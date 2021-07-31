@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.mp3val = void 0;
-const tool_1 = require("../../../utils/tool");
+import { spawnTool } from '../../../utils/tool';
 function parseMP3ValWarning(data) {
     let s = data;
     let i = s.indexOf('"');
@@ -30,16 +27,15 @@ function parseMP3ValResult(data) {
     }
     return result;
 }
-async function mp3val(filename, fix) {
+export async function mp3val(filename, fix) {
     const cmds = ['-si'];
     if (fix) {
         cmds.push('-f');
     }
-    const result = await tool_1.spawnTool('mp3val', 'MP3VAL_PATH', [...cmds, filename]);
+    const result = await spawnTool('mp3val', 'MP3VAL_PATH', [...cmds, filename]);
     if (result.errMsg) {
         return Promise.reject(Error(result.errMsg));
     }
     return parseMP3ValResult(result.result);
 }
-exports.mp3val = mp3val;
 //# sourceMappingURL=mp3val.js.map

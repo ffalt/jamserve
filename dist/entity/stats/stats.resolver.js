@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,25 +10,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const stats_1 = require("./stats");
-const stats_args_1 = require("./stats.args");
+import { Args, Ctx, Query, Resolver } from 'type-graphql';
+import { StatsQL } from './stats';
+import { StatsArgs } from './stats.args';
 let StatsResolver = class StatsResolver {
     async stats(args, { engine, orm }) {
         return await engine.stats.getStats(orm, args?.rootID);
     }
 };
 __decorate([
-    type_graphql_1.Query(() => stats_1.StatsQL),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => StatsQL),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [stats_args_1.StatsArgs, Object]),
+    __metadata("design:paramtypes", [StatsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StatsResolver.prototype, "stats", null);
 StatsResolver = __decorate([
-    type_graphql_1.Resolver(stats_1.StatsQL)
+    Resolver(StatsQL)
 ], StatsResolver);
-exports.StatsResolver = StatsResolver;
+export { StatsResolver };
 //# sourceMappingURL=stats.resolver.js.map

@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityManager = exports.EntityCache = void 0;
-const repository_1 = require("./repository");
-const entity_1 = require("./entity");
-const uuid_1 = require("uuid");
-class EntityCache {
+import { EntityRepository } from './repository';
+import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity';
+import { v4 } from 'uuid';
+export class EntityCache {
     constructor() {
         this.cache = new Map();
     }
@@ -29,8 +26,7 @@ class EntityCache {
         }
     }
 }
-exports.EntityCache = EntityCache;
-class EntityManager {
+export class EntityManager {
     constructor(sequelize, metadata, config, parent, useCache) {
         this.sequelize = sequelize;
         this.metadata = metadata;
@@ -51,7 +47,7 @@ class EntityManager {
                 this.repositoryMap[entityName] = new RepositoryClass(this, entityName);
             }
             else {
-                this.repositoryMap[entityName] = new repository_1.EntityRepository(this, entityName);
+                this.repositoryMap[entityName] = new EntityRepository(this, entityName);
             }
         }
         return this.repositoryMap[entityName];
@@ -73,7 +69,7 @@ class EntityManager {
         try {
             for (const change of this.changeSet) {
                 if (change.persist) {
-                    entity_1.mapManagedToSource(change.persist);
+                    mapManagedToSource(change.persist);
                     await change.persist._source.save({ transaction: t });
                 }
                 else if (change.remove && change.remove.entity) {
@@ -88,12 +84,12 @@ class EntityManager {
             }
             for (const change of this.changeSet) {
                 if (change.persist) {
-                    await entity_1.saveManagedEntityRelations(change.persist, t);
+                    await saveManagedEntityRelations(change.persist, t);
                 }
             }
             for (const change of this.changeSet) {
                 if (change.persist) {
-                    entity_1.cleanManagedEntityRelations(change.persist);
+                    cleanManagedEntityRelations(change.persist);
                     this.parent.cache.remove(change.entityName, change.persist);
                 }
             }
@@ -247,10 +243,10 @@ class EntityManager {
         if (!meta) {
             throw Error('Invalid ORM setup');
         }
-        return entity_1.createManagedEntity(meta, source, this);
+        return createManagedEntity(meta, source, this);
     }
     create(entityName, data) {
-        const idData = { id: uuid_1.v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
+        const idData = { id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
         const _source = this.model(entityName).build(idData);
         const entity = this.mapEntity(entityName, _source);
         Object.keys(idData).forEach(key => entity[key] = idData[key]);
@@ -292,5 +288,4 @@ class EntityManager {
         return;
     }
 }
-exports.EntityManager = EntityManager;
 //# sourceMappingURL=manager.js.map

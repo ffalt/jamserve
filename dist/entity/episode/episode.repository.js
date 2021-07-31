@@ -1,44 +1,40 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EpisodeRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-class EpisodeRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { DBObjectType, EpisodeOrderFields } from '../../types/enums';
+import { OrderHelper } from '../base/base';
+import { QHelper } from '../../modules/orm';
+export class EpisodeRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.episode;
+        this.objType = DBObjectType.episode;
     }
     buildOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.EpisodeOrderFields.created:
+            case EpisodeOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.EpisodeOrderFields.updated:
+            case EpisodeOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.EpisodeOrderFields.status:
+            case EpisodeOrderFields.status:
                 return [['status', direction]];
-            case enums_1.EpisodeOrderFields.name:
+            case EpisodeOrderFields.name:
                 return [['name', direction]];
-            case enums_1.EpisodeOrderFields.default:
-            case enums_1.EpisodeOrderFields.date:
+            case EpisodeOrderFields.default:
+            case EpisodeOrderFields.date:
                 return [['date', direction]];
         }
         return [];
     }
     async buildFilter(filter, _) {
-        return filter ? orm_1.QHelper.buildQuery([
+        return filter ? QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
-            { name: orm_1.QHelper.eq(filter.name) },
-            { status: orm_1.QHelper.inOrEqual(filter.statuses) },
-            { guid: orm_1.QHelper.inOrEqual(filter.guids) },
-            { author: orm_1.QHelper.inOrEqual(filter.authors) },
-            { createdAt: orm_1.QHelper.gte(filter.since) },
-            { podcast: orm_1.QHelper.inOrEqual(filter.podcastIDs) }
+            { name: QHelper.like(filter.query, this.em.dialect) },
+            { name: QHelper.eq(filter.name) },
+            { status: QHelper.inOrEqual(filter.statuses) },
+            { guid: QHelper.inOrEqual(filter.guids) },
+            { author: QHelper.inOrEqual(filter.authors) },
+            { createdAt: QHelper.gte(filter.since) },
+            { podcast: QHelper.inOrEqual(filter.podcastIDs) }
         ]) : {};
     }
 }
-exports.EpisodeRepository = EpisodeRepository;
 //# sourceMappingURL=episode.repository.js.map

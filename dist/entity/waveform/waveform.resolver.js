@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,16 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaveformResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const waveform_1 = require("./waveform");
-const builder_1 = require("../../modules/rest/builder");
+import { Arg, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { Waveform, WaveformQL } from './waveform';
+import { NotFoundError } from '../../modules/rest/builder';
 let WaveformResolver = class WaveformResolver {
     async waveform(id, { orm }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(builder_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         return result;
     }
@@ -32,29 +29,32 @@ let WaveformResolver = class WaveformResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => waveform_1.WaveformQL),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)),
-    __param(1, type_graphql_1.Ctx()),
+    Query(() => WaveformQL),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformResolver.prototype, "waveform", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => String),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    FieldResolver(() => String),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [waveform_1.Waveform, Object]),
+    __metadata("design:paramtypes", [Waveform, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformResolver.prototype, "json", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => String),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Arg('width', () => type_graphql_1.Int)), __param(2, type_graphql_1.Ctx()),
+    FieldResolver(() => String),
+    __param(0, GQLRoot()),
+    __param(1, Arg('width', () => Int)),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [waveform_1.Waveform, Number, Object]),
+    __metadata("design:paramtypes", [Waveform, Number, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformResolver.prototype, "svg", null);
 WaveformResolver = __decorate([
-    type_graphql_1.Resolver(waveform_1.WaveformQL)
+    Resolver(WaveformQL)
 ], WaveformResolver);
-exports.WaveformResolver = WaveformResolver;
+export { WaveformResolver };
 //# sourceMappingURL=waveform.resolver.js.map

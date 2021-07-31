@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Reference = void 0;
-class Reference {
+export class Reference {
     constructor(owner) {
         this.owner = owner;
         this.initialized = false;
@@ -62,5 +59,4 @@ class Reference {
         return result;
     }
 }
-exports.Reference = Reference;
 //# sourceMappingURL=reference.js.map

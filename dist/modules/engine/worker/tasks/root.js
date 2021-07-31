@@ -1,18 +1,15 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RootWorker = void 0;
-const scan_dir_1 = require("../../../../utils/scan-dir");
-const scan_1 = require("../scan");
-const base_1 = require("./base");
-const typescript_ioc_1 = require("typescript-ioc");
-const merge_scan_1 = require("../merge-scan");
-let RootWorker = class RootWorker extends base_1.BaseWorker {
+import { DirScanner } from '../../../../utils/scan-dir';
+import { ObjLoadTrackMatch, WorkerScan } from '../scan';
+import { BaseWorker } from './base';
+import { InRequestScope } from 'typescript-ioc';
+import { WorkerMergeScan } from '../merge-scan';
+let RootWorker = class RootWorker extends BaseWorker {
     async validateRootPath(orm, dir) {
         const d = dir.trim();
         if (d[0] === '.') {
@@ -40,11 +37,11 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         changes.roots.removed.add(root);
     }
     async scan(orm, root, changes) {
-        const dirScanner = new scan_dir_1.DirScanner();
+        const dirScanner = new DirScanner();
         const scanDir = await dirScanner.scan(root.path);
-        const scanMatcher = new scan_1.WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
+        const scanMatcher = new WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
         const rootMatch = await scanMatcher.match(scanDir);
-        const scanMerger = new merge_scan_1.WorkerMergeScan(orm, root.strategy, changes);
+        const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
         await scanMerger.mergeMatch(rootMatch);
     }
     async refreshMeta(orm, root, changes) {
@@ -71,7 +68,7 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         }
         if (rootMatch) {
             await this.loadEmptyUnchanged(rootMatch);
-            const scanMerger = new merge_scan_1.WorkerMergeScan(orm, root.strategy, changes);
+            const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
             await scanMerger.merge(rootMatch);
         }
     }
@@ -146,13 +143,13 @@ let RootWorker = class RootWorker extends base_1.BaseWorker {
         const tracks = await folder.tracks.getItems();
         const list = [];
         for (const track of tracks) {
-            list.push(new scan_1.ObjLoadTrackMatch(track));
+            list.push(new ObjLoadTrackMatch(track));
         }
         return list;
     }
 };
 RootWorker = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], RootWorker);
-exports.RootWorker = RootWorker;
+export { RootWorker };
 //# sourceMappingURL=root.js.map

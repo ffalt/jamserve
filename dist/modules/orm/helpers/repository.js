@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityRepository = void 0;
-class EntityRepository {
+export class EntityRepository {
     constructor(em, entityName) {
         this.em = em;
         this.entityName = entityName;
@@ -73,5 +70,4 @@ class EntityRepository {
         return this.em.count(this.entityName, options);
     }
 }
-exports.EntityRepository = EntityRepository;
 //# sourceMappingURL=repository.js.map

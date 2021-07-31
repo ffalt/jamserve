@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNameDecoratorParams = exports.getTypeDecoratorParams = void 0;
-function getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions) {
+export function getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions) {
     if (typeof returnTypeFuncOrOptions === 'function') {
         return {
             returnTypeFunc: returnTypeFuncOrOptions,
@@ -14,8 +11,7 @@ function getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions) {
         };
     }
 }
-exports.getTypeDecoratorParams = getTypeDecoratorParams;
-function getNameDecoratorParams(nameOrOptions, maybeOptions) {
+export function getNameDecoratorParams(nameOrOptions, maybeOptions) {
     if (typeof nameOrOptions === 'string') {
         return {
             name: nameOrOptions,
@@ -28,5 +24,4 @@ function getNameDecoratorParams(nameOrOptions, maybeOptions) {
         };
     }
 }
-exports.getNameDecoratorParams = getNameDecoratorParams;
 //# sourceMappingURL=decorators.js.map

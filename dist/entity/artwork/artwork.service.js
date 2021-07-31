@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,15 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtworkService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const io_service_1 = require("../../modules/engine/services/io.service");
-const path_1 = __importDefault(require("path"));
-const image_module_1 = require("../../modules/image/image.module");
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { IoService } from '../../modules/engine/services/io.service';
+import path from 'path';
+import { ImageModule } from '../../modules/image/image.module';
 let ArtworkService = class ArtworkService {
     async createByUrl(folder, url, types) {
         return this.ioService.artwork.download(folder.id, url, types, folder.root.idOrFail());
@@ -34,19 +28,19 @@ let ArtworkService = class ArtworkService {
         return this.ioService.artwork.delete(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
     }
     async getImage(orm, artwork, size, format) {
-        return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);
+        return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
+    Inject,
+    __metadata("design:type", IoService)
 ], ArtworkService.prototype, "ioService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], ArtworkService.prototype, "imageModule", void 0);
 ArtworkService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], ArtworkService);
-exports.ArtworkService = ArtworkService;
+export { ArtworkService };
 //# sourceMappingURL=artwork.service.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,24 +7,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaveformQL = exports.Waveform = void 0;
-const type_graphql_1 = require("type-graphql");
-class Waveform {
+import { Field, ObjectType } from 'type-graphql';
+export class Waveform {
 }
-exports.Waveform = Waveform;
 let WaveformQL = class WaveformQL extends Waveform {
 };
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
     __metadata("design:type", Object)
 ], WaveformQL.prototype, "json", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
     __metadata("design:type", Function)
 ], WaveformQL.prototype, "svg", void 0);
 WaveformQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], WaveformQL);
-exports.WaveformQL = WaveformQL;
+export { WaveformQL };
 //# sourceMappingURL=waveform.js.map

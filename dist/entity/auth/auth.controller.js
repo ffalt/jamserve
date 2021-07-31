@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,33 +10,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthController = void 0;
-const session_model_1 = require("../session/session.model");
-const rest_1 = require("../../modules/rest");
-const passport_1 = __importDefault(require("passport"));
-const jwt_1 = require("../../utils/jwt");
-const version_1 = require("../../modules/engine/rest/version");
-const auth_args_1 = require("./auth.args");
-const enums_1 = require("../../types/enums");
-const logger_1 = require("../../utils/logger");
-const log = logger_1.logger('AuthController');
+import { Session } from '../session/session.model';
+import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest';
+import passport from 'passport';
+import { generateJWT, jwtHash } from '../../utils/jwt';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
+import { CredentialsArgs } from './auth.args';
+import { UserRole } from '../../types/enums';
+import { logger } from '../../utils/logger';
+const log = logger('AuthController');
 let AuthController = class AuthController {
     async loginUser(req, res, next) {
         return new Promise((resolve, reject) => {
-            passport_1.default.authenticate('local', (err, user) => {
+            passport.authenticate('local', (err, user) => {
                 if (err || !user) {
                     log.error(err);
-                    return reject(rest_1.UnauthError('Invalid Auth'));
+                    return reject(UnauthError('Invalid Auth'));
                 }
                 req.login(user, (err2) => {
                     if (err2) {
                         log.error(err2);
                         console.error(err2);
-                        return reject(rest_1.UnauthError('Invalid Auth'));
+                        return reject(UnauthError('Invalid Auth'));
                     }
                     resolve(user);
                 });
@@ -70,18 +64,18 @@ let AuthController = class AuthController {
     }
     buildSessionResult(req, credentials, user, engine) {
         const client = req.body.client || 'Unknown Client';
-        const token = credentials.jwt ? jwt_1.generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
+        const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
         if (req.session) {
             const session = req.session;
             session.client = client;
             session.userAgent = req.headers['user-agent'] || client;
             if (token) {
-                session.jwth = jwt_1.jwtHash(token);
+                session.jwth = jwtHash(token);
             }
         }
         return {
             allowedCookieDomains: engine.config.env.session.allowedCookieDomains,
-            version: version_1.JAMAPI_VERSION,
+            version: JAMAPI_VERSION,
             jwt: token,
             user: {
                 id: user.id,
@@ -100,22 +94,22 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    rest_1.Post('/login', () => session_model_1.Session, { description: 'Start session or jwt access', summary: 'Login' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/login', () => Session, { description: 'Start session or jwt access', summary: 'Login' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_args_1.CredentialsArgs, Object]),
+    __metadata("design:paramtypes", [CredentialsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
-    rest_1.Post('/logout', { roles: [enums_1.UserRole.stream], description: 'End session or jwt access', summary: 'Logout' }),
-    __param(0, rest_1.Ctx()),
+    Post('/logout', { roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
 AuthController = __decorate([
-    rest_1.Controller('/auth', { tags: ['Access'] })
+    Controller('/auth', { tags: ['Access'] })
 ], AuthController);
-exports.AuthController = AuthController;
+export { AuthController };
 //# sourceMappingURL=auth.controller.js.map

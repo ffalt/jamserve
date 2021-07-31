@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FlacProcessorStream = void 0;
-const stream_1 = require("stream");
-const block_1 = require("./block");
-const block_picture_1 = require("./block.picture");
-const block_streaminfo_1 = require("./block.streaminfo");
-const block_vorbiscomment_1 = require("./block.vorbiscomment");
-class FlacProcessorStream extends stream_1.Transform {
+import { Transform } from 'stream';
+import { MetaDataBlock } from './block';
+import { MetaDataBlockPicture } from './block.picture';
+import { MetaDataBlockStreamInfo } from './block.streaminfo';
+import { BlockVorbiscomment } from './block.vorbiscomment';
+export class FlacProcessorStream extends Transform {
     constructor(reportID3 = false, parseMetaDataBlocks = false, options) {
         super(options);
         this.reportID3 = reportID3;
@@ -194,13 +191,13 @@ class FlacProcessorStream extends stream_1.Transform {
     initMDB(type) {
         switch (type) {
             case 0:
-                return new block_streaminfo_1.MetaDataBlockStreamInfo(this.mdbLast);
+                return new MetaDataBlockStreamInfo(this.mdbLast);
             case 4:
-                return new block_vorbiscomment_1.BlockVorbiscomment(this.mdbLast);
+                return new BlockVorbiscomment(this.mdbLast);
             case 6:
-                return new block_picture_1.MetaDataBlockPicture(this.mdbLast);
+                return new MetaDataBlockPicture(this.mdbLast);
             default:
-                return new block_1.MetaDataBlock(this.mdbLast, type);
+                return new MetaDataBlock(this.mdbLast, type);
         }
     }
     preProcess(slice, header) {
@@ -235,5 +232,4 @@ class FlacProcessorStream extends stream_1.Transform {
         return this.mdbPush;
     }
 }
-exports.FlacProcessorStream = FlacProcessorStream;
 //# sourceMappingURL=processor.js.map

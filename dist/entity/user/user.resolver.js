@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,138 +10,154 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserResolver = exports.UserFavoritesResolver = exports.UserFavorites = void 0;
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const user_1 = require("./user");
-const user_service_1 = require("./user.service");
-const user_args_1 = require("./user.args");
-const session_1 = require("../session/session");
-const bookmark_1 = require("../bookmark/bookmark");
-const playqueue_1 = require("../playqueue/playqueue");
-const playlist_1 = require("../playlist/playlist");
-const playlist_args_1 = require("../playlist/playlist.args");
-const bookmark_args_1 = require("../bookmark/bookmark.args");
-const session_args_1 = require("../session/session.args");
-const album_1 = require("../album/album");
-const album_args_1 = require("../album/album.args");
-const artist_1 = require("../artist/artist");
-const artist_args_1 = require("../artist/artist.args");
-const series_1 = require("../series/series");
-const series_args_1 = require("../series/series.args");
-const podcast_1 = require("../podcast/podcast");
-const podcast_args_1 = require("../podcast/podcast.args");
-const episode_1 = require("../episode/episode");
-const episode_args_1 = require("../episode/episode.args");
-const track_1 = require("../track/track");
-const track_args_1 = require("../track/track.args");
-const folder_1 = require("../folder/folder");
-const folder_args_1 = require("../folder/folder.args");
-const artwork_args_1 = require("../artwork/artwork.args");
-const stats_1 = require("../stats/stats");
+import { ListType, UserRole } from '../../types/enums';
+import { Arg, Args, Authorized, Ctx, FieldResolver, ID, ObjectType, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { User, UserFavoritesQL, UserIndexQL, UserPageQL, UserQL } from './user';
+import { UserService } from './user.service';
+import { UserIndexArgs, UsersArgs } from './user.args';
+import { SessionPageQL } from '../session/session';
+import { BookmarkPageQL } from '../bookmark/bookmark';
+import { PlayQueueQL } from '../playqueue/playqueue';
+import { PlaylistPageQL } from '../playlist/playlist';
+import { PlaylistPageArgsQL } from '../playlist/playlist.args';
+import { BookmarksPageArgsQL } from '../bookmark/bookmark.args';
+import { SessionsPageArgsQL } from '../session/session.args';
+import { AlbumPageQL } from '../album/album';
+import { AlbumPageArgsQL } from '../album/album.args';
+import { ArtistPageQL } from '../artist/artist';
+import { ArtistPageArgsQL } from '../artist/artist.args';
+import { SeriesPageQL } from '../series/series';
+import { SeriesPageArgsQL } from '../series/series.args';
+import { PodcastPageQL } from '../podcast/podcast';
+import { PodcastPageArgsQL } from '../podcast/podcast.args';
+import { EpisodePageQL } from '../episode/episode';
+import { EpisodePageArgsQL } from '../episode/episode.args';
+import { TrackPageQL } from '../track/track';
+import { TrackPageArgsQL } from '../track/track.args';
+import { FolderPageQL } from '../folder/folder';
+import { FolderPageArgsQL } from '../folder/folder.args';
+import { ArtworkPageArgsQL } from '../artwork/artwork.args';
+import { UserStatsQL } from '../stats/stats';
 let UserFavorites = class UserFavorites {
 };
 UserFavorites = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], UserFavorites);
-exports.UserFavorites = UserFavorites;
+export { UserFavorites };
 let UserFavoritesResolver = class UserFavoritesResolver {
     async albums(owner, { orm }, { filter, order, page }) {
-        return orm.Album.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Album.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async artists(owner, { orm }, { filter, order, page }) {
-        return orm.Artist.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Artist.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async series(owner, { orm }, { filter, order, page }) {
-        return orm.Series.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Series.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async podcasts(owner, { orm }, { filter, order, page }) {
-        return orm.Podcast.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Podcast.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async episodes(owner, { orm }, { filter, order, page }) {
-        return orm.Episode.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Episode.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async tracks(owner, { orm }, { filter, order, page }) {
-        return orm.Track.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Track.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async folders(owner, { orm }, { filter, order, page }) {
-        return orm.Folder.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Folder.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async playlists(owner, { orm }, { filter, order, page }) {
-        return orm.Playlist.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Playlist.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
     async artworks(owner, { orm }, { filter, order, page }) {
-        return orm.Artwork.findListFilter(enums_1.ListType.faved, undefined, filter, order, page, owner.user);
+        return orm.Artwork.findListFilter(ListType.faved, undefined, filter, order, page, owner.user);
     }
 };
 __decorate([
-    type_graphql_1.FieldResolver(() => album_1.AlbumPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => AlbumPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, album_args_1.AlbumPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, AlbumPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "albums", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => artist_1.ArtistPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => ArtistPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, artist_args_1.ArtistPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, ArtistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "artists", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => series_1.SeriesPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => SeriesPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, series_args_1.SeriesPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, SeriesPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "series", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => podcast_1.PodcastPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => PodcastPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, podcast_args_1.PodcastPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, PodcastPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "podcasts", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => episode_1.EpisodePageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => EpisodePageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, episode_args_1.EpisodePageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, EpisodePageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "episodes", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => track_1.TrackPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => TrackPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, track_args_1.TrackPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, TrackPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "tracks", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => folder_1.FolderPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => FolderPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, folder_args_1.FolderPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, FolderPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "folders", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => PlaylistPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, playlist_args_1.PlaylistPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, PlaylistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "playlists", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => artist_1.ArtistPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => ArtistPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, artwork_args_1.ArtworkPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, ArtworkPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "artworks", null);
 UserFavoritesResolver = __decorate([
-    type_graphql_1.Resolver(user_1.UserFavoritesQL)
+    Resolver(UserFavoritesQL)
 ], UserFavoritesResolver);
-exports.UserFavoritesResolver = UserFavoritesResolver;
+export { UserFavoritesResolver };
 let UserResolver = class UserResolver {
     currentUser({ user }) {
         return user;
@@ -157,7 +172,7 @@ let UserResolver = class UserResolver {
         return await orm.User.indexFilter(filter, user);
     }
     roles(user) {
-        return user_service_1.UserService.listfyRoles(user);
+        return UserService.listfyRoles(user);
     }
     async stats(user, { orm, engine }) {
         return engine.stats.getUserStats(orm, user);
@@ -181,87 +196,97 @@ let UserResolver = class UserResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => user_1.UserQL),
-    __param(0, type_graphql_1.Ctx()),
+    Query(() => UserQL),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", user_1.User)
+    __metadata("design:returntype", User)
 ], UserResolver.prototype, "currentUser", null);
 __decorate([
-    type_graphql_1.Authorized(enums_1.UserRole.admin),
-    type_graphql_1.Query(() => user_1.UserQL),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Authorized(UserRole.admin),
+    Query(() => UserQL),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "user", null);
 __decorate([
-    type_graphql_1.Authorized(enums_1.UserRole.admin),
-    type_graphql_1.Query(() => user_1.UserPageQL),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Authorized(UserRole.admin),
+    Query(() => UserPageQL),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_args_1.UsersArgs, Object]),
+    __metadata("design:paramtypes", [UsersArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "users", null);
 __decorate([
-    type_graphql_1.Authorized(enums_1.UserRole.admin),
-    type_graphql_1.Query(() => user_1.UserIndexQL),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Authorized(UserRole.admin),
+    Query(() => UserIndexQL),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_args_1.UserIndexArgs, Object]),
+    __metadata("design:paramtypes", [UserIndexArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "userIndex", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => [enums_1.UserRole]),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => [UserRole]),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User]),
+    __metadata("design:paramtypes", [User]),
     __metadata("design:returntype", Array)
 ], UserResolver.prototype, "roles", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => stats_1.UserStatsQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    FieldResolver(() => UserStatsQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object]),
+    __metadata("design:paramtypes", [User, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "stats", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => playlist_1.PlaylistPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => PlaylistPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object, playlist_args_1.PlaylistPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, PlaylistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "playlists", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => bookmark_1.BookmarkPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => BookmarkPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object, bookmark_args_1.BookmarksPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, BookmarksPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "bookmarks", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => session_1.SessionPageQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => SessionPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User, Object, session_args_1.SessionsPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, SessionsPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "sessions", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => playqueue_1.PlayQueueQL, { nullable: true }),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => PlayQueueQL, { nullable: true }),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User]),
+    __metadata("design:paramtypes", [User]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "playQueue", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => user_1.UserFavoritesQL),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => UserFavoritesQL),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_1.User]),
+    __metadata("design:paramtypes", [User]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "favorites", null);
 UserResolver = __decorate([
-    type_graphql_1.Resolver(user_1.UserQL)
+    Resolver(UserQL)
 ], UserResolver);
-exports.UserResolver = UserResolver;
+export { UserResolver };
 //# sourceMappingURL=user.resolver.js.map

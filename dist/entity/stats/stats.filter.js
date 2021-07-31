@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,17 +7,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatsFilter = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
+import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
 let StatsFilter = class StatsFilter {
 };
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'filter stats by Root Id', isID: true }),
+    ObjField({ nullable: true, description: 'filter stats by Root Id', isID: true }),
     __metadata("design:type", String)
 ], StatsFilter.prototype, "rootID", void 0);
 StatsFilter = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], StatsFilter);
-exports.StatsFilter = StatsFilter;
+export { StatsFilter };
 //# sourceMappingURL=stats.filter.js.map

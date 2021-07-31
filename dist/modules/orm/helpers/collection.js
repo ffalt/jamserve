@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Collection = void 0;
-class Collection {
+export class Collection {
     constructor(owner) {
         this.owner = owner;
         this.initialized = false;
@@ -106,5 +103,4 @@ class Collection {
         return;
     }
 }
-exports.Collection = Collection;
 //# sourceMappingURL=collection.js.map

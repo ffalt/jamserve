@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createManagedEntity = exports.saveManagedEntityRelations = exports.cleanManagedEntityRelations = exports.saveManagedEntity = exports.mapManagedToSource = void 0;
-const reference_1 = require("./reference");
-const collection_1 = require("./collection");
+import { Reference } from './reference';
+import { Collection } from './collection';
 function transformValueForDB(value, field) {
     if (field.typeOptions.array) {
         const list = value || [];
@@ -20,7 +17,7 @@ function transformValueForUse(value, field) {
     }
     return value === null ? undefined : value;
 }
-function mapManagedToSource(instance) {
+export function mapManagedToSource(instance) {
     const source = instance._source;
     instance._meta.fields.forEach(field => {
         if (!field.isRelation) {
@@ -34,41 +31,37 @@ function mapManagedToSource(instance) {
         instance._source.updatedAt = instance.updatedAt;
     }
 }
-exports.mapManagedToSource = mapManagedToSource;
-async function saveManagedEntity(instance) {
+export async function saveManagedEntity(instance) {
     mapManagedToSource(instance);
     await instance._source.save();
 }
-exports.saveManagedEntity = saveManagedEntity;
-function cleanManagedEntityRelations(instance) {
+export function cleanManagedEntityRelations(instance) {
     for (const field of instance._meta.fields) {
         if (field.isRelation) {
             const refOrCollection = instance[field.name];
-            if (refOrCollection instanceof reference_1.Reference) {
+            if (refOrCollection instanceof Reference) {
                 const ref = refOrCollection;
                 ref.clear();
             }
-            else if (refOrCollection instanceof collection_1.Collection) {
+            else if (refOrCollection instanceof Collection) {
                 const collection = refOrCollection;
                 collection.clear();
             }
         }
     }
 }
-exports.cleanManagedEntityRelations = cleanManagedEntityRelations;
-async function saveManagedEntityRelations(instance, transaction) {
+export async function saveManagedEntityRelations(instance, transaction) {
     for (const field of instance._meta.fields) {
         if (field.isRelation) {
             const refOrCollection = instance[field.name];
-            if (refOrCollection instanceof collection_1.Collection) {
+            if (refOrCollection instanceof Collection) {
                 const collection = refOrCollection;
                 await collection.flush(transaction);
             }
         }
     }
 }
-exports.saveManagedEntityRelations = saveManagedEntityRelations;
-function createManagedEntity(meta, source, em) {
+export function createManagedEntity(meta, source, em) {
     const entity = new meta.target();
     Object.defineProperty(entity, '_em', { enumerable: false, value: em, writable: false });
     Object.defineProperty(entity, '_source', { enumerable: false, value: source, writable: false });
@@ -76,11 +69,11 @@ function createManagedEntity(meta, source, em) {
     meta.fields.forEach(field => {
         if (field.isRelation) {
             const refOrCollection = entity[field.name];
-            if (refOrCollection instanceof reference_1.Reference) {
+            if (refOrCollection instanceof Reference) {
                 const ref = refOrCollection;
                 ref.manage(field);
             }
-            else if (refOrCollection instanceof collection_1.Collection) {
+            else if (refOrCollection instanceof Collection) {
                 const collection = refOrCollection;
                 collection.manage(field);
             }
@@ -93,5 +86,4 @@ function createManagedEntity(meta, source, em) {
     entity['updatedAt'] = source.get('updatedAt');
     return entity;
 }
-exports.createManagedEntity = createManagedEntity;
 //# sourceMappingURL=entity.js.map

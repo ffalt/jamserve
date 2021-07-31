@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Waveform = void 0;
-const waveform_stream_1 = require("./waveform.stream");
-class Waveform {
+import { WaveformStream } from './waveform.stream';
+export class Waveform {
     constructor(stream, opts) {
         this.stream = stream;
         this.opts = { samplesPerPixel: 256, sampleRate: 44100 };
@@ -10,7 +7,7 @@ class Waveform {
         this.opts = { ...this.opts, ...(opts || {}) };
     }
     run(cb) {
-        const ws = new waveform_stream_1.WaveformStream(this.opts.samplesPerPixel, this.opts.sampleRate);
+        const ws = new WaveformStream(this.opts.samplesPerPixel, this.opts.sampleRate);
         ws.on('readable', () => {
             let px = ws.read();
             while (px && px.length > 0) {
@@ -65,5 +62,4 @@ class Waveform {
         };
     }
 }
-exports.Waveform = Waveform;
 //# sourceMappingURL=waveform.class.js.map

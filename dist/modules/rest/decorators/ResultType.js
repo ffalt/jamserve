@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResultType = void 0;
-const getMetadataStorage_1 = require("../metadata/getMetadataStorage");
-const decorators_1 = require("../helpers/decorators");
-function ResultType(nameOrOptions, maybeOptions) {
-    const { name, options } = decorators_1.getNameDecoratorParams(nameOrOptions, maybeOptions);
+import { getMetadataStorage } from "../metadata/getMetadataStorage";
+import { getNameDecoratorParams } from "../helpers/decorators";
+export function ResultType(nameOrOptions, maybeOptions) {
+    const { name, options } = getNameDecoratorParams(nameOrOptions, maybeOptions);
     const interfaceClasses = options.implements && [].concat(options.implements);
     return target => {
-        getMetadataStorage_1.getMetadataStorage().collectResultMetadata({
+        getMetadataStorage().collectResultMetadata({
             name: name || target.name,
             target,
             fields: [],
@@ -17,5 +14,4 @@ function ResultType(nameOrOptions, maybeOptions) {
         });
     };
 }
-exports.ResultType = ResultType;
 //# sourceMappingURL=ResultType.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,12 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AutocompleteController = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const autocomplete_model_1 = require("./autocomplete.model");
-const enums_1 = require("../../types/enums");
-const autocomplete_args_1 = require("./autocomplete.args");
+import { Controller, Ctx, Get, QueryParams } from '../../modules/rest/decorators';
+import { AutoComplete } from './autocomplete.model';
+import { UserRole } from '../../types/enums';
+import { AutoCompleteFilterArgs } from './autocomplete.args';
 let AutocompleteController = class AutocompleteController {
     async autocomplete(filter, { orm, user }) {
         const result = {};
@@ -61,15 +58,15 @@ let AutocompleteController = class AutocompleteController {
     }
 };
 __decorate([
-    decorators_1.Get(() => autocomplete_model_1.AutoComplete, { description: 'Get compact Search Results for Autocomplete Features', summary: 'Get Autocomplete' }),
-    __param(0, decorators_1.QueryParams()),
-    __param(1, decorators_1.Ctx()),
+    Get(() => AutoComplete, { description: 'Get compact Search Results for Autocomplete Features', summary: 'Get Autocomplete' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [autocomplete_args_1.AutoCompleteFilterArgs, Object]),
+    __metadata("design:paramtypes", [AutoCompleteFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AutocompleteController.prototype, "autocomplete", null);
 AutocompleteController = __decorate([
-    decorators_1.Controller('/autocomplete', { tags: ['Various'], roles: [enums_1.UserRole.stream] })
+    Controller('/autocomplete', { tags: ['Various'], roles: [UserRole.stream] })
 ], AutocompleteController);
-exports.AutocompleteController = AutocompleteController;
+export { AutocompleteController };
 //# sourceMappingURL=autocomplete.controller.js.map

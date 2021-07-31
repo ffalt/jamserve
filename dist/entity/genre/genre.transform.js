@@ -1,16 +1,13 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const enums_1 = require("../../types/enums");
-const base_transform_1 = require("../base/base.transform");
-let GenreTransformService = class GenreTransformService extends base_transform_1.BaseTransformService {
+import { InRequestScope } from 'typescript-ioc';
+import { DBObjectType } from '../../types/enums';
+import { BaseTransformService } from '../base/base.transform';
+let GenreTransformService = class GenreTransformService extends BaseTransformService {
     async genreBases(orm, list, genreArgs, user) {
         return await Promise.all(list.map(g => this.genreBase(orm, g, {}, user)));
     }
@@ -19,7 +16,7 @@ let GenreTransformService = class GenreTransformService extends base_transform_1
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            state: genreArgs.genreState ? await this.state(orm, o.id, enums_1.DBObjectType.genre, user.id) : undefined
+            state: genreArgs.genreState ? await this.state(orm, o.id, DBObjectType.genre, user.id) : undefined
         };
     }
     async genre(orm, o, genreArgs, user) {
@@ -45,7 +42,7 @@ let GenreTransformService = class GenreTransformService extends base_transform_1
     }
 };
 GenreTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], GenreTransformService);
-exports.GenreTransformService = GenreTransformService;
+export { GenreTransformService };
 //# sourceMappingURL=genre.transform.js.map

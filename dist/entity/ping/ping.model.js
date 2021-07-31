@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,18 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ping = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const version_1 = require("../../modules/engine/rest/version");
+import { ObjField, ResultType } from '../../modules/rest/decorators';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
 let Ping = class Ping {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Jam Api Version', example: version_1.JAMAPI_VERSION }),
+    ObjField({ description: 'Jam Api Version', example: JAMAPI_VERSION }),
     __metadata("design:type", String)
 ], Ping.prototype, "version", void 0);
 Ping = __decorate([
-    decorators_1.ResultType()
+    ResultType()
 ], Ping);
-exports.Ping = Ping;
+export { Ping };
 //# sourceMappingURL=ping.model.js.map

@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpressMethod = void 0;
-const express_error_1 = require("./express-error");
-const express_responder_1 = require("./express-responder");
-const metadata_1 = require("../metadata");
-const logger_1 = require("../../../utils/logger");
-const express_parameters_1 = require("./express-parameters");
-const express_path_parameters_1 = require("./express-path-parameters");
-const log = logger_1.logger('RestAPI');
-class ExpressMethod {
+import { GenericError, UnauthError } from './express-error';
+import { ApiBaseResponder } from './express-responder';
+import { getMetadataStorage } from '../metadata';
+import { logger } from '../../../utils/logger';
+import { ExpressParameters } from './express-parameters';
+import { processCustomPathParameters } from './express-path-parameters';
+const log = logger('RestAPI');
+export class ExpressMethod {
     constructor() {
-        this.parameters = new express_parameters_1.ExpressParameters();
-        this.metadata = metadata_1.getMetadataStorage();
+        this.parameters = new ExpressParameters();
+        this.metadata = getMetadataStorage();
     }
     static getMethodResultFormat(method) {
         if (method.binary) {
@@ -41,38 +38,38 @@ class ExpressMethod {
         try {
             const Controller = method.controllerClassMetadata?.target;
             if (!Controller) {
-                throw express_error_1.GenericError(`Internal: Invalid controller in method ${method.methodName}`);
+                throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
             }
             const instance = new Controller();
             const func = instance[method.methodName];
             const args = this.buildArguments(method, context);
             if (method.binary !== undefined) {
                 const result = await func.apply(instance, args);
-                express_responder_1.ApiBaseResponder.sendBinary(context.req, context.res, result);
+                ApiBaseResponder.sendBinary(context.req, context.res, result);
                 return;
             }
             if (method.getReturnType === undefined) {
                 await func.apply(instance, args);
-                express_responder_1.ApiBaseResponder.sendOK(context.req, context.res);
+                ApiBaseResponder.sendOK(context.req, context.res);
                 return;
             }
             const target = method.getReturnType();
             if (target === String) {
                 const result = await func.apply(instance, args);
-                express_responder_1.ApiBaseResponder.sendString(context.req, context.res, result);
+                ApiBaseResponder.sendString(context.req, context.res, result);
                 return;
             }
             const resultType = this.metadata.resultType(target);
             if (!resultType) {
-                throw express_error_1.GenericError(`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
+                throw GenericError(`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
                     `is not a class decorated with '@ResultType' decorator!`);
             }
             const result = await instance[method.methodName].apply(instance, args);
-            express_responder_1.ApiBaseResponder.sendJSON(context.req, context.res, result);
+            ApiBaseResponder.sendJSON(context.req, context.res, result);
         }
         catch (e) {
             log.error(e);
-            express_responder_1.ApiBaseResponder.sendError(context.req, context.res, e);
+            ApiBaseResponder.sendError(context.req, context.res, e);
         }
     }
     POST(post, ctrl, router, options, uploadHandler) {
@@ -90,18 +87,18 @@ class ExpressMethod {
         router.post(route, ...handlers, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
-                    throw express_error_1.UnauthError();
+                    throw UnauthError();
                 }
                 if (post.customPathParameters) {
                     req.params = {
                         ...req.params,
-                        ...express_path_parameters_1.processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post), pathParameters: undefined
+                        ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post), pathParameters: undefined
                     };
                 }
                 await this.callMethod(post, { req, res, next, orm: req.orm, engine: req.engine, user: req.user }, 'Post');
             }
             catch (e) {
-                express_responder_1.ApiBaseResponder.sendError(req, res, e);
+                ApiBaseResponder.sendError(req, res, e);
             }
         });
         return {
@@ -120,18 +117,18 @@ class ExpressMethod {
         router.get(route, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
-                    throw express_error_1.UnauthError();
+                    throw UnauthError();
                 }
                 if (get.customPathParameters) {
                     req.params = {
                         ...req.params,
-                        ...express_path_parameters_1.processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get), pathParameters: undefined
+                        ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get), pathParameters: undefined
                     };
                 }
                 await this.callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get');
             }
             catch (e) {
-                express_responder_1.ApiBaseResponder.sendError(req, res, e);
+                ApiBaseResponder.sendError(req, res, e);
             }
         });
         return {
@@ -142,5 +139,4 @@ class ExpressMethod {
         };
     }
 }
-exports.ExpressMethod = ExpressMethod;
 //# sourceMappingURL=express-method.js.map

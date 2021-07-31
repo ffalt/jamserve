@@ -1,28 +1,22 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.usePassPortMiddleWare = void 0;
-const passport_jwt_1 = __importDefault(require("passport-jwt"));
-const passport_local_1 = __importDefault(require("passport-local"));
-const passport_1 = __importDefault(require("passport"));
-const logger_1 = require("../../../utils/logger");
-const md5_1 = require("../../../utils/md5");
-const log = logger_1.logger('Passport');
+import passportJWT from 'passport-jwt';
+import passportLocal from 'passport-local';
+import passport from 'passport';
+import { logger } from '../../../utils/logger';
+import { hashMD5 } from '../../../utils/md5';
+const log = logger('Passport');
 function jwthash(token) {
-    return md5_1.hashMD5(token);
+    return hashMD5(token);
 }
-function usePassPortMiddleWare(router, engine) {
-    router.use(passport_1.default.initialize());
-    router.use(passport_1.default.session());
-    passport_1.default.serializeUser((user, done) => {
+export function usePassPortMiddleWare(router, engine) {
+    router.use(passport.initialize());
+    router.use(passport.session());
+    passport.serializeUser((user, done) => {
         done(null, user?.id || '_invalid_');
     });
-    passport_1.default.deserializeUser((id, done) => {
+    passport.deserializeUser((id, done) => {
         engine.user.findByID(engine.orm.fork(), id).then(user => done(null, user)).catch(done);
     });
-    passport_1.default.use('local', new passport_local_1.default.Strategy({ usernameField: 'username', passwordField: 'password' }, (username, password, done) => {
+    passport.use('local', new passportLocal.Strategy({ usernameField: 'username', passwordField: 'password' }, (username, password, done) => {
         engine.user.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
     }));
     const resolvePayload = (jwtPayload, done) => {
@@ -30,12 +24,12 @@ function usePassPortMiddleWare(router, engine) {
             .then(user => done(null, user ? user : false, jwtPayload))
             .catch(done);
     };
-    passport_1.default.use('jwt-header', new passport_jwt_1.default.Strategy({
-        jwtFromRequest: passport_jwt_1.default.ExtractJwt.fromAuthHeaderAsBearerToken(),
+    passport.use('jwt-header', new passportJWT.Strategy({
+        jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: engine.config.env.jwt.secret
     }, resolvePayload));
-    passport_1.default.use('jwt-parameter', new passport_jwt_1.default.Strategy({
-        jwtFromRequest: passport_jwt_1.default.ExtractJwt.fromUrlQueryParameter('bearer'),
+    passport.use('jwt-parameter', new passportJWT.Strategy({
+        jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
         secretOrKey: engine.config.env.jwt.secret
     }, resolvePayload));
     function jwtAuthMiddleware(req, res, next) {
@@ -60,7 +54,7 @@ function usePassPortMiddleWare(router, engine) {
         const jwth = jwthash(token);
         req.engine.rateLimit.loginSlowDown(req, res)
             .then(() => {
-            passport_1.default.authenticate(name, { session: false }, (err, user, info) => {
+            passport.authenticate(name, { session: false }, (err, user, info) => {
                 if (err) {
                     log.error(err);
                     return next();
@@ -92,5 +86,4 @@ function usePassPortMiddleWare(router, engine) {
     }
     return jwtAuthMiddleware;
 }
-exports.usePassPortMiddleWare = usePassPortMiddleWare;
 //# sourceMappingURL=passport.middleware.js.map

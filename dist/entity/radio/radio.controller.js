@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RadioController = void 0;
-const radio_model_1 = require("./radio.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const radio_args_1 = require("./radio.args");
-const base_args_1 = require("../base/base.args");
+import { Radio, RadioIndex, RadioPage } from './radio.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs } from './radio.args';
+import { PageArgs } from '../base/base.args';
 let RadioController = class RadioController {
     async id(id, radioArgs, { orm, engine, user }) {
         return engine.transform.Radio.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);
@@ -49,63 +46,63 @@ let RadioController = class RadioController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => radio_model_1.Radio, { description: 'Get a Radio by Id', summary: 'Get Radio' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Radio Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.Ctx()),
+    Get('/id', () => Radio, { description: 'Get a Radio by Id', summary: 'Get Radio' }),
+    __param(0, QueryParam('id', { description: 'Radio Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, radio_args_1.IncludesRadioArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesRadioArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/index', () => radio_model_1.RadioIndex, { description: 'Get the Navigation Index for Radios', summary: 'Get Index' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/index', () => RadioIndex, { description: 'Get the Navigation Index for Radios', summary: 'Get Index' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [radio_args_1.RadioFilterArgs, Object]),
+    __metadata("design:paramtypes", [RadioFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "index", null);
 __decorate([
-    rest_1.Get('/search', () => radio_model_1.RadioPage, { description: 'Search Radios' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/search', () => RadioPage, { description: 'Search Radios' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        radio_args_1.IncludesRadioArgs,
-        radio_args_1.RadioFilterArgs,
-        radio_args_1.RadioOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesRadioArgs,
+        RadioFilterArgs,
+        RadioOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "search", null);
 __decorate([
-    rest_1.Post('/create', { description: 'Create a Radio', roles: [enums_1.UserRole.admin], summary: 'Create Radio' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', { description: 'Create a Radio', roles: [UserRole.admin], summary: 'Create Radio' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [radio_args_1.RadioMutateArgs, Object]),
+    __metadata("design:paramtypes", [RadioMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/update', { description: 'Update a Radio', roles: [enums_1.UserRole.admin], summary: 'Update Radio' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Root Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/update', { description: 'Update a Radio', roles: [UserRole.admin], summary: 'Update Radio' }),
+    __param(0, BodyParam('id', { description: 'Root Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, radio_args_1.RadioMutateArgs, Object]),
+    __metadata("design:paramtypes", [String, RadioMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "update", null);
 __decorate([
-    rest_1.Post('/remove', { description: 'Remove a Radio', roles: [enums_1.UserRole.admin], summary: 'Remove Radio' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Root Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', { description: 'Remove a Radio', roles: [UserRole.admin], summary: 'Remove Radio' }),
+    __param(0, BodyParam('id', { description: 'Root Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], RadioController.prototype, "remove", null);
 RadioController = __decorate([
-    rest_1.Controller('/radio', { tags: ['Radio'], roles: [enums_1.UserRole.stream] })
+    Controller('/radio', { tags: ['Radio'], roles: [UserRole.stream] })
 ], RadioController);
-exports.RadioController = RadioController;
+export { RadioController };
 //# sourceMappingURL=radio.controller.js.map

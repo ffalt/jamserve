@@ -1,40 +1,34 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlbumRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-const sequelize_1 = __importDefault(require("sequelize"));
-class AlbumRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { AlbumOrderFields, DBObjectType } from '../../types/enums';
+import { OrderHelper } from '../base/base';
+import { QHelper } from '../../modules/orm';
+import Sequelize from 'sequelize';
+export class AlbumRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.album;
+        this.objType = DBObjectType.album;
         this.indexProperty = 'name';
     }
     buildOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.AlbumOrderFields.created:
+            case AlbumOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.AlbumOrderFields.updated:
+            case AlbumOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.AlbumOrderFields.name:
+            case AlbumOrderFields.name:
                 return [['name', direction]];
-            case enums_1.AlbumOrderFields.duration:
+            case AlbumOrderFields.duration:
                 return [['duration', direction]];
-            case enums_1.AlbumOrderFields.albumType:
+            case AlbumOrderFields.albumType:
                 return [['albumType', direction]];
-            case enums_1.AlbumOrderFields.artist:
+            case AlbumOrderFields.artist:
                 return [['artistORM', 'name', direction]];
-            case enums_1.AlbumOrderFields.year:
+            case AlbumOrderFields.year:
                 return [['year', direction]];
-            case enums_1.AlbumOrderFields.seriesNr:
+            case AlbumOrderFields.seriesNr:
                 return this.seriesNrOrder(direction);
-            case enums_1.AlbumOrderFields.default:
+            case AlbumOrderFields.default:
                 return this.defaultOrder(direction);
         }
         return [];
@@ -50,10 +44,10 @@ class AlbumRepository extends base_repository_1.BaseRepository {
     seriesNrOrder(direction) {
         switch (this.em.dialect) {
             case 'sqlite': {
-                return [[sequelize_1.default.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+                return [[Sequelize.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
             }
             case 'postgres': {
-                return [[sequelize_1.default.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+                return [[Sequelize.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
             }
             default: {
                 throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
@@ -64,30 +58,29 @@ class AlbumRepository extends base_repository_1.BaseRepository {
         if (!filter) {
             return {};
         }
-        const result = orm_1.QHelper.buildQuery([
+        const result = QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
-            { name: orm_1.QHelper.eq(filter.name) },
-            { mbReleaseID: orm_1.QHelper.inOrEqual(filter.mbReleaseIDs) },
-            { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },
-            { mbArtistID: orm_1.QHelper.neq(filter.notMbArtistID) },
-            { albumType: orm_1.QHelper.inOrEqual(filter.albumTypes) },
-            { createdAt: orm_1.QHelper.gte(filter.since) },
-            { artist: orm_1.QHelper.inOrEqual(filter.artistIDs) },
-            { year: orm_1.QHelper.lte(filter.toYear) },
-            { year: orm_1.QHelper.gte(filter.fromYear) }
+            { name: QHelper.like(filter.query, this.em.dialect) },
+            { name: QHelper.eq(filter.name) },
+            { mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs) },
+            { mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs) },
+            { mbArtistID: QHelper.neq(filter.notMbArtistID) },
+            { albumType: QHelper.inOrEqual(filter.albumTypes) },
+            { createdAt: QHelper.gte(filter.since) },
+            { artist: QHelper.inOrEqual(filter.artistIDs) },
+            { year: QHelper.lte(filter.toYear) },
+            { year: QHelper.gte(filter.fromYear) }
         ]);
-        result.include = orm_1.QHelper.includeQueries([
-            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
-            { genres: [{ name: orm_1.QHelper.inOrEqual(filter.genres) }] },
-            { tracks: [{ id: orm_1.QHelper.inOrEqual(filter.trackIDs) }] },
-            { series: [{ id: orm_1.QHelper.inOrEqual(filter.seriesIDs) }] },
-            { artist: [{ name: orm_1.QHelper.eq(filter.artist) }] },
-            { folders: [{ id: orm_1.QHelper.inOrEqual(filter.folderIDs) }] },
-            { roots: [{ id: orm_1.QHelper.inOrEqual(filter.rootIDs) }] }
+        result.include = QHelper.includeQueries([
+            { genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },
+            { genres: [{ name: QHelper.inOrEqual(filter.genres) }] },
+            { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
+            { series: [{ id: QHelper.inOrEqual(filter.seriesIDs) }] },
+            { artist: [{ name: QHelper.eq(filter.artist) }] },
+            { folders: [{ id: QHelper.inOrEqual(filter.folderIDs) }] },
+            { roots: [{ id: QHelper.inOrEqual(filter.rootIDs) }] }
         ]);
         return result;
     }
 }
-exports.AlbumRepository = AlbumRepository;
 //# sourceMappingURL=album.repository.js.map

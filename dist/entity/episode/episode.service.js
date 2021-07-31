@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,27 +7,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EpisodeService = void 0;
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const path_1 = __importDefault(require("path"));
-const audio_module_1 = require("../../modules/audio/audio.module");
-const image_module_1 = require("../../modules/image/image.module");
-const download_1 = require("../../utils/download");
-const filetype_1 = require("../../utils/filetype");
-const fs_utils_1 = require("../../utils/fs-utils");
-const logger_1 = require("../../utils/logger");
-const typescript_ioc_1 = require("typescript-ioc");
-const debounce_promises_1 = require("../../utils/debounce-promises");
-const enums_1 = require("../../types/enums");
-const config_service_1 = require("../../modules/engine/services/config.service");
-const log = logger_1.logger('EpisodeService');
+import fse from 'fs-extra';
+import path from 'path';
+import { AudioModule } from '../../modules/audio/audio.module';
+import { ImageModule } from '../../modules/image/image.module';
+import { downloadFile } from '../../utils/download';
+import { SupportedAudioFormat } from '../../utils/filetype';
+import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils';
+import { logger } from '../../utils/logger';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { DebouncePromises } from '../../utils/debounce-promises';
+import { PodcastStatus } from '../../types/enums';
+import { ConfigService } from '../../modules/engine/services/config.service';
+const log = logger('EpisodeService');
 let EpisodeService = class EpisodeService {
     constructor() {
-        this.episodeDownloadDebounce = new debounce_promises_1.DebouncePromises();
+        this.episodeDownloadDebounce = new DebouncePromises();
         this.podcastsPath = this.configService.getDataPath(['podcasts']);
     }
     isDownloading(podcastEpisodeId) {
@@ -43,19 +37,19 @@ let EpisodeService = class EpisodeService {
         else {
             throw new Error('No podcast episode url found');
         }
-        let suffix = fs_utils_1.fileSuffix(url);
+        let suffix = fileSuffix(url);
         if (suffix.includes('?')) {
             suffix = suffix.slice(0, suffix.indexOf('?'));
         }
-        if (!filetype_1.SupportedAudioFormat.includes(suffix)) {
+        if (!SupportedAudioFormat.includes(suffix)) {
             throw new Error(`Unsupported Podcast audio format .${suffix}`);
         }
         const podcastID = episode.podcast.idOrFail();
-        const p = path_1.default.resolve(this.podcastsPath, podcastID);
-        await fs_extra_1.default.ensureDir(p);
-        const filename = path_1.default.join(p, `${episode.id}.${suffix}`);
+        const p = path.resolve(this.podcastsPath, podcastID);
+        await fse.ensureDir(p);
+        const filename = path.join(p, `${episode.id}.${suffix}`);
         log.info('retrieving file', url);
-        await download_1.downloadFile(url, filename);
+        await downloadFile(url, filename);
         return filename;
     }
     async downloadEpisode(orm, episode) {
@@ -66,7 +60,7 @@ let EpisodeService = class EpisodeService {
         try {
             try {
                 const filename = await this.downloadEpisodeFile(episode);
-                const stat = await fs_extra_1.default.stat(filename);
+                const stat = await fse.stat(filename);
                 const result = await this.audioModule.read(filename);
                 const oldTag = await episode.tag.get();
                 if (oldTag) {
@@ -75,7 +69,7 @@ let EpisodeService = class EpisodeService {
                 const tag = orm.Tag.createByScan(result, filename);
                 orm.Tag.persistLater(tag);
                 await episode.tag.set(tag);
-                episode.status = enums_1.PodcastStatus.completed;
+                episode.status = PodcastStatus.completed;
                 episode.statCreated = stat.ctime;
                 episode.statModified = stat.mtime;
                 episode.fileSize = stat.size;
@@ -83,7 +77,7 @@ let EpisodeService = class EpisodeService {
                 episode.path = filename;
             }
             catch (e) {
-                episode.status = enums_1.PodcastStatus.error;
+                episode.status = PodcastStatus.error;
                 episode.error = (e || '').toString();
             }
             await orm.Episode.persistAndFlush(episode);
@@ -100,7 +94,7 @@ let EpisodeService = class EpisodeService {
         for (const episode of removeEpisodes) {
             orm.Episode.removeLater(episode);
             if (episode.path) {
-                await fs_utils_1.fileDeleteIfExists(episode.path);
+                await fileDeleteIfExists(episode.path);
             }
         }
     }
@@ -108,7 +102,7 @@ let EpisodeService = class EpisodeService {
         if (!episode.path) {
             return;
         }
-        await fs_utils_1.fileDeleteIfExists(episode.path);
+        await fileDeleteIfExists(episode.path);
         const tag = await episode.tag.get();
         if (tag) {
             orm.Tag.removeLater(tag);
@@ -118,7 +112,7 @@ let EpisodeService = class EpisodeService {
         episode.statCreated = undefined;
         episode.statModified = undefined;
         episode.fileSize = undefined;
-        episode.status = enums_1.PodcastStatus.deleted;
+        episode.status = PodcastStatus.deleted;
         await orm.Episode.persistAndFlush(episode);
     }
     async getImage(episode, size, format) {
@@ -148,20 +142,20 @@ let EpisodeService = class EpisodeService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", audio_module_1.AudioModule)
+    Inject,
+    __metadata("design:type", AudioModule)
 ], EpisodeService.prototype, "audioModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], EpisodeService.prototype, "imageModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], EpisodeService.prototype, "configService", void 0);
 EpisodeService = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], EpisodeService);
-exports.EpisodeService = EpisodeService;
+export { EpisodeService };
 //# sourceMappingURL=episode.service.js.map

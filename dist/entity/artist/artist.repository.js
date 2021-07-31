@@ -1,27 +1,24 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtistRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-class ArtistRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { ArtistOrderFields, DBObjectType } from '../../types/enums';
+import { OrderHelper } from '../base/base';
+import { QHelper } from '../../modules/orm';
+export class ArtistRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.artist;
+        this.objType = DBObjectType.artist;
         this.indexProperty = 'nameSort';
     }
     buildOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.ArtistOrderFields.created:
+            case ArtistOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.ArtistOrderFields.updated:
+            case ArtistOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.ArtistOrderFields.name:
+            case ArtistOrderFields.name:
                 return [['name', direction]];
-            case enums_1.ArtistOrderFields.default:
-            case enums_1.ArtistOrderFields.nameSort:
+            case ArtistOrderFields.default:
+            case ArtistOrderFields.nameSort:
                 return [['nameSort', direction]];
         }
         return [];
@@ -30,28 +27,27 @@ class ArtistRepository extends base_repository_1.BaseRepository {
         if (!filter) {
             return {};
         }
-        const result = orm_1.QHelper.buildQuery([
+        const result = QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
-            { slug: orm_1.QHelper.eq(filter.slug) },
-            { name: orm_1.QHelper.eq(filter.name) },
-            { mbArtistID: orm_1.QHelper.inOrEqual(filter.mbArtistIDs) },
-            { mbArtistID: orm_1.QHelper.neq(filter.notMbArtistID) },
-            { createdAt: orm_1.QHelper.gte(filter.since) },
-            ...orm_1.QHelper.inStringArray('albumTypes', filter.albumTypes)
+            { name: QHelper.like(filter.query, this.em.dialect) },
+            { slug: QHelper.eq(filter.slug) },
+            { name: QHelper.eq(filter.name) },
+            { mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs) },
+            { mbArtistID: QHelper.neq(filter.notMbArtistID) },
+            { createdAt: QHelper.gte(filter.since) },
+            ...QHelper.inStringArray('albumTypes', filter.albumTypes)
         ]);
-        result.include = orm_1.QHelper.includeQueries([
-            { genres: [{ name: orm_1.QHelper.inOrEqual(filter.genres) }] },
-            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
-            { tracks: [{ id: orm_1.QHelper.inOrEqual(filter.trackIDs) }] },
-            { albumTracks: [{ id: orm_1.QHelper.inOrEqual(filter.albumTrackIDs) }] },
-            { series: [{ id: orm_1.QHelper.inOrEqual(filter.seriesIDs) }] },
-            { albums: [{ id: orm_1.QHelper.inOrEqual(filter.albumIDs) }] },
-            { folders: [{ id: orm_1.QHelper.inOrEqual(filter.folderIDs) }] },
-            { roots: [{ id: orm_1.QHelper.inOrEqual(filter.rootIDs) }] }
+        result.include = QHelper.includeQueries([
+            { genres: [{ name: QHelper.inOrEqual(filter.genres) }] },
+            { genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },
+            { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
+            { albumTracks: [{ id: QHelper.inOrEqual(filter.albumTrackIDs) }] },
+            { series: [{ id: QHelper.inOrEqual(filter.seriesIDs) }] },
+            { albums: [{ id: QHelper.inOrEqual(filter.albumIDs) }] },
+            { folders: [{ id: QHelper.inOrEqual(filter.folderIDs) }] },
+            { roots: [{ id: QHelper.inOrEqual(filter.rootIDs) }] }
         ]);
         return result;
     }
 }
-exports.ArtistRepository = ArtistRepository;
 //# sourceMappingURL=artist.repository.js.map

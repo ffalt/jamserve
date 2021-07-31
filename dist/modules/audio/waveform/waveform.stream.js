@@ -1,18 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaveformStream = void 0;
-const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
-const stream_1 = require("stream");
-const logger_1 = require("../../../utils/logger");
-const log = logger_1.logger('waveform.stream');
-class WaveformStream extends stream_1.Transform {
+import Ffmpeg from 'fluent-ffmpeg';
+import { PassThrough, Transform } from 'stream';
+import { logger } from '../../../utils/logger';
+const log = logger('waveform.stream');
+export class WaveformStream extends Transform {
     constructor(atSamplesPerPixel, atSampleRate) {
         super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
-        this._buf = new stream_1.PassThrough();
-        this._out = new stream_1.PassThrough();
+        this._buf = new PassThrough();
+        this._out = new PassThrough();
         this._started = false;
         this._min = null;
         this._max = null;
@@ -23,7 +17,7 @@ class WaveformStream extends stream_1.Transform {
         const options = {
             source: this._buf
         };
-        this._ffmpeg = fluent_ffmpeg_1.default(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
+        this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
         this._ffmpeg.on('start', (cmd) => {
             log.debug(`ffmpeg started with ${cmd}`);
             this._started = true;
@@ -96,5 +90,4 @@ class WaveformStream extends stream_1.Transform {
         });
     }
 }
-exports.WaveformStream = WaveformStream;
 //# sourceMappingURL=waveform.stream.js.map

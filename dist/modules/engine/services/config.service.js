@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,15 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfigService = void 0;
-const thirdparty_config_1 = require("../../../config/thirdparty.config");
-const typescript_ioc_1 = require("typescript-ioc");
-const path_1 = __importDefault(require("path"));
-const max_age_1 = require("../../../utils/max-age");
+import { ThirdPartyConfig } from '../../../config/thirdparty.config';
+import { InRequestScope } from 'typescript-ioc';
+import path from 'path';
+import { getMaxAge } from '../../../utils/max-age';
+import fse from 'fs-extra';
 let ConfigService = class ConfigService {
     constructor() {
         this.env = {
@@ -25,14 +20,14 @@ let ConfigService = class ConfigService {
             port: Number(process.env.JAM_PORT) || 4040,
             jwt: {
                 secret: process.env.JAM_JWT_SECRET || 'keyboard cat is sad because no secret has been set',
-                maxAge: max_age_1.getMaxAge(process.env.JAM_JWT_MAXAGE),
+                maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE),
             },
             session: {
                 secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
                 proxy: process.env.JAM_SESSION_TRUST_PROXY === 'true',
                 secret: process.env.JAM_SESSION_SECRET || 'keyboard cat is sad because no secret has been set',
                 allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS || '').split(','),
-                maxAge: max_age_1.getMaxAge(process.env.JAM_SESSION_MAXAGE)
+                maxAge: getMaxAge(process.env.JAM_SESSION_MAXAGE)
             },
             paths: {
                 data: process.env.JAM_DATA_PATH || './data/',
@@ -48,13 +43,14 @@ let ConfigService = class ConfigService {
                 port: Number(process.env.JAM_DB_PORT) || undefined
             }
         };
-        this.getDataPath = (parts) => path_1.default.resolve(this.env.paths.data, ...parts);
-        this.tools = thirdparty_config_1.ThirdPartyConfig;
-        const configFirstStartFile = path_1.default.resolve(this.getDataPath(['config']), 'firststart.config.js');
+        this.getDataPath = (parts) => path.resolve(this.env.paths.data, ...parts);
+        this.tools = ThirdPartyConfig;
+        const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
         try {
-            this.firstStart = require(configFirstStartFile);
+            this.firstStart = fse.readJSONSync(configFirstStartFile);
         }
         catch (e) {
+            console.error('Error loading first start config', e);
             this.firstStart = {
                 adminUser: undefined,
                 roots: []
@@ -63,8 +59,8 @@ let ConfigService = class ConfigService {
     }
 };
 ConfigService = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], ConfigService);
-exports.ConfigService = ConfigService;
+export { ConfigService };
 //# sourceMappingURL=config.service.js.map

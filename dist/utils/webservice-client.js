@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebserviceClient = void 0;
-const limiter_1 = __importDefault(require("limiter"));
-const node_fetch_1 = __importDefault(require("node-fetch"));
-class WebserviceClient {
+import rateLimiter from 'limiter';
+import fetch from 'node-fetch';
+export class WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent) {
         this.enabled = false;
-        this.limiter = new limiter_1.default.RateLimiter(requestPerInterval, requestIntervalMS);
+        this.limiter = new rateLimiter.RateLimiter(requestPerInterval, requestIntervalMS);
         this.userAgent = userAgent;
     }
     async parseResult(response) {
@@ -34,15 +28,15 @@ class WebserviceClient {
             limiter.removeTokens(1, () => resolve());
         });
     }
-    async getJson(url, parameters) {
+    async getJson(url, parameters, ignoreStatus) {
         this.checkDisabled();
         await this.limit();
         const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
-        const response = await node_fetch_1.default(url + params, {
+        const response = await fetch(url + params, {
             headers: { 'User-Agent': this.userAgent },
             timeout: 20000
         });
-        if (response.status !== 200) {
+        if (!ignoreStatus && response.status !== 200) {
             return Promise.reject(new Error('Invalid Result'));
         }
         const result = await this.parseResult(response);
@@ -52,5 +46,4 @@ class WebserviceClient {
         return result;
     }
 }
-exports.WebserviceClient = WebserviceClient;
 //# sourceMappingURL=webservice-client.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,24 +7,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FolderService = exports.getFolderDisplayArtwork = void 0;
-const enums_1 = require("../../types/enums");
-const path_1 = __importDefault(require("path"));
-const typescript_ioc_1 = require("typescript-ioc");
-const folder_rule_1 = require("../health/folder.rule");
-const image_module_1 = require("../../modules/image/image.module");
-async function getFolderDisplayArtwork(orm, folder) {
-    const search = folder.folderType === enums_1.FolderType.artist ? enums_1.ArtworkImageType.artist : enums_1.ArtworkImageType.front;
+import { ArtworkImageType, FolderType } from '../../types/enums';
+import path from 'path';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { FolderRulesChecker } from '../health/folder.rule';
+import { ImageModule } from '../../modules/image/image.module';
+export async function getFolderDisplayArtwork(orm, folder) {
+    const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
     return (await folder.artworks.getItems()).find(a => a.types.includes(search));
 }
-exports.getFolderDisplayArtwork = getFolderDisplayArtwork;
 let FolderService = class FolderService {
     constructor() {
-        this.checker = new folder_rule_1.FolderRulesChecker();
+        this.checker = new FolderRulesChecker();
     }
     async collectFolderPath(folder) {
         const result = [];
@@ -42,7 +35,7 @@ let FolderService = class FolderService {
     async getImage(orm, folder, size, format) {
         const artwork = await getFolderDisplayArtwork(orm, folder);
         if (artwork) {
-            return this.imageModule.get(artwork.id, path_1.default.join(artwork.path, artwork.name), size, format);
+            return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
         }
         return;
     }
@@ -60,11 +53,11 @@ let FolderService = class FolderService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], FolderService.prototype, "imageModule", void 0);
 FolderService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], FolderService);
-exports.FolderService = FolderService;
+export { FolderService };
 //# sourceMappingURL=folder.service.js.map

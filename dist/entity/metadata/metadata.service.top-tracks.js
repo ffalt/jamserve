@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetadataServiceTopTracks = void 0;
-class MetadataServiceTopTracks {
+export class MetadataServiceTopTracks {
     constructor(service) {
         this.service = service;
     }
@@ -22,5 +19,4 @@ class MetadataServiceTopTracks {
         return { items: [], ...(page || {}), total: 0 };
     }
 }
-exports.MetadataServiceTopTracks = MetadataServiceTopTracks;
 //# sourceMappingURL=metadata.service.top-tracks.js.map

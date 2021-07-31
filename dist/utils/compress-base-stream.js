@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseCompressStream = void 0;
-const archiver_1 = __importDefault(require("archiver"));
-const fs_utils_1 = require("./fs-utils");
-const logger_1 = require("./logger");
-const log = logger_1.logger('BaseCompressStream');
-class BaseCompressStream {
+import archiver from 'archiver';
+import { replaceFileSystemChars } from './fs-utils';
+import { logger } from './logger';
+const log = logger('BaseCompressStream');
+export class BaseCompressStream {
     constructor(filename, format) {
         this.streaming = true;
-        this.filename = fs_utils_1.replaceFileSystemChars(filename, '_').replace(/ /g, '_');
+        this.filename = replaceFileSystemChars(filename, '_').replace(/ /g, '_');
         this.format = format || 'zip';
         if (!BaseCompressStream.isSupportedFormat(this.format)) {
             throw new Error('Unsupported Download Format');
@@ -22,7 +16,7 @@ class BaseCompressStream {
     }
     pipe(stream) {
         const format = 'zip';
-        const archive = archiver_1.default(this.format, { zlib: { level: 0 } });
+        const archive = archiver(this.format, { zlib: { level: 0 } });
         archive.on('error', err => {
             throw err;
         });
@@ -36,5 +30,4 @@ class BaseCompressStream {
         archive.finalize().catch(e => log.error(e));
     }
 }
-exports.BaseCompressStream = BaseCompressStream;
 //# sourceMappingURL=compress-base-stream.js.map

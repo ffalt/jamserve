@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,33 +10,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ImageController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const consts_1 = require("../../types/consts");
-const image_args_1 = require("./image.args");
-const decorators_1 = require("../../modules/rest/decorators");
+import { Controller, Ctx, Get, NotFoundError } from '../../modules/rest';
+import { ImageFormatType, UserRole } from '../../types/enums';
+import { ApiImageTypes } from '../../types/consts';
+import { ImageArgs } from './image.args';
+import { PathParams } from '../../modules/rest/decorators';
 let ImageController = class ImageController {
     async image(imageArgs, { orm, engine }) {
         const result = await orm.findInImageTypes(imageArgs.id);
         if (!result) {
-            return Promise.reject(rest_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         return await engine.image.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
     }
 };
 __decorate([
-    rest_1.Get('/{id}_{size}.{format}', {
+    Get('/{id}_{size}.{format}', {
         description: 'Image Binary [Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track, User]',
         summary: 'Get Image',
-        binary: consts_1.ApiImageTypes,
+        binary: ApiImageTypes,
         customPathParameters: {
             regex: /(.*?)(_.*?)?(\..*)?$/,
             groups: [
                 { name: 'id', getType: () => String },
                 { name: 'size', getType: () => Number, prefix: '_', min: 16, max: 1024 },
-                { name: 'format', getType: () => enums_1.ImageFormatType, prefix: '.' }
+                { name: 'format', getType: () => ImageFormatType, prefix: '.' }
             ]
         },
         aliasRoutes: [
@@ -46,14 +43,14 @@ __decorate([
             { route: '/{id}', name: 'by Id', hideParameters: ['size', 'format'] }
         ]
     }),
-    __param(0, decorators_1.PathParams()),
-    __param(1, rest_1.Ctx()),
+    __param(0, PathParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [image_args_1.ImageArgs, Object]),
+    __metadata("design:paramtypes", [ImageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], ImageController.prototype, "image", null);
 ImageController = __decorate([
-    rest_1.Controller('/image', { tags: ['Image'], roles: [enums_1.UserRole.stream] })
+    Controller('/image', { tags: ['Image'], roles: [UserRole.stream] })
 ], ImageController);
-exports.ImageController = ImageController;
+export { ImageController };
 //# sourceMappingURL=image.controller.js.map

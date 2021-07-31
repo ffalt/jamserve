@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,18 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const genre_1 = require("./genre");
-const genre_args_1 = require("./genre.args");
-const Root_1 = require("type-graphql/dist/decorators/Root");
-const album_1 = require("../album/album");
-const track_1 = require("../track/track");
-const artist_1 = require("../artist/artist");
-const track_args_1 = require("../track/track.args");
-const album_args_1 = require("../album/album.args");
-const artist_args_1 = require("../artist/artist.args");
+import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver } from 'type-graphql';
+import { Genre, GenreIndexQL, GenrePageQL, GenreQL } from './genre';
+import { GenreIndexArgsQL, GenresArgsQL } from './genre.args';
+import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
+import { AlbumPageQL } from '../album/album';
+import { TrackPageQL } from '../track/track';
+import { ArtistPageQL } from '../artist/artist';
+import { TrackPageArgsQL } from '../track/track.args';
+import { AlbumPageArgsQL } from '../album/album.args';
+import { ArtistPageArgsQL } from '../artist/artist.args';
 let GenreResolver = class GenreResolver {
     async genre(id, { orm }) {
         return await orm.Genre.oneOrFailByID(id);
@@ -56,70 +53,79 @@ let GenreResolver = class GenreResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => genre_1.GenreQL, { description: 'Get an Genre by Id' }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Query(() => GenreQL, { description: 'Get an Genre by Id' }),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "genre", null);
 __decorate([
-    type_graphql_1.Query(() => genre_1.GenrePageQL, { description: 'Search Genres' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => GenrePageQL, { description: 'Search Genres' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_args_1.GenresArgsQL, Object]),
+    __metadata("design:paramtypes", [GenresArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "genres", null);
 __decorate([
-    type_graphql_1.Query(() => genre_1.GenreIndexQL, { description: 'Get the Navigation Index for Genres' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => GenreIndexQL, { description: 'Get the Navigation Index for Genres' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_args_1.GenreIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [GenreIndexArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "genreIndex", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, Root_1.Root()),
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre]),
+    __metadata("design:paramtypes", [Genre]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "albumCount", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, Root_1.Root()),
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre]),
+    __metadata("design:paramtypes", [Genre]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "artistCount", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, Root_1.Root()),
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre]),
+    __metadata("design:paramtypes", [Genre]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "trackCount", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => track_1.TrackPageQL),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => TrackPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre, Object, track_args_1.TrackPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, TrackPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "tracks", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => album_1.AlbumPageQL),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => AlbumPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre, Object, album_args_1.AlbumPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, AlbumPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "albums", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => artist_1.ArtistPageQL),
-    __param(0, Root_1.Root()), __param(1, type_graphql_1.Ctx()), __param(2, type_graphql_1.Args()),
+    FieldResolver(() => ArtistPageQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [genre_1.Genre, Object, artist_args_1.ArtistPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, ArtistPageArgsQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "artists", null);
 GenreResolver = __decorate([
-    type_graphql_1.Resolver(genre_1.GenreQL)
+    Resolver(GenreQL)
 ], GenreResolver);
-exports.GenreResolver = GenreResolver;
+export { GenreResolver };
 //# sourceMappingURL=genre.resolver.js.map

@@ -1,18 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Flac = void 0;
-const fs_1 = __importDefault(require("fs"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const processor_1 = require("./lib/processor");
-class Flac {
+import fs from 'fs';
+import fse from 'fs-extra';
+import { FlacProcessorStream } from './lib/processor';
+export class Flac {
     async read(filename) {
         const result = {};
         return new Promise((resolve, reject) => {
-            const reader = fs_1.default.createReadStream(filename);
-            const processor = new processor_1.FlacProcessorStream(true, true);
+            const reader = fs.createReadStream(filename);
+            const processor = new FlacProcessorStream(true, true);
             processor.on('postprocess', (mdb) => {
                 if (mdb.type === 0) {
                     result.media = this.formatMediaBlock(mdb);
@@ -54,9 +48,9 @@ class Flac {
         flacBlocks.forEach(flacBlock => {
             flacBlock.isLast = false;
         });
-        const reader = fs_1.default.createReadStream(filename);
-        const writer = fs_1.default.createWriteStream(destination);
-        const processor = new processor_1.FlacProcessorStream(false, false);
+        const reader = fs.createReadStream(filename);
+        const writer = fs.createWriteStream(destination);
+        const processor = new FlacProcessorStream(false, false);
         return new Promise((resolve, reject) => {
             processor.on('preprocess', mdb => {
                 if (mdb.type === 4 || mdb.type === 6 || mdb.type === 1) {
@@ -91,16 +85,16 @@ class Flac {
         const tmpFile = `${filename}.tmp`;
         try {
             await this.writeTo(filename, tmpFile, flacBlocks);
-            const exists = await fs_extra_1.default.pathExists(filename);
+            const exists = await fse.pathExists(filename);
             if (exists) {
-                await fs_extra_1.default.remove(filename);
+                await fse.remove(filename);
             }
-            await fs_extra_1.default.move(tmpFile, filename);
+            await fse.move(tmpFile, filename);
         }
         catch (e) {
-            const exists = await fs_extra_1.default.pathExists(tmpFile);
+            const exists = await fse.pathExists(tmpFile);
             if (exists) {
-                await fs_extra_1.default.remove(tmpFile);
+                await fse.remove(tmpFile);
             }
             return Promise.reject(e);
         }
@@ -146,5 +140,4 @@ class Flac {
         };
     }
 }
-exports.Flac = Flac;
 //# sourceMappingURL=index.js.map

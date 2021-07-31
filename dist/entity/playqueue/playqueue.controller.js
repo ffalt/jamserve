@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayQueueController = void 0;
-const playqueue_model_1 = require("./playqueue.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const track_args_1 = require("../track/track.args");
-const playqueue_args_1 = require("./playqueue.args");
-const episode_args_1 = require("../episode/episode.args");
+import { PlayQueue } from './playqueue.model';
+import { BodyParams, Controller, Ctx, Get, Post, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { IncludesTrackArgs } from '../track/track.args';
+import { IncludesPlayQueueArgs, PlayQueueSetArgs } from './playqueue.args';
+import { IncludesEpisodeArgs } from '../episode/episode.args';
 let PlayQueueController = class PlayQueueController {
     async get(playqueueArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         return engine.transform.playQueue(orm, await engine.playQueue.get(orm, user), playqueueArgs, trackArgs, episodeArgs, user);
@@ -31,34 +28,34 @@ let PlayQueueController = class PlayQueueController {
     }
 };
 __decorate([
-    rest_1.Get('/get', () => playqueue_model_1.PlayQueue, { description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/get', () => PlayQueue, { description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playqueue_args_1.IncludesPlayQueueArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [IncludesPlayQueueArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "get", null);
 __decorate([
-    rest_1.Post('/set', { description: 'Create/update the PlayQueue for the calling user', summary: 'Set PlayQueue' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/set', { description: 'Create/update the PlayQueue for the calling user', summary: 'Set PlayQueue' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playqueue_args_1.PlayQueueSetArgs, Object]),
+    __metadata("design:paramtypes", [PlayQueueSetArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "set", null);
 __decorate([
-    rest_1.Post('/clear', { description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue' }),
-    __param(0, rest_1.Ctx()),
+    Post('/clear', { description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "clear", null);
 PlayQueueController = __decorate([
-    rest_1.Controller('/playqueue', { tags: ['PlayQueue'], roles: [enums_1.UserRole.stream] })
+    Controller('/playqueue', { tags: ['PlayQueue'], roles: [UserRole.stream] })
 ], PlayQueueController);
-exports.PlayQueueController = PlayQueueController;
+export { PlayQueueController };
 //# sourceMappingURL=playqueue.controller.js.map

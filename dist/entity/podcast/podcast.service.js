@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,28 +7,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastService = void 0;
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const path_1 = __importDefault(require("path"));
-const image_module_1 = require("../../modules/image/image.module");
-const debounce_promises_1 = require("../../utils/debounce-promises");
-const fs_utils_1 = require("../../utils/fs-utils");
-const logger_1 = require("../../utils/logger");
-const typescript_ioc_1 = require("typescript-ioc");
-const enums_1 = require("../../types/enums");
-const config_service_1 = require("../../modules/engine/services/config.service");
-const podcast_feed_1 = require("./podcast-feed");
-const audio_module_1 = require("../../modules/audio/audio.module");
-const episode_service_1 = require("../episode/episode.service");
-const base_utils_1 = require("../base/base.utils");
-const log = logger_1.logger('PodcastService');
+import fse from 'fs-extra';
+import path from 'path';
+import { ImageModule } from '../../modules/image/image.module';
+import { DebouncePromises } from '../../utils/debounce-promises';
+import { pathDeleteIfExists } from '../../utils/fs-utils';
+import { logger } from '../../utils/logger';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { PodcastStatus } from '../../types/enums';
+import { ConfigService } from '../../modules/engine/services/config.service';
+import { Feed } from './podcast-feed';
+import { AudioModule } from '../../modules/audio/audio.module';
+import { EpisodeService } from '../episode/episode.service';
+import { paginate } from '../base/base.utils';
+const log = logger('PodcastService');
 let PodcastService = class PodcastService {
     constructor() {
-        this.podcastRefreshDebounce = new debounce_promises_1.DebouncePromises();
+        this.podcastRefreshDebounce = new DebouncePromises();
         this.podcastsPath = this.configService.getDataPath(['podcasts']);
     }
     isDownloading(podcastId) {
@@ -41,16 +35,16 @@ let PodcastService = class PodcastService {
             url,
             name: url,
             categories: [],
-            status: enums_1.PodcastStatus.new
+            status: PodcastStatus.new
         });
         await orm.Podcast.persistAndFlush(podcast);
         return podcast;
     }
     async remove(orm, podcast) {
-        const p = path_1.default.resolve(this.podcastsPath, podcast.id);
+        const p = path.resolve(this.podcastsPath, podcast.id);
         await this.episodeService.removeEpisodes(orm, podcast.id);
         await orm.Podcast.removeAndFlush(podcast);
-        await fs_utils_1.pathDeleteIfExists(p);
+        await pathDeleteIfExists(p);
         await this.imageModule.clearImageCacheByIDs([podcast.id]);
     }
     async mergeEpisodes(orm, podcast, episodes) {
@@ -66,7 +60,7 @@ let PodcastService = class PodcastService {
                     ...epi,
                     chapters: undefined,
                     enclosures: undefined,
-                    status: enums_1.PodcastStatus.new
+                    status: PodcastStatus.new
                 });
                 newEpisodes.push(episode);
             }
@@ -94,15 +88,15 @@ let PodcastService = class PodcastService {
         podcast.language = tag.language;
         podcast.categories = tag.categories || [];
         if (podcast.image) {
-            const imageFile = path_1.default.resolve(this.podcastsPath, podcast.id, podcast.image);
-            if (!(await fs_extra_1.default.pathExists(imageFile))) {
+            const imageFile = path.resolve(this.podcastsPath, podcast.id, podcast.image);
+            if (!(await fse.pathExists(imageFile))) {
                 podcast.image = undefined;
             }
         }
         if (!podcast.image && tag.image) {
             log.info('Try downloading Podcast image');
-            const podcastPath = path_1.default.resolve(this.podcastsPath, podcast.id);
-            await fs_extra_1.default.ensureDir(podcastPath);
+            const podcastPath = path.resolve(this.podcastsPath, podcast.id);
+            await fse.ensureDir(podcastPath);
             try {
                 podcast.image = await this.imageModule.storeImage(podcastPath, 'cover', tag.image);
             }
@@ -121,21 +115,21 @@ let PodcastService = class PodcastService {
         this.podcastRefreshDebounce.setPending(podcast.id);
         try {
             log.debug('Refreshing Podcast', podcast.url);
-            const feed = new podcast_feed_1.Feed();
+            const feed = new Feed();
             try {
                 const result = await feed.get(podcast);
                 if (result) {
                     await this.updatePodcast(orm, podcast, result.tag, result.episodes);
-                    podcast.status = enums_1.PodcastStatus.completed;
+                    podcast.status = PodcastStatus.completed;
                 }
                 else {
-                    podcast.status = enums_1.PodcastStatus.error;
+                    podcast.status = PodcastStatus.error;
                     podcast.errorMessage = 'No Podcast Feed Data';
                 }
             }
             catch (e) {
                 log.info('Refreshing Podcast failed', e);
-                podcast.status = enums_1.PodcastStatus.error;
+                podcast.status = PodcastStatus.error;
                 podcast.errorMessage = (e || '').toString();
             }
             podcast.lastCheck = new Date();
@@ -157,7 +151,7 @@ let PodcastService = class PodcastService {
     }
     async getImage(orm, podcast, size, format) {
         if (podcast.image) {
-            return this.imageModule.get(podcast.id, path_1.default.join(this.podcastsPath, podcast.id, podcast.image), size, format);
+            return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
         }
         return;
     }
@@ -170,39 +164,39 @@ let PodcastService = class PodcastService {
     }
     async discoverTags(page) {
         const list = await this.audioModule.gpodder.tags(1000);
-        return base_utils_1.paginate(list, page);
+        return paginate(list, page);
     }
     async discoverByTag(tag, page) {
         const list = await this.audioModule.gpodder.byTag(tag, 100);
-        return base_utils_1.paginate(list, page);
+        return paginate(list, page);
     }
     async discover(name) {
         return this.audioModule.gpodder.search(name);
     }
     async discoverTop(page) {
         const list = await this.audioModule.gpodder.top(300);
-        return base_utils_1.paginate(list, page);
+        return paginate(list, page);
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], PodcastService.prototype, "imageModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", audio_module_1.AudioModule)
+    Inject,
+    __metadata("design:type", AudioModule)
 ], PodcastService.prototype, "audioModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], PodcastService.prototype, "configService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", episode_service_1.EpisodeService)
+    Inject,
+    __metadata("design:type", EpisodeService)
 ], PodcastService.prototype, "episodeService", void 0);
 PodcastService = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], PodcastService);
-exports.PodcastService = PodcastService;
+export { PodcastService };
 //# sourceMappingURL=podcast.service.js.map

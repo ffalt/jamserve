@@ -1,37 +1,34 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IoCommandsRoot = void 0;
-const io_types_1 = require("./io.types");
-class IoCommandsRoot {
+import { WorkerRequestMode } from './io.types';
+export class IoCommandsRoot {
     constructor(owner) {
         this.owner = owner;
     }
     async update(rootID, name, path, strategy) {
-        return this.owner.newRequest(io_types_1.WorkerRequestMode.updateRoot, p => this.owner.workerService.root.update(p), { rootID, name, path, strategy });
+        return this.owner.newRequest(WorkerRequestMode.updateRoot, p => this.owner.workerService.root.update(p), { rootID, name, path, strategy });
     }
     async create(name, path, strategy) {
-        return this.owner.newRequest(io_types_1.WorkerRequestMode.createRoot, p => this.owner.workerService.root.create(p), { rootID: '', name, path, strategy });
+        return this.owner.newRequest(WorkerRequestMode.createRoot, p => this.owner.workerService.root.create(p), { rootID: '', name, path, strategy });
     }
     async delete(rootID) {
-        const oldRequest = this.owner.findRequest(rootID, io_types_1.WorkerRequestMode.removeRoot);
+        const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.removeRoot);
         if (oldRequest) {
             return this.owner.getRequestInfo(oldRequest);
         }
-        return this.owner.newRequest(io_types_1.WorkerRequestMode.removeRoot, p => this.owner.workerService.root.remove(p), { rootID });
+        return this.owner.newRequest(WorkerRequestMode.removeRoot, p => this.owner.workerService.root.remove(p), { rootID });
     }
     async refresh(rootID) {
-        const oldRequest = this.owner.findRequest(rootID, io_types_1.WorkerRequestMode.refreshRoot);
+        const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.refreshRoot);
         if (oldRequest) {
             return this.owner.getRequestInfo(oldRequest);
         }
-        return this.owner.newRequest(io_types_1.WorkerRequestMode.refreshRoot, p => this.owner.workerService.root.refresh(p), { rootID });
+        return this.owner.newRequest(WorkerRequestMode.refreshRoot, p => this.owner.workerService.root.refresh(p), { rootID });
     }
     async refreshMeta(rootID) {
-        const oldRequest = this.owner.findRequest(rootID, io_types_1.WorkerRequestMode.refreshRootMeta);
+        const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.refreshRootMeta);
         if (oldRequest) {
             return this.owner.getRequestInfo(oldRequest);
         }
-        return this.owner.newRequest(io_types_1.WorkerRequestMode.refreshRootMeta, p => this.owner.workerService.root.refreshMeta(p), { rootID });
+        return this.owner.newRequest(WorkerRequestMode.refreshRootMeta, p => this.owner.workerService.root.refreshMeta(p), { rootID });
     }
     async refreshAllMeta(orm) {
         const roots = await orm.Root.all();
@@ -58,5 +55,4 @@ class IoCommandsRoot {
         }
     }
 }
-exports.IoCommandsRoot = IoCommandsRoot;
 //# sourceMappingURL=io.commands.root.js.map

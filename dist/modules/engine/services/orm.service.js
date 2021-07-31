@@ -1,70 +1,64 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrmService = exports.Orm = void 0;
-const album_1 = require("../../../entity/album/album");
-const state_1 = require("../../../entity/state/state");
-const artist_1 = require("../../../entity/artist/artist");
-const artwork_1 = require("../../../entity/artwork/artwork");
-const bookmark_1 = require("../../../entity/bookmark/bookmark");
-const episode_1 = require("../../../entity/episode/episode");
-const folder_1 = require("../../../entity/folder/folder");
-const root_1 = require("../../../entity/root/root");
-const playqueue_1 = require("../../../entity/playqueue/playqueue");
-const playlist_1 = require("../../../entity/playlist/playlist");
-const podcast_1 = require("../../../entity/podcast/podcast");
-const series_1 = require("../../../entity/series/series");
-const radio_1 = require("../../../entity/radio/radio");
-const session_1 = require("../../../entity/session/session");
-const settings_1 = require("../../../entity/settings/settings");
-const track_1 = require("../../../entity/track/track");
-const user_1 = require("../../../entity/user/user");
-const tag_1 = require("../../../entity/tag/tag");
-const typescript_ioc_1 = require("typescript-ioc");
-const metadata_1 = require("../../../entity/metadata/metadata");
-const playlist_entry_1 = require("../../../entity/playlistentry/playlist-entry");
-const playqueue_entry_1 = require("../../../entity/playqueueentry/playqueue-entry");
-const path_1 = __importDefault(require("path"));
-const orm_1 = require("../../orm");
-const entities_1 = require("../orm/entities");
-const repositories_1 = require("../orm/repositories");
-const enum_registration_1 = require("../orm/enum-registration");
-const builder_1 = require("../../rest/builder");
-const genre_1 = require("../../../entity/genre/genre");
-enum_registration_1.registerORMEnums();
-class Orm {
+import { Album } from '../../../entity/album/album';
+import { State } from '../../../entity/state/state';
+import { Artist } from '../../../entity/artist/artist';
+import { Artwork } from '../../../entity/artwork/artwork';
+import { Bookmark } from '../../../entity/bookmark/bookmark';
+import { Episode } from '../../../entity/episode/episode';
+import { Folder } from '../../../entity/folder/folder';
+import { Root } from '../../../entity/root/root';
+import { PlayQueue } from '../../../entity/playqueue/playqueue';
+import { Playlist } from '../../../entity/playlist/playlist';
+import { Podcast } from '../../../entity/podcast/podcast';
+import { Series } from '../../../entity/series/series';
+import { Radio } from '../../../entity/radio/radio';
+import { Session } from '../../../entity/session/session';
+import { Settings } from '../../../entity/settings/settings';
+import { Track } from '../../../entity/track/track';
+import { User } from '../../../entity/user/user';
+import { Tag } from '../../../entity/tag/tag';
+import { InRequestScope } from 'typescript-ioc';
+import { MetaData } from '../../../entity/metadata/metadata';
+import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry';
+import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry';
+import path from 'path';
+import { ORM } from '../../orm';
+import { ORMEntities } from '../orm/entities';
+import { ORMRepositories } from '../orm/repositories';
+import { registerORMEnums } from '../orm/enum-registration';
+import { NotFoundError } from '../../rest/builder';
+import { Genre } from '../../../entity/genre/genre';
+registerORMEnums();
+export class Orm {
     constructor(em) {
         this.em = em;
-        this.State = em.getRepository(state_1.State);
-        this.Album = em.getRepository(album_1.Album);
-        this.Artist = em.getRepository(artist_1.Artist);
-        this.Artwork = em.getRepository(artwork_1.Artwork);
-        this.Bookmark = em.getRepository(bookmark_1.Bookmark);
-        this.Episode = em.getRepository(episode_1.Episode);
-        this.Folder = em.getRepository(folder_1.Folder);
-        this.Root = em.getRepository(root_1.Root);
-        this.MetaData = em.getRepository(metadata_1.MetaData);
-        this.PlayQueue = em.getRepository(playqueue_1.PlayQueue);
-        this.PlayQueueEntry = em.getRepository(playqueue_entry_1.PlayQueueEntry);
-        this.Playlist = em.getRepository(playlist_1.Playlist);
-        this.PlaylistEntry = em.getRepository(playlist_entry_1.PlaylistEntry);
-        this.Podcast = em.getRepository(podcast_1.Podcast);
-        this.Radio = em.getRepository(radio_1.Radio);
-        this.Series = em.getRepository(series_1.Series);
-        this.Session = em.getRepository(session_1.Session);
-        this.Settings = em.getRepository(settings_1.Settings);
-        this.Tag = em.getRepository(tag_1.Tag);
-        this.Track = em.getRepository(track_1.Track);
-        this.User = em.getRepository(user_1.User);
-        this.Genre = em.getRepository(genre_1.Genre);
+        this.State = em.getRepository(State);
+        this.Album = em.getRepository(Album);
+        this.Artist = em.getRepository(Artist);
+        this.Artwork = em.getRepository(Artwork);
+        this.Bookmark = em.getRepository(Bookmark);
+        this.Episode = em.getRepository(Episode);
+        this.Folder = em.getRepository(Folder);
+        this.Root = em.getRepository(Root);
+        this.MetaData = em.getRepository(MetaData);
+        this.PlayQueue = em.getRepository(PlayQueue);
+        this.PlayQueueEntry = em.getRepository(PlayQueueEntry);
+        this.Playlist = em.getRepository(Playlist);
+        this.PlaylistEntry = em.getRepository(PlaylistEntry);
+        this.Podcast = em.getRepository(Podcast);
+        this.Radio = em.getRepository(Radio);
+        this.Series = em.getRepository(Series);
+        this.Session = em.getRepository(Session);
+        this.Settings = em.getRepository(Settings);
+        this.Tag = em.getRepository(Tag);
+        this.Track = em.getRepository(Track);
+        this.User = em.getRepository(User);
+        this.Genre = em.getRepository(Genre);
     }
     async findInReposTypes(id, repos) {
         for (const repo of repos) {
@@ -83,7 +77,7 @@ class Orm {
         for (const id of ids) {
             const media = await this.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(builder_1.NotFoundError());
+                return Promise.reject(NotFoundError());
             }
             list.push(media);
         }
@@ -164,12 +158,11 @@ class Orm {
         return this.findInReposTypes(id, [this.Track, this.Episode]);
     }
 }
-exports.Orm = Orm;
 let OrmService = class OrmService {
     async init(config) {
         const db = config.env.db.dialect === 'sqlite' ? {
             dialect: 'sqlite',
-            storage: path_1.default.resolve(config.env.paths.data, 'jam.sqlite')
+            storage: path.resolve(config.env.paths.data, 'jam.sqlite')
         } :
             {
                 dialect: config.env.db.dialect,
@@ -179,9 +172,9 @@ let OrmService = class OrmService {
                 host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
                 port: config.env.db.port ? Number(config.env.db.port) : undefined
             };
-        this.orm = await orm_1.ORM.init({
-            entities: entities_1.ORMEntities,
-            repositories: repositories_1.ORMRepositories,
+        this.orm = await ORM.init({
+            entities: ORMEntities,
+            repositories: ORMRepositories,
             options: {
                 ...db,
                 logging: false,
@@ -207,7 +200,7 @@ let OrmService = class OrmService {
     }
 };
 OrmService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], OrmService);
-exports.OrmService = OrmService;
+export { OrmService };
 //# sourceMappingURL=orm.service.js.map

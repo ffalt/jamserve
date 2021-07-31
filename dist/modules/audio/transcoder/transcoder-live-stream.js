@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LiveTranscoderStream = void 0;
-const logger_1 = require("../../../utils/logger");
-const transcoder_stream_1 = require("./transcoder-stream");
-const log = logger_1.logger('audio.transcoder.live');
-class LiveTranscoderStream extends transcoder_stream_1.TranscoderStream {
+import { logger } from '../../../utils/logger';
+import { TranscoderStream } from './transcoder-stream';
+const log = logger('audio.transcoder.live');
+export class LiveTranscoderStream extends TranscoderStream {
     constructor(filename, format, maxBitRate) {
         super();
         this.filename = filename;
@@ -17,7 +14,7 @@ class LiveTranscoderStream extends transcoder_stream_1.TranscoderStream {
     pipe(stream) {
         log.info('Start transcode streaming', this.format, this.maxBitRate);
         stream.contentType(this.format);
-        const proc = transcoder_stream_1.TranscoderStream.getTranscodeProc(this.filename, this.format, this.maxBitRate);
+        const proc = TranscoderStream.getTranscodeProc(this.filename, this.format, this.maxBitRate);
         proc
             .on('end', () => {
             log.debug('file has been transcoded successfully');
@@ -28,5 +25,4 @@ class LiveTranscoderStream extends transcoder_stream_1.TranscoderStream {
             .writeToStream(stream, { end: true });
     }
 }
-exports.LiveTranscoderStream = LiveTranscoderStream;
 //# sourceMappingURL=transcoder-live-stream.js.map

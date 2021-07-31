@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.iterateArguments = exports.iterateControllers = void 0;
-function iterateControllers(metadata, ctrl, onControl) {
+export function iterateControllers(metadata, ctrl, onControl) {
     onControl(ctrl);
     let superClass = Object.getPrototypeOf(ctrl.target);
     while (superClass.prototype !== undefined) {
@@ -12,8 +9,7 @@ function iterateControllers(metadata, ctrl, onControl) {
         superClass = Object.getPrototypeOf(superClass);
     }
 }
-exports.iterateControllers = iterateControllers;
-function iterateArguments(metadata, argument, onArgument) {
+export function iterateArguments(metadata, argument, onArgument) {
     onArgument(argument);
     let superClass = Object.getPrototypeOf(argument.target);
     while (superClass.prototype !== undefined) {
@@ -24,5 +20,4 @@ function iterateArguments(metadata, argument, onArgument) {
         superClass = Object.getPrototypeOf(superClass);
     }
 }
-exports.iterateArguments = iterateArguments;
 //# sourceMappingURL=iterate-super.js.map

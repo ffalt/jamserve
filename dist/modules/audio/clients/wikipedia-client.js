@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WikipediaClient = void 0;
-const logger_1 = require("../../../utils/logger");
-const webservice_client_1 = require("../../../utils/webservice-client");
-const log = logger_1.logger('Wikipedia');
-class WikipediaClient extends webservice_client_1.WebserviceClient {
+import { logger } from '../../../utils/logger';
+import { WebserviceClient } from '../../../utils/webservice-client';
+const log = logger('Wikipedia');
+export class WikipediaClient extends WebserviceClient {
     constructor(userAgent) {
         super(200, 1000, userAgent);
     }
@@ -48,5 +45,4 @@ class WikipediaClient extends webservice_client_1.WebserviceClient {
         return data.entities[id];
     }
 }
-exports.WikipediaClient = WikipediaClient;
 //# sourceMappingURL=wikipedia-client.js.map

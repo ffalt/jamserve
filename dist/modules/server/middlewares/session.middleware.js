@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useSessionMiddleware = void 0;
-const express_session_1 = __importDefault(require("express-session"));
-const session_store_1 = require("./session-store");
-function useSessionMiddleware(configService, sessionService) {
-    return express_session_1.default({
+import session from 'express-session';
+import { ExpressSessionStore } from './session-store';
+export function useSessionMiddleware(configService, sessionService) {
+    return session({
         name: 'jam.sid',
         secret: configService.env.session.secret,
-        store: new session_store_1.ExpressSessionStore(sessionService),
+        store: new ExpressSessionStore(sessionService),
         resave: false,
         proxy: configService.env.session.proxy,
         saveUninitialized: false,
@@ -21,5 +15,4 @@ function useSessionMiddleware(configService, sessionService) {
         }
     });
 }
-exports.useSessionMiddleware = useSessionMiddleware;
 //# sourceMappingURL=session.middleware.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,26 +7,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const base_transform_1 = require("../base/base.transform");
-const enums_1 = require("../../types/enums");
-const podcast_service_1 = require("./podcast.service");
-let PodcastTransformService = class PodcastTransformService extends base_transform_1.BaseTransformService {
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform';
+import { DBObjectType, PodcastStatus } from '../../types/enums';
+import { PodcastService } from './podcast.service';
+let PodcastTransformService = class PodcastTransformService extends BaseTransformService {
     async podcastBase(orm, o, podcastArgs, user) {
         return {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
             url: o.url,
-            status: this.podcastService.isDownloading(o.id) ? enums_1.PodcastStatus.downloading : o.status,
+            status: this.podcastService.isDownloading(o.id) ? PodcastStatus.downloading : o.status,
             lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
             error: o.errorMessage,
             description: o.description,
             episodeIDs: podcastArgs.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
             episodeCount: podcastArgs.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
-            state: podcastArgs.podcastIncState ? await this.state(orm, o.id, enums_1.DBObjectType.podcast, user.id) : undefined
+            state: podcastArgs.podcastIncState ? await this.state(orm, o.id, DBObjectType.podcast, user.id) : undefined
         };
     }
     async podcastIndex(orm, result) {
@@ -40,15 +37,15 @@ let PodcastTransformService = class PodcastTransformService extends base_transfo
         });
     }
     podcastStatus(o) {
-        return this.podcastService.isDownloading(o.id) ? { status: enums_1.PodcastStatus.downloading } : { status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined };
+        return this.podcastService.isDownloading(o.id) ? { status: PodcastStatus.downloading } : { status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined };
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_service_1.PodcastService)
+    Inject,
+    __metadata("design:type", PodcastService)
 ], PodcastTransformService.prototype, "podcastService", void 0);
 PodcastTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], PodcastTransformService);
-exports.PodcastTransformService = PodcastTransformService;
+export { PodcastTransformService };
 //# sourceMappingURL=podcast.transform.js.map

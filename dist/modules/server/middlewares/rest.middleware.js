@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,50 +7,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RestMiddleware = void 0;
-const express_1 = __importDefault(require("express"));
-const rest_1 = require("../../rest");
-const enums_1 = require("../../../types/enums");
-const typescript_ioc_1 = require("typescript-ioc");
-const logger_1 = require("../../../utils/logger");
-const controllers_1 = require("../../engine/rest/controllers");
-const config_service_1 = require("../../engine/services/config.service");
-const enum_registration_1 = require("../../engine/rest/enum-registration");
-const log = logger_1.logger('REST');
-enum_registration_1.registerRestEnums();
+import express from 'express';
+import { buildRestMeta, restRouter } from '../../rest';
+import { UserRole } from '../../../types/enums';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger';
+import { RestControllers } from '../../engine/rest/controllers';
+import { ConfigService } from '../../engine/services/config.service';
+import { registerRestEnums } from '../../engine/rest/enum-registration';
+const log = logger('REST');
+registerRestEnums();
 let RestMiddleware = class RestMiddleware {
     middleware() {
-        const api = express_1.default.Router();
-        rest_1.buildRestMeta();
+        const api = express.Router();
+        buildRestMeta();
         const options = {
             tmpPath: this.configService.getDataPath(['cache', 'uploads']),
-            controllers: controllers_1.RestControllers(),
+            controllers: RestControllers(),
             validateRoles: (user, roles) => {
                 if (roles.length > 0) {
                     if (!user) {
                         return false;
                     }
-                    if (roles.includes(enums_1.UserRole.stream) && !user.roleStream) {
+                    if (roles.includes(UserRole.stream) && !user.roleStream) {
                         return false;
                     }
-                    if (roles.includes(enums_1.UserRole.admin) && !user.roleAdmin) {
+                    if (roles.includes(UserRole.admin) && !user.roleAdmin) {
                         return false;
                     }
-                    if (roles.includes(enums_1.UserRole.podcast) && !user.rolePodcast) {
+                    if (roles.includes(UserRole.podcast) && !user.rolePodcast) {
                         return false;
                     }
-                    if (roles.includes(enums_1.UserRole.upload) && !user.roleUpload) {
+                    if (roles.includes(UserRole.upload) && !user.roleUpload) {
                         return false;
                     }
                 }
                 return true;
             }
         };
-        const routeInfos = rest_1.restRouter(api, options);
+        const routeInfos = restRouter(api, options);
         if (process.env.NODE_ENV !== 'production') {
             log.table(routeInfos, [
                 { name: 'method', alignment: 'right' },
@@ -67,11 +61,11 @@ let RestMiddleware = class RestMiddleware {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], RestMiddleware.prototype, "configService", void 0);
 RestMiddleware = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], RestMiddleware);
-exports.RestMiddleware = RestMiddleware;
+export { RestMiddleware };
 //# sourceMappingURL=rest.middleware.js.map

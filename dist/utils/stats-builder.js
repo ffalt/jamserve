@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaStatBuilder = void 0;
-const slug_1 = require("./slug");
-class MetaStatBuilder {
+import { slugify } from './slug';
+export class MetaStatBuilder {
     constructor() {
         this.stats = {};
     }
@@ -66,7 +63,7 @@ class MetaStatBuilder {
     }
     statSlugValue(name, val) {
         if (val && val.trim().length > 0) {
-            const slug = slug_1.slugify(val);
+            const slug = slugify(val);
             this.stats[name] = this.stats[name] || {};
             this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: val.trim() };
             this.stats[name][slug].count += 1;
@@ -100,5 +97,4 @@ class MetaStatBuilder {
         return MetaStatBuilder.getMostUsedTagValue(list);
     }
 }
-exports.MetaStatBuilder = MetaStatBuilder;
 //# sourceMappingURL=stats-builder.js.map

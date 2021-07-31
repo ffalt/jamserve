@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,13 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SeriesTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const base_transform_1 = require("../base/base.transform");
-const enums_1 = require("../../types/enums");
-const metadata_service_1 = require("../metadata/metadata.service");
-let SeriesTransformService = class SeriesTransformService extends base_transform_1.BaseTransformService {
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform';
+import { DBObjectType } from '../../types/enums';
+import { MetaDataService } from '../metadata/metadata.service';
+let SeriesTransformService = class SeriesTransformService extends BaseTransformService {
     async seriesBases(orm, list, seriesArgs, user) {
         return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesArgs, user)));
     }
@@ -32,7 +29,7 @@ let SeriesTransformService = class SeriesTransformService extends base_transform
             trackIDs: seriesArgs.seriesIncTrackIDs ? await o.tracks.getIDs() : undefined,
             albumIDs: seriesArgs.seriesIncAlbumIDs ? await o.albums.getIDs() : undefined,
             info: seriesArgs.seriesIncInfo ? await this.metaData.extInfo.bySeries(orm, o) : undefined,
-            state: seriesArgs.seriesIncState ? await this.state(orm, o.id, enums_1.DBObjectType.series, user.id) : undefined
+            state: seriesArgs.seriesIncState ? await this.state(orm, o.id, DBObjectType.series, user.id) : undefined
         };
     }
     async seriesIndex(orm, result) {
@@ -47,11 +44,11 @@ let SeriesTransformService = class SeriesTransformService extends base_transform
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
+    Inject,
+    __metadata("design:type", MetaDataService)
 ], SeriesTransformService.prototype, "metaData", void 0);
 SeriesTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], SeriesTransformService);
-exports.SeriesTransformService = SeriesTransformService;
+export { SeriesTransformService };
 //# sourceMappingURL=series.transform.js.map

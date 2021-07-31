@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,12 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionService = void 0;
-const orm_service_1 = require("../../modules/engine/services/orm.service");
-const enums_1 = require("../../types/enums");
-const typescript_ioc_1 = require("typescript-ioc");
-const orm_1 = require("../../modules/orm");
+import { OrmService } from '../../modules/engine/services/orm.service';
+import { SessionMode } from '../../types/enums';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import seq from 'sequelize';
 let SessionService = class SessionService {
     constructor() {
         this.events = [];
@@ -41,7 +38,7 @@ let SessionService = class SessionService {
         session.agent = data.userAgent;
         session.client = data.client;
         session.cookie = JSON.stringify(data.cookie);
-        session.mode = data.jwth ? enums_1.SessionMode.jwt : enums_1.SessionMode.browser;
+        session.mode = data.jwth ? SessionMode.jwt : SessionMode.browser;
         if (session.user.id() !== data.passport.user) {
             await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
         }
@@ -65,7 +62,7 @@ let SessionService = class SessionService {
     }
     async clearExpired() {
         const orm = this.ormService.fork();
-        await orm.Session.removeByQueryAndFlush({ where: { expires: { [orm_1.Op.lt]: Date.now() } } });
+        await orm.Session.removeByQueryAndFlush({ where: { expires: { [seq.Op.lt]: Date.now() } } });
     }
     async byJwth(jwth) {
         const orm = this.ormService.fork();
@@ -141,11 +138,11 @@ let SessionService = class SessionService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
+    Inject,
+    __metadata("design:type", OrmService)
 ], SessionService.prototype, "ormService", void 0);
 SessionService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], SessionService);
-exports.SessionService = SessionService;
+export { SessionService };
 //# sourceMappingURL=session.service.js.map

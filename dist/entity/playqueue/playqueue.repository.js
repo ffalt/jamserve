@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayQueueRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-class PlayQueueRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { DBObjectType } from '../../types/enums';
+export class PlayQueueRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.playqueue;
+        this.objType = DBObjectType.playqueue;
     }
     buildOrder(_) {
         return [];
@@ -15,5 +12,4 @@ class PlayQueueRepository extends base_repository_1.BaseRepository {
         return {};
     }
 }
-exports.PlayQueueRepository = PlayQueueRepository;
 //# sourceMappingURL=playqueue.repository.js.map

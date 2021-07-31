@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,12 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const admin_1 = require("./admin");
-const admin_args_1 = require("./admin.args");
+import { BodyParams, Controller, Ctx, Get, Post, QueryParam } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { AdminChangeQueueInfo, AdminSettings } from './admin';
+import { AdminSettingsArgs } from './admin.args';
 let AdminController = class AdminController {
     async settings({ engine }) {
         return engine.settings.get();
@@ -29,30 +26,30 @@ let AdminController = class AdminController {
     }
 };
 __decorate([
-    rest_1.Get('/settings/get', () => admin_1.AdminSettings, { description: 'Get the Server Admin Settings', summary: 'Get Settings' }),
-    __param(0, rest_1.Ctx()),
+    Get('/settings/get', () => AdminSettings, { description: 'Get the Server Admin Settings', summary: 'Get Settings' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "settings", null);
 __decorate([
-    rest_1.Get('/queue/id', () => admin_1.AdminChangeQueueInfo, { description: 'Get Queue Information for Admin Change Tasks', summary: 'Get Queue Info' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Queue Task Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/queue/id', () => AdminChangeQueueInfo, { description: 'Get Queue Information for Admin Change Tasks', summary: 'Get Queue Info' }),
+    __param(0, QueryParam('id', { description: 'Queue Task Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "queueId", null);
 __decorate([
-    rest_1.Post('/settings/update', { description: 'Update the Server Admin Settings', summary: 'Set Settings' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/settings/update', { description: 'Update the Server Admin Settings', summary: 'Set Settings' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [admin_args_1.AdminSettingsArgs, Object]),
+    __metadata("design:paramtypes", [AdminSettingsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "settingsUpdate", null);
 AdminController = __decorate([
-    rest_1.Controller('/admin', { tags: ['Administration'], roles: [enums_1.UserRole.admin] })
+    Controller('/admin', { tags: ['Administration'], roles: [UserRole.admin] })
 ], AdminController);
-exports.AdminController = AdminController;
+export { AdminController };
 //# sourceMappingURL=admin.controller.js.map

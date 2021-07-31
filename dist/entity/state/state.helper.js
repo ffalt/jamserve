@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StateHelper = void 0;
-const state_1 = require("./state");
-const orm_1 = require("../../modules/orm");
-class StateHelper {
+import { State } from './state';
+import seq from 'sequelize';
+export class StateHelper {
     constructor(em) {
         this.em = em;
-        this.stateRepo = this.em.getRepository(state_1.State);
+        this.stateRepo = this.em.getRepository(State);
     }
     async emptyState(destID, destType, user) {
         const state = this.stateRepo.create({
@@ -54,13 +51,13 @@ class StateHelper {
     }
     async getHighestRatedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({
-            where: { user: userID, destType, rated: { [orm_1.Op.gte]: 1 } },
+            where: { user: userID, destType, rated: { [seq.Op.gte]: 1 } },
             order: [['rated', 'DESC']]
         });
         return states.map(a => a.destID);
     }
     async getAvgHighestDestIDs(destType) {
-        const states = await this.stateRepo.find({ where: { destType, rated: { [orm_1.Op.gte]: 1 } } });
+        const states = await this.stateRepo.find({ where: { destType, rated: { [seq.Op.gte]: 1 } } });
         const ratings = {};
         states.forEach(state => {
             if (state.rated !== undefined) {
@@ -78,7 +75,7 @@ class StateHelper {
     }
     async getFrequentlyPlayedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({
-            where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } },
+            where: { user: userID, destType, played: { [seq.Op.gte]: 1 } },
             order: [
                 ['played', 'DESC'],
                 ['lastPlayed', 'DESC']
@@ -88,14 +85,14 @@ class StateHelper {
     }
     async getFavedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({
-            where: { user: userID, destType, faved: { [orm_1.Op.ne]: null } },
+            where: { user: userID, destType, faved: { [seq.Op.ne]: null } },
             order: [['faved', 'DESC']]
         });
         return states.map(a => a.destID);
     }
     async getRecentlyPlayedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({
-            where: { user: userID, destType, played: { [orm_1.Op.gte]: 1 } },
+            where: { user: userID, destType, played: { [seq.Op.gte]: 1 } },
             order: [['lastPlayed', 'DESC']]
         });
         return states.map(a => a.destID);
@@ -108,5 +105,4 @@ class StateHelper {
         return state;
     }
 }
-exports.StateHelper = StateHelper;
 //# sourceMappingURL=state.helper.js.map

@@ -1,12 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useAuthenticatedCors = exports.registerPublicCORS = void 0;
-const cors_1 = __importDefault(require("cors"));
-function registerPublicCORS(_) {
-    return cors_1.default({
+import cors from 'cors';
+export function registerPublicCORS(_) {
+    return cors({
         preflightContinue: false,
         credentials: true,
         allowedHeaders: ['Content-Type', 'Authorization'],
@@ -14,8 +8,7 @@ function registerPublicCORS(_) {
         methods: ['GET', 'POST']
     });
 }
-exports.registerPublicCORS = registerPublicCORS;
-function useAuthenticatedCors(configService) {
+export function useAuthenticatedCors(configService) {
     const origins = configService.env.session.allowedCookieDomains || [];
     const corsOptionsDelegate = (req, callback) => {
         const corsOptions = {
@@ -39,7 +32,6 @@ function useAuthenticatedCors(configService) {
         };
         callback(null, corsOptions);
     };
-    return cors_1.default(corsOptionsDelegate);
+    return cors(corsOptionsDelegate);
 }
-exports.useAuthenticatedCors = useAuthenticatedCors;
 //# sourceMappingURL=cors.middleware.js.map

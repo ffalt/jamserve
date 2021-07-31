@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,18 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StateController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const state_model_1 = require("./state.model");
-const state_args_1 = require("./state.args");
+import { BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { State, States } from './state.model';
+import { FavArgs, RateArgs, StatesArgs } from './state.args';
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 let StateController = class StateController {
     async state(id, { orm, engine, user }) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
-            return Promise.reject(rest_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         return engine.transform.Base.state(orm, id, result.objType, user.id);
     }
@@ -44,39 +41,39 @@ let StateController = class StateController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => state_model_1.State, { description: `Get User State (fav/rate/etc) ${description}`, summary: 'Get State' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Object Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/id', () => State, { description: `Get User State (fav/rate/etc) ${description}`, summary: 'Get State' }),
+    __param(0, QueryParam('id', { description: 'Object Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "state", null);
 __decorate([
-    rest_1.Get('/list', () => state_model_1.States, { description: `Get User States (fav/rate/etc) ${description}`, summary: 'Get States' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/list', () => States, { description: `Get User States (fav/rate/etc) ${description}`, summary: 'Get States' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [state_args_1.StatesArgs, Object]),
+    __metadata("design:paramtypes", [StatesArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "states", null);
 __decorate([
-    rest_1.Post('/fav', () => state_model_1.State, { description: `Set/Unset Favorite ${description}`, summary: 'Fav' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/fav', () => State, { description: `Set/Unset Favorite ${description}`, summary: 'Fav' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [state_args_1.FavArgs, Object]),
+    __metadata("design:paramtypes", [FavArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "fav", null);
 __decorate([
-    rest_1.Post('/rate', () => state_model_1.State, { description: `Rate ${description}`, summary: 'Rate' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/rate', () => State, { description: `Rate ${description}`, summary: 'Rate' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [state_args_1.RateArgs, Object]),
+    __metadata("design:paramtypes", [RateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "rate", null);
 StateController = __decorate([
-    rest_1.Controller('/state', { tags: ['State'], roles: [enums_1.UserRole.stream] })
+    Controller('/state', { tags: ['State'], roles: [UserRole.stream] })
 ], StateController);
-exports.StateController = StateController;
+export { StateController };
 //# sourceMappingURL=state.controller.js.map

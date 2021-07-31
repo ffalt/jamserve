@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GpodderClient = void 0;
-const logger_1 = require("../../../utils/logger");
-const webservice_client_1 = require("../../../utils/webservice-client");
-const log = logger_1.logger('GPodderClient');
-class GpodderClient extends webservice_client_1.WebserviceClient {
+import { logger } from '../../../utils/logger';
+import { WebserviceClient } from '../../../utils/webservice-client';
+const log = logger('GPodderClient');
+export class GpodderClient extends WebserviceClient {
     constructor(userAgent) {
         super(1, 1000, userAgent);
     }
@@ -76,5 +73,4 @@ class GpodderClient extends webservice_client_1.WebserviceClient {
         };
     }
 }
-exports.GpodderClient = GpodderClient;
 //# sourceMappingURL=gpodder-client.js.map

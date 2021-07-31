@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,26 +10,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaveformController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const builder_1 = require("../../modules/rest/builder");
-const decorators_1 = require("../../modules/rest/decorators");
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const waveform_args_1 = require("./waveform.args");
-const waveform_model_1 = require("./waveform.model");
-const consts_1 = require("../../types/consts");
+import { Controller, Ctx, GenericError, Get, QueryParam } from '../../modules/rest';
+import { UserRole, WaveformFormatType } from '../../types/enums';
+import { NotFoundError } from '../../modules/rest/builder';
+import { PathParam, PathParams, QueryParams } from '../../modules/rest/decorators';
+import fse from 'fs-extra';
+import { WaveformArgs, WaveformSVGArgs } from './waveform.args';
+import { WaveFormData } from './waveform.model';
+import { ApiWaveformTypes } from '../../types/consts';
 let WaveformController = class WaveformController {
     async json(id, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(builder_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
-        const bin = await engine.waveform.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.json);
+        const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.json);
         if (bin.json) {
             return bin.json;
         }
@@ -38,61 +32,61 @@ let WaveformController = class WaveformController {
             return JSON.parse(bin.buffer.buffer.toString());
         }
         if (bin.file) {
-            return JSON.parse((await fs_extra_1.default.readFile(bin.file.filename)).toString());
+            return JSON.parse((await fse.readFile(bin.file.filename)).toString());
         }
-        return Promise.reject(rest_1.GenericError('Error on Waveform generation'));
+        return Promise.reject(GenericError('Error on Waveform generation'));
     }
     async svg(args, { orm, engine }) {
         const result = await orm.findInWaveformTypes(args.id);
         if (!result) {
-            return Promise.reject(builder_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
-        const bin = await engine.waveform.getWaveform(result.obj, result.objType, enums_1.WaveformFormatType.svg, args.width);
+        const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.svg, args.width);
         if (bin.buffer) {
             return bin.buffer.buffer.toString();
         }
         if (bin.file) {
-            return (await fs_extra_1.default.readFile(bin.file.filename)).toString();
+            return (await fse.readFile(bin.file.filename)).toString();
         }
-        return Promise.reject(rest_1.GenericError('Error on Waveform generation'));
+        return Promise.reject(GenericError('Error on Waveform generation'));
     }
     async waveform(id, waveformArgs, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(builder_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
     }
 };
 __decorate([
-    rest_1.Get('/json', () => waveform_model_1.WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Object Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/json', () => WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }),
+    __param(0, QueryParam('id', { description: 'Object Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "json", null);
 __decorate([
-    rest_1.Get('/svg', () => String, {
+    Get('/svg', () => String, {
         description: 'Get Peaks Waveform Data as SVG [Episode, Track]', summary: 'Get SVG',
         responseStringMimeTypes: ['image/svg+xml']
     }),
-    __param(0, decorators_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [waveform_args_1.WaveformSVGArgs, Object]),
+    __metadata("design:paramtypes", [WaveformSVGArgs, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "svg", null);
 __decorate([
-    rest_1.Get('/{id}_{width}.{format}', {
+    Get('/{id}_{width}.{format}', {
         description: 'Get Peaks Waveform Data [Episode, Track]', summary: 'Get Waveform',
-        binary: consts_1.ApiWaveformTypes,
+        binary: ApiWaveformTypes,
         customPathParameters: {
             regex: /(.*?)(_.*?)?(\..*)?$/,
             groups: [
                 { name: 'id', getType: () => String },
                 { name: 'width', getType: () => Number, prefix: '_', min: 100, max: 4000 },
-                { name: 'format', getType: () => enums_1.WaveformFormatType, prefix: '.' }
+                { name: 'format', getType: () => WaveformFormatType, prefix: '.' }
             ]
         },
         aliasRoutes: [
@@ -100,15 +94,15 @@ __decorate([
             { route: '/{id}', name: 'by Id', hideParameters: ['width', 'format'] }
         ]
     }),
-    __param(0, decorators_1.PathParam('id', { description: 'Media Id', isID: true })),
-    __param(1, decorators_1.PathParams()),
-    __param(2, rest_1.Ctx()),
+    __param(0, PathParam('id', { description: 'Media Id', isID: true })),
+    __param(1, PathParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, waveform_args_1.WaveformArgs, Object]),
+    __metadata("design:paramtypes", [String, WaveformArgs, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "waveform", null);
 WaveformController = __decorate([
-    rest_1.Controller('/waveform', { tags: ['Waveform'], roles: [enums_1.UserRole.stream] })
+    Controller('/waveform', { tags: ['Waveform'], roles: [UserRole.stream] })
 ], WaveformController);
-exports.WaveformController = WaveformController;
+export { WaveformController };
 //# sourceMappingURL=waveform.controller.js.map

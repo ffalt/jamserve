@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BlockVorbiscomment = void 0;
-const block_writeable_1 = require("./block.writeable");
-class BlockVorbiscomment extends block_writeable_1.MetaWriteableDataBlock {
+import { MetaWriteableDataBlock } from './block.writeable';
+export class BlockVorbiscomment extends MetaWriteableDataBlock {
     constructor(isLast) {
         super(isLast, 4);
         this.vendor = '';
@@ -69,5 +66,4 @@ class BlockVorbiscomment extends block_writeable_1.MetaWriteableDataBlock {
         return size;
     }
 }
-exports.BlockVorbiscomment = BlockVorbiscomment;
 //# sourceMappingURL=block.vorbiscomment.js.map

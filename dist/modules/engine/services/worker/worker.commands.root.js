@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerCommandsRoot = void 0;
-class WorkerCommandsRoot {
+export class WorkerCommandsRoot {
     constructor(owner) {
         this.owner = owner;
     }
@@ -32,5 +29,4 @@ class WorkerCommandsRoot {
         return this.owner.changes.finish(orm, changes, root);
     }
 }
-exports.WorkerCommandsRoot = WorkerCommandsRoot;
 //# sourceMappingURL=worker.commands.root.js.map

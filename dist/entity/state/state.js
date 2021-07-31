@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,60 +7,57 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.StateQL = exports.State = void 0;
-const user_1 = require("../user/user");
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-let State = class State extends base_1.Base {
+import { DBObjectType } from '../../types/enums';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Base } from '../base/base';
+import { Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference } from '../../modules/orm';
+let State = class State extends Base {
     constructor() {
         super(...arguments);
-        this.user = new orm_1.Reference(this);
+        this.user = new Reference(this);
     }
 };
 __decorate([
-    orm_1.Property(() => orm_1.ORM_ID),
+    Property(() => ORM_ID),
     __metadata("design:type", String)
 ], State.prototype, "destID", void 0);
 __decorate([
-    orm_1.Property(() => enums_1.DBObjectType),
+    Property(() => DBObjectType),
     __metadata("design:type", String)
 ], State.prototype, "destType", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    Field(() => Date, { nullable: true }),
+    Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], State.prototype, "faved", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], State.prototype, "played", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], State.prototype, "rated", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    Field(() => Date, { nullable: true }),
+    Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], State.prototype, "lastPlayed", void 0);
 __decorate([
-    orm_1.ManyToOne(() => user_1.User, user => user.states),
-    __metadata("design:type", orm_1.Reference)
+    ManyToOne(() => 'User', user => user.states),
+    __metadata("design:type", Reference)
 ], State.prototype, "user", void 0);
 State = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], State);
-exports.State = State;
+export { State };
 let StateQL = class StateQL extends State {
 };
 StateQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], StateQL);
-exports.StateQL = StateQL;
+export { StateQL };
 //# sourceMappingURL=state.js.map

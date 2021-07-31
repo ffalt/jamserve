@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpressParameters = void 0;
-const enums_1 = require("../helpers/enums");
-const express_error_1 = require("./express-error");
-const metadata_1 = require("../metadata");
-const default_value_1 = require("../helpers/default-value");
-const iterate_super_1 = require("../helpers/iterate-super");
-class ExpressParameters {
+import { getEnumReverseValuesMap } from '../helpers/enums';
+import { GenericError, InvalidParamError, MissingParamError } from './express-error';
+import { getMetadataStorage } from '../metadata';
+import { getDefaultValue } from '../helpers/default-value';
+import { iterateArguments } from '../helpers/iterate-super';
+export class ExpressParameters {
     constructor() {
-        this.metadata = metadata_1.getMetadataStorage();
+        this.metadata = getMetadataStorage();
     }
     validateBoolean(value, typeOptions, param) {
         if (typeOptions.array) {
-            throw express_error_1.InvalidParamError(param.name);
+            throw InvalidParamError(param.name);
         }
         if (typeof value !== 'boolean') {
             if (value === 'true') {
@@ -22,30 +19,30 @@ class ExpressParameters {
                 return false;
             }
             else {
-                throw express_error_1.InvalidParamError(param.name);
+                throw InvalidParamError(param.name);
             }
         }
         return value;
     }
     validateNumber(value, typeOptions, param) {
         if (typeOptions.array) {
-            throw express_error_1.InvalidParamError(param.name);
+            throw InvalidParamError(param.name);
         }
         if (typeof value === 'string' && value.length === 0) {
-            throw express_error_1.InvalidParamError(param.name);
+            throw InvalidParamError(param.name);
         }
         const val = Number(value);
         if (isNaN(val)) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value is not a number`);
+            throw InvalidParamError(param.name, `Parameter value is not a number`);
         }
         if (val % 1 !== 0) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value is not an integer`);
+            throw InvalidParamError(param.name, `Parameter value is not an integer`);
         }
         if (typeOptions.min !== undefined && val < typeOptions.min) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value too small`);
+            throw InvalidParamError(param.name, `Parameter value too small`);
         }
         if (typeOptions.max !== undefined && val > typeOptions.max) {
-            throw express_error_1.InvalidParamError(param.name, `Parameter value too high`);
+            throw InvalidParamError(param.name, `Parameter value too high`);
         }
         return val;
     }
@@ -58,13 +55,13 @@ class ExpressParameters {
             else if (value) {
                 const s = `${value}`;
                 if (s.length === 0) {
-                    throw express_error_1.InvalidParamError(param.name);
+                    throw InvalidParamError(param.name);
                 }
                 array = [s];
             }
             return array.map((v) => String(v)).filter((v) => {
                 if (v.length === 0 && !typeOptions.nullable) {
-                    throw express_error_1.InvalidParamError(param.name);
+                    throw InvalidParamError(param.name);
                 }
                 return v.length > 0;
             });
@@ -72,20 +69,20 @@ class ExpressParameters {
         else {
             const val = String(value);
             if (val.length === 0) {
-                throw express_error_1.InvalidParamError(param.name);
+                throw InvalidParamError(param.name);
             }
             return val;
         }
     }
     validateEnum(value, typeOptions, param, enumInfo) {
         const enumObj = enumInfo.enumObj;
-        const enumValues = enums_1.getEnumReverseValuesMap(enumObj);
+        const enumValues = getEnumReverseValuesMap(enumObj);
         if (typeOptions.array) {
             let array = Array.isArray(value) ? value : [value];
             array = (array || []).map((v) => String(v)).filter(s => s.length > 0);
             for (const val of array) {
                 if (!enumValues[val]) {
-                    throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
+                    throw InvalidParamError(param.name, `Enum value not valid`);
                 }
             }
             return array;
@@ -93,7 +90,7 @@ class ExpressParameters {
         else {
             const val = String(value);
             if (!enumValues[val]) {
-                throw express_error_1.InvalidParamError(param.name, `Enum value not valid`);
+                throw InvalidParamError(param.name, `Enum value not valid`);
             }
             return val;
         }
@@ -118,7 +115,7 @@ class ExpressParameters {
     validateParameter(param, data, isField) {
         if (isField) {
             const argumentInstance = new param.target();
-            param.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, param.typeOptions, param.name);
+            param.typeOptions.defaultValue = getDefaultValue(argumentInstance, param.typeOptions, param.name);
         }
         let value = data[param.name];
         if (value === undefined) {
@@ -127,7 +124,7 @@ class ExpressParameters {
         const typeOptions = param.typeOptions;
         const isNull = (value === undefined || value === null);
         if (!typeOptions.nullable && isNull) {
-            throw express_error_1.MissingParamError(param.name);
+            throw MissingParamError(param.name);
         }
         if (isNull) {
             return;
@@ -162,6 +159,9 @@ class ExpressParameters {
             case 'path':
                 return context.req.params;
             case 'file': {
+                if (!context.req.file) {
+                    return {};
+                }
                 const upload = {
                     name: context.req.file.path,
                     size: context.req.file.size,
@@ -185,12 +185,12 @@ class ExpressParameters {
         const type = param.getType();
         const argumentType = this.metadata.argumentTypes.find(it => it.target === type);
         if (!argumentType) {
-            throw express_error_1.GenericError(`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
+            throw GenericError(`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
                 `is not a class decorated with '@ObjParamsType' decorator!`);
         }
         const args = {};
         const data = this.getData(param.mode, context);
-        iterate_super_1.iterateArguments(this.metadata, argumentType, argument => {
+        iterateArguments(this.metadata, argumentType, argument => {
             this.mapArgFields(argument, data, args);
         });
         return args;
@@ -205,8 +205,7 @@ class ExpressParameters {
             case 'args':
                 return this.prepareParameterObj(param, context);
         }
-        throw express_error_1.GenericError(`Internal: not implemented ${param.methodName} ${param.kind}`);
+        throw GenericError(`Internal: not implemented ${param.methodName} ${param.kind}`);
     }
 }
-exports.ExpressParameters = ExpressParameters;
 //# sourceMappingURL=express-parameters.js.map

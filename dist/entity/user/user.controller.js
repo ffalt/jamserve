@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
-const user_model_1 = require("./user.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const user_args_1 = require("./user.args");
-const random_1 = require("../../utils/random");
-const base_args_1 = require("../base/base.args");
+import { User, UserPage } from './user.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args';
+import { randomString } from '../../utils/random';
+import { PageArgs } from '../base/base.args';
 let UserController = class UserController {
     async id(id, userArgs, { orm, engine, user }) {
         return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
@@ -35,17 +32,17 @@ let UserController = class UserController {
         const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
         if (user.id === id) {
             if (!args.roleAdmin) {
-                throw rest_1.InvalidParamError('roleAdmin', `You can't de-admin yourself`);
+                throw InvalidParamError('roleAdmin', `You can't de-admin yourself`);
             }
             if (!args.roleStream) {
-                throw rest_1.InvalidParamError('roleStream', `You can't remove api access for yourself`);
+                throw InvalidParamError('roleStream', `You can't remove api access for yourself`);
             }
         }
         return engine.transform.User.user(orm, await engine.user.update(orm, u, args), {}, user);
     }
     async remove(id, { orm, engine, user }) {
         if (user.id === id) {
-            throw rest_1.InvalidParamError('id', `You can't remove yourself`);
+            throw InvalidParamError('id', `You can't remove yourself`);
         }
         const u = await orm.User.oneOrFailByID(id);
         await engine.user.remove(orm, u);
@@ -60,7 +57,7 @@ let UserController = class UserController {
     }
     async generateUserImage(id, args, { orm, engine, user }) {
         const u = await this.validateUserOrAdmin(orm, id, user);
-        await engine.user.generateAvatar(u, args.seed || random_1.randomString(42));
+        await engine.user.generateAvatar(u, args.seed || randomString(42));
     }
     async uploadUserImage(id, file, { orm, engine, user }) {
         const u = await this.validateUserOrAdmin(orm, id, user);
@@ -69,7 +66,7 @@ let UserController = class UserController {
     async validatePassword(orm, engine, password, user) {
         const result = await engine.user.auth(orm, user.name, password);
         if (!result) {
-            return Promise.reject(rest_1.UnauthError());
+            return Promise.reject(UnauthError());
         }
     }
     async checkUserAccess(orm, engine, userID, password, user) {
@@ -77,104 +74,104 @@ let UserController = class UserController {
         if (userID === user.id || user.roleAdmin) {
             return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
         }
-        return Promise.reject(rest_1.UnauthError());
+        return Promise.reject(UnauthError());
     }
     async validateUserOrAdmin(orm, id, user) {
         if (id === user.id) {
             return user;
         }
         if (!user.roleAdmin) {
-            throw rest_1.UnauthError();
+            throw UnauthError();
         }
         return await orm.User.oneOrFailByID(id);
     }
 };
 __decorate([
-    rest_1.Get('/id', () => user_model_1.User, { description: 'Get an User by Id', roles: [enums_1.UserRole.admin], summary: 'Get User' }),
-    __param(0, rest_1.QueryParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.Ctx()),
+    Get('/id', () => User, { description: 'Get an User by Id', roles: [UserRole.admin], summary: 'Get User' }),
+    __param(0, QueryParam('id', { description: 'User Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_args_1.IncludesUserArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesUserArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/search', () => user_model_1.UserPage, { description: 'Search Users', roles: [enums_1.UserRole.admin] }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/search', () => UserPage, { description: 'Search Users', roles: [UserRole.admin] }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        user_args_1.IncludesUserArgs,
-        user_args_1.UserFilterArgs,
-        user_args_1.UserOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesUserArgs,
+        UserFilterArgs,
+        UserOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "search", null);
 __decorate([
-    rest_1.Post('/create', () => user_model_1.User, { description: 'Create an User', roles: [enums_1.UserRole.admin], summary: 'Create User' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', () => User, { description: 'Create an User', roles: [UserRole.admin], summary: 'Create User' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_args_1.UserMutateArgs, Object]),
+    __metadata("design:paramtypes", [UserMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/update', () => user_model_1.User, { description: 'Update an User', roles: [enums_1.UserRole.admin], summary: 'Update User' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/update', () => User, { description: 'Update an User', roles: [UserRole.admin], summary: 'Update User' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_args_1.UserMutateArgs, Object]),
+    __metadata("design:paramtypes", [String, UserMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "update", null);
 __decorate([
-    rest_1.Post('/remove', { description: 'Remove an User', roles: [enums_1.UserRole.admin], summary: 'Remove User' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', { description: 'Remove an User', roles: [UserRole.admin], summary: 'Remove User' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
 __decorate([
-    rest_1.Post('/password/update', { description: 'Set an User Password', roles: [enums_1.UserRole.stream], summary: 'Change Password' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/password/update', { description: 'Set an User Password', roles: [UserRole.stream], summary: 'Change Password' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_args_1.UserPasswordUpdateArgs, Object]),
+    __metadata("design:paramtypes", [String, UserPasswordUpdateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "changePassword", null);
 __decorate([
-    rest_1.Post('/email/update', { description: 'Set an User Email Address', roles: [enums_1.UserRole.stream], summary: 'Change Email' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/email/update', { description: 'Set an User Email Address', roles: [UserRole.stream], summary: 'Change Email' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_args_1.UserEmailUpdateArgs, Object]),
+    __metadata("design:paramtypes", [String, UserEmailUpdateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "changeEmail", null);
 __decorate([
-    rest_1.Post('/image/random', { description: 'Generate a random User Image', roles: [enums_1.UserRole.stream], summary: 'Set Random Image' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/image/random', { description: 'Generate a random User Image', roles: [UserRole.stream], summary: 'Set Random Image' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, user_args_1.UserGenerateImageArgs, Object]),
+    __metadata("design:paramtypes", [String, UserGenerateImageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "generateUserImage", null);
 __decorate([
-    rest_1.Post('/image/upload', { description: 'Upload an User Image', roles: [enums_1.UserRole.stream], summary: 'Upload Image' }),
-    __param(0, rest_1.BodyParam('id', { description: 'User Id', isID: true })),
-    __param(1, rest_1.Upload('image')),
-    __param(2, rest_1.Ctx()),
+    Post('/image/upload', { description: 'Upload an User Image', roles: [UserRole.stream], summary: 'Upload Image' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, Upload('image')),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, rest_1.UploadFile, Object]),
+    __metadata("design:paramtypes", [String, UploadFile, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "uploadUserImage", null);
 UserController = __decorate([
-    rest_1.Controller('/user', { tags: ['User'] })
+    Controller('/user', { tags: ['User'] })
 ], UserController);
-exports.UserController = UserController;
+export { UserController };
 //# sourceMappingURL=user.controller.js.map

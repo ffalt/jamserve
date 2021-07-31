@@ -1,14 +1,11 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RateLimitService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const rate_limiter_flexible_1 = require("rate-limiter-flexible");
+import { InRequestScope } from 'typescript-ioc';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits) {
     if (countConsecutiveOutOfLimits <= 1) {
         return 1;
@@ -22,8 +19,8 @@ let RateLimitService = class RateLimitService {
             duration: 15 * 60,
             keyPrefix: 'login'
         };
-        this.loginLimiter = new rate_limiter_flexible_1.RateLimiterMemory(this.loginLimiterOption);
-        this.limiterConsecutiveOutOfLimits = new rate_limiter_flexible_1.RateLimiterMemory({
+        this.loginLimiter = new RateLimiterMemory(this.loginLimiterOption);
+        this.limiterConsecutiveOutOfLimits = new RateLimiterMemory({
             keyPrefix: 'login_consecutive_outoflimits',
             points: 99999,
             duration: 0,
@@ -64,7 +61,7 @@ let RateLimitService = class RateLimitService {
     }
 };
 RateLimitService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], RateLimitService);
-exports.RateLimitService = RateLimitService;
+export { RateLimitService };
 //# sourceMappingURL=ratelimit.service.js.map

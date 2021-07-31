@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,24 +7,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DocsMiddleware = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const express_1 = __importDefault(require("express"));
-const apollo_middleware_1 = require("./apollo.middleware");
-const rest_middleware_1 = require("./rest.middleware");
-const rest_1 = require("../../rest");
-const path_1 = __importDefault(require("path"));
+import { Inject, InRequestScope } from 'typescript-ioc';
+import express from 'express';
+import { ApolloMiddleware } from './apollo.middleware';
+import { RestMiddleware } from './rest.middleware';
+import { ApiBaseResponder, buildAngularClientZip, buildAxiosClientZip, buildOpenApi } from '../../rest';
+import path from 'path';
 let DocsMiddleware = class DocsMiddleware {
     getOpenApiSchema(extended = true) {
-        const openapi = rest_1.buildOpenApi(extended);
+        const openapi = buildOpenApi(extended);
         return JSON.stringify(openapi, null, '\t');
     }
     async middleware() {
-        const api = express_1.default.Router();
+        const api = express.Router();
         api.get('/schema.graphql', (req, res) => {
             res.type('application/graphql').send(this.apollo.printSchema());
         });
@@ -36,25 +30,25 @@ let DocsMiddleware = class DocsMiddleware {
             res.type('application/json').send(this.getOpenApiSchema());
         });
         api.get('/angular-client.zip', async (req, res) => {
-            rest_1.ApiBaseResponder.sendBinary(req, res, await rest_1.buildAngularClientZip());
+            ApiBaseResponder.sendBinary(req, res, await buildAngularClientZip());
         });
         api.get('/axios-client.zip', async (req, res) => {
-            rest_1.ApiBaseResponder.sendBinary(req, res, await rest_1.buildAxiosClientZip());
+            ApiBaseResponder.sendBinary(req, res, await buildAxiosClientZip());
         });
-        api.get('*', express_1.default.static(path_1.default.resolve('./static/redoc/')));
+        api.get('*', express.static(path.resolve('./static/redoc/')));
         return api;
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", apollo_middleware_1.ApolloMiddleware)
+    Inject,
+    __metadata("design:type", ApolloMiddleware)
 ], DocsMiddleware.prototype, "apollo", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", rest_middleware_1.RestMiddleware)
+    Inject,
+    __metadata("design:type", RestMiddleware)
 ], DocsMiddleware.prototype, "rest", void 0);
 DocsMiddleware = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], DocsMiddleware);
-exports.DocsMiddleware = DocsMiddleware;
+export { DocsMiddleware };
 //# sourceMappingURL=docs.middleware.js.map

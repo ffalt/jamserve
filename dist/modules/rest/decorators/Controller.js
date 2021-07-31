@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Controller = void 0;
-const metadata_1 = require("../metadata");
+import { getMetadataStorage } from '../metadata';
 function extractClassName(target) {
     const s = target.toString().split(' ');
     return s[1];
 }
-function Controller(route, options) {
+export function Controller(route, options) {
     return (target) => {
-        metadata_1.getMetadataStorage().collectControllerClassMetadata({
+        getMetadataStorage().collectControllerClassMetadata({
             target,
             route,
             name: extractClassName(target),
@@ -20,5 +17,4 @@ function Controller(route, options) {
         });
     };
 }
-exports.Controller = Controller;
 //# sourceMappingURL=Controller.js.map

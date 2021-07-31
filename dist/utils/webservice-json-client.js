@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebserviceJSONClient = void 0;
-const logger_1 = require("./logger");
-const webservice_client_1 = require("./webservice-client");
-const log = logger_1.logger('WebserviceJSONClient');
-class WebserviceJSONClient extends webservice_client_1.WebserviceClient {
+import { logger } from './logger';
+import { WebserviceClient } from './webservice-client';
+const log = logger('WebserviceJSONClient');
+export class WebserviceJSONClient extends WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent, options) {
         super(requestPerInterval, requestIntervalMS, userAgent);
         const defaultOptions = {
@@ -66,5 +63,4 @@ class WebserviceJSONClient extends webservice_client_1.WebserviceClient {
         }
     }
 }
-exports.WebserviceJSONClient = WebserviceJSONClient;
 //# sourceMappingURL=webservice-json-client.js.map

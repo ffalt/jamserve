@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,56 +7,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Server = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const path_1 = __importDefault(require("path"));
-const express_1 = __importDefault(require("express"));
-const engine_service_1 = require("../engine/services/engine.service");
-const body_parser_1 = __importDefault(require("body-parser"));
-const helmet_1 = __importDefault(require("helmet"));
-const engine_middleware_1 = require("./middlewares/engine.middleware");
-const config_service_1 = require("../engine/services/config.service");
-const logger_1 = require("../../utils/logger");
-const apollo_middleware_1 = require("./middlewares/apollo.middleware");
-const session_middleware_1 = require("./middlewares/session.middleware");
-const log_middleware_1 = require("./middlewares/log.middleware");
-const rest_middleware_1 = require("./middlewares/rest.middleware");
-const passport_middleware_1 = require("./middlewares/passport.middleware");
-const version_1 = require("../engine/rest/version");
-const docs_middleware_1 = require("./middlewares/docs.middleware");
-const cors_middleware_1 = require("./middlewares/cors.middleware");
-const session_service_1 = require("../../entity/session/session.service");
-const csp_middleware_1 = require("./middlewares/csp.middleware");
-const log = logger_1.logger('Server');
+import { Inject, InRequestScope } from 'typescript-ioc';
+import path from 'path';
+import express from 'express';
+import { EngineService } from '../engine/services/engine.service';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import { useEngineMiddleware } from './middlewares/engine.middleware';
+import { ConfigService } from '../engine/services/config.service';
+import { logger } from '../../utils/logger';
+import { ApolloMiddleware } from './middlewares/apollo.middleware';
+import { useSessionMiddleware } from './middlewares/session.middleware';
+import { useLogMiddleware } from './middlewares/log.middleware';
+import { RestMiddleware } from './middlewares/rest.middleware';
+import { usePassPortMiddleWare } from './middlewares/passport.middleware';
+import { JAMAPI_URL_VERSION } from '../engine/rest/version';
+import { DocsMiddleware } from './middlewares/docs.middleware';
+import { useAuthenticatedCors } from './middlewares/cors.middleware';
+import { SessionService } from '../../entity/session/session.service';
+import { useCSPMiddleware } from './middlewares/csp.middleware';
+const log = logger('Server');
 let Server = class Server {
     async init() {
-        const app = express_1.default();
+        const app = express();
         log.debug(`registering express standard middleware`);
-        app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
-        app.use(body_parser_1.default.json({ limit: '10mb' }));
-        app.use(body_parser_1.default.json({ type: 'application/json', limit: '10mb' }));
-        app.use(body_parser_1.default.json({ type: 'application/vnd.api+json', limit: '10mb' }));
-        app.use(body_parser_1.default.json({ type: 'application/csp-report', limit: '10mb' }));
-        app.use(helmet_1.default());
-        app.use(csp_middleware_1.useCSPMiddleware());
+        app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+        app.use(bodyParser.json({ limit: '10mb' }));
+        app.use(bodyParser.json({ type: 'application/json', limit: '10mb' }));
+        app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '10mb' }));
+        app.use(bodyParser.json({ type: 'application/csp-report', limit: '10mb' }));
+        app.use(helmet());
+        app.use(useCSPMiddleware());
         if (this.configService.env.session.proxy) {
             app.enable('trust proxy');
         }
-        app.use(log_middleware_1.useLogMiddleware());
+        app.use(useLogMiddleware());
         app.post('/csp/report-violation', async (req, res) => {
             log.error('CSP', req.body ? JSON.stringify(req.body) : 'No data');
             res.status(204).end();
         });
-        app.use(engine_middleware_1.useEngineMiddleware(this.engine));
-        app.use(session_middleware_1.useSessionMiddleware(this.configService, this.sessionService));
-        app.use(passport_middleware_1.usePassPortMiddleWare(app, this.engine));
-        app.use(cors_middleware_1.useAuthenticatedCors(this.configService));
+        app.use(useEngineMiddleware(this.engine));
+        app.use(useSessionMiddleware(this.configService, this.sessionService));
+        app.use(usePassPortMiddleWare(app, this.engine));
+        app.use(useAuthenticatedCors(this.configService));
         log.debug(`registering jam api middleware`);
-        app.use(`/jam/${version_1.JAMAPI_URL_VERSION}`, this.rest.middleware());
+        app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
         log.debug(`registering graphql playground`);
         app.use('/graphql/playground', await this.apollo.playground());
         log.debug(`registering graphql middleware`);
@@ -70,8 +64,8 @@ let Server = class Server {
             res.type('text/javascript');
             res.send(jamberry_config);
         });
-        const indexHTML = path_1.default.resolve(this.configService.env.paths.frontend, 'index.html');
-        app.get('/*', express_1.default.static(path_1.default.resolve(this.configService.env.paths.frontend)));
+        const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
+        app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
         app.get('*', (req, res) => {
             res.sendFile(indexHTML);
         });
@@ -93,7 +87,7 @@ let Server = class Server {
             { Content: 'Frontend', URL: `${domain}` },
             { Content: 'GraphQl Api', URL: `${domain}/graphql` },
             { Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
-            { Content: 'REST Api', URL: `${domain}/jam/${version_1.JAMAPI_URL_VERSION}/ping` },
+            { Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
             { Content: 'REST Documentation', URL: `${domain}/docs` },
             { Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
             { Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },
@@ -124,31 +118,31 @@ let Server = class Server {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", engine_service_1.EngineService)
+    Inject,
+    __metadata("design:type", EngineService)
 ], Server.prototype, "engine", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", apollo_middleware_1.ApolloMiddleware)
+    Inject,
+    __metadata("design:type", ApolloMiddleware)
 ], Server.prototype, "apollo", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", rest_middleware_1.RestMiddleware)
+    Inject,
+    __metadata("design:type", RestMiddleware)
 ], Server.prototype, "rest", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], Server.prototype, "configService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", session_service_1.SessionService)
+    Inject,
+    __metadata("design:type", SessionService)
 ], Server.prototype, "sessionService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", docs_middleware_1.DocsMiddleware)
+    Inject,
+    __metadata("design:type", DocsMiddleware)
 ], Server.prototype, "docs", void 0);
 Server = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], Server);
-exports.Server = Server;
+export { Server };
 //# sourceMappingURL=server.js.map

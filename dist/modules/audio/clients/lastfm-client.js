@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LastFMClient = void 0;
-const logger_1 = require("../../../utils/logger");
-const webservice_client_1 = require("../../../utils/webservice-client");
-const log = logger_1.logger('LastFM');
+import { logger } from '../../../utils/logger';
+import { WebserviceClient } from '../../../utils/webservice-client';
+const log = logger('LastFM');
 class LastFMClientBeautify {
     static ensureList(name, sub) {
         if (sub[name]) {
@@ -68,10 +65,21 @@ class LastFMClientBeautify {
         return LastFMClientBeautify.walk(obj, {});
     }
 }
-class LastFMClient extends webservice_client_1.WebserviceClient {
+export class LastFMClient extends WebserviceClient {
     constructor(options) {
         super(5, 1000, options.userAgent);
         this.options = options;
+    }
+    async parseResult(response) {
+        if (response.status === 404) {
+            return {};
+        }
+        try {
+            return response.json();
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
     }
     async get(api, params) {
         log.info('requesting', api, JSON.stringify(params));
@@ -83,7 +91,10 @@ class LastFMClient extends webservice_client_1.WebserviceClient {
         sortedParams.api_key = this.options.key;
         sortedParams.format = 'json';
         try {
-            const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams);
+            const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams, true);
+            if (data?.error) {
+                return {};
+            }
             return LastFMClientBeautify.beautify(data);
         }
         catch (e) {
@@ -143,5 +154,4 @@ class LastFMClient extends webservice_client_1.WebserviceClient {
         }
     }
 }
-exports.LastFMClient = LastFMClient;
 //# sourceMappingURL=lastfm-client.js.map

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetadataServiceSimilarTracks = void 0;
-const random_1 = require("../../utils/random");
-class MetadataServiceSimilarTracks {
+import { shuffle } from '../../utils/random';
+export class MetadataServiceSimilarTracks {
     constructor(service) {
         this.service = service;
     }
@@ -58,7 +55,7 @@ class MetadataServiceSimilarTracks {
                 }));
             }
         }
-        return random_1.shuffle(tracks);
+        return shuffle(tracks);
     }
     async getSimilarArtistTracks(orm, similars, page) {
         if (!similars || similars.length === 0) {
@@ -105,5 +102,4 @@ class MetadataServiceSimilarTracks {
         return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
     }
 }
-exports.MetadataServiceSimilarTracks = MetadataServiceSimilarTracks;
 //# sourceMappingURL=metadata.service.similar-tracks.js.map

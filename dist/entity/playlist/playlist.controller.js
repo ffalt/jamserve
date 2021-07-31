@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,17 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistController = void 0;
-const playlist_model_1 = require("./playlist.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const playlist_entry_model_1 = require("../playlistentry/playlist-entry.model");
-const track_args_1 = require("../track/track.args");
-const playlist_args_1 = require("./playlist.args");
-const episode_args_1 = require("../episode/episode.args");
-const base_args_1 = require("../base/base.args");
-const playlist_entry_args_1 = require("../playlistentry/playlist-entry.args");
+import { Playlist, PlaylistIndex, PlaylistPage } from './playlist.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { PlaylistEntryPage } from '../playlistentry/playlist-entry.model';
+import { IncludesTrackArgs } from '../track/track.args';
+import { IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs } from './playlist.args';
+import { IncludesEpisodeArgs } from '../episode/episode.args';
+import { ListArgs, PageArgs } from '../base/base.args';
+import { PlaylistEntryOrderArgs } from '../playlistentry/playlist-entry.args';
 let PlaylistController = class PlaylistController {
     async id(id, playlistArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         return engine.transform.playlist(orm, await orm.Playlist.oneOrFailFilter({ ids: [id] }, user), playlistArgs, trackArgs, episodeArgs, user);
@@ -55,89 +52,89 @@ let PlaylistController = class PlaylistController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => playlist_model_1.Playlist, { description: 'Get a Playlist by Id', summary: 'Get Playlist' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Playlist Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/id', () => Playlist, { description: 'Get a Playlist by Id', summary: 'Get Playlist' }),
+    __param(0, QueryParam('id', { description: 'Playlist Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, playlist_args_1.IncludesPlaylistArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesPlaylistArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/index', () => playlist_model_1.PlaylistIndex, { description: 'Get the Navigation Index for Playlists', summary: 'Get Index' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/index', () => PlaylistIndex, { description: 'Get the Navigation Index for Playlists', summary: 'Get Index' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_args_1.PlaylistFilterArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "index", null);
 __decorate([
-    rest_1.Get('/search', () => playlist_model_1.PlaylistPage, { description: 'Search Playlists' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.QueryParams()),
-    __param(6, rest_1.QueryParams()),
-    __param(7, rest_1.Ctx()),
+    Get('/search', () => PlaylistPage, { description: 'Search Playlists' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, QueryParams()),
+    __param(6, QueryParams()),
+    __param(7, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        playlist_args_1.IncludesPlaylistArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs,
-        playlist_args_1.PlaylistFilterArgs,
-        playlist_args_1.PlaylistOrderArgs,
-        base_args_1.ListArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesPlaylistArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs,
+        PlaylistFilterArgs,
+        PlaylistOrderArgs,
+        ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "search", null);
 __decorate([
-    rest_1.Get('/entries', () => playlist_entry_model_1.PlaylistEntryPage, { description: 'Get Media Entries [Track/Episode] of Playlists', summary: 'Get Entries' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.Ctx()),
+    Get('/entries', () => PlaylistEntryPage, { description: 'Get Media Entries [Track/Episode] of Playlists', summary: 'Get Entries' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs,
-        playlist_args_1.PlaylistFilterArgs,
-        playlist_entry_args_1.PlaylistEntryOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs,
+        PlaylistFilterArgs,
+        PlaylistEntryOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "entries", null);
 __decorate([
-    rest_1.Post('/create', () => playlist_model_1.Playlist, { description: 'Create a Playlist', summary: 'Create Playlist' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', () => Playlist, { description: 'Create a Playlist', summary: 'Create Playlist' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_args_1.PlaylistMutateArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/update', () => playlist_model_1.Playlist, { description: 'Update a Playlist', summary: 'Update Playlist' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Playlist Id', isID: true })),
-    __param(1, rest_1.BodyParams()),
-    __param(2, rest_1.Ctx()),
+    Post('/update', () => Playlist, { description: 'Update a Playlist', summary: 'Update Playlist' }),
+    __param(0, BodyParam('id', { description: 'Playlist Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, playlist_args_1.PlaylistMutateArgs, Object]),
+    __metadata("design:paramtypes", [String, PlaylistMutateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "update", null);
 __decorate([
-    rest_1.Post('/remove', { description: 'Remove a Playlist', summary: 'Remove Playlist' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Playlist Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', { description: 'Remove a Playlist', summary: 'Remove Playlist' }),
+    __param(0, BodyParam('id', { description: 'Playlist Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistController.prototype, "remove", null);
 PlaylistController = __decorate([
-    rest_1.Controller('/playlist', { tags: ['Playlist'], roles: [enums_1.UserRole.stream] })
+    Controller('/playlist', { tags: ['Playlist'], roles: [UserRole.stream] })
 ], PlaylistController);
-exports.PlaylistController = PlaylistController;
+export { PlaylistController };
 //# sourceMappingURL=playlist.controller.js.map

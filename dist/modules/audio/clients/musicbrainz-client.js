@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MusicbrainzClient = void 0;
-const webservice_json_client_1 = require("../../../utils/webservice-json-client");
-const musicbrainz_client_types_1 = require("./musicbrainz-client.types");
-class MusicbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client';
+import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types';
+export class MusicbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
             host: 'https://musicbrainz.org',
@@ -76,8 +73,8 @@ class MusicbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
         if (!params.id || params.id.length === 0) {
             return Promise.reject(Error(`Invalid lookup id for type ${params.type}`));
         }
-        const lookup = musicbrainz_client_types_1.LookupIncludes[params.type];
-        const inc = params.inc || musicbrainz_client_types_1.LookupIncludes[params.type].join('+');
+        const lookup = LookupIncludes[params.type];
+        const inc = params.inc || LookupIncludes[params.type].join('+');
         if (!lookup) {
             return Promise.reject(Error('Invalid Lookup'));
         }
@@ -96,7 +93,7 @@ class MusicbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
         return this.beautify(result);
     }
     async browse(params) {
-        const invalidKey = Object.keys(params.lookupIds).find(key => !musicbrainz_client_types_1.LookupBrowseTypes[params.type] || !musicbrainz_client_types_1.LookupBrowseTypes[params.type].includes(key));
+        const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || !LookupBrowseTypes[params.type].includes(key));
         if (invalidKey) {
             return Promise.reject(Error(`Invalid browse lookup key for type ${params.type}: ${invalidKey}`));
         }
@@ -130,5 +127,4 @@ class MusicbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
         return this.beautify(result);
     }
 }
-exports.MusicbrainzClient = MusicbrainzClient;
 //# sourceMappingURL=musicbrainz-client.js.map

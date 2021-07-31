@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildTSParameterTypes = exports.buildTSResultTypes = exports.buildTSEnums = void 0;
-const metadata_1 = require("../metadata");
+import { getMetadataStorage } from '../metadata';
 const tab = '\t';
 const tabtab = '\t\t';
-function buildTSEnums() {
-    const metadata = metadata_1.getMetadataStorage();
+export function buildTSEnums() {
+    const metadata = getMetadataStorage();
     const sl = [
         '// @generated',
         '// This file was automatically generated and should not be edited.\n',
@@ -20,7 +17,6 @@ function buildTSEnums() {
     }
     return sl.join('\n');
 }
-exports.buildTSEnums = buildTSEnums;
 function buildTSField(field, metadata, sl, withDefault = false) {
     const typeOptions = field.typeOptions;
     let fieldType;
@@ -88,8 +84,8 @@ function buildTSType(type, metadata, sl, withDefault, list) {
     }
     sl.push(`${tab}}\n`);
 }
-function buildTSResultTypes() {
-    const metadata = metadata_1.getMetadataStorage();
+export function buildTSResultTypes() {
+    const metadata = getMetadataStorage();
     const sl = [
         '// @generated',
         '// This file was automatically generated and should not be edited.\n',
@@ -102,7 +98,6 @@ function buildTSResultTypes() {
     sl.push('}');
     return sl.join('\n') + '\n';
 }
-exports.buildTSResultTypes = buildTSResultTypes;
 function getCombinedType(call) {
     if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
         const combineName = call.controllerClassMetadata?.name.replace('Controller', '') +
@@ -111,7 +106,7 @@ function getCombinedType(call) {
         call.params.forEach(p => {
             if (p.kind === 'args') {
                 const type = p.getType();
-                const argumentType = metadata_1.getMetadataStorage().argumentTypes.find(it => it.target === type);
+                const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
                 if (argumentType) {
                     names.push(argumentType.name);
                 }
@@ -132,8 +127,8 @@ function getCombinedType(call) {
     }
     return [];
 }
-function buildTSParameterTypes() {
-    const metadata = metadata_1.getMetadataStorage();
+export function buildTSParameterTypes() {
+    const metadata = getMetadataStorage();
     const sl = [
         '// @generated',
         '// This file was automatically generated and should not be edited.\n',
@@ -153,5 +148,4 @@ function buildTSParameterTypes() {
     }
     return sl.join('\n') + '}\n';
 }
-exports.buildTSParameterTypes = buildTSParameterTypes;
 //# sourceMappingURL=typescript.js.map

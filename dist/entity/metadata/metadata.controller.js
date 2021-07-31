@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaDataController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const metadata_model_1 = require("./metadata.model");
-const metadata_args_1 = require("./metadata.args");
-const consts_1 = require("../../types/consts");
+import { Controller, Ctx, Get, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { MetaDataResult } from './metadata.model';
+import { AcousticBrainzLookupArgs, AcoustidLookupArgs, CoverArtArchiveImageArgs, CoverArtArchiveLookupArgs, LastFMLookupArgs, LyricsOVHSearchArgs, MusicBrainzLookupArgs, MusicBrainzSearchArgs, WikidataLookupArgs, WikidataSummaryArgs, WikipediaSummaryArgs } from './metadata.args';
+import { ApiImageTypes } from '../../types/consts';
 let MetaDataController = class MetaDataController {
     async lastfmLookup(args, { orm, engine }) {
         return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };
@@ -55,98 +52,98 @@ let MetaDataController = class MetaDataController {
     }
 };
 __decorate([
-    rest_1.Get('/lastfm/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup LastFM data', summary: 'Lookup LastFM' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/lastfm/lookup', () => MetaDataResult, { description: 'Lookup LastFM data', summary: 'Lookup LastFM' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.LastFMLookupArgs, Object]),
+    __metadata("design:paramtypes", [LastFMLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "lastfmLookup", null);
 __decorate([
-    rest_1.Get('/lyricsovh/search', () => metadata_model_1.MetaDataResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/lyricsovh/search', () => MetaDataResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.LyricsOVHSearchArgs, Object]),
+    __metadata("design:paramtypes", [LyricsOVHSearchArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "lyricsovhSearch", null);
 __decorate([
-    rest_1.Get('/acoustid/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/acoustid/lookup', () => MetaDataResult, { description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.AcoustidLookupArgs, Object]),
+    __metadata("design:paramtypes", [AcoustidLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "acoustidLookup", null);
 __decorate([
-    rest_1.Get('/musicbrainz/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup MusicBrainz data', summary: 'Lookup MusicBrainz' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/musicbrainz/lookup', () => MetaDataResult, { description: 'Lookup MusicBrainz data', summary: 'Lookup MusicBrainz' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.MusicBrainzLookupArgs, Object]),
+    __metadata("design:paramtypes", [MusicBrainzLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "musicbrainzLookup", null);
 __decorate([
-    rest_1.Get('/musicbrainz/search', () => metadata_model_1.MetaDataResult, { description: 'Search MusicBrainz data', summary: 'Search MusicBrainz' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/musicbrainz/search', () => MetaDataResult, { description: 'Search MusicBrainz data', summary: 'Search MusicBrainz' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.MusicBrainzSearchArgs, Object]),
+    __metadata("design:paramtypes", [MusicBrainzSearchArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "musicbrainzSearch", null);
 __decorate([
-    rest_1.Get('/acousticbrainz/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup AcousticBrainz data', summary: 'Lookup AcousticBrainz' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/acousticbrainz/lookup', () => MetaDataResult, { description: 'Lookup AcousticBrainz data', summary: 'Lookup AcousticBrainz' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.AcousticBrainzLookupArgs, Object]),
+    __metadata("design:paramtypes", [AcousticBrainzLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "acousticbrainzLookup", null);
 __decorate([
-    rest_1.Get('/coverartarchive/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup CoverArtArchive data', summary: 'Lookup CoverArtArchive' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/coverartarchive/lookup', () => MetaDataResult, { description: 'Lookup CoverArtArchive data', summary: 'Lookup CoverArtArchive' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.CoverArtArchiveLookupArgs, Object]),
+    __metadata("design:paramtypes", [CoverArtArchiveLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "coverartarchiveLookup", null);
 __decorate([
-    rest_1.Get('/coverartarchive/image', {
-        binary: consts_1.ApiImageTypes,
+    Get('/coverartarchive/image', {
+        binary: ApiImageTypes,
         description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
     }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.CoverArtArchiveImageArgs, Object]),
+    __metadata("design:paramtypes", [CoverArtArchiveImageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "coverartarchiveImage", null);
 __decorate([
-    rest_1.Get('/wikipedia/summary', () => metadata_model_1.MetaDataResult, { description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/wikipedia/summary', () => MetaDataResult, { description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.WikipediaSummaryArgs, Object]),
+    __metadata("design:paramtypes", [WikipediaSummaryArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "wikipediaSummarySearch", null);
 __decorate([
-    rest_1.Get('/wikidata/summary', () => metadata_model_1.MetaDataResult, { description: 'Search WikiData summary data', summary: 'Search Wikidata' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/wikidata/summary', () => MetaDataResult, { description: 'Search WikiData summary data', summary: 'Search Wikidata' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.WikidataSummaryArgs, Object]),
+    __metadata("design:paramtypes", [WikidataSummaryArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "wikidataSummarySearch", null);
 __decorate([
-    rest_1.Get('/wikidata/lookup', () => metadata_model_1.MetaDataResult, { description: 'Lookup WikiData summary data', summary: 'Lookup WikiData' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/wikidata/lookup', () => MetaDataResult, { description: 'Lookup WikiData summary data', summary: 'Lookup WikiData' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [metadata_args_1.WikidataLookupArgs, Object]),
+    __metadata("design:paramtypes", [WikidataLookupArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "wikidataLookup", null);
 MetaDataController = __decorate([
-    rest_1.Controller('/metadata', { tags: ['Meta Data'], roles: [enums_1.UserRole.stream] })
+    Controller('/metadata', { tags: ['Meta Data'], roles: [UserRole.stream] })
 ], MetaDataController);
-exports.MetaDataController = MetaDataController;
+export { MetaDataController };
 //# sourceMappingURL=metadata.controller.js.map

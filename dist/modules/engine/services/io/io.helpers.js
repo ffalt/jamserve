@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DelayedRequests = void 0;
-class DelayedRequests {
+export class DelayedRequests {
     constructor() {
         this.requests = new Map();
     }
@@ -31,5 +28,4 @@ class DelayedRequests {
         }, 10000);
     }
 }
-exports.DelayedRequests = DelayedRequests;
 //# sourceMappingURL=io.helpers.js.map

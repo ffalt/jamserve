@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetadataStorage = void 0;
-const utils_1 = require("type-graphql/dist/metadata/utils");
-class MetadataStorage {
+import { ensureReflectMetadataExists } from 'type-graphql/dist/metadata/utils';
+export class MetadataStorage {
     constructor() {
         this.initialized = false;
         this.gets = [];
@@ -14,7 +11,7 @@ class MetadataStorage {
         this.controllerClasses = [];
         this.fields = [];
         this.params = [];
-        utils_1.ensureReflectMetadataExists();
+        ensureReflectMetadataExists();
     }
     resultType(target) {
         return this.resultTypes.find(it => it.target === target);
@@ -85,5 +82,4 @@ class MetadataStorage {
         });
     }
 }
-exports.MetadataStorage = MetadataStorage;
 //# sourceMappingURL=metadata-storage.js.map

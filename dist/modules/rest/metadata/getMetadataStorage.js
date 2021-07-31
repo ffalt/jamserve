@@ -1,10 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMetadataStorage = void 0;
-const metadata_storage_1 = require("./metadata-storage");
+import { MetadataStorage } from './metadata-storage';
 let RESTMetadataStorage;
-function getMetadataStorage() {
-    return (RESTMetadataStorage || (RESTMetadataStorage = new metadata_storage_1.MetadataStorage()));
+export function getMetadataStorage() {
+    return (RESTMetadataStorage || (RESTMetadataStorage = new MetadataStorage()));
 }
-exports.getMetadataStorage = getMetadataStorage;
 //# sourceMappingURL=getMetadataStorage.js.map

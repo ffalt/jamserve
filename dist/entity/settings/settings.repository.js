@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SettingsRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-class SettingsRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { DBObjectType } from '../../types/enums';
+export class SettingsRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.settings;
+        this.objType = DBObjectType.settings;
     }
     buildOrder(_) {
         return [];
@@ -15,5 +12,4 @@ class SettingsRepository extends base_repository_1.BaseRepository {
         return {};
     }
 }
-exports.SettingsRepository = SettingsRepository;
 //# sourceMappingURL=settings.repository.js.map

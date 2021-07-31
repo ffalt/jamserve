@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetadataStorage = void 0;
-const utils_1 = require("type-graphql/dist/metadata/utils");
-class MetadataStorage {
+import { ensureReflectMetadataExists } from 'type-graphql/dist/metadata/utils';
+export class MetadataStorage {
     constructor() {
         this.entities = [];
         this.fields = [];
         this.enums = [];
         this.initialized = false;
-        utils_1.ensureReflectMetadataExists();
+        ensureReflectMetadataExists();
     }
     collectEnumMetadata(definition) {
         this.enums.push(definition);
@@ -56,5 +53,4 @@ class MetadataStorage {
         this.enums = [];
     }
 }
-exports.MetadataStorage = MetadataStorage;
 //# sourceMappingURL=metadata-storage.js.map

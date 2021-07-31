@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.examples = void 0;
-exports.examples = {
+export const examples = {
     timestamp: new Date(2001, 0, 1),
     year: 2001,
     token: 'eyfsfkwefwesdfsdlkfgmergergweefw.wefkljnsvdpvnssd',

@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FORMAT = void 0;
-const jamp3_1 = require("jamp3");
-const genres_1 = require("../../utils/genres");
-const audio_module_1 = require("./audio.module");
-const enums_1 = require("../../types/enums");
-class FORMAT {
+import { ID3v1_GENRES, ID3v2 } from 'jamp3';
+import { cleanGenre } from '../../utils/genres';
+import { ID3TrackTagRawFormatTypes } from './audio.module';
+import { AudioFormatType, TagFormatType } from '../../types/enums';
+export class FORMAT {
     static packJamServeMedia(data) {
         if (!data) {
             return {};
         }
         return {
-            mediaFormat: enums_1.AudioFormatType.mp3,
+            mediaFormat: AudioFormatType.mp3,
             mediaDuration: Math.floor(data.durationEstimate * 1000),
             mediaBitRate: data.bitRate,
             mediaSampleRate: data.sampleRate,
@@ -44,7 +41,7 @@ class FORMAT {
             return {};
         }
         return {
-            mediaFormat: enums_1.AudioFormatType.flac,
+            mediaFormat: AudioFormatType.flac,
             mediaDuration: Math.floor(media.duration * 1000),
             mediaSampleRate: media.sampleRate,
             mediaEncoded: 'VBR',
@@ -77,14 +74,14 @@ class FORMAT {
     }
     static packProbeJamServeTag(data) {
         if (!data || !data.format || !data.format.tags) {
-            return { format: enums_1.TagFormatType.none };
+            return { format: TagFormatType.none };
         }
         const simple = {};
         Object.keys(data.format.tags).forEach(key => {
             simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
         });
         return {
-            format: enums_1.TagFormatType.ffmpeg,
+            format: TagFormatType.ffmpeg,
             artist: simple.ARTIST,
             title: simple.TITLE,
             album: simple.ALBUM,
@@ -94,7 +91,7 @@ class FORMAT {
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,
-            genres: simple.GENRE ? genres_1.cleanGenre(simple.GENRE) : undefined,
+            genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
             albumArtist: simple.ALBUM_ARTIST,
             albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
             albumArtistSort: simple.ALBUM_ARTIST_SORT || simple.ALBUM_ARTIST_SORT_ORDER,
@@ -117,9 +114,9 @@ class FORMAT {
             return undefined;
         }
         const simple = data.value;
-        const genre = (simple.genreIndex !== undefined && !!jamp3_1.ID3v1_GENRES[simple.genreIndex]) ? jamp3_1.ID3v1_GENRES[simple.genreIndex] : undefined;
+        const genre = (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined;
         return {
-            format: enums_1.TagFormatType.id3v1,
+            format: TagFormatType.id3v1,
             artist: FORMAT.cleanText(simple.artist),
             title: FORMAT.cleanText(simple.title),
             album: FORMAT.cleanText(simple.album),
@@ -132,9 +129,9 @@ class FORMAT {
         if (!data) {
             return undefined;
         }
-        const simple = jamp3_1.ID3v2.simplify(data, ['CHAP', 'APIC']);
+        const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
         const pics = data.frames.filter(f => f.id === 'APIC');
-        const format = audio_module_1.ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || enums_1.TagFormatType.none;
+        const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
         return {
             format,
             album: FORMAT.cleanText(simple.ALBUM),
@@ -145,7 +142,7 @@ class FORMAT {
             artistSort: FORMAT.cleanText(simple.ARTISTSORT),
             title: FORMAT.cleanText(simple.TITLE),
             titleSort: FORMAT.cleanText(simple.TITLESORT),
-            genres: simple.GENRE ? genres_1.cleanGenre(simple.GENRE) : undefined,
+            genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
             disc: FORMAT.parseNum(simple.DISCNUMBER),
             discTotal: FORMAT.parseNum(simple.DISCTOTAL),
             trackNr: FORMAT.parseNum(simple.TRACKNUMBER),
@@ -176,14 +173,14 @@ class FORMAT {
         }
         const simple = comment.tag;
         return {
-            format: enums_1.TagFormatType.vorbis,
+            format: TagFormatType.vorbis,
             album: simple.ALBUM,
             albumSort: simple.ALBUMSORT,
             albumArtist: simple.ALBUMARTIST,
             albumArtistSort: simple.ALBUMARTISTSORT,
             artist: simple.ARTIST,
             artistSort: simple.ARTISTSORT,
-            genres: simple.GENRE ? genres_1.cleanGenre(simple.GENRE) : undefined,
+            genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
             disc: FORMAT.parseNum(simple.DISCNUMBER),
             discTotal: FORMAT.parseNum(simple.DISCTOTAL) || FORMAT.parseNum(simple.TOTALDISCS),
             title: simple.TITLE,
@@ -208,5 +205,4 @@ class FORMAT {
         };
     }
 }
-exports.FORMAT = FORMAT;
 //# sourceMappingURL=audio.format.js.map

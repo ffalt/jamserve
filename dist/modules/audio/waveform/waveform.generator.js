@@ -1,18 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WaveformGenerator = void 0;
-const d3_array_1 = require("d3-array");
-const d3_scale_1 = require("d3-scale");
-const d3_shape_1 = require("d3-shape");
-const d3_selection_1 = require("d3-selection");
-const fs_1 = __importDefault(require("fs"));
-const waveform_data_1 = __importDefault(require("waveform-data"));
-const waveform_class_1 = require("./waveform.class");
-const jsdom_1 = require("jsdom");
-class WaveformGenerator {
+import { max, min } from 'd3-array';
+import { scaleLinear } from 'd3-scale';
+import { area } from 'd3-shape';
+import { select } from 'd3-selection';
+import fs from 'fs';
+import WaveformData from 'waveform-data';
+import { Waveform } from './waveform.class';
+import { JSDOM } from 'jsdom';
+export class WaveformGenerator {
     async binary(filename) {
         const wf = await this.generateWaveform(filename);
         return wf.asBinary();
@@ -26,9 +20,9 @@ class WaveformGenerator {
         return this.buildSvg(data, width);
     }
     async generateWaveform(filename) {
-        const stream = fs_1.default.createReadStream(filename);
+        const stream = fs.createReadStream(filename);
         return new Promise((resolve, reject) => {
-            const wf = new waveform_class_1.Waveform(stream, {
+            const wf = new Waveform(stream, {
                 samplesPerPixel: 256,
                 sampleRate: 44100
             });
@@ -44,9 +38,9 @@ class WaveformGenerator {
     }
     buildSvg(data, width) {
         const height = 256;
-        const x = d3_scale_1.scaleLinear();
-        const y = d3_scale_1.scaleLinear();
-        let wfd = waveform_data_1.default.create(data);
+        const x = scaleLinear();
+        const y = scaleLinear();
+        let wfd = WaveformData.create(data);
         if (width !== undefined) {
             const samplesPerPixel = Math.floor(wfd.duration * wfd.sample_rate / width);
             wfd = wfd.resample({ width: width * 2, scale: (samplesPerPixel < wfd.scale) ? wfd.scale : undefined });
@@ -58,13 +52,13 @@ class WaveformGenerator {
         const minArray = channel.min_array();
         const maxArray = channel.max_array();
         x.domain([0, wfd.length]).rangeRound([0, width]);
-        y.domain([d3_array_1.min(minArray), d3_array_1.max(maxArray)]).rangeRound([0, height]);
-        const waveArea = d3_shape_1.area()
+        y.domain([min(minArray), max(maxArray)]).rangeRound([0, height]);
+        const waveArea = area()
             .x((a, i) => x(i))
             .y0((b, i) => y(minArray[i]))
             .y1((c) => y(c));
-        const fakedom = new jsdom_1.JSDOM('<!DOCTYPE html><html><body></body></html>');
-        const d3Element = d3_selection_1.select(fakedom.window.document).select('body');
+        const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+        const d3Element = select(fakedom.window.document).select('body');
         const svg = d3Element.append('svg')
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .attr('preserveAspectRatio', 'none')
@@ -81,5 +75,4 @@ class WaveformGenerator {
         return node?.outerHTML || '';
     }
 }
-exports.WaveformGenerator = WaveformGenerator;
 //# sourceMappingURL=waveform.generator.js.map

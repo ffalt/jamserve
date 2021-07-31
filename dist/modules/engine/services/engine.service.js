@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,46 +7,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var EngineService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EngineService = void 0;
-const path_1 = __importDefault(require("path"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const settings_service_1 = require("../../../entity/settings/settings.service");
-const io_service_1 = require("./io.service");
-const config_service_1 = require("./config.service");
-const version_1 = require("../../../version");
-const orm_service_1 = require("./orm.service");
-const waveform_service_1 = require("../../../entity/waveform/waveform.service");
-const typescript_ioc_1 = require("typescript-ioc");
-const logger_1 = require("../../../utils/logger");
-const enums_1 = require("../../../types/enums");
-const user_service_1 = require("../../../entity/user/user.service");
-const session_service_1 = require("../../../entity/session/session.service");
-const podcast_service_1 = require("../../../entity/podcast/podcast.service");
-const episode_service_1 = require("../../../entity/episode/episode.service");
-const genre_service_1 = require("../../../entity/genre/genre.service");
-const stats_service_1 = require("../../../entity/stats/stats.service");
-const metadata_service_1 = require("../../../entity/metadata/metadata.service");
-const audio_module_1 = require("../../audio/audio.module");
-const state_service_1 = require("../../../entity/state/state.service");
-const nowplaying_service_1 = require("../../../entity/nowplaying/nowplaying.service");
-const playqueue_service_1 = require("../../../entity/playqueue/playqueue.service");
-const chat_service_1 = require("../../../entity/chat/chat.service");
-const track_service_1 = require("../../../entity/track/track.service");
-const artwork_service_1 = require("../../../entity/artwork/artwork.service");
-const download_service_1 = require("../../../entity/download/download.service");
-const folder_service_1 = require("../../../entity/folder/folder.service");
-const image_service_1 = require("../../../entity/image/image.service");
-const playlist_service_1 = require("../../../entity/playlist/playlist.service");
-const stream_service_1 = require("../../../entity/stream/stream.service");
-const transform_service_1 = require("./transform.service");
-const bookmark_service_1 = require("../../../entity/bookmark/bookmark.service");
-const ratelimit_service_1 = require("./ratelimit.service");
-const log = logger_1.logger('Engine');
+import path from 'path';
+import fse from 'fs-extra';
+import { SettingsService } from '../../../entity/settings/settings.service';
+import { IoService } from './io.service';
+import { ConfigService } from './config.service';
+import { JAMSERVE_VERSION } from '../../../version';
+import { OrmService } from './orm.service';
+import { WaveformService } from '../../../entity/waveform/waveform.service';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger';
+import { RootScanStrategy } from '../../../types/enums';
+import { UserService } from '../../../entity/user/user.service';
+import { SessionService } from '../../../entity/session/session.service';
+import { PodcastService } from '../../../entity/podcast/podcast.service';
+import { EpisodeService } from '../../../entity/episode/episode.service';
+import { GenreService } from '../../../entity/genre/genre.service';
+import { StatsService } from '../../../entity/stats/stats.service';
+import { MetaDataService } from '../../../entity/metadata/metadata.service';
+import { AudioModule } from '../../audio/audio.module';
+import { StateService } from '../../../entity/state/state.service';
+import { NowPlayingService } from '../../../entity/nowplaying/nowplaying.service';
+import { PlayQueueService } from '../../../entity/playqueue/playqueue.service';
+import { ChatService } from '../../../entity/chat/chat.service';
+import { TrackService } from '../../../entity/track/track.service';
+import { ArtworkService } from '../../../entity/artwork/artwork.service';
+import { DownloadService } from '../../../entity/download/download.service';
+import { FolderService } from '../../../entity/folder/folder.service';
+import { ImageService } from '../../../entity/image/image.service';
+import { PlaylistService } from '../../../entity/playlist/playlist.service';
+import { StreamService } from '../../../entity/stream/stream.service';
+import { TransformService } from './transform.service';
+import { BookmarkService } from '../../../entity/bookmark/bookmark.service';
+import { RateLimitService } from './ratelimit.service';
+const log = logger('Engine');
 let EngineService = EngineService_1 = class EngineService {
     constructor() {
         this.io.registerAfterRefresh(() => this.afterRefresh());
@@ -66,7 +60,7 @@ let EngineService = EngineService_1 = class EngineService {
     }
     async checkRescan(orm) {
         const version = await this.settings.settingsVersion(orm);
-        const forceRescan = !!version && version !== version_1.JAMSERVE_VERSION;
+        const forceRescan = !!version && version !== JAMSERVE_VERSION;
         if (forceRescan) {
             log.info(`Updating from version ${version || '-'}`);
         }
@@ -80,10 +74,10 @@ let EngineService = EngineService_1 = class EngineService {
         }
     }
     async checkDataPaths() {
-        await fs_extra_1.default.ensureDir(path_1.default.resolve(this.config.env.paths.data));
+        await fse.ensureDir(path.resolve(this.config.env.paths.data));
         const paths = this.resolveCachePaths();
         for (const p of paths) {
-            await fs_extra_1.default.ensureDir(p);
+            await fse.ensureDir(p);
         }
     }
     async init() {
@@ -114,7 +108,7 @@ let EngineService = EngineService_1 = class EngineService {
             const root = orm.Root.create({
                 name: first.name,
                 path: first.path,
-                strategy: first.strategy || enums_1.RootScanStrategy.auto
+                strategy: first.strategy || RootScanStrategy.auto
             });
             await orm.Root.persistAndFlush(root);
         }
@@ -138,116 +132,116 @@ let EngineService = EngineService_1 = class EngineService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artwork_service_1.ArtworkService)
+    Inject,
+    __metadata("design:type", ArtworkService)
 ], EngineService.prototype, "artwork", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", audio_module_1.AudioModule)
+    Inject,
+    __metadata("design:type", AudioModule)
 ], EngineService.prototype, "audio", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", chat_service_1.ChatService)
+    Inject,
+    __metadata("design:type", ChatService)
 ], EngineService.prototype, "chat", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], EngineService.prototype, "config", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", download_service_1.DownloadService)
+    Inject,
+    __metadata("design:type", DownloadService)
 ], EngineService.prototype, "download", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", episode_service_1.EpisodeService)
+    Inject,
+    __metadata("design:type", EpisodeService)
 ], EngineService.prototype, "episode", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", folder_service_1.FolderService)
+    Inject,
+    __metadata("design:type", FolderService)
 ], EngineService.prototype, "folder", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_service_1.GenreService)
+    Inject,
+    __metadata("design:type", GenreService)
 ], EngineService.prototype, "genre", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_service_1.ImageService)
+    Inject,
+    __metadata("design:type", ImageService)
 ], EngineService.prototype, "image", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
+    Inject,
+    __metadata("design:type", IoService)
 ], EngineService.prototype, "io", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
+    Inject,
+    __metadata("design:type", MetaDataService)
 ], EngineService.prototype, "metadata", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", nowplaying_service_1.NowPlayingService)
+    Inject,
+    __metadata("design:type", NowPlayingService)
 ], EngineService.prototype, "nowPlaying", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
+    Inject,
+    __metadata("design:type", OrmService)
 ], EngineService.prototype, "orm", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playlist_service_1.PlaylistService)
+    Inject,
+    __metadata("design:type", PlaylistService)
 ], EngineService.prototype, "playlist", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playqueue_service_1.PlayQueueService)
+    Inject,
+    __metadata("design:type", PlayQueueService)
 ], EngineService.prototype, "playQueue", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_service_1.PodcastService)
+    Inject,
+    __metadata("design:type", PodcastService)
 ], EngineService.prototype, "podcast", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", session_service_1.SessionService)
+    Inject,
+    __metadata("design:type", SessionService)
 ], EngineService.prototype, "session", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", settings_service_1.SettingsService)
+    Inject,
+    __metadata("design:type", SettingsService)
 ], EngineService.prototype, "settings", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", state_service_1.StateService)
+    Inject,
+    __metadata("design:type", StateService)
 ], EngineService.prototype, "state", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", stats_service_1.StatsService)
+    Inject,
+    __metadata("design:type", StatsService)
 ], EngineService.prototype, "stats", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", stream_service_1.StreamService)
+    Inject,
+    __metadata("design:type", StreamService)
 ], EngineService.prototype, "stream", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", track_service_1.TrackService)
+    Inject,
+    __metadata("design:type", TrackService)
 ], EngineService.prototype, "track", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", transform_service_1.TransformService)
+    Inject,
+    __metadata("design:type", TransformService)
 ], EngineService.prototype, "transform", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", user_service_1.UserService)
+    Inject,
+    __metadata("design:type", UserService)
 ], EngineService.prototype, "user", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", waveform_service_1.WaveformService)
+    Inject,
+    __metadata("design:type", WaveformService)
 ], EngineService.prototype, "waveform", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", bookmark_service_1.BookmarkService)
+    Inject,
+    __metadata("design:type", BookmarkService)
 ], EngineService.prototype, "bookmark", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", ratelimit_service_1.RateLimitService)
+    Inject,
+    __metadata("design:type", RateLimitService)
 ], EngineService.prototype, "rateLimit", void 0);
 EngineService = EngineService_1 = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], EngineService);
-exports.EngineService = EngineService;
+export { EngineService };
 //# sourceMappingURL=engine.service.js.map

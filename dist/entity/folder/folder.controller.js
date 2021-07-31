@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,19 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FolderController = void 0;
-const folder_model_1 = require("./folder.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const track_model_1 = require("../track/track.model");
-const artwork_model_1 = require("../artwork/artwork.model");
-const metadata_model_1 = require("../metadata/metadata.model");
-const track_args_1 = require("../track/track.args");
-const folder_args_1 = require("./folder.args");
-const artwork_args_1 = require("../artwork/artwork.args");
-const base_args_1 = require("../base/base.args");
-const admin_1 = require("../admin/admin");
+import { Folder, FolderHealth, FolderIndex, FolderPage } from './folder.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { TrackPage } from '../track/track.model';
+import { ArtworkPage } from '../artwork/artwork.model';
+import { ExtendedInfoResult } from '../metadata/metadata.model';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args';
+import { FolderCreateArgs, FolderFilterArgs, FolderMoveArgs, FolderOrderArgs, FolderRenameArgs, IncludesFolderArgs, IncludesFolderChildrenArgs } from './folder.args';
+import { ArtworkOrderArgs, IncludesArtworkArgs } from '../artwork/artwork.args';
+import { ListArgs, PageArgs } from '../base/base.args';
+import { AdminChangeQueueInfo } from '../admin/admin';
 let FolderController = class FolderController {
     async id(id, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, { orm, engine, user }) {
         return engine.transform.folder(orm, await orm.Folder.oneOrFailByID(id), folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user);
@@ -90,7 +87,7 @@ let FolderController = class FolderController {
     }
     async move(args, { orm, engine }) {
         if (args.ids.length === 0) {
-            throw rest_1.InvalidParamError('ids', 'Must have entries');
+            throw InvalidParamError('ids', 'Must have entries');
         }
         const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
         return await engine.io.folder.move(args.ids, args.newParentID, folder.root.idOrFail());
@@ -101,174 +98,174 @@ let FolderController = class FolderController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => folder_model_1.Folder, { description: 'Get a Folder by Id', summary: 'Get Folder' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.Ctx()),
+    Get('/id', () => Folder, { description: 'Get a Folder by Id', summary: 'Get Folder' }),
+    __param(0, QueryParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, folder_args_1.IncludesFolderArgs,
-        folder_args_1.IncludesFolderChildrenArgs,
-        track_args_1.IncludesTrackArgs,
-        artwork_args_1.IncludesArtworkArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesFolderArgs,
+        IncludesFolderChildrenArgs,
+        IncludesTrackArgs,
+        IncludesArtworkArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/index', () => folder_model_1.FolderIndex, { description: 'Get the Navigation Index for Folders', summary: 'Get Index' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/index', () => FolderIndex, { description: 'Get the Navigation Index for Folders', summary: 'Get Index' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FolderFilterArgs, Object]),
+    __metadata("design:paramtypes", [FolderFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "index", null);
 __decorate([
-    rest_1.Get('/search', () => folder_model_1.FolderPage, { description: 'Search Folders' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.QueryParams()),
-    __param(6, rest_1.QueryParams()),
-    __param(7, rest_1.QueryParams()),
-    __param(8, rest_1.Ctx()),
+    Get('/search', () => FolderPage, { description: 'Search Folders' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, QueryParams()),
+    __param(6, QueryParams()),
+    __param(7, QueryParams()),
+    __param(8, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        folder_args_1.IncludesFolderArgs,
-        folder_args_1.IncludesFolderChildrenArgs,
-        track_args_1.IncludesTrackArgs,
-        artwork_args_1.IncludesArtworkArgs,
-        folder_args_1.FolderFilterArgs,
-        folder_args_1.FolderOrderArgs,
-        base_args_1.ListArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesFolderArgs,
+        IncludesFolderChildrenArgs,
+        IncludesTrackArgs,
+        IncludesArtworkArgs,
+        FolderFilterArgs,
+        FolderOrderArgs,
+        ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "search", null);
 __decorate([
-    rest_1.Get('/tracks', () => track_model_1.TrackPage, { description: 'Get Tracks of Folders', summary: 'Get Tracks' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/tracks', () => TrackPage, { description: 'Get Tracks of Folders', summary: 'Get Tracks' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs,
-        folder_args_1.FolderFilterArgs,
-        track_args_1.TrackOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesTrackArgs,
+        FolderFilterArgs,
+        TrackOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "tracks", null);
 __decorate([
-    rest_1.Get('/subfolders', () => track_model_1.TrackPage, { description: 'Get Child Folders of Folders', summary: 'Get Sub-Folders' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/subfolders', () => TrackPage, { description: 'Get Child Folders of Folders', summary: 'Get Sub-Folders' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        folder_args_1.IncludesFolderArgs,
-        folder_args_1.FolderFilterArgs,
-        folder_args_1.FolderOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesFolderArgs,
+        FolderFilterArgs,
+        FolderOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "subfolders", null);
 __decorate([
-    rest_1.Get('/artworks', () => artwork_model_1.ArtworkPage, { description: 'Get Artworks of Folders', summary: 'Get Artwork' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/artworks', () => ArtworkPage, { description: 'Get Artworks of Folders', summary: 'Get Artwork' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        artwork_args_1.IncludesArtworkArgs,
-        folder_args_1.FolderFilterArgs,
-        artwork_args_1.ArtworkOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesArtworkArgs,
+        FolderFilterArgs,
+        ArtworkOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "artworks", null);
 __decorate([
-    rest_1.Get('/artist/info', () => metadata_model_1.ExtendedInfoResult, { description: 'Get Meta Data Info of an Artist by Folder Id (External Service)', summary: 'Get Artist Info' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/artist/info', () => ExtendedInfoResult, { description: 'Get Meta Data Info of an Artist by Folder Id (External Service)', summary: 'Get Artist Info' }),
+    __param(0, QueryParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "artistInfo", null);
 __decorate([
-    rest_1.Get('/album/info', () => metadata_model_1.ExtendedInfoResult, { description: 'Get Meta Data Info of an Album by Folder Id (External Service)', summary: 'Get Album Info' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/album/info', () => ExtendedInfoResult, { description: 'Get Meta Data Info of an Album by Folder Id (External Service)', summary: 'Get Album Info' }),
+    __param(0, QueryParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "albumInfo", null);
 __decorate([
-    rest_1.Get('/artist/similar', () => folder_model_1.FolderPage, { description: 'Get similar Artist Folders of a Folder by Id (External Service)', summary: 'Get similar Artists' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/artist/similar', () => FolderPage, { description: 'Get similar Artist Folders of a Folder by Id (External Service)', summary: 'Get similar Artists' }),
+    __param(0, QueryParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, base_args_1.PageArgs,
-        folder_args_1.IncludesFolderArgs, Object]),
+    __metadata("design:paramtypes", [String, PageArgs,
+        IncludesFolderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "artistsSimilar", null);
 __decorate([
-    rest_1.Get('/artist/similar/tracks', () => track_model_1.TrackPage, { description: 'Get similar Tracks of a Artist Folder by Id (External Service)', summary: 'Get similar Tracks' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/artist/similar/tracks', () => TrackPage, { description: 'Get similar Tracks of a Artist Folder by Id (External Service)', summary: 'Get similar Tracks' }),
+    __param(0, QueryParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs, Object]),
+    __metadata("design:paramtypes", [String, PageArgs,
+        IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "artistsSimilarTracks", null);
 __decorate([
-    rest_1.Get('/health', () => [folder_model_1.FolderHealth], { description: 'Get a List of Folders with Health Issues', roles: [enums_1.UserRole.admin], summary: 'Get Health' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.Ctx()),
+    Get('/health', () => [FolderHealth], { description: 'Get a List of Folders with Health Issues', roles: [UserRole.admin], summary: 'Get Health' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FolderFilterArgs,
-        folder_args_1.IncludesFolderArgs, Object]),
+    __metadata("design:paramtypes", [FolderFilterArgs,
+        IncludesFolderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "health", null);
 __decorate([
-    rest_1.Post('/create', () => admin_1.AdminChangeQueueInfo, { description: 'Create a Folder', roles: [enums_1.UserRole.admin], summary: 'Create Folder' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', () => AdminChangeQueueInfo, { description: 'Create a Folder', roles: [UserRole.admin], summary: 'Create Folder' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FolderCreateArgs, Object]),
+    __metadata("design:paramtypes", [FolderCreateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/rename', () => admin_1.AdminChangeQueueInfo, { description: 'Rename a folder', roles: [enums_1.UserRole.admin], summary: 'Rename Folder' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/rename', () => AdminChangeQueueInfo, { description: 'Rename a folder', roles: [UserRole.admin], summary: 'Rename Folder' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FolderRenameArgs, Object]),
+    __metadata("design:paramtypes", [FolderRenameArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "rename", null);
 __decorate([
-    rest_1.Post('/move', () => admin_1.AdminChangeQueueInfo, { description: 'Move a Folder', roles: [enums_1.UserRole.admin], summary: 'Move Folder' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/move', () => AdminChangeQueueInfo, { description: 'Move a Folder', roles: [UserRole.admin], summary: 'Move Folder' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [folder_args_1.FolderMoveArgs, Object]),
+    __metadata("design:paramtypes", [FolderMoveArgs, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "move", null);
 __decorate([
-    rest_1.Post('/remove', () => admin_1.AdminChangeQueueInfo, { description: 'Remove a Folder', summary: 'Remove Folder' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Folder Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', () => AdminChangeQueueInfo, { description: 'Remove a Folder', summary: 'Remove Folder' }),
+    __param(0, BodyParam('id', { description: 'Folder Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "remove", null);
 FolderController = __decorate([
-    rest_1.Controller('/folder', { tags: ['Folder'], roles: [enums_1.UserRole.stream] })
+    Controller('/folder', { tags: ['Folder'], roles: [UserRole.stream] })
 ], FolderController);
-exports.FolderController = FolderController;
+export { FolderController };
 //# sourceMappingURL=folder.controller.js.map

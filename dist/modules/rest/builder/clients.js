@@ -1,14 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getClientZip = exports.getCustomParameterTemplate = exports.callDescription = exports.getCallParamType = exports.getResultType = exports.buildParts = exports.buildTemplate = exports.wrapLong = exports.buildCallSections = exports.buildPartService = exports.buildServiceParts = void 0;
-const metadata_1 = require("../metadata");
-const mustache_1 = __importDefault(require("mustache"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const archiver_1 = __importDefault(require("archiver"));
-const path_1 = __importDefault(require("path"));
+import { getMetadataStorage } from '../metadata';
+import Mustache from 'mustache';
+import fse from 'fs-extra';
+import archiver from 'archiver';
+import path from 'path';
 function generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls) {
     const name = call.methodName.replace(/\//g, '_');
     const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
@@ -21,8 +15,8 @@ function generateClientCalls(call, method, generateRequestClientCalls, generateB
     }
     return generateRequestClientCalls(call, name, paramType, method);
 }
-async function buildServiceParts(generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls, buildPartService) {
-    const metadata = metadata_1.getMetadataStorage();
+export async function buildServiceParts(generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls, buildPartService) {
+    const metadata = getMetadataStorage();
     const sections = {};
     buildCallSections(metadata.gets, 'get', sections, (call, method) => generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
     buildCallSections(metadata.posts, 'post', sections, (call, method) => generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
@@ -34,8 +28,7 @@ async function buildServiceParts(generateRequestClientCalls, generateBinaryClien
     }
     return parts;
 }
-exports.buildServiceParts = buildServiceParts;
-async function buildPartService(template, key, part, calls) {
+export async function buildPartService(template, key, part, calls) {
     const list = calls.map(call => {
         return { ...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType) };
     });
@@ -44,26 +37,22 @@ async function buildPartService(template, key, part, calls) {
     const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
     return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam });
 }
-exports.buildPartService = buildPartService;
-function buildCallSections(calls, method, sections, generateClientCalls) {
+export function buildCallSections(calls, method, sections, generateClientCalls) {
     for (const call of calls) {
         const tag = call.controllerClassMetadata.name.replace('Controller', '');
         sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
     }
 }
-exports.buildCallSections = buildCallSections;
-function wrapLong(s) {
+export function wrapLong(s) {
     if (s && s.length > 140) {
         return s.split('&').map(s => s.trim()).join(' &\n\t');
     }
     return s;
 }
-exports.wrapLong = wrapLong;
-async function buildTemplate(template, data = {}) {
-    return mustache_1.default.render((await fs_extra_1.default.readFile(template)).toString(), data);
+export async function buildTemplate(template, data = {}) {
+    return Mustache.render((await fse.readFile(template)).toString(), data);
 }
-exports.buildTemplate = buildTemplate;
-async function buildParts(template, serviceParts) {
+export async function buildParts(template, serviceParts) {
     const list = serviceParts
         .sort((a, b) => a.name.localeCompare(b.name));
     list.forEach((p, i) => {
@@ -71,9 +60,8 @@ async function buildParts(template, serviceParts) {
     });
     return buildTemplate(template, { list });
 }
-exports.buildParts = buildParts;
-function getResultType(call) {
-    const metadata = metadata_1.getMetadataStorage();
+export function getResultType(call) {
+    const metadata = getMetadataStorage();
     let resultType;
     if (call.getReturnType) {
         const type = call.getReturnType();
@@ -102,7 +90,6 @@ function getResultType(call) {
     }
     return resultType;
 }
-exports.getResultType = getResultType;
 function getCallParamArgType(param, metadata) {
     const type = param.getType();
     let typeString;
@@ -143,8 +130,8 @@ function getCallParamArgsType(param, metadata) {
     }
     return typeString;
 }
-function getCallParamType(call) {
-    const metadata = metadata_1.getMetadataStorage();
+export function getCallParamType(call) {
+    const metadata = getMetadataStorage();
     const types = [];
     if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
         types.push('JamParameters.' + call.controllerClassMetadata?.name.replace('Controller', '') + call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args');
@@ -161,14 +148,12 @@ function getCallParamType(call) {
     }
     return types.join(' & ');
 }
-exports.getCallParamType = getCallParamType;
-function callDescription(call) {
+export function callDescription(call) {
     const roles = call.controllerClassMetadata?.roles || call.roles || [];
     const result = (call.description || '') + (roles && roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
     return result.trim();
 }
-exports.callDescription = callDescription;
-function getCustomParameterTemplate(customPathParameters, call, result) {
+export function getCustomParameterTemplate(customPathParameters, call, result) {
     const routeParts = [];
     const validateNames = [];
     customPathParameters.groups.forEach(g => {
@@ -184,12 +169,11 @@ function getCustomParameterTemplate(customPathParameters, call, result) {
     const validateCode = 'if (' + validateNames.map(s => '!params.' + s).join(' && ') + ') { ' + result + '; }';
     return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
-exports.getCustomParameterTemplate = getCustomParameterTemplate;
-async function getClientZip(filename, list, models) {
+export async function getClientZip(filename, list, models) {
     return {
         pipe: {
             pipe: (res) => {
-                const archive = archiver_1.default('zip', { zlib: { level: 9 } });
+                const archive = archiver('zip', { zlib: { level: 9 } });
                 archive.on('error', err => {
                     throw err;
                 });
@@ -202,7 +186,7 @@ async function getClientZip(filename, list, models) {
                     archive.append(entry.content, { name: entry.name });
                 }
                 for (const entry of models) {
-                    archive.append(fs_extra_1.default.createReadStream(path_1.default.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
+                    archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
                 }
                 archive.pipe(res);
                 archive.finalize().catch(e => {
@@ -212,5 +196,4 @@ async function getClientZip(filename, list, models) {
         }
     };
 }
-exports.getClientZip = getClientZip;
 //# sourceMappingURL=clients.js.map

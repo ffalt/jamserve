@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,41 +7,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatFilterArgs = exports.ChatRemoveArgs = exports.ChatCreateArgs = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const example_consts_1 = require("../../modules/engine/rest/example.consts");
-const type_graphql_1 = require("type-graphql");
+import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
+import { examples } from '../../modules/engine/rest/example.consts';
+import { ArgsType, Field, Float } from 'type-graphql';
 let ChatCreateArgs = class ChatCreateArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Chat message', example: 'Hello' }),
+    ObjField({ description: 'Chat message', example: 'Hello' }),
     __metadata("design:type", String)
 ], ChatCreateArgs.prototype, "message", void 0);
 ChatCreateArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], ChatCreateArgs);
-exports.ChatCreateArgs = ChatCreateArgs;
+export { ChatCreateArgs };
 let ChatRemoveArgs = class ChatRemoveArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Chat time', example: example_consts_1.examples.timestamp }),
+    ObjField({ description: 'Chat time', example: examples.timestamp }),
     __metadata("design:type", Number)
 ], ChatRemoveArgs.prototype, "time", void 0);
 ChatRemoveArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], ChatRemoveArgs);
-exports.ChatRemoveArgs = ChatRemoveArgs;
+export { ChatRemoveArgs };
 let ChatFilterArgs = class ChatFilterArgs {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
-    decorators_1.ObjField(() => Number, { nullable: true, description: 'filter by message timestamp', min: 0, example: example_consts_1.examples.timestamp }),
+    Field(() => Float, { nullable: true }),
+    ObjField(() => Number, { nullable: true, description: 'filter by message timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], ChatFilterArgs.prototype, "since", void 0);
 ChatFilterArgs = __decorate([
-    type_graphql_1.ArgsType(),
-    decorators_1.ObjParamsType()
+    ArgsType(),
+    ObjParamsType()
 ], ChatFilterArgs);
-exports.ChatFilterArgs = ChatFilterArgs;
+export { ChatFilterArgs };
 //# sourceMappingURL=chat.args.js.map

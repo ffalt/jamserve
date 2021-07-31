@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,85 +7,83 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtworkPageQL = exports.ArtworkQL = exports.Artwork = void 0;
-const folder_1 = require("../folder/folder");
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const orm_1 = require("../../modules/orm");
-const base_1 = require("../base/base");
-let Artwork = class Artwork extends base_1.Base {
+import { Folder, FolderQL } from '../folder/folder';
+import { ArtworkImageType } from '../../types/enums';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Entity, ManyToOne, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm';
+import { Base, PaginatedResponse } from '../base/base';
+let Artwork = class Artwork extends Base {
     constructor() {
         super(...arguments);
         this.types = [];
-        this.folder = new orm_1.Reference(this);
+        this.folder = new Reference(this);
     }
 };
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Artwork.prototype, "name", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Artwork.prototype, "path", void 0);
 __decorate([
-    type_graphql_1.Field(() => [enums_1.ArtworkImageType]),
-    orm_1.Property(() => [enums_1.ArtworkImageType]),
+    Field(() => [ArtworkImageType]),
+    Property(() => [ArtworkImageType]),
     __metadata("design:type", Array)
 ], Artwork.prototype, "types", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
-    orm_1.Property(() => orm_1.ORM_DATETIME),
+    Field(() => Date),
+    Property(() => ORM_DATETIME),
     __metadata("design:type", Date)
 ], Artwork.prototype, "statCreated", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
-    orm_1.Property(() => orm_1.ORM_DATETIME),
+    Field(() => Date),
+    Property(() => ORM_DATETIME),
     __metadata("design:type", Date)
 ], Artwork.prototype, "statModified", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
-    orm_1.Property(() => orm_1.ORM_INT),
+    Field(() => Int),
+    Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], Artwork.prototype, "fileSize", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Artwork.prototype, "width", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Artwork.prototype, "height", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Artwork.prototype, "format", void 0);
 __decorate([
-    type_graphql_1.Field(() => folder_1.FolderQL),
-    orm_1.ManyToOne(() => folder_1.Folder, folder => folder.artworks),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => FolderQL),
+    ManyToOne(() => Folder, folder => folder.artworks),
+    __metadata("design:type", Reference)
 ], Artwork.prototype, "folder", void 0);
 Artwork = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], Artwork);
-exports.Artwork = Artwork;
+export { Artwork };
 let ArtworkQL = class ArtworkQL extends Artwork {
 };
 ArtworkQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtworkQL);
-exports.ArtworkQL = ArtworkQL;
-let ArtworkPageQL = class ArtworkPageQL extends base_1.PaginatedResponse(Artwork, ArtworkQL) {
+export { ArtworkQL };
+let ArtworkPageQL = class ArtworkPageQL extends PaginatedResponse(Artwork, ArtworkQL) {
 };
 ArtworkPageQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtworkPageQL);
-exports.ArtworkPageQL = ArtworkPageQL;
+export { ArtworkPageQL };
 //# sourceMappingURL=artwork.js.map

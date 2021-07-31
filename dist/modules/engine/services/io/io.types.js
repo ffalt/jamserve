@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IoRequest = exports.WorkerRequestMode = void 0;
-var WorkerRequestMode;
+export var WorkerRequestMode;
 (function (WorkerRequestMode) {
     WorkerRequestMode[WorkerRequestMode["refreshRoot"] = 0] = "refreshRoot";
     WorkerRequestMode[WorkerRequestMode["removeRoot"] = 1] = "removeRoot";
@@ -22,8 +19,8 @@ var WorkerRequestMode;
     WorkerRequestMode[WorkerRequestMode["replaceArtwork"] = 16] = "replaceArtwork";
     WorkerRequestMode[WorkerRequestMode["createArtwork"] = 17] = "createArtwork";
     WorkerRequestMode[WorkerRequestMode["renameArtwork"] = 18] = "renameArtwork";
-})(WorkerRequestMode = exports.WorkerRequestMode || (exports.WorkerRequestMode = {}));
-class IoRequest {
+})(WorkerRequestMode || (WorkerRequestMode = {}));
+export class IoRequest {
     constructor(id, mode, execute, parameters) {
         this.id = id;
         this.mode = mode;
@@ -43,5 +40,4 @@ class IoRequest {
         }
     }
 }
-exports.IoRequest = IoRequest;
 //# sourceMappingURL=io.types.js.map

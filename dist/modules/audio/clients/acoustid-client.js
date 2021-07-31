@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AcoustidClient = void 0;
-const logger_1 = require("../../../utils/logger");
-const webservice_client_1 = require("../../../utils/webservice-client");
-const fpcalc_1 = require("../tools/fpcalc");
-const log = logger_1.logger('Acoustid');
+import { logger } from '../../../utils/logger';
+import { WebserviceClient } from '../../../utils/webservice-client';
+import { fpcalc } from '../tools/fpcalc';
+const log = logger('Acoustid');
 const META_DEFAULT = 'recordings releases releasegroups tracks compress usermeta sources';
-class AcoustidClient extends webservice_client_1.WebserviceClient {
+export class AcoustidClient extends WebserviceClient {
     constructor(options) {
         super(1, 3000, 'JamServe/0.1.0');
         this.options = options;
@@ -28,9 +25,8 @@ class AcoustidClient extends webservice_client_1.WebserviceClient {
     }
     async acoustid(file, includes) {
         this.checkDisabled();
-        const result = await fpcalc_1.fpcalc(file, this.options.fpcalc || {});
+        const result = await fpcalc(file, this.options.fpcalc || {});
         return this.get(result, includes);
     }
 }
-exports.AcoustidClient = AcoustidClient;
 //# sourceMappingURL=acoustid-client.js.map

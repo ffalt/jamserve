@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtworkResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const artwork_1 = require("./artwork");
-const folder_1 = require("../folder/folder");
-const Root_1 = require("type-graphql/dist/decorators/Root");
-const artwork_args_1 = require("./artwork.args");
+import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
+import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork';
+import { FolderQL } from '../folder/folder';
+import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
+import { ArtworksArgsQL } from './artwork.args';
 let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {
         return await orm.Artwork.oneOrFailByID(id);
@@ -33,28 +30,30 @@ let ArtworkResolver = class ArtworkResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => artwork_1.ArtworkQL, { description: 'Get an Artwork by Id' }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Query(() => ArtworkQL, { description: 'Get an Artwork by Id' }),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkResolver.prototype, "artwork", null);
 __decorate([
-    type_graphql_1.Query(() => artwork_1.ArtworkPageQL, { description: 'Search Artworks' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => ArtworkPageQL, { description: 'Search Artworks' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artwork_args_1.ArtworksArgsQL, Object]),
+    __metadata("design:paramtypes", [ArtworksArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkResolver.prototype, "artworks", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => folder_1.FolderQL, { description: 'Get the Navigation Index for Albums' }),
-    __param(0, Root_1.Root()),
+    FieldResolver(() => FolderQL, { description: 'Get the Navigation Index for Albums' }),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [artwork_1.Artwork]),
+    __metadata("design:paramtypes", [Artwork]),
     __metadata("design:returntype", Promise)
 ], ArtworkResolver.prototype, "folder", null);
 ArtworkResolver = __decorate([
-    type_graphql_1.Resolver(artwork_1.ArtworkQL)
+    Resolver(ArtworkQL)
 ], ArtworkResolver);
-exports.ArtworkResolver = ArtworkResolver;
+export { ArtworkResolver };
 //# sourceMappingURL=artwork.resolver.js.map

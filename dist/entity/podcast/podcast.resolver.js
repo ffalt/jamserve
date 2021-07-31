@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,15 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastResolver = void 0;
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const state_1 = require("../state/state");
-const podcast_1 = require("./podcast");
-const podcast_args_1 = require("./podcast.args");
-const episode_1 = require("../episode/episode");
-const base_args_1 = require("../base/base.args");
+import { DBObjectType, PodcastStatus } from '../../types/enums';
+import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { StateQL } from '../state/state';
+import { Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL } from './podcast';
+import { PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL } from './podcast.args';
+import { EpisodeQL } from '../episode/episode';
+import { PageArgsQL } from '../base/base.args';
 let PodcastResolver = class PodcastResolver {
     async podcast(id, { orm }) {
         return await orm.Podcast.oneOrFailByID(id);
@@ -34,10 +31,10 @@ let PodcastResolver = class PodcastResolver {
         return await orm.Podcast.indexFilter(filter, user);
     }
     async state(podcast, { orm, user }) {
-        return await orm.State.findOrCreate(podcast.id, enums_1.DBObjectType.podcast, user.id);
+        return await orm.State.findOrCreate(podcast.id, DBObjectType.podcast, user.id);
     }
     status(podcast, { engine }) {
-        return engine.podcast.isDownloading(podcast.id) ? enums_1.PodcastStatus.downloading : podcast.status;
+        return engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : podcast.status;
     }
     async episodes(podcast) {
         return podcast.episodes.getItems();
@@ -62,91 +59,101 @@ let PodcastResolver = class PodcastResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastQL, { description: 'Get a Podcast by Id' }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Query(() => PodcastQL, { description: 'Get a Podcast by Id' }),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcast", null);
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastPageQL, { description: 'Search Podcasts' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PodcastPageQL, { description: 'Search Podcasts' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastsArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastsArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcasts", null);
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastIndexQL, { description: 'Get the Navigation Index for Podcasts' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PodcastIndexQL, { description: 'Get the Navigation Index for Podcasts' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastIndexArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastIndex", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => state_1.StateQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    FieldResolver(() => StateQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast, Object]),
+    __metadata("design:paramtypes", [Podcast, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "state", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => enums_1.PodcastStatus),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    FieldResolver(() => PodcastStatus),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast, Object]),
+    __metadata("design:paramtypes", [Podcast, Object]),
     __metadata("design:returntype", String)
 ], PodcastResolver.prototype, "status", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => [episode_1.EpisodeQL]),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => [EpisodeQL]),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast]),
+    __metadata("design:paramtypes", [Podcast]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "episodes", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_1.Podcast]),
+    __metadata("design:paramtypes", [Podcast]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "episodesCount", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => Date),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => Date),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "lastCheck", null);
 __decorate([
-    type_graphql_1.Query(() => [podcast_1.PodcastDiscoverQL], { description: 'Discover Podcasts via gpodder.net' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => [PodcastDiscoverQL], { description: 'Discover Podcasts via gpodder.net' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscover", null);
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastDiscoverTagPageQL, { description: 'Discover Podcast Tags via gpodder.net' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PodcastDiscoverTagPageQL, { description: 'Discover Podcast Tags via gpodder.net' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PageArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverTags", null);
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastDiscoverPageQL, { description: 'Discover Podcasts by Tag via gpodder.net' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Args()), __param(2, type_graphql_1.Ctx()),
+    Query(() => PodcastDiscoverPageQL, { description: 'Discover Podcasts by Tag via gpodder.net' }),
+    __param(0, Args()),
+    __param(1, Args()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverByTagArgsQL, base_args_1.PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverByTagArgsQL, PageArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverByTag", null);
 __decorate([
-    type_graphql_1.Query(() => podcast_1.PodcastDiscoverPageQL, { description: 'Discover Top Podcasts via gpodder.net' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PodcastDiscoverPageQL, { description: 'Discover Top Podcasts via gpodder.net' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PageArgsQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverTop", null);
 PodcastResolver = __decorate([
-    type_graphql_1.Resolver(podcast_1.PodcastQL)
+    Resolver(PodcastQL)
 ], PodcastResolver);
-exports.PodcastResolver = PodcastResolver;
+export { PodcastResolver };
 //# sourceMappingURL=podcast.resolver.js.map

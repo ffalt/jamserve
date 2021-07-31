@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,45 +7,43 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AudioModule = exports.ID3TrackTagRawFormatTypes = void 0;
-const fs_utils_1 = require("../../utils/fs-utils");
-const image_module_1 = require("../image/image.module");
-const audio_format_1 = require("./audio.format");
-const acousticbrainz_client_1 = require("./clients/acousticbrainz-client");
-const acoustid_client_1 = require("./clients/acoustid-client");
-const coverartarchive_client_1 = require("./clients/coverartarchive-client");
-const lastfm_client_1 = require("./clients/lastfm-client");
-const lyricsovh_client_1 = require("./clients/lyricsovh-client");
-const musicbrainz_client_1 = require("./clients/musicbrainz-client");
-const wikipedia_client_1 = require("./clients/wikipedia-client");
-const flac_module_1 = require("./formats/flac.module");
-const mp3_module_1 = require("./formats/mp3.module");
-const ffprobe_1 = require("./tools/ffprobe");
-const transcoder_module_1 = require("./transcoder/transcoder.module");
-const waveform_module_1 = require("./waveform/waveform.module");
-const enums_1 = require("../../types/enums");
-const settings_service_1 = require("../../entity/settings/settings.service");
-const config_service_1 = require("../engine/services/config.service");
-const typescript_ioc_1 = require("typescript-ioc");
-const gpodder_client_1 = require("./clients/gpodder-client");
-exports.ID3TrackTagRawFormatTypes = [enums_1.TagFormatType.id3v20, enums_1.TagFormatType.id3v21, enums_1.TagFormatType.id3v22, enums_1.TagFormatType.id3v23, enums_1.TagFormatType.id3v24];
+import { fileSuffix } from '../../utils/fs-utils';
+import { ImageModule } from '../image/image.module';
+import { FORMAT } from './audio.format';
+import { AcousticbrainzClient } from './clients/acousticbrainz-client';
+import { AcoustidClient } from './clients/acoustid-client';
+import { CoverArtArchiveClient } from './clients/coverartarchive-client';
+import { LastFMClient } from './clients/lastfm-client';
+import { LyricsOVHClient } from './clients/lyricsovh-client';
+import { MusicbrainzClient } from './clients/musicbrainz-client';
+import { WikipediaClient } from './clients/wikipedia-client';
+import { AudioModuleFLAC } from './formats/flac.module';
+import { AudioModuleMP3 } from './formats/mp3.module';
+import { probe } from './tools/ffprobe';
+import { TranscoderModule } from './transcoder/transcoder.module';
+import { WaveformModule } from './waveform/waveform.module';
+import { AudioFormatType, TagFormatType } from '../../types/enums';
+import { SettingsService } from '../../entity/settings/settings.service';
+import { ConfigService } from '../engine/services/config.service';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { GpodderClient } from './clients/gpodder-client';
+export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 let AudioModule = class AudioModule {
     constructor() {
         this.waveformCachePath = this.configService.getDataPath(['cache', 'waveforms']);
         this.transcodeCachePath = this.configService.getDataPath(['cache', 'transcode']);
-        this.musicbrainz = new musicbrainz_client_1.MusicbrainzClient({ userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true });
-        this.acousticbrainz = new acousticbrainz_client_1.AcousticbrainzClient({ userAgent: this.configService.tools.acousticbrainz.userAgent, retryOn: true });
-        this.lastFM = new lastfm_client_1.LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
-        this.acoustid = new acoustid_client_1.AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
-        this.lyricsOVH = new lyricsovh_client_1.LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
-        this.wikipedia = new wikipedia_client_1.WikipediaClient(this.configService.tools.wikipedia.userAgent);
-        this.gpodder = new gpodder_client_1.GpodderClient(this.configService.tools.gpodder.userAgent);
-        this.coverArtArchive = new coverartarchive_client_1.CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
-        this.transcoder = new transcoder_module_1.TranscoderModule(this.transcodeCachePath);
-        this.mp3 = new mp3_module_1.AudioModuleMP3();
-        this.flac = new flac_module_1.AudioModuleFLAC(this.imageModule);
-        this.waveform = new waveform_module_1.WaveformModule(this.waveformCachePath);
+        this.musicbrainz = new MusicbrainzClient({ userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true });
+        this.acousticbrainz = new AcousticbrainzClient({ userAgent: this.configService.tools.acousticbrainz.userAgent, retryOn: true });
+        this.lastFM = new LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
+        this.acoustid = new AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
+        this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
+        this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
+        this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
+        this.coverArtArchive = new CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
+        this.transcoder = new TranscoderModule(this.transcodeCachePath);
+        this.mp3 = new AudioModuleMP3();
+        this.flac = new AudioModuleFLAC(this.imageModule);
+        this.waveform = new WaveformModule(this.waveformCachePath);
         this.settingsService.registerChangeListener(async () => {
             this.setSettings(this.settingsService.settings.externalServices);
         });
@@ -64,36 +61,36 @@ let AudioModule = class AudioModule {
         this.gpodder.enabled = enabled;
     }
     async read(filename) {
-        const suffix = fs_utils_1.fileSuffix(filename);
-        if (suffix === enums_1.AudioFormatType.mp3) {
+        const suffix = fileSuffix(filename);
+        if (suffix === AudioFormatType.mp3) {
             return this.mp3.read(filename);
         }
-        if (suffix === enums_1.AudioFormatType.flac) {
+        if (suffix === AudioFormatType.flac) {
             return this.flac.read(filename);
         }
-        const p = await ffprobe_1.probe(filename, []);
+        const p = await probe(filename, []);
         if (!p) {
-            return { format: enums_1.TagFormatType.none };
+            return { format: TagFormatType.none };
         }
-        return { ...audio_format_1.FORMAT.packProbeJamServeTag(p), ...audio_format_1.FORMAT.packProbeJamServeMedia(p, suffix) };
+        return { ...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix) };
     }
     async readRawTag(filename) {
-        const suffix = fs_utils_1.fileSuffix(filename);
-        if (suffix === enums_1.AudioFormatType.mp3) {
+        const suffix = fileSuffix(filename);
+        if (suffix === AudioFormatType.mp3) {
             return this.mp3.readRaw(filename);
         }
-        if (suffix === enums_1.AudioFormatType.flac) {
+        if (suffix === AudioFormatType.flac) {
             return this.flac.readRaw(filename);
         }
         return;
     }
     async writeRawTag(filename, tag) {
-        const suffix = fs_utils_1.fileSuffix(filename);
+        const suffix = fileSuffix(filename);
         try {
-            if (suffix === enums_1.AudioFormatType.mp3) {
+            if (suffix === AudioFormatType.mp3) {
                 await this.mp3.write(filename, tag);
             }
-            else if (suffix === enums_1.AudioFormatType.flac) {
+            else if (suffix === AudioFormatType.flac) {
                 await this.flac.write(filename, tag);
             }
             else {
@@ -105,11 +102,11 @@ let AudioModule = class AudioModule {
         }
     }
     async extractTagImage(filename) {
-        const suffix = fs_utils_1.fileSuffix(filename);
-        if (suffix === enums_1.AudioFormatType.mp3) {
+        const suffix = fileSuffix(filename);
+        if (suffix === AudioFormatType.mp3) {
             return this.mp3.extractTagImage(filename);
         }
-        if (suffix === enums_1.AudioFormatType.flac) {
+        if (suffix === AudioFormatType.flac) {
             return this.flac.extractTagImage(filename);
         }
         return;
@@ -120,20 +117,20 @@ let AudioModule = class AudioModule {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], AudioModule.prototype, "configService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", settings_service_1.SettingsService)
+    Inject,
+    __metadata("design:type", SettingsService)
 ], AudioModule.prototype, "settingsService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], AudioModule.prototype, "imageModule", void 0);
 AudioModule = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], AudioModule);
-exports.AudioModule = AudioModule;
+export { AudioModule };
 //# sourceMappingURL=audio.module.js.map

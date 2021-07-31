@@ -1,27 +1,21 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var FolderWorker_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FolderWorker = void 0;
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const path_1 = __importDefault(require("path"));
-const fs_utils_1 = require("../../../../utils/fs-utils");
-const enums_1 = require("../../../../types/enums");
-const dir_name_1 = require("../../../../utils/dir-name");
-const base_1 = require("./base");
-const typescript_ioc_1 = require("typescript-ioc");
-let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker {
+import fse from 'fs-extra';
+import path from 'path';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils';
+import { FolderType } from '../../../../types/enums';
+import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name';
+import { BaseWorker } from './base';
+import { InRequestScope } from 'typescript-ioc';
+let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
     static async validateFolderTask(destPath, destName) {
-        const newPath = path_1.default.join(destPath, destName);
-        const exists = await fs_extra_1.default.pathExists(newPath);
+        const newPath = path.join(destPath, destName);
+        const exists = await fse.pathExists(newPath);
         if (exists) {
             return Promise.reject(Error('Folder name already used in Destination'));
         }
@@ -35,11 +29,11 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
             return Promise.reject(Error('Folder name already used in Destination'));
         }
         const p = newParent.path;
-        const name = path_1.default.basename(folder.path);
-        const newPath = path_1.default.join(p, name);
+        const name = path.basename(folder.path);
+        const newPath = path.join(p, name);
         await FolderWorker_1.validateFolderTask(p, name);
         try {
-            await fs_extra_1.default.move(folder.path, newPath);
+            await fse.move(folder.path, newPath);
         }
         catch (e) {
             return Promise.reject(Error('Folder moving failed'));
@@ -47,12 +41,12 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
         await this.updateFolder(orm, folder, newParent, newPath, changes);
     }
     async updateFolder(orm, folder, newParent, newPath, changes) {
-        const source = fs_utils_1.ensureTrailingPathSeparator(folder.path);
+        const source = ensureTrailingPathSeparator(folder.path);
         const folders = await orm.Folder.findAllDescendants(folder);
         await folder.parent.set(newParent);
         await folder.root.set(await newParent.root.getOrFail());
         orm.Folder.persistLater(folder);
-        const dest = fs_utils_1.ensureTrailingPathSeparator(newPath);
+        const dest = ensureTrailingPathSeparator(newPath);
         for (const sub of folders) {
             sub.path = sub.path.replace(source, dest);
             sub.root = newParent.root;
@@ -78,17 +72,17 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
         if (!parent) {
             return Promise.reject(Error('Destination Folder not found'));
         }
-        name = await dir_name_1.validateFolderName(name);
-        const parentPath = fs_utils_1.ensureTrailingPathSeparator(parent.path);
-        const destination = fs_utils_1.ensureTrailingPathSeparator(path_1.default.join(parentPath, name));
+        name = await validateFolderName(name);
+        const parentPath = ensureTrailingPathSeparator(parent.path);
+        const destination = ensureTrailingPathSeparator(path.join(parentPath, name));
         await FolderWorker_1.validateFolderTask(parent.path, name);
-        await fs_extra_1.default.mkdir(destination);
-        const { title, year } = dir_name_1.splitDirectoryName(name);
-        const stat = await fs_extra_1.default.stat(destination);
+        await fse.mkdir(destination);
+        const { title, year } = splitDirectoryName(name);
+        const stat = await fse.stat(destination);
         const folder = orm.Folder.create({
             name,
             path: destination,
-            folderType: enums_1.FolderType.extras,
+            folderType: FolderType.extras,
             level: parent.level + 1,
             title: name !== title ? title : undefined,
             year,
@@ -103,13 +97,13 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
     }
     async delete(orm, root, folderIDs, changes) {
         const folders = await orm.Folder.findByIDs(folderIDs);
-        const trashPath = path_1.default.join(root.path, '.trash');
+        const trashPath = path.join(root.path, '.trash');
         for (const folder of folders) {
             if (folder.level === 0) {
                 return Promise.reject(Error('Root folder can not be deleted'));
             }
             try {
-                await fs_extra_1.default.move(folder.path, path_1.default.join(trashPath, `${Date.now()}_${path_1.default.basename(folder.path)}`));
+                await fse.move(folder.path, path.join(trashPath, `${Date.now()}_${path.basename(folder.path)}`));
             }
             catch (e) {
                 return Promise.reject(Error('Folder removing failed'));
@@ -132,19 +126,19 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
         if (!folder) {
             return Promise.reject(Error('Folder not found'));
         }
-        const name = await dir_name_1.validateFolderName(newName);
-        const oldPath = fs_utils_1.ensureTrailingPathSeparator(folder.path);
-        const p = path_1.default.dirname(folder.path);
-        const newPath = path_1.default.join(p, name);
+        const name = await validateFolderName(newName);
+        const oldPath = ensureTrailingPathSeparator(folder.path);
+        const p = path.dirname(folder.path);
+        const newPath = path.join(p, name);
         await FolderWorker_1.validateFolderTask(p, name);
         try {
-            await fs_extra_1.default.rename(oldPath, newPath);
+            await fse.rename(oldPath, newPath);
         }
         catch (e) {
             return Promise.reject(Error('Folder renaming failed'));
         }
         const folders = await orm.Folder.findAllDescendants(folder);
-        const dest = fs_utils_1.ensureTrailingPathSeparator(newPath);
+        const dest = ensureTrailingPathSeparator(newPath);
         for (const item of folders) {
             item.path = item.path.replace(oldPath, dest);
             changes.folders.updated.add(item);
@@ -189,7 +183,7 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends base_1.BaseWorker
     }
 };
 FolderWorker = FolderWorker_1 = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], FolderWorker);
-exports.FolderWorker = FolderWorker;
+export { FolderWorker };
 //# sourceMappingURL=folder.js.map

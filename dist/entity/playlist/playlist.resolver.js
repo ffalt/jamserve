@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const state_1 = require("../state/state");
-const enums_1 = require("../../types/enums");
-const playlist_1 = require("./playlist");
-const playlist_entry_1 = require("../playlistentry/playlist-entry");
-const playlist_args_1 = require("./playlist.args");
+import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { StateQL } from '../state/state';
+import { DBObjectType } from '../../types/enums';
+import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist';
+import { PlaylistEntryQL } from '../playlistentry/playlist-entry';
+import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args';
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
         return await orm.Playlist.oneOrFail({ where: { id, user: user.id, isPublic: true } });
@@ -45,67 +42,71 @@ let PlaylistResolver = class PlaylistResolver {
         return (await playlist.user.getOrFail()).name;
     }
     async state(playlist, { orm, user }) {
-        return await orm.State.findOrCreate(playlist.id, enums_1.DBObjectType.playlist, user.id);
+        return await orm.State.findOrCreate(playlist.id, DBObjectType.playlist, user.id);
     }
 };
 __decorate([
-    type_graphql_1.Query(() => playlist_1.PlaylistQL, { description: 'Get a Playlist by Id' }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Query(() => PlaylistQL, { description: 'Get a Playlist by Id' }),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "playlist", null);
 __decorate([
-    type_graphql_1.Query(() => playlist_1.PlaylistPageQL, { description: 'Search Playlists' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PlaylistPageQL, { description: 'Search Playlists' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_args_1.PlaylistsArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "playlists", null);
 __decorate([
-    type_graphql_1.Query(() => playlist_1.PlaylistIndexQL, { description: 'Get the Navigation Index for Playlists' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => PlaylistIndexQL, { description: 'Get the Navigation Index for Playlists' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_args_1.PlaylistIndexArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistIndexArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "playlistIndex", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => [playlist_entry_1.PlaylistEntryQL]),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => [PlaylistEntryQL]),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist]),
+    __metadata("design:paramtypes", [Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "entries", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.Int),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist]),
+    __metadata("design:paramtypes", [Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "entriesCount", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.ID),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => ID),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist]),
+    __metadata("design:paramtypes", [Playlist]),
     __metadata("design:returntype", String)
 ], PlaylistResolver.prototype, "userID", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => String),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => String),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist]),
+    __metadata("design:paramtypes", [Playlist]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "userName", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => state_1.StateQL),
-    __param(0, type_graphql_1.Root()), __param(1, type_graphql_1.Ctx()),
+    FieldResolver(() => StateQL),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [playlist_1.Playlist, Object]),
+    __metadata("design:paramtypes", [Playlist, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "state", null);
 PlaylistResolver = __decorate([
-    type_graphql_1.Resolver(playlist_1.PlaylistQL)
+    Resolver(PlaylistQL)
 ], PlaylistResolver);
-exports.PlaylistResolver = PlaylistResolver;
+export { PlaylistResolver };
 //# sourceMappingURL=playlist.resolver.js.map

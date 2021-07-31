@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMethodMetadata = void 0;
-const findType_1 = require("./findType");
-const type_graphql_1 = require("type-graphql");
-function getMethodMetadata(prototype, propertyKey, route, returnTypeFunc, options = {}) {
+import { findType } from './findType';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
+export function getMethodMetadata(prototype, propertyKey, route, returnTypeFunc, options = {}) {
     if (typeof propertyKey === 'symbol') {
-        throw new type_graphql_1.SymbolKeysNotSupportedError();
+        throw new SymbolKeysNotSupportedError();
     }
     const methodName = propertyKey;
     let getReturnType = undefined;
     let returnTypeOptions = undefined;
     if (returnTypeFunc) {
-        const { getType, typeOptions } = findType_1.findType({
+        const { getType, typeOptions } = findType({
             metadataKey: 'design:returntype',
             prototype,
             propertyKey,
@@ -41,5 +38,4 @@ function getMethodMetadata(prototype, propertyKey, route, returnTypeFunc, option
         deprecationReason: options.deprecationReason
     };
 }
-exports.getMethodMetadata = getMethodMetadata;
 //# sourceMappingURL=method-metadata.js.map

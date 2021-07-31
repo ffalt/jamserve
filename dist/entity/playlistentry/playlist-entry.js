@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,51 +7,49 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistEntryQL = exports.PlaylistEntry = void 0;
-const track_1 = require("../track/track");
-const episode_1 = require("../episode/episode");
-const playlist_1 = require("../playlist/playlist");
-const type_graphql_1 = require("type-graphql");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-let PlaylistEntry = class PlaylistEntry extends base_1.Base {
+import { Track, TrackQL } from '../track/track';
+import { Episode, EpisodeQL } from '../episode/episode';
+import { Playlist, PlaylistQL } from '../playlist/playlist';
+import { Field, Float, ObjectType } from 'type-graphql';
+import { Base } from '../base/base';
+import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm';
+let PlaylistEntry = class PlaylistEntry extends Base {
     constructor() {
         super(...arguments);
-        this.playlist = new orm_1.Reference(this);
-        this.track = new orm_1.Reference(this);
-        this.episode = new orm_1.Reference(this);
+        this.playlist = new Reference(this);
+        this.track = new Reference(this);
+        this.episode = new Reference(this);
     }
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float),
-    orm_1.Property(() => orm_1.ORM_INT),
+    Field(() => Float),
+    Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], PlaylistEntry.prototype, "position", void 0);
 __decorate([
-    type_graphql_1.Field(() => playlist_1.PlaylistQL),
-    orm_1.ManyToOne(() => playlist_1.Playlist, playlist => playlist.entries),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => PlaylistQL),
+    ManyToOne(() => Playlist, playlist => playlist.entries),
+    __metadata("design:type", Reference)
 ], PlaylistEntry.prototype, "playlist", void 0);
 __decorate([
-    type_graphql_1.Field(() => track_1.TrackQL),
-    orm_1.ManyToOne(() => track_1.Track, track => track.playlistEntries),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => TrackQL),
+    ManyToOne(() => Track, track => track.playlistEntries),
+    __metadata("design:type", Reference)
 ], PlaylistEntry.prototype, "track", void 0);
 __decorate([
-    type_graphql_1.Field(() => episode_1.EpisodeQL),
-    orm_1.ManyToOne(() => episode_1.Episode, episode => episode.playlistEntries),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => EpisodeQL),
+    ManyToOne(() => Episode, episode => episode.playlistEntries),
+    __metadata("design:type", Reference)
 ], PlaylistEntry.prototype, "episode", void 0);
 PlaylistEntry = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], PlaylistEntry);
-exports.PlaylistEntry = PlaylistEntry;
+export { PlaylistEntry };
 let PlaylistEntryQL = class PlaylistEntryQL extends PlaylistEntry {
 };
 PlaylistEntryQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], PlaylistEntryQL);
-exports.PlaylistEntryQL = PlaylistEntryQL;
+export { PlaylistEntryQL };
 //# sourceMappingURL=playlist-entry.js.map

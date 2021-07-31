@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,29 +7,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserService = void 0;
-const bcrypt_1 = require("../../utils/bcrypt");
-const enums_1 = require("../../types/enums");
-const typescript_ioc_1 = require("typescript-ioc");
-const path_1 = __importDefault(require("path"));
-const fs_extra_1 = __importDefault(require("fs-extra"));
-const rest_1 = require("../../modules/rest");
-const config_service_1 = require("../../modules/engine/services/config.service");
-const fs_utils_1 = require("../../utils/fs-utils");
-const image_module_1 = require("../../modules/image/image.module");
-const common_password_checker_1 = __importDefault(require("common-password-checker"));
-const random_1 = require("../../utils/random");
+import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt';
+import { UserRole } from '../../types/enums';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import path from 'path';
+import fse from 'fs-extra';
+import { InvalidParamError, UnauthError } from '../../modules/rest';
+import { ConfigService } from '../../modules/engine/services/config.service';
+import { fileDeleteIfExists } from '../../utils/fs-utils';
+import { ImageModule } from '../../modules/image/image.module';
+import commonPassword from 'common-password-checker';
+import { randomString } from '../../utils/random';
 let UserService = class UserService {
     constructor() {
         this.userAvatarPath = this.configService.getDataPath(['images']);
     }
     async findByName(orm, name) {
         if (!name || name.trim().length === 0) {
-            return Promise.reject(rest_1.UnauthError('Invalid Username'));
+            return Promise.reject(UnauthError('Invalid Username'));
         }
         return await orm.User.findOne({ where: { name } });
     }
@@ -40,48 +34,48 @@ let UserService = class UserService {
     }
     async auth(orm, name, pass) {
         if ((!pass) || (!pass.length)) {
-            return Promise.reject(rest_1.InvalidParamError('password', 'Invalid Password'));
+            return Promise.reject(InvalidParamError('password', 'Invalid Password'));
         }
         const user = await this.findByName(orm, name);
         if (!user) {
-            return Promise.reject(rest_1.InvalidParamError('username', 'Invalid Username'));
+            return Promise.reject(InvalidParamError('username', 'Invalid Username'));
         }
-        if (!await bcrypt_1.bcryptComparePassword(pass, user.hash)) {
-            return Promise.reject(rest_1.InvalidParamError('password', 'Invalid Password'));
+        if (!await bcryptComparePassword(pass, user.hash)) {
+            return Promise.reject(InvalidParamError('password', 'Invalid Password'));
         }
         return user;
     }
     async authJWT(orm, jwtPayload) {
         if (!jwtPayload?.id) {
-            return Promise.reject(rest_1.InvalidParamError('token', 'Invalid token'));
+            return Promise.reject(InvalidParamError('token', 'Invalid token'));
         }
         return await orm.User.findOneByID(jwtPayload.id);
     }
     static listfyRoles(user) {
         const result = [];
         if (user.roleAdmin) {
-            result.push(enums_1.UserRole.admin);
+            result.push(UserRole.admin);
         }
         if (user.roleStream) {
-            result.push(enums_1.UserRole.stream);
+            result.push(UserRole.stream);
         }
         if (user.rolePodcast) {
-            result.push(enums_1.UserRole.podcast);
+            result.push(UserRole.podcast);
         }
         if (user.roleUpload) {
-            result.push(enums_1.UserRole.upload);
+            result.push(UserRole.upload);
         }
         return result;
     }
     avatarImageFilename(user) {
-        return path_1.default.join(this.userAvatarPath, `avatar-${user.id}.png`);
+        return path.join(this.userAvatarPath, `avatar-${user.id}.png`);
     }
     async getImage(orm, user, size, format) {
         const filename = this.avatarImageFilename(user);
-        let exists = await fs_extra_1.default.pathExists(filename);
+        let exists = await fse.pathExists(filename);
         if (!exists) {
             await this.generateAvatar(user);
-            exists = await fs_extra_1.default.pathExists(filename);
+            exists = await fse.pathExists(filename);
         }
         if (exists) {
             return this.imageModule.get(user.id, filename, size, format);
@@ -90,35 +84,35 @@ let UserService = class UserService {
     }
     async generateAvatar(user, seed) {
         const filename = this.avatarImageFilename(user);
-        await fs_utils_1.fileDeleteIfExists(filename);
+        await fileDeleteIfExists(filename);
         await this.imageModule.generateAvatar(seed || user.name, filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
     async setUserImage(user, filename) {
         const destName = this.avatarImageFilename(user);
         await this.imageModule.createAvatar(filename, destName);
-        await fs_utils_1.fileDeleteIfExists(filename);
+        await fileDeleteIfExists(filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
     async validatePassword(password) {
         if ((!password) || (!password.trim().length)) {
-            return Promise.reject(rest_1.InvalidParamError('Invalid Password'));
+            return Promise.reject(InvalidParamError('Invalid Password'));
         }
         if (password.length < 4) {
-            return Promise.reject(rest_1.InvalidParamError('Password is too short'));
+            return Promise.reject(InvalidParamError('Password is too short'));
         }
-        if (common_password_checker_1.default(password)) {
+        if (commonPassword(password)) {
             return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
         }
     }
     async setUserPassword(orm, user, pass) {
         await this.validatePassword(pass);
-        user.hash = await bcrypt_1.bcryptPassword(pass);
+        user.hash = await bcryptPassword(pass);
         await orm.User.persistAndFlush(user);
     }
     async setUserEmail(orm, user, email) {
         if ((!email) || (!email.trim().length)) {
-            return Promise.reject(rest_1.InvalidParamError('email', 'Invalid Email'));
+            return Promise.reject(InvalidParamError('email', 'Invalid Email'));
         }
         user.email = email;
         await orm.User.persistAndFlush(user);
@@ -126,32 +120,32 @@ let UserService = class UserService {
     async remove(orm, user) {
         await orm.User.removeAndFlush(user);
         await this.imageModule.clearImageCacheByIDs([user.id]);
-        await fs_utils_1.fileDeleteIfExists(this.avatarImageFilename(user));
+        await fileDeleteIfExists(this.avatarImageFilename(user));
     }
     async createUser(orm, name, email, pass, roleAdmin, roleStream, roleUpload, rolePodcast) {
-        const hashAndSalt = await bcrypt_1.bcryptPassword(pass);
+        const hashAndSalt = await bcryptPassword(pass);
         const user = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
         await orm.User.persistAndFlush(user);
         return user;
     }
     async create(orm, args) {
         if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(rest_1.InvalidParamError('name', 'Invalid Username'));
+            return Promise.reject(InvalidParamError('name', 'Invalid Username'));
         }
         const existingUser = await orm.User.findOne({ where: { name: args.name } });
         if (existingUser) {
-            return Promise.reject(rest_1.InvalidParamError('name', 'Username already exists'));
+            return Promise.reject(InvalidParamError('name', 'Username already exists'));
         }
-        const pass = random_1.randomString(32);
+        const pass = randomString(32);
         return await this.createUser(orm, args.name, args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
     }
     async update(orm, user, args) {
         if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(rest_1.InvalidParamError('name', 'Invalid Username'));
+            return Promise.reject(InvalidParamError('name', 'Invalid Username'));
         }
         const existingUser = await orm.User.findOne({ where: { name: args.name } });
         if (existingUser && existingUser.id !== user.id) {
-            return Promise.reject(rest_1.InvalidParamError('name', 'Username already exists'));
+            return Promise.reject(InvalidParamError('name', 'Username already exists'));
         }
         user.name = args.name;
         user.email = args.email || user.email;
@@ -164,16 +158,16 @@ let UserService = class UserService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", config_service_1.ConfigService)
+    Inject,
+    __metadata("design:type", ConfigService)
 ], UserService.prototype, "configService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], UserService.prototype, "imageModule", void 0);
 UserService = __decorate([
-    typescript_ioc_1.InRequestScope,
+    InRequestScope,
     __metadata("design:paramtypes", [])
 ], UserService);
-exports.UserService = UserService;
+export { UserService };
 //# sourceMappingURL=user.service.js.map

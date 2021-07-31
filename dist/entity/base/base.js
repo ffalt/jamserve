@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,86 +7,81 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.dateOrUndefined = exports.OrderHelper = exports.PaginatedResponse = exports.Index = exports.IndexGroup = exports.Base = void 0;
-const type_graphql_1 = require("type-graphql");
-const orm_1 = require("../../modules/orm");
+import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { Entity, PrimaryKey } from '../../modules/orm';
 let Base = class Base {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.ID),
-    orm_1.PrimaryKey(),
+    Field(() => ID),
+    PrimaryKey(),
     __metadata("design:type", String)
 ], Base.prototype, "id", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
+    Field(() => Date),
     __metadata("design:type", Date)
 ], Base.prototype, "createdAt", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
+    Field(() => Date),
     __metadata("design:type", Date)
 ], Base.prototype, "updatedAt", void 0);
 Base = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity({ isAbstract: true })
+    ObjectType(),
+    Entity({ isAbstract: true })
 ], Base);
-exports.Base = Base;
-function IndexGroup(EntityClass, EntityQLClass) {
+export { Base };
+export function IndexGroup(EntityClass, EntityQLClass) {
     let IndexResultResponseClass = class IndexResultResponseClass {
     };
     __decorate([
-        type_graphql_1.Field(() => [EntityQLClass]),
+        Field(() => [EntityQLClass]),
         __metadata("design:type", Array)
     ], IndexResultResponseClass.prototype, "items", void 0);
     __decorate([
-        type_graphql_1.Field(() => String),
+        Field(() => String),
         __metadata("design:type", String)
     ], IndexResultResponseClass.prototype, "name", void 0);
     IndexResultResponseClass = __decorate([
-        type_graphql_1.ObjectType({ isAbstract: true })
+        ObjectType({ isAbstract: true })
     ], IndexResultResponseClass);
     return IndexResultResponseClass;
 }
-exports.IndexGroup = IndexGroup;
-function Index(EntityQLClass) {
+export function Index(EntityQLClass) {
     let IndexResponseClass = class IndexResponseClass {
     };
     __decorate([
-        type_graphql_1.Field(() => [EntityQLClass]),
+        Field(() => [EntityQLClass]),
         __metadata("design:type", Array)
     ], IndexResponseClass.prototype, "groups", void 0);
     IndexResponseClass = __decorate([
-        type_graphql_1.ObjectType({ isAbstract: true })
+        ObjectType({ isAbstract: true })
     ], IndexResponseClass);
     return IndexResponseClass;
 }
-exports.Index = Index;
-function PaginatedResponse(EntityClass, EntityQLClass) {
+export function PaginatedResponse(EntityClass, EntityQLClass) {
     let PaginatedResponseClass = class PaginatedResponseClass {
     };
     __decorate([
-        type_graphql_1.Field(() => [EntityQLClass]),
+        Field(() => [EntityQLClass]),
         __metadata("design:type", Array)
     ], PaginatedResponseClass.prototype, "items", void 0);
     __decorate([
-        type_graphql_1.Field(() => type_graphql_1.Int),
+        Field(() => Int),
         __metadata("design:type", Number)
     ], PaginatedResponseClass.prototype, "total", void 0);
     __decorate([
-        type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+        Field(() => Int, { nullable: true }),
         __metadata("design:type", Number)
     ], PaginatedResponseClass.prototype, "take", void 0);
     __decorate([
-        type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
+        Field(() => Int, { nullable: true }),
         __metadata("design:type", Number)
     ], PaginatedResponseClass.prototype, "skip", void 0);
     PaginatedResponseClass = __decorate([
-        type_graphql_1.ObjectType({ isAbstract: true })
+        ObjectType({ isAbstract: true })
     ], PaginatedResponseClass);
     return PaginatedResponseClass;
 }
-exports.PaginatedResponse = PaginatedResponse;
-class OrderHelper {
+export class OrderHelper {
     static direction(args) {
         return args?.orderDesc ? 'DESC' : 'ASC';
     }
@@ -95,12 +89,10 @@ class OrderHelper {
         return order === 'ASC' ? 'DESC' : 'ASC';
     }
 }
-exports.OrderHelper = OrderHelper;
-function dateOrUndefined(timestamp) {
+export function dateOrUndefined(timestamp) {
     if (timestamp === undefined || timestamp === null || timestamp === 0) {
         return undefined;
     }
     return new Date(timestamp);
 }
-exports.dateOrUndefined = dateOrUndefined;
 //# sourceMappingURL=base.js.map

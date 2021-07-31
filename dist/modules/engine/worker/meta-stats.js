@@ -1,34 +1,28 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MatchNodeMetaStats = void 0;
-const path_1 = __importDefault(require("path"));
-const enums_1 = require("../../../types/enums");
-const stats_builder_1 = require("../../../utils/stats-builder");
-const album_name_1 = require("../../../utils/album-name");
-const consts_1 = require("../../../types/consts");
+import path from 'path';
+import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums';
+import { MetaStatBuilder } from '../../../utils/stats-builder';
+import { extractAlbumName } from '../../../utils/album-name';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts';
 const typeByGenreNames = {
-    audiobook: enums_1.AlbumType.audiobook,
-    'audio theater': enums_1.AlbumType.audiobook,
-    'audio drama': enums_1.AlbumType.audiobook,
-    'audio series': enums_1.AlbumType.audiobook,
-    soundtrack: enums_1.AlbumType.soundtrack
+    audiobook: AlbumType.audiobook,
+    'audio theater': AlbumType.audiobook,
+    'audio drama': AlbumType.audiobook,
+    'audio series': AlbumType.audiobook,
+    soundtrack: AlbumType.soundtrack
 };
 const typeByMusicbrainzString = [
-    { type: enums_1.AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series'] },
-    { type: enums_1.AlbumType.bootleg, names: ['bootleg'] },
-    { type: enums_1.AlbumType.compilation, names: ['compilation'] },
-    { type: enums_1.AlbumType.live, names: ['live'] },
-    { type: enums_1.AlbumType.soundtrack, names: ['soundtrack'] },
-    { type: enums_1.AlbumType.ep, names: ['ep'] },
-    { type: enums_1.AlbumType.single, names: ['single'] },
-    { type: enums_1.AlbumType.album, names: ['album'] }
+    { type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series'] },
+    { type: AlbumType.bootleg, names: ['bootleg'] },
+    { type: AlbumType.compilation, names: ['compilation'] },
+    { type: AlbumType.live, names: ['live'] },
+    { type: AlbumType.soundtrack, names: ['soundtrack'] },
+    { type: AlbumType.ep, names: ['ep'] },
+    { type: AlbumType.single, names: ['single'] },
+    { type: AlbumType.album, names: ['album'] }
 ];
-class MatchNodeMetaStats {
+export class MatchNodeMetaStats {
     static getGenreAlbumType(genre) {
-        return typeByGenreNames[genre.toLowerCase()] || enums_1.AlbumType.unknown;
+        return typeByGenreNames[genre.toLowerCase()] || AlbumType.unknown;
     }
     static getMusicbrainzAlbumType(mbAlbumType) {
         const t = mbAlbumType.toLowerCase();
@@ -39,20 +33,20 @@ class MatchNodeMetaStats {
                 }
             }
         }
-        return enums_1.AlbumType.unknown;
+        return AlbumType.unknown;
     }
     static getStrategyAlbumType(strategy, hasMultipleArtists) {
         switch (strategy) {
-            case enums_1.RootScanStrategy.auto:
-                return hasMultipleArtists ? enums_1.AlbumType.compilation : enums_1.AlbumType.album;
-            case enums_1.RootScanStrategy.artistalbum:
-                return enums_1.AlbumType.album;
-            case enums_1.RootScanStrategy.compilation:
-                return enums_1.AlbumType.compilation;
-            case enums_1.RootScanStrategy.audiobook:
-                return enums_1.AlbumType.audiobook;
+            case RootScanStrategy.auto:
+                return hasMultipleArtists ? AlbumType.compilation : AlbumType.album;
+            case RootScanStrategy.artistalbum:
+                return AlbumType.album;
+            case RootScanStrategy.compilation:
+                return AlbumType.compilation;
+            case RootScanStrategy.audiobook:
+                return AlbumType.audiobook;
             default:
-                return enums_1.AlbumType.unknown;
+                return AlbumType.unknown;
         }
     }
     static async buildTrackSlugs(match, builder) {
@@ -62,7 +56,7 @@ class MatchNodeMetaStats {
             builder.statSlugValue('genre', genre);
         }
         builder.statSlugValue('series', match.series);
-        builder.statSlugValue('album', match.album ? album_name_1.extractAlbumName(match.album) : undefined);
+        builder.statSlugValue('album', match.album ? extractAlbumName(match.album) : undefined);
         builder.statNumber('year', match.year);
         builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
         builder.statSlugValue('mbAlbumType', match.mbAlbumType);
@@ -78,7 +72,7 @@ class MatchNodeMetaStats {
     static buildSubFolderSlugs(folder, builder) {
         builder.statSlugValue('artist', folder.artist);
         builder.statSlugValue('artistSort', folder.artistSort);
-        builder.statSlugValue('album', folder.album ? album_name_1.extractAlbumName(folder.album) : undefined);
+        builder.statSlugValue('album', folder.album ? extractAlbumName(folder.album) : undefined);
         builder.statNumber('year', folder.year);
         builder.statSlugValue('mbAlbumType', folder.mbAlbumType);
         builder.statID('mbArtistID', folder.mbArtistID);
@@ -89,7 +83,7 @@ class MatchNodeMetaStats {
         let subFolderTrackCount = 0;
         let subFolderCount = 0;
         for (const child of dir.children) {
-            if (child.folder.folderType !== enums_1.FolderType.extras) {
+            if (child.folder.folderType !== FolderType.extras) {
                 const result = MatchNodeMetaStats.recursiveCount(child);
                 subFolderCount += result.subFolderCount + 1;
                 subFolderTrackCount += result.subFolderTrackCount;
@@ -100,43 +94,43 @@ class MatchNodeMetaStats {
     }
     static async buildSubFoldersSlugs(dir, builder) {
         for (const child of dir.children) {
-            if (child.folder.folderType !== enums_1.FolderType.extras) {
+            if (child.folder.folderType !== FolderType.extras) {
                 await MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
             }
         }
     }
     static getAlbumInfo(builder, strategy) {
-        const artist = builder.mostUsed('artist', consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
+        const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
         const genre = builder.mostUsed('genre');
         const mbAlbumType = builder.mostUsed('mbAlbumType', '');
-        const hasMultipleArtists = artist === consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_NAME;
-        let albumType = enums_1.AlbumType.unknown;
+        const hasMultipleArtists = artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME;
+        let albumType = AlbumType.unknown;
         if (genre) {
             albumType = MatchNodeMetaStats.getGenreAlbumType(genre);
         }
-        if (mbAlbumType && albumType === enums_1.AlbumType.unknown) {
+        if (mbAlbumType && albumType === AlbumType.unknown) {
             albumType = MatchNodeMetaStats.getMusicbrainzAlbumType(mbAlbumType);
         }
-        if (albumType === enums_1.AlbumType.unknown) {
+        if (albumType === AlbumType.unknown) {
             albumType = MatchNodeMetaStats.getStrategyAlbumType(strategy, hasMultipleArtists);
         }
-        if (albumType === enums_1.AlbumType.audiobook) {
+        if (albumType === AlbumType.audiobook) {
             const series = builder.mostUsed('series');
             if (series) {
-                albumType = enums_1.AlbumType.series;
+                albumType = AlbumType.series;
             }
         }
         return { albumType, artist, hasMultipleArtists, mbAlbumType, genres: builder.asStringList('genre') };
     }
     static async buildMetaStat(node, strategy) {
-        const builder = new stats_builder_1.MetaStatBuilder();
+        const builder = new MetaStatBuilder();
         await MatchNodeMetaStats.buildTracksSlugs(node, builder);
         const { subFolderTrackCount, subFolderCount } = MatchNodeMetaStats.recursiveCount(node);
         await MatchNodeMetaStats.buildSubFoldersSlugs(node, builder);
         const { albumType, artist, hasMultipleArtists, mbAlbumType, genres } = MatchNodeMetaStats.getAlbumInfo(builder, strategy);
         return {
             trackCount: node.nrOfTracks,
-            folderCount: node.children.filter(c => c.folder.folderType !== enums_1.FolderType.extras).length,
+            folderCount: node.children.filter(c => c.folder.folderType !== FolderType.extras).length,
             subFolderTrackCount,
             subFolderCount,
             albumType,
@@ -145,7 +139,7 @@ class MatchNodeMetaStats {
             hasMultipleArtists,
             mbAlbumType,
             hasMultipleAlbums: builder.asList('album').length > 1,
-            album: builder.mostUsed('album', album_name_1.extractAlbumName(path_1.default.basename(node.path))),
+            album: builder.mostUsed('album', extractAlbumName(path.basename(node.path))),
             artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
             mbReleaseID: builder.mostUsed('mbReleaseID', ''),
             mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),
@@ -154,5 +148,4 @@ class MatchNodeMetaStats {
         };
     }
 }
-exports.MatchNodeMetaStats = MatchNodeMetaStats;
 //# sourceMappingURL=meta-stats.js.map

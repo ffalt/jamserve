@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,14 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NowPlayingService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const builder_1 = require("../../modules/rest/builder");
-const enums_1 = require("../../types/enums");
-const logger_1 = require("../../utils/logger");
-const state_service_1 = require("../state/state.service");
-const log = logger_1.logger('NowPlayingService');
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { NotFoundError } from '../../modules/rest/builder';
+import { DBObjectType } from '../../types/enums';
+import { logger } from '../../utils/logger';
+import { StateService } from '../state/state.service';
+const log = logger('NowPlayingService');
 let NowPlayingService = class NowPlayingService {
     constructor() {
         this.playing = [];
@@ -34,8 +31,8 @@ let NowPlayingService = class NowPlayingService {
         const result = { time: Date.now(), episode, user };
         this.playing.push(result);
         this.report(orm, [
-            { id: episode.id, type: enums_1.DBObjectType.episode },
-            { id: episode.podcast.idOrFail(), type: enums_1.DBObjectType.podcast },
+            { id: episode.id, type: DBObjectType.episode },
+            { id: episode.podcast.idOrFail(), type: DBObjectType.podcast },
         ], user).catch(e => log.error(e));
         return result;
     }
@@ -44,24 +41,24 @@ let NowPlayingService = class NowPlayingService {
         const result = { time: Date.now(), track, user };
         this.playing.push(result);
         this.report(orm, [
-            { id: track.id, type: enums_1.DBObjectType.track },
-            { id: track.album.id(), type: enums_1.DBObjectType.album },
-            { id: track.artist.id(), type: enums_1.DBObjectType.artist },
-            { id: track.folder.id(), type: enums_1.DBObjectType.folder },
-            { id: track.series.id(), type: enums_1.DBObjectType.series },
-            { id: track.root.id(), type: enums_1.DBObjectType.root },
+            { id: track.id, type: DBObjectType.track },
+            { id: track.album.id(), type: DBObjectType.album },
+            { id: track.artist.id(), type: DBObjectType.artist },
+            { id: track.folder.id(), type: DBObjectType.folder },
+            { id: track.series.id(), type: DBObjectType.series },
+            { id: track.root.id(), type: DBObjectType.root },
         ], user).catch(e => log.error(e));
         return result;
     }
     async scrobble(orm, id, user) {
         const result = await orm.findInStreamTypes(id);
         if (!result) {
-            return Promise.reject(builder_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         switch (result.objType) {
-            case enums_1.DBObjectType.track:
+            case DBObjectType.track:
                 return await this.reportTrack(orm, result.obj, user);
-            case enums_1.DBObjectType.episode:
+            case DBObjectType.episode:
                 return this.reportEpisode(orm, result.obj, user);
             default:
                 return Promise.reject(Error('Invalid Object Type for Scrobbling'));
@@ -69,11 +66,11 @@ let NowPlayingService = class NowPlayingService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", state_service_1.StateService)
+    Inject,
+    __metadata("design:type", StateService)
 ], NowPlayingService.prototype, "stateService", void 0);
 NowPlayingService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], NowPlayingService);
-exports.NowPlayingService = NowPlayingService;
+export { NowPlayingService };
 //# sourceMappingURL=nowplaying.service.js.map

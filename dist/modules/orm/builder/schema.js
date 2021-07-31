@@ -1,12 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ModelBuilder = exports.DBModel = void 0;
-const sequelize_1 = require("sequelize");
-const __1 = require("..");
-class DBModel {
+import seq from 'sequelize';
+import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '..';
+export class DBModel {
 }
-exports.DBModel = DBModel;
-class ModelBuilder {
+export class ModelBuilder {
     constructor(sequelize, metadata) {
         this.sequelize = sequelize;
         this.metadata = metadata;
@@ -16,40 +12,40 @@ class ModelBuilder {
         const type = field.getType();
         const opts = field.typeOptions;
         const allowNull = opts.nullable === true;
-        if (type === __1.ORM_ID && opts.primaryKey) {
+        if (type === ORM_ID && opts.primaryKey) {
             return {
-                type: sequelize_1.DataTypes.UUID,
-                defaultValue: sequelize_1.DataTypes.UUIDV4,
+                type: seq.DataTypes.UUID,
+                defaultValue: seq.DataTypes.UUIDV4,
                 allowNull: false,
                 unique: true,
                 primaryKey: true
             };
         }
-        if (type === __1.ORM_ID) {
-            return { type: sequelize_1.DataTypes.UUID, defaultValue: sequelize_1.DataTypes.UUIDV4, allowNull };
+        if (type === ORM_ID) {
+            return { type: seq.DataTypes.UUID, defaultValue: seq.DataTypes.UUIDV4, allowNull };
         }
         if (type === Boolean) {
-            return { type: sequelize_1.DataTypes.BOOLEAN, allowNull };
+            return { type: seq.DataTypes.BOOLEAN, allowNull };
         }
-        if (type === __1.ORM_INT) {
-            return { type: sequelize_1.DataTypes.INTEGER, allowNull };
+        if (type === ORM_INT) {
+            return { type: seq.DataTypes.INTEGER, allowNull };
         }
-        if (type === __1.ORM_DATETIME || type === Date) {
-            return { type: sequelize_1.DataTypes.DATE, allowNull };
+        if (type === ORM_DATETIME || type === Date) {
+            return { type: seq.DataTypes.DATE, allowNull };
         }
-        if (type === __1.ORM_FLOAT || type === Number) {
-            return { type: sequelize_1.DataTypes.FLOAT, allowNull };
+        if (type === ORM_FLOAT || type === Number) {
+            return { type: seq.DataTypes.FLOAT, allowNull };
         }
         if (type === String) {
             return {
-                type: sequelize_1.DataTypes.TEXT,
+                type: seq.DataTypes.TEXT,
                 allowNull
             };
         }
         const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
         if (enumInfo) {
             return {
-                type: sequelize_1.DataTypes.TEXT,
+                type: seq.DataTypes.TEXT,
                 allowNull
             };
         }
@@ -155,13 +151,13 @@ class ModelBuilder {
             throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
         }
         sourceModel.hasMany(destModel, {
-            type: sequelize_1.DataTypes.UUID,
+            type: seq.DataTypes.UUID,
             as: sourceField.name + 'ORM',
             onDelete: o2m.onDelete,
             foreignKey: destField.name
         });
         destModel.belongsTo(sourceModel, {
-            type: sequelize_1.DataTypes.UUID,
+            type: seq.DataTypes.UUID,
             as: destField.name + 'ORM',
             foreignKey: {
                 name: destField.name,
@@ -195,5 +191,4 @@ class ModelBuilder {
         return result;
     }
 }
-exports.ModelBuilder = ModelBuilder;
 //# sourceMappingURL=schema.js.map

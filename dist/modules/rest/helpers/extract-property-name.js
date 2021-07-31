@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractPropertyName = void 0;
 function $args(func) {
     return (func + '')
         .replace(/[/][/].*$/mg, '')
@@ -10,8 +7,7 @@ function $args(func) {
         .replace(/=[^,]+/g, '')
         .split(',').filter(Boolean);
 }
-function extractPropertyName(prototype, propertyKey, parameterIndex) {
+export function extractPropertyName(prototype, propertyKey, parameterIndex) {
     return `${$args(prototype[propertyKey].toString())[parameterIndex]}`;
 }
-exports.extractPropertyName = extractPropertyName;
 //# sourceMappingURL=extract-property-name.js.map

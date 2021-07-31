@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CoverArtArchiveClient = void 0;
-const webservice_json_client_1 = require("../../../utils/webservice-json-client");
-class CoverArtArchiveClient extends webservice_json_client_1.WebserviceJSONClient {
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client';
+export class CoverArtArchiveClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
             host: 'https://coverartarchive.org',
@@ -37,5 +34,4 @@ class CoverArtArchiveClient extends webservice_json_client_1.WebserviceJSONClien
         });
     }
 }
-exports.CoverArtArchiveClient = CoverArtArchiveClient;
 //# sourceMappingURL=coverartarchive-client.js.map

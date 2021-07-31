@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,10 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NowPlayingResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const nowplaying_1 = require("./nowplaying");
+import { Arg, Ctx, FieldResolver, ID, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { NowPlaying, NowPlayingQL } from './nowplaying';
 let NowPlayingResolver = class NowPlayingResolver {
     async nowPlaying({ engine }) {
         return engine.nowPlaying.getNowPlaying();
@@ -30,35 +27,36 @@ let NowPlayingResolver = class NowPlayingResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => [nowplaying_1.NowPlayingQL], { description: 'Get a List of media [Track, Episode] played currently by Users' }),
-    __param(0, type_graphql_1.Ctx()),
+    Query(() => [NowPlayingQL], { description: 'Get a List of media [Track, Episode] played currently by Users' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NowPlayingResolver.prototype, "nowPlaying", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => type_graphql_1.ID),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => ID),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [nowplaying_1.NowPlaying]),
+    __metadata("design:paramtypes", [NowPlaying]),
     __metadata("design:returntype", Promise)
 ], NowPlayingResolver.prototype, "userID", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => String),
-    __param(0, type_graphql_1.Root()),
+    FieldResolver(() => String),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [nowplaying_1.NowPlaying]),
+    __metadata("design:paramtypes", [NowPlaying]),
     __metadata("design:returntype", Promise)
 ], NowPlayingResolver.prototype, "userName", null);
 __decorate([
-    type_graphql_1.Mutation(() => nowplaying_1.NowPlayingQL),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID)), __param(1, type_graphql_1.Ctx()),
+    Mutation(() => NowPlayingQL),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], NowPlayingResolver.prototype, "scrobble", null);
 NowPlayingResolver = __decorate([
-    type_graphql_1.Resolver(nowplaying_1.NowPlayingQL)
+    Resolver(NowPlayingQL)
 ], NowPlayingResolver);
-exports.NowPlayingResolver = NowPlayingResolver;
+export { NowPlayingResolver };
 //# sourceMappingURL=nowplaying.resolver.js.map

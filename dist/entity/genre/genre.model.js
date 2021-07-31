@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,104 +7,102 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreIndex = exports.GenreIndexGroup = exports.GenreIndexEntry = exports.GenrePage = exports.Genre = exports.GenreBase = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const base_model_1 = require("../base/base.model");
-let GenreBase = class GenreBase extends base_model_1.Base {
+import { ObjField, ResultType } from '../../modules/rest/decorators';
+import { Base, Page } from '../base/base.model';
+let GenreBase = class GenreBase extends Base {
 };
 GenreBase = __decorate([
-    decorators_1.ResultType({ description: 'Genre' })
+    ResultType({ description: 'Genre' })
 ], GenreBase);
-exports.GenreBase = GenreBase;
+export { GenreBase };
 let Genre = class Genre extends GenreBase {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Album Count', min: 0, example: 5 }),
+    ObjField({ description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "albumCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Track Count', min: 0, example: 55 }),
+    ObjField({ description: 'Track Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "trackCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Artist Count', min: 0, example: 55 }),
+    ObjField({ description: 'Artist Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "artistCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Folder Count', min: 0, example: 55 }),
+    ObjField({ description: 'Folder Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "folderCount", void 0);
 Genre = __decorate([
-    decorators_1.ResultType({ description: 'Genre' })
+    ResultType({ description: 'Genre' })
 ], Genre);
-exports.Genre = Genre;
-let GenrePage = class GenrePage extends base_model_1.Page {
+export { Genre };
+let GenrePage = class GenrePage extends Page {
 };
 __decorate([
-    decorators_1.ObjField(() => Genre, { description: 'List of Genre' }),
+    ObjField(() => Genre, { description: 'List of Genre' }),
     __metadata("design:type", Array)
 ], GenrePage.prototype, "items", void 0);
 GenrePage = __decorate([
-    decorators_1.ResultType({ description: 'Genre Page' })
+    ResultType({ description: 'Genre Page' })
 ], GenrePage);
-exports.GenrePage = GenrePage;
+export { GenrePage };
 let GenreIndexEntry = class GenreIndexEntry {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'ID', isID: true }),
+    ObjField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], GenreIndexEntry.prototype, "id", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Name', example: 'Awesome' }),
+    ObjField({ description: 'Name', example: 'Awesome' }),
     __metadata("design:type", String)
 ], GenreIndexEntry.prototype, "name", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Track Count', min: 0, example: 5 }),
+    ObjField({ description: 'Track Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "trackCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Artist Count', min: 0, example: 5 }),
+    ObjField({ description: 'Artist Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "artistCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Album Count', min: 0, example: 5 }),
+    ObjField({ description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "albumCount", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Folder Count', min: 0, example: 5 }),
+    ObjField({ description: 'Folder Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "folderCount", void 0);
 GenreIndexEntry = __decorate([
-    decorators_1.ResultType({ description: 'Genre Index Entry' })
+    ResultType({ description: 'Genre Index Entry' })
 ], GenreIndexEntry);
-exports.GenreIndexEntry = GenreIndexEntry;
+export { GenreIndexEntry };
 let GenreIndexGroup = class GenreIndexGroup {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Genre Group Name', example: 'A' }),
+    ObjField({ description: 'Genre Group Name', example: 'A' }),
     __metadata("design:type", String)
 ], GenreIndexGroup.prototype, "name", void 0);
 __decorate([
-    decorators_1.ObjField(() => [GenreIndexEntry]),
+    ObjField(() => [GenreIndexEntry]),
     __metadata("design:type", Array)
 ], GenreIndexGroup.prototype, "items", void 0);
 GenreIndexGroup = __decorate([
-    decorators_1.ResultType({ description: 'Genre Index Group' })
+    ResultType({ description: 'Genre Index Group' })
 ], GenreIndexGroup);
-exports.GenreIndexGroup = GenreIndexGroup;
+export { GenreIndexGroup };
 let GenreIndex = class GenreIndex {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Last Change Timestamp' }),
+    ObjField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], GenreIndex.prototype, "lastModified", void 0);
 __decorate([
-    decorators_1.ObjField(() => [GenreIndexGroup], { description: 'Genre Index Groups' }),
+    ObjField(() => [GenreIndexGroup], { description: 'Genre Index Groups' }),
     __metadata("design:type", Array)
 ], GenreIndex.prototype, "groups", void 0);
 GenreIndex = __decorate([
-    decorators_1.ResultType({ description: 'Genre Index' })
+    ResultType({ description: 'Genre Index' })
 ], GenreIndex);
-exports.GenreIndex = GenreIndex;
+export { GenreIndex };
 //# sourceMappingURL=genre.model.js.map

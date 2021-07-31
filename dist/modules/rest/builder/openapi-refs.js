@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OpenApiRefBuilder = void 0;
-const openapi_helpers_1 = require("./openapi-helpers");
-const metadata_1 = require("../metadata");
-const default_value_1 = require("../helpers/default-value");
-const iterate_super_1 = require("../helpers/iterate-super");
-class OpenApiRefBuilder {
+import { exampleID, SCHEMA_ID, SCHEMA_JSON } from './openapi-helpers';
+import { getMetadataStorage } from '../metadata';
+import { getDefaultValue } from '../helpers/default-value';
+import { iterateArguments } from '../helpers/iterate-super';
+export class OpenApiRefBuilder {
     constructor(extended = true) {
         this.extended = extended;
-        this.metadata = metadata_1.getMetadataStorage();
+        this.metadata = getMetadataStorage();
     }
     getEnumRef(enumInfo, schemas) {
         const name = enumInfo.name;
@@ -19,7 +16,7 @@ class OpenApiRefBuilder {
     }
     buildFieldSchema(type, typeOptions, schemas) {
         if (typeOptions.isID) {
-            return { $ref: openapi_helpers_1.SCHEMA_ID };
+            return { $ref: SCHEMA_ID };
         }
         else if (type === String) {
             return { type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
@@ -47,7 +44,7 @@ class OpenApiRefBuilder {
             if (hideParameters && hideParameters.includes(field.name)) {
                 return;
             }
-            field.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, field.typeOptions, field.name);
+            field.typeOptions.defaultValue = getDefaultValue(argumentInstance, field.typeOptions, field.name);
             const typeOptions = field.typeOptions;
             const o = {
                 in: mode,
@@ -55,7 +52,7 @@ class OpenApiRefBuilder {
                 description: field.description,
                 deprecated: field.deprecationReason ? true : undefined,
                 required: !typeOptions.nullable || mode === 'path',
-                example: typeOptions.isID ? openapi_helpers_1.exampleID : typeOptions.example
+                example: typeOptions.isID ? exampleID : typeOptions.example
             };
             const type = field.getType();
             o.schema = this.buildFieldSchema(type, typeOptions, schemas);
@@ -79,7 +76,7 @@ class OpenApiRefBuilder {
             description: typeOptions.description,
             deprecated: typeOptions.deprecationReason || ctrl.deprecationReason ? true : undefined,
             required: !param.typeOptions.nullable || param.mode === 'path',
-            example: typeOptions.isID ? openapi_helpers_1.exampleID : typeOptions.example,
+            example: typeOptions.isID ? exampleID : typeOptions.example,
             schema: this.buildParameterSchema(param, schemas)
         };
         parameters.push(o);
@@ -90,7 +87,7 @@ class OpenApiRefBuilder {
             throw new Error(`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
                 `is not a class decorated with '@ObjParamsType' decorator!`);
         }
-        iterate_super_1.iterateArguments(this.metadata, argumentType, argument => {
+        iterateArguments(this.metadata, argumentType, argument => {
             this.mapArgFields(param.mode, argument, parameters, schemas, hideParameters);
         });
     }
@@ -99,7 +96,7 @@ class OpenApiRefBuilder {
         const properties = {};
         const required = [];
         for (const field of argumentType.fields) {
-            field.typeOptions.defaultValue = default_value_1.getDefaultValue(argumentInstance, field.typeOptions, field.name);
+            field.typeOptions.defaultValue = getDefaultValue(argumentInstance, field.typeOptions, field.name);
             const typeOptions = field.typeOptions;
             if (!typeOptions.nullable) {
                 required.push(field.name);
@@ -131,7 +128,7 @@ class OpenApiRefBuilder {
     getParamRef(paramClass, name, schemas) {
         const argumentType = this.metadata.argumentType(paramClass);
         if (!argumentType) {
-            return openapi_helpers_1.SCHEMA_JSON;
+            return SCHEMA_JSON;
         }
         if (!schemas[argumentType.name]) {
             this.buildRef(argumentType, schemas, this.getParamRef.bind(this));
@@ -142,7 +139,7 @@ class OpenApiRefBuilder {
         const argumentType = this.metadata.resultType(resultClassValue);
         if (!argumentType) {
             if (resultClassValue === Object) {
-                return openapi_helpers_1.SCHEMA_JSON;
+                return SCHEMA_JSON;
             }
             throw new Error(`Missing ReturnType for method ${name}`);
         }
@@ -189,7 +186,7 @@ class OpenApiRefBuilder {
         const typeOptions = param.typeOptions;
         let result;
         if (typeOptions.isID) {
-            result = { $ref: openapi_helpers_1.SCHEMA_ID };
+            result = { $ref: SCHEMA_ID };
         }
         else if (param.getType() === String) {
             result = { type: 'string' };
@@ -219,5 +216,4 @@ class OpenApiRefBuilder {
         return result;
     }
 }
-exports.OpenApiRefBuilder = OpenApiRefBuilder;
 //# sourceMappingURL=openapi-refs.js.map

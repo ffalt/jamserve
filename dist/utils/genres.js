@@ -1,30 +1,23 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cleanGenre = exports.getKnownGenre = exports.Genres = void 0;
-const genres_json_1 = __importDefault(require("../static/genres.json"));
+import genreData from '../static/genres.json';
 let GenresSlugs;
-exports.Genres = genres_json_1.default.list;
+export const Genres = genreData.list;
 function slugify(genre) {
     return genre.replace(/[& \-.]/g, '').toLowerCase();
 }
 function buildGenreSlugs() {
     if (!GenresSlugs) {
         GenresSlugs = {};
-        exports.Genres.forEach(g => {
+        Genres.forEach(g => {
             GenresSlugs[slugify(g)] = g;
         });
     }
 }
-function getKnownGenre(genre) {
+export function getKnownGenre(genre) {
     const slug = slugify(genre);
     buildGenreSlugs();
     return GenresSlugs[slug];
 }
-exports.getKnownGenre = getKnownGenre;
-function cleanGenre(genre) {
+export function cleanGenre(genre) {
     const results = [];
     const parts = genre.split('/');
     parts.forEach(part => {
@@ -36,7 +29,7 @@ function cleanGenre(genre) {
             part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
         }
         if (part.length === 0 && (num !== undefined)) {
-            const s = genres_json_1.default.id3v1[num];
+            const s = genreData.id3v1[num];
             if (s) {
                 part = s;
             }
@@ -73,5 +66,4 @@ function cleanGenre(genre) {
     });
     return results;
 }
-exports.cleanGenre = cleanGenre;
 //# sourceMappingURL=genres.js.map

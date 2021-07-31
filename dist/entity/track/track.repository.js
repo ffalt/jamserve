@@ -1,41 +1,38 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TrackRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-const base_1 = require("../base/base");
-const folder_1 = require("../folder/folder");
-const orm_1 = require("../../modules/orm");
-class TrackRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { DBObjectType, TrackOrderFields } from '../../types/enums';
+import { OrderHelper } from '../base/base';
+import { Folder } from '../folder/folder';
+import { QHelper } from '../../modules/orm';
+export class TrackRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.track;
+        this.objType = DBObjectType.track;
     }
     buildOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.TrackOrderFields.created:
+            case TrackOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.TrackOrderFields.updated:
+            case TrackOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.TrackOrderFields.parent:
+            case TrackOrderFields.parent:
                 return [['path', direction]];
-            case enums_1.TrackOrderFields.filename:
+            case TrackOrderFields.filename:
                 return [['path', direction], ['fileName', direction]];
-            case enums_1.TrackOrderFields.album:
+            case TrackOrderFields.album:
                 return [['albumORM', 'name', direction]];
-            case enums_1.TrackOrderFields.trackNr:
+            case TrackOrderFields.trackNr:
                 return [['tagORM', 'trackNr', direction]];
-            case enums_1.TrackOrderFields.discNr:
+            case TrackOrderFields.discNr:
                 return [['tagORM', 'disc', direction]];
-            case enums_1.TrackOrderFields.seriesNr:
+            case TrackOrderFields.seriesNr:
                 return [['tagORM', 'seriesNr', direction]];
-            case enums_1.TrackOrderFields.title:
+            case TrackOrderFields.title:
                 return [['tagORM', 'title', direction]];
-            case enums_1.TrackOrderFields.default:
+            case TrackOrderFields.default:
                 return [
                     ['tagORM', 'disc', direction],
-                    ['path', base_1.OrderHelper.inverse(direction)],
+                    ['path', OrderHelper.inverse(direction)],
                     ['tagORM', 'trackNr', direction],
                     ['tagORM', 'title', direction]
                 ];
@@ -48,7 +45,7 @@ class TrackRepository extends base_repository_1.BaseRepository {
         }
         let folderIDs = [];
         if (filter?.childOfID) {
-            const folderRepo = this.em.getRepository(folder_1.Folder);
+            const folderRepo = this.em.getRepository(Folder);
             const folder = await folderRepo.oneOrFailByID(filter.childOfID);
             folderIDs = folderIDs.concat(await folderRepo.findAllDescendantsIds(folder));
             folderIDs.push(filter.childOfID);
@@ -56,33 +53,32 @@ class TrackRepository extends base_repository_1.BaseRepository {
         if (filter?.folderIDs) {
             folderIDs = folderIDs.concat(filter.folderIDs);
         }
-        const result = orm_1.QHelper.buildQuery([
+        const result = QHelper.buildQuery([
             { id: filter.ids },
-            { createdAt: orm_1.QHelper.gte(filter.since) },
-            { series: orm_1.QHelper.inOrEqual(filter.seriesIDs) },
-            { album: orm_1.QHelper.inOrEqual(filter.albumIDs) },
-            { artist: orm_1.QHelper.inOrEqual(filter.artistIDs) },
-            { albumArtist: orm_1.QHelper.inOrEqual(filter.albumArtistIDs) },
-            { root: orm_1.QHelper.inOrEqual(filter.rootIDs) },
-            { folder: orm_1.QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined) }
+            { createdAt: QHelper.gte(filter.since) },
+            { series: QHelper.inOrEqual(filter.seriesIDs) },
+            { album: QHelper.inOrEqual(filter.albumIDs) },
+            { artist: QHelper.inOrEqual(filter.artistIDs) },
+            { albumArtist: QHelper.inOrEqual(filter.albumArtistIDs) },
+            { root: QHelper.inOrEqual(filter.rootIDs) },
+            { folder: QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined) }
         ]);
-        result.include = orm_1.QHelper.includeQueries([
-            { bookmarks: [{ id: orm_1.QHelper.inOrEqual(filter.bookmarkIDs) }] },
-            { genres: [{ id: orm_1.QHelper.inOrEqual(filter.genreIDs) }] },
-            { artist: [{ name: orm_1.QHelper.eq(filter.artist) }] },
-            { album: [{ name: orm_1.QHelper.eq(filter.album) }] },
+        result.include = QHelper.includeQueries([
+            { bookmarks: [{ id: QHelper.inOrEqual(filter.bookmarkIDs) }] },
+            { genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },
+            { artist: [{ name: QHelper.eq(filter.artist) }] },
+            { album: [{ name: QHelper.eq(filter.album) }] },
             {
                 tag: [
-                    ...orm_1.QHelper.inStringArray('genres', filter.genres),
-                    { title: orm_1.QHelper.like(filter.name, this.em.dialect) },
-                    { title: orm_1.QHelper.eq(filter.query) },
-                    { year: orm_1.QHelper.lte(filter.toYear) },
-                    { year: orm_1.QHelper.gte(filter.fromYear) }
+                    ...QHelper.inStringArray('genres', filter.genres),
+                    { title: QHelper.like(filter.name, this.em.dialect) },
+                    { title: QHelper.eq(filter.query) },
+                    { year: QHelper.lte(filter.toYear) },
+                    { year: QHelper.gte(filter.fromYear) }
                 ]
             }
         ]);
         return result;
     }
 }
-exports.TrackRepository = TrackRepository;
 //# sourceMappingURL=track.repository.js.map

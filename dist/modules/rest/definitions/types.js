@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.bannedTypes = exports.allowedTypes = void 0;
-exports.allowedTypes = [String, Number, Date, Boolean];
-exports.bannedTypes = [Promise, Array, Object, Function];
+export const allowedTypes = [String, Number, Date, Boolean];
+export const bannedTypes = [Promise, Array, Object, Function];
 //# sourceMappingURL=types.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,24 +7,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PingController = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const ping_model_1 = require("./ping.model");
-const version_1 = require("../../modules/engine/rest/version");
+import { Controller, Get } from '../../modules/rest/decorators';
+import { Ping } from './ping.model';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
 let PingController = class PingController {
     ping() {
-        return { version: version_1.JAMAPI_VERSION };
+        return { version: JAMAPI_VERSION };
     }
 };
 __decorate([
-    decorators_1.Get(() => ping_model_1.Ping, { description: 'Is the Api online?', summary: 'Ping' }),
+    Get(() => Ping, { description: 'Is the Api online?', summary: 'Ping' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", ping_model_1.Ping)
+    __metadata("design:returntype", Ping)
 ], PingController.prototype, "ping", null);
 PingController = __decorate([
-    decorators_1.Controller('/ping', { tags: ['Access'] })
+    Controller('/ping', { tags: ['Access'] })
 ], PingController);
-exports.PingController = PingController;
+export { PingController };
 //# sourceMappingURL=ping.controller.js.map

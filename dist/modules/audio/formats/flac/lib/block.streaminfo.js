@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaDataBlockStreamInfo = void 0;
-const block_1 = require("./block");
-class MetaDataBlockStreamInfo extends block_1.MetaDataBlock {
+import { MetaDataBlock } from './block';
+export class MetaDataBlockStreamInfo extends MetaDataBlock {
     constructor(isLast) {
         super(isLast, 0);
         this.minBlockSize = 0;
@@ -41,5 +38,4 @@ class MetaDataBlockStreamInfo extends block_1.MetaDataBlock {
         }
     }
 }
-exports.MetaDataBlockStreamInfo = MetaDataBlockStreamInfo;
 //# sourceMappingURL=block.streaminfo.js.map

@@ -1,20 +1,8 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./OneToMany"), exports);
-__exportStar(require("./ManyToMany"), exports);
-__exportStar(require("./ManyToOne"), exports);
-__exportStar(require("./OneToOne"), exports);
-__exportStar(require("./Property"), exports);
-__exportStar(require("./PrimaryKey"), exports);
-__exportStar(require("./Entity"), exports);
+export * from './OneToMany';
+export * from './ManyToMany';
+export * from './ManyToOne';
+export * from './OneToOne';
+export * from './Property';
+export * from './PrimaryKey';
+export * from './Entity';
 //# sourceMappingURL=index.js.map

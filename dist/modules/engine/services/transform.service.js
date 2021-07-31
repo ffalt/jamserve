@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,31 +7,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TransformService = void 0;
-const moment_1 = __importDefault(require("moment"));
-const typescript_ioc_1 = require("typescript-ioc");
-const chat_transform_1 = require("../../../entity/chat/chat.transform");
-const genre_transform_1 = require("../../../entity/genre/genre.transform");
-const radio_transform_1 = require("../../../entity/radio/radio.transform");
-const root_transform_1 = require("../../../entity/root/root.transform");
-const podcast_transform_1 = require("../../../entity/podcast/podcast.transform");
-const episode_transform_1 = require("../../../entity/episode/episode.transform");
-const folder_transform_1 = require("../../../entity/folder/folder.transform");
-const track_transform_1 = require("../../../entity/track/track.transform");
-const series_transform_1 = require("../../../entity/series/series.transform");
-const artist_transform_1 = require("../../../entity/artist/artist.transform");
-const album_transform_1 = require("../../../entity/album/album.transform");
-const artwork_transform_1 = require("../../../entity/artwork/artwork.transform");
-const playlist_transform_1 = require("../../../entity/playlist/playlist.transform");
-const bookmark_transform_1 = require("../../../entity/bookmark/bookmark.transform");
-const playqueue_transform_1 = require("../../../entity/playqueue/playqueue.transform");
-const base_transform_1 = require("../../../entity/base/base.transform");
-const session_transform_1 = require("../../../entity/session/session.transform");
-const user_transform_1 = require("../../../entity/user/user.transform");
+import moment from 'moment';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { ChatTransformService } from '../../../entity/chat/chat.transform';
+import { GenreTransformService } from '../../../entity/genre/genre.transform';
+import { RadioTransformService } from '../../../entity/radio/radio.transform';
+import { RootTransformService } from '../../../entity/root/root.transform';
+import { PodcastTransformService } from '../../../entity/podcast/podcast.transform';
+import { EpisodeTransformService } from '../../../entity/episode/episode.transform';
+import { FolderTransformService } from '../../../entity/folder/folder.transform';
+import { TrackTransformService } from '../../../entity/track/track.transform';
+import { SeriesTransformService } from '../../../entity/series/series.transform';
+import { ArtistTransformService } from '../../../entity/artist/artist.transform';
+import { AlbumTransformService } from '../../../entity/album/album.transform';
+import { ArtworkTransformService } from '../../../entity/artwork/artwork.transform';
+import { PlaylistTransformService } from '../../../entity/playlist/playlist.transform';
+import { BookmarkTransformService } from '../../../entity/bookmark/bookmark.transform';
+import { PlayQueueTransformService } from '../../../entity/playqueue/playqueue.transform';
+import { BaseTransformService } from '../../../entity/base/base.transform';
+import { SessionTransformService } from '../../../entity/session/session.transform';
+import { UserTransformService } from '../../../entity/user/user.transform';
 let TransformService = class TransformService {
     async album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistIncludes, user) {
         return {
@@ -123,7 +117,7 @@ let TransformService = class TransformService {
         return {
             userName: o.user.name,
             userID: o.user.id,
-            minutesAgo: Math.round(moment_1.default.duration(moment_1.default().diff(moment_1.default(o.time))).asMinutes()),
+            minutesAgo: Math.round(moment.duration(moment().diff(moment(o.time))).asMinutes()),
             trackID: nowPlayingArgs.nowPlayingIncTrackIDs ? o.track?.id : undefined,
             track: nowPlayingArgs.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackArgs, user)) : undefined,
             episodeID: nowPlayingArgs.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,
@@ -142,79 +136,79 @@ let TransformService = class TransformService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", base_transform_1.BaseTransformService)
+    Inject,
+    __metadata("design:type", BaseTransformService)
 ], TransformService.prototype, "Base", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", chat_transform_1.ChatTransformService)
+    Inject,
+    __metadata("design:type", ChatTransformService)
 ], TransformService.prototype, "Chat", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_transform_1.GenreTransformService)
+    Inject,
+    __metadata("design:type", GenreTransformService)
 ], TransformService.prototype, "Genre", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", radio_transform_1.RadioTransformService)
+    Inject,
+    __metadata("design:type", RadioTransformService)
 ], TransformService.prototype, "Radio", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", root_transform_1.RootTransformService)
+    Inject,
+    __metadata("design:type", RootTransformService)
 ], TransformService.prototype, "Root", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_transform_1.PodcastTransformService)
+    Inject,
+    __metadata("design:type", PodcastTransformService)
 ], TransformService.prototype, "Podcast", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", episode_transform_1.EpisodeTransformService)
+    Inject,
+    __metadata("design:type", EpisodeTransformService)
 ], TransformService.prototype, "Episode", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", folder_transform_1.FolderTransformService)
+    Inject,
+    __metadata("design:type", FolderTransformService)
 ], TransformService.prototype, "Folder", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", track_transform_1.TrackTransformService)
+    Inject,
+    __metadata("design:type", TrackTransformService)
 ], TransformService.prototype, "Track", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", series_transform_1.SeriesTransformService)
+    Inject,
+    __metadata("design:type", SeriesTransformService)
 ], TransformService.prototype, "Series", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artist_transform_1.ArtistTransformService)
+    Inject,
+    __metadata("design:type", ArtistTransformService)
 ], TransformService.prototype, "Artist", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", album_transform_1.AlbumTransformService)
+    Inject,
+    __metadata("design:type", AlbumTransformService)
 ], TransformService.prototype, "Album", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artwork_transform_1.ArtworkTransformService)
+    Inject,
+    __metadata("design:type", ArtworkTransformService)
 ], TransformService.prototype, "Artwork", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playlist_transform_1.PlaylistTransformService)
+    Inject,
+    __metadata("design:type", PlaylistTransformService)
 ], TransformService.prototype, "Playlist", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", bookmark_transform_1.BookmarkTransformService)
+    Inject,
+    __metadata("design:type", BookmarkTransformService)
 ], TransformService.prototype, "Bookmark", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", playqueue_transform_1.PlayQueueTransformService)
+    Inject,
+    __metadata("design:type", PlayQueueTransformService)
 ], TransformService.prototype, "PlayQueue", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", session_transform_1.SessionTransformService)
+    Inject,
+    __metadata("design:type", SessionTransformService)
 ], TransformService.prototype, "Session", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", user_transform_1.UserTransformService)
+    Inject,
+    __metadata("design:type", UserTransformService)
 ], TransformService.prototype, "User", void 0);
 TransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], TransformService);
-exports.TransformService = TransformService;
+export { TransformService };
 //# sourceMappingURL=transform.service.js.map

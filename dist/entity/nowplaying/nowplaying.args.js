@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,29 +7,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncludesNowPlayingArgs = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
+import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
 let IncludesNowPlayingArgs = class IncludesNowPlayingArgs {
 };
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include track Id on now playing entries', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include track Id on now playing entries', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesNowPlayingArgs.prototype, "nowPlayingIncTrackIDs", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include tracks on now playing entries', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include tracks on now playing entries', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesNowPlayingArgs.prototype, "nowPlayingIncTracks", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include track Id on now playing entries', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include track Id on now playing entries', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesNowPlayingArgs.prototype, "nowPlayingIncEpisodeIDs", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include tracks on now playing entries', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include tracks on now playing entries', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesNowPlayingArgs.prototype, "nowPlayingIncEpisodes", void 0);
 IncludesNowPlayingArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], IncludesNowPlayingArgs);
-exports.IncludesNowPlayingArgs = IncludesNowPlayingArgs;
+export { IncludesNowPlayingArgs };
 //# sourceMappingURL=nowplaying.args.js.map

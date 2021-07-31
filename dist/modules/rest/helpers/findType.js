@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.findType = void 0;
-const type_graphql_1 = require("type-graphql");
-const types_1 = require("../definitions/types");
-function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }) {
+import { NoExplicitTypeError } from 'type-graphql';
+import { bannedTypes } from '../definitions/types';
+export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }) {
     const options = { ...typeOptions };
     let metadataDesignType;
     const reflectedType = Reflect.getMetadata(metadataKey, prototype, propertyKey);
@@ -14,8 +11,8 @@ function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOpt
         metadataDesignType = reflectedType;
     }
     if (!returnTypeFunc &&
-        (!metadataDesignType || (metadataDesignType && types_1.bannedTypes.includes(metadataDesignType)))) {
-        throw new type_graphql_1.NoExplicitTypeError(prototype.constructor.name, propertyKey, parameterIndex);
+        (!metadataDesignType || (metadataDesignType && bannedTypes.includes(metadataDesignType)))) {
+        throw new NoExplicitTypeError(prototype.constructor.name, propertyKey, parameterIndex);
     }
     if (metadataDesignType === Array) {
         options.array = true;
@@ -40,8 +37,7 @@ function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOpt
         };
     }
     else {
-        throw new type_graphql_1.NoExplicitTypeError(prototype.constructor.name, propertyKey, parameterIndex);
+        throw new NoExplicitTypeError(prototype.constructor.name, propertyKey, parameterIndex);
     }
 }
-exports.findType = findType;
 //# sourceMappingURL=findType.js.map

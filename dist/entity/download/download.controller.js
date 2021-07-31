@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,47 +10,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DownloadController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const consts_1 = require("../../types/consts");
-const download_args_1 = require("./download.args");
+import { Controller, Ctx, Get, NotFoundError, PathParam, PathParams } from '../../modules/rest';
+import { DownloadFormatType, UserRole } from '../../types/enums';
+import { ApiDownloadTypes } from '../../types/consts';
+import { DownloadArgs } from './download.args';
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 let DownloadController = class DownloadController {
     async download(id, downloadArgs, { orm, engine, user }) {
         const result = await orm.findInDownloadTypes(id);
         if (!result) {
-            return Promise.reject(rest_1.NotFoundError());
+            return Promise.reject(NotFoundError());
         }
         return await engine.download.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
     }
 };
 __decorate([
-    rest_1.Get('/{id}.{format}', {
+    Get('/{id}.{format}', {
         description,
         summary: 'Download',
-        binary: consts_1.ApiDownloadTypes,
+        binary: ApiDownloadTypes,
         customPathParameters: {
             regex: /(.*?)(\..*)?$/,
             groups: [
                 { name: 'id', getType: () => String },
-                { name: 'format', getType: () => enums_1.DownloadFormatType, prefix: '.' }
+                { name: 'format', getType: () => DownloadFormatType, prefix: '.' }
             ]
         },
         aliasRoutes: [
             { route: '/{id}', name: 'by Id', hideParameters: ['format'] }
         ]
     }),
-    __param(0, rest_1.PathParam('id', { description: 'Object Id', isID: true })),
-    __param(1, rest_1.PathParams()),
-    __param(2, rest_1.Ctx()),
+    __param(0, PathParam('id', { description: 'Object Id', isID: true })),
+    __param(1, PathParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, download_args_1.DownloadArgs, Object]),
+    __metadata("design:paramtypes", [String, DownloadArgs, Object]),
     __metadata("design:returntype", Promise)
 ], DownloadController.prototype, "download", null);
 DownloadController = __decorate([
-    rest_1.Controller('/download', { tags: ['Download'], roles: [enums_1.UserRole.stream] })
+    Controller('/download', { tags: ['Download'], roles: [UserRole.stream] })
 ], DownloadController);
-exports.DownloadController = DownloadController;
+export { DownloadController };
 //# sourceMappingURL=download.controller.js.map

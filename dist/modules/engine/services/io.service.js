@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,18 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IoService = void 0;
-const worker_service_1 = require("./worker.service");
-const orm_service_1 = require("./orm.service");
-const io_types_1 = require("./io/io.types");
-const typescript_ioc_1 = require("typescript-ioc");
-const logger_1 = require("../../../utils/logger");
-const io_commands_artwork_1 = require("./io/io.commands.artwork");
-const io_commands_folder_1 = require("./io/io.commands.folder");
-const io_commands_root_1 = require("./io/io.commands.root");
-const io_commands_track_1 = require("./io/io.commands.track");
-const log = logger_1.logger('IO');
+import { WorkerService } from './worker.service';
+import { OrmService } from './orm.service';
+import { IoRequest } from './io/io.types';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger';
+import { IoCommandsArtwork } from './io/io.commands.artwork';
+import { IoCommandsFolder } from './io/io.commands.folder';
+import { IoCommandsRoot } from './io/io.commands.root';
+import { IoCommandsTrack } from './io/io.commands.track';
+const log = logger('IO');
 let IoService = class IoService {
     constructor() {
         this.scanning = false;
@@ -28,10 +25,10 @@ let IoService = class IoService {
         this.queue = [];
         this.nextID = Date.now();
         this.history = [];
-        this.artwork = new io_commands_artwork_1.IoCommandsArtwork(this);
-        this.folder = new io_commands_folder_1.IoCommandsFolder(this);
-        this.root = new io_commands_root_1.IoCommandsRoot(this);
-        this.track = new io_commands_track_1.IoCommandsTrack(this);
+        this.artwork = new IoCommandsArtwork(this);
+        this.folder = new IoCommandsFolder(this);
+        this.root = new IoCommandsRoot(this);
+        this.track = new IoCommandsTrack(this);
     }
     async runRequest(cmd) {
         this.clearAfterRefresh();
@@ -118,7 +115,7 @@ let IoService = class IoService {
         return { id: req.id, pos: pos >= 0 ? pos : undefined };
     }
     newRequest(mode, execute, parameters) {
-        return this.addRequest(new io_types_1.IoRequest(this.generateRequestID(), mode, execute, parameters));
+        return this.addRequest(new IoRequest(this.generateRequestID(), mode, execute, parameters));
     }
     getAdminChangeQueueInfoStatus(id) {
         if (this.current && this.current.id === id) {
@@ -160,15 +157,15 @@ let IoService = class IoService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
+    Inject,
+    __metadata("design:type", OrmService)
 ], IoService.prototype, "orm", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", worker_service_1.WorkerService)
+    Inject,
+    __metadata("design:type", WorkerService)
 ], IoService.prototype, "workerService", void 0);
 IoService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], IoService);
-exports.IoService = IoService;
+export { IoService };
 //# sourceMappingURL=io.service.js.map

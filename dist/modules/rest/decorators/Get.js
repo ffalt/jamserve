@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Get = void 0;
-const metadata_1 = require("../metadata");
-const method_metadata_1 = require("../helpers/method-metadata");
-const decorators_1 = require("../helpers/decorators");
-function Get(routeOrReturnTypeFuncOrOptions, returnTypeFuncOrOptions, maybeOptions) {
+import { getMetadataStorage } from '../metadata';
+import { getMethodMetadata } from '../helpers/method-metadata';
+import { getTypeDecoratorParams } from '../helpers/decorators';
+export function Get(routeOrReturnTypeFuncOrOptions, returnTypeFuncOrOptions, maybeOptions) {
     let route = undefined;
     if (typeof routeOrReturnTypeFuncOrOptions !== 'string') {
         maybeOptions = returnTypeFuncOrOptions;
@@ -14,11 +11,10 @@ function Get(routeOrReturnTypeFuncOrOptions, returnTypeFuncOrOptions, maybeOptio
     else {
         route = routeOrReturnTypeFuncOrOptions;
     }
-    const { options, returnTypeFunc } = decorators_1.getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
+    const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
     return (prototype, methodName) => {
-        const metadata = method_metadata_1.getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
-        metadata_1.getMetadataStorage().collectGetHandlerMetadata(metadata);
+        const metadata = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
+        getMetadataStorage().collectGetHandlerMetadata(metadata);
     };
 }
-exports.Get = Get;
 //# sourceMappingURL=Get.js.map

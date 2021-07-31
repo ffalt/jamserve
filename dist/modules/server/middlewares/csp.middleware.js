@@ -1,14 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useCSPMiddleware = void 0;
-const helmet_1 = __importDefault(require("helmet"));
-function useCSPMiddleware() {
+import helmet from 'helmet';
+export function useCSPMiddleware() {
     const self = `'self'`;
     const none = '\'none\'';
-    return helmet_1.default.contentSecurityPolicy({
+    return helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: [none],
             scriptSrc: [self],
@@ -37,5 +31,4 @@ function useCSPMiddleware() {
         },
     });
 }
-exports.useCSPMiddleware = useCSPMiddleware;
 //# sourceMappingURL=csp.middleware.js.map

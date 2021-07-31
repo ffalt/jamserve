@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetadataServiceSimilarArtists = void 0;
-const enums_1 = require("../../types/enums");
-class MetadataServiceSimilarArtists {
+import { FolderType, LastFMLookupType } from '../../types/enums';
+export class MetadataServiceSimilarArtists {
     constructor(service) {
         this.service = service;
     }
     async getLastFMSimilarArtists(orm, mbArtistID) {
-        const lastfm = await this.service.lastFMLookup(orm, enums_1.LastFMLookupType.artist, mbArtistID);
+        const lastfm = await this.service.lastFMLookup(orm, LastFMLookupType.artist, mbArtistID);
         if (lastfm && lastfm.artist && lastfm.artist.similar && lastfm.artist.similar.artist) {
             return lastfm.artist.similar.artist;
         }
@@ -20,7 +17,7 @@ class MetadataServiceSimilarArtists {
                 names.push(a.name);
             }
         });
-        return await orm.Folder.search({ where: { folderType: enums_1.FolderType.artist, artist: names }, limit: page?.take, offset: page?.skip });
+        return await orm.Folder.search({ where: { folderType: FolderType.artist, artist: names }, limit: page?.take, offset: page?.skip });
     }
     async findSimilarArtists(orm, similarArtists, page) {
         const names = [];
@@ -59,5 +56,4 @@ class MetadataServiceSimilarArtists {
         return { items: [], ...(page || {}), total: 0 };
     }
 }
-exports.MetadataServiceSimilarArtists = MetadataServiceSimilarArtists;
 //# sourceMappingURL=metadata.service.similar-artists.js.map

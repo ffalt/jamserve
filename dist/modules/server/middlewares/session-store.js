@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpressSessionStore = void 0;
-const express_session_1 = require("express-session");
-class ExpressSessionStore extends express_session_1.Store {
+import { Store } from 'express-session';
+export class ExpressSessionStore extends Store {
     constructor(sessionService) {
         super();
         this.sessionService = sessionService;
@@ -70,5 +67,4 @@ class ExpressSessionStore extends express_session_1.Store {
         return;
     }
 }
-exports.ExpressSessionStore = ExpressSessionStore;
 //# sourceMappingURL=session-store.js.map

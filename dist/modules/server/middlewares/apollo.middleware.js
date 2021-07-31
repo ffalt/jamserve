@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,81 +7,77 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApolloMiddleware = exports.buildGraphQlSchema = exports.customAuthChecker = void 0;
-const apollo_server_express_1 = require("apollo-server-express");
-const orm_service_1 = require("../../engine/services/orm.service");
-const engine_service_1 = require("../../engine/services/engine.service");
-const typescript_ioc_1 = require("typescript-ioc");
-const express_1 = __importDefault(require("express"));
-const type_graphql_1 = require("type-graphql");
-const enums_1 = require("../../../types/enums");
-const user_resolver_1 = require("../../../entity/user/user.resolver");
-const album_resolver_1 = require("../../../entity/album/album.resolver");
-const artist_resolver_1 = require("../../../entity/artist/artist.resolver");
-const artwork_resolver_1 = require("../../../entity/artwork/artwork.resolver");
-const bookmark_resolver_1 = require("../../../entity/bookmark/bookmark.resolver");
-const chat_resolver_1 = require("../../../entity/chat/chat.resolver");
-const episode_resolver_1 = require("../../../entity/episode/episode.resolver");
-const folder_resolver_1 = require("../../../entity/folder/folder.resolver");
-const waveform_resolver_1 = require("../../../entity/waveform/waveform.resolver");
-const genre_resolver_1 = require("../../../entity/genre/genre.resolver");
-const playlist_resolver_1 = require("../../../entity/playlist/playlist.resolver");
-const playqueue_resolver_1 = require("../../../entity/playqueue/playqueue.resolver");
-const podcast_resolver_1 = require("../../../entity/podcast/podcast.resolver");
-const radio_resolver_1 = require("../../../entity/radio/radio.resolver");
-const root_resolver_1 = require("../../../entity/root/root.resolver");
-const series_resolver_1 = require("../../../entity/series/series.resolver");
-const session_resolver_1 = require("../../../entity/session/session.resolver");
-const track_resolver_1 = require("../../../entity/track/track.resolver");
-const graphql_1 = require("graphql");
-const stats_resolver_1 = require("../../../entity/stats/stats.resolver");
-const state_resolver_1 = require("../../../entity/state/state.resolver");
-const nowplaying_resolver_1 = require("../../../entity/nowplaying/nowplaying.resolver");
-const admin_resolver_1 = require("../../../entity/admin/admin.resolver");
-const path_1 = __importDefault(require("path"));
+import { ApolloServer, AuthenticationError } from 'apollo-server-express';
+import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
+import { OrmService } from '../../engine/services/orm.service';
+import { EngineService } from '../../engine/services/engine.service';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import express from 'express';
+import { buildSchema, registerEnumType } from 'type-graphql';
+import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, DefaultOrderFields, EpisodeOrderFields, FolderOrderFields, FolderType, GenreOrderFields, ListType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackOrderFields, UserRole } from '../../../types/enums';
+import { UserFavoritesResolver, UserResolver } from '../../../entity/user/user.resolver';
+import { AlbumResolver } from '../../../entity/album/album.resolver';
+import { ArtistResolver } from '../../../entity/artist/artist.resolver';
+import { ArtworkResolver } from '../../../entity/artwork/artwork.resolver';
+import { BookmarkResolver } from '../../../entity/bookmark/bookmark.resolver';
+import { ChatResolver } from '../../../entity/chat/chat.resolver';
+import { EpisodeResolver } from '../../../entity/episode/episode.resolver';
+import { FolderResolver } from '../../../entity/folder/folder.resolver';
+import { WaveformResolver } from '../../../entity/waveform/waveform.resolver';
+import { GenreResolver } from '../../../entity/genre/genre.resolver';
+import { PlaylistResolver } from '../../../entity/playlist/playlist.resolver';
+import { PlayQueueResolver } from '../../../entity/playqueue/playqueue.resolver';
+import { PodcastResolver } from '../../../entity/podcast/podcast.resolver';
+import { RadioResolver } from '../../../entity/radio/radio.resolver';
+import { RootResolver, RootStatusResolver } from '../../../entity/root/root.resolver';
+import { SeriesResolver } from '../../../entity/series/series.resolver';
+import { SessionResolver } from '../../../entity/session/session.resolver';
+import { TrackResolver } from '../../../entity/track/track.resolver';
+import { printSchema } from 'graphql';
+import { StatsResolver } from '../../../entity/stats/stats.resolver';
+import { StateResolver } from '../../../entity/state/state.resolver';
+import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver';
+import { AdminResolver } from '../../../entity/admin/admin.resolver';
+import path from 'path';
 function registerEnums() {
-    type_graphql_1.registerEnumType(enums_1.DefaultOrderFields, { name: 'DefaultOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.PodcastOrderFields, { name: 'PodcastOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.TrackOrderFields, { name: 'TrackOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.ArtistOrderFields, { name: 'ArtistOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.FolderOrderFields, { name: 'FolderOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.PlaylistEntryOrderFields, { name: 'PlaylistEntryOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.PlayQueueEntryOrderFields, { name: 'PlayQueueEntryOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.BookmarkOrderFields, { name: 'BookmarkOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.SessionOrderFields, { name: 'SessionOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.EpisodeOrderFields, { name: 'EpisodeOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.AlbumOrderFields, { name: 'AlbumOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.GenreOrderFields, { name: 'GenreOrderFields' });
-    type_graphql_1.registerEnumType(enums_1.PodcastStatus, { name: 'PodcastStatus' });
-    type_graphql_1.registerEnumType(enums_1.AudioFormatType, { name: 'AudioFormatType' });
-    type_graphql_1.registerEnumType(enums_1.ArtworkImageType, { name: 'ArtworkImageType' });
-    type_graphql_1.registerEnumType(enums_1.RootScanStrategy, { name: 'RootScanStrategy' });
-    type_graphql_1.registerEnumType(enums_1.TagFormatType, { name: 'TagFormatType' });
-    type_graphql_1.registerEnumType(enums_1.FolderType, { name: 'FolderType' });
-    type_graphql_1.registerEnumType(enums_1.AlbumType, { name: 'AlbumType' });
-    type_graphql_1.registerEnumType(enums_1.SessionMode, { name: 'SessionMode' });
-    type_graphql_1.registerEnumType(enums_1.UserRole, { name: 'UserRole', description: 'User Roles' });
-    type_graphql_1.registerEnumType(enums_1.ListType, { name: 'ListType', description: 'Type of List Request' });
+    registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
+    registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });
+    registerEnumType(TrackOrderFields, { name: 'TrackOrderFields' });
+    registerEnumType(ArtistOrderFields, { name: 'ArtistOrderFields' });
+    registerEnumType(FolderOrderFields, { name: 'FolderOrderFields' });
+    registerEnumType(PlaylistEntryOrderFields, { name: 'PlaylistEntryOrderFields' });
+    registerEnumType(PlayQueueEntryOrderFields, { name: 'PlayQueueEntryOrderFields' });
+    registerEnumType(BookmarkOrderFields, { name: 'BookmarkOrderFields' });
+    registerEnumType(SessionOrderFields, { name: 'SessionOrderFields' });
+    registerEnumType(EpisodeOrderFields, { name: 'EpisodeOrderFields' });
+    registerEnumType(AlbumOrderFields, { name: 'AlbumOrderFields' });
+    registerEnumType(GenreOrderFields, { name: 'GenreOrderFields' });
+    registerEnumType(PodcastStatus, { name: 'PodcastStatus' });
+    registerEnumType(AudioFormatType, { name: 'AudioFormatType' });
+    registerEnumType(ArtworkImageType, { name: 'ArtworkImageType' });
+    registerEnumType(RootScanStrategy, { name: 'RootScanStrategy' });
+    registerEnumType(TagFormatType, { name: 'TagFormatType' });
+    registerEnumType(FolderType, { name: 'FolderType' });
+    registerEnumType(AlbumType, { name: 'AlbumType' });
+    registerEnumType(SessionMode, { name: 'SessionMode' });
+    registerEnumType(UserRole, { name: 'UserRole', description: 'User Roles' });
+    registerEnumType(ListType, { name: 'ListType', description: 'Type of List Request' });
 }
 function checkRole(role, context) {
     switch (role) {
-        case enums_1.UserRole.admin:
+        case UserRole.admin:
             if (!context.user.roleAdmin)
                 return false;
             break;
-        case enums_1.UserRole.podcast:
+        case UserRole.podcast:
             if (!context.user.rolePodcast)
                 return false;
             break;
-        case enums_1.UserRole.upload:
+        case UserRole.upload:
             if (!context.user.roleUpload)
                 return false;
             break;
-        case enums_1.UserRole.stream:
+        case UserRole.stream:
             if (!context.user.roleStream)
                 return false;
             break;
@@ -91,7 +86,7 @@ function checkRole(role, context) {
     }
     return true;
 }
-const customAuthChecker = ({ root, args, context, info }, roles) => {
+export const customAuthChecker = ({ root, args, context, info }, roles) => {
     for (const role of roles) {
         if (!checkRole(role, context)) {
             return false;
@@ -99,21 +94,19 @@ const customAuthChecker = ({ root, args, context, info }, roles) => {
     }
     return true;
 };
-exports.customAuthChecker = customAuthChecker;
-async function buildGraphQlSchema() {
+export async function buildGraphQlSchema() {
     registerEnums();
-    return await type_graphql_1.buildSchema({
+    return await buildSchema({
         resolvers: [
-            user_resolver_1.UserResolver, album_resolver_1.AlbumResolver, artist_resolver_1.ArtistResolver, artwork_resolver_1.ArtworkResolver, bookmark_resolver_1.BookmarkResolver, chat_resolver_1.ChatResolver,
-            episode_resolver_1.EpisodeResolver, folder_resolver_1.FolderResolver, nowplaying_resolver_1.NowPlayingResolver, waveform_resolver_1.WaveformResolver, genre_resolver_1.GenreResolver,
-            playlist_resolver_1.PlaylistResolver, playqueue_resolver_1.PlayQueueResolver, podcast_resolver_1.PodcastResolver, radio_resolver_1.RadioResolver, root_resolver_1.RootResolver,
-            root_resolver_1.RootStatusResolver, series_resolver_1.SeriesResolver, user_resolver_1.UserFavoritesResolver,
-            session_resolver_1.SessionResolver, state_resolver_1.StateResolver, stats_resolver_1.StatsResolver, track_resolver_1.TrackResolver, admin_resolver_1.AdminResolver
+            UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
+            EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
+            PlaylistResolver, PlayQueueResolver, PodcastResolver, RadioResolver, RootResolver,
+            RootStatusResolver, SeriesResolver, UserFavoritesResolver,
+            SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
         ],
-        authChecker: exports.customAuthChecker
+        authChecker: customAuthChecker
     });
 }
-exports.buildGraphQlSchema = buildGraphQlSchema;
 const apolloLogger = {
     willSendResponse(requestContext) {
         const { graphqlResponse } = requestContext;
@@ -127,24 +120,26 @@ const apolloLogger = {
 };
 let ApolloMiddleware = class ApolloMiddleware {
     async playground() {
-        const api = express_1.default.Router();
-        api.get('*', express_1.default.static(path_1.default.resolve('./static/graphql/')));
+        const api = express.Router();
+        api.get('*', express.static(path.resolve('./static/graphql/')));
         return api;
     }
     async middleware() {
         this.schema = await buildGraphQlSchema();
-        const apollo = new apollo_server_express_1.ApolloServer({
+        const apollo = new ApolloServer({
             schema: this.schema,
             debug: true,
-            plugins: [() => apolloLogger],
-            playground: false,
+            plugins: [
+                () => apolloLogger,
+                ApolloServerPluginLandingPageDisabled
+            ],
             introspection: true,
             formatError: (err) => {
                 return err;
             },
             context: async ({ req, res }) => {
                 if (!req.user)
-                    throw new apollo_server_express_1.AuthenticationError('you must be logged in');
+                    throw new AuthenticationError('you must be logged in');
                 return {
                     req, res,
                     orm: this.orm.fork(),
@@ -154,22 +149,23 @@ let ApolloMiddleware = class ApolloMiddleware {
                 };
             },
         });
+        await apollo.start();
         return apollo.getMiddleware({ path: `/`, cors: false });
     }
     printSchema() {
-        return graphql_1.printSchema(this.schema);
+        return printSchema(this.schema);
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", orm_service_1.OrmService)
+    Inject,
+    __metadata("design:type", OrmService)
 ], ApolloMiddleware.prototype, "orm", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", engine_service_1.EngineService)
+    Inject,
+    __metadata("design:type", EngineService)
 ], ApolloMiddleware.prototype, "engine", void 0);
 ApolloMiddleware = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], ApolloMiddleware);
-exports.ApolloMiddleware = ApolloMiddleware;
+export { ApolloMiddleware };
 //# sourceMappingURL=apollo.middleware.js.map

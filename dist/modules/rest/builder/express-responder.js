@@ -1,12 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiBaseResponder = void 0;
-const path_1 = __importDefault(require("path"));
-const express_error_1 = require("./express-error");
-class ApiBaseResponder {
+import path from 'path';
+import { ApiError } from './express-error';
+export class ApiBaseResponder {
     static sendOK(req, res) {
         res.status(200).json({ ok: true });
     }
@@ -22,7 +16,7 @@ class ApiBaseResponder {
         if (typeof err === 'string') {
             message = err;
         }
-        else if (err instanceof express_error_1.ApiError) {
+        else if (err instanceof ApiError) {
             failCode = err.failCode;
             message = err.message;
         }
@@ -47,9 +41,8 @@ class ApiBaseResponder {
             res.status(200).send(data.buffer.buffer);
         }
         else if (data.file) {
-            res.sendFile(data.file.filename, { filename: data.file.name || path_1.default.basename(data.file.filename) });
+            res.sendFile(data.file.filename, { filename: data.file.name || path.basename(data.file.filename) });
         }
     }
 }
-exports.ApiBaseResponder = ApiBaseResponder;
 //# sourceMappingURL=express-responder.js.map

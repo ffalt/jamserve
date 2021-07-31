@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,143 +7,141 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtistIndexQL = exports.ArtistIndexGroupQL = exports.ArtistPageQL = exports.ArtistQL = exports.Artist = void 0;
-const track_1 = require("../track/track");
-const album_1 = require("../album/album");
-const root_1 = require("../root/root");
-const folder_1 = require("../folder/folder");
-const series_1 = require("../series/series");
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const orm_1 = require("../../modules/orm");
-const base_1 = require("../base/base");
-const state_1 = require("../state/state");
-const genre_1 = require("../genre/genre");
-let Artist = class Artist extends base_1.Base {
+import { Track, TrackQL } from '../track/track';
+import { Album, AlbumQL } from '../album/album';
+import { Root, RootQL } from '../root/root';
+import { Folder, FolderQL } from '../folder/folder';
+import { Series, SeriesQL } from '../series/series';
+import { AlbumOrderFields, AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields } from '../../types/enums';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Collection, Entity, ManyToMany, OneToMany, Property } from '../../modules/orm';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
+import { State, StateQL } from '../state/state';
+import { Genre, GenreQL } from '../genre/genre';
+let Artist = class Artist extends Base {
     constructor() {
         super(...arguments);
         this.albumTypes = [];
-        this.genres = new orm_1.Collection(this);
-        this.tracks = new orm_1.Collection(this);
-        this.albumTracks = new orm_1.Collection(this);
-        this.albums = new orm_1.Collection(this);
-        this.roots = new orm_1.Collection(this);
-        this.folders = new orm_1.Collection(this);
-        this.series = new orm_1.Collection(this);
+        this.genres = new Collection(this);
+        this.tracks = new Collection(this);
+        this.albumTracks = new Collection(this);
+        this.albums = new Collection(this);
+        this.roots = new Collection(this);
+        this.folders = new Collection(this);
+        this.series = new Collection(this);
     }
 };
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "name", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "slug", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Artist.prototype, "nameSort", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Artist.prototype, "mbArtistID", void 0);
 __decorate([
-    type_graphql_1.Field(() => [enums_1.AlbumType]),
-    orm_1.Property(() => [enums_1.AlbumType]),
+    Field(() => [AlbumType]),
+    Property(() => [AlbumType]),
     __metadata("design:type", Array)
 ], Artist.prototype, "albumTypes", void 0);
 __decorate([
-    type_graphql_1.Field(() => [genre_1.GenreQL]),
-    orm_1.ManyToMany(() => genre_1.Genre, genre => genre.artists),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [GenreQL]),
+    ManyToMany(() => Genre, genre => genre.artists),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "genres", void 0);
 __decorate([
-    type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.artist, { order: [{ orderBy: enums_1.TrackOrderFields.album }, { orderBy: enums_1.TrackOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [TrackQL]),
+    OneToMany(() => Track, track => track.artist, { order: [{ orderBy: TrackOrderFields.album }, { orderBy: TrackOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "tracks", void 0);
 __decorate([
-    type_graphql_1.Field(() => [track_1.TrackQL]),
-    orm_1.OneToMany(() => track_1.Track, track => track.albumArtist, { order: [{ orderBy: enums_1.TrackOrderFields.album }, { orderBy: enums_1.TrackOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [TrackQL]),
+    OneToMany(() => Track, track => track.albumArtist, { order: [{ orderBy: TrackOrderFields.album }, { orderBy: TrackOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "albumTracks", void 0);
 __decorate([
-    type_graphql_1.Field(() => [album_1.AlbumQL]),
-    orm_1.OneToMany(() => album_1.Album, album => album.artist, { order: [{ orderBy: enums_1.AlbumOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [AlbumQL]),
+    OneToMany(() => Album, album => album.artist, { order: [{ orderBy: AlbumOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "albums", void 0);
 __decorate([
-    type_graphql_1.Field(() => [root_1.RootQL]),
-    orm_1.ManyToMany(() => root_1.Root, root => root.artists, { owner: true, order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [RootQL]),
+    ManyToMany(() => Root, root => root.artists, { owner: true, order: [{ orderBy: DefaultOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "roots", void 0);
 __decorate([
-    type_graphql_1.Field(() => [folder_1.FolderQL]),
-    orm_1.ManyToMany(() => folder_1.Folder, folder => folder.artists, { owner: true, order: [{ orderBy: enums_1.FolderOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [FolderQL]),
+    ManyToMany(() => Folder, folder => folder.artists, { owner: true, order: [{ orderBy: FolderOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "folders", void 0);
 __decorate([
-    type_graphql_1.Field(() => [series_1.SeriesQL]),
-    orm_1.OneToMany(() => series_1.Series, series => series.artist, { order: [{ orderBy: enums_1.DefaultOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [SeriesQL]),
+    OneToMany(() => Series, series => series.artist, { order: [{ orderBy: DefaultOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Artist.prototype, "series", void 0);
 Artist = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], Artist);
-exports.Artist = Artist;
+export { Artist };
 let ArtistQL = class ArtistQL extends Artist {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], ArtistQL.prototype, "tracksCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], ArtistQL.prototype, "albumsCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], ArtistQL.prototype, "rootsCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], ArtistQL.prototype, "foldersCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], ArtistQL.prototype, "seriesCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => state_1.StateQL),
-    __metadata("design:type", state_1.State)
+    Field(() => StateQL),
+    __metadata("design:type", State)
 ], ArtistQL.prototype, "state", void 0);
 ArtistQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtistQL);
-exports.ArtistQL = ArtistQL;
-let ArtistPageQL = class ArtistPageQL extends base_1.PaginatedResponse(Artist, ArtistQL) {
+export { ArtistQL };
+let ArtistPageQL = class ArtistPageQL extends PaginatedResponse(Artist, ArtistQL) {
 };
 ArtistPageQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtistPageQL);
-exports.ArtistPageQL = ArtistPageQL;
-let ArtistIndexGroupQL = class ArtistIndexGroupQL extends base_1.IndexGroup(Artist, ArtistQL) {
+export { ArtistPageQL };
+let ArtistIndexGroupQL = class ArtistIndexGroupQL extends IndexGroup(Artist, ArtistQL) {
 };
 ArtistIndexGroupQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtistIndexGroupQL);
-exports.ArtistIndexGroupQL = ArtistIndexGroupQL;
-let ArtistIndexQL = class ArtistIndexQL extends base_1.Index(ArtistIndexGroupQL) {
+export { ArtistIndexGroupQL };
+let ArtistIndexQL = class ArtistIndexQL extends Index(ArtistIndexGroupQL) {
 };
 ArtistIndexQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ArtistIndexQL);
-exports.ArtistIndexQL = ArtistIndexQL;
+export { ArtistIndexQL };
 //# sourceMappingURL=artist.js.map

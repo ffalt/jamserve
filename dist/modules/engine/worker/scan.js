@@ -1,21 +1,14 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerScan = exports.ObjLoadTrackMatch = exports.ObjTrackMatch = exports.OnDemandTrackMatch = void 0;
-const logger_1 = require("../../../utils/logger");
-const enums_1 = require("../../../types/enums");
-const dir_name_1 = require("../../../utils/dir-name");
-const path_1 = __importDefault(require("path"));
-const fs_utils_1 = require("../../../utils/fs-utils");
-const artwork_type_1 = require("../../../utils/artwork-type");
-const moment_1 = __importDefault(require("moment"));
-const log = logger_1.logger('IO.Scan');
-class OnDemandTrackMatch {
+import { logger } from '../../../utils/logger';
+import { FileTyp, FolderType } from '../../../types/enums';
+import { splitDirectoryName } from '../../../utils/dir-name';
+import path from 'path';
+import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils';
+import { artWorkImageNameToType } from '../../../utils/artwork-type';
+import moment from 'moment';
+const log = logger('IO.Scan');
+export class OnDemandTrackMatch {
 }
-exports.OnDemandTrackMatch = OnDemandTrackMatch;
-class ObjTrackMatch {
+export class ObjTrackMatch {
     constructor(match) {
         this.match = match;
     }
@@ -23,8 +16,7 @@ class ObjTrackMatch {
         return this.match;
     }
 }
-exports.ObjTrackMatch = ObjTrackMatch;
-class ObjLoadTrackMatch {
+export class ObjLoadTrackMatch {
     constructor(track) {
         this.track = track;
     }
@@ -32,8 +24,7 @@ class ObjLoadTrackMatch {
         return WorkerScan.buildTrackMatch(this.track);
     }
 }
-exports.ObjLoadTrackMatch = ObjLoadTrackMatch;
-class WorkerScan {
+export class WorkerScan {
     constructor(orm, rootID, audioModule, imageModule, changes) {
         this.orm = orm;
         this.rootID = rootID;
@@ -43,9 +34,9 @@ class WorkerScan {
         this.genresCache = [];
     }
     async setArtworkValues(file, artwork) {
-        const name = path_1.default.basename(file.path);
+        const name = path.basename(file.path);
         const info = await this.imageModule.getImageInfo(file.path);
-        artwork.types = artwork_type_1.artWorkImageNameToType(name);
+        artwork.types = artWorkImageNameToType(name);
         artwork.format = info?.format;
         artwork.height = info?.height;
         artwork.width = info?.width;
@@ -56,7 +47,7 @@ class WorkerScan {
     }
     async buildArtwork(file, folder) {
         log.info('New Artwork', file.path);
-        const name = path_1.default.basename(file.path);
+        const name = path.basename(file.path);
         const artwork = this.orm.Artwork.create({ name, path: folder.path });
         await artwork.folder.set(folder);
         await this.setArtworkValues(file, artwork);
@@ -130,9 +121,9 @@ class WorkerScan {
     async buildTrack(file, parent) {
         log.info('New Track', file.path);
         const track = this.orm.Track.create({
-            name: fs_utils_1.basenameStripExt(file.path),
-            fileName: path_1.default.basename(file.path),
-            path: fs_utils_1.ensureTrailingPathSeparator(path_1.default.dirname(file.path))
+            name: basenameStripExt(file.path),
+            fileName: path.basename(file.path),
+            path: ensureTrailingPathSeparator(path.dirname(file.path))
         });
         await track.folder.set(parent);
         await track.root.set(this.root);
@@ -151,15 +142,15 @@ class WorkerScan {
     }
     async buildFolder(dir, parent) {
         log.info('New Folder', dir.path);
-        const { title, year } = dir_name_1.splitDirectoryName(dir.path);
-        const name = path_1.default.basename(dir.path);
+        const { title, year } = splitDirectoryName(dir.path);
+        const name = path.basename(dir.path);
         const folder = this.orm.Folder.create({
             level: dir.level,
             path: dir.path,
             name,
             title: name !== title ? title : undefined,
             year,
-            folderType: enums_1.FolderType.unknown,
+            folderType: FolderType.unknown,
             statCreated: dir.ctime,
             statModified: dir.mtime
         });
@@ -189,10 +180,10 @@ class WorkerScan {
             result.children.push(await this.buildNode(subDir, folder));
         }
         for (const file of dir.files) {
-            if (file.type === enums_1.FileTyp.audio) {
+            if (file.type === FileTyp.audio) {
                 result.tracks.push(new ObjTrackMatch(await this.buildTrack(file, folder)));
             }
-            else if (file.type === enums_1.FileTyp.image) {
+            else if (file.type === FileTyp.image) {
                 result.artworksCount += 1;
                 await this.buildArtwork(file, folder);
             }
@@ -241,7 +232,7 @@ class WorkerScan {
         }
     }
     async scanArtworks(dir, folder, result) {
-        const scanArtworks = dir.files.filter(f => f.type === enums_1.FileTyp.image);
+        const scanArtworks = dir.files.filter(f => f.type === FileTyp.image);
         const foundScanArtworks = [];
         const artworks = await folder.artworks.getItems();
         for (const artwork of artworks) {
@@ -255,7 +246,7 @@ class WorkerScan {
         }
     }
     async scanArtwork(artwork, scanArtworks, foundScanArtworks, result) {
-        const filename = path_1.default.join(artwork.path, artwork.name);
+        const filename = path.join(artwork.path, artwork.name);
         const scanArtwork = scanArtworks.find(t => t.path == filename);
         if (!scanArtwork) {
             log.info('Artwork has been removed', filename);
@@ -266,14 +257,14 @@ class WorkerScan {
         foundScanArtworks.push(scanArtwork);
         result.artworksCount += 1;
         if (scanArtwork.size !== artwork.fileSize ||
-            !moment_1.default(scanArtwork.ctime).isSame(artwork.statCreated) ||
-            !moment_1.default(scanArtwork.mtime).isSame(artwork.statModified)) {
+            !moment(scanArtwork.ctime).isSame(artwork.statCreated) ||
+            !moment(scanArtwork.mtime).isSame(artwork.statModified)) {
             result.changed = true;
             await this.updateArtwork(scanArtwork, artwork);
         }
     }
     async scanTracks(dir, folder, result) {
-        const scanTracks = dir.files.filter(f => f.type === enums_1.FileTyp.audio);
+        const scanTracks = dir.files.filter(f => f.type === FileTyp.audio);
         const foundScanTracks = [];
         const tracks = await folder.tracks.getItems();
         for (const track of tracks) {
@@ -286,7 +277,7 @@ class WorkerScan {
         }
     }
     async scanTrack(track, scanTracks, foundScanTracks, result) {
-        const filename = path_1.default.join(track.path, track.fileName);
+        const filename = path.join(track.path, track.fileName);
         const scanTrack = scanTracks.find(t => t.path == filename);
         if (!scanTrack) {
             log.info('Track has been removed', filename);
@@ -297,8 +288,8 @@ class WorkerScan {
         foundScanTracks.push(scanTrack);
         if (this.changes.tracks.updated.has(track) ||
             scanTrack.size !== track.fileSize ||
-            !moment_1.default(scanTrack.ctime).isSame(track.statCreated) ||
-            !moment_1.default(scanTrack.mtime).isSame(track.statModified)) {
+            !moment(scanTrack.ctime).isSame(track.statCreated) ||
+            !moment(scanTrack.mtime).isSame(track.statModified)) {
             const t = await this.updateTrack(scanTrack, track);
             if (t) {
                 result.tracks.push(new ObjTrackMatch(t));
@@ -326,5 +317,4 @@ class WorkerScan {
         return rootMatch;
     }
 }
-exports.WorkerScan = WorkerScan;
 //# sourceMappingURL=scan.js.map

@@ -1,28 +1,21 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = exports.Logger = exports.configureLogger = void 0;
-const winston_1 = __importDefault(require("winston"));
-const console_table_printer_1 = require("console-table-printer");
-function configureLogger(level) {
-    winston_1.default.configure({
+import winston from 'winston';
+import { Table } from 'console-table-printer';
+export function configureLogger(level) {
+    winston.configure({
         level,
         transports: [
-            new winston_1.default.transports.Console({
-                format: winston_1.default.format.combine(winston_1.default.format.colorize(), winston_1.default.format.simple())
+            new winston.transports.Console({
+                format: winston.format.combine(winston.format.colorize(), winston.format.simple())
             })
         ]
     });
 }
-exports.configureLogger = configureLogger;
-class Logger {
+export class Logger {
     constructor(name) {
         this.name = name;
     }
     applyLog(level, format, ...params) {
-        winston_1.default.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
+        winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
     }
     debug(format, ...params) {
         this.applyLog('debug', format, params);
@@ -37,8 +30,8 @@ class Logger {
         this.applyLog('error', format.toString(), params);
     }
     table(items, columns) {
-        if (winston_1.default.level === 'info') {
-            const p = new console_table_printer_1.Table({ columns });
+        if (winston.level === 'info') {
+            const p = new Table({ columns });
             p.addRows(items);
             p.printTable();
         }
@@ -47,9 +40,7 @@ class Logger {
         this.applyLog('debug', format, params);
     }
 }
-exports.Logger = Logger;
-function logger(name) {
+export function logger(name) {
     return new Logger(name);
 }
-exports.logger = logger;
 //# sourceMappingURL=logger.js.map

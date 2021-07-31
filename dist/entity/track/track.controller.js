@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,15 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TrackController = void 0;
-const track_model_1 = require("./track.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const track_args_1 = require("./track.args");
-const tag_model_1 = require("../tag/tag.model");
-const base_args_1 = require("../base/base.args");
-const admin_1 = require("../admin/admin");
+import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs } from './track.args';
+import { MediaIDTagRaw } from '../tag/tag.model';
+import { ListArgs, PageArgs } from '../base/base.args';
+import { AdminChangeQueueInfo } from '../admin/admin';
 let TrackController = class TrackController {
     async id(id, trackArgs, { orm, engine, user }) {
         return engine.transform.track(orm, await orm.Track.oneOrFailByID(id), trackArgs, user);
@@ -82,111 +79,111 @@ let TrackController = class TrackController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => track_model_1.Track, { description: 'Get a Track by Id', summary: 'Get Track' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.Ctx()),
+    Get('/id', () => Track, { description: 'Get a Track by Id', summary: 'Get Track' }),
+    __param(0, QueryParam('id', { description: 'Track Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, track_args_1.IncludesTrackArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/search', () => track_model_1.TrackPage, { description: 'Search Tracks' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.Ctx()),
+    Get('/search', () => TrackPage, { description: 'Search Tracks' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs,
-        track_args_1.TrackFilterArgs,
-        track_args_1.TrackOrderArgs,
-        base_args_1.ListArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesTrackArgs,
+        TrackFilterArgs,
+        TrackOrderArgs,
+        ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "search", null);
 __decorate([
-    rest_1.Get('/similar', () => track_model_1.TrackPage, { description: 'Get similar Tracks by Track Id (External Service)', summary: 'Get similar Tracks' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/similar', () => TrackPage, { description: 'Get similar Tracks by Track Id (External Service)', summary: 'Get similar Tracks' }),
+    __param(0, QueryParam('id', { description: 'Track Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, base_args_1.PageArgs,
-        track_args_1.IncludesTrackArgs, Object]),
+    __metadata("design:paramtypes", [String, PageArgs,
+        IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "similar", null);
 __decorate([
-    rest_1.Get('/lyrics', () => track_model_1.TrackLyrics, { description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Track Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/lyrics', () => TrackLyrics, { description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }),
+    __param(0, QueryParam('id', { description: 'Track Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "lyrics", null);
 __decorate([
-    rest_1.Get('/rawTag/get', () => [tag_model_1.MediaIDTagRaw], { description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.Ctx()),
+    Get('/rawTag/get', () => [MediaIDTagRaw], { description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackFilterArgs, Object]),
+    __metadata("design:paramtypes", [TrackFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rawTagGet", null);
 __decorate([
-    rest_1.Get('/health', () => [track_model_1.TrackHealth], { description: 'List of Tracks with Health Issues', roles: [enums_1.UserRole.admin], summary: 'Get Health' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/health', () => [TrackHealth], { description: 'List of Tracks with Health Issues', roles: [UserRole.admin], summary: 'Get Health' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.MediaHealthArgs,
-        track_args_1.TrackFilterArgs,
-        track_args_1.IncludesTrackArgs, Object]),
+    __metadata("design:paramtypes", [MediaHealthArgs,
+        TrackFilterArgs,
+        IncludesTrackArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "health", null);
 __decorate([
-    rest_1.Post('/rename', () => admin_1.AdminChangeQueueInfo, { description: 'Rename a track', roles: [enums_1.UserRole.admin], summary: 'Rename Track' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/rename', () => AdminChangeQueueInfo, { description: 'Rename a track', roles: [UserRole.admin], summary: 'Rename Track' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackRenameArgs, Object]),
+    __metadata("design:paramtypes", [TrackRenameArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rename", null);
 __decorate([
-    rest_1.Post('/move', () => admin_1.AdminChangeQueueInfo, { description: 'Move Tracks', roles: [enums_1.UserRole.admin] }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/move', () => AdminChangeQueueInfo, { description: 'Move Tracks', roles: [UserRole.admin] }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackMoveArgs, Object]),
+    __metadata("design:paramtypes", [TrackMoveArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "move", null);
 __decorate([
-    rest_1.Post('/remove', () => admin_1.AdminChangeQueueInfo, { description: 'Remove a Track', roles: [enums_1.UserRole.admin], summary: 'Remove Track' }),
-    __param(0, rest_1.BodyParam('id')),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', () => AdminChangeQueueInfo, { description: 'Remove a Track', roles: [UserRole.admin], summary: 'Remove Track' }),
+    __param(0, BodyParam('id')),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "remove", null);
 __decorate([
-    rest_1.Post('/fix', () => admin_1.AdminChangeQueueInfo, { description: 'Fix Track by Health Hint Id', roles: [enums_1.UserRole.admin], summary: 'Fix Track' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/fix', () => AdminChangeQueueInfo, { description: 'Fix Track by Health Hint Id', roles: [UserRole.admin], summary: 'Fix Track' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.TrackFixArgs, Object]),
+    __metadata("design:paramtypes", [TrackFixArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "fix", null);
 __decorate([
-    rest_1.Post('/rawTag/set', () => admin_1.AdminChangeQueueInfo, { description: 'Write a Raw Rag to a Track by Track Id', roles: [enums_1.UserRole.admin], summary: 'Set Raw Tag' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/rawTag/set', () => AdminChangeQueueInfo, { description: 'Write a Raw Rag to a Track by Track Id', roles: [UserRole.admin], summary: 'Set Raw Tag' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [track_args_1.RawTagUpdateArgs, Object]),
+    __metadata("design:paramtypes", [RawTagUpdateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "rawTagSet", null);
 TrackController = __decorate([
-    rest_1.Controller('/track', { tags: ['Track'], roles: [enums_1.UserRole.stream] })
+    Controller('/track', { tags: ['Track'], roles: [UserRole.stream] })
 ], TrackController);
-exports.TrackController = TrackController;
+export { TrackController };
 //# sourceMappingURL=track.controller.js.map

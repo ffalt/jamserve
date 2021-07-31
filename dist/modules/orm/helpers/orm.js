@@ -1,24 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ORM = void 0;
-const manager_1 = require("./manager");
-const sequelize_1 = require("sequelize");
-const metadata_1 = require("../metadata");
-const schema_1 = require("../builder/schema");
-class ORM {
+import { EntityCache, EntityManager } from './manager';
+import seq, { Sequelize } from 'sequelize';
+import { getMetadataStorage } from '../metadata';
+import { ModelBuilder } from '../builder/schema';
+export class ORM {
     constructor(sequelize, config) {
         this.sequelize = sequelize;
         this.config = config;
-        this.cache = new manager_1.EntityCache();
+        this.cache = new EntityCache();
     }
     static async init(config) {
-        const sequelize = new sequelize_1.Sequelize(config.options);
+        const sequelize = new Sequelize(config.options);
         const orm = new ORM(sequelize, config);
         await orm.init();
         return orm;
     }
     async init() {
-        const metadata = metadata_1.getMetadataStorage();
+        const metadata = getMetadataStorage();
         metadata.build();
         await this.testConnection();
         await this.buildSchema();
@@ -31,7 +28,7 @@ class ORM {
         let table = await queryInterface.describeTable('State');
         if (table?.played && table.played.type !== 'INTEGER') {
             await queryInterface.removeColumn('State', 'played');
-            await queryInterface.addColumn('State', 'played', { type: sequelize_1.DataTypes.INTEGER, allowNull: true });
+            await queryInterface.addColumn('State', 'played', { type: seq.DataTypes.INTEGER, allowNull: true });
         }
         table = await queryInterface.describeTable('Artist');
         if (table?.genres) {
@@ -58,11 +55,11 @@ class ORM {
         await this.sequelize.authenticate();
     }
     async buildSchema() {
-        const schema = new schema_1.ModelBuilder(this.sequelize, metadata_1.getMetadataStorage());
+        const schema = new ModelBuilder(this.sequelize, getMetadataStorage());
         await schema.build();
     }
     manager(useCache) {
-        return new manager_1.EntityManager(this.sequelize, metadata_1.getMetadataStorage(), this.config, this, useCache);
+        return new EntityManager(this.sequelize, getMetadataStorage(), this.config, this, useCache);
     }
     clearCache() {
         this.cache.clear();
@@ -71,5 +68,4 @@ class ORM {
         await this.sequelize.close();
     }
 }
-exports.ORM = ORM;
 //# sourceMappingURL=orm.js.map

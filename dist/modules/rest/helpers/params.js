@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getParamInfo = void 0;
-const findType_1 = require("./findType");
-const type_graphql_1 = require("type-graphql");
-function getParamInfo({ prototype, propertyKey, parameterIndex, returnTypeFunc, options = {}, }) {
+import { findType } from "./findType";
+import { SymbolKeysNotSupportedError } from 'type-graphql';
+export function getParamInfo({ prototype, propertyKey, parameterIndex, returnTypeFunc, options = {}, }) {
     if (typeof propertyKey === "symbol") {
-        throw new type_graphql_1.SymbolKeysNotSupportedError();
+        throw new SymbolKeysNotSupportedError();
     }
-    const { getType, typeOptions } = findType_1.findType({
+    const { getType, typeOptions } = findType({
         metadataKey: "design:paramtypes",
         prototype,
         propertyKey,
@@ -24,5 +21,4 @@ function getParamInfo({ prototype, propertyKey, parameterIndex, returnTypeFunc, 
         validate: options.validate,
     };
 }
-exports.getParamInfo = getParamInfo;
 //# sourceMappingURL=params.js.map

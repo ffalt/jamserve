@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,17 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PodcastController = void 0;
-const podcast_model_1 = require("./podcast.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const episode_model_1 = require("../episode/episode.model");
-const podcast_args_1 = require("./podcast.args");
-const episode_args_1 = require("../episode/episode.args");
-const base_args_1 = require("../base/base.args");
-const logger_1 = require("../../utils/logger");
-const log = logger_1.logger('PodcastController');
+import { Podcast, PodcastDiscover, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus } from './podcast.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { EpisodePage } from '../episode/episode.model';
+import { IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs } from './podcast.args';
+import { EpisodeOrderArgs, IncludesEpisodeArgs } from '../episode/episode.args';
+import { ListArgs, PageArgs } from '../base/base.args';
+import { logger } from '../../utils/logger';
+const log = logger('PodcastController');
 let PodcastController = class PodcastController {
     async id(id, podcastArgs, podcastChildrenArgs, episodeArgs, { orm, engine, user }) {
         return engine.transform.podcast(orm, await orm.Podcast.oneOrFailByID(id), podcastArgs, podcastChildrenArgs, episodeArgs, user);
@@ -75,124 +72,128 @@ let PodcastController = class PodcastController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => podcast_model_1.Podcast, { description: 'Get a Podcast by Id', summary: 'Get Podcast' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Podcast Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/id', () => Podcast, { description: 'Get a Podcast by Id', summary: 'Get Podcast' }),
+    __param(0, QueryParam('id', { description: 'Podcast Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, podcast_args_1.IncludesPodcastArgs,
-        podcast_args_1.IncludesPodcastChildrenArgs,
-        episode_args_1.IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesPodcastArgs,
+        IncludesPodcastChildrenArgs,
+        IncludesEpisodeArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/index', () => podcast_model_1.PodcastIndex, { description: 'Get the Navigation Index for Podcasts', summary: 'Get Index' }),
-    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    Get('/index', () => PodcastIndex, { description: 'Get the Navigation Index for Podcasts', summary: 'Get Index' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastFilterArgs, Object]),
+    __metadata("design:paramtypes", [PodcastFilterArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "index", null);
 __decorate([
-    rest_1.Get('/search', () => podcast_model_1.PodcastPage, { description: 'Search Podcasts' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.QueryParams()),
-    __param(6, rest_1.QueryParams()),
-    __param(7, rest_1.Ctx()),
+    Get('/search', () => PodcastPage, { description: 'Search Podcasts' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, QueryParams()),
+    __param(6, QueryParams()),
+    __param(7, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        podcast_args_1.IncludesPodcastArgs,
-        podcast_args_1.IncludesPodcastChildrenArgs,
-        episode_args_1.IncludesEpisodeArgs,
-        podcast_args_1.PodcastFilterArgs,
-        podcast_args_1.PodcastOrderArgs,
-        base_args_1.ListArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesPodcastArgs,
+        IncludesPodcastChildrenArgs,
+        IncludesEpisodeArgs,
+        PodcastFilterArgs,
+        PodcastOrderArgs,
+        ListArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "search", null);
 __decorate([
-    rest_1.Get('/episodes', () => episode_model_1.EpisodePage, { description: 'Get Episodes of Podcasts', summary: 'Get Episodes' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/episodes', () => EpisodePage, { description: 'Get Episodes of Podcasts', summary: 'Get Episodes' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        episode_args_1.IncludesEpisodeArgs,
-        podcast_args_1.PodcastFilterArgs,
-        episode_args_1.EpisodeOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesEpisodeArgs,
+        PodcastFilterArgs,
+        EpisodeOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "episodes", null);
 __decorate([
-    rest_1.Get('/status', () => podcast_model_1.PodcastUpdateStatus, { description: 'Get a Podcast Status by Podcast Id', summary: 'Get Status' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Podcast Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Get('/status', () => PodcastUpdateStatus, { description: 'Get a Podcast Status by Podcast Id', summary: 'Get Status' }),
+    __param(0, QueryParam('id', { description: 'Podcast Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "status", null);
 __decorate([
-    rest_1.Post('/create', () => podcast_model_1.Podcast, { description: 'Create a Podcast', roles: [enums_1.UserRole.podcast], summary: 'Create Podcast' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', () => Podcast, { description: 'Create a Podcast', roles: [UserRole.podcast], summary: 'Create Podcast' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastCreateArgs, Object]),
+    __metadata("design:paramtypes", [PodcastCreateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/refresh', { description: 'Check Podcast Feeds for new Episodes', roles: [enums_1.UserRole.podcast], summary: 'Refresh Podcasts' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/refresh', { description: 'Check Podcast Feeds for new Episodes', roles: [UserRole.podcast], summary: 'Refresh Podcasts' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastRefreshArgs, Object]),
+    __metadata("design:paramtypes", [PodcastRefreshArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "refresh", null);
 __decorate([
-    rest_1.Post('/remove', { description: 'Remove a Podcast', roles: [enums_1.UserRole.podcast], summary: 'Remove Podcast' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Podcast ID to remove', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', { description: 'Remove a Podcast', roles: [UserRole.podcast], summary: 'Remove Podcast' }),
+    __param(0, BodyParam('id', { description: 'Podcast ID to remove', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "remove", null);
 __decorate([
-    rest_1.Get('/discover', () => [podcast_model_1.PodcastDiscover], { description: 'Discover Podcasts via gpodder.net', summary: 'Discover Podcasts' }),
-    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    Get('/discover', () => [PodcastDiscover], { description: 'Discover Podcasts via gpodder.net', summary: 'Discover Podcasts' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverArgs, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "discover", null);
 __decorate([
-    rest_1.Get('/discover/tags', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Podcast Tags via gpodder.net', summary: 'Discover Podcast Tags' }),
-    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    Get('/discover/tags', () => PodcastDiscoverTagPage, { description: 'Discover Podcast Tags via gpodder.net', summary: 'Discover Podcast Tags' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "podcastsDiscoverTags", null);
 __decorate([
-    rest_1.Get('/discover/byTag', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Podcasts by Tag via gpodder.net', summary: 'Discover Podcasts by Tag' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.Ctx()),
+    Get('/discover/byTag', () => PodcastDiscoverTagPage, { description: 'Discover Podcasts by Tag via gpodder.net', summary: 'Discover Podcasts by Tag' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [podcast_args_1.PodcastDiscoverByTagArgs,
-        base_args_1.PageArgs, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverByTagArgs,
+        PageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "podcastsDiscoverByTag", null);
 __decorate([
-    rest_1.Get('/discover/top', () => podcast_model_1.PodcastDiscoverTagPage, { description: 'Discover Top Podcasts via gpodder.net', summary: 'Discover Top Podcasts' }),
-    __param(0, rest_1.QueryParams()), __param(1, rest_1.Ctx()),
+    Get('/discover/top', () => PodcastDiscoverTagPage, { description: 'Discover Top Podcasts via gpodder.net', summary: 'Discover Top Podcasts' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastController.prototype, "podcastsDiscoverTop", null);
 PodcastController = __decorate([
-    rest_1.Controller('/podcast', { tags: ['Podcast'], roles: [enums_1.UserRole.stream] })
+    Controller('/podcast', { tags: ['Podcast'], roles: [UserRole.stream] })
 ], PodcastController);
-exports.PodcastController = PodcastController;
+export { PodcastController };
 //# sourceMappingURL=podcast.controller.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,175 +7,173 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WikidataLookupArgs = exports.WikidataSummaryArgs = exports.WikipediaSummaryArgs = exports.CoverArtArchiveImageArgs = exports.CoverArtArchiveLookupArgs = exports.AcousticBrainzLookupArgs = exports.MusicBrainzSearchArgs = exports.MusicBrainzLookupArgs = exports.AcoustidLookupArgs = exports.LyricsOVHSearchArgs = exports.LastFMLookupArgs = void 0;
-const enums_1 = require("../../types/enums");
-const decorators_1 = require("../../modules/rest/decorators");
-const example_consts_1 = require("../../modules/engine/rest/example.consts");
+import { CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums';
+import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
+import { examples } from '../../modules/engine/rest/example.consts';
 let LastFMLookupArgs = class LastFMLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'MusicBrainz ID', example: example_consts_1.examples.mbReleaseID }),
+    ObjField({ description: 'MusicBrainz ID', example: examples.mbReleaseID }),
     __metadata("design:type", String)
 ], LastFMLookupArgs.prototype, "mbID", void 0);
 __decorate([
-    decorators_1.ObjField(() => enums_1.LastFMLookupType, { description: 'lookup by lastfm type', example: enums_1.LastFMLookupType.album }),
+    ObjField(() => LastFMLookupType, { description: 'lookup by lastfm type', example: LastFMLookupType.album }),
     __metadata("design:type", String)
 ], LastFMLookupArgs.prototype, "type", void 0);
 LastFMLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], LastFMLookupArgs);
-exports.LastFMLookupArgs = LastFMLookupArgs;
+export { LastFMLookupArgs };
 let LyricsOVHSearchArgs = class LyricsOVHSearchArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' }),
+    ObjField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' }),
     __metadata("design:type", String)
 ], LyricsOVHSearchArgs.prototype, "title", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Song Artist', example: 'Primus' }),
+    ObjField({ description: 'Song Artist', example: 'Primus' }),
     __metadata("design:type", String)
 ], LyricsOVHSearchArgs.prototype, "artist", void 0);
 LyricsOVHSearchArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], LyricsOVHSearchArgs);
-exports.LyricsOVHSearchArgs = LyricsOVHSearchArgs;
+export { LyricsOVHSearchArgs };
 let AcoustidLookupArgs = class AcoustidLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Track ID', example: example_consts_1.examples.mbTrackID }),
+    ObjField({ description: 'Track ID', example: examples.mbTrackID }),
     __metadata("design:type", String)
 ], AcoustidLookupArgs.prototype, "trackID", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' }),
+    ObjField({ nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' }),
     __metadata("design:type", String)
 ], AcoustidLookupArgs.prototype, "inc", void 0);
 AcoustidLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], AcoustidLookupArgs);
-exports.AcoustidLookupArgs = AcoustidLookupArgs;
+export { AcoustidLookupArgs };
 let MusicBrainzLookupArgs = class MusicBrainzLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'MusicBrainz ID', example: example_consts_1.examples.mbReleaseID }),
+    ObjField({ description: 'MusicBrainz ID', example: examples.mbReleaseID }),
     __metadata("design:type", String)
 ], MusicBrainzLookupArgs.prototype, "mbID", void 0);
 __decorate([
-    decorators_1.ObjField(() => enums_1.MusicBrainzLookupType, { description: 'MusicBrainz Lookup Type', example: enums_1.MusicBrainzLookupType.release }),
+    ObjField(() => MusicBrainzLookupType, { description: 'MusicBrainz Lookup Type', example: MusicBrainzLookupType.release }),
     __metadata("design:type", String)
 ], MusicBrainzLookupArgs.prototype, "type", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' }),
+    ObjField({ nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' }),
     __metadata("design:type", String)
 ], MusicBrainzLookupArgs.prototype, "inc", void 0);
 MusicBrainzLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], MusicBrainzLookupArgs);
-exports.MusicBrainzLookupArgs = MusicBrainzLookupArgs;
+export { MusicBrainzLookupArgs };
 let MusicBrainzSearchArgs = class MusicBrainzSearchArgs {
 };
 __decorate([
-    decorators_1.ObjField(() => enums_1.MusicBrainzSearchType, { description: 'MusicBrainz Search Type', example: enums_1.MusicBrainzSearchType.artist }),
+    ObjField(() => MusicBrainzSearchType, { description: 'MusicBrainz Search Type', example: MusicBrainzSearchType.artist }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "type", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by Recording Name' }),
+    ObjField({ nullable: true, description: 'Search by Recording Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "recording", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by Releasegroup Name' }),
+    ObjField({ nullable: true, description: 'Search by Releasegroup Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "releasegroup", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by Release Name' }),
+    ObjField({ nullable: true, description: 'Search by Release Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "release", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by Artist Name' }),
+    ObjField({ nullable: true, description: 'Search by Artist Name' }),
     __metadata("design:type", String)
 ], MusicBrainzSearchArgs.prototype, "artist", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Search by Number of Release Tracks', min: 0 }),
+    ObjField({ nullable: true, description: 'Search by Number of Release Tracks', min: 0 }),
     __metadata("design:type", Number)
 ], MusicBrainzSearchArgs.prototype, "tracks", void 0);
 MusicBrainzSearchArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], MusicBrainzSearchArgs);
-exports.MusicBrainzSearchArgs = MusicBrainzSearchArgs;
+export { MusicBrainzSearchArgs };
 let AcousticBrainzLookupArgs = class AcousticBrainzLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'MusicBrainz ID', example: example_consts_1.examples.mbReleaseID }),
+    ObjField({ description: 'MusicBrainz ID', example: examples.mbReleaseID }),
     __metadata("design:type", String)
 ], AcousticBrainzLookupArgs.prototype, "mbID", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Page parameter if more than one acousticbrainz info is available', min: 0 }),
+    ObjField({ nullable: true, description: 'Page parameter if more than one acousticbrainz info is available', min: 0 }),
     __metadata("design:type", Number)
 ], AcousticBrainzLookupArgs.prototype, "nr", void 0);
 AcousticBrainzLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], AcousticBrainzLookupArgs);
-exports.AcousticBrainzLookupArgs = AcousticBrainzLookupArgs;
+export { AcousticBrainzLookupArgs };
 let CoverArtArchiveLookupArgs = class CoverArtArchiveLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'MusicBrainz ID', example: example_consts_1.examples.mbReleaseID }),
+    ObjField({ description: 'MusicBrainz ID', example: examples.mbReleaseID }),
     __metadata("design:type", String)
 ], CoverArtArchiveLookupArgs.prototype, "mbID", void 0);
 __decorate([
-    decorators_1.ObjField(() => enums_1.CoverArtArchiveLookupType, { description: 'Lookup by CoverArtArchive MusicBrainz Type', example: enums_1.CoverArtArchiveLookupType.release }),
+    ObjField(() => CoverArtArchiveLookupType, { description: 'Lookup by CoverArtArchive MusicBrainz Type', example: CoverArtArchiveLookupType.release }),
     __metadata("design:type", String)
 ], CoverArtArchiveLookupArgs.prototype, "type", void 0);
 CoverArtArchiveLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], CoverArtArchiveLookupArgs);
-exports.CoverArtArchiveLookupArgs = CoverArtArchiveLookupArgs;
+export { CoverArtArchiveLookupArgs };
 let CoverArtArchiveImageArgs = class CoverArtArchiveImageArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'Coverart URL' }),
+    ObjField({ description: 'Coverart URL' }),
     __metadata("design:type", String)
 ], CoverArtArchiveImageArgs.prototype, "url", void 0);
 CoverArtArchiveImageArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], CoverArtArchiveImageArgs);
-exports.CoverArtArchiveImageArgs = CoverArtArchiveImageArgs;
+export { CoverArtArchiveImageArgs };
 let WikipediaSummaryArgs = class WikipediaSummaryArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'MusicBrainz ID', example: 'Primus' }),
+    ObjField({ description: 'MusicBrainz ID', example: 'Primus' }),
     __metadata("design:type", String)
 ], WikipediaSummaryArgs.prototype, "title", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Wikipedia Language', example: 'en', defaultValue: 'en' }),
+    ObjField({ nullable: true, description: 'Wikipedia Language', example: 'en', defaultValue: 'en' }),
     __metadata("design:type", String)
 ], WikipediaSummaryArgs.prototype, "lang", void 0);
 WikipediaSummaryArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], WikipediaSummaryArgs);
-exports.WikipediaSummaryArgs = WikipediaSummaryArgs;
+export { WikipediaSummaryArgs };
 let WikidataSummaryArgs = class WikidataSummaryArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'WikiData ID' }),
+    ObjField({ description: 'WikiData ID' }),
     __metadata("design:type", String)
 ], WikidataSummaryArgs.prototype, "wikiDataID", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Wikipedia Language', example: 'en', defaultValue: 'en' }),
+    ObjField({ nullable: true, description: 'Wikipedia Language', example: 'en', defaultValue: 'en' }),
     __metadata("design:type", String)
 ], WikidataSummaryArgs.prototype, "lang", void 0);
 WikidataSummaryArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], WikidataSummaryArgs);
-exports.WikidataSummaryArgs = WikidataSummaryArgs;
+export { WikidataSummaryArgs };
 let WikidataLookupArgs = class WikidataLookupArgs {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'WikiData ID' }),
+    ObjField({ description: 'WikiData ID' }),
     __metadata("design:type", String)
 ], WikidataLookupArgs.prototype, "wikiDataID", void 0);
 WikidataLookupArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], WikidataLookupArgs);
-exports.WikidataLookupArgs = WikidataLookupArgs;
+export { WikidataLookupArgs };
 //# sourceMappingURL=metadata.args.js.map

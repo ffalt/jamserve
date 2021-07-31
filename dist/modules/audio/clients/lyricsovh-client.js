@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LyricsOVHClient = void 0;
-const logger_1 = require("../../../utils/logger");
-const webservice_client_1 = require("../../../utils/webservice-client");
-const log = logger_1.logger('LyricsOVHClient');
-class LyricsOVHClient extends webservice_client_1.WebserviceClient {
+import { logger } from '../../../utils/logger';
+import { WebserviceClient } from '../../../utils/webservice-client';
+const log = logger('LyricsOVHClient');
+export class LyricsOVHClient extends WebserviceClient {
     constructor(userAgent) {
         super(1, 1000, userAgent);
     }
@@ -32,5 +29,4 @@ class LyricsOVHClient extends webservice_client_1.WebserviceClient {
             .trim());
     }
 }
-exports.LyricsOVHClient = LyricsOVHClient;
 //# sourceMappingURL=lyricsovh-client.js.map

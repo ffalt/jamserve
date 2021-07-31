@@ -1,32 +1,29 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildOpenApi = void 0;
-const version_1 = require("../../engine/rest/version");
-const metadata_1 = require("../metadata");
-const express_error_1 = require("./express-error");
-const iterate_super_1 = require("../helpers/iterate-super");
-const openapi_helpers_1 = require("./openapi-helpers");
-const openapi_refs_1 = require("./openapi-refs");
+import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version';
+import { getMetadataStorage } from '../metadata';
+import { Errors } from './express-error';
+import { iterateControllers } from '../helpers/iterate-super';
+import { SCHEMA_ID } from './openapi-helpers';
+import { OpenApiRefBuilder } from './openapi-refs';
 class OpenApiBuilder {
     constructor(extended = true) {
         this.extended = extended;
-        this.metadata = metadata_1.getMetadataStorage();
-        this.refsBuilder = new openapi_refs_1.OpenApiRefBuilder(extended);
+        this.metadata = getMetadataStorage();
+        this.refsBuilder = new OpenApiRefBuilder(extended);
     }
     fillErrorResponses(method, parameters, roles, responses) {
         if (parameters.length > 0) {
-            responses['422'] = { description: express_error_1.Errors.invalidParameter };
+            responses['422'] = { description: Errors.invalidParameter };
             if (parameters.find(p => p.required)) {
-                responses['400'] = { description: express_error_1.Errors.missingParameter };
+                responses['400'] = { description: Errors.missingParameter };
             }
         }
         if (parameters.find(p => {
-            return p.schema?.$ref === openapi_helpers_1.SCHEMA_ID || p.schema?.items?.$ref === openapi_helpers_1.SCHEMA_ID;
+            return p.schema?.$ref === SCHEMA_ID || p.schema?.items?.$ref === SCHEMA_ID;
         })) {
-            responses['404'] = { description: express_error_1.Errors.itemNotFound };
+            responses['404'] = { description: Errors.itemNotFound };
         }
         if (roles.length > 0) {
-            responses['401'] = { description: express_error_1.Errors.unauthorized };
+            responses['401'] = { description: Errors.unauthorized };
         }
     }
     buildResponses(method, parameters, roles, schemas) {
@@ -121,7 +118,7 @@ class OpenApiBuilder {
             servers: [{
                     url: 'http://localhost:4040/jam/{version}',
                     description: 'A local JamServe API',
-                    variables: { version: { enum: [version_1.JAMAPI_URL_VERSION], default: version_1.JAMAPI_URL_VERSION } }
+                    variables: { version: { enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION } }
                 }],
             tags: [], paths: {},
             components: {
@@ -182,7 +179,7 @@ class OpenApiBuilder {
         for (const ctrl of controllers) {
             let gets = [];
             let posts = [];
-            iterate_super_1.iterateControllers(this.metadata, ctrl, (ctrlClass => {
+            iterateControllers(this.metadata, ctrl, (ctrlClass => {
                 gets = gets.concat(this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
                 posts = posts.concat(this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
             }));
@@ -191,7 +188,7 @@ class OpenApiBuilder {
         }
     }
     build() {
-        const openapi = this.buildOpenApiBase(version_1.JAMAPI_VERSION);
+        const openapi = this.buildOpenApiBase(JAMAPI_VERSION);
         const schemas = {
             'ID': { type: 'string', format: 'uuid' },
             'JSON': { type: 'object' }
@@ -204,9 +201,8 @@ class OpenApiBuilder {
         return openapi;
     }
 }
-function buildOpenApi(extended = true) {
+export function buildOpenApi(extended = true) {
     const builder = new OpenApiBuilder(extended);
     return builder.build();
 }
-exports.buildOpenApi = buildOpenApi;
 //# sourceMappingURL=openapi.js.map

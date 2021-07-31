@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,39 +7,37 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayQueueSetArgs = exports.IncludesPlayQueueArgs = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
+import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
 let IncludesPlayQueueArgs = class IncludesPlayQueueArgs {
 };
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include entries on play queue', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include entries on play queue', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesPlayQueueArgs.prototype, "playQueueEntries", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'include entry ids on play queue', defaultValue: false, example: false }),
+    ObjField({ nullable: true, description: 'include entry ids on play queue', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesPlayQueueArgs.prototype, "playQueueEntriesIDs", void 0);
 IncludesPlayQueueArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], IncludesPlayQueueArgs);
-exports.IncludesPlayQueueArgs = IncludesPlayQueueArgs;
+export { IncludesPlayQueueArgs };
 let PlayQueueSetArgs = class PlayQueueSetArgs {
 };
 __decorate([
-    decorators_1.ObjField(() => [String], { nullable: true, description: 'Media Ids of the play queue' }),
+    ObjField(() => [String], { nullable: true, description: 'Media Ids of the play queue' }),
     __metadata("design:type", Array)
 ], PlayQueueSetArgs.prototype, "mediaIDs", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Current Media Id' }),
+    ObjField({ nullable: true, description: 'Current Media Id' }),
     __metadata("design:type", String)
 ], PlayQueueSetArgs.prototype, "currentID", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: 'Position in Current Media', min: 0 }),
+    ObjField({ nullable: true, description: 'Position in Current Media', min: 0 }),
     __metadata("design:type", Number)
 ], PlayQueueSetArgs.prototype, "position", void 0);
 PlayQueueSetArgs = __decorate([
-    decorators_1.ObjParamsType()
+    ObjParamsType()
 ], PlayQueueSetArgs);
-exports.PlayQueueSetArgs = PlayQueueSetArgs;
+export { PlayQueueSetArgs };
 //# sourceMappingURL=playqueue.args.js.map

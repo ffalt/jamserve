@@ -1,20 +1,15 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
-const version_1 = require("./version");
-const dotenv_1 = __importDefault(require("dotenv"));
-const logger_1 = require("./utils/logger");
-const server_1 = require("./modules/server/server");
-const typescript_ioc_1 = require("typescript-ioc");
-dotenv_1.default.config();
-logger_1.configureLogger(process.env.JAM_LOG_LEVEL || 'info');
-const log = logger_1.logger('Server');
-const server = typescript_ioc_1.Container.get(server_1.Server);
+import 'reflect-metadata';
+import { JAMSERVE_VERSION } from './version';
+import dotenv from 'dotenv';
+import { configureLogger, logger } from './utils/logger';
+import { Server } from './modules/server/server';
+import { Container } from 'typescript-ioc';
+dotenv.config();
+configureLogger(process.env.JAM_LOG_LEVEL || 'info');
+const log = logger('Server');
+const server = Container.get(Server);
 async function run() {
-    log.info(`Jamserve ${version_1.JAMSERVE_VERSION} starting`);
+    log.info(`Jamserve ${JAMSERVE_VERSION} starting`);
     await server.init();
     await server.engine.init();
     await server.engine.start();

@@ -1,25 +1,22 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreRepository = void 0;
-const base_repository_1 = require("../base/base.repository");
-const enums_1 = require("../../types/enums");
-const base_1 = require("../base/base");
-const orm_1 = require("../../modules/orm");
-class GenreRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from '../base/base.repository';
+import { DBObjectType, GenreOrderFields } from '../../types/enums';
+import { OrderHelper } from '../base/base';
+import { QHelper } from '../../modules/orm';
+export class GenreRepository extends BaseRepository {
     constructor() {
         super(...arguments);
-        this.objType = enums_1.DBObjectType.genre;
+        this.objType = DBObjectType.genre;
         this.indexProperty = 'name';
     }
     buildOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.GenreOrderFields.created:
+            case GenreOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.GenreOrderFields.updated:
+            case GenreOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.GenreOrderFields.name:
-            case enums_1.GenreOrderFields.default:
+            case GenreOrderFields.name:
+            case GenreOrderFields.default:
                 return [['name', direction]];
         }
         return [];
@@ -28,16 +25,15 @@ class GenreRepository extends base_repository_1.BaseRepository {
         if (!filter) {
             return {};
         }
-        const result = orm_1.QHelper.buildQuery([
+        const result = QHelper.buildQuery([
             { id: filter.ids },
-            { name: orm_1.QHelper.like(filter.query, this.em.dialect) },
-            { name: orm_1.QHelper.eq(filter.name) }
+            { name: QHelper.like(filter.query, this.em.dialect) },
+            { name: QHelper.eq(filter.name) }
         ]);
-        result.include = orm_1.QHelper.includeQueries([
-            { tracks: [{ id: orm_1.QHelper.inOrEqual(filter.trackIDs) }] },
+        result.include = QHelper.includeQueries([
+            { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
         ]);
         return result;
     }
 }
-exports.GenreRepository = GenreRepository;
 //# sourceMappingURL=genre.repository.js.map

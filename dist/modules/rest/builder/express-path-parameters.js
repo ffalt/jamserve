@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.processCustomPathParameters = void 0;
-const express_error_1 = require("./express-error");
-const metadata_1 = require("../metadata");
+import { InvalidParamError, MissingParamError } from './express-error';
+import { getMetadataStorage } from '../metadata';
 function validateCustomPathParameterValue(rElement, group) {
     const type = group.getType();
     let value = rElement || '';
@@ -10,7 +7,7 @@ function validateCustomPathParameterValue(rElement, group) {
         value = value.replace(group.prefix, '').trim();
     }
     if (value.length === 0) {
-        throw express_error_1.MissingParamError(group.name);
+        throw MissingParamError(group.name);
     }
     if (type === String) {
         return value;
@@ -21,27 +18,27 @@ function validateCustomPathParameterValue(rElement, group) {
     else if (type === Number) {
         const number = Number(value);
         if (isNaN(number)) {
-            throw express_error_1.InvalidParamError(group.name, 'is not a number');
+            throw InvalidParamError(group.name, 'is not a number');
         }
         if ((group.min !== undefined && number < group.min) ||
             (group.max !== undefined && number > group.max)) {
-            throw express_error_1.InvalidParamError(group.name, 'number not in allowed range');
+            throw InvalidParamError(group.name, 'number not in allowed range');
         }
         return number;
     }
     else {
-        const enumInfo = metadata_1.getMetadataStorage().enums.find(e => e.enumObj === type);
+        const enumInfo = getMetadataStorage().enums.find(e => e.enumObj === type);
         if (enumInfo) {
             const enumObj = enumInfo.enumObj;
             if (!enumObj[value]) {
-                throw express_error_1.InvalidParamError(group.name, `Enum value not valid`);
+                throw InvalidParamError(group.name, `Enum value not valid`);
             }
             return value;
         }
         throw new Error('Internal: Invalid Custom Path Parameter Type ' + group.name);
     }
 }
-function processCustomPathParameters(customPathParameters, pathParameters, method) {
+export function processCustomPathParameters(customPathParameters, pathParameters, method) {
     const r = customPathParameters.regex.exec(pathParameters) || [];
     let index = 1;
     const result = {};
@@ -55,5 +52,4 @@ function processCustomPathParameters(customPathParameters, pathParameters, metho
     }
     return result;
 }
-exports.processCustomPathParameters = processCustomPathParameters;
 //# sourceMappingURL=express-path-parameters.js.map

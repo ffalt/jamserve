@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaDataFormat = void 0;
-class MetaDataFormat {
+export class MetaDataFormat {
     static stripInlineLastFM(content) {
         return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
             .replace(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
@@ -32,5 +29,4 @@ class MetaDataFormat {
         };
     }
 }
-exports.MetaDataFormat = MetaDataFormat;
 //# sourceMappingURL=metadata.format.js.map

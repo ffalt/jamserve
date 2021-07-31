@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NowPlayingController = void 0;
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const nowplaying_model_1 = require("./nowplaying.model");
-const nowplaying_args_1 = require("./nowplaying.args");
-const track_args_1 = require("../track/track.args");
-const episode_args_1 = require("../episode/episode.args");
+import { BodyParam, Controller, Ctx, Get, Post, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { NowPlaying } from './nowplaying.model';
+import { IncludesNowPlayingArgs } from './nowplaying.args';
+import { IncludesTrackArgs } from '../track/track.args';
+import { IncludesEpisodeArgs } from '../episode/episode.args';
 let NowPlayingController = class NowPlayingController {
     async list(nowPlayingArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         const result = await engine.nowPlaying.getNowPlaying();
@@ -29,27 +26,27 @@ let NowPlayingController = class NowPlayingController {
     }
 };
 __decorate([
-    rest_1.Get('/list', () => [nowplaying_model_1.NowPlaying], { description: 'Get a List of media [Track, Episode] played currently by Users', summary: 'Get Now Playing' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.Ctx()),
+    Get('/list', () => [NowPlaying], { description: 'Get a List of media [Track, Episode] played currently by Users', summary: 'Get Now Playing' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [nowplaying_args_1.IncludesNowPlayingArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [IncludesNowPlayingArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs, Object]),
     __metadata("design:returntype", Promise)
 ], NowPlayingController.prototype, "list", null);
 __decorate([
-    rest_1.Post('/scrobble', { description: 'Report playing (scrobble) a media file [Track, Episode]', summary: 'Scrobble' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Media Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/scrobble', { description: 'Report playing (scrobble) a media file [Track, Episode]', summary: 'Scrobble' }),
+    __param(0, BodyParam('id', { description: 'Media Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], NowPlayingController.prototype, "scrobble", null);
 NowPlayingController = __decorate([
-    rest_1.Controller('/nowPlaying', { tags: ['Now Playing'], roles: [enums_1.UserRole.stream] })
+    Controller('/nowPlaying', { tags: ['Now Playing'], roles: [UserRole.stream] })
 ], NowPlayingController);
-exports.NowPlayingController = NowPlayingController;
+export { NowPlayingController };
 //# sourceMappingURL=nowplaying.controller.js.map

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaDataType = void 0;
-var MetaDataType;
+export var MetaDataType;
 (function (MetaDataType) {
     MetaDataType[MetaDataType["musicbrainz"] = 0] = "musicbrainz";
     MetaDataType[MetaDataType["wikipedia"] = 1] = "wikipedia";
@@ -11,5 +8,5 @@ var MetaDataType;
     MetaDataType[MetaDataType["coverartarchive"] = 5] = "coverartarchive";
     MetaDataType[MetaDataType["lastfm"] = 6] = "lastfm";
     MetaDataType[MetaDataType["lyrics"] = 7] = "lyrics";
-})(MetaDataType = exports.MetaDataType || (exports.MetaDataType = {}));
+})(MetaDataType || (MetaDataType = {}));
 //# sourceMappingURL=metadata.types.js.map

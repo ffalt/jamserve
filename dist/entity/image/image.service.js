@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,37 +7,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var ImageService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ImageService = void 0;
-const path_1 = __importDefault(require("path"));
-const typescript_ioc_1 = require("typescript-ioc");
-const image_module_1 = require("../../modules/image/image.module");
-const enums_1 = require("../../types/enums");
-const audio_module_1 = require("../../modules/audio/audio.module");
-const podcast_service_1 = require("../podcast/podcast.service");
-const track_service_1 = require("../track/track.service");
-const folder_service_1 = require("../folder/folder.service");
-const user_service_1 = require("../user/user.service");
-const album_service_1 = require("../album/album.service");
-const artist_service_1 = require("../artist/artist.service");
-const series_service_1 = require("../series/series.service");
-const root_service_1 = require("../root/root.service");
-const artwork_service_1 = require("../artwork/artwork.service");
+import path from 'path';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { ImageModule } from '../../modules/image/image.module';
+import { DBObjectType, FolderType } from '../../types/enums';
+import { AudioModule } from '../../modules/audio/audio.module';
+import { PodcastService } from '../podcast/podcast.service';
+import { TrackService } from '../track/track.service';
+import { FolderService } from '../folder/folder.service';
+import { UserService } from '../user/user.service';
+import { AlbumService } from '../album/album.service';
+import { ArtistService } from '../artist/artist.service';
+import { SeriesService } from '../series/series.service';
+import { RootService } from '../root/root.service';
+import { ArtworkService } from '../artwork/artwork.service';
 let ImageService = ImageService_1 = class ImageService {
     static getCoverArtTextFolder(folder) {
         let result;
-        if (folder.folderType === enums_1.FolderType.artist) {
+        if (folder.folderType === FolderType.artist) {
             result = folder.artist;
         }
-        else if ([enums_1.FolderType.multialbum, enums_1.FolderType.album].includes(folder.folderType)) {
+        else if ([FolderType.multialbum, FolderType.album].includes(folder.folderType)) {
             result = folder.album;
         }
         if (!result || result.length === 0) {
-            result = path_1.default.basename(folder.path);
+            result = path.basename(folder.path);
         }
         return result;
     }
@@ -46,7 +40,7 @@ let ImageService = ImageService_1 = class ImageService {
         const tag = await episode.tag.get();
         let text = tag?.title;
         if (!text && episode.path) {
-            text = path_1.default.basename(episode.path);
+            text = path.basename(episode.path);
         }
         if (!text) {
             text = episode.name;
@@ -58,57 +52,57 @@ let ImageService = ImageService_1 = class ImageService {
     }
     static async getCoverArtTextTrack(track) {
         const tag = await track.tag.get();
-        return tag && tag.title ? tag.title : path_1.default.basename(track.path);
+        return tag && tag.title ? tag.title : path.basename(track.path);
     }
     static getCoverArtTextPodcast(podcast) {
         return podcast.title || podcast.url;
     }
     async getCoverArtText(o, type) {
         switch (type) {
-            case enums_1.DBObjectType.track:
+            case DBObjectType.track:
                 return await ImageService_1.getCoverArtTextTrack(o);
-            case enums_1.DBObjectType.folder:
+            case DBObjectType.folder:
                 return ImageService_1.getCoverArtTextFolder(o);
-            case enums_1.DBObjectType.episode:
+            case DBObjectType.episode:
                 return await ImageService_1.getCoverArtTextEpisode(o);
-            case enums_1.DBObjectType.podcast:
+            case DBObjectType.podcast:
                 return ImageService_1.getCoverArtTextPodcast(o);
-            case enums_1.DBObjectType.playlist:
+            case DBObjectType.playlist:
                 return o.name;
-            case enums_1.DBObjectType.series:
+            case DBObjectType.series:
                 return o.name;
-            case enums_1.DBObjectType.album:
+            case DBObjectType.album:
                 return o.name;
-            case enums_1.DBObjectType.artist:
+            case DBObjectType.artist:
                 return o.name;
-            case enums_1.DBObjectType.user:
+            case DBObjectType.user:
                 return o.name;
-            case enums_1.DBObjectType.root:
+            case DBObjectType.root:
                 return o.name;
         }
         return type;
     }
     async getObjImageByType(orm, o, type, size, format) {
         switch (type) {
-            case enums_1.DBObjectType.track:
+            case DBObjectType.track:
                 return this.trackService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.folder:
+            case DBObjectType.folder:
                 return this.folderService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.artist:
+            case DBObjectType.artist:
                 return this.artistService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.album:
+            case DBObjectType.album:
                 return this.albumService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.user:
+            case DBObjectType.user:
                 return this.userService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.podcast:
+            case DBObjectType.podcast:
                 return this.podcastService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.episode:
+            case DBObjectType.episode:
                 return this.podcastService.getEpisodeImage(orm, o, size, format);
-            case enums_1.DBObjectType.series:
+            case DBObjectType.series:
                 return this.seriesService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.artwork:
+            case DBObjectType.artwork:
                 return this.artworkService.getImage(orm, o, size, format);
-            case enums_1.DBObjectType.root:
+            case DBObjectType.root:
                 return this.rootService.getImage(orm, o, size, format);
         }
         return;
@@ -122,51 +116,51 @@ let ImageService = ImageService_1 = class ImageService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", image_module_1.ImageModule)
+    Inject,
+    __metadata("design:type", ImageModule)
 ], ImageService.prototype, "imageModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", audio_module_1.AudioModule)
+    Inject,
+    __metadata("design:type", AudioModule)
 ], ImageService.prototype, "audioModule", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", podcast_service_1.PodcastService)
+    Inject,
+    __metadata("design:type", PodcastService)
 ], ImageService.prototype, "podcastService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", track_service_1.TrackService)
+    Inject,
+    __metadata("design:type", TrackService)
 ], ImageService.prototype, "trackService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", folder_service_1.FolderService)
+    Inject,
+    __metadata("design:type", FolderService)
 ], ImageService.prototype, "folderService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", user_service_1.UserService)
+    Inject,
+    __metadata("design:type", UserService)
 ], ImageService.prototype, "userService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", root_service_1.RootService)
+    Inject,
+    __metadata("design:type", RootService)
 ], ImageService.prototype, "rootService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", series_service_1.SeriesService)
+    Inject,
+    __metadata("design:type", SeriesService)
 ], ImageService.prototype, "seriesService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artist_service_1.ArtistService)
+    Inject,
+    __metadata("design:type", ArtistService)
 ], ImageService.prototype, "artistService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", album_service_1.AlbumService)
+    Inject,
+    __metadata("design:type", AlbumService)
 ], ImageService.prototype, "albumService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", artwork_service_1.ArtworkService)
+    Inject,
+    __metadata("design:type", ArtworkService)
 ], ImageService.prototype, "artworkService", void 0);
 ImageService = ImageService_1 = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], ImageService);
-exports.ImageService = ImageService;
+export { ImageService };
 //# sourceMappingURL=image.service.js.map

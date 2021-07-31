@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AcousticbrainzClient = void 0;
-const webservice_json_client_1 = require("../../../utils/webservice-json-client");
-class AcousticbrainzClient extends webservice_json_client_1.WebserviceJSONClient {
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client';
+export class AcousticbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
             host: 'https://acousticbrainz.org',
@@ -18,5 +15,4 @@ class AcousticbrainzClient extends webservice_json_client_1.WebserviceJSONClient
         });
     }
 }
-exports.AcousticbrainzClient = AcousticbrainzClient;
 //# sourceMappingURL=acousticbrainz-client.js.map

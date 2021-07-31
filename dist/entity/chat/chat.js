@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,35 +7,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatQL = exports.Chat = void 0;
-const type_graphql_1 = require("type-graphql");
+import { Field, ID, ObjectType } from 'type-graphql';
 let Chat = class Chat {
 };
 __decorate([
-    type_graphql_1.Field(() => String),
+    Field(() => String),
     __metadata("design:type", String)
 ], Chat.prototype, "message", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
+    Field(() => Date),
     __metadata("design:type", Number)
 ], Chat.prototype, "created", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
+    Field(() => String),
     __metadata("design:type", String)
 ], Chat.prototype, "userName", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.ID),
+    Field(() => ID),
     __metadata("design:type", String)
 ], Chat.prototype, "userID", void 0);
 Chat = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], Chat);
-exports.Chat = Chat;
+export { Chat };
 let ChatQL = class ChatQL extends Chat {
 };
 ChatQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], ChatQL);
-exports.ChatQL = ChatQL;
+export { ChatQL };
 //# sourceMappingURL=chat.js.map

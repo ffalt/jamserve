@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaDataBlockPicture = void 0;
-const block_writeable_1 = require("./block.writeable");
-class MetaDataBlockPicture extends block_writeable_1.MetaWriteableDataBlock {
+import { MetaWriteableDataBlock } from './block.writeable';
+export class MetaDataBlockPicture extends MetaWriteableDataBlock {
     constructor(isLast) {
         super(isLast, 6);
         this.pictureType = 0;
@@ -90,5 +87,4 @@ class MetaDataBlockPicture extends block_writeable_1.MetaWriteableDataBlock {
             + (this.pictureData ? this.pictureData.length : 0) + 4;
     }
 }
-exports.MetaDataBlockPicture = MetaDataBlockPicture;
 //# sourceMappingURL=block.picture.js.map

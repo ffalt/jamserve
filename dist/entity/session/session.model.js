@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,32 +7,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Session = void 0;
-const session_user_model_1 = require("./session-user.model");
-const rest_1 = require("../../modules/rest");
-const version_1 = require("../../modules/engine/rest/version");
-const example_consts_1 = require("../../modules/engine/rest/example.consts");
+import { SessionUser } from './session-user.model';
+import { ObjField, ResultType } from '../../modules/rest';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
+import { examples } from '../../modules/engine/rest/example.consts';
 let Session = class Session {
 };
 __decorate([
-    rest_1.ObjField({ description: 'Api Version', example: version_1.JAMAPI_VERSION }),
+    ObjField({ description: 'Api Version', example: JAMAPI_VERSION }),
     __metadata("design:type", String)
 ], Session.prototype, "version", void 0);
 __decorate([
-    rest_1.ObjField(() => [String], { description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] }),
+    ObjField(() => [String], { description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] }),
     __metadata("design:type", Array)
 ], Session.prototype, "allowedCookieDomains", void 0);
 __decorate([
-    rest_1.ObjField({ nullable: true, description: 'JSON Web Token', example: example_consts_1.examples.token }),
+    ObjField({ nullable: true, description: 'JSON Web Token', example: examples.token }),
     __metadata("design:type", String)
 ], Session.prototype, "jwt", void 0);
 __decorate([
-    rest_1.ObjField({ nullable: true, description: 'User of this session' }),
-    __metadata("design:type", session_user_model_1.SessionUser)
+    ObjField({ nullable: true, description: 'User of this session' }),
+    __metadata("design:type", SessionUser)
 ], Session.prototype, "user", void 0);
 Session = __decorate([
-    rest_1.ResultType({ description: 'Session Data' })
+    ResultType({ description: 'Session Data' })
 ], Session);
-exports.Session = Session;
+export { Session };
 //# sourceMappingURL=session.model.js.map

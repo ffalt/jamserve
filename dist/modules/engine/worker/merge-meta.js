@@ -1,22 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MetaMerger = void 0;
-const meta_cache_1 = require("./meta-cache");
-const logger_1 = require("../../../utils/logger");
-const consts_1 = require("../../../types/consts");
-const enums_1 = require("../../../types/enums");
-const stats_builder_1 = require("../../../utils/stats-builder");
-const slug_1 = require("../../../utils/slug");
-const album_name_1 = require("../../../utils/album-name");
-const log = logger_1.logger('Worker.MetaMerger');
-class MetaMerger {
+import { MetaMergerCache } from './meta-cache';
+import { logger } from '../../../utils/logger';
+import { cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts';
+import { AlbumType } from '../../../types/enums';
+import { MetaStatBuilder } from '../../../utils/stats-builder';
+import { slugify } from '../../../utils/slug';
+import { extractAlbumName } from '../../../utils/album-name';
+const log = logger('Worker.MetaMerger');
+export class MetaMerger {
     constructor(orm, changes, rootID) {
         this.orm = orm;
         this.changes = changes;
         this.rootID = rootID;
     }
     static async collectArtistNames(artist) {
-        const metaStatBuilder = new stats_builder_1.MetaStatBuilder();
+        const metaStatBuilder = new MetaStatBuilder();
         const tracks = await artist.tracks.getItems();
         for (const track of tracks) {
             const tag = await track.tag.getOrFail();
@@ -29,8 +26,8 @@ class MetaMerger {
                 metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
             }
         }
-        const artistName = metaStatBuilder.mostUsed('artist') || consts_1.cUnknownArtist;
-        return { artistName, slug: slug_1.slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name };
+        const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
+        return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name };
     }
     static async collectArtistAlbumTypes(artist) {
         const types = new Set();
@@ -50,7 +47,7 @@ class MetaMerger {
         await this.linkArtist(artist, trackInfo);
         await trackInfo.track.artist.set(artist);
         await artist.tracks.add(trackInfo.track);
-        const albumArtist = (trackInfo.folder.artist === consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
+        const albumArtist = (trackInfo.folder.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) ?
             await this.cache.findOrCreateCompilationArtist() :
             await this.cache.findOrCreateArtist(trackInfo, true);
         await this.linkArtist(albumArtist, trackInfo);
@@ -145,7 +142,7 @@ class MetaMerger {
         }
     }
     async updateArtistMeta(artist, tracks) {
-        if (artist.name !== consts_1.MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
+        if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
             const { artistName, artistSortName, slug } = await MetaMerger.collectArtistNames(artist);
             artist.name = artistName;
             artist.slug = slug;
@@ -229,9 +226,9 @@ class MetaMerger {
             }
         }
         await album.folders.set(folders);
-        const metaStatBuilder = new stats_builder_1.MetaStatBuilder();
+        const metaStatBuilder = new MetaStatBuilder();
         folders.forEach(folder => metaStatBuilder.statID('albumType', folder.albumType));
-        album.albumType = metaStatBuilder.mostUsed('albumType') || enums_1.AlbumType.unknown;
+        album.albumType = metaStatBuilder.mostUsed('albumType') || AlbumType.unknown;
         let duration = 0;
         const genreMap = new Map();
         for (const track of tracks) {
@@ -239,12 +236,12 @@ class MetaMerger {
             duration += (tag?.mediaDuration || 0);
             metaStatBuilder.statID('seriesNr', tag?.seriesNr);
             metaStatBuilder.statNumber('year', tag?.year);
-            metaStatBuilder.statSlugValue('album', tag?.album && album_name_1.extractAlbumName(tag?.album));
+            metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
             const genres = await track.genres.getItems();
             genres.forEach(genre => genreMap.set(genre.id, genre));
         }
         album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
-        album.slug = slug_1.slugify(album.name);
+        album.slug = slugify(album.name);
         album.duration = duration;
         album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
         album.year = metaStatBuilder.mostUsedNumber('year');
@@ -284,7 +281,7 @@ class MetaMerger {
     }
     async mergeMeta() {
         this.root = await this.orm.Root.oneOrFailByID(this.rootID);
-        this.cache = new meta_cache_1.MetaMergerCache(this.orm, this.changes, this.root);
+        this.cache = new MetaMergerCache(this.orm, this.changes, this.root);
         await this.loadChangedMeta();
         await this.applyChangedTracksMeta();
         await this.applyChangedAlbumsMeta();
@@ -293,5 +290,4 @@ class MetaMerger {
         await this.applyChangedGenresMeta();
     }
 }
-exports.MetaMerger = MetaMerger;
 //# sourceMappingURL=merge-meta.js.map

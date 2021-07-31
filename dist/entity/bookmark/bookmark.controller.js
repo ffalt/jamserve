@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,15 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BookmarkController = void 0;
-const bookmark_model_1 = require("./bookmark.model");
-const rest_1 = require("../../modules/rest");
-const enums_1 = require("../../types/enums");
-const track_args_1 = require("../track/track.args");
-const bookmark_args_1 = require("./bookmark.args");
-const episode_args_1 = require("../episode/episode.args");
-const base_args_1 = require("../base/base.args");
+import { Bookmark, BookmarkPage } from './bookmark.model';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { UserRole } from '../../types/enums';
+import { IncludesTrackArgs } from '../track/track.args';
+import { BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs } from './bookmark.args';
+import { IncludesEpisodeArgs } from '../episode/episode.args';
+import { PageArgs } from '../base/base.args';
 let BookmarkController = class BookmarkController {
     async id(id, bookmarkChildrenArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         return engine.transform.bookmark(orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }), bookmarkChildrenArgs, trackArgs, episodeArgs, user);
@@ -38,62 +35,62 @@ let BookmarkController = class BookmarkController {
     }
 };
 __decorate([
-    rest_1.Get('/id', () => bookmark_model_1.Bookmark, { description: 'Get a Bookmark by Id', summary: 'Get Bookmark' }),
-    __param(0, rest_1.QueryParam('id', { description: 'Bookmark Id', isID: true })),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.Ctx()),
+    Get('/id', () => Bookmark, { description: 'Get a Bookmark by Id', summary: 'Get Bookmark' }),
+    __param(0, QueryParam('id', { description: 'Bookmark Id', isID: true })),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, bookmark_args_1.IncludesBookmarkChildrenArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesBookmarkChildrenArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "id", null);
 __decorate([
-    rest_1.Get('/search', () => bookmark_model_1.BookmarkPage, { description: 'Search Bookmarks' }),
-    __param(0, rest_1.QueryParams()),
-    __param(1, rest_1.QueryParams()),
-    __param(2, rest_1.QueryParams()),
-    __param(3, rest_1.QueryParams()),
-    __param(4, rest_1.QueryParams()),
-    __param(5, rest_1.QueryParams()),
-    __param(6, rest_1.Ctx()),
+    Get('/search', () => BookmarkPage, { description: 'Search Bookmarks' }),
+    __param(0, QueryParams()),
+    __param(1, QueryParams()),
+    __param(2, QueryParams()),
+    __param(3, QueryParams()),
+    __param(4, QueryParams()),
+    __param(5, QueryParams()),
+    __param(6, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [base_args_1.PageArgs,
-        bookmark_args_1.IncludesBookmarkChildrenArgs,
-        track_args_1.IncludesTrackArgs,
-        episode_args_1.IncludesEpisodeArgs,
-        bookmark_args_1.BookmarkFilterArgs,
-        bookmark_args_1.BookmarkOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageArgs,
+        IncludesBookmarkChildrenArgs,
+        IncludesTrackArgs,
+        IncludesEpisodeArgs,
+        BookmarkFilterArgs,
+        BookmarkOrderArgs, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "search", null);
 __decorate([
-    rest_1.Post('/create', () => bookmark_model_1.Bookmark, { description: 'Create a Bookmark', summary: 'Create Bookmark' }),
-    __param(0, rest_1.BodyParams()),
-    __param(1, rest_1.Ctx()),
+    Post('/create', () => Bookmark, { description: 'Create a Bookmark', summary: 'Create Bookmark' }),
+    __param(0, BodyParams()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [bookmark_args_1.BookmarkCreateArgs, Object]),
+    __metadata("design:paramtypes", [BookmarkCreateArgs, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "create", null);
 __decorate([
-    rest_1.Post('/remove', { description: 'Remove a Bookmark by Id', summary: 'Remove Bookmark' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Bookmark Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/remove', { description: 'Remove a Bookmark by Id', summary: 'Remove Bookmark' }),
+    __param(0, BodyParam('id', { description: 'Bookmark Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "remove", null);
 __decorate([
-    rest_1.Post('/removeByMedia', { description: 'Remove Bookmarks by Media Id [Track/Episode]', summary: 'Remove Bookmarks' }),
-    __param(0, rest_1.BodyParam('id', { description: 'Track or Episode Id', isID: true })),
-    __param(1, rest_1.Ctx()),
+    Post('/removeByMedia', { description: 'Remove Bookmarks by Media Id [Track/Episode]', summary: 'Remove Bookmarks' }),
+    __param(0, BodyParam('id', { description: 'Track or Episode Id', isID: true })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkController.prototype, "removeByMedia", null);
 BookmarkController = __decorate([
-    rest_1.Controller('/bookmark', { tags: ['Bookmark'], roles: [enums_1.UserRole.stream] })
+    Controller('/bookmark', { tags: ['Bookmark'], roles: [UserRole.stream] })
 ], BookmarkController);
-exports.BookmarkController = BookmarkController;
+export { BookmarkController };
 //# sourceMappingURL=bookmark.controller.js.map

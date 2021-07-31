@@ -1,21 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerRelation = void 0;
-const findType_1 = require("./findType");
-const metadata_1 = require("../metadata");
-const type_graphql_1 = require("type-graphql");
-function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
+import { findType } from './findType';
+import { getMetadataStorage } from '../metadata';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
+export function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
     if (typeof propertyKey === 'symbol') {
-        throw new type_graphql_1.SymbolKeysNotSupportedError();
+        throw new SymbolKeysNotSupportedError();
     }
-    const { getType, typeOptions } = findType_1.findType({
+    const { getType, typeOptions } = findType({
         metadataKey: 'design:type',
         prototype,
         propertyKey,
         returnTypeFunc,
         typeOptions: opt,
     });
-    metadata_1.getMetadataStorage().collectPropertyMetadata({
+    getMetadataStorage().collectPropertyMetadata({
         name: propertyKey,
         getType,
         typeOptions,
@@ -23,5 +20,4 @@ function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
         target: prototype.constructor
     });
 }
-exports.registerRelation = registerRelation;
 //# sourceMappingURL=relation-register.js.map

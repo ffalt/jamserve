@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,30 +7,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Chat = void 0;
-const decorators_1 = require("../../modules/rest/decorators");
-const example_consts_1 = require("../../modules/engine/rest/example.consts");
+import { ObjField, ResultType } from '../../modules/rest/decorators';
+import { examples } from '../../modules/engine/rest/example.consts';
 let Chat = class Chat {
 };
 __decorate([
-    decorators_1.ObjField({ description: 'User Name', example: 'Awesome User' }),
+    ObjField({ description: 'User Name', example: 'Awesome User' }),
     __metadata("design:type", String)
 ], Chat.prototype, "userName", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'User Id', isID: true }),
+    ObjField({ description: 'User Id', isID: true }),
     __metadata("design:type", String)
 ], Chat.prototype, "userID", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Created Timestamp', min: 0, example: example_consts_1.examples.timestamp }),
+    ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], Chat.prototype, "created", void 0);
 __decorate([
-    decorators_1.ObjField({ description: 'Chat Message', example: 'Hello!' }),
+    ObjField({ description: 'Chat Message', example: 'Hello!' }),
     __metadata("design:type", String)
 ], Chat.prototype, "message", void 0);
 Chat = __decorate([
-    decorators_1.ResultType({ description: 'Chat' })
+    ResultType({ description: 'Chat' })
 ], Chat);
-exports.Chat = Chat;
+export { Chat };
 //# sourceMappingURL=chat.model.js.map

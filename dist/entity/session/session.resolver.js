@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,16 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionResolver = void 0;
-const type_graphql_1 = require("type-graphql");
-const session_1 = require("./session");
-const version_1 = require("../../modules/engine/rest/version");
-const session_args_1 = require("./session.args");
-const Root_1 = require("type-graphql/dist/decorators/Root");
+import { Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
+import { SessionPageQL, SessionQL } from './session';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
+import { SessionsArgs } from './session.args';
+import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
 let SessionResolver = class SessionResolver {
     async version() {
-        return version_1.JAMAPI_VERSION;
+        return JAMAPI_VERSION;
     }
     async session({ orm, user }) {
         return await orm.Session.oneOrFail({ where: { user: user.id } });
@@ -33,34 +30,35 @@ let SessionResolver = class SessionResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => String, { description: 'Get the API Version' }),
+    Query(() => String, { description: 'Get the API Version' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "version", null);
 __decorate([
-    type_graphql_1.Query(() => session_1.SessionQL, { description: 'Check the Login State' }),
-    __param(0, type_graphql_1.Ctx()),
+    Query(() => SessionQL, { description: 'Check the Login State' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "session", null);
 __decorate([
-    type_graphql_1.Query(() => session_1.SessionPageQL, { description: 'Get a list of all sessions of the current user' }),
-    __param(0, type_graphql_1.Args()), __param(1, type_graphql_1.Ctx()),
+    Query(() => SessionPageQL, { description: 'Get a list of all sessions of the current user' }),
+    __param(0, Args()),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [session_args_1.SessionsArgs, Object]),
+    __metadata("design:paramtypes", [SessionsArgs, Object]),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "sessions", null);
 __decorate([
-    type_graphql_1.FieldResolver(() => Date),
-    __param(0, Root_1.Root()),
+    FieldResolver(() => Date),
+    __param(0, GQLRoot()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "expires", null);
 SessionResolver = __decorate([
-    type_graphql_1.Resolver(session_1.SessionQL)
+    Resolver(SessionQL)
 ], SessionResolver);
-exports.SessionResolver = SessionResolver;
+export { SessionResolver };
 //# sourceMappingURL=session.resolver.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,11 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var AlbumService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlbumService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const track_service_1 = require("../track/track.service");
-const folder_service_1 = require("../folder/folder.service");
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { TrackService } from '../track/track.service';
+import { FolderService } from '../folder/folder.service';
 let AlbumService = AlbumService_1 = class AlbumService {
     static async getAlbumFolder(album) {
         const folders = await album.folders.getItems();
@@ -51,15 +48,15 @@ let AlbumService = AlbumService_1 = class AlbumService {
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", track_service_1.TrackService)
+    Inject,
+    __metadata("design:type", TrackService)
 ], AlbumService.prototype, "trackService", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", folder_service_1.FolderService)
+    Inject,
+    __metadata("design:type", FolderService)
 ], AlbumService.prototype, "folderService", void 0);
 AlbumService = AlbumService_1 = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], AlbumService);
-exports.AlbumService = AlbumService;
+export { AlbumService };
 //# sourceMappingURL=album.service.js.map

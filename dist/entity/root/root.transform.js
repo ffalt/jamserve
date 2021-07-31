@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,12 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RootTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const base_transform_1 = require("../base/base.transform");
-const io_service_1 = require("../../modules/engine/services/io.service");
-let RootTransformService = class RootTransformService extends base_transform_1.BaseTransformService {
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform';
+import { IoService } from '../../modules/engine/services/io.service';
+let RootTransformService = class RootTransformService extends BaseTransformService {
     async root(orm, o, rootArgs, user) {
         return {
             id: o.id,
@@ -29,11 +26,11 @@ let RootTransformService = class RootTransformService extends base_transform_1.B
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", io_service_1.IoService)
+    Inject,
+    __metadata("design:type", IoService)
 ], RootTransformService.prototype, "ioService", void 0);
 RootTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], RootTransformService);
-exports.RootTransformService = RootTransformService;
+export { RootTransformService };
 //# sourceMappingURL=root.transform.js.map

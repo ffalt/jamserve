@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreOrderFields = exports.ArtistOrderFields = exports.AlbumOrderFields = exports.PodcastOrderFields = exports.PlayQueueEntryOrderFields = exports.PlaylistEntryOrderFields = exports.FolderOrderFields = exports.SessionOrderFields = exports.DefaultOrderFields = exports.BookmarkOrderFields = exports.EpisodeOrderFields = exports.TrackOrderFields = exports.JamObjectType = exports.MusicBrainzSearchType = exports.MusicBrainzLookupType = exports.CoverArtArchiveLookupType = exports.LastFMLookupType = exports.DownloadFormatTypes = exports.DownloadFormatType = exports.FolderHealthID = exports.ListType = exports.WaveformFormatTypes = exports.WaveformFormatType = exports.FileTyp = exports.TrackHealthID = exports.UserRole = exports.TagFormatType = exports.AudioFormatType = exports.DBObjectType = exports.SessionMode = exports.MetaDataType = exports.FolderTypesAlbum = exports.FolderType = exports.PodcastStatus = exports.ArtworkImageType = exports.ImageFormatType = exports.AlbumTypesArtistMusic = exports.AlbumType = exports.RootScanStrategy = void 0;
-var RootScanStrategy;
+export var RootScanStrategy;
 (function (RootScanStrategy) {
     RootScanStrategy["auto"] = "auto";
     RootScanStrategy["artistalbum"] = "artistalbum";
     RootScanStrategy["compilation"] = "compilation";
     RootScanStrategy["audiobook"] = "audiobook";
-})(RootScanStrategy = exports.RootScanStrategy || (exports.RootScanStrategy = {}));
-var AlbumType;
+})(RootScanStrategy || (RootScanStrategy = {}));
+export var AlbumType;
 (function (AlbumType) {
     AlbumType["unknown"] = "unknown";
     AlbumType["album"] = "album";
@@ -20,15 +17,16 @@ var AlbumType;
     AlbumType["ep"] = "ep";
     AlbumType["single"] = "single";
     AlbumType["series"] = "series";
-})(AlbumType = exports.AlbumType || (exports.AlbumType = {}));
-exports.AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType.bootleg, AlbumType.ep, AlbumType.single];
-var ImageFormatType;
+})(AlbumType || (AlbumType = {}));
+export const AlbumTypesArtistMusic = [AlbumType.album, AlbumType.live, AlbumType.bootleg, AlbumType.ep, AlbumType.single];
+export var ImageFormatType;
 (function (ImageFormatType) {
     ImageFormatType["png"] = "png";
     ImageFormatType["jpeg"] = "jpeg";
     ImageFormatType["tiff"] = "tiff";
-})(ImageFormatType = exports.ImageFormatType || (exports.ImageFormatType = {}));
-var ArtworkImageType;
+    ImageFormatType["webp"] = "webp";
+})(ImageFormatType || (ImageFormatType = {}));
+export var ArtworkImageType;
 (function (ArtworkImageType) {
     ArtworkImageType["front"] = "front";
     ArtworkImageType["back"] = "back";
@@ -46,16 +44,16 @@ var ArtworkImageType;
     ArtworkImageType["unedited"] = "unedited";
     ArtworkImageType["other"] = "other";
     ArtworkImageType["artist"] = "artist";
-})(ArtworkImageType = exports.ArtworkImageType || (exports.ArtworkImageType = {}));
-var PodcastStatus;
+})(ArtworkImageType || (ArtworkImageType = {}));
+export var PodcastStatus;
 (function (PodcastStatus) {
     PodcastStatus["new"] = "new";
     PodcastStatus["downloading"] = "downloading";
     PodcastStatus["completed"] = "completed";
     PodcastStatus["error"] = "error";
     PodcastStatus["deleted"] = "deleted";
-})(PodcastStatus = exports.PodcastStatus || (exports.PodcastStatus = {}));
-var FolderType;
+})(PodcastStatus || (PodcastStatus = {}));
+export var FolderType;
 (function (FolderType) {
     FolderType["unknown"] = "unknown";
     FolderType["artist"] = "artist";
@@ -63,9 +61,9 @@ var FolderType;
     FolderType["album"] = "album";
     FolderType["multialbum"] = "multialbum";
     FolderType["extras"] = "extras";
-})(FolderType = exports.FolderType || (exports.FolderType = {}));
-exports.FolderTypesAlbum = [FolderType.album, FolderType.multialbum];
-var MetaDataType;
+})(FolderType || (FolderType = {}));
+export const FolderTypesAlbum = [FolderType.album, FolderType.multialbum];
+export var MetaDataType;
 (function (MetaDataType) {
     MetaDataType["musicbrainz"] = "musicbrainz";
     MetaDataType["wikipedia"] = "wikipedia";
@@ -75,13 +73,13 @@ var MetaDataType;
     MetaDataType["coverartarchive"] = "coverartarchive";
     MetaDataType["lastfm"] = "lastfm";
     MetaDataType["lyrics"] = "lyrics";
-})(MetaDataType = exports.MetaDataType || (exports.MetaDataType = {}));
-var SessionMode;
+})(MetaDataType || (MetaDataType = {}));
+export var SessionMode;
 (function (SessionMode) {
     SessionMode["browser"] = "browser";
     SessionMode["jwt"] = "jwt";
-})(SessionMode = exports.SessionMode || (exports.SessionMode = {}));
-var DBObjectType;
+})(SessionMode || (SessionMode = {}));
+export var DBObjectType;
 (function (DBObjectType) {
     DBObjectType["root"] = "root";
     DBObjectType["user"] = "user";
@@ -105,8 +103,8 @@ var DBObjectType;
     DBObjectType["tag"] = "tag";
     DBObjectType["series"] = "series";
     DBObjectType["genre"] = "genre";
-})(DBObjectType = exports.DBObjectType || (exports.DBObjectType = {}));
-var AudioFormatType;
+})(DBObjectType || (DBObjectType = {}));
+export var AudioFormatType;
 (function (AudioFormatType) {
     AudioFormatType["mp3"] = "mp3";
     AudioFormatType["m4a"] = "m4a";
@@ -117,8 +115,8 @@ var AudioFormatType;
     AudioFormatType["flac"] = "flac";
     AudioFormatType["webma"] = "webma";
     AudioFormatType["wav"] = "wav";
-})(AudioFormatType = exports.AudioFormatType || (exports.AudioFormatType = {}));
-var TagFormatType;
+})(AudioFormatType || (AudioFormatType = {}));
+export var TagFormatType;
 (function (TagFormatType) {
     TagFormatType["none"] = "none";
     TagFormatType["ffmpeg"] = "ffmpeg";
@@ -129,15 +127,15 @@ var TagFormatType;
     TagFormatType["id3v24"] = "id3v24";
     TagFormatType["id3v1"] = "id3v1";
     TagFormatType["vorbis"] = "vorbis";
-})(TagFormatType = exports.TagFormatType || (exports.TagFormatType = {}));
-var UserRole;
+})(TagFormatType || (TagFormatType = {}));
+export var UserRole;
 (function (UserRole) {
     UserRole["admin"] = "admin";
     UserRole["stream"] = "stream";
     UserRole["upload"] = "upload";
     UserRole["podcast"] = "podcast";
-})(UserRole = exports.UserRole || (exports.UserRole = {}));
-var TrackHealthID;
+})(UserRole || (UserRole = {}));
+export var TrackHealthID;
 (function (TrackHealthID) {
     TrackHealthID["tagValuesExists"] = "track.tag.values.exists";
     TrackHealthID["id3v2Exists"] = "track.mp3.id3v2.exists";
@@ -149,8 +147,8 @@ var TrackHealthID;
     TrackHealthID["flacMediaValid"] = "track.flac.media.valid";
     TrackHealthID["id3v2NoId3v1"] = "track.mp3.id3v2.no.id3v1";
     TrackHealthID["mp3Garbage"] = "track.mp3.garbage.data";
-})(TrackHealthID = exports.TrackHealthID || (exports.TrackHealthID = {}));
-var FileTyp;
+})(TrackHealthID || (TrackHealthID = {}));
+export var FileTyp;
 (function (FileTyp) {
     FileTyp["unknown"] = "unknown";
     FileTyp["audio"] = "audio";
@@ -158,15 +156,15 @@ var FileTyp;
     FileTyp["tag"] = "tag";
     FileTyp["backup"] = "backup";
     FileTyp["other"] = "other";
-})(FileTyp = exports.FileTyp || (exports.FileTyp = {}));
-var WaveformFormatType;
+})(FileTyp || (FileTyp = {}));
+export var WaveformFormatType;
 (function (WaveformFormatType) {
     WaveformFormatType["svg"] = "svg";
     WaveformFormatType["json"] = "json";
     WaveformFormatType["dat"] = "dat";
-})(WaveformFormatType = exports.WaveformFormatType || (exports.WaveformFormatType = {}));
-exports.WaveformFormatTypes = [WaveformFormatType.svg, WaveformFormatType.json, WaveformFormatType.dat];
-var ListType;
+})(WaveformFormatType || (WaveformFormatType = {}));
+export const WaveformFormatTypes = [WaveformFormatType.svg, WaveformFormatType.json, WaveformFormatType.dat];
+export var ListType;
 (function (ListType) {
     ListType["random"] = "random";
     ListType["highest"] = "highest";
@@ -174,8 +172,8 @@ var ListType;
     ListType["frequent"] = "frequent";
     ListType["faved"] = "faved";
     ListType["recent"] = "recent";
-})(ListType = exports.ListType || (exports.ListType = {}));
-var FolderHealthID;
+})(ListType || (ListType = {}));
+export var FolderHealthID;
 (function (FolderHealthID) {
     FolderHealthID["albumTagsExists"] = "folder.album.tags.exists";
     FolderHealthID["albumMBIDExists"] = "folder.album.mbid.exists";
@@ -187,14 +185,14 @@ var FolderHealthID;
     FolderHealthID["artistNameConform"] = "folder.artist.name.conform";
     FolderHealthID["artistImageExists"] = "folder.artist.image.exists";
     FolderHealthID["artistImageValid"] = "folder.artist.image.valid";
-})(FolderHealthID = exports.FolderHealthID || (exports.FolderHealthID = {}));
-var DownloadFormatType;
+})(FolderHealthID || (FolderHealthID = {}));
+export var DownloadFormatType;
 (function (DownloadFormatType) {
     DownloadFormatType["zip"] = "zip";
     DownloadFormatType["tar"] = "tar";
-})(DownloadFormatType = exports.DownloadFormatType || (exports.DownloadFormatType = {}));
-exports.DownloadFormatTypes = [DownloadFormatType.zip, DownloadFormatType.tar];
-var LastFMLookupType;
+})(DownloadFormatType || (DownloadFormatType = {}));
+export const DownloadFormatTypes = [DownloadFormatType.zip, DownloadFormatType.tar];
+export var LastFMLookupType;
 (function (LastFMLookupType) {
     LastFMLookupType["album"] = "album";
     LastFMLookupType["albumToptracks"] = "album-toptracks";
@@ -202,13 +200,13 @@ var LastFMLookupType;
     LastFMLookupType["track"] = "track";
     LastFMLookupType["trackSimilar"] = "track-similar";
     LastFMLookupType["artistToptracks"] = "artist-toptracks";
-})(LastFMLookupType = exports.LastFMLookupType || (exports.LastFMLookupType = {}));
-var CoverArtArchiveLookupType;
+})(LastFMLookupType || (LastFMLookupType = {}));
+export var CoverArtArchiveLookupType;
 (function (CoverArtArchiveLookupType) {
     CoverArtArchiveLookupType["release"] = "release";
     CoverArtArchiveLookupType["releaseGroup"] = "release-group";
-})(CoverArtArchiveLookupType = exports.CoverArtArchiveLookupType || (exports.CoverArtArchiveLookupType = {}));
-var MusicBrainzLookupType;
+})(CoverArtArchiveLookupType || (CoverArtArchiveLookupType = {}));
+export var MusicBrainzLookupType;
 (function (MusicBrainzLookupType) {
     MusicBrainzLookupType["area"] = "area";
     MusicBrainzLookupType["artist"] = "artist";
@@ -223,8 +221,8 @@ var MusicBrainzLookupType;
     MusicBrainzLookupType["series"] = "series";
     MusicBrainzLookupType["work"] = "work";
     MusicBrainzLookupType["url"] = "url";
-})(MusicBrainzLookupType = exports.MusicBrainzLookupType || (exports.MusicBrainzLookupType = {}));
-var MusicBrainzSearchType;
+})(MusicBrainzLookupType || (MusicBrainzLookupType = {}));
+export var MusicBrainzSearchType;
 (function (MusicBrainzSearchType) {
     MusicBrainzSearchType["artist"] = "artist";
     MusicBrainzSearchType["label"] = "label";
@@ -233,8 +231,8 @@ var MusicBrainzSearchType;
     MusicBrainzSearchType["releaseGroup"] = "release-group";
     MusicBrainzSearchType["work"] = "work";
     MusicBrainzSearchType["area"] = "area";
-})(MusicBrainzSearchType = exports.MusicBrainzSearchType || (exports.MusicBrainzSearchType = {}));
-var JamObjectType;
+})(MusicBrainzSearchType || (MusicBrainzSearchType = {}));
+export var JamObjectType;
 (function (JamObjectType) {
     JamObjectType["root"] = "root";
     JamObjectType["user"] = "user";
@@ -252,8 +250,8 @@ var JamObjectType;
     JamObjectType["playqueue"] = "playqueue";
     JamObjectType["radio"] = "radio";
     JamObjectType["genre"] = "genre";
-})(JamObjectType = exports.JamObjectType || (exports.JamObjectType = {}));
-var TrackOrderFields;
+})(JamObjectType || (JamObjectType = {}));
+export var TrackOrderFields;
 (function (TrackOrderFields) {
     TrackOrderFields["default"] = "default";
     TrackOrderFields["created"] = "created";
@@ -265,8 +263,8 @@ var TrackOrderFields;
     TrackOrderFields["title"] = "title";
     TrackOrderFields["parent"] = "parent";
     TrackOrderFields["filename"] = "filename";
-})(TrackOrderFields = exports.TrackOrderFields || (exports.TrackOrderFields = {}));
-var EpisodeOrderFields;
+})(TrackOrderFields || (TrackOrderFields = {}));
+export var EpisodeOrderFields;
 (function (EpisodeOrderFields) {
     EpisodeOrderFields["default"] = "default";
     EpisodeOrderFields["created"] = "created";
@@ -274,28 +272,28 @@ var EpisodeOrderFields;
     EpisodeOrderFields["name"] = "name";
     EpisodeOrderFields["status"] = "status";
     EpisodeOrderFields["date"] = "date";
-})(EpisodeOrderFields = exports.EpisodeOrderFields || (exports.EpisodeOrderFields = {}));
-var BookmarkOrderFields;
+})(EpisodeOrderFields || (EpisodeOrderFields = {}));
+export var BookmarkOrderFields;
 (function (BookmarkOrderFields) {
     BookmarkOrderFields["default"] = "default";
     BookmarkOrderFields["created"] = "created";
     BookmarkOrderFields["updated"] = "updated";
     BookmarkOrderFields["media"] = "media";
     BookmarkOrderFields["position"] = "position";
-})(BookmarkOrderFields = exports.BookmarkOrderFields || (exports.BookmarkOrderFields = {}));
-var DefaultOrderFields;
+})(BookmarkOrderFields || (BookmarkOrderFields = {}));
+export var DefaultOrderFields;
 (function (DefaultOrderFields) {
     DefaultOrderFields["default"] = "default";
     DefaultOrderFields["created"] = "created";
     DefaultOrderFields["updated"] = "updated";
     DefaultOrderFields["name"] = "name";
-})(DefaultOrderFields = exports.DefaultOrderFields || (exports.DefaultOrderFields = {}));
-var SessionOrderFields;
+})(DefaultOrderFields || (DefaultOrderFields = {}));
+export var SessionOrderFields;
 (function (SessionOrderFields) {
     SessionOrderFields["default"] = "default";
     SessionOrderFields["expires"] = "expires";
-})(SessionOrderFields = exports.SessionOrderFields || (exports.SessionOrderFields = {}));
-var FolderOrderFields;
+})(SessionOrderFields || (SessionOrderFields = {}));
+export var FolderOrderFields;
 (function (FolderOrderFields) {
     FolderOrderFields["default"] = "default";
     FolderOrderFields["created"] = "created";
@@ -304,30 +302,30 @@ var FolderOrderFields;
     FolderOrderFields["name"] = "name";
     FolderOrderFields["title"] = "title";
     FolderOrderFields["year"] = "year";
-})(FolderOrderFields = exports.FolderOrderFields || (exports.FolderOrderFields = {}));
-var PlaylistEntryOrderFields;
+})(FolderOrderFields || (FolderOrderFields = {}));
+export var PlaylistEntryOrderFields;
 (function (PlaylistEntryOrderFields) {
     PlaylistEntryOrderFields["default"] = "default";
     PlaylistEntryOrderFields["created"] = "created";
     PlaylistEntryOrderFields["updated"] = "updated";
     PlaylistEntryOrderFields["position"] = "position";
-})(PlaylistEntryOrderFields = exports.PlaylistEntryOrderFields || (exports.PlaylistEntryOrderFields = {}));
-var PlayQueueEntryOrderFields;
+})(PlaylistEntryOrderFields || (PlaylistEntryOrderFields = {}));
+export var PlayQueueEntryOrderFields;
 (function (PlayQueueEntryOrderFields) {
     PlayQueueEntryOrderFields["default"] = "default";
     PlayQueueEntryOrderFields["created"] = "created";
     PlayQueueEntryOrderFields["updated"] = "updated";
     PlayQueueEntryOrderFields["position"] = "position";
-})(PlayQueueEntryOrderFields = exports.PlayQueueEntryOrderFields || (exports.PlayQueueEntryOrderFields = {}));
-var PodcastOrderFields;
+})(PlayQueueEntryOrderFields || (PlayQueueEntryOrderFields = {}));
+export var PodcastOrderFields;
 (function (PodcastOrderFields) {
     PodcastOrderFields["default"] = "default";
     PodcastOrderFields["created"] = "created";
     PodcastOrderFields["updated"] = "updated";
     PodcastOrderFields["name"] = "name";
     PodcastOrderFields["lastCheck"] = "lastCheck";
-})(PodcastOrderFields = exports.PodcastOrderFields || (exports.PodcastOrderFields = {}));
-var AlbumOrderFields;
+})(PodcastOrderFields || (PodcastOrderFields = {}));
+export var AlbumOrderFields;
 (function (AlbumOrderFields) {
     AlbumOrderFields["default"] = "default";
     AlbumOrderFields["created"] = "created";
@@ -338,20 +336,20 @@ var AlbumOrderFields;
     AlbumOrderFields["seriesNr"] = "seriesNr";
     AlbumOrderFields["duration"] = "duration";
     AlbumOrderFields["albumType"] = "albumType";
-})(AlbumOrderFields = exports.AlbumOrderFields || (exports.AlbumOrderFields = {}));
-var ArtistOrderFields;
+})(AlbumOrderFields || (AlbumOrderFields = {}));
+export var ArtistOrderFields;
 (function (ArtistOrderFields) {
     ArtistOrderFields["default"] = "default";
     ArtistOrderFields["created"] = "created";
     ArtistOrderFields["updated"] = "updated";
     ArtistOrderFields["name"] = "name";
     ArtistOrderFields["nameSort"] = "nameSort";
-})(ArtistOrderFields = exports.ArtistOrderFields || (exports.ArtistOrderFields = {}));
-var GenreOrderFields;
+})(ArtistOrderFields || (ArtistOrderFields = {}));
+export var GenreOrderFields;
 (function (GenreOrderFields) {
     GenreOrderFields["default"] = "default";
     GenreOrderFields["created"] = "created";
     GenreOrderFields["updated"] = "updated";
     GenreOrderFields["name"] = "name";
-})(GenreOrderFields = exports.GenreOrderFields || (exports.GenreOrderFields = {}));
+})(GenreOrderFields || (GenreOrderFields = {}));
 //# sourceMappingURL=enums.js.map

@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Feed = void 0;
-const feedparser_1 = __importDefault(require("feedparser"));
-const iconv_lite_1 = __importDefault(require("iconv-lite"));
-const moment_1 = __importDefault(require("moment"));
-const node_fetch_1 = __importDefault(require("node-fetch"));
-const zlib_1 = __importDefault(require("zlib"));
-class Feed {
+import FeedParser from 'feedparser';
+import iconv from 'iconv-lite';
+import moment from 'moment';
+import fetch from 'node-fetch';
+import zlib from 'zlib';
+export class Feed {
     static parseDurationMilliseconds(s) {
-        return moment_1.default.duration(s).as('milliseconds');
+        return moment.duration(s).as('milliseconds');
     }
     static parseItunesDurationSeconds(s) {
         const num = Number(s);
@@ -21,7 +15,7 @@ class Feed {
         if (s.length === 5) {
             s = `00:${s}`;
         }
-        return moment_1.default.duration(s).as('seconds');
+        return moment.duration(s).as('seconds');
     }
     static getParams(str) {
         return str.split(';').reduce((para, param) => {
@@ -35,11 +29,11 @@ class Feed {
     static maybeDecompress(res, encoding, done) {
         let decompress;
         if (encoding.match(/\bdeflate\b/)) {
-            decompress = zlib_1.default.createInflate();
+            decompress = zlib.createInflate();
             decompress.on('error', done);
         }
         else if (encoding.match(/\bgzip\b/)) {
-            decompress = zlib_1.default.createGunzip();
+            decompress = zlib.createGunzip();
             decompress.on('error', done);
         }
         return decompress ? res.pipe(decompress) : res;
@@ -47,7 +41,7 @@ class Feed {
     static maybeTranslate(res, charset, done) {
         if (charset && !/utf-*8/i.test(charset)) {
             try {
-                const iv = iconv_lite_1.default.decodeStream(charset);
+                const iv = iconv.decodeStream(charset);
                 iv.on('error', done);
                 res = res.pipe(iv);
             }
@@ -59,7 +53,7 @@ class Feed {
     }
     async fetch(url) {
         const posts = [];
-        const res = await node_fetch_1.default(url, {
+        const res = await fetch(url, {
             timeout: 10000,
             headers: {
                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
@@ -77,7 +71,7 @@ class Feed {
                         resolve({ feed, posts });
                     }
                 };
-                const feedParser = new feedparser_1.default({});
+                const feedParser = new FeedParser({});
                 feedParser.on('readable', function streamResponse() {
                     const response = feedParser;
                     feed = response.meta;
@@ -145,5 +139,4 @@ class Feed {
         return { tag, episodes };
     }
 }
-exports.Feed = Feed;
 //# sourceMappingURL=podcast-feed.js.map

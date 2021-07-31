@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Validator = void 0;
-const logger_1 = require("../../../utils/logger");
-const log = logger_1.logger('Validator');
-class Validator {
+import { logger } from '../../../utils/logger';
+const log = logger('Validator');
+export class Validator {
     async validateCollection(objID, collection, property, object) {
         const count = await collection.count();
         const items = await collection.getItems();
@@ -119,5 +116,4 @@ class Validator {
         await this.validateStates(orm);
     }
 }
-exports.Validator = Validator;
 //# sourceMappingURL=validator.js.map

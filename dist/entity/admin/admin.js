@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminChangeQueueInfoQL = exports.AdminChangeQueueInfo = exports.AdminSettingsQL = exports.AdminSettings = exports.AdminSettingsExternalQL = exports.AdminSettingsExternal = exports.AdminSettingsLibraryQL = exports.AdminSettingsLibrary = exports.AdminSettingsIndexQL = exports.AdminSettingsIndex = exports.AdminSettingsChatQL = exports.AdminSettingsChat = exports.AdminSettingsChatMaxAgeQL = exports.AdminSettingsChatMaxAge = void 0;
-const type_graphql_1 = require("type-graphql");
-const class_validator_1 = require("class-validator");
-const decorators_1 = require("../../modules/rest/decorators");
+import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { Min } from 'class-validator';
+import { ObjField, ObjParamsType, ResultType } from '../../modules/rest/decorators';
 const AdminSettingsChatMaxAgeDesc = {
     _: 'Admin Chat Maximum Age Settings',
     value: 'Value of Maximum Age',
@@ -21,28 +18,28 @@ const AdminSettingsChatMaxAgeDesc = {
 let AdminSettingsChatMaxAge = class AdminSettingsChatMaxAge {
 };
 __decorate([
-    decorators_1.ObjField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { description: AdminSettingsChatMaxAgeDesc.value }),
-    class_validator_1.Min(0),
+    ObjField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 }),
+    Field(() => Int, { description: AdminSettingsChatMaxAgeDesc.value }),
+    Min(0),
     __metadata("design:type", Number)
 ], AdminSettingsChatMaxAge.prototype, "value", void 0);
 __decorate([
-    decorators_1.ObjField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' }),
-    type_graphql_1.Field(() => String, { description: AdminSettingsChatMaxAgeDesc.unit }),
+    ObjField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' }),
+    Field(() => String, { description: AdminSettingsChatMaxAgeDesc.unit }),
     __metadata("design:type", String)
 ], AdminSettingsChatMaxAge.prototype, "unit", void 0);
 AdminSettingsChatMaxAge = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsChatMaxAgeDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsChatMaxAgeDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsChatMaxAgeDesc._ }),
+    ObjectType({ description: AdminSettingsChatMaxAgeDesc._ }),
+    ObjParamsType()
 ], AdminSettingsChatMaxAge);
-exports.AdminSettingsChatMaxAge = AdminSettingsChatMaxAge;
+export { AdminSettingsChatMaxAge };
 let AdminSettingsChatMaxAgeQL = class AdminSettingsChatMaxAgeQL extends AdminSettingsChatMaxAge {
 };
 AdminSettingsChatMaxAgeQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsChatMaxAgeDesc._ })
+    ObjectType({ description: AdminSettingsChatMaxAgeDesc._ })
 ], AdminSettingsChatMaxAgeQL);
-exports.AdminSettingsChatMaxAgeQL = AdminSettingsChatMaxAgeQL;
+export { AdminSettingsChatMaxAgeQL };
 const AdminSettingsChatDesc = {
     _: 'Admin Chat Settings',
     maxMessages: 'Maximum Number of Chat Messages to keep',
@@ -51,28 +48,28 @@ const AdminSettingsChatDesc = {
 let AdminSettingsChat = class AdminSettingsChat {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { description: AdminSettingsChatDesc.maxMessages }),
-    decorators_1.ObjField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 }),
-    class_validator_1.Min(0),
+    Field(() => Int, { description: AdminSettingsChatDesc.maxMessages }),
+    ObjField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 }),
+    Min(0),
     __metadata("design:type", Number)
 ], AdminSettingsChat.prototype, "maxMessages", void 0);
 __decorate([
-    type_graphql_1.Field(() => AdminSettingsChatMaxAgeQL, { description: AdminSettingsChatDesc.maxAge }),
-    decorators_1.ObjField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge }),
+    Field(() => AdminSettingsChatMaxAgeQL, { description: AdminSettingsChatDesc.maxAge }),
+    ObjField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge }),
     __metadata("design:type", AdminSettingsChatMaxAge)
 ], AdminSettingsChat.prototype, "maxAge", void 0);
 AdminSettingsChat = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsChatDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsChatDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsChatDesc._ }),
+    ObjectType({ description: AdminSettingsChatDesc._ }),
+    ObjParamsType()
 ], AdminSettingsChat);
-exports.AdminSettingsChat = AdminSettingsChat;
+export { AdminSettingsChat };
 let AdminSettingsChatQL = class AdminSettingsChatQL extends AdminSettingsChat {
 };
 AdminSettingsChatQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsChatDesc._ })
+    ObjectType({ description: AdminSettingsChatDesc._ })
 ], AdminSettingsChatQL);
-exports.AdminSettingsChatQL = AdminSettingsChatQL;
+export { AdminSettingsChatQL };
 const AdminSettingsIndexDesc = {
     _: 'Admin Index Settings',
     ignoreArticles: 'List of ignored Articles'
@@ -80,22 +77,22 @@ const AdminSettingsIndexDesc = {
 let AdminSettingsIndex = class AdminSettingsIndex {
 };
 __decorate([
-    decorators_1.ObjField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] }),
-    type_graphql_1.Field(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles }),
+    ObjField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] }),
+    Field(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles }),
     __metadata("design:type", Array)
 ], AdminSettingsIndex.prototype, "ignoreArticles", void 0);
 AdminSettingsIndex = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsIndexDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsIndexDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsIndexDesc._ }),
+    ObjectType({ description: AdminSettingsIndexDesc._ }),
+    ObjParamsType()
 ], AdminSettingsIndex);
-exports.AdminSettingsIndex = AdminSettingsIndex;
+export { AdminSettingsIndex };
 let AdminSettingsIndexQL = class AdminSettingsIndexQL extends AdminSettingsIndex {
 };
 AdminSettingsIndexQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsIndexDesc._ })
+    ObjectType({ description: AdminSettingsIndexDesc._ })
 ], AdminSettingsIndexQL);
-exports.AdminSettingsIndexQL = AdminSettingsIndexQL;
+export { AdminSettingsIndexQL };
 const AdminSettingsLibraryDesc = {
     _: 'Admin Library Settings',
     scanAtStart: 'Start Root Scanning on Server Start'
@@ -103,22 +100,22 @@ const AdminSettingsLibraryDesc = {
 let AdminSettingsLibrary = class AdminSettingsLibrary {
 };
 __decorate([
-    decorators_1.ObjField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true }),
-    type_graphql_1.Field(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart }),
+    ObjField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true }),
+    Field(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart }),
     __metadata("design:type", Boolean)
 ], AdminSettingsLibrary.prototype, "scanAtStart", void 0);
 AdminSettingsLibrary = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsLibraryDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsLibraryDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsLibraryDesc._ }),
+    ObjectType({ description: AdminSettingsLibraryDesc._ }),
+    ObjParamsType()
 ], AdminSettingsLibrary);
-exports.AdminSettingsLibrary = AdminSettingsLibrary;
+export { AdminSettingsLibrary };
 let AdminSettingsLibraryQL = class AdminSettingsLibraryQL extends AdminSettingsLibrary {
 };
 AdminSettingsLibraryQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsLibraryDesc._ })
+    ObjectType({ description: AdminSettingsLibraryDesc._ })
 ], AdminSettingsLibraryQL);
-exports.AdminSettingsLibraryQL = AdminSettingsLibraryQL;
+export { AdminSettingsLibraryQL };
 const AdminSettingsExternalDesc = {
     _: 'Admin External Services Settings',
     enabled: 'Enable External Services'
@@ -126,59 +123,59 @@ const AdminSettingsExternalDesc = {
 let AdminSettingsExternal = class AdminSettingsExternal {
 };
 __decorate([
-    decorators_1.ObjField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true }),
-    type_graphql_1.Field(() => Boolean, { description: AdminSettingsExternalDesc.enabled }),
+    ObjField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true }),
+    Field(() => Boolean, { description: AdminSettingsExternalDesc.enabled }),
     __metadata("design:type", Boolean)
 ], AdminSettingsExternal.prototype, "enabled", void 0);
 AdminSettingsExternal = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsExternalDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsExternalDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsExternalDesc._ }),
+    ObjectType({ description: AdminSettingsExternalDesc._ }),
+    ObjParamsType()
 ], AdminSettingsExternal);
-exports.AdminSettingsExternal = AdminSettingsExternal;
+export { AdminSettingsExternal };
 let AdminSettingsExternalQL = class AdminSettingsExternalQL extends AdminSettingsExternal {
 };
 AdminSettingsExternalQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsExternalDesc._ })
+    ObjectType({ description: AdminSettingsExternalDesc._ })
 ], AdminSettingsExternalQL);
-exports.AdminSettingsExternalQL = AdminSettingsExternalQL;
+export { AdminSettingsExternalQL };
 const AdminSettingsDesc = {
     _: 'Admin Settings'
 };
 let AdminSettings = class AdminSettings {
 };
 __decorate([
-    decorators_1.ObjField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ }),
-    type_graphql_1.Field(() => AdminSettingsChatQL),
+    ObjField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ }),
+    Field(() => AdminSettingsChatQL),
     __metadata("design:type", AdminSettingsChat)
 ], AdminSettings.prototype, "chat", void 0);
 __decorate([
-    decorators_1.ObjField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ }),
-    type_graphql_1.Field(() => AdminSettingsIndexQL),
+    ObjField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ }),
+    Field(() => AdminSettingsIndexQL),
     __metadata("design:type", AdminSettingsIndex)
 ], AdminSettings.prototype, "index", void 0);
 __decorate([
-    decorators_1.ObjField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ }),
-    type_graphql_1.Field(() => AdminSettingsLibraryQL),
+    ObjField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ }),
+    Field(() => AdminSettingsLibraryQL),
     __metadata("design:type", AdminSettingsLibrary)
 ], AdminSettings.prototype, "library", void 0);
 __decorate([
-    decorators_1.ObjField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ }),
-    type_graphql_1.Field(() => AdminSettingsExternalQL),
+    ObjField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ }),
+    Field(() => AdminSettingsExternalQL),
     __metadata("design:type", AdminSettingsExternal)
 ], AdminSettings.prototype, "externalServices", void 0);
 AdminSettings = __decorate([
-    decorators_1.ResultType({ description: AdminSettingsDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminSettingsDesc._ }),
-    decorators_1.ObjParamsType()
+    ResultType({ description: AdminSettingsDesc._ }),
+    ObjectType({ description: AdminSettingsDesc._ }),
+    ObjParamsType()
 ], AdminSettings);
-exports.AdminSettings = AdminSettings;
+export { AdminSettings };
 let AdminSettingsQL = class AdminSettingsQL extends AdminSettings {
 };
 AdminSettingsQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminSettingsDesc._ })
+    ObjectType({ description: AdminSettingsDesc._ })
 ], AdminSettingsQL);
-exports.AdminSettingsQL = AdminSettingsQL;
+export { AdminSettingsQL };
 const AdminChangeQueueInfoDesc = {
     _: 'Admin Change Queue Info',
     id: 'Queue ID',
@@ -189,34 +186,34 @@ const AdminChangeQueueInfoDesc = {
 let AdminChangeQueueInfo = class AdminChangeQueueInfo {
 };
 __decorate([
-    decorators_1.ObjField({ description: AdminChangeQueueInfoDesc.id, isID: true }),
-    type_graphql_1.Field(() => type_graphql_1.ID, { description: AdminChangeQueueInfoDesc.id }),
+    ObjField({ description: AdminChangeQueueInfoDesc.id, isID: true }),
+    Field(() => ID, { description: AdminChangeQueueInfoDesc.id }),
     __metadata("design:type", String)
 ], AdminChangeQueueInfo.prototype, "id", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { description: AdminChangeQueueInfoDesc.position }),
+    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 }),
+    Field(() => Int, { description: AdminChangeQueueInfoDesc.position }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "position", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' }),
-    type_graphql_1.Field(() => String, { description: AdminChangeQueueInfoDesc.error }),
+    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' }),
+    Field(() => String, { description: AdminChangeQueueInfoDesc.error }),
     __metadata("design:type", String)
 ], AdminChangeQueueInfo.prototype, "error", void 0);
 __decorate([
-    decorators_1.ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true }),
-    type_graphql_1.Field(() => type_graphql_1.Int, { description: AdminChangeQueueInfoDesc.done }),
+    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true }),
+    Field(() => Int, { description: AdminChangeQueueInfoDesc.done }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "done", void 0);
 AdminChangeQueueInfo = __decorate([
-    decorators_1.ResultType({ description: AdminChangeQueueInfoDesc._ }),
-    type_graphql_1.ObjectType({ description: AdminChangeQueueInfoDesc._ })
+    ResultType({ description: AdminChangeQueueInfoDesc._ }),
+    ObjectType({ description: AdminChangeQueueInfoDesc._ })
 ], AdminChangeQueueInfo);
-exports.AdminChangeQueueInfo = AdminChangeQueueInfo;
+export { AdminChangeQueueInfo };
 let AdminChangeQueueInfoQL = class AdminChangeQueueInfoQL extends AdminChangeQueueInfo {
 };
 AdminChangeQueueInfoQL = __decorate([
-    type_graphql_1.ObjectType({ description: AdminChangeQueueInfoDesc._ })
+    ObjectType({ description: AdminChangeQueueInfoDesc._ })
 ], AdminChangeQueueInfoQL);
-exports.AdminChangeQueueInfoQL = AdminChangeQueueInfoQL;
+export { AdminChangeQueueInfoQL };
 //# sourceMappingURL=admin.js.map

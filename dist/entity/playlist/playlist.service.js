@@ -1,23 +1,20 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlaylistService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const enums_1 = require("../../types/enums");
-const rest_1 = require("../../modules/rest");
+import { InRequestScope } from 'typescript-ioc';
+import { DBObjectType } from '../../types/enums';
+import { NotFoundError } from '../../modules/rest';
 let PlaylistService = class PlaylistService {
     async getDuration(media) {
         switch (media.objType) {
-            case enums_1.DBObjectType.episode: {
+            case DBObjectType.episode: {
                 const episodeTag = await media.obj.tag.get();
                 return (episodeTag?.mediaDuration || 0);
             }
-            case enums_1.DBObjectType.track: {
+            case DBObjectType.track: {
                 const trackTag = await media.obj.tag.get();
                 return (trackTag?.mediaDuration || 0);
             }
@@ -39,13 +36,13 @@ let PlaylistService = class PlaylistService {
         for (const id of ids) {
             const media = await orm.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(rest_1.NotFoundError());
+                return Promise.reject(NotFoundError());
             }
             duration += await this.getDuration(media);
             const entry = orm.PlaylistEntry.create({ position });
             await entry.playlist.set(playlist);
-            await entry.track.set(media.objType === enums_1.DBObjectType.track ? media.obj : undefined);
-            await entry.episode.set(media.objType === enums_1.DBObjectType.episode ? media.obj : undefined);
+            await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
+            await entry.episode.set(media.objType === DBObjectType.episode ? media.obj : undefined);
             orm.PlaylistEntry.persistLater(entry);
             position++;
         }
@@ -65,8 +62,8 @@ let PlaylistService = class PlaylistService {
             }
             entry.position = position;
             await entry.playlist.set(playlist);
-            await entry.track.set(media.objType === enums_1.DBObjectType.track ? media.obj : undefined);
-            await entry.episode.set(media.objType === enums_1.DBObjectType.episode ? media.obj : undefined);
+            await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
+            await entry.episode.set(media.objType === DBObjectType.episode ? media.obj : undefined);
             duration += await this.getDuration(media);
             position++;
             orm.PlaylistEntry.persistLater(entry);
@@ -87,7 +84,7 @@ let PlaylistService = class PlaylistService {
     }
 };
 PlaylistService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], PlaylistService);
-exports.PlaylistService = PlaylistService;
+export { PlaylistService };
 //# sourceMappingURL=playlist.service.js.map

@@ -1,26 +1,21 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseRepository = void 0;
-const enums_1 = require("../../types/enums");
-const builder_1 = require("../../modules/rest/builder");
-const base_1 = require("./base");
-const state_helper_1 = require("../state/state.helper");
-const orm_1 = require("../../modules/orm");
-const base_utils_1 = require("./base.utils");
-const shuffle_seed_1 = __importDefault(require("shuffle-seed"));
-class BaseRepository extends orm_1.EntityRepository {
+import { DefaultOrderFields, ListType } from '../../types/enums';
+import { InvalidParamError, NotFoundError } from '../../modules/rest/builder';
+import { OrderHelper } from './base';
+import { StateHelper } from '../state/state.helper';
+import { EntityRepository } from '../../modules/orm';
+import seq from 'sequelize';
+import { paginate } from './base.utils';
+import shuffleSeed from 'shuffle-seed';
+export class BaseRepository extends EntityRepository {
     buildDefaultOrder(order) {
-        const direction = base_1.OrderHelper.direction(order);
+        const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case enums_1.DefaultOrderFields.created:
+            case DefaultOrderFields.created:
                 return [['createdAt', direction]];
-            case enums_1.DefaultOrderFields.updated:
+            case DefaultOrderFields.updated:
                 return [['updatedAt', direction]];
-            case enums_1.DefaultOrderFields.name:
-            case enums_1.DefaultOrderFields.default:
+            case DefaultOrderFields.name:
+            case DefaultOrderFields.default:
                 return [['name', direction]];
         }
         return [];
@@ -80,7 +75,7 @@ class BaseRepository extends orm_1.EntityRepository {
             return await super.findOneOrFailByID(id);
         }
         catch (e) {
-            throw builder_1.NotFoundError();
+            throw NotFoundError();
         }
     }
     async oneOrFail(options) {
@@ -88,7 +83,7 @@ class BaseRepository extends orm_1.EntityRepository {
             return await super.findOneOrFail(options);
         }
         catch (e) {
-            throw builder_1.NotFoundError();
+            throw NotFoundError();
         }
     }
     async oneOrFailFilter(filter, user) {
@@ -96,7 +91,7 @@ class BaseRepository extends orm_1.EntityRepository {
             return await super.findOneOrFail(await this.buildFilter(filter, user));
         }
         catch (e) {
-            throw builder_1.NotFoundError();
+            throw NotFoundError();
         }
     }
     async findOneFilter(filter, user) {
@@ -161,7 +156,7 @@ class BaseRepository extends orm_1.EntityRepository {
     async findOneIDorFail(options) {
         const result = await this.findOneID(options);
         if (!result) {
-            throw builder_1.NotFoundError();
+            throw NotFoundError();
         }
         return result;
     }
@@ -217,73 +212,73 @@ class BaseRepository extends orm_1.EntityRepository {
         const opts = { ...options, limit: undefined, offset: undefined };
         const page = { skip: options.offset, take: options.limit };
         switch (list) {
-            case enums_1.ListType.random: {
+            case ListType.random: {
                 ids = await this.findIDs(opts);
                 let s = seed;
                 if (!s) {
                     s = `${userID}_${new Date().toISOString().split('T')[0]}`;
                 }
                 ids.sort();
-                ids = shuffle_seed_1.default.shuffle(ids, s);
+                ids = shuffleSeed.shuffle(ids, s);
                 break;
             }
-            case enums_1.ListType.highest:
+            case ListType.highest:
                 ids = await this.getHighestRatedIDs(opts, userID);
                 break;
-            case enums_1.ListType.avghighest:
+            case ListType.avghighest:
                 ids = await this.getAvgHighestIDs(opts);
                 break;
-            case enums_1.ListType.frequent:
+            case ListType.frequent:
                 ids = await this.getFrequentlyPlayedIDs(opts, userID);
                 break;
-            case enums_1.ListType.faved:
+            case ListType.faved:
                 ids = await this.getFavedIDs(opts, userID);
                 break;
-            case enums_1.ListType.recent:
+            case ListType.recent:
                 ids = await this.getRecentlyPlayedIDs(opts, userID);
                 break;
             default:
-                return Promise.reject(builder_1.InvalidParamError('Unknown List Type'));
+                return Promise.reject(InvalidParamError('Unknown List Type'));
         }
         const total = ids.length;
-        ids = base_utils_1.paginate(ids, page).items;
+        ids = paginate(ids, page).items;
         return { total, ...page, items: ids };
     }
     async getFilteredIDs(ids, options) {
         if (!options.where) {
             return ids;
         }
-        let where = { id: { [orm_1.Op.in]: ids } };
+        let where = { id: { [seq.Op.in]: ids } };
         if (options.where &&
             (Object.keys(options.where).length > 0 ||
                 Object.getOwnPropertySymbols(options.where).length > 0)) {
-            where = { [orm_1.Op.and]: [where, options.where] };
+            where = { [seq.Op.and]: [where, options.where] };
         }
         const list = await this.findIDs({ ...options, where });
         return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));
     }
     async getHighestRatedIDs(options, userID) {
-        const helper = new state_helper_1.StateHelper(this.em);
+        const helper = new StateHelper(this.em);
         const ids = await helper.getHighestRatedDestIDs(this.objType, userID);
         return this.getFilteredIDs(ids, options);
     }
     async getAvgHighestIDs(options) {
-        const helper = new state_helper_1.StateHelper(this.em);
+        const helper = new StateHelper(this.em);
         const ids = await helper.getAvgHighestDestIDs(this.objType);
         return this.getFilteredIDs(ids, options);
     }
     async getFrequentlyPlayedIDs(options, userID) {
-        const helper = new state_helper_1.StateHelper(this.em);
+        const helper = new StateHelper(this.em);
         const ids = await helper.getFrequentlyPlayedDestIDs(this.objType, userID);
         return this.getFilteredIDs(ids, options);
     }
     async getFavedIDs(options, userID) {
-        const helper = new state_helper_1.StateHelper(this.em);
+        const helper = new StateHelper(this.em);
         const ids = await helper.getFavedDestIDs(this.objType, userID);
         return this.getFilteredIDs(ids, options);
     }
     async getRecentlyPlayedIDs(options, userID) {
-        const helper = new state_helper_1.StateHelper(this.em);
+        const helper = new StateHelper(this.em);
         const ids = await helper.getRecentlyPlayedDestIDs(this.objType, userID);
         return this.getFilteredIDs(ids, options);
     }
@@ -296,5 +291,4 @@ class BaseRepository extends orm_1.EntityRepository {
         }
     }
 }
-exports.BaseRepository = BaseRepository;
 //# sourceMappingURL=base.repository.js.map

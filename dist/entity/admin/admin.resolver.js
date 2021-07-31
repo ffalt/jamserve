@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminResolver = void 0;
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const admin_1 = require("./admin");
+import { UserRole } from '../../types/enums';
+import { Arg, Authorized, Ctx, ID, Query, Resolver } from 'type-graphql';
+import { AdminChangeQueueInfoQL, AdminSettingsQL } from './admin';
 class AdminChangeQueueInfo {
 }
 let AdminResolver = class AdminResolver {
@@ -27,23 +24,24 @@ let AdminResolver = class AdminResolver {
     }
 };
 __decorate([
-    type_graphql_1.Authorized(enums_1.UserRole.admin),
-    type_graphql_1.Query(() => admin_1.AdminSettingsQL, { description: 'Get the Server Admin Settings' }),
-    __param(0, type_graphql_1.Ctx()),
+    Authorized(UserRole.admin),
+    Query(() => AdminSettingsQL, { description: 'Get the Server Admin Settings' }),
+    __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminResolver.prototype, "adminSettings", null);
 __decorate([
-    type_graphql_1.Authorized(enums_1.UserRole.admin),
-    type_graphql_1.Query(() => admin_1.AdminChangeQueueInfoQL, { description: 'Get Queue Information for Admin Change Tasks' }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.ID, { description: 'Queue Task Id' })), __param(1, type_graphql_1.Ctx()),
+    Authorized(UserRole.admin),
+    Query(() => AdminChangeQueueInfoQL, { description: 'Get Queue Information for Admin Change Tasks' }),
+    __param(0, Arg('id', () => ID, { description: 'Queue Task Id' })),
+    __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminResolver.prototype, "adminQueue", null);
 AdminResolver = __decorate([
-    type_graphql_1.Resolver(admin_1.AdminSettingsQL)
+    Resolver(AdminSettingsQL)
 ], AdminResolver);
-exports.AdminResolver = AdminResolver;
+export { AdminResolver };
 //# sourceMappingURL=admin.resolver.js.map

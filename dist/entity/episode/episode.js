@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,213 +7,211 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EpisodePageQL = exports.EpisodeQL = exports.Episode = exports.EpisodeEnclosureQL = exports.EpisodeChapterQL = exports.EpisodeEnclosure = exports.EpisodeChapter = void 0;
-const podcast_1 = require("../podcast/podcast");
-const tag_1 = require("../tag/tag");
-const bookmark_1 = require("../bookmark/bookmark");
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const orm_1 = require("../../modules/orm");
-const base_1 = require("../base/base");
-const state_1 = require("../state/state");
-const waveform_1 = require("../waveform/waveform");
-const playqueue_entry_1 = require("../playqueueentry/playqueue-entry");
-const playlist_entry_1 = require("../playlistentry/playlist-entry");
+import { Podcast, PodcastQL } from '../podcast/podcast';
+import { Tag, TagQL } from '../tag/tag';
+import { Bookmark, BookmarkQL } from '../bookmark/bookmark';
+import { BookmarkOrderFields, PodcastStatus } from '../../types/enums';
+import { Field, Float, Int, ObjectType } from 'type-graphql';
+import { Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm';
+import { Base, PaginatedResponse } from '../base/base';
+import { State, StateQL } from '../state/state';
+import { Waveform, WaveformQL } from '../waveform/waveform';
+import { PlayQueueEntry } from '../playqueueentry/playqueue-entry';
+import { PlaylistEntry } from '../playlistentry/playlist-entry';
 let EpisodeChapter = class EpisodeChapter {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float),
+    Field(() => Float),
     __metadata("design:type", Number)
 ], EpisodeChapter.prototype, "start", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
+    Field(() => String),
     __metadata("design:type", String)
 ], EpisodeChapter.prototype, "title", void 0);
 EpisodeChapter = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodeChapter);
-exports.EpisodeChapter = EpisodeChapter;
+export { EpisodeChapter };
 let EpisodeEnclosure = class EpisodeEnclosure {
 };
 __decorate([
-    type_graphql_1.Field(() => String),
+    Field(() => String),
     __metadata("design:type", String)
 ], EpisodeEnclosure.prototype, "url", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], EpisodeEnclosure.prototype, "type", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
+    Field(() => Float, { nullable: true }),
     __metadata("design:type", Number)
 ], EpisodeEnclosure.prototype, "length", void 0);
 EpisodeEnclosure = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodeEnclosure);
-exports.EpisodeEnclosure = EpisodeEnclosure;
+export { EpisodeEnclosure };
 let EpisodeChapterQL = class EpisodeChapterQL extends EpisodeChapter {
 };
 EpisodeChapterQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodeChapterQL);
-exports.EpisodeChapterQL = EpisodeChapterQL;
+export { EpisodeChapterQL };
 let EpisodeEnclosureQL = class EpisodeEnclosureQL extends EpisodeEnclosure {
 };
 EpisodeEnclosureQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodeEnclosureQL);
-exports.EpisodeEnclosureQL = EpisodeEnclosureQL;
-let Episode = class Episode extends base_1.Base {
+export { EpisodeEnclosureQL };
+let Episode = class Episode extends Base {
     constructor() {
         super(...arguments);
-        this.tag = new orm_1.Reference(this);
-        this.podcast = new orm_1.Reference(this);
-        this.bookmarks = new orm_1.Collection(this);
-        this.playqueueEntries = new orm_1.Collection(this);
-        this.playlistEntries = new orm_1.Collection(this);
+        this.tag = new Reference(this);
+        this.podcast = new Reference(this);
+        this.bookmarks = new Collection(this);
+        this.playqueueEntries = new Collection(this);
+        this.playlistEntries = new Collection(this);
     }
 };
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Episode.prototype, "name", void 0);
 __decorate([
-    type_graphql_1.Field(() => enums_1.PodcastStatus),
-    orm_1.Property(() => enums_1.PodcastStatus),
+    Field(() => PodcastStatus),
+    Property(() => PodcastStatus),
     __metadata("design:type", String)
 ], Episode.prototype, "status", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "fileSize", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], Episode.prototype, "statCreated", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], Episode.prototype, "statModified", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "error", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "path", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "link", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "summary", void 0);
 __decorate([
-    orm_1.Property(() => orm_1.ORM_DATETIME),
+    Property(() => ORM_DATETIME),
     __metadata("design:type", Date)
 ], Episode.prototype, "date", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_INT, { nullable: true }),
+    Field(() => Float, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "duration", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "guid", void 0);
 __decorate([
-    type_graphql_1.Field(() => String, { nullable: true }),
-    orm_1.Property(() => String, { nullable: true }),
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "author", void 0);
 __decorate([
-    orm_1.Property(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "chaptersJSON", void 0);
 __decorate([
-    orm_1.Property(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Episode.prototype, "enclosuresJSON", void 0);
 __decorate([
-    type_graphql_1.Field(() => tag_1.TagQL, { nullable: true }),
-    orm_1.OneToOne(() => tag_1.Tag, tag => tag.episode, { owner: true, nullable: true }),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => TagQL, { nullable: true }),
+    OneToOne(() => Tag, tag => tag.episode, { owner: true, nullable: true }),
+    __metadata("design:type", Reference)
 ], Episode.prototype, "tag", void 0);
 __decorate([
-    type_graphql_1.Field(() => podcast_1.PodcastQL),
-    orm_1.ManyToOne(() => podcast_1.Podcast, podcast => podcast.episodes),
-    __metadata("design:type", orm_1.Reference)
+    Field(() => PodcastQL),
+    ManyToOne(() => Podcast, podcast => podcast.episodes),
+    __metadata("design:type", Reference)
 ], Episode.prototype, "podcast", void 0);
 __decorate([
-    type_graphql_1.Field(() => [bookmark_1.BookmarkQL]),
-    orm_1.OneToMany(() => bookmark_1.Bookmark, bookmark => bookmark.episode, { order: [{ orderBy: enums_1.BookmarkOrderFields.default }] }),
-    __metadata("design:type", orm_1.Collection)
+    Field(() => [BookmarkQL]),
+    OneToMany(() => Bookmark, bookmark => bookmark.episode, { order: [{ orderBy: BookmarkOrderFields.default }] }),
+    __metadata("design:type", Collection)
 ], Episode.prototype, "bookmarks", void 0);
 __decorate([
-    orm_1.OneToMany(() => playqueue_entry_1.PlayQueueEntry, playqueueEntry => playqueueEntry.episode),
-    __metadata("design:type", orm_1.Collection)
+    OneToMany(() => PlayQueueEntry, playqueueEntry => playqueueEntry.episode),
+    __metadata("design:type", Collection)
 ], Episode.prototype, "playqueueEntries", void 0);
 __decorate([
-    orm_1.OneToMany(() => playlist_entry_1.PlaylistEntry, playlistEntry => playlistEntry.episode),
-    __metadata("design:type", orm_1.Collection)
+    OneToMany(() => PlaylistEntry, playlistEntry => playlistEntry.episode),
+    __metadata("design:type", Collection)
 ], Episode.prototype, "playlistEntries", void 0);
 Episode = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], Episode);
-exports.Episode = Episode;
+export { Episode };
 let EpisodeQL = class EpisodeQL extends Episode {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Int),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], EpisodeQL.prototype, "bookmarksCount", void 0);
 __decorate([
-    type_graphql_1.Field(() => state_1.StateQL),
-    __metadata("design:type", state_1.State)
+    Field(() => StateQL),
+    __metadata("design:type", State)
 ], EpisodeQL.prototype, "state", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
+    Field(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], EpisodeQL.prototype, "fileCreated", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
+    Field(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], EpisodeQL.prototype, "fileModified", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date),
+    Field(() => Date),
     __metadata("design:type", Date)
 ], EpisodeQL.prototype, "date", void 0);
 __decorate([
-    type_graphql_1.Field(() => [EpisodeChapterQL], { nullable: true }),
+    Field(() => [EpisodeChapterQL], { nullable: true }),
     __metadata("design:type", Array)
 ], EpisodeQL.prototype, "chapters", void 0);
 __decorate([
-    type_graphql_1.Field(() => [EpisodeEnclosureQL], { nullable: true }),
+    Field(() => [EpisodeEnclosureQL], { nullable: true }),
     __metadata("design:type", Array)
 ], EpisodeQL.prototype, "enclosures", void 0);
 __decorate([
-    type_graphql_1.Field(() => waveform_1.WaveformQL),
-    __metadata("design:type", waveform_1.Waveform)
+    Field(() => WaveformQL),
+    __metadata("design:type", Waveform)
 ], EpisodeQL.prototype, "waveform", void 0);
 EpisodeQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodeQL);
-exports.EpisodeQL = EpisodeQL;
-let EpisodePageQL = class EpisodePageQL extends base_1.PaginatedResponse(Episode, EpisodeQL) {
+export { EpisodeQL };
+let EpisodePageQL = class EpisodePageQL extends PaginatedResponse(Episode, EpisodeQL) {
 };
 EpisodePageQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], EpisodePageQL);
-exports.EpisodePageQL = EpisodePageQL;
+export { EpisodePageQL };
 //# sourceMappingURL=episode.js.map

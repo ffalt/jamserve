@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DebouncePromises = void 0;
-class DebouncePromises {
+export class DebouncePromises {
     constructor() {
         this.pendingPromises = new Map();
     }
@@ -45,5 +42,4 @@ class DebouncePromises {
         }
     }
 }
-exports.DebouncePromises = DebouncePromises;
 //# sourceMappingURL=debounce-promises.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,70 +7,68 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionPageQL = exports.SessionQL = exports.Session = void 0;
-const user_1 = require("../user/user");
-const enums_1 = require("../../types/enums");
-const type_graphql_1 = require("type-graphql");
-const orm_1 = require("../../modules/orm");
-const base_1 = require("../base/base");
-let Session = class Session extends base_1.Base {
+import { User } from '../user/user';
+import { SessionMode } from '../../types/enums';
+import { Field, ObjectType } from 'type-graphql';
+import { Entity, ManyToOne, ORM_DATETIME, Property, Reference } from '../../modules/orm';
+import { Base, PaginatedResponse } from '../base/base';
+let Session = class Session extends Base {
     constructor() {
         super(...arguments);
-        this.user = new orm_1.Reference(this);
+        this.user = new Reference(this);
     }
 };
 __decorate([
-    orm_1.ManyToOne(() => user_1.User, user => user.sessions),
-    __metadata("design:type", orm_1.Reference)
+    ManyToOne(() => User, user => user.sessions),
+    __metadata("design:type", Reference)
 ], Session.prototype, "user", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "client", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
-    orm_1.Property(() => String),
+    Field(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "agent", void 0);
 __decorate([
-    type_graphql_1.Field(() => Date, { nullable: true }),
-    orm_1.Property(() => orm_1.ORM_DATETIME, { nullable: true }),
+    Field(() => Date, { nullable: true }),
+    Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], Session.prototype, "expires", void 0);
 __decorate([
-    type_graphql_1.Field(() => enums_1.SessionMode),
-    orm_1.Property(() => enums_1.SessionMode),
+    Field(() => SessionMode),
+    Property(() => SessionMode),
     __metadata("design:type", String)
 ], Session.prototype, "mode", void 0);
 __decorate([
-    orm_1.Property(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "sessionID", void 0);
 __decorate([
-    orm_1.Property(() => String),
+    Property(() => String),
     __metadata("design:type", String)
 ], Session.prototype, "cookie", void 0);
 __decorate([
-    orm_1.Property(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], Session.prototype, "jwth", void 0);
 Session = __decorate([
-    type_graphql_1.ObjectType(),
-    orm_1.Entity()
+    ObjectType(),
+    Entity()
 ], Session);
-exports.Session = Session;
+export { Session };
 let SessionQL = class SessionQL extends Session {
 };
 SessionQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], SessionQL);
-exports.SessionQL = SessionQL;
-let SessionPageQL = class SessionPageQL extends base_1.PaginatedResponse(Session, SessionQL) {
+export { SessionQL };
+let SessionPageQL = class SessionPageQL extends PaginatedResponse(Session, SessionQL) {
 };
 SessionPageQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], SessionPageQL);
-exports.SessionPageQL = SessionPageQL;
+export { SessionPageQL };
 //# sourceMappingURL=session.js.map

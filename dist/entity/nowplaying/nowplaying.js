@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,41 +7,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NowPlayingQL = exports.NowPlaying = void 0;
-const track_1 = require("../track/track");
-const episode_1 = require("../episode/episode");
-const type_graphql_1 = require("type-graphql");
+import { Track, TrackQL } from '../track/track';
+import { Episode, EpisodeQL } from '../episode/episode';
+import { Field, Float, ID, ObjectType } from 'type-graphql';
 let NowPlaying = class NowPlaying {
 };
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.Float),
+    Field(() => Float),
     __metadata("design:type", Number)
 ], NowPlaying.prototype, "time", void 0);
 __decorate([
-    type_graphql_1.Field(() => track_1.TrackQL, { nullable: true }),
-    __metadata("design:type", track_1.Track)
+    Field(() => TrackQL, { nullable: true }),
+    __metadata("design:type", Track)
 ], NowPlaying.prototype, "track", void 0);
 __decorate([
-    type_graphql_1.Field(() => episode_1.EpisodeQL, { nullable: true }),
-    __metadata("design:type", episode_1.Episode)
+    Field(() => EpisodeQL, { nullable: true }),
+    __metadata("design:type", Episode)
 ], NowPlaying.prototype, "episode", void 0);
 NowPlaying = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], NowPlaying);
-exports.NowPlaying = NowPlaying;
+export { NowPlaying };
 let NowPlayingQL = class NowPlayingQL extends NowPlaying {
 };
 __decorate([
-    type_graphql_1.Field(() => String),
+    Field(() => String),
     __metadata("design:type", String)
 ], NowPlayingQL.prototype, "userName", void 0);
 __decorate([
-    type_graphql_1.Field(() => type_graphql_1.ID),
+    Field(() => ID),
     __metadata("design:type", String)
 ], NowPlayingQL.prototype, "userID", void 0);
 NowPlayingQL = __decorate([
-    type_graphql_1.ObjectType()
+    ObjectType()
 ], NowPlayingQL);
-exports.NowPlayingQL = NowPlayingQL;
+export { NowPlayingQL };
 //# sourceMappingURL=nowplaying.js.map

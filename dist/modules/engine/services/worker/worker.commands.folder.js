@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkerCommandsFolder = void 0;
-class WorkerCommandsFolder {
+export class WorkerCommandsFolder {
     constructor(owner) {
         this.owner = owner;
     }
@@ -32,5 +29,4 @@ class WorkerCommandsFolder {
         return this.owner.changes.finish(orm, changes, root);
     }
 }
-exports.WorkerCommandsFolder = WorkerCommandsFolder;
 //# sourceMappingURL=worker.commands.folder.js.map

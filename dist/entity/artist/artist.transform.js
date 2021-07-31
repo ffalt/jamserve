@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,14 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtistTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const base_transform_1 = require("../base/base.transform");
-const enums_1 = require("../../types/enums");
-const metadata_service_1 = require("../metadata/metadata.service");
-const genre_transform_1 = require("../genre/genre.transform");
-let ArtistTransformService = class ArtistTransformService extends base_transform_1.BaseTransformService {
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform';
+import { DBObjectType } from '../../types/enums';
+import { MetaDataService } from '../metadata/metadata.service';
+import { GenreTransformService } from '../genre/genre.transform';
+let ArtistTransformService = class ArtistTransformService extends BaseTransformService {
     async artistBases(orm, list, artistArgs, user) {
         return await Promise.all(list.map(t => this.artistBase(orm, t, artistArgs, user)));
     }
@@ -30,7 +27,7 @@ let ArtistTransformService = class ArtistTransformService extends base_transform
             mbArtistID: o.mbArtistID,
             genres: artistArgs.artistIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
             albumTypes: o.albumTypes,
-            state: artistArgs.artistIncState ? await this.state(orm, o.id, enums_1.DBObjectType.artist, user.id) : undefined,
+            state: artistArgs.artistIncState ? await this.state(orm, o.id, DBObjectType.artist, user.id) : undefined,
             trackIDs: artistArgs.artistIncTrackIDs ? await o.tracks.getIDs() : undefined,
             albumIDs: artistArgs.artistIncAlbumIDs ? await o.albums.getIDs() : undefined,
             seriesIDs: artistArgs.artistIncSeriesIDs ? await o.series.getIDs() : undefined,
@@ -49,15 +46,15 @@ let ArtistTransformService = class ArtistTransformService extends base_transform
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
+    Inject,
+    __metadata("design:type", MetaDataService)
 ], ArtistTransformService.prototype, "metaData", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_transform_1.GenreTransformService)
+    Inject,
+    __metadata("design:type", GenreTransformService)
 ], ArtistTransformService.prototype, "Genre", void 0);
 ArtistTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], ArtistTransformService);
-exports.ArtistTransformService = ArtistTransformService;
+export { ArtistTransformService };
 //# sourceMappingURL=artist.transform.js.map

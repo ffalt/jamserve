@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TrackRulesChecker = void 0;
-const jamp3_1 = require("jamp3");
-const path_1 = __importDefault(require("path"));
-const audio_module_1 = require("../../modules/audio/audio.module");
-const flac_1 = require("../../modules/audio/tools/flac");
-const logger_1 = require("../../utils/logger");
-const enums_1 = require("../../types/enums");
-const log = logger_1.logger('TrackHealth');
+import { ID3v2 } from 'jamp3';
+import path from 'path';
+import { ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module';
+import { flac_test } from '../../modules/audio/tools/flac';
+import { logger } from '../../utils/logger';
+import { AlbumTypesArtistMusic, AudioFormatType, TrackHealthID } from '../../types/enums';
+const log = logger('TrackHealth');
 const analyzeErrors = {
     xing: [
         'XING: Wrong number of data bytes declared in VBRI Header',
@@ -35,17 +29,17 @@ const GARBAGE_FRAMES_IDS = [
     'POPM'
 ];
 function hasID3v2Tag(track, tag) {
-    return !!tag?.format && audio_module_1.ID3TrackTagRawFormatTypes.includes(tag.format);
+    return !!tag?.format && ID3TrackTagRawFormatTypes.includes(tag.format);
 }
 function isMP3(track, tag) {
-    return !!tag && tag.mediaFormat === enums_1.AudioFormatType.mp3;
+    return !!tag && tag.mediaFormat === AudioFormatType.mp3;
 }
 function isFlac(track, tag) {
-    return !!tag && tag.mediaFormat === enums_1.AudioFormatType.flac;
+    return !!tag && tag.mediaFormat === AudioFormatType.flac;
 }
 const trackRules = [
     {
-        id: enums_1.TrackHealthID.tagValuesExists,
+        id: TrackHealthID.tagValuesExists,
         name: 'Tag Values missing',
         all: true,
         run: async (folder, track, tag) => {
@@ -68,7 +62,7 @@ const trackRules = [
             if (folder.albumType !== undefined && !track.series && !tag?.trackTotal) {
                 missing.push('total track count');
             }
-            if (folder.albumType !== undefined && enums_1.AlbumTypesArtistMusic.includes(folder.albumType) && !tag?.year) {
+            if (folder.albumType !== undefined && AlbumTypesArtistMusic.includes(folder.albumType) && !tag?.year) {
                 missing.push('year');
             }
             if (missing.length > 0) {
@@ -78,7 +72,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.id3v2NoId3v1,
+        id: TrackHealthID.id3v2NoId3v1,
         name: 'ID3v2 is available, ID3v1 is redundant',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -89,7 +83,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.id3v2Exists,
+        id: TrackHealthID.id3v2Exists,
         name: 'ID3v2 Tag is missing',
         mp3: true,
         run: async (folder, track, tag) => {
@@ -100,7 +94,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.id3v2Valid,
+        id: TrackHealthID.id3v2Valid,
         name: 'ID3v2 is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -115,7 +109,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.id3v2Garbage,
+        id: TrackHealthID.id3v2Garbage,
         name: 'ID3v2 has garbage frames',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -139,7 +133,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.mp3Garbage,
+        id: TrackHealthID.mp3Garbage,
         name: 'MP3 has unaccounted data',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -157,7 +151,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.mp3HeaderExists,
+        id: TrackHealthID.mp3HeaderExists,
         name: 'VBR Header is missing',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -173,7 +167,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.mp3HeaderValid,
+        id: TrackHealthID.mp3HeaderValid,
         name: 'VBR Header is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -191,7 +185,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.mp3MediaValid,
+        id: TrackHealthID.mp3MediaValid,
         name: 'MP3 Media is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -209,7 +203,7 @@ const trackRules = [
         }
     },
     {
-        id: enums_1.TrackHealthID.flacMediaValid,
+        id: TrackHealthID.flacMediaValid,
         name: 'Flac Media is invalid',
         mp3: true,
         run: async (folder, track, tag, tagCache) => {
@@ -220,14 +214,14 @@ const trackRules = [
         }
     }
 ];
-class TrackRulesChecker {
+export class TrackRulesChecker {
     constructor(audiomodule) {
         this.audiomodule = audiomodule;
     }
     async run(track, checkMedia) {
         const result = [];
         const mediaCache = {};
-        const filename = path_1.default.join(track.path, track.fileName);
+        const filename = path.join(track.path, track.fileName);
         log.debug('Analyzing track', filename);
         if (checkMedia) {
             if (isMP3(track)) {
@@ -244,19 +238,19 @@ class TrackRulesChecker {
             }
             else {
                 log.debug('Check Media with flac', filename);
-                mediaCache.flacWarnings = await flac_1.flac_test(filename);
+                mediaCache.flacWarnings = await flac_test(filename);
             }
         }
         else {
             if (isMP3(track)) {
-                const id3v2 = new jamp3_1.ID3v2();
+                const id3v2 = new ID3v2();
                 mediaCache.id3v2 = await id3v2.read(filename);
                 if (mediaCache.id3v2) {
                     mediaCache.mp3Warnings = {
                         xing: [],
                         mpeg: [],
                         id3v1: [],
-                        id3v2: jamp3_1.ID3v2.check(mediaCache.id3v2)
+                        id3v2: ID3v2.check(mediaCache.id3v2)
                     };
                 }
             }
@@ -280,5 +274,4 @@ class TrackRulesChecker {
         return result;
     }
 }
-exports.TrackRulesChecker = TrackRulesChecker;
 //# sourceMappingURL=track.rule.js.map

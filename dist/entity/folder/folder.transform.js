@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,19 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FolderTransformService = void 0;
-const typescript_ioc_1 = require("typescript-ioc");
-const base_transform_1 = require("../base/base.transform");
-const enums_1 = require("../../types/enums");
-const metadata_service_1 = require("../metadata/metadata.service");
-const genre_transform_1 = require("../genre/genre.transform");
-let FolderTransformService = class FolderTransformService extends base_transform_1.BaseTransformService {
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform';
+import { DBObjectType, FolderType } from '../../types/enums';
+import { MetaDataService } from '../metadata/metadata.service';
+import { GenreTransformService } from '../genre/genre.transform';
+let FolderTransformService = class FolderTransformService extends BaseTransformService {
     async folderBases(orm, list, folderArgs, user) {
         return await Promise.all(list.map(o => this.folderBase(orm, o, folderArgs, user)));
     }
     async folderInfo(orm, o) {
-        return o.folderType === enums_1.FolderType.artist ?
+        return o.folderType === FolderType.artist ?
             await this.metaData.extInfo.byFolderArtist(orm, o) :
             await this.metaData.extInfo.byFolderAlbum(orm, o);
     }
@@ -46,7 +43,7 @@ let FolderTransformService = class FolderTransformService extends base_transform
             folderIDs: folderArgs.folderIncFolderIDs ? await o.children.getIDs() : undefined,
             artworkIDs: folderArgs.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
             info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
-            state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, enums_1.DBObjectType.folder, user.id) : undefined
+            state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
         };
     }
     async folderChildren(orm, o, folderChildrenArgs, user) {
@@ -100,15 +97,15 @@ let FolderTransformService = class FolderTransformService extends base_transform
     }
 };
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", metadata_service_1.MetaDataService)
+    Inject,
+    __metadata("design:type", MetaDataService)
 ], FolderTransformService.prototype, "metaData", void 0);
 __decorate([
-    typescript_ioc_1.Inject,
-    __metadata("design:type", genre_transform_1.GenreTransformService)
+    Inject,
+    __metadata("design:type", GenreTransformService)
 ], FolderTransformService.prototype, "Genre", void 0);
 FolderTransformService = __decorate([
-    typescript_ioc_1.InRequestScope
+    InRequestScope
 ], FolderTransformService);
-exports.FolderTransformService = FolderTransformService;
+export { FolderTransformService };
 //# sourceMappingURL=folder.transform.js.map
