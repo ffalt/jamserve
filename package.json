@@ -21,7 +21,7 @@
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "build": "tsc",
     "build:prod": "npm run clean && npm run build",
-    "build:deploy": "npm run build:prod && ts-node deploy.ts",
+    "build:deploy": "npm run build:prod && node --loader ts-node/esm deploy.ts",
     "clean": "rimraf dist",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
