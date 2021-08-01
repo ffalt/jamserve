@@ -74,7 +74,7 @@ export class DownloadService {
 				fileList.push(path.join(track.path, track.fileName));
 			} else {
 				const episode = await entry.episode.get();
-				if (episode && episode.path) {
+				if (episode?.path) {
 					fileList.push(episode.path);
 				}
 			}

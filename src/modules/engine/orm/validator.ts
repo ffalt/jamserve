@@ -31,7 +31,7 @@ export class Validator {
 	private async validateStates(orm: Orm) {
 		const states = await orm.State.all();
 		for (const state of states) {
-			log.info(`Validating State "${state.destType}" by User ${state.user.id()}`);
+			// log.info(`Validating State "${state.destType}" by User ${state.user.id()}`);
 			const repo = orm.byType(state.destType);
 			if (!repo) {
 				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
@@ -47,7 +47,7 @@ export class Validator {
 	private async validatePlaylists(orm: Orm) {
 		const playlists = await orm.Playlist.all();
 		for (const playlist of playlists) {
-			log.info(`Validating Playlist "${playlist.name}"`);
+			// log.info(`Validating Playlist "${playlist.name}"`);
 			await this.validateCollection(playlist.id, playlist.entries, 'Entries', 'Album');
 		}
 	}
@@ -55,7 +55,7 @@ export class Validator {
 	private async validateTracks(orm: Orm) {
 		const tracks = await orm.Track.all();
 		for (const track of tracks) {
-			log.info(`Validating Track "${track.name}"`);
+			// log.info(`Validating Track "${track.name}"`);
 			await this.validateReference(track.id, track.albumArtist, 'AlbumArtist', 'Track', false);
 			await this.validateReference(track.id, track.artist, 'Artist', 'Track', false);
 			await this.validateReference(track.id, track.album, 'Album', 'Track', false);
@@ -71,7 +71,7 @@ export class Validator {
 	private async validateFolders(orm: Orm) {
 		const folders = await orm.Folder.all();
 		for (const folder of folders) {
-			log.info(`Validating Folder "${folder.name}"`);
+			// log.info(`Validating Folder "${folder.name}"`);
 			await this.validateReference(folder.id, folder.root, 'Root', 'Folder', false);
 			await this.validateCollection(folder.id, folder.artworks, 'Artwork', 'Folder');
 			await this.validateCollection(folder.id, folder.children, 'Children', 'Folder');
