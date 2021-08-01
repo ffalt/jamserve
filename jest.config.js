@@ -2,7 +2,6 @@ export default {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	coverageDirectory: 'coverage',
-	setupFilesAfterEnv: ["jest-expect-message"],
 	testTimeout: 1000000,
 	extensionsToTreatAsEsm: ['.ts'],
 	maxWorkers: 1,

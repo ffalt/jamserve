@@ -4,8 +4,7 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import {WorkerService} from '../modules/engine/services/worker.service';
 import {ensureTrailingPathSeparator} from '../utils/fs-utils';
-import 'jest-expect-message';
-import {AlbumType, ArtworkImageType, FolderType, RootScanStrategy} from '../types/enums';
+import {AlbumType, ArtworkImageType, DBObjectType, FolderType, RootScanStrategy} from '../types/enums';
 import {randomString} from '../utils/random';
 import {bindMockConfig, DBConfigs} from './mock/mock.config';
 import {waitEngineStart} from './mock/mock.engine';
@@ -39,6 +38,7 @@ import {expectChanges, validateMockRoot} from './mock/mock.changes';
 import {Orm} from '../modules/engine/services/orm.service';
 import {v4} from 'uuid';
 import nock from 'nock';
+import {StateHelper} from '../entity/state/state.helper';
 
 const UNKNOWN_UUID = v4();
 
@@ -246,6 +246,7 @@ describe('WorkerService', () => {
 								artists: ['Run Dmc'],
 								albums: 1,
 								genres: 1,
+								states: 0,
 								folderType: FolderType.collection
 							}
 						};
@@ -343,6 +344,7 @@ describe('WorkerService', () => {
 								series: 0,
 								albums: 2,
 								genres: 2,
+								states: 0,
 								folderType: FolderType.collection
 							}
 						};
@@ -409,19 +411,71 @@ describe('WorkerService', () => {
 						await fse.remove(mockRoot2.path);
 						dir2.removeCallback();
 					});
-					it('should remove tracks on scan', async () => {
+					it('should remove tracks and states on scan', async () => {
+						const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
+						const helper = new StateHelper(orm.em);
+						const artists = await orm.Artist.findFilter({rootIDs: [mockRoot.id]});
+						for (const artist of artists) {
+							await helper.fav(artist.id, DBObjectType.artist, admin, false);
+						}
+						const albums = await orm.Album.findFilter({rootIDs: [mockRoot.id]});
+						for (const album of albums) {
+							await helper.fav(album.id, DBObjectType.album, admin, false);
+						}
+						const series = await orm.Series.findFilter({rootIDs: [mockRoot.id]});
+						for (const serie of series) {
+							await helper.fav(serie.id, DBObjectType.series, admin, false);
+						}
+						const folders = await orm.Folder.findFilter({rootIDs: [mockRoot.id]});
+						for (const folder of folders) {
+							await helper.fav(folder.id, DBObjectType.folder, admin, false);
+						}
 						const tracks = await orm.Track.findFilter({rootIDs: [mockRoot.id]});
 						for (const track of tracks) {
-							const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
-							expect(changes.tracks.removed.size, 'Removed Tracks count doesnt match').toBe(1);
+							await helper.fav(track.id, DBObjectType.track, admin, false);
+						}
+						const trackIDs = tracks.map(t => t.id);
+						const playlistEntryIDs = await orm.PlaylistEntry.findIDs({where: {track: trackIDs}});
+						const playlistEntries = await orm.PlaylistEntry.findByIDs(playlistEntryIDs);
+						for (const playlistEntry of playlistEntries) {
+							await helper.fav(playlistEntry.id, DBObjectType.playlistentry, admin, false);
+						}
+
+						const checkRemoveStates = async (ids: Array<string>) => {
+							for (const id of ids) {
+								expect(await orm.State.count({where: {destID: id}})).toBe(0); // 'Removed Fav count doesnt match'
+							}
+						};
+
+						for (const track of tracks) {
+
+							await fse.remove(path.join(track.path, track.fileName));
+							const changes = await workerService.root.refresh({rootID: mockRoot.id});
+							// const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
+							expect(changes.tracks.removed.size).toBe(1); // 'Removed Tracks count doesnt match'
+							await checkRemoveStates(changes.artists.removed.ids());
+							await checkRemoveStates(changes.albums.removed.ids());
+							await checkRemoveStates(changes.series.removed.ids());
+							await checkRemoveStates(changes.folders.removed.ids());
+							await checkRemoveStates(changes.tracks.removed.ids());
 						}
 						const album = await orm.Album.findFilter({rootIDs: [mockRoot.id]});
-						expect(album.length, 'All albums should have been removed').toBe(0);
-						const artists = await orm.Artist.findFilter({rootIDs: [mockRoot.id]});
-						expect(artists.length, 'All artists should have been removed').toBe(0);
+						expect(album.length).toBe(0); // 'All albums should have been removed'
+						const artist = await orm.Artist.findFilter({rootIDs: [mockRoot.id]});
+						expect(artist.length).toBe(0); // 'All artists should have been removed'
+						const serie = await orm.Series.findFilter({rootIDs: [mockRoot.id]});
+						expect(serie.length).toBe(0); // 'All series should have been removed'
+						const track = await orm.Track.findFilter({rootIDs: [mockRoot.id]});
+						expect(track.length).toBe(0); // 'All tracks should have been removed'
+
+						await fse.remove(mockRoot.path);
+						await fse.ensureDir(mockRoot.path);
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
+						await checkRemoveStates(changes.folders.removed.ids());
+
 						await writeMockRoot(mockRoot);
 						const restoreChanges = await workerService.root.refresh({rootID: mockRoot.id});
-						expect(restoreChanges.tracks.added.size, 'Restored Tracks count doesnt match').toBe(tracks.length);
+						expect(restoreChanges.tracks.added.size).toBe(tracks.length); // 'Restored Tracks count doesnt match'
 					});
 				});
 
@@ -540,15 +594,14 @@ describe('WorkerService', () => {
 								await workerService.folder.rename({rootID: mockRoot.id, folderID: folder.id, newName});
 								const updatedFolder = await orm.Folder.oneOrFailByID(folder.id);
 								const all = await orm.Folder.findFilter({childOfID: updatedFolder.id});
-								expect(folderCount, `Folder count does not match: ${updatedFolder.path}`).toBe(all.length);
+								expect(folderCount).toBe(all.length); //  `Folder count does not match: ${updatedFolder.path}`
 								for (const f of all) {
-									expect(await fse.pathExists(f.path), `Folder does not exists: ${f.path}`).toBe(true);
+									expect(await fse.pathExists(f.path)).toBe(true); // `Folder does not exists: ${f.path}`
 								}
 								const tracks = await orm.Track.findFilter({childOfID: updatedFolder.id});
-								expect(trackCount, `Track count does not match: ${updatedFolder.path}`).toBe(tracks.length);
+								expect(trackCount).toBe(tracks.length); // `Track count does not match: ${updatedFolder.path}`
 								for (const track of tracks) {
-									expect(await fse.pathExists(path.join(track.path, track.fileName)),
-										`Track does not exists: ${path.join(track.path, track.fileName)}`).toBe(true);
+									expect(await fse.pathExists(path.join(track.path, track.fileName))).toBe(true); //`Track does not exists: ${path.join(track.path, track.fileName)}`
 								}
 								return updatedFolder;
 							}
@@ -920,7 +973,7 @@ describe('WorkerService', () => {
 							const scope = mockNock()
 								.get('/nonexisting.png').reply(404);
 							await expect(workerService.artwork.download({...opts, artworkURL: mockNockURL('nonexisting.png')})).rejects.toThrow('Not Found');
-							expect(scope.isDone(), 'No request has been made').toBe(true);
+							expect(scope.isDone()).toBe(true); // 'No request has been made'
 						});
 
 						it('should download', async () => {
@@ -928,7 +981,7 @@ describe('WorkerService', () => {
 							const scope = mockNock()
 								.get('/image.png').reply(200, image.buffer, {'Content-Type': image.mime});
 							const changes = await workerService.artwork.download({...opts, artworkURL: mockNockURL('image.png')});
-							expect(scope.isDone(), 'No request has been made').toBe(true);
+							expect(scope.isDone()).toBe(true); // 'No request has been made'
 							expectChanges(changes, {foldersUpdate: 1, artworksNew: 1});
 						});
 					});

@@ -1,12 +1,13 @@
 import path from 'path';
 import fse from 'fs-extra';
-import {AlbumType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums';
+import {AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums';
 import {WorkerService} from '../../modules/engine/services/worker.service';
 import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
 import {extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder} from './mock.folder';
 import {extendSpecMockTrack, MockTrack} from './mock.track';
 import {Changes} from '../../modules/engine/worker/changes';
 import {Orm} from '../../modules/engine/services/orm.service';
+import {StateHelper} from '../../entity/state/state.helper';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;
@@ -14,6 +15,7 @@ export interface MockSpecRoot extends MockSpecFolder {
 	expected: {
 		folders: number;
 		tracks: number;
+		states: number;
 		artists: Array<string>;
 		series: number;
 		artworks: number;
@@ -350,6 +352,7 @@ export function buildMockRoot(dir: string, nr: number, strategy: RootScanStrateg
 			series: 1,
 			genres: 4,
 			artworks: 11,
+			states: 3,
 			folderType: FolderType.collection
 		}
 	};
@@ -713,6 +716,7 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 			albums: 10,
 			genres: 1,
 			artworks: 6,
+			states: 3,
 			folderType: FolderType.collection
 		}
 	};
@@ -733,14 +737,43 @@ export async function validateMock(mockFolder: MockFolder, workerService: Worker
 		return;
 	}
 	if (mockFolder.expected.folderType !== undefined) {
-		expect(folder.folderType, 'Folder type unexpected: ' + mockFolder.path).toBe(mockFolder.expected.folderType);
+		expect(folder.folderType).toBe(mockFolder.expected.folderType); // 'Folder type unexpected: ' + mockFolder.path
 	}
 	if (mockFolder.expected.albumType !== undefined) {
-		expect(folder.albumType, 'Album type unexpected: ' + mockFolder.path).toBe(mockFolder.expected.albumType);
+		expect(folder.albumType).toBe(mockFolder.expected.albumType); // 'Album type unexpected: ' + mockFolder.path
 	}
 	for (const sub of mockFolder.folders) {
 		await validateMock(sub, workerService, orm);
 	}
+}
+
+export async function writeAndStoreExternalMedia(workerService: WorkerService, orm: Orm): Promise<void> {
+	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
+	const helper = new StateHelper(orm.em);
+	const radio = orm.Radio.create({
+		name: 'radio',
+		url: 'http://awesome!stream',
+		homepage: 'http://awesome!',
+		disabled: false
+	});
+	await orm.Radio.persistAndFlush(radio);
+	await helper.fav(radio.id, DBObjectType.radio, admin, false);
+	const podcast = orm.Podcast.create({
+		name: 'podcast',
+		url: 'http://podcast!stream',
+		status: PodcastStatus.new,
+		categories: []
+	});
+	await orm.Podcast.persistAndFlush(podcast);
+	await helper.fav(podcast.id, DBObjectType.podcast, admin, false);
+	const episode = orm.Episode.create({
+		name: 'episode',
+		date: new Date(),
+		status: PodcastStatus.new
+	});
+	await episode.podcast.set(podcast);
+	await orm.Episode.persistAndFlush(episode);
+	await helper.fav(episode.id, DBObjectType.episode, admin, false);
 }
 
 export async function writeAndStoreMock(mockRoot: MockRoot, workerService: WorkerService, orm: Orm): Promise<Changes> {
@@ -755,6 +788,7 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 	const changes = await workerService.root.refresh({rootID: mockRoot.id});
 	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
 	if (changes.tracks.added.size > 0) {
+		const helper = new StateHelper(orm.em);
 		const track = await orm.Track.oneOrFailByID(changes.tracks.added.ids()[0]);
 		const bookmark = orm.Bookmark.create({
 			position: 1,
@@ -763,7 +797,10 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 		await bookmark.user.set(admin);
 		await bookmark.track.set(track);
 		await orm.Bookmark.persistAndFlush(bookmark);
-		//
+		await helper.fav(track.id, DBObjectType.track, admin, false);
+		await helper.rate(track.id, DBObjectType.track, admin, 5);
+		await helper.reportPlaying(track.id, DBObjectType.track, admin);
+
 		const playlist = orm.Playlist.create({
 			name: 'playlist',
 			comment: 'awesome!',
@@ -773,31 +810,14 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 		});
 		await playlist.user.set(admin);
 		await orm.Playlist.persistAndFlush(playlist);
+
 		const entry = orm.PlaylistEntry.create({position: 1});
 		await entry.playlist.set(playlist);
 		await entry.track.set(track);
 		await orm.PlaylistEntry.persistAndFlush(entry);
+		await helper.fav(entry.id, DBObjectType.playlistentry, admin, false);
+
+		await helper.fav(track.folder.idOrFail(), DBObjectType.folder, admin, false);
 	}
-	const radio = orm.Radio.create({
-		name: 'radio',
-		url: 'http://awesome!stream',
-		homepage: 'http://awesome!',
-		disabled: false
-	});
-	await orm.Radio.persistAndFlush(radio);
-	const podcast = orm.Podcast.create({
-		name: 'podcast',
-		url: 'http://podcast!stream',
-		status: PodcastStatus.new,
-		categories: []
-	});
-	await orm.Podcast.persistAndFlush(podcast);
-	const episode = orm.Episode.create({
-		name: 'episode',
-		date: new Date(),
-		status: PodcastStatus.new
-	});
-	await episode.podcast.set(podcast);
-	await orm.Episode.persistAndFlush(episode);
 	return changes;
 }

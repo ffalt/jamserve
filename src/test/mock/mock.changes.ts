@@ -4,9 +4,9 @@ import {WorkerService} from '../../modules/engine/services/worker.service';
 import {Orm} from '../../modules/engine/services/orm.service';
 
 function validateChangeSet(name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
-	expect(changeSet.added.size, `New ${name} count doesnt match`).toBe(added);
-	expect(changeSet.updated.size, `Updated ${name} count doesnt match`).toBe(updated);
-	expect(changeSet.removed.size, `Removed ${name} count doesnt match`).toBe(removed);
+	expect(changeSet.added.size).toBe(added); // `New ${name} count doesnt match`
+	expect(changeSet.updated.size).toBe(updated); // `Updated ${name} count doesnt match`
+	expect(changeSet.removed.size).toBe(removed); // `Removed ${name} count doesnt match`
 }
 
 export function expectChanges(changes: Changes, expected: {
@@ -49,16 +49,17 @@ export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, wor
 	validateChangeSet('Album', changes.albums, mockRoot.expected.albums, 0, 0);
 	validateChangeSet('Series', changes.series, mockRoot.expected.series, 0, 0);
 	validateChangeSet('Genres', changes.genres, mockRoot.expected.genres, 0, 0);
+	expect(await orm.State.count()).toBe(mockRoot.expected.states);
 	for (const a of mockRoot.expected.artists) {
-		expect(await orm.Artist.findOne({where: {name: a}}), `Missing Artist ${a}`).toBeDefined();
+		expect(await orm.Artist.findOne({where: {name: a}})).toBeDefined(); // `Missing Artist ${a}`
 	}
 	if (mockRoot.albums) {
-		expect(changes.albums.added.size, 'Album count doesnt match').toBe(mockRoot.albums.length);
+		expect(changes.albums.added.size).toBe(mockRoot.albums.length); // 'Album count doesnt match'
 		for (const album of mockRoot.albums) {
 			const b = await orm.Album.findOneFilter({name: album.name, artist: album.artist});
-			expect(b, `Album not found ${album.name} - ${album.artist}`).toBeDefined();
+			expect(b).toBeDefined(); // `Album not found ${album.name} - ${album.artist}`
 			if (b) {
-				expect(b.albumType, `Album Type doesnt match ${album.name} - ${album.artist}`).toBe(album.albumType);
+				expect(b.albumType).toBe(album.albumType); // `Album Type doesnt match ${album.name} - ${album.artist}`
 			}
 		}
 	}
