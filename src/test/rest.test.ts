@@ -12,7 +12,7 @@ import {waitEngineStart} from './mock/mock.engine';
 import {MockRequests, RequestMock} from './mock/mock.request';
 import {ensureTrailingPathSeparator} from '../utils/fs-utils';
 import path from 'path';
-import {buildMockRoot, MockRoot, writeAndStoreMock} from './mock/mock.root';
+import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} from './mock/mock.root';
 import {initTest} from './init';
 import {Container, Snapshot} from 'typescript-ioc';
 
@@ -184,6 +184,7 @@ describe('REST', () => {
 					await fse.mkdir(mediaPath);
 					mockRoot = buildMockRoot(mediaPath, 1, RootScanStrategy.auto);
 					await writeAndStoreMock(mockRoot, server.engine.io.workerService, server.engine.orm.fork());
+					await writeAndStoreExternalMedia(server.engine.io.workerService, server.engine.orm.fork());
 				});
 				afterEach(async () => {
 					await fse.remove(dir.name);
