@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/ffalt/jamserve/compare/v0.5.1...v0.5.2) (2021-08-04)
+
+
+### Bug Fixes
+
+* **api:** image file upload special handling in express ([4af50e8](https://github.com/ffalt/jamserve/commit/4af50e834414a8db0ba9366c67e8ead63dc1115f))
+* **changes-worker:** remove states from bookmarks & playlistEntries on delete ([dac43bf](https://github.com/ffalt/jamserve/commit/dac43bfb07d57a4841b3dcd94c82655d969b9ae3))
+
 ### [0.5.1](https://github.com/ffalt/jamserve/compare/v0.5.0...v0.5.1) (2021-07-31)
 
 
