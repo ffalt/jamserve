@@ -189,7 +189,14 @@ export class ExpressParameters {
 	}
 
 	private prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any, any>): any {
-		return this.validateParameter(param, this.getData(param.mode, context), false);
+		const result = this.getData(param.mode, context);
+		if (param.mode === 'file') {
+			if (!result) {
+				throw MissingParamError(param.name);
+			}
+			return result;
+		}
+		return this.validateParameter(param, result, false);
 	}
 
 	private mapArgFields(argumentType: ClassMetadata, data: any, args: any = {}): void {
