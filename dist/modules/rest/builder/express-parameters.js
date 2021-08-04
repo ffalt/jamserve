@@ -174,7 +174,14 @@ export class ExpressParameters {
         return {};
     }
     prepareParameterSingle(param, context) {
-        return this.validateParameter(param, this.getData(param.mode, context), false);
+        const result = this.getData(param.mode, context);
+        if (param.mode === 'file') {
+            if (!result) {
+                throw MissingParamError(param.name);
+            }
+            return result;
+        }
+        return this.validateParameter(param, result, false);
     }
     mapArgFields(argumentType, data, args = {}) {
         argumentType.fields.forEach(field => {

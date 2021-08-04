@@ -60,7 +60,7 @@ let DownloadService = class DownloadService {
             }
             else {
                 const episode = await entry.episode.get();
-                if (episode && episode.path) {
+                if (episode?.path) {
                     fileList.push(episode.path);
                 }
             }

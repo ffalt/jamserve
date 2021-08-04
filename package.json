@@ -1,6 +1,6 @@
 {
   "name": "jamserve",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "author": "ffalt",
   "description": "jamserve streaming audio server",
   "license": "MIT",
@@ -16,14 +16,14 @@
     "node": ">=14"
   },
   "dependencies": {
-    "apollo-server-express": "3.1.1",
+    "apollo-server-express": "3.1.2",
     "archiver": "5.3.0",
     "bcrypt": "5.0.1",
     "body-parser": "1.19.0",
     "class-validator": "0.13.1",
     "common-password-checker": "0.1.0",
     "compression": "1.7.4",
-    "console-table-printer": "2.9.0",
+    "console-table-printer": "2.10.0",
     "cookie-parser": "1.4.5",
     "cors": "2.8.5",
     "d3-array": "3.0.1",
@@ -42,7 +42,7 @@
     "helmet": "4.6.0",
     "jamp3": "0.4.3",
     "jimp": "0.16.1",
-    "jsdom": "16.6.0",
+    "jsdom": "16.7.0",
     "limiter": "1.1.5",
     "mime-types": "2.1.32",
     "moment": "2.29.1",
@@ -66,7 +66,7 @@
     "tiny-async-pool": "1.2.0",
     "type-graphql": "1.1.1",
     "typescript-ioc": "3.2.2",
-    "waveform-data": "4.1.0",
+    "waveform-data": "4.1.1",
     "which": "2.0.2",
     "winston": "3.3.3",
     "yauzl": "2.10.0"

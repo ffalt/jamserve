@@ -65,18 +65,20 @@ let ChangesWorker = class ChangesWorker extends BaseWorker {
         stateCleanIds.appendIDs(changes.genres.removed.ids());
         stateCleanIds.appendIDs(changes.roots.removed.ids());
         stateCleanIds.appendIDs(changes.series.removed.ids());
-        const stateDestIDs = stateCleanIds.ids();
-        if (stateDestIDs.length > 0) {
-            const states = await orm.State.findIDs({ where: { destID: stateDestIDs } });
-            await orm.State.removeLaterByIDs(states);
-        }
         const stateBookmarkIDs = await orm.Bookmark.findIDs({ where: { track: trackIDs } });
         if (stateBookmarkIDs.length > 0) {
             await orm.Bookmark.removeLaterByIDs(stateBookmarkIDs);
+            stateCleanIds.appendIDs(stateBookmarkIDs);
         }
         const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
         if (playlistEntryIDs.length > 0) {
             await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
+            stateCleanIds.appendIDs(playlistEntryIDs);
+        }
+        const stateDestIDs = stateCleanIds.ids();
+        if (stateDestIDs.length > 0) {
+            const states = await orm.State.findIDs({ where: { destID: stateDestIDs } });
+            await orm.State.removeLaterByIDs(states);
         }
         if (orm.em.hasChanges()) {
             log.debug('Syncing Removal Dependend Updates to DB');
