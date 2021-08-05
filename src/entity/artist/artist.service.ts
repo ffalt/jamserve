@@ -17,14 +17,7 @@ export class ArtistService {
 	}
 
 	async getArtistFolder(orm: Orm, artist: Artist): Promise<Folder | undefined> {
-		let p = await orm.Folder.findOneFilter({artistIDs: [artist.id]});
-		while (p) {
-			if (p.folderType === FolderType.artist) {
-				return p;
-			}
-			p = await p.parent.get();
-		}
-		return;
+		return orm.Folder.findOneFilter({artistIDs: [artist.id], folderTypes: [FolderType.artist]});
 	}
 
 	async getImage(orm: Orm, artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {

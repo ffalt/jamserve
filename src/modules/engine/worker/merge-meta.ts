@@ -5,7 +5,7 @@ import {Root} from '../../../entity/root/root';
 import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Artist} from '../../../entity/artist/artist';
 import {Orm} from '../services/orm.service';
-import {AlbumType} from '../../../types/enums';
+import {AlbumType, FolderType} from '../../../types/enums';
 import {Folder} from '../../../entity/folder/folder';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {slugify} from '../../../utils/slug';
@@ -50,7 +50,7 @@ export class MetaMerger {
 		return [...types];
 	}
 
-	private async linkArtist(a: Artist, trackInfo:MetaMergeTrackInfo):Promise<void> {
+	private async linkArtist(a: Artist, trackInfo: MetaMergeTrackInfo): Promise<void> {
 		await a.roots.add(this.root);
 		await a.folders.add(trackInfo.folder);
 		this.orm.Artist.persistLater(a);
@@ -179,6 +179,14 @@ export class MetaMerger {
 		for (const folder of (await artist.folders.getItems())) {
 			if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
 				folders.push(folder);
+			}
+		}
+		for (const folder of folders) {
+			const parent = await folder.parent.get();
+			if (parent?.folderType === FolderType.artist) {
+				if (!folders.find(f => f.id === parent.id)) {
+					folders.push(parent);
+				}
 			}
 		}
 		await artist.folders.set(folders);
