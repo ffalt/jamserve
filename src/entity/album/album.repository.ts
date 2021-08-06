@@ -31,12 +31,12 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 			case AlbumOrderFields.seriesNr:
 				return this.seriesNrOrder(direction);
 			case AlbumOrderFields.default:
-				return this.defaultOrder(direction);
+				return AlbumRepository.defaultOrder(direction);
 		}
 		return [];
 	}
 
-	private defaultOrder(direction: string): Array<OrderItem> {
+	private static defaultOrder(direction: string): Array<OrderItem> {
 		// order of setting properties matches order of sort queries. important!
 		return [
 			['artistORM', 'name', direction],

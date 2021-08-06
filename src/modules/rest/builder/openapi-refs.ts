@@ -18,7 +18,7 @@ export class OpenApiRefBuilder {
 		this.metadata = getMetadataStorage();
 	}
 
-	private getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
+	private static getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
 		const name = enumInfo.name;
 		if (!schemas[name]) {
 			schemas[name] = {type: 'string', enum: Object.values(enumInfo.enumObj)};
@@ -41,7 +41,7 @@ export class OpenApiRefBuilder {
 		} else {
 			const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
 			if (enumInfo) {
-				return {$ref: this.getEnumRef(enumInfo, schemas)};
+				return {$ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas)};
 			}
 		}
 		return;
@@ -225,7 +225,7 @@ export class OpenApiRefBuilder {
 		} else {
 			const enumInfo = this.metadata.enums.find(e => e.enumObj === param.getType());
 			if (enumInfo) {
-				result = {$ref: this.getEnumRef(enumInfo, schemas)};
+				result = {$ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas)};
 			} else {
 				throw new Error(`Implement OpenApi collectParameter ${JSON.stringify(param)}`);
 			}

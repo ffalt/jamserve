@@ -92,11 +92,3 @@ export class OrderHelper {
 		return order === 'ASC' ? 'DESC' : 'ASC';
 	}
 }
-
-export function dateOrUndefined(timestamp?: number): Date | undefined {
-	if (timestamp === undefined || timestamp === null || timestamp === 0) {
-		return undefined;
-	}
-	return new Date(timestamp);
-}
-

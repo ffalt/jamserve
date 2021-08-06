@@ -121,7 +121,7 @@ class OpenApiBuilder {
 		return {path, o};
 	}
 
-	private buildOpenApiBase(version: string): OpenAPIObject {
+	private static buildOpenApiBase(version: string): OpenAPIObject {
 		return {
 			openapi: '3.0.0',
 			info: {
@@ -159,7 +159,7 @@ class OpenApiBuilder {
 		}
 	}
 
-	private buildExtensions(openapi: OpenAPIObject, schemas: Schemas) {
+	private static buildExtensions(openapi: OpenAPIObject, schemas: Schemas) {
 		const apiTags = new Set();
 		const tags = [];
 		const tagNames = [];
@@ -205,7 +205,7 @@ class OpenApiBuilder {
 	}
 
 	build(): OpenAPIObject {
-		const openapi: OpenAPIObject = this.buildOpenApiBase(JAMAPI_VERSION);
+		const openapi: OpenAPIObject = OpenApiBuilder.buildOpenApiBase(JAMAPI_VERSION);
 		const schemas: Schemas = {
 			'ID': {type: 'string', format: 'uuid'},
 			'JSON': {type: 'object'}
@@ -213,7 +213,7 @@ class OpenApiBuilder {
 		this.buildControllers(schemas, openapi);
 		openapi.components = {schemas, securitySchemes: openapi.components?.securitySchemes};
 		if (this.extended) {
-			this.buildExtensions(openapi, schemas);
+			OpenApiBuilder.buildExtensions(openapi, schemas);
 		}
 		return openapi;
 	}

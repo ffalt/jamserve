@@ -5,13 +5,6 @@ import {FlacComment, FlacMedia, FlacPicture} from './formats/flac';
 import {ProbeResult} from './tools/ffprobe';
 import {AudioFormatType, TagFormatType} from '../../types/enums';
 
-
-export interface TagChapter {
-	start: number;
-	end: number;
-	title?: string;
-}
-
 export interface TrackTag {
 	format: TagFormatType;
 	album?: string;
@@ -42,7 +35,7 @@ export interface TrackTag {
 	series?: string;
 	seriesNr?: string;
 	lyrics?: string;
-	chapters?: string; //Array<TagChapter>;
+	chapters?: string;
 }
 
 export interface TrackMedia {

@@ -39,7 +39,7 @@ export class AuthController {
 	private async authenticate(credentials: CredentialsArgs, req: express.Request, res: express.Response, next: express.NextFunction, engine: EngineService): Promise<Session> {
 		const user = await this.loginUser(req, res, next);
 		await engine.rateLimit.loginSlowDownReset(req);
-		return this.buildSessionResult(req, credentials, user, engine);
+		return AuthController.buildSessionResult(req, credentials, user, engine);
 	}
 
 
@@ -67,7 +67,7 @@ export class AuthController {
 		});
 	}
 
-	private buildSessionResult(req: express.Request, credentials: CredentialsArgs, user: User, engine: EngineService): Session {
+	private static buildSessionResult(req: express.Request, credentials: CredentialsArgs, user: User, engine: EngineService): Session {
 		const client = req.body.client || 'Unknown Client';
 		// context.req.client = client;
 		const token = credentials.jwt ? generateJWT(user.id, client,

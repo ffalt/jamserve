@@ -19,7 +19,7 @@ export class ExpressParameters {
 		this.metadata = getMetadataStorage();
 	}
 
-	private validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): boolean {
+	private static validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): boolean {
 		if (typeOptions.array) {
 			throw InvalidParamError(param.name);
 		}
@@ -35,7 +35,7 @@ export class ExpressParameters {
 		return value;
 	}
 
-	private validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
+	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
 		if (typeOptions.array) {
 			//TODO: support number arrays
 			throw InvalidParamError(param.name);
@@ -148,9 +148,9 @@ export class ExpressParameters {
 		}
 		const type = param.getType();
 		if (type === Boolean) {
-			value = this.validateBoolean(value, typeOptions, param);
+			value = ExpressParameters.validateBoolean(value, typeOptions, param);
 		} else if (type === Number) {
-			value = this.validateNumber(value, typeOptions, param);
+			value = ExpressParameters.validateNumber(value, typeOptions, param);
 		} else if (type === String) {
 			value = this.validateString(value, typeOptions, param);
 		} else {
@@ -164,7 +164,7 @@ export class ExpressParameters {
 		return value;
 	}
 
-	private getData(mode: 'body' | 'query' | 'path' | 'file', context: RestContext<any, any, any>): any {
+	private static getData(mode: 'body' | 'query' | 'path' | 'file', context: RestContext<any, any, any>): any {
 		switch (mode) {
 			case 'body':
 				return context.req.body;
@@ -189,7 +189,7 @@ export class ExpressParameters {
 	}
 
 	private prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any, any>): any {
-		const result = this.getData(param.mode, context);
+		const result = ExpressParameters.getData(param.mode, context);
 		if (param.mode === 'file') {
 			if (!result) {
 				throw MissingParamError(param.name);
@@ -215,7 +215,7 @@ export class ExpressParameters {
 			);
 		}
 		const args: any = {};
-		const data: any = this.getData(param.mode, context);
+		const data: any = ExpressParameters.getData(param.mode, context);
 		iterateArguments(this.metadata, argumentType, argument => {
 			this.mapArgFields(argument, data, args);
 		});

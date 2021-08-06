@@ -145,7 +145,4 @@ export class EpisodeService {
 		return;
 	}
 
-	async countEpisodes(orm: Orm, podcastID: string): Promise<number> {
-		return await orm.Episode.count({where: {podcast: podcastID}});
-	}
 }

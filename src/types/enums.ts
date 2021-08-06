@@ -165,7 +165,7 @@ export enum WaveformFormatType {
 	dat = 'dat'
 }
 
-export const WaveformFormatTypes = [WaveformFormatType.svg, WaveformFormatType.json, WaveformFormatType.dat];
+// export const WaveformFormatTypes = [WaveformFormatType.svg, WaveformFormatType.json, WaveformFormatType.dat];
 
 export enum ListType {
 	random = 'random',

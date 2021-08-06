@@ -16,14 +16,14 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 		this.cache.clear();
 	}
 
-	private expired(data: SessionData): boolean {
+	private static expired(data: SessionData): boolean {
 		return (data.cookie.expires || 0) < Date.now();
 	}
 
 	private async _get(sid: string): Promise<SessionData | undefined> {
 		const result = this.cache.get(sid);
 		if (result) {
-			if (this.expired(result)) {
+			if (ExpressSessionStore.expired(result)) {
 				await this.sessionService.remove(sid);
 				return;
 			}

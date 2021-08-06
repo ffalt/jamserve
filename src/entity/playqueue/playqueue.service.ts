@@ -12,7 +12,7 @@ import {PlayQueue} from './playqueue';
 @InRequestScope
 export class PlayQueueService {
 
-	private async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
+	private static async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
 		switch (media.objType) {
 			case DBObjectType.episode: {
 				const episodeTag = await (media.obj as Episode).tag.get();
@@ -62,7 +62,7 @@ export class PlayQueueService {
 			entry.position = position;
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
 			await entry.episode.set(media.objType === DBObjectType.episode ? media.obj as Episode : undefined);
-			duration += await this.getDuration(media);
+			duration += await PlayQueueService.getDuration(media);
 			position++;
 			orm.PlayQueueEntry.persistLater(entry);
 		}

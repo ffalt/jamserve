@@ -18,22 +18,22 @@ import {Artwork} from '../artwork/artwork';
 
 @InRequestScope
 export class DownloadService {
-	private async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
+	private static async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
 		if (!episode.path) {
 			return Promise.reject(Error('Podcast episode not ready'));
 		}
 		return {pipe: new CompressListStream([episode.path], path.basename(episode.path), format)};
 	}
 
-	private async downloadTrack(track: Track, format?: string): Promise<ApiBinaryResult> {
+	private static async downloadTrack(track: Track, format?: string): Promise<ApiBinaryResult> {
 		return {pipe: new CompressListStream([path.join(track.path, track.fileName)], path.basename(track.fileName), format)};
 	}
 
-	private async downloadArtwork(artwork: Artwork, format?: string): Promise<ApiBinaryResult> {
+	private static async downloadArtwork(artwork: Artwork, format?: string): Promise<ApiBinaryResult> {
 		return {pipe: new CompressListStream([path.join(artwork.path, artwork.name)], path.basename(artwork.name), format)};
 	}
 
-	private async downloadFolder(folder: Folder, format?: string): Promise<ApiBinaryResult> {
+	private static async downloadFolder(folder: Folder, format?: string): Promise<ApiBinaryResult> {
 		return {pipe: new CompressFolderStream(folder.path, path.basename(folder.path), format)};
 	}
 
@@ -61,7 +61,7 @@ export class DownloadService {
 		return {pipe: new CompressListStream(fileList, podcast.id, format)};
 	}
 
-	private async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
+	private static async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		const userID = await playlist.user.id();
 		if (userID !== user.id && !playlist.isPublic) {
 			return Promise.reject(UnauthError());
@@ -86,11 +86,11 @@ export class DownloadService {
 	async getObjDownload(o: Base, objType: DBObjectType, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		switch (objType) {
 			case DBObjectType.track:
-				return this.downloadTrack(o as Track, format);
+				return DownloadService.downloadTrack(o as Track, format);
 			case DBObjectType.artwork:
-				return this.downloadArtwork(o as Artwork, format);
+				return DownloadService.downloadArtwork(o as Artwork, format);
 			case DBObjectType.folder:
-				return this.downloadFolder(o as Folder, format);
+				return DownloadService.downloadFolder(o as Folder, format);
 			case DBObjectType.artist:
 				return this.downloadArtist(o as Artist, format);
 			case DBObjectType.series:
@@ -98,11 +98,11 @@ export class DownloadService {
 			case DBObjectType.album:
 				return this.downloadAlbum(o as Album, format);
 			case DBObjectType.episode:
-				return this.downloadEpisode(o as Episode, format);
+				return DownloadService.downloadEpisode(o as Episode, format);
 			case DBObjectType.podcast:
 				return this.downloadPodcast(o as Podcast, format);
 			case DBObjectType.playlist:
-				return this.downloadPlaylist(o as Playlist, format, user);
+				return DownloadService.downloadPlaylist(o as Playlist, format, user);
 			default:
 		}
 		return Promise.reject(InvalidParamError('type', 'Invalid Download Type'));

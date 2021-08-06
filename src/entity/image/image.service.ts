@@ -89,7 +89,7 @@ export class ImageService {
 		return podcast.title || podcast.url;
 	}
 
-	private async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
+	private static async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
 		switch (type) {
 			case DBObjectType.track:
 				return await ImageService.getCoverArtTextTrack(o as Track);
@@ -146,7 +146,7 @@ export class ImageService {
 	}
 
 	async paintImage(obj: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
-		const s = await this.getCoverArtText(obj, type);
+		const s = await ImageService.getCoverArtText(obj, type);
 		return this.imageModule.paint(s, size || 128, format);
 	}
 

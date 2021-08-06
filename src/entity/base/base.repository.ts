@@ -183,6 +183,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return {groups};
 	}
 
+	/* unused
 	async findOneIDorFail(options: FindOptions<Entity>): Promise<string> {
 		const result = await this.findOneID(options);
 		if (!result) {
@@ -190,6 +191,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		}
 		return result;
 	}
+	 */
 
 	async findList(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<Entity>> {
 		const result = await this.getListIDs(list, seed, options, userID);

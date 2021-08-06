@@ -53,13 +53,13 @@ export class Flac {
 			const processor = new FlacProcessorStream(true, true);
 			processor.on('postprocess', (mdb: MetaDataBlock) => {
 				if (mdb.type === MDB_TYPE.STREAMINFO) {
-					result.media = this.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
+					result.media = Flac.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
 				} else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
 				} else if (mdb.type === MDB_TYPE.PICTURE) {
 					if ((mdb as MetaDataBlockPicture).pictureData) {
 						result.pictures = result.pictures || [];
-						result.pictures.push(this.formatMediaPicture(mdb as MetaDataBlockPicture));
+						result.pictures.push(Flac.formatMediaPicture(mdb as MetaDataBlockPicture));
 					}
 				}
 			});
@@ -158,7 +158,7 @@ export class Flac {
 		return {vendor: mdb.vendor, tag};
 	}
 
-	private formatMediaBlock(mdb: MetaDataBlockStreamInfo): FlacMedia {
+	private static formatMediaBlock(mdb: MetaDataBlockStreamInfo): FlacMedia {
 		return {
 			duration: mdb.duration,
 			channels: mdb.channels + 1,
@@ -172,7 +172,7 @@ export class Flac {
 		};
 	}
 
-	private formatMediaPicture(mdb: MetaDataBlockPicture): FlacPicture {
+	private static formatMediaPicture(mdb: MetaDataBlockPicture): FlacPicture {
 		return {
 			pictureType: mdb.pictureType,
 			mimeType: mdb.mimeType,

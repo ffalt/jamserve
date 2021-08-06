@@ -28,7 +28,7 @@ export class TrackWorker extends BaseWorker {
 				const tag = orm.Tag.createByScan(result, filename);
 				orm.Tag.persistLater(tag);
 				await track.tag.set(tag);
-				await this.updateTrackStats(track);
+				await TrackWorker.updateTrackStats(track);
 				orm.Track.persistLater(track);
 				changes.tracks.updated.add(track);
 				changes.folders.updated.addID(track.folder.id());
@@ -60,7 +60,7 @@ export class TrackWorker extends BaseWorker {
 		});
 	}
 
-	private async updateTrackStats(track: Track): Promise<void> {
+	private static async updateTrackStats(track: Track): Promise<void> {
 		const stat = await fse.stat(path.join(track.path, track.fileName));
 		track.statCreated = stat.ctime;
 		track.statModified = stat.mtime;
@@ -73,7 +73,7 @@ export class TrackWorker extends BaseWorker {
 			return Promise.reject(Error('Track not found'));
 		}
 		track.fileName = await this.renameFile(track.path, track.fileName, newName);
-		await this.updateTrackStats(track);
+		await TrackWorker.updateTrackStats(track);
 		orm.Track.persistLater(track);
 		changes.tracks.updated.add(track);
 		changes.folders.updated.add(await track.folder.get());
@@ -115,7 +115,7 @@ export class TrackWorker extends BaseWorker {
 				track.path = ensureTrailingPathSeparator(newParent.path);
 				await track.root.set(await newParent.root.getOrFail());
 				await track.folder.set(newParent);
-				await this.updateTrackStats(track);
+				await TrackWorker.updateTrackStats(track);
 				orm.Track.persistLater(track);
 			}
 		}

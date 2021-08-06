@@ -10,15 +10,6 @@ export interface BaseControllerMetadata {
 	roles?: string[];
 }
 
-export interface FieldResolverMetadata extends BaseControllerMetadata {
-	kind: 'internal' | 'external';
-	description?: string;
-	deprecationReason?: string;
-	getType?: TypeValueThunk;
-	typeOptions?: TypeOptions;
-	getObjectType?: ClassTypeResolver;
-}
-
 export interface ControllerClassMetadata {
 	target: Function;
 	name: string;

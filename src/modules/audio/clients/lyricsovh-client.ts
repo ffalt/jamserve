@@ -28,7 +28,7 @@ export class LyricsOVHClient extends WebserviceClient {
 	}
 
 	async search(artistName: string, songName: string): Promise<LyricsResult | undefined> {
-		const url = `https://api.lyrics.ovh/v1/${this.cleanString(artistName)}/${this.cleanString(songName)}`;
+		const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
 		log.info('requesting', url);
 		const data = await this.getJson<LyricsOVHResult | undefined>(url);
 		if (!data || !data.lyrics) {
@@ -37,7 +37,7 @@ export class LyricsOVHClient extends WebserviceClient {
 		return {lyrics: data.lyrics, source: url};
 	}
 
-	private cleanString(s: string): string {
+	private static cleanString(s: string): string {
 		return encodeURIComponent(s
 			.replace(/[’´`]/g, '\'')
 			.replace(/[():]/g, ' ')

@@ -100,10 +100,10 @@ export class ImageModule {
 		if (!SupportedWriteImageFormat.includes(fileFormat)) {
 			fileFormat = this.format;
 		}
-		return this.getImageAs(filename, fileFormat, size, name);
+		return ImageModule.getImageAs(filename, fileFormat, size, name);
 	}
 
-	private async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ImageResult> {
+	private static async getImageAs(filename: string, format: string, size: number | undefined, name: string): Promise<ImageResult> {
 		const fileFormat = fileSuffix(filename);
 		const exists = await fse.pathExists(filename);
 		if (!exists) {
@@ -194,7 +194,7 @@ export class ImageModule {
 			return this.cache.get(id, {size, format}, async cachefile => {
 				const name = path.basename(cachefile);
 				const result = format ?
-					await this.getImageAs(filename, format, size, name) :
+					await ImageModule.getImageAs(filename, format, size, name) :
 					await this.getImage(filename, size, name);
 				if (result.buffer) {
 					log.debug('Writing image cache file', cachefile);
@@ -242,7 +242,7 @@ export class ImageModule {
 		await fse.writeFile(destination, avatar);
 	}
 
-	private async formatImageInfo(sharpy: sharp.Sharp): Promise<ImageInfo> {
+	private static async formatImageInfo(sharpy: sharp.Sharp): Promise<ImageInfo> {
 		try {
 			const metadata = await sharpy.metadata();
 			return {
@@ -258,11 +258,11 @@ export class ImageModule {
 	}
 
 	async getImageInfo(filename: string): Promise<ImageInfo> {
-		return this.formatImageInfo(sharp(filename, {failOnError: false}));
+		return ImageModule.formatImageInfo(sharp(filename, {failOnError: false}));
 	}
 
 	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
-		return this.formatImageInfo(sharp(bin, {failOnError: false}));
+		return ImageModule.formatImageInfo(sharp(bin, {failOnError: false}));
 	}
 
 }

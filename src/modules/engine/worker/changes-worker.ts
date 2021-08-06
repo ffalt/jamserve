@@ -24,8 +24,8 @@ export class ChangesWorker extends BaseWorker {
 	async finish(orm: Orm, changes: Changes, root: Root): Promise<Changes> {
 		const metaMerger = new MetaMerger(orm, changes, root.id);
 		await metaMerger.mergeMeta();
-		await this.mergeDependendRemovals(orm, changes);
-		await this.mergeRemovals(orm, changes);
+		await ChangesWorker.mergeDependendRemovals(orm, changes);
+		await ChangesWorker.mergeRemovals(orm, changes);
 		await this.cleanCacheFiles(changes);
 		changes.end = Date.now();
 		this.logChanges(changes);
@@ -59,7 +59,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 	}
 
-	private async mergeDependendRemovals(orm: Orm, changes: Changes): Promise<void> {
+	private static async mergeDependendRemovals(orm: Orm, changes: Changes): Promise<void> {
 		const stateCleanIds = new IdSet<Base>();
 		const trackIDs = changes.tracks.removed.ids();
 		stateCleanIds.appendIDs(trackIDs);
@@ -97,7 +97,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 	}
 
-	private async mergeRemovals(orm: Orm, changes: Changes): Promise<void> {
+	private static async mergeRemovals(orm: Orm, changes: Changes): Promise<void> {
 		await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
 		await orm.Artwork.removeLaterByIDs(changes.artworks.removed.ids());
 		await orm.Folder.removeLaterByIDs(changes.folders.removed.ids());

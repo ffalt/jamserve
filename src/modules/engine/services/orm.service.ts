@@ -106,7 +106,7 @@ export class Orm {
 		this.Genre = em.getRepository<Genre, GenreRepository>(Genre);
 	}
 
-	private async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+	private static async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		for (const repo of repos) {
 			const obj = await repo.findOneByID(id);
 			if (obj) {
@@ -117,7 +117,7 @@ export class Orm {
 	}
 
 	public async findInStreamTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		return this.findInReposTypes(id, [this.Track, this.Episode]);
+		return Orm.findInReposTypes(id, [this.Track, this.Episode]);
 	}
 
 	public async findListInStreamTypes(ids: Array<string>): Promise<Array<{ obj: Base; objType: DBObjectType }>> {
@@ -159,7 +159,7 @@ export class Orm {
 	}
 
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		return this.findInReposTypes(id, [
+		return Orm.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -177,7 +177,7 @@ export class Orm {
 	}
 
 	public async findInDownloadTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		return this.findInReposTypes(id, [
+		return Orm.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -191,7 +191,7 @@ export class Orm {
 	}
 
 	async findInStateTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		return this.findInReposTypes(id, [
+		return Orm.findInReposTypes(id, [
 			this.Album,
 			this.Artist,
 			this.Artwork,
@@ -208,7 +208,7 @@ export class Orm {
 	}
 
 	async findInWaveformTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
-		return this.findInReposTypes(id, [this.Track, this.Episode]);
+		return Orm.findInReposTypes(id, [this.Track, this.Episode]);
 	}
 }
 

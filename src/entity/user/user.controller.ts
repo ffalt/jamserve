@@ -50,7 +50,7 @@ export class UserController {
 		@BodyParams() args: UserMutateArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		await this.validatePassword(orm, engine, args.password, user);
+		await UserController.validatePassword(orm, engine, args.password, user);
 		return engine.transform.User.user(orm, await engine.user.create(orm, args), {}, user);
 	}
 
@@ -64,7 +64,7 @@ export class UserController {
 		@BodyParams() args: UserMutateArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<User> {
-		await this.validatePassword(orm, engine, args.password, user);
+		await UserController.validatePassword(orm, engine, args.password, user);
 		const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
 		if (user.id === id) {
 			if (!args.roleAdmin) {
@@ -127,7 +127,7 @@ export class UserController {
 		@BodyParams() args: UserGenerateImageArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
-		const u = await this.validateUserOrAdmin(orm, id, user);
+		const u = await UserController.validateUserOrAdmin(orm, id, user);
 		await engine.user.generateAvatar(u, args.seed || randomString(42));
 	}
 
@@ -140,11 +140,11 @@ export class UserController {
 		@Upload('image') file: UploadFile,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<void> {
-		const u = await this.validateUserOrAdmin(orm, id, user);
+		const u = await UserController.validateUserOrAdmin(orm, id, user);
 		return engine.user.setUserImage(u, file.name);
 	}
 
-	private async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {
+	private static async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {
 		const result = await engine.user.auth(orm, user.name, password);
 		if (!result) {
 			return Promise.reject(UnauthError());
@@ -152,14 +152,14 @@ export class UserController {
 	}
 
 	private async checkUserAccess(orm: Orm, engine: EngineService, userID: string, password: string, user: ORMUser): Promise<ORMUser> {
-		await this.validatePassword(orm, engine, password, user);
+		await UserController.validatePassword(orm, engine, password, user);
 		if (userID === user.id || user.roleAdmin) {
 			return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
 		}
 		return Promise.reject(UnauthError());
 	}
 
-	private async validateUserOrAdmin(orm: Orm, id: string, user: ORMUser): Promise<ORMUser> {
+	private static async validateUserOrAdmin(orm: Orm, id: string, user: ORMUser): Promise<ORMUser> {
 		if (id === user.id) {
 			return user;
 		}

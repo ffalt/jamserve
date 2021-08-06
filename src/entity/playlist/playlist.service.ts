@@ -12,7 +12,7 @@ import {Base} from '../base/base';
 @InRequestScope
 export class PlaylistService {
 
-	private async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
+	private static async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
 		switch (media.objType) {
 			case DBObjectType.episode: {
 				const episodeTag = await (media.obj as Episode).tag.get();
@@ -43,7 +43,7 @@ export class PlaylistService {
 			if (!media) {
 				return Promise.reject(NotFoundError());
 			}
-			duration += await this.getDuration(media);
+			duration += await PlaylistService.getDuration(media);
 			const entry = orm.PlaylistEntry.create({position});
 			await entry.playlist.set(playlist);
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
@@ -70,7 +70,7 @@ export class PlaylistService {
 			await entry.playlist.set(playlist);
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
 			await entry.episode.set(media.objType === DBObjectType.episode ? media.obj as Episode : undefined);
-			duration += await this.getDuration(media);
+			duration += await PlaylistService.getDuration(media);
 			position++;
 			orm.PlaylistEntry.persistLater(entry);
 		}

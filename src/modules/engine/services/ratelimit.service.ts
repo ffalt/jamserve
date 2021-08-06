@@ -23,13 +23,13 @@ export class RateLimitService {
 		duration: 0, // never expire
 	});
 
-	private getReqID(req: express.Request): string {
+	private static getReqID(req: express.Request): string {
 		const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
 		return Array.isArray(ip) ? ip[0] : ip;
 	}
 
 	async loginSlowDown(req: express.Request, res: express.Response): Promise<boolean> {
-		const key = this.getReqID(req);
+		const key = RateLimitService.getReqID(req);
 		try {
 			const resConsume = await this.loginLimiter.consume(key);
 			if (resConsume.remainingPoints <= 0) {
@@ -53,7 +53,7 @@ export class RateLimitService {
 	}
 
 	async loginSlowDownReset(req: express.Request): Promise<void> {
-		const key = this.getReqID(req);
+		const key = RateLimitService.getReqID(req);
 		await this.limiterConsecutiveOutOfLimits.delete(key);
 		await this.loginLimiter.delete(key);
 	}

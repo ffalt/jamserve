@@ -42,10 +42,10 @@ export function mapManagedToSource(instance: ManagedEntity): void {
 	}
 }
 
-export async function saveManagedEntity(instance: ManagedEntity): Promise<void> {
-	mapManagedToSource(instance);
-	await instance._source.save();
-}
+// export async function saveManagedEntity(instance: ManagedEntity): Promise<void> {
+// 	mapManagedToSource(instance);
+// 	await instance._source.save();
+// }
 
 export function cleanManagedEntityRelations(instance: ManagedEntity): void {
 	for (const field of instance._meta.fields) {

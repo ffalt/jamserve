@@ -32,25 +32,25 @@ export class SettingsService {
 	}
 
 	async settingsVersion(orm: Orm): Promise<string | undefined> {
-		const settingsStore = await this.getSettings(orm);
+		const settingsStore = await SettingsService.getSettings(orm);
 		return settingsStore.version;
 	}
 
 	async saveSettings(orm: Orm): Promise<void> {
-		const settingsStore = await this.getSettings(orm);
+		const settingsStore = await SettingsService.getSettings(orm);
 		settingsStore.version = JAMSERVE_VERSION;
 		settingsStore.data = JSON.stringify(this.settings);
 		await orm.Settings.persistAndFlush(settingsStore);
 	}
 
 	async loadSettings(orm: Orm): Promise<void> {
-		const settingsStore = await this.getSettings(orm);
+		const settingsStore = await SettingsService.getSettings(orm);
 		if (settingsStore) {
 			this.settings = JSON.parse(settingsStore.data);
 		}
 	}
 
-	private async getSettings(orm: Orm): Promise<Settings> {
+	private static async getSettings(orm: Orm): Promise<Settings> {
 		let settingsStore = await orm.Settings.findOne({where: {section: 'jamserve'}});
 		if (!settingsStore) {
 			settingsStore = orm.Settings.create({

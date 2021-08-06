@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import {ConfigService} from '../../engine/services/config.service';
 
+/*
 export function registerPublicCORS(_: express.Router): express.RequestHandler {
 	return cors({
 		preflightContinue: false,
@@ -11,7 +12,7 @@ export function registerPublicCORS(_: express.Router): express.RequestHandler {
 		methods: ['GET', 'POST']
 	});
 }
-
+*/
 export function useAuthenticatedCors(configService: ConfigService): express.RequestHandler {
 	const origins = configService.env.session.allowedCookieDomains || [];
 

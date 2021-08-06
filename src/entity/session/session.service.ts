@@ -52,7 +52,7 @@ export class SessionService {
 	async all(): Promise<Array<SessionData>> {
 		const orm = this.ormService.fork();
 		const sessions = await orm.Session.all();
-		return sessions.map(session => this.toExpress(session));
+		return sessions.map(session => SessionService.toExpress(session));
 	}
 
 	async getSession(sessionID: string): Promise<Session | undefined> {
@@ -139,12 +139,12 @@ export class SessionService {
 	async get(sessionID: string): Promise<SessionData | undefined> {
 		const session = await this.getSession(sessionID);
 		if (session) {
-			return this.toExpress(session);
+			return SessionService.toExpress(session);
 		}
 		return;
 	}
 
-	private toExpress(session: Session): SessionData {
+	private static toExpress(session: Session): SessionData {
 		return {
 			cookie: JSON.parse(session.cookie),
 			client: session.client,

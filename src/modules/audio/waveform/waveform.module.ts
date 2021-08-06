@@ -26,7 +26,7 @@ export class WaveformModule {
 		});
 	}
 
-	private async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
+	private static async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case WaveformFormatType.svg:
@@ -45,7 +45,7 @@ export class WaveformModule {
 			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}
 		return this.waveformCache.get(id, {format, width}, async cacheFilename => {
-			const result = await this.generateWaveform(filename, format, width);
+			const result = await WaveformModule.generateWaveform(filename, format, width);
 			log.debug('Writing cache file', cacheFilename);
 			if (result.buffer) {
 				await fse.writeFile(cacheFilename, result.buffer.buffer);

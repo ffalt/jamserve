@@ -214,7 +214,7 @@ export class WorkerScan {
 		return folder;
 	}
 
-	private createNode(dir: ScanDir, folder: Folder): MatchNode {
+	private static createNode(dir: ScanDir, folder: Folder): MatchNode {
 		return {
 			scan: dir,
 			folder,
@@ -228,7 +228,7 @@ export class WorkerScan {
 	private async buildNode(dir: ScanDir, parent?: Folder): Promise<MatchNode> {
 		const folder = await this.buildFolder(dir, parent);
 		this.changes.folders.added.add(folder);
-		const result = this.createNode(dir, folder);
+		const result = WorkerScan.createNode(dir, folder);
 		result.changed = true;
 		for (const subDir of dir.directories) {
 			result.children.push(await this.buildNode(subDir, folder));
@@ -264,7 +264,7 @@ export class WorkerScan {
 
 	private async scanNode(dir: ScanDir, folder: Folder): Promise<MatchNode> {
 		log.debug('Matching:', dir.path);
-		const result = this.createNode(dir, folder);
+		const result = WorkerScan.createNode(dir, folder);
 		await this.scanSubfolders(folder, dir, result);
 		await this.scanTracks(dir, folder, result);
 		await this.scanArtworks(dir, folder, result);

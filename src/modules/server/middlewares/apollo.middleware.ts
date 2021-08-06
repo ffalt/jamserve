@@ -54,6 +54,9 @@ import {StateResolver} from '../../../entity/state/state.resolver';
 import {NowPlayingResolver} from '../../../entity/nowplaying/nowplaying.resolver';
 import {AdminResolver} from '../../../entity/admin/admin.resolver';
 import path from 'path';
+import {ApolloServerPlugin} from 'apollo-server-plugin-base';
+import {GraphQLRequestListener} from 'apollo-server-plugin-base/src/index';
+import {GraphQLRequestContext, GraphQLRequestContextWillSendResponse} from 'apollo-server-types';
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
@@ -127,18 +130,6 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 	});
 }
 
-const apolloLogger: any = {
-	willSendResponse(requestContext: any): any {
-		const {graphqlResponse} = requestContext as any;
-		if (graphqlResponse.errors) {
-			graphqlResponse.errors.forEach((err: Error) => {
-				console.error(err);
-			});
-		}
-		return requestContext;
-	}
-};
-
 @InRequestScope
 export class ApolloMiddleware {
 	@Inject
@@ -159,7 +150,19 @@ export class ApolloMiddleware {
 			schema: this.schema,
 			debug: true,
 			plugins: [
-				() => apolloLogger,
+				{
+					async requestDidStart(_: GraphQLRequestContext<any>): Promise<GraphQLRequestListener<any> | void> {
+						return {
+							async willSendResponse(requestContext: GraphQLRequestContextWillSendResponse<any>): Promise<void> {
+								if (requestContext.errors) {
+									requestContext.errors.forEach((err: Error) => {
+										console.error(err);
+									});
+								}
+							}
+						};
+					}
+				},
 				ApolloServerPluginLandingPageDisabled
 			],
 			introspection: true,

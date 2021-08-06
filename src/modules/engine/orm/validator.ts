@@ -6,7 +6,7 @@ const log = logger('Validator');
 
 export class Validator {
 
-	private async validateCollection(objID: string, collection: Collection<any>, property: string, object: string): Promise<void> {
+	private static async validateCollection(objID: string, collection: Collection<any>, property: string, object: string): Promise<void> {
 		const count = await collection.count();
 		const items = await collection.getItems();
 		if (count !== items.length) {
@@ -14,7 +14,7 @@ export class Validator {
 		}
 	}
 
-	private async validateReference(objID: string, collection: Reference<any>, property: string, object: string, maybeNull: boolean): Promise<void> {
+	private static async validateReference(objID: string, collection: Reference<any>, property: string, object: string, maybeNull: boolean): Promise<void> {
 		const id = await collection.id();
 		if (!maybeNull && !id) {
 			log.error(`Missing ${property} ID on ${object} [${objID}]`);
@@ -28,7 +28,7 @@ export class Validator {
 		}
 	}
 
-	private async validateStates(orm: Orm) {
+	private static async validateStates(orm: Orm) {
 		const states = await orm.State.all();
 		for (const state of states) {
 			// log.info(`Validating State "${state.destType}" by User ${state.user.id()}`);
@@ -48,7 +48,7 @@ export class Validator {
 		const playlists = await orm.Playlist.all();
 		for (const playlist of playlists) {
 			// log.info(`Validating Playlist "${playlist.name}"`);
-			await this.validateCollection(playlist.id, playlist.entries, 'Entries', 'Album');
+			await Validator.validateCollection(playlist.id, playlist.entries, 'Entries', 'Album');
 		}
 	}
 
@@ -56,15 +56,15 @@ export class Validator {
 		const tracks = await orm.Track.all();
 		for (const track of tracks) {
 			// log.info(`Validating Track "${track.name}"`);
-			await this.validateReference(track.id, track.albumArtist, 'AlbumArtist', 'Track', false);
-			await this.validateReference(track.id, track.artist, 'Artist', 'Track', false);
-			await this.validateReference(track.id, track.album, 'Album', 'Track', false);
-			await this.validateReference(track.id, track.folder, 'Folder', 'Track', false);
-			await this.validateReference(track.id, track.root, 'Root', 'Track', false);
-			await this.validateReference(track.id, track.series, 'Series', 'Track', true);
-			await this.validateCollection(track.id, track.playlistEntries, 'playlistEntries', 'Track');
-			await this.validateCollection(track.id, track.playqueueEntries, 'playqueueEntries', 'Track');
-			await this.validateCollection(track.id, track.genres, 'Genres', 'Track');
+			await Validator.validateReference(track.id, track.albumArtist, 'AlbumArtist', 'Track', false);
+			await Validator.validateReference(track.id, track.artist, 'Artist', 'Track', false);
+			await Validator.validateReference(track.id, track.album, 'Album', 'Track', false);
+			await Validator.validateReference(track.id, track.folder, 'Folder', 'Track', false);
+			await Validator.validateReference(track.id, track.root, 'Root', 'Track', false);
+			await Validator.validateReference(track.id, track.series, 'Series', 'Track', true);
+			await Validator.validateCollection(track.id, track.playlistEntries, 'playlistEntries', 'Track');
+			await Validator.validateCollection(track.id, track.playqueueEntries, 'playqueueEntries', 'Track');
+			await Validator.validateCollection(track.id, track.genres, 'Genres', 'Track');
 		}
 	}
 
@@ -72,12 +72,12 @@ export class Validator {
 		const folders = await orm.Folder.all();
 		for (const folder of folders) {
 			// log.info(`Validating Folder "${folder.name}"`);
-			await this.validateReference(folder.id, folder.root, 'Root', 'Folder', false);
-			await this.validateCollection(folder.id, folder.artworks, 'Artwork', 'Folder');
-			await this.validateCollection(folder.id, folder.children, 'Children', 'Folder');
-			await this.validateCollection(folder.id, folder.artists, 'Artists', 'Folder');
-			await this.validateCollection(folder.id, folder.tracks, 'Tracks', 'Folder');
-			await this.validateCollection(folder.id, folder.albums, 'Albums', 'Folder');
+			await Validator.validateReference(folder.id, folder.root, 'Root', 'Folder', false);
+			await Validator.validateCollection(folder.id, folder.artworks, 'Artwork', 'Folder');
+			await Validator.validateCollection(folder.id, folder.children, 'Children', 'Folder');
+			await Validator.validateCollection(folder.id, folder.artists, 'Artists', 'Folder');
+			await Validator.validateCollection(folder.id, folder.tracks, 'Tracks', 'Folder');
+			await Validator.validateCollection(folder.id, folder.albums, 'Albums', 'Folder');
 		}
 	}
 
@@ -85,10 +85,10 @@ export class Validator {
 		const series = await orm.Series.all();
 		for (const serie of series) {
 			log.info(`Validating Series "${serie.name}"`);
-			await this.validateCollection(serie.id, serie.folders, 'Folders', 'Series');
-			await this.validateCollection(serie.id, serie.tracks, 'Tracks', 'Series');
-			await this.validateCollection(serie.id, serie.albums, 'Albums', 'Series');
-			await this.validateCollection(serie.id, serie.roots, 'Roots', 'Series');
+			await Validator.validateCollection(serie.id, serie.folders, 'Folders', 'Series');
+			await Validator.validateCollection(serie.id, serie.tracks, 'Tracks', 'Series');
+			await Validator.validateCollection(serie.id, serie.albums, 'Albums', 'Series');
+			await Validator.validateCollection(serie.id, serie.roots, 'Roots', 'Series');
 		}
 	}
 
@@ -96,12 +96,12 @@ export class Validator {
 		const artists = await orm.Artist.all();
 		for (const artist of artists) {
 			log.info(`Validating Artist "${artist.name}"`);
-			await this.validateCollection(artist.id, artist.folders, 'Folders', 'Artist');
-			await this.validateCollection(artist.id, artist.tracks, 'Tracks', 'Artist');
-			await this.validateCollection(artist.id, artist.albums, 'Albums', 'Artist');
-			await this.validateCollection(artist.id, artist.genres, 'Genres', 'Artist');
-			await this.validateCollection(artist.id, artist.roots, 'Roots', 'Artist');
-			await this.validateCollection(artist.id, artist.series, 'Series', 'Artist');
+			await Validator.validateCollection(artist.id, artist.folders, 'Folders', 'Artist');
+			await Validator.validateCollection(artist.id, artist.tracks, 'Tracks', 'Artist');
+			await Validator.validateCollection(artist.id, artist.albums, 'Albums', 'Artist');
+			await Validator.validateCollection(artist.id, artist.genres, 'Genres', 'Artist');
+			await Validator.validateCollection(artist.id, artist.roots, 'Roots', 'Artist');
+			await Validator.validateCollection(artist.id, artist.series, 'Series', 'Artist');
 		}
 	}
 
@@ -109,12 +109,12 @@ export class Validator {
 		const albums = await orm.Album.all();
 		for (const album of albums) {
 			log.info(`Validating Album "${album.name}"`);
-			await this.validateReference(album.id, album.artist, 'Artist', 'Album', false);
-			await this.validateReference(album.id, album.series, 'Series', 'Album', true);
-			await this.validateCollection(album.id, album.folders, 'Folders', 'Album');
-			await this.validateCollection(album.id, album.tracks, 'Tracks', 'Album');
-			await this.validateCollection(album.id, album.genres, 'Genres', 'Album');
-			await this.validateCollection(album.id, album.roots, 'Roots', 'Album');
+			await Validator.validateReference(album.id, album.artist, 'Artist', 'Album', false);
+			await Validator.validateReference(album.id, album.series, 'Series', 'Album', true);
+			await Validator.validateCollection(album.id, album.folders, 'Folders', 'Album');
+			await Validator.validateCollection(album.id, album.tracks, 'Tracks', 'Album');
+			await Validator.validateCollection(album.id, album.genres, 'Genres', 'Album');
+			await Validator.validateCollection(album.id, album.roots, 'Roots', 'Album');
 		}
 	}
 
@@ -126,6 +126,6 @@ export class Validator {
 		await this.validateFolders(orm);
 		await this.validateTracks(orm);
 		await this.validatePlaylists(orm);
-		await this.validateStates(orm);
+		await Validator.validateStates(orm);
 	}
 }

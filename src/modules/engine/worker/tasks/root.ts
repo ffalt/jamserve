@@ -12,7 +12,7 @@ import {Folder} from '../../../../entity/folder/folder';
 @InRequestScope
 export class RootWorker extends BaseWorker {
 
-	private async validateRootPath(orm: Orm, dir: string): Promise<void> {
+	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
 		const d = dir.trim();
 		if (d[0] === '.') {
 			return Promise.reject(Error('Root Directory must be absolute'));
@@ -65,7 +65,7 @@ export class RootWorker extends BaseWorker {
 			const parents = await this.getParents(folder);
 			if (parents[0]) {
 				if (!rootMatch) {
-					const tracks = await this.buildMergeTracks(parents[0]);
+					const tracks = await RootWorker.buildMergeTracks(parents[0]);
 					rootMatch = {changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length};
 				}
 				const pathToChild = parents.slice(1).concat([folder]);
@@ -85,7 +85,7 @@ export class RootWorker extends BaseWorker {
 		const folder = pathToChild[0];
 		let node = merge.children.find(c => c.folder.id === folder.id);
 		if (!node) {
-			const tracks = await this.buildMergeTracks(folder);
+			const tracks = await RootWorker.buildMergeTracks(folder);
 			node = {
 				changed: true,
 				folder,
@@ -102,7 +102,7 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async create(orm: Orm, name: string, path: string, strategy: RootScanStrategy): Promise<Root> {
-		await this.validateRootPath(orm, path);
+		await RootWorker.validateRootPath(orm, path);
 		const root = orm.Root.create({name, path, strategy});
 		await orm.Root.persistAndFlush(root);
 		return root;
@@ -111,7 +111,7 @@ export class RootWorker extends BaseWorker {
 	async update(orm: Orm, root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<void> {
 		root.name = name;
 		if (root.path !== path) {
-			await this.validateRootPath(orm, path);
+			await RootWorker.validateRootPath(orm, path);
 			root.path = path;
 		}
 		root.strategy = strategy;
@@ -153,7 +153,7 @@ export class RootWorker extends BaseWorker {
 		return stat;
 	}
 
-	private async buildMergeTracks(folder: Folder): Promise<Array<OnDemandTrackMatch>> {
+	private static async buildMergeTracks(folder: Folder): Promise<Array<OnDemandTrackMatch>> {
 		const tracks = await folder.tracks.getItems();
 		const list: Array<OnDemandTrackMatch> = [];
 		for (const track of tracks) {

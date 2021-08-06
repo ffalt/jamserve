@@ -1,6 +1,6 @@
 import {EnumConfig} from '../definitions/types';
 import {getMetadataStorage} from '../metadata';
-
+/*
 export function getEnumValuesMap<T extends object>(enumObject: T): any {
 	const enumKeys = Object.keys(enumObject).filter(key => isNaN(parseInt(key, 10)));
 	return enumKeys.reduce<any>((map, key) => {
@@ -15,7 +15,7 @@ export function getEnumReverseValuesMap<T extends object>(enumObject: T): any {
 		return map;
 	}, {});
 }
-
+*/
 export function registerEnumType<T extends object>(enumObj: T, enumConfig: EnumConfig): void {
 	getMetadataStorage().collectEnumMetadata({
 		enumObj,
