@@ -14,8 +14,7 @@ import {Artwork} from '../../../entity/artwork/artwork';
 import {artWorkImageNameToType} from '../../../utils/artwork-type';
 import {ImageModule} from '../../image/image.module';
 import moment from 'moment';
-import {Genre} from '../../../entity/genre/genre';
-import {TrackTag} from '../../audio/audio.format';
+import {TrackUpdater} from './tasks/track';
 
 const log = logger('IO.Scan');
 
@@ -69,9 +68,10 @@ export interface MatchNode {
 
 export class WorkerScan {
 	root!: Root;
-	private genresCache: Array<Genre> = [];
+	trackUpdater: TrackUpdater;
 
 	constructor(private orm: Orm, private rootID: string, private audioModule: AudioModule, private imageModule: ImageModule, private changes: Changes) {
+		this.trackUpdater = new TrackUpdater(orm, audioModule, changes);
 	}
 
 	private async setArtworkValues(file: ScanFile, artwork: Artwork): Promise<void> {
@@ -103,32 +103,6 @@ export class WorkerScan {
 		this.changes.artworks.updated.add(artwork);
 	}
 
-	async findOrCreateGenres(tag: TrackTag): Promise<Array<Genre>> {
-		const names = tag.genres || [];
-		const genres = [];
-		for (const name of names) {
-			genres.push(await this.findOrCreateGenre(name));
-		}
-		return genres;
-	}
-
-	private async findOrCreateGenre(name: string): Promise<Genre> {
-		let genre = this.genresCache.find(g => g.name === name);
-		if (!genre) {
-			genre = await this.orm.Genre.findOne({where: {name}});
-			if (genre) {
-				this.genresCache.push(genre);
-			}
-		}
-		if (!genre) {
-			genre = this.orm.Genre.create({name});
-			this.orm.Genre.persistLater(genre);
-			this.genresCache.push(genre);
-			this.changes.genres.added.add(genre);
-		}
-		return genre;
-	}
-
 	static async buildTrackMatch(track: Track): Promise<MatchTrack> {
 		const tag = await track.tag.get();
 		return {
@@ -149,21 +123,10 @@ export class WorkerScan {
 	}
 
 	private async setTrackValues(file: ScanFile, track: Track): Promise<MatchTrack> {
-		const data = await this.audioModule.read(file.path);
-		const tag = this.orm.Tag.createByScan(data, file.path);
-		this.orm.Tag.persistLater(tag);
-		const oldTag = await track.tag.get();
-		if (oldTag) {
-			this.orm.Tag.removeLater(oldTag);
-		}
-		await track.tag.set(tag);
 		track.fileSize = file.size;
 		track.statCreated = file.ctime;
 		track.statModified = file.mtime;
-
-		const genres = await this.findOrCreateGenres(tag);
-		await track.genres.set(genres);
-
+		await this.trackUpdater.updateTrackValues(track, file.path);
 		this.orm.Track.persistLater(track);
 		return WorkerScan.buildTrackMatch(track);
 	}

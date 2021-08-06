@@ -10,24 +10,71 @@ import {BaseWorker} from './base';
 import {Track} from '../../../../entity/track/track';
 import {InRequestScope} from 'typescript-ioc';
 import {Orm} from '../../services/orm.service';
+import {AudioModule} from '../../../audio/audio.module';
+import {TrackTag} from '../../../audio/audio.format';
+import {Genre} from '../../../../entity/genre/genre';
+
+export class TrackUpdater {
+	private genresCache: Array<Genre> = [];
+
+	constructor(private orm: Orm, private audioModule: AudioModule, private changes: Changes) {
+	}
+
+	public async updateTrackValues(track: Track, filename: string): Promise<void> {
+		const data = await this.audioModule.read(filename);
+		const tag = this.orm.Tag.createByScan(data, filename);
+		this.orm.Tag.persistLater(tag);
+		const oldTag = await track.tag.get();
+		if (oldTag) {
+			this.orm.Tag.removeLater(oldTag);
+		}
+		await track.tag.set(tag);
+		const genres = await this.findOrCreateGenres(tag);
+		const removedGenreIDs = (await track.genres.getIDs()).filter(id => !genres.find(g => g.id == id));
+		this.changes.genres.updated.appendIDs(removedGenreIDs);
+		await track.genres.set(genres);
+	}
+
+	async findOrCreateGenres(tag: TrackTag): Promise<Array<Genre>> {
+		const names = tag.genres || [];
+		const genres = [];
+		for (const name of names) {
+			genres.push(await this.findOrCreateGenre(name));
+		}
+		return genres;
+	}
+
+	private async findOrCreateGenre(name: string): Promise<Genre> {
+		let genre = this.genresCache.find(g => g.name === name);
+		if (!genre) {
+			genre = await this.orm.Genre.findOne({where: {name}});
+			if (genre) {
+				this.genresCache.push(genre);
+			}
+		}
+		if (!genre) {
+			genre = this.orm.Genre.create({name});
+			this.orm.Genre.persistLater(genre);
+			this.genresCache.push(genre);
+			this.changes.genres.added.add(genre);
+		}
+		return genre;
+	}
+
+}
+
 
 @InRequestScope
 export class TrackWorker extends BaseWorker {
 
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: RawTag }>, changes: Changes): Promise<void> {
+		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
 		for (const writeTag of tags) {
 			const track = await orm.Track.findOneByID(writeTag.trackID);
 			if (track) {
 				const filename = path.join(track.path, track.fileName);
 				await this.audioModule.writeRawTag(filename, writeTag.tag);
-				const oldTag = await track.tag.get();
-				if (oldTag) {
-					orm.Tag.removeLater(oldTag);
-				}
-				const result = await this.audioModule.read(filename);
-				const tag = orm.Tag.createByScan(result, filename);
-				orm.Tag.persistLater(tag);
-				await track.tag.set(tag);
+				await trackUpdater.updateTrackValues(track, filename);
 				await TrackWorker.updateTrackStats(track);
 				orm.Track.persistLater(track);
 				changes.tracks.updated.add(track);
