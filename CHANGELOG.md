@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.3](https://github.com/ffalt/jamserve/compare/v0.5.2...v0.5.3) (2021-08-06)
+
+
+### Bug Fixes
+
+* **albumtype:** set various artist albums to albumtype compilation ([3719e37](https://github.com/ffalt/jamserve/commit/3719e37bab5888a72a477eab422d15f4b3bb1cab))
+* **album:** update musicbrainzIDs on changes ([396f023](https://github.com/ffalt/jamserve/commit/396f0237fdf6b389eb6b24b22c9136eacaa308e4))
+* **genres:** update genres for removed audio files ([094e272](https://github.com/ffalt/jamserve/commit/094e2721feb12862d15ab5106280b747e9e05814))
+* **model:** add artist root folder to artist.folders ([2e4ef82](https://github.com/ffalt/jamserve/commit/2e4ef82a012c121b6943942d5987ac44c9bc06c9))
+* **track:** update genres on track tag change ([4b1f1ed](https://github.com/ffalt/jamserve/commit/4b1f1eda5ed3c1364f63e1e861cca3b88a24101d))
+
 ### [0.5.2](https://github.com/ffalt/jamserve/compare/v0.5.1...v0.5.2) (2021-08-04)
 
 
