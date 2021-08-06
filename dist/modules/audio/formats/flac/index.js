@@ -9,7 +9,7 @@ export class Flac {
             const processor = new FlacProcessorStream(true, true);
             processor.on('postprocess', (mdb) => {
                 if (mdb.type === 0) {
-                    result.media = this.formatMediaBlock(mdb);
+                    result.media = Flac.formatMediaBlock(mdb);
                 }
                 else if (mdb.type === 4) {
                     result.comment = this.formatMediaComment(mdb);
@@ -17,7 +17,7 @@ export class Flac {
                 else if (mdb.type === 6) {
                     if (mdb.pictureData) {
                         result.pictures = result.pictures || [];
-                        result.pictures.push(this.formatMediaPicture(mdb));
+                        result.pictures.push(Flac.formatMediaPicture(mdb));
                     }
                 }
             });
@@ -114,7 +114,7 @@ export class Flac {
         });
         return { vendor: mdb.vendor, tag };
     }
-    formatMediaBlock(mdb) {
+    static formatMediaBlock(mdb) {
         return {
             duration: mdb.duration,
             channels: mdb.channels + 1,
@@ -127,7 +127,7 @@ export class Flac {
             maxFrameSize: mdb.maxFrameSize
         };
     }
-    formatMediaPicture(mdb) {
+    static formatMediaPicture(mdb) {
         return {
             pictureType: mdb.pictureType,
             mimeType: mdb.mimeType,

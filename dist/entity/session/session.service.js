@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var SessionService_1;
 import { OrmService } from '../../modules/engine/services/orm.service';
 import { SessionMode } from '../../types/enums';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import seq from 'sequelize';
-let SessionService = class SessionService {
+let SessionService = SessionService_1 = class SessionService {
     constructor() {
         this.events = [];
         this.jwthCache = [];
@@ -49,7 +50,7 @@ let SessionService = class SessionService {
     async all() {
         const orm = this.ormService.fork();
         const sessions = await orm.Session.all();
-        return sessions.map(session => this.toExpress(session));
+        return sessions.map(session => SessionService_1.toExpress(session));
     }
     async getSession(sessionID) {
         const orm = this.ormService.fork();
@@ -122,11 +123,11 @@ let SessionService = class SessionService {
     async get(sessionID) {
         const session = await this.getSession(sessionID);
         if (session) {
-            return this.toExpress(session);
+            return SessionService_1.toExpress(session);
         }
         return;
     }
-    toExpress(session) {
+    static toExpress(session) {
         return {
             cookie: JSON.parse(session.cookie),
             client: session.client,
@@ -141,7 +142,7 @@ __decorate([
     Inject,
     __metadata("design:type", OrmService)
 ], SessionService.prototype, "ormService", void 0);
-SessionService = __decorate([
+SessionService = SessionService_1 = __decorate([
     InRequestScope
 ], SessionService);
 export { SessionService };

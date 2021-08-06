@@ -5,6 +5,7 @@ import path from 'path';
 import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils';
 import { artWorkImageNameToType } from '../../../utils/artwork-type';
 import moment from 'moment';
+import { TrackUpdater } from './tasks/track';
 const log = logger('IO.Scan');
 export class OnDemandTrackMatch {
 }
@@ -31,7 +32,7 @@ export class WorkerScan {
         this.audioModule = audioModule;
         this.imageModule = imageModule;
         this.changes = changes;
-        this.genresCache = [];
+        this.trackUpdater = new TrackUpdater(orm, audioModule, changes);
     }
     async setArtworkValues(file, artwork) {
         const name = path.basename(file.path);
@@ -59,30 +60,6 @@ export class WorkerScan {
         await this.setArtworkValues(file, artwork);
         this.changes.artworks.updated.add(artwork);
     }
-    async findOrCreateGenres(tag) {
-        const names = tag.genres || [];
-        const genres = [];
-        for (const name of names) {
-            genres.push(await this.findOrCreateGenre(name));
-        }
-        return genres;
-    }
-    async findOrCreateGenre(name) {
-        let genre = this.genresCache.find(g => g.name === name);
-        if (!genre) {
-            genre = await this.orm.Genre.findOne({ where: { name } });
-            if (genre) {
-                this.genresCache.push(genre);
-            }
-        }
-        if (!genre) {
-            genre = this.orm.Genre.create({ name });
-            this.orm.Genre.persistLater(genre);
-            this.genresCache.push(genre);
-            this.changes.genres.added.add(genre);
-        }
-        return genre;
-    }
     static async buildTrackMatch(track) {
         const tag = await track.tag.get();
         return {
@@ -102,19 +79,10 @@ export class WorkerScan {
         };
     }
     async setTrackValues(file, track) {
-        const data = await this.audioModule.read(file.path);
-        const tag = this.orm.Tag.createByScan(data, file.path);
-        this.orm.Tag.persistLater(tag);
-        const oldTag = await track.tag.get();
-        if (oldTag) {
-            this.orm.Tag.removeLater(oldTag);
-        }
-        await track.tag.set(tag);
         track.fileSize = file.size;
         track.statCreated = file.ctime;
         track.statModified = file.mtime;
-        const genres = await this.findOrCreateGenres(tag);
-        await track.genres.set(genres);
+        await this.trackUpdater.updateTrackValues(track, file.path);
         this.orm.Track.persistLater(track);
         return WorkerScan.buildTrackMatch(track);
     }
@@ -161,7 +129,7 @@ export class WorkerScan {
         this.orm.Folder.persistLater(folder);
         return folder;
     }
-    createNode(dir, folder) {
+    static createNode(dir, folder) {
         return {
             scan: dir,
             folder,
@@ -174,7 +142,7 @@ export class WorkerScan {
     async buildNode(dir, parent) {
         const folder = await this.buildFolder(dir, parent);
         this.changes.folders.added.add(folder);
-        const result = this.createNode(dir, folder);
+        const result = WorkerScan.createNode(dir, folder);
         result.changed = true;
         for (const subDir of dir.directories) {
             result.children.push(await this.buildNode(subDir, folder));
@@ -208,7 +176,7 @@ export class WorkerScan {
     }
     async scanNode(dir, folder) {
         log.debug('Matching:', dir.path);
-        const result = this.createNode(dir, folder);
+        const result = WorkerScan.createNode(dir, folder);
         await this.scanSubfolders(folder, dir, result);
         await this.scanTracks(dir, folder, result);
         await this.scanArtworks(dir, folder, result);

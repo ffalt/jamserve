@@ -1,13 +1,4 @@
 import cors from 'cors';
-export function registerPublicCORS(_) {
-    return cors({
-        preflightContinue: false,
-        credentials: true,
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        origin: true,
-        methods: ['GET', 'POST']
-    });
-}
 export function useAuthenticatedCors(configService) {
     const origins = configService.env.session.allowedCookieDomains || [];
     const corsOptionsDelegate = (req, callback) => {

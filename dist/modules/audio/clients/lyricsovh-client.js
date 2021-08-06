@@ -12,7 +12,7 @@ export class LyricsOVHClient extends WebserviceClient {
         return super.parseResult(response);
     }
     async search(artistName, songName) {
-        const url = `https://api.lyrics.ovh/v1/${this.cleanString(artistName)}/${this.cleanString(songName)}`;
+        const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
         log.info('requesting', url);
         const data = await this.getJson(url);
         if (!data || !data.lyrics) {
@@ -20,7 +20,7 @@ export class LyricsOVHClient extends WebserviceClient {
         }
         return { lyrics: data.lyrics, source: url };
     }
-    cleanString(s) {
+    static cleanString(s) {
         return encodeURIComponent(s
             .replace(/[’´`]/g, '\'')
             .replace(/[():]/g, ' ')

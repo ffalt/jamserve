@@ -60,7 +60,7 @@ export class Orm {
         this.User = em.getRepository(User);
         this.Genre = em.getRepository(Genre);
     }
-    async findInReposTypes(id, repos) {
+    static async findInReposTypes(id, repos) {
         for (const repo of repos) {
             const obj = await repo.findOneByID(id);
             if (obj) {
@@ -70,7 +70,7 @@ export class Orm {
         return;
     }
     async findInStreamTypes(id) {
-        return this.findInReposTypes(id, [this.Track, this.Episode]);
+        return Orm.findInReposTypes(id, [this.Track, this.Episode]);
     }
     async findListInStreamTypes(ids) {
         const list = [];
@@ -109,7 +109,7 @@ export class Orm {
         ].find(repo => repo.objType === destType);
     }
     async findInImageTypes(id) {
-        return this.findInReposTypes(id, [
+        return Orm.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -126,7 +126,7 @@ export class Orm {
         ]);
     }
     async findInDownloadTypes(id) {
-        return this.findInReposTypes(id, [
+        return Orm.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -139,7 +139,7 @@ export class Orm {
         ]);
     }
     async findInStateTypes(id) {
-        return this.findInReposTypes(id, [
+        return Orm.findInReposTypes(id, [
             this.Album,
             this.Artist,
             this.Artwork,
@@ -155,7 +155,7 @@ export class Orm {
         ]);
     }
     async findInWaveformTypes(id) {
-        return this.findInReposTypes(id, [this.Track, this.Episode]);
+        return Orm.findInReposTypes(id, [this.Track, this.Episode]);
     }
 }
 let OrmService = class OrmService {

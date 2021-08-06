@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var ChangesWorker_1;
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { BaseWorker } from './tasks/base';
 import { OrmService } from '../services/orm.service';
@@ -15,7 +16,7 @@ import { Changes, IdSet } from './changes';
 import { logger } from '../../../utils/logger';
 import moment from 'moment';
 const log = logger('IO.Changes');
-let ChangesWorker = class ChangesWorker extends BaseWorker {
+let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     async start(rootID) {
         const orm = this.ormService.fork(true);
         const root = await orm.Root.findOneOrFailByID(rootID);
@@ -24,8 +25,8 @@ let ChangesWorker = class ChangesWorker extends BaseWorker {
     async finish(orm, changes, root) {
         const metaMerger = new MetaMerger(orm, changes, root.id);
         await metaMerger.mergeMeta();
-        await this.mergeDependendRemovals(orm, changes);
-        await this.mergeRemovals(orm, changes);
+        await ChangesWorker_1.mergeDependendRemovals(orm, changes);
+        await ChangesWorker_1.mergeRemovals(orm, changes);
         await this.cleanCacheFiles(changes);
         changes.end = Date.now();
         this.logChanges(changes);
@@ -55,7 +56,7 @@ let ChangesWorker = class ChangesWorker extends BaseWorker {
             await this.audioModule.clearCacheByIDs(trackIDs);
         }
     }
-    async mergeDependendRemovals(orm, changes) {
+    static async mergeDependendRemovals(orm, changes) {
         const stateCleanIds = new IdSet();
         const trackIDs = changes.tracks.removed.ids();
         stateCleanIds.appendIDs(trackIDs);
@@ -85,7 +86,7 @@ let ChangesWorker = class ChangesWorker extends BaseWorker {
             await orm.em.flush();
         }
     }
-    async mergeRemovals(orm, changes) {
+    static async mergeRemovals(orm, changes) {
         await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
         await orm.Artwork.removeLaterByIDs(changes.artworks.removed.ids());
         await orm.Folder.removeLaterByIDs(changes.folders.removed.ids());
@@ -125,7 +126,7 @@ __decorate([
     Inject,
     __metadata("design:type", OrmService)
 ], ChangesWorker.prototype, "ormService", void 0);
-ChangesWorker = __decorate([
+ChangesWorker = ChangesWorker_1 = __decorate([
     InRequestScope
 ], ChangesWorker);
 export { ChangesWorker };

@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var ImageModule_1;
 import fse from 'fs-extra';
 import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
@@ -25,7 +26,7 @@ import { ImageFormatType } from '../../types/enums';
 const log = logger('Images');
 sharp.cache(false);
 sharp.simd(false);
-let ImageModule = class ImageModule {
+let ImageModule = ImageModule_1 = class ImageModule {
     constructor() {
         this.format = 'png';
         this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
@@ -83,9 +84,9 @@ let ImageModule = class ImageModule {
         if (!SupportedWriteImageFormat.includes(fileFormat)) {
             fileFormat = this.format;
         }
-        return this.getImageAs(filename, fileFormat, size, name);
+        return ImageModule_1.getImageAs(filename, fileFormat, size, name);
     }
-    async getImageAs(filename, format, size, name) {
+    static async getImageAs(filename, format, size, name) {
         const fileFormat = fileSuffix(filename);
         const exists = await fse.pathExists(filename);
         if (!exists) {
@@ -173,7 +174,7 @@ let ImageModule = class ImageModule {
             return this.cache.get(id, { size, format }, async (cachefile) => {
                 const name = path.basename(cachefile);
                 const result = format ?
-                    await this.getImageAs(filename, format, size, name) :
+                    await ImageModule_1.getImageAs(filename, format, size, name) :
                     await this.getImage(filename, size, name);
                 if (result.buffer) {
                     log.debug('Writing image cache file', cachefile);
@@ -210,7 +211,7 @@ let ImageModule = class ImageModule {
         const avatar = await avatarGenerator.generate(seed);
         await fse.writeFile(destination, avatar);
     }
-    async formatImageInfo(sharpy) {
+    static async formatImageInfo(sharpy) {
         try {
             const metadata = await sharpy.metadata();
             return {
@@ -226,17 +227,17 @@ let ImageModule = class ImageModule {
         }
     }
     async getImageInfo(filename) {
-        return this.formatImageInfo(sharp(filename, { failOnError: false }));
+        return ImageModule_1.formatImageInfo(sharp(filename, { failOnError: false }));
     }
     async getImageInfoBuffer(bin) {
-        return this.formatImageInfo(sharp(bin, { failOnError: false }));
+        return ImageModule_1.formatImageInfo(sharp(bin, { failOnError: false }));
     }
 };
 __decorate([
     Inject,
     __metadata("design:type", ConfigService)
 ], ImageModule.prototype, "configService", void 0);
-ImageModule = __decorate([
+ImageModule = ImageModule_1 = __decorate([
     InRequestScope,
     __metadata("design:paramtypes", [])
 ], ImageModule);

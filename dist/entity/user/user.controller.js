@@ -10,13 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var UserController_1;
 import { User, UserPage } from './user.model';
 import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest';
 import { UserRole } from '../../types/enums';
 import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args';
 import { randomString } from '../../utils/random';
 import { PageArgs } from '../base/base.args';
-let UserController = class UserController {
+let UserController = UserController_1 = class UserController {
     async id(id, userArgs, { orm, engine, user }) {
         return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
     }
@@ -24,11 +25,11 @@ let UserController = class UserController {
         return await orm.User.searchTransformFilter(filter, [order], page, user, o => engine.transform.User.user(orm, o, userArgs, user));
     }
     async create(args, { orm, engine, user }) {
-        await this.validatePassword(orm, engine, args.password, user);
+        await UserController_1.validatePassword(orm, engine, args.password, user);
         return engine.transform.User.user(orm, await engine.user.create(orm, args), {}, user);
     }
     async update(id, args, { orm, engine, user }) {
-        await this.validatePassword(orm, engine, args.password, user);
+        await UserController_1.validatePassword(orm, engine, args.password, user);
         const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
         if (user.id === id) {
             if (!args.roleAdmin) {
@@ -56,27 +57,27 @@ let UserController = class UserController {
         return engine.user.setUserEmail(orm, u, args.email);
     }
     async generateUserImage(id, args, { orm, engine, user }) {
-        const u = await this.validateUserOrAdmin(orm, id, user);
+        const u = await UserController_1.validateUserOrAdmin(orm, id, user);
         await engine.user.generateAvatar(u, args.seed || randomString(42));
     }
     async uploadUserImage(id, file, { orm, engine, user }) {
-        const u = await this.validateUserOrAdmin(orm, id, user);
+        const u = await UserController_1.validateUserOrAdmin(orm, id, user);
         return engine.user.setUserImage(u, file.name);
     }
-    async validatePassword(orm, engine, password, user) {
+    static async validatePassword(orm, engine, password, user) {
         const result = await engine.user.auth(orm, user.name, password);
         if (!result) {
             return Promise.reject(UnauthError());
         }
     }
     async checkUserAccess(orm, engine, userID, password, user) {
-        await this.validatePassword(orm, engine, password, user);
+        await UserController_1.validatePassword(orm, engine, password, user);
         if (userID === user.id || user.roleAdmin) {
             return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
         }
         return Promise.reject(UnauthError());
     }
-    async validateUserOrAdmin(orm, id, user) {
+    static async validateUserOrAdmin(orm, id, user) {
         if (id === user.id) {
             return user;
         }
@@ -170,7 +171,7 @@ __decorate([
     __metadata("design:paramtypes", [String, UploadFile, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "uploadUserImage", null);
-UserController = __decorate([
+UserController = UserController_1 = __decorate([
     Controller('/user', { tags: ['User'] })
 ], UserController);
 export { UserController };

@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var MetaDataService_1;
 import moment from 'moment';
 import path from 'path';
 import { AudioModule } from '../../modules/audio/audio.module';
@@ -21,14 +22,14 @@ import seq from 'sequelize';
 import { InvalidParamError } from '../../modules/rest';
 import fetch from 'node-fetch';
 const log = logger('Metadata');
-let MetaDataService = class MetaDataService {
+let MetaDataService = MetaDataService_1 = class MetaDataService {
     constructor() {
         this.extInfo = new MetadataServiceExtendedInfo(this);
         this.similarArtists = new MetadataServiceSimilarArtists(this);
         this.similarTracks = new MetadataServiceSimilarTracks(this);
         this.topTracks = new MetadataServiceTopTracks(this);
     }
-    async addToStore(orm, name, dataType, data) {
+    static async addToStore(orm, name, dataType, data) {
         const item = await orm.MetaData.create({
             name,
             dataType,
@@ -52,7 +53,7 @@ let MetaDataService = class MetaDataService {
             return JSON.parse(result.data);
         }
         const data = (await generate()) || {};
-        await this.addToStore(orm, name, dataType, JSON.stringify(data));
+        await MetaDataService_1.addToStore(orm, name, dataType, JSON.stringify(data));
         return data;
     }
     async musicbrainzSearch(orm, type, query) {
@@ -214,7 +215,7 @@ __decorate([
     Inject,
     __metadata("design:type", AudioModule)
 ], MetaDataService.prototype, "audioModule", void 0);
-MetaDataService = __decorate([
+MetaDataService = MetaDataService_1 = __decorate([
     InRequestScope
 ], MetaDataService);
 export { MetaDataService };

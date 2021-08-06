@@ -4,11 +4,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var PlaylistService_1;
 import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums';
 import { NotFoundError } from '../../modules/rest';
-let PlaylistService = class PlaylistService {
-    async getDuration(media) {
+let PlaylistService = PlaylistService_1 = class PlaylistService {
+    static async getDuration(media) {
         switch (media.objType) {
             case DBObjectType.episode: {
                 const episodeTag = await media.obj.tag.get();
@@ -38,7 +39,7 @@ let PlaylistService = class PlaylistService {
             if (!media) {
                 return Promise.reject(NotFoundError());
             }
-            duration += await this.getDuration(media);
+            duration += await PlaylistService_1.getDuration(media);
             const entry = orm.PlaylistEntry.create({ position });
             await entry.playlist.set(playlist);
             await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
@@ -64,7 +65,7 @@ let PlaylistService = class PlaylistService {
             await entry.playlist.set(playlist);
             await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
             await entry.episode.set(media.objType === DBObjectType.episode ? media.obj : undefined);
-            duration += await this.getDuration(media);
+            duration += await PlaylistService_1.getDuration(media);
             position++;
             orm.PlaylistEntry.persistLater(entry);
         }
@@ -83,7 +84,7 @@ let PlaylistService = class PlaylistService {
         await orm.Playlist.removeAndFlush(playlist);
     }
 };
-PlaylistService = __decorate([
+PlaylistService = PlaylistService_1 = __decorate([
     InRequestScope
 ], PlaylistService);
 export { PlaylistService };

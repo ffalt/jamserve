@@ -57,7 +57,7 @@ let ImageService = ImageService_1 = class ImageService {
     static getCoverArtTextPodcast(podcast) {
         return podcast.title || podcast.url;
     }
-    async getCoverArtText(o, type) {
+    static async getCoverArtText(o, type) {
         switch (type) {
             case DBObjectType.track:
                 return await ImageService_1.getCoverArtTextTrack(o);
@@ -111,7 +111,7 @@ let ImageService = ImageService_1 = class ImageService {
         return await this.getObjImageByType(orm, o, type, size, format) ?? await this.paintImage(o, type, size, format);
     }
     async paintImage(obj, type, size, format) {
-        const s = await this.getCoverArtText(obj, type);
+        const s = await ImageService_1.getCoverArtText(obj, type);
         return this.imageModule.paint(s, size || 128, format);
     }
 };

@@ -16,14 +16,7 @@ let ArtistService = class ArtistService {
         return (artist.albumTypes.length > 0 && artist.mbArtistID !== MUSICBRAINZ_VARIOUS_ARTISTS_ID);
     }
     async getArtistFolder(orm, artist) {
-        let p = await orm.Folder.findOneFilter({ artistIDs: [artist.id] });
-        while (p) {
-            if (p.folderType === FolderType.artist) {
-                return p;
-            }
-            p = await p.parent.get();
-        }
-        return;
+        return orm.Folder.findOneFilter({ artistIDs: [artist.id], folderTypes: [FolderType.artist] });
     }
     async getImage(orm, artist, size, format) {
         if (this.canHaveArtistImage(artist)) {

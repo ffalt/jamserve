@@ -108,7 +108,7 @@ class OpenApiBuilder {
         };
         return { path, o };
     }
-    buildOpenApiBase(version) {
+    static buildOpenApiBase(version) {
         return {
             openapi: '3.0.0',
             info: {
@@ -144,7 +144,7 @@ class OpenApiBuilder {
             }
         }
     }
-    buildExtensions(openapi, schemas) {
+    static buildExtensions(openapi, schemas) {
         const apiTags = new Set();
         const tags = [];
         const tagNames = [];
@@ -188,7 +188,7 @@ class OpenApiBuilder {
         }
     }
     build() {
-        const openapi = this.buildOpenApiBase(JAMAPI_VERSION);
+        const openapi = OpenApiBuilder.buildOpenApiBase(JAMAPI_VERSION);
         const schemas = {
             'ID': { type: 'string', format: 'uuid' },
             'JSON': { type: 'object' }
@@ -196,7 +196,7 @@ class OpenApiBuilder {
         this.buildControllers(schemas, openapi);
         openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
         if (this.extended) {
-            this.buildExtensions(openapi, schemas);
+            OpenApiBuilder.buildExtensions(openapi, schemas);
         }
         return openapi;
     }

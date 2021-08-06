@@ -137,9 +137,6 @@ let EpisodeService = class EpisodeService {
         }
         return;
     }
-    async countEpisodes(orm, podcastID) {
-        return await orm.Episode.count({ where: { podcast: podcastID } });
-    }
 };
 __decorate([
     Inject,

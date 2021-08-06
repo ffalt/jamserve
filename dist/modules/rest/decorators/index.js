@@ -2,7 +2,6 @@ export * from './BodyParam';
 export * from './BodyParams';
 export * from './Controller';
 export * from './Ctx';
-export * from './CurrentUser';
 export * from './Get';
 export * from './ObjField';
 export * from './ObjParamsType';

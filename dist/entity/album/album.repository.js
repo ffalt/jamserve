@@ -29,11 +29,11 @@ export class AlbumRepository extends BaseRepository {
             case AlbumOrderFields.seriesNr:
                 return this.seriesNrOrder(direction);
             case AlbumOrderFields.default:
-                return this.defaultOrder(direction);
+                return AlbumRepository.defaultOrder(direction);
         }
         return [];
     }
-    defaultOrder(direction) {
+    static defaultOrder(direction) {
         return [
             ['artistORM', 'name', direction],
             ['albumType', direction],

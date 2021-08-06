@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AuthController_1;
 import { Session } from '../session/session.model';
 import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest';
 import passport from 'passport';
@@ -19,7 +20,7 @@ import { CredentialsArgs } from './auth.args';
 import { UserRole } from '../../types/enums';
 import { logger } from '../../utils/logger';
 const log = logger('AuthController');
-let AuthController = class AuthController {
+let AuthController = AuthController_1 = class AuthController {
     async loginUser(req, res, next) {
         return new Promise((resolve, reject) => {
             passport.authenticate('local', (err, user) => {
@@ -41,7 +42,7 @@ let AuthController = class AuthController {
     async authenticate(credentials, req, res, next, engine) {
         const user = await this.loginUser(req, res, next);
         await engine.rateLimit.loginSlowDownReset(req);
-        return this.buildSessionResult(req, credentials, user, engine);
+        return AuthController_1.buildSessionResult(req, credentials, user, engine);
     }
     async login(credentials, { engine, req, res, next }) {
         return new Promise((resolve, reject) => {
@@ -62,7 +63,7 @@ let AuthController = class AuthController {
             });
         });
     }
-    buildSessionResult(req, credentials, user, engine) {
+    static buildSessionResult(req, credentials, user, engine) {
         const client = req.body.client || 'Unknown Client';
         const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
         if (req.session) {
@@ -108,7 +109,7 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
-AuthController = __decorate([
+AuthController = AuthController_1 = __decorate([
     Controller('/auth', { tags: ['Access'] })
 ], AuthController);
 export { AuthController };

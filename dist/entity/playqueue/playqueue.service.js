@@ -4,11 +4,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var PlayQueueService_1;
 import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums';
 import { NotFoundError } from '../../modules/rest';
-let PlayQueueService = class PlayQueueService {
-    async getDuration(media) {
+let PlayQueueService = PlayQueueService_1 = class PlayQueueService {
+    static async getDuration(media) {
         switch (media.objType) {
             case DBObjectType.episode: {
                 const episodeTag = await media.obj.tag.get();
@@ -56,7 +57,7 @@ let PlayQueueService = class PlayQueueService {
             entry.position = position;
             await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
             await entry.episode.set(media.objType === DBObjectType.episode ? media.obj : undefined);
-            duration += await this.getDuration(media);
+            duration += await PlayQueueService_1.getDuration(media);
             position++;
             orm.PlayQueueEntry.persistLater(entry);
         }
@@ -71,7 +72,7 @@ let PlayQueueService = class PlayQueueService {
         await orm.PlayQueue.removeByQueryAndFlush({ where: { user: user.id } });
     }
 };
-PlayQueueService = __decorate([
+PlayQueueService = PlayQueueService_1 = __decorate([
     InRequestScope
 ], PlayQueueService);
 export { PlayQueueService };

@@ -31,10 +31,6 @@ export function mapManagedToSource(instance) {
         instance._source.updatedAt = instance.updatedAt;
     }
 }
-export async function saveManagedEntity(instance) {
-    mapManagedToSource(instance);
-    await instance._source.save();
-}
 export function cleanManagedEntityRelations(instance) {
     for (const field of instance._meta.fields) {
         if (field.isRelation) {

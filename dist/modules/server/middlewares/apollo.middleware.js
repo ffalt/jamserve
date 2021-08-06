@@ -107,17 +107,6 @@ export async function buildGraphQlSchema() {
         authChecker: customAuthChecker
     });
 }
-const apolloLogger = {
-    willSendResponse(requestContext) {
-        const { graphqlResponse } = requestContext;
-        if (graphqlResponse.errors) {
-            graphqlResponse.errors.forEach((err) => {
-                console.error(err);
-            });
-        }
-        return requestContext;
-    }
-};
 let ApolloMiddleware = class ApolloMiddleware {
     async playground() {
         const api = express.Router();
@@ -130,7 +119,19 @@ let ApolloMiddleware = class ApolloMiddleware {
             schema: this.schema,
             debug: true,
             plugins: [
-                () => apolloLogger,
+                {
+                    async requestDidStart(_) {
+                        return {
+                            async willSendResponse(requestContext) {
+                                if (requestContext.errors) {
+                                    requestContext.errors.forEach((err) => {
+                                        console.error(err);
+                                    });
+                                }
+                            }
+                        };
+                    }
+                },
                 ApolloServerPluginLandingPageDisabled
             ],
             introspection: true,

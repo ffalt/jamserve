@@ -4,13 +4,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var RootWorker_1;
 import { DirScanner } from '../../../../utils/scan-dir';
 import { ObjLoadTrackMatch, WorkerScan } from '../scan';
 import { BaseWorker } from './base';
 import { InRequestScope } from 'typescript-ioc';
 import { WorkerMergeScan } from '../merge-scan';
-let RootWorker = class RootWorker extends BaseWorker {
-    async validateRootPath(orm, dir) {
+let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
+    static async validateRootPath(orm, dir) {
         const d = dir.trim();
         if (d[0] === '.') {
             return Promise.reject(Error('Root Directory must be absolute'));
@@ -59,7 +60,7 @@ let RootWorker = class RootWorker extends BaseWorker {
             const parents = await this.getParents(folder);
             if (parents[0]) {
                 if (!rootMatch) {
-                    const tracks = await this.buildMergeTracks(parents[0]);
+                    const tracks = await RootWorker_1.buildMergeTracks(parents[0]);
                     rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
                 }
                 const pathToChild = parents.slice(1).concat([folder]);
@@ -76,7 +77,7 @@ let RootWorker = class RootWorker extends BaseWorker {
         const folder = pathToChild[0];
         let node = merge.children.find(c => c.folder.id === folder.id);
         if (!node) {
-            const tracks = await this.buildMergeTracks(folder);
+            const tracks = await RootWorker_1.buildMergeTracks(folder);
             node = {
                 changed: true,
                 folder,
@@ -92,7 +93,7 @@ let RootWorker = class RootWorker extends BaseWorker {
         }
     }
     async create(orm, name, path, strategy) {
-        await this.validateRootPath(orm, path);
+        await RootWorker_1.validateRootPath(orm, path);
         const root = orm.Root.create({ name, path, strategy });
         await orm.Root.persistAndFlush(root);
         return root;
@@ -100,7 +101,7 @@ let RootWorker = class RootWorker extends BaseWorker {
     async update(orm, root, name, path, strategy) {
         root.name = name;
         if (root.path !== path) {
-            await this.validateRootPath(orm, path);
+            await RootWorker_1.validateRootPath(orm, path);
             root.path = path;
         }
         root.strategy = strategy;
@@ -139,7 +140,7 @@ let RootWorker = class RootWorker extends BaseWorker {
         });
         return stat;
     }
-    async buildMergeTracks(folder) {
+    static async buildMergeTracks(folder) {
         const tracks = await folder.tracks.getItems();
         const list = [];
         for (const track of tracks) {
@@ -148,7 +149,7 @@ let RootWorker = class RootWorker extends BaseWorker {
         return list;
     }
 };
-RootWorker = __decorate([
+RootWorker = RootWorker_1 = __decorate([
     InRequestScope
 ], RootWorker);
 export { RootWorker };

@@ -153,13 +153,6 @@ export class BaseRepository extends EntityRepository {
         });
         return { groups };
     }
-    async findOneIDorFail(options) {
-        const result = await this.findOneID(options);
-        if (!result) {
-            throw NotFoundError();
-        }
-        return result;
-    }
     async findList(list, seed, options, userID) {
         const result = await this.getListIDs(list, seed, options, userID);
         return {

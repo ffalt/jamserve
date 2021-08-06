@@ -54,7 +54,7 @@ export class GpodderClient extends WebserviceClient {
         const data = (await this.getJson(url)) || [];
         return data.map(d => this.transform(d));
     }
-    ensureHTTPS(url) {
+    static ensureHTTPS(url) {
         if (url && url.toLowerCase().startsWith('http:')) {
             return 'https:' + url.slice(5);
         }
@@ -68,8 +68,8 @@ export class GpodderClient extends WebserviceClient {
     transform(d) {
         return {
             ...d,
-            scaled_logo_url: this.ensureHTTPS(d.scaled_logo_url),
-            mygpo_link: this.ensureHTTPS(d.mygpo_link)
+            scaled_logo_url: GpodderClient.ensureHTTPS(d.scaled_logo_url),
+            mygpo_link: GpodderClient.ensureHTTPS(d.mygpo_link)
         };
     }
 }

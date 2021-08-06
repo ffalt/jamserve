@@ -47,13 +47,13 @@ export class ExpressSessionStore extends Store {
     async clearCache() {
         this.cache.clear();
     }
-    expired(data) {
+    static expired(data) {
         return (data.cookie.expires || 0) < Date.now();
     }
     async _get(sid) {
         const result = this.cache.get(sid);
         if (result) {
-            if (this.expired(result)) {
+            if (ExpressSessionStore.expired(result)) {
                 await this.sessionService.remove(sid);
                 return;
             }

@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SettingsService_1;
 import { JAMSERVE_VERSION } from '../../version';
 import { InRequestScope } from 'typescript-ioc';
 export const defaultEngineSettings = {
@@ -21,7 +22,7 @@ export const defaultEngineSettings = {
         enabled: false
     }
 };
-let SettingsService = class SettingsService {
+let SettingsService = SettingsService_1 = class SettingsService {
     constructor() {
         this.settings = { ...defaultEngineSettings };
         this.settingsChangeListeners = [];
@@ -30,22 +31,22 @@ let SettingsService = class SettingsService {
         return this.settings;
     }
     async settingsVersion(orm) {
-        const settingsStore = await this.getSettings(orm);
+        const settingsStore = await SettingsService_1.getSettings(orm);
         return settingsStore.version;
     }
     async saveSettings(orm) {
-        const settingsStore = await this.getSettings(orm);
+        const settingsStore = await SettingsService_1.getSettings(orm);
         settingsStore.version = JAMSERVE_VERSION;
         settingsStore.data = JSON.stringify(this.settings);
         await orm.Settings.persistAndFlush(settingsStore);
     }
     async loadSettings(orm) {
-        const settingsStore = await this.getSettings(orm);
+        const settingsStore = await SettingsService_1.getSettings(orm);
         if (settingsStore) {
             this.settings = JSON.parse(settingsStore.data);
         }
     }
-    async getSettings(orm) {
+    static async getSettings(orm) {
         let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });
         if (!settingsStore) {
             settingsStore = orm.Settings.create({
@@ -73,7 +74,7 @@ let SettingsService = class SettingsService {
         this.settingsChangeListeners = this.settingsChangeListeners.filter(l => l !== listener);
     }
 };
-SettingsService = __decorate([
+SettingsService = SettingsService_1 = __decorate([
     InRequestScope
 ], SettingsService);
 export { SettingsService };

@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var TrackWorker_1;
 import fse from 'fs-extra';
 import path from 'path';
 import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils';
@@ -11,22 +12,62 @@ import { TrackHealthID } from '../../../../types/enums';
 import { processQueue } from '../../../../utils/queue';
 import { BaseWorker } from './base';
 import { InRequestScope } from 'typescript-ioc';
-let TrackWorker = class TrackWorker extends BaseWorker {
+export class TrackUpdater {
+    constructor(orm, audioModule, changes) {
+        this.orm = orm;
+        this.audioModule = audioModule;
+        this.changes = changes;
+        this.genresCache = [];
+    }
+    async updateTrackValues(track, filename) {
+        const data = await this.audioModule.read(filename);
+        const tag = this.orm.Tag.createByScan(data, filename);
+        this.orm.Tag.persistLater(tag);
+        const oldTag = await track.tag.get();
+        if (oldTag) {
+            this.orm.Tag.removeLater(oldTag);
+        }
+        await track.tag.set(tag);
+        const genres = await this.findOrCreateGenres(tag);
+        const removedGenreIDs = (await track.genres.getIDs()).filter(id => !genres.find(g => g.id == id));
+        this.changes.genres.updated.appendIDs(removedGenreIDs);
+        await track.genres.set(genres);
+    }
+    async findOrCreateGenres(tag) {
+        const names = tag.genres || [];
+        const genres = [];
+        for (const name of names) {
+            genres.push(await this.findOrCreateGenre(name));
+        }
+        return genres;
+    }
+    async findOrCreateGenre(name) {
+        let genre = this.genresCache.find(g => g.name === name);
+        if (!genre) {
+            genre = await this.orm.Genre.findOne({ where: { name } });
+            if (genre) {
+                this.genresCache.push(genre);
+            }
+        }
+        if (!genre) {
+            genre = this.orm.Genre.create({ name });
+            this.orm.Genre.persistLater(genre);
+            this.genresCache.push(genre);
+            this.changes.genres.added.add(genre);
+        }
+        return genre;
+    }
+}
+let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async writeTags(orm, tags, changes) {
+        const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
         for (const writeTag of tags) {
             const track = await orm.Track.findOneByID(writeTag.trackID);
             if (track) {
                 const filename = path.join(track.path, track.fileName);
                 await this.audioModule.writeRawTag(filename, writeTag.tag);
-                const oldTag = await track.tag.get();
-                if (oldTag) {
-                    orm.Tag.removeLater(oldTag);
-                }
-                const result = await this.audioModule.read(filename);
-                const tag = orm.Tag.createByScan(result, filename);
-                orm.Tag.persistLater(tag);
-                await track.tag.set(tag);
-                await this.updateTrackStats(track);
+                await trackUpdater.updateTrackValues(track, filename);
+                await TrackWorker_1.updateTrackStats(track);
                 orm.Track.persistLater(track);
                 changes.tracks.updated.add(track);
                 changes.folders.updated.addID(track.folder.id());
@@ -58,7 +99,7 @@ let TrackWorker = class TrackWorker extends BaseWorker {
             }
         });
     }
-    async updateTrackStats(track) {
+    static async updateTrackStats(track) {
         const stat = await fse.stat(path.join(track.path, track.fileName));
         track.statCreated = stat.ctime;
         track.statModified = stat.mtime;
@@ -70,7 +111,7 @@ let TrackWorker = class TrackWorker extends BaseWorker {
             return Promise.reject(Error('Track not found'));
         }
         track.fileName = await this.renameFile(track.path, track.fileName, newName);
-        await this.updateTrackStats(track);
+        await TrackWorker_1.updateTrackStats(track);
         orm.Track.persistLater(track);
         changes.tracks.updated.add(track);
         changes.folders.updated.add(await track.folder.get());
@@ -110,7 +151,7 @@ let TrackWorker = class TrackWorker extends BaseWorker {
                 track.path = ensureTrailingPathSeparator(newParent.path);
                 await track.root.set(await newParent.root.getOrFail());
                 await track.folder.set(newParent);
-                await this.updateTrackStats(track);
+                await TrackWorker_1.updateTrackStats(track);
                 orm.Track.persistLater(track);
             }
         }
@@ -126,7 +167,7 @@ let TrackWorker = class TrackWorker extends BaseWorker {
         }
     }
 };
-TrackWorker = __decorate([
+TrackWorker = TrackWorker_1 = __decorate([
     InRequestScope
 ], TrackWorker);
 export { TrackWorker };

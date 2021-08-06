@@ -7,7 +7,7 @@ export class ExpressParameters {
     constructor() {
         this.metadata = getMetadataStorage();
     }
-    validateBoolean(value, typeOptions, param) {
+    static validateBoolean(value, typeOptions, param) {
         if (typeOptions.array) {
             throw InvalidParamError(param.name);
         }
@@ -24,7 +24,7 @@ export class ExpressParameters {
         }
         return value;
     }
-    validateNumber(value, typeOptions, param) {
+    static validateNumber(value, typeOptions, param) {
         if (typeOptions.array) {
             throw InvalidParamError(param.name);
         }
@@ -131,10 +131,10 @@ export class ExpressParameters {
         }
         const type = param.getType();
         if (type === Boolean) {
-            value = this.validateBoolean(value, typeOptions, param);
+            value = ExpressParameters.validateBoolean(value, typeOptions, param);
         }
         else if (type === Number) {
-            value = this.validateNumber(value, typeOptions, param);
+            value = ExpressParameters.validateNumber(value, typeOptions, param);
         }
         else if (type === String) {
             value = this.validateString(value, typeOptions, param);
@@ -150,7 +150,7 @@ export class ExpressParameters {
         }
         return value;
     }
-    getData(mode, context) {
+    static getData(mode, context) {
         switch (mode) {
             case 'body':
                 return context.req.body;
@@ -174,7 +174,7 @@ export class ExpressParameters {
         return {};
     }
     prepareParameterSingle(param, context) {
-        const result = this.getData(param.mode, context);
+        const result = ExpressParameters.getData(param.mode, context);
         if (param.mode === 'file') {
             if (!result) {
                 throw MissingParamError(param.name);
@@ -196,7 +196,7 @@ export class ExpressParameters {
                 `is not a class decorated with '@ObjParamsType' decorator!`);
         }
         const args = {};
-        const data = this.getData(param.mode, context);
+        const data = ExpressParameters.getData(param.mode, context);
         iterateArguments(this.metadata, argumentType, argument => {
             this.mapArgFields(argument, data, args);
         });

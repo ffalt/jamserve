@@ -44,7 +44,7 @@ export class MetadataServiceSimilarTracks {
             else if (artist.name) {
                 data = await this.service.lastFMTopTracksArtist(orm, artist.name);
             }
-            if (data && data.toptracks && data.toptracks.track) {
+            if (data?.toptracks?.track) {
                 tracks = tracks.concat(data.toptracks.track.map(song => {
                     return {
                         name: song.name,

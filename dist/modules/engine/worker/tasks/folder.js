@@ -38,9 +38,9 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
         catch (e) {
             return Promise.reject(Error('Folder moving failed'));
         }
-        await this.updateFolder(orm, folder, newParent, newPath, changes);
+        await FolderWorker_1.updateFolder(orm, folder, newParent, newPath, changes);
     }
-    async updateFolder(orm, folder, newParent, newPath, changes) {
+    static async updateFolder(orm, folder, newParent, newPath, changes) {
         const source = ensureTrailingPathSeparator(folder.path);
         const folders = await orm.Folder.findAllDescendants(folder);
         await folder.parent.set(newParent);
