@@ -264,9 +264,12 @@ export class MetaMerger {
 		await album.folders.set(folders);
 
 		const metaStatBuilder = new MetaStatBuilder();
-		folders.forEach(folder => metaStatBuilder.statID('albumType', folder.albumType));
+		for (const folder of folders) {
+			metaStatBuilder.statID('albumType', folder.albumType);
+			metaStatBuilder.statID('mbArtistID', folder.mbArtistID);
+			metaStatBuilder.statID('mbReleaseID', folder.mbReleaseID);
+		}
 		album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
-
 		let duration = 0;
 		const genreMap = new Map<string, Genre>();
 		for (const track of tracks) {
@@ -274,10 +277,14 @@ export class MetaMerger {
 			duration += (tag?.mediaDuration || 0);
 			metaStatBuilder.statID('seriesNr', tag?.seriesNr);
 			metaStatBuilder.statNumber('year', tag?.year);
+			metaStatBuilder.statID('mbArtistID', tag?.mbArtistID);
+			metaStatBuilder.statID('mbReleaseID', tag?.mbReleaseID);
 			metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
 			const genres = await track.genres.getItems();
 			genres.forEach(genre => genreMap.set(genre.id, genre));
 		}
+		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
+		album.mbReleaseID = metaStatBuilder.mostUsed('mbReleaseID');
 		album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
 		album.slug = slugify(album.name);
 		album.duration = duration;

@@ -3,7 +3,7 @@ import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
 import {MetaStatBuilder} from '../../../utils/stats-builder';
 import {extractAlbumName} from '../../../utils/album-name';
 import {MatchTrack} from './scan';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
+import {MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
 import {Folder} from '../../../entity/folder/folder';
 import {MergeNode} from './merge-scan';
 
@@ -89,7 +89,7 @@ export class MatchNodeMetaStats {
 		builder.statNumber('year', match.year);
 		builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
 		builder.statSlugValue('mbAlbumType', match.mbAlbumType);
-		builder.statID('mbArtistID', match.mbArtistID);
+		builder.statID('mbArtistID', match.artist == MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
 		builder.statID('mbReleaseID', match.mbReleaseID);
 		builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
 	}
