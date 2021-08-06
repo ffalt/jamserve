@@ -105,7 +105,7 @@ export class MetaMerger {
 			const series = await this.orm.Series.findIDsFilter({trackIDs});
 			this.changes.series.updated.appendIDs(series);
 			const genres = await this.orm.Genre.findIDsFilter({trackIDs});
-			this.changes.genres.updated.appendIDs(genres);
+			this.changes.genres.updated.appendIDs(genres.filter(id => !this.changes.genres.added.hasID(id)));
 		}
 		await this.flush('Track/Folder');
 	}
@@ -319,6 +319,9 @@ export class MetaMerger {
 	}
 
 	private async applyChangedGenresMeta(): Promise<void> {
+		const trackIDs = this.changes.tracks.removed.ids();
+		const updateGenreIDs = trackIDs.length === 0 ? [] : await this.orm.Genre.findIDsFilter({trackIDs});
+		this.changes.genres.updated.appendIDs(updateGenreIDs);
 		const genreIDs = this.changes.genres.updated.ids();
 		for (const id of genreIDs) {
 			await this.applyChangedGenreMeta(id);

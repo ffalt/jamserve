@@ -405,7 +405,7 @@ describe('WorkerService', () => {
 							artistsRemoved: 1, 	// Artist B must be removed
 							artistsUpdate: 1, // Artist A must be updated
 							genresNew: 1, // New Genre
-							genresUpdate: 1 // Updated Genre
+							genresRemoved: 1 // Removed Genre
 						});
 						await validateMock(mockRoot2, workerService, orm);
 						await fse.remove(mockRoot2.path);
