@@ -197,6 +197,10 @@ export class FolderFilterArgs {
 	@Field(() => [ID], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Series Ids', isID: true})
 	seriesIDs?: Array<string>;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Genre Ids', isID: true})
+	genreIDs?: Array<string>;
 }
 
 @InputType()

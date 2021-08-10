@@ -70,6 +70,10 @@ export class SeriesFilterArgs {
 	@Field(() => [ID], {nullable: true})
 	@ObjField(() => [String], {nullable: true, description: 'filter by Folder Ids', isID: true})
 	folderIDs?: Array<string>;
+
+	@Field(() => [ID], {nullable: true})
+	@ObjField(() => [String], {nullable: true, description: 'filter by Genre Ids', isID: true})
+	genreIDs?: Array<string>;
 }
 
 @InputType()

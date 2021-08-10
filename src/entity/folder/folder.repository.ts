@@ -78,7 +78,8 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 			{artworks: [{id: QHelper.inOrEqual(filter.artworksIDs)}]},
 			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
 			{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},
-			{artists: [{id: QHelper.inOrEqual(filter.artistIDs)}]}
+			{artists: [{id: QHelper.inOrEqual(filter.artistIDs)}]},
+			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]}
 		]);
 		return result;
 	}

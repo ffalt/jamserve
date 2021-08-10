@@ -33,6 +33,7 @@ export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, S
 			{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},
 			{folders: [{id: QHelper.inOrEqual(filter.folderIDs)}]},
 			{roots: [{id: QHelper.inOrEqual(filter.rootIDs)}]},
+			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]}
 		]);
 		return result;
 

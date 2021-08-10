@@ -41,6 +41,11 @@ export class GenreResolver {
 	}
 
 	@FieldResolver(() => Int)
+	async folderCount(@GQLRoot() genre: Genre): Promise<number> {
+		return genre.folders.count();
+	}
+
+	@FieldResolver(() => Int)
 	async trackCount(@GQLRoot() genre: Genre): Promise<number> {
 		return genre.tracks.count();
 	}
