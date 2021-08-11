@@ -97,12 +97,15 @@ describe('REST', () => {
 						split[split.length - 1] = api;
 						url = apiPrefix + split.join('/');
 					}
-					// const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
+					const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
 					return request.get(url)
 						.query(mock.data)
 						.set('Authorization', token ? `Bearer ${token}` : '')
 						.expect(function(res) {
-							expect(res.status).toBe(expected); // message + JSON.stringify(res.text)
+							if (res.status !== expected) {
+								console.error(message + JSON.stringify(res.text));
+							}
+							expect(res.status).toBe(expected);
 						});
 				};
 				const post = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
@@ -120,13 +123,16 @@ describe('REST', () => {
 						split[split.length - 1] = api;
 						url = apiPrefix + split.join('/');
 					}
-					// const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
+					const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
 					return request.post(url)
 						.query({})
 						.send(mock.data)
 						.set('Authorization', token ? `Bearer ${token}` : '')
 						.expect(function(res) {
-							expect(res.status).toBe(expected); // message + JSON.stringify(res.text)
+							if (res.status !== expected) {
+								console.error(message + JSON.stringify(res.text));
+							}
+							expect(res.status).toBe(expected);
 						});
 				};
 				mockCall = (mock, expected, token): supertest.Test => {

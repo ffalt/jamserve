@@ -5,9 +5,12 @@ import {Container, Scope} from 'typescript-ioc';
 import {OrmService} from '../../modules/engine/services/orm.service';
 
 export const DBConfigs: Array<ENVConfigDB> = [
-	{dialect: 'sqlite', name: 'jamtest'},
-	{dialect: 'postgres', name: 'jamtest', host: process.env.JAM_DB_HOST || 'localhost', port: 5432, user: 'test', password: 'test'}
+	{dialect: 'sqlite', name: 'jamtest'}
 ];
+
+if (!process.env.DISABLE_POSTGRES_TEST) {
+	DBConfigs.push({dialect: 'postgres', name: 'jamtest', host: process.env.JAM_DB_HOST || 'localhost', port: 5432, user: 'test', password: 'test'});
+}
 
 export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boolean = true): void {
 
