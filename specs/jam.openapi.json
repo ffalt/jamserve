@@ -4461,6 +4461,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
@@ -7980,6 +7993,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "genres",
 						"description": "filter by Genres",
 						"required": false,
@@ -8717,6 +8743,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "genres",
 						"description": "filter by Genres",
 						"required": false,
@@ -9240,6 +9279,19 @@
 							"type": "integer",
 							"minimum": 0,
 							"description": "filter by since year"
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
 						}
 					},
 					{
@@ -9894,6 +9946,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "genres",
 						"description": "filter by Genres",
 						"required": false,
@@ -10348,6 +10413,19 @@
 							"type": "integer",
 							"minimum": 0,
 							"description": "filter by since year"
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
 						}
 					},
 					{
@@ -11424,6 +11502,19 @@
 							"type": "integer",
 							"minimum": 0,
 							"description": "filter by since year"
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
 						}
 					},
 					{
@@ -18731,6 +18822,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
@@ -18952,6 +19056,19 @@
 						"in": "query",
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
 						"required": false,
 						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
@@ -19475,6 +19592,19 @@
 					},
 					{
 						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "ids",
 						"description": "filter by Series Ids",
 						"required": false,
@@ -19681,6 +19811,19 @@
 						"in": "query",
 						"name": "folderIDs",
 						"description": "filter by Folder Ids",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "genreIDs",
+						"description": "filter by Genre Ids",
 						"required": false,
 						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {

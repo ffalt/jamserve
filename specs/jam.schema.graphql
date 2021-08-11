@@ -167,6 +167,18 @@ type Query {
     """Queue Task Id"""
     id: ID!
   ): AdminChangeQueueInfoQL!
+
+  """Get Extended Info for Folder by Id"""
+  folderInfo(id: ID!): ExtendedInfoResultQL!
+
+  """Get Extended Info for Artist by Id"""
+  artistInfo(id: ID!): ExtendedInfoResultQL!
+
+  """Get Extended Info for Album by Id"""
+  albumInfo(id: ID!): ExtendedInfoResultQL!
+
+  """Get Extended Info for Series by Id"""
+  seriesInfo(id: ID!): ExtendedInfoResultQL!
 }
 
 type UserQL {
@@ -806,6 +818,7 @@ input SeriesFilterArgsQL {
   artistIDs: [ID!]
   rootIDs: [ID!]
   folderIDs: [ID!]
+  genreIDs: [ID!]
 }
 
 input SeriesOrderArgsQL {
@@ -923,6 +936,7 @@ input FolderFilterArgsQL {
   albumIDs: [ID!]
   artistIDs: [ID!]
   seriesIDs: [ID!]
+  genreIDs: [ID!]
 }
 
 input FolderOrderArgsQL {
@@ -1435,6 +1449,18 @@ type AdminChangeQueueInfoQL {
 
   """Changes Completed Timestamp"""
   done: Int!
+}
+
+type ExtendedInfoResultQL {
+  info: ExtendedInfoQL
+}
+
+type ExtendedInfoQL {
+  description: String!
+  source: String!
+  license: String!
+  url: String!
+  licenseUrl: String!
 }
 
 type Mutation {

@@ -57,6 +57,7 @@ import path from 'path';
 import {ApolloServerPlugin} from 'apollo-server-plugin-base';
 import {GraphQLRequestListener} from 'apollo-server-plugin-base/src/index';
 import {GraphQLRequestContext, GraphQLRequestContextWillSendResponse} from 'apollo-server-types';
+import {MetadataResolver} from '../../../entity/metadata/metadata.resolver';
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
@@ -123,7 +124,7 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 			UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
 			EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
 			PlaylistResolver, PlayQueueResolver, PodcastResolver, RadioResolver, RootResolver,
-			RootStatusResolver, SeriesResolver, UserFavoritesResolver,
+			RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
 			SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
 		],
 		authChecker: customAuthChecker
