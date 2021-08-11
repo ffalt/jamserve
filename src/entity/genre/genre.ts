@@ -6,6 +6,7 @@ import {Track, TrackQL} from '../track/track';
 import {Album, AlbumQL} from '../album/album';
 import {Artist, ArtistQL} from '../artist/artist';
 import {Folder, FolderQL} from '../folder/folder';
+import {Series, SeriesQL} from '../series/series';
 
 @Entity()
 @ObjectType()
@@ -25,6 +26,9 @@ export class Genre extends Base {
 	@Field(() => [FolderQL])
 	@ManyToMany<Folder>(() => Folder, folder => folder.genres, {owner: true})
 	folders: Collection<Folder> = new Collection<Folder>(this);
+	@Field(() => [SeriesQL])
+	@ManyToMany<Series>(() => Series, series => series.genres, {owner: true})
+	series: Collection<Series> = new Collection<Series>(this);
 }
 
 @ObjectType()

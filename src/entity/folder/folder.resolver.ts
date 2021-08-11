@@ -76,6 +76,11 @@ export class FolderResolver {
 		return folder.albums.count();
 	}
 
+	@FieldResolver(() => Int)
+	async genresCount(@GQLRoot() folder: Folder): Promise<number> {
+		return folder.genres.count();
+	}
+
 	@FieldResolver(() => [TrackQL], {nullable: true})
 	async tracks(@GQLRoot() folder: Folder): Promise<Array<Track>> {
 		return folder.tracks.getItems();

@@ -71,6 +71,11 @@ export class ArtistResolver {
 		return artist.albums.count();
 	}
 
+	@FieldResolver(() => Int)
+	async genresCount(@GQLRoot() artist: Artist): Promise<number> {
+		return artist.genres.count();
+	}
+
 	@FieldResolver(() => [RootQL])
 	async roots(@GQLRoot() artist: Artist): Promise<Array<Root>> {
 		return artist.roots.getItems();

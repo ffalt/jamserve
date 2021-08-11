@@ -8,6 +8,7 @@ import {Field, Int, ObjectType} from 'type-graphql';
 import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, Property, Reference} from '../../modules/orm';
 import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
 import {State, StateQL} from '../state/state';
+import {Genre, GenreQL} from '../genre/genre';
 
 @ObjectType()
 @Entity()
@@ -39,6 +40,10 @@ export class Series extends Base {
 	@Field(() => [FolderQL])
 	@ManyToMany<Folder>(() => Folder, folder => folder.series, {owner: true, order: [{orderBy: FolderOrderFields.default}]})
 	folders: Collection<Folder> = new Collection<Folder>(this);
+
+	@Field(() => [GenreQL])
+	@ManyToMany<Genre>(() => Genre, genre => genre.series)
+	genres: Collection<Genre> = new Collection<Genre>(this);
 }
 
 @ObjectType()
@@ -54,6 +59,9 @@ export class SeriesQL extends Series {
 
 	@Field(() => Int)
 	albumsCount!: number;
+
+	@Field(() => Int)
+	genresCount!: number;
 
 	@Field(() => StateQL)
 	state!: State

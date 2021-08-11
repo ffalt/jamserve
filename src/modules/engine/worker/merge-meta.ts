@@ -223,7 +223,13 @@ export class MetaMerger {
 			this.changes.series.removed.add(series);
 			this.changes.series.updated.delete(series);
 		} else {
-			albums.forEach(album => albumTypes.add(album.albumType));
+			const genreMap = new Map<string, Genre>();
+			for (const album of albums) {
+				albumTypes.add(album.albumType);
+				const genres = await album.genres.getItems();
+				genres.forEach(genre => genreMap.set(genre.id, genre));
+			}
+			await series.genres.set([...genreMap.values()]);
 			series.albumTypes = [...albumTypes];
 			this.orm.Series.persistLater(series);
 		}

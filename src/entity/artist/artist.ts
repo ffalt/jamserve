@@ -77,6 +77,9 @@ export class ArtistQL extends Artist {
 	foldersCount!: number;
 
 	@Field(() => Int)
+	genresCount!: number;
+
+	@Field(() => Int)
 	seriesCount!: number;
 
 	@Field(() => StateQL)

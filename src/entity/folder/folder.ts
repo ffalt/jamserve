@@ -138,6 +138,9 @@ export class FolderQL extends Folder {
 	artistsCount!: number;
 
 	@Field(() => Int)
+	genresCount!: number;
+
+	@Field(() => Int)
 	seriesCount!: number;
 
 	@Field(() => Int)

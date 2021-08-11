@@ -70,6 +70,11 @@ export class SeriesResolver {
 		return series.albums.count();
 	}
 
+	@FieldResolver(() => Int)
+	async genresCount(@GQLRoot() series: Series): Promise<number> {
+		return series.genres.count();
+	}
+
 	@FieldResolver(() => ArtistQL, {nullable: true})
 	async artist(@GQLRoot() series: Series): Promise<Artist | undefined> {
 		return series.artist.get();
