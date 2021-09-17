@@ -112,7 +112,7 @@
     "@types/mime-types": "2.1.0",
     "@types/multer": "1.4.7",
     "@types/mustache": "4.1.2",
-    "@types/node": "16.4.12",
+    "@types/node": "16.9.2",
     "@types/node-fetch": "2.5.12",
     "@types/on-finished": "2.3.1",
     "@types/passport": "1.0.7",
