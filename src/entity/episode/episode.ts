@@ -120,7 +120,7 @@ export class EpisodeQL extends Episode {
 	bookmarksCount!: number;
 
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 
 	@Field(() => Date, {nullable: true})
 	fileCreated?: Date;

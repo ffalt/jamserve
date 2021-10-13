@@ -64,7 +64,7 @@ export class SeriesQL extends Series {
 	genresCount!: number;
 
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 }
 
 @ObjectType()

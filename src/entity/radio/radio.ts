@@ -26,7 +26,7 @@ export class Radio extends Base {
 @ObjectType()
 export class RadioQL extends Radio {
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 }
 
 @ObjectType()

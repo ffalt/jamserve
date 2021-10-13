@@ -147,7 +147,7 @@ export class FolderQL extends Folder {
 	rootsCount!: number;
 
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 }
 
 @ObjectType()

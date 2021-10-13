@@ -54,7 +54,6 @@ import {StateResolver} from '../../../entity/state/state.resolver';
 import {NowPlayingResolver} from '../../../entity/nowplaying/nowplaying.resolver';
 import {AdminResolver} from '../../../entity/admin/admin.resolver';
 import path from 'path';
-import {ApolloServerPlugin} from 'apollo-server-plugin-base';
 import {GraphQLRequestListener} from 'apollo-server-plugin-base/src/index';
 import {GraphQLRequestContext, GraphQLRequestContextWillSendResponse} from 'apollo-server-types';
 import {MetadataResolver} from '../../../entity/metadata/metadata.resolver';
@@ -136,7 +135,7 @@ export class ApolloMiddleware {
 	@Inject
 	private orm!: OrmService;
 	@Inject
-	private engine!: EngineService
+	private engine!: EngineService;
 	private schema!: GraphQLSchema;
 
 	async playground(): Promise<express.Router> {

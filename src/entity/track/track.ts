@@ -97,7 +97,7 @@ export class TrackLyricsQL {
 @ObjectType()
 export class TrackQL extends Track {
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 
 	@Field(() => WaveformQL)
 	waveform!: Waveform;

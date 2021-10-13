@@ -83,7 +83,7 @@ export class ArtistQL extends Artist {
 	seriesCount!: number;
 
 	@Field(() => StateQL)
-	state!: State
+	state!: State;
 }
 
 @ObjectType()

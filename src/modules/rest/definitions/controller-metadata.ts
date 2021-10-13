@@ -1,5 +1,4 @@
 import {ParamMetadata} from './param-metadata';
-import {ClassTypeResolver, TypeOptions, TypeValueThunk} from './types';
 
 export interface BaseControllerMetadata {
 	methodName: string;

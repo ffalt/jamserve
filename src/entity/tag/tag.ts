@@ -186,7 +186,7 @@ export class TagQL extends Tag {
 @ObjectType()
 export class MediaTagRawQL {
 	@Field(() => String)
-	version!: string
+	version!: string;
 
 	@Field(() => GraphQLJSON)
 	frames!: any;

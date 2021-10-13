@@ -34,7 +34,7 @@ export interface WaveFormData {
 @InRequestScope
 export class WaveformService {
 	@Inject
-	private audioModule!: AudioModule
+	private audioModule!: AudioModule;
 
 	async getWaveform(obj: Base, objType: DBObjectType, format?: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		format = (format || WaveformDefaultFormat);

@@ -69,8 +69,8 @@ export class ConfigService {
 			host: process.env.JAM_DB_HOST,
 			port: Number(process.env.JAM_DB_PORT) || undefined
 		}
-	}
-	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts)
+	};
+	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts);
 	tools: ThirdpartyToolsConfig = ThirdPartyConfig;
 	firstStart?: FirstStartConfig;
 

@@ -55,7 +55,7 @@ export class MusicBrainzSearchArgs {
 @ObjParamsType()
 export class AcousticBrainzLookupArgs {
 	@ObjField({description: 'MusicBrainz ID', example: examples.mbReleaseID})
-	mbID!: string
+	mbID!: string;
 	@ObjField({nullable: true, description: 'Page parameter if more than one acousticbrainz info is available', min: 0})
 	nr?: number;
 }
@@ -63,7 +63,7 @@ export class AcousticBrainzLookupArgs {
 @ObjParamsType()
 export class CoverArtArchiveLookupArgs {
 	@ObjField({description: 'MusicBrainz ID', example: examples.mbReleaseID})
-	mbID!: string
+	mbID!: string;
 	@ObjField(() => CoverArtArchiveLookupType, {description: 'Lookup by CoverArtArchive MusicBrainz Type', example: CoverArtArchiveLookupType.release})
 	type!: CoverArtArchiveLookupType;
 }
@@ -71,7 +71,7 @@ export class CoverArtArchiveLookupArgs {
 @ObjParamsType()
 export class CoverArtArchiveImageArgs {
 	@ObjField({description: 'Coverart URL'})
-	url!: string
+	url!: string;
 }
 
 @ObjParamsType()
