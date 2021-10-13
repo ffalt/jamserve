@@ -75,7 +75,7 @@ export class LastFMClient extends WebserviceClient {
             return {};
         }
         try {
-            return response.json();
+            return await response.json();
         }
         catch (err) {
             return Promise.reject(err);

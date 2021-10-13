@@ -54,7 +54,6 @@ export class Feed {
     async fetch(url) {
         const posts = [];
         const res = await fetch(url, {
-            timeout: 10000,
             headers: {
                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
                 'accept': 'text/html,application/xhtml+xml'
@@ -83,6 +82,9 @@ export class Feed {
                 });
                 feedParser.on('error', done);
                 feedParser.on('end', done);
+                if (!res.body) {
+                    return done(Error('Bad feed stream'));
+                }
                 res.body.pipe(feedParser);
             });
         }

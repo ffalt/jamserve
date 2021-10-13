@@ -117,6 +117,10 @@ __decorate([
 __decorate([
     Field(() => Int),
     __metadata("design:type", Number)
+], ArtistQL.prototype, "genresCount", void 0);
+__decorate([
+    Field(() => Int),
+    __metadata("design:type", Number)
 ], ArtistQL.prototype, "seriesCount", void 0);
 __decorate([
     Field(() => StateQL),

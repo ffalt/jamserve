@@ -39,6 +39,9 @@ let GenreResolver = class GenreResolver {
     async artistCount(genre) {
         return genre.artists.count();
     }
+    async folderCount(genre) {
+        return genre.folders.count();
+    }
     async trackCount(genre) {
         return genre.tracks.count();
     }
@@ -90,6 +93,13 @@ __decorate([
     __metadata("design:paramtypes", [Genre]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "artistCount", null);
+__decorate([
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Genre]),
+    __metadata("design:returntype", Promise)
+], GenreResolver.prototype, "folderCount", null);
 __decorate([
     FieldResolver(() => Int),
     __param(0, GQLRoot()),

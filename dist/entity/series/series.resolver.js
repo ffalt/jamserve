@@ -57,6 +57,9 @@ let SeriesResolver = class SeriesResolver {
     async albumsCount(series) {
         return series.albums.count();
     }
+    async genresCount(series) {
+        return series.genres.count();
+    }
     async artist(series) {
         return series.artist.get();
     }
@@ -144,6 +147,13 @@ __decorate([
     __metadata("design:paramtypes", [Series]),
     __metadata("design:returntype", Promise)
 ], SeriesResolver.prototype, "albumsCount", null);
+__decorate([
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Series]),
+    __metadata("design:returntype", Promise)
+], SeriesResolver.prototype, "genresCount", null);
 __decorate([
     FieldResolver(() => ArtistQL, { nullable: true }),
     __param(0, GQLRoot()),

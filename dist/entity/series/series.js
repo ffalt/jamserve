@@ -17,6 +17,7 @@ import { Field, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, Property, Reference } from '../../modules/orm';
 import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
 import { State, StateQL } from '../state/state';
+import { Genre, GenreQL } from '../genre/genre';
 let Series = class Series extends Base {
     constructor() {
         super(...arguments);
@@ -25,6 +26,7 @@ let Series = class Series extends Base {
         this.albums = new Collection(this);
         this.roots = new Collection(this);
         this.folders = new Collection(this);
+        this.genres = new Collection(this);
     }
 };
 __decorate([
@@ -62,6 +64,11 @@ __decorate([
     ManyToMany(() => Folder, folder => folder.series, { owner: true, order: [{ orderBy: FolderOrderFields.default }] }),
     __metadata("design:type", Collection)
 ], Series.prototype, "folders", void 0);
+__decorate([
+    Field(() => [GenreQL]),
+    ManyToMany(() => Genre, genre => genre.series),
+    __metadata("design:type", Collection)
+], Series.prototype, "genres", void 0);
 Series = __decorate([
     ObjectType(),
     Entity()
@@ -85,6 +92,10 @@ __decorate([
     Field(() => Int),
     __metadata("design:type", Number)
 ], SeriesQL.prototype, "albumsCount", void 0);
+__decorate([
+    Field(() => Int),
+    __metadata("design:type", Number)
+], SeriesQL.prototype, "genresCount", void 0);
 __decorate([
     Field(() => StateQL),
     __metadata("design:type", State)

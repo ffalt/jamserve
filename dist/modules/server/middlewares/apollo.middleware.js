@@ -39,6 +39,7 @@ import { StateResolver } from '../../../entity/state/state.resolver';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver';
 import { AdminResolver } from '../../../entity/admin/admin.resolver';
 import path from 'path';
+import { MetadataResolver } from '../../../entity/metadata/metadata.resolver';
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });
@@ -101,7 +102,7 @@ export async function buildGraphQlSchema() {
             UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
             EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
             PlaylistResolver, PlayQueueResolver, PodcastResolver, RadioResolver, RootResolver,
-            RootStatusResolver, SeriesResolver, UserFavoritesResolver,
+            RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
             SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
         ],
         authChecker: customAuthChecker

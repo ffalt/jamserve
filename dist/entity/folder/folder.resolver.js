@@ -61,6 +61,9 @@ let FolderResolver = class FolderResolver {
     async albumsCount(folder) {
         return folder.albums.count();
     }
+    async genresCount(folder) {
+        return folder.genres.count();
+    }
     async tracks(folder) {
         return folder.tracks.getItems();
     }
@@ -173,6 +176,13 @@ __decorate([
     __metadata("design:paramtypes", [Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "albumsCount", null);
+__decorate([
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Folder]),
+    __metadata("design:returntype", Promise)
+], FolderResolver.prototype, "genresCount", null);
 __decorate([
     FieldResolver(() => [TrackQL], { nullable: true }),
     __param(0, GQLRoot()),

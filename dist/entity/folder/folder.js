@@ -195,6 +195,10 @@ __decorate([
 __decorate([
     Field(() => Int),
     __metadata("design:type", Number)
+], FolderQL.prototype, "genresCount", void 0);
+__decorate([
+    Field(() => Int),
+    __metadata("design:type", Number)
 ], FolderQL.prototype, "seriesCount", void 0);
 __decorate([
     Field(() => Int),

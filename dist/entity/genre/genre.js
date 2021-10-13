@@ -15,6 +15,7 @@ import { Track, TrackQL } from '../track/track';
 import { Album, AlbumQL } from '../album/album';
 import { Artist, ArtistQL } from '../artist/artist';
 import { Folder, FolderQL } from '../folder/folder';
+import { Series, SeriesQL } from '../series/series';
 let Genre = class Genre extends Base {
     constructor() {
         super(...arguments);
@@ -22,6 +23,7 @@ let Genre = class Genre extends Base {
         this.albums = new Collection(this);
         this.artists = new Collection(this);
         this.folders = new Collection(this);
+        this.series = new Collection(this);
     }
 };
 __decorate([
@@ -49,6 +51,11 @@ __decorate([
     ManyToMany(() => Folder, folder => folder.genres, { owner: true }),
     __metadata("design:type", Collection)
 ], Genre.prototype, "folders", void 0);
+__decorate([
+    Field(() => [SeriesQL]),
+    ManyToMany(() => Series, series => series.genres, { owner: true }),
+    __metadata("design:type", Collection)
+], Genre.prototype, "series", void 0);
 Genre = __decorate([
     Entity(),
     ObjectType()

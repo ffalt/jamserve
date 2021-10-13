@@ -45,7 +45,7 @@ export class JamHttpService {
 						resolve({buffer: res.body as ArrayBuffer, contentType: res.headers.get('content-type') || 'invalid'});
 					});
 			});
-		} catch (e) {
+		} catch (e: any) {
 			return handleError(e);
 		}
 	}
@@ -58,7 +58,7 @@ export class JamHttpService {
 					withCredentials: options.withCredentials, responseType: options.responseType as 'json'
 				}
 			).toPromise();
-		} catch (e) {
+		} catch (e: any) {
 			return handleError(e);
 		}
 	}
@@ -68,7 +68,7 @@ export class JamHttpService {
 			return await this.client.post<T>(url, body,
 				{params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials}
 			).toPromise();
-		} catch (e) {
+		} catch (e: any) {
 			return handleError(e);
 		}
 	}

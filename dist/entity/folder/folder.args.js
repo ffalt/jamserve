@@ -306,6 +306,11 @@ __decorate([
     ObjField(() => [String], { nullable: true, description: 'filter by Series Ids', isID: true }),
     __metadata("design:type", Array)
 ], FolderFilterArgs.prototype, "seriesIDs", void 0);
+__decorate([
+    Field(() => [ID], { nullable: true }),
+    ObjField(() => [String], { nullable: true, description: 'filter by Genre Ids', isID: true }),
+    __metadata("design:type", Array)
+], FolderFilterArgs.prototype, "genreIDs", void 0);
 FolderFilterArgs = __decorate([
     InputType(),
     ObjParamsType()

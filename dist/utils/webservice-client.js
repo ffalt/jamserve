@@ -11,7 +11,7 @@ export class WebserviceClient {
             return Promise.reject(Error(`${response.status} ${response.statusText || ''}`));
         }
         try {
-            return response.json();
+            return await response.json();
         }
         catch (err) {
             return Promise.reject(err);
@@ -34,7 +34,6 @@ export class WebserviceClient {
         const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
         const response = await fetch(url + params, {
             headers: { 'User-Agent': this.userAgent },
-            timeout: 20000
         });
         if (!ignoreStatus && response.status !== 200) {
             return Promise.reject(new Error('Invalid Result'));
