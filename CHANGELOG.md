@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.4) (2021-10-13)
+
+
+### Features
+
+* **genres:** add missing genre<=>series relation ([93711ae](https://github.com/ffalt/jamserve/commit/93711aef84623f1988d57b3a9cf23640eba5e39f))
+* **genres:** add missing genreID filter ([8917e70](https://github.com/ffalt/jamserve/commit/8917e70cfe14abb0d706e8c3f112538e2f6aaa6b))
+* **graphql:** get album/artist/folder extended info ([635042f](https://github.com/ffalt/jamserve/commit/635042fcff56ce2b91b4bb6df71c12e4d434ad8a))
+
 ### [0.5.3](https://github.com/ffalt/jamserve/compare/v0.5.2...v0.5.3) (2021-08-06)
 
 
