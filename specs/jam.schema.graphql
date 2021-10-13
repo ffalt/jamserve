@@ -261,10 +261,12 @@ type SeriesQL {
   albums: [AlbumQL!]!
   roots: [RootQL!]!
   folders: [FolderQL!]!
+  genres: [GenreQL!]!
   rootsCount: Int!
   foldersCount: Int!
   tracksCount: Int!
   albumsCount: Int!
+  genresCount: Int!
   state: StateQL!
 }
 
@@ -301,6 +303,7 @@ type ArtistQL {
   albumsCount: Int!
   rootsCount: Int!
   foldersCount: Int!
+  genresCount: Int!
   seriesCount: Int!
   state: StateQL!
   albumsTracksCount: Int!
@@ -315,6 +318,7 @@ type GenreQL {
   albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
   artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): ArtistPageQL!
   folders: [FolderQL!]!
+  series: [SeriesQL!]!
   trackCount: Int!
   albumCount: Int!
   artistCount: Int!
@@ -463,6 +467,7 @@ type FolderQL {
   tracksCount: Int!
   albumsCount: Int!
   artistsCount: Int!
+  genresCount: Int!
   seriesCount: Int!
   rootsCount: Int!
   state: StateQL!
