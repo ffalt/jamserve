@@ -94,7 +94,7 @@ export class Feed {
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		const res = await fetch(url, {
-			timeout: 10000,
+			// timeout: 10000,
 			headers: {
 				// Some feeds do not respond without user-agent and accept headers.
 				'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
@@ -127,6 +127,9 @@ export class Feed {
 				// const encoding = res.headers.get('content-encoding') || 'identity';
 				// let pipestream = Feed.maybeDecompress(res.body, encoding, done);
 				// const pipestream = Feed.maybeTranslate(res.body, charset, done);
+				if (!res.body) {
+					return done(Error('Bad feed stream'));
+				}
 				res.body.pipe(feedParser);
 			});
 		} else {

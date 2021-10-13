@@ -45,7 +45,7 @@ export class QHelper {
 		if (!list || list.length === 0) {
 			return;
 		}
-		return list.length > 1 ? {[seq.Op.in]: list} : list[0];
+		return list.length > 1 ? {[seq.Op.in]: list} : (list[0] as WhereValue<Entity>);
 	}
 
 	static cleanList<Entity>(list: Array<WhereOptions<Entity> | { [name: string]: undefined }>): Array<WhereOptions<Entity>> | undefined {

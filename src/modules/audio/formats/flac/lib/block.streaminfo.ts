@@ -36,7 +36,7 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 			buffer.copy(this.checksum, 0, 18, 34);
 			this.duration = this.samples / this.sampleRate;
 			this.hasData = true;
-		} catch (e) {
+		} catch (e: any) {
 			this.error = e;
 			this.hasData = false;
 		}

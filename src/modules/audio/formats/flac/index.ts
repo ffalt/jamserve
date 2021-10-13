@@ -77,7 +77,7 @@ export class Flac {
 			});
 			try {
 				reader.pipe(processor);
-			} catch (e) {
+			} catch (e: any) {
 				reject(e);
 			}
 		});
@@ -133,7 +133,7 @@ export class Flac {
 				await fse.remove(filename);
 			}
 			await fse.move(tmpFile, filename);
-		} catch (e) {
+		} catch (e: any) {
 			const exists = await fse.pathExists(tmpFile);
 			if (exists) {
 				await fse.remove(tmpFile);

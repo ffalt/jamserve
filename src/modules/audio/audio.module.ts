@@ -119,7 +119,7 @@ export class AudioModule {
 			} else {
 				return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
 			}
-		} catch (e) {
+		} catch (e: any) {
 			return Promise.reject(e);
 		}
 	}

@@ -56,7 +56,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 
 			this.hasData = true;
 
-		} catch (e) {
+		} catch (e: any) {
 			this.error = e;
 			this.hasData = false;
 		}

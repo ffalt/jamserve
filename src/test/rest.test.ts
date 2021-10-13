@@ -15,6 +15,7 @@ import path from 'path';
 import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} from './mock/mock.root';
 import {initTest} from './init';
 import {Container, Snapshot} from 'typescript-ioc';
+import {OpenAPISpecObject} from 'openapi-validator';
 
 initTest();
 
@@ -80,8 +81,11 @@ describe('REST', () => {
 				}
 
 				openapi = JSON.parse(server.docs.getOpenApiSchema(false));
-				jestOpenAPI(openapi);
-
+				if ((jestOpenAPI as any).default) {
+					(jestOpenAPI as any).default(openapi);
+				} else {
+					jestOpenAPI(openapi as OpenAPISpecObject);
+				}
 				const get = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
 					let url = apiPrefix + mock.apiName;
 					if (mock.params) {

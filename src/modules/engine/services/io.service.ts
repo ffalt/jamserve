@@ -44,7 +44,7 @@ export class IoService {
 			this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now()});
 			this.history.push({id: cmd.id, date: Date.now()});
 			this.current = undefined;
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e);
 			this.current = undefined;
 			let msg = e.toString();

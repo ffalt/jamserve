@@ -65,7 +65,7 @@ export class IDFolderCache<T> {
 			const result: IDCacheResult = {file: {filename: cachefile, name: cacheID}};
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
-		} catch (e) {
+		} catch (e: any) {
 			this.cacheDebounce.reject(cacheID, e);
 			return Promise.reject(e);
 		}

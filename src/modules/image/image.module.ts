@@ -252,7 +252,7 @@ export class ImageModule {
 				colorDepth: metadata.density || 0,
 				colors: 0
 			};
-		} catch (e) {
+		} catch (e: any) {
 			return {width: 0, height: 0, format: 'invalid', colorDepth: 0, colors: 0};
 		}
 	}

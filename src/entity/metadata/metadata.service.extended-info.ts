@@ -134,7 +134,7 @@ export class MetadataServiceExtendedInfo {
 			if (!info && artist.name) {
 				info = await this.getArtistInfoByName(orm, artist.name);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 		}
 		return info;
@@ -148,7 +148,7 @@ export class MetadataServiceExtendedInfo {
 					return info;
 				}
 			}
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 		}
 		return;
@@ -164,7 +164,7 @@ export class MetadataServiceExtendedInfo {
 			if (!info && album.name && artist) {
 				info = await this.getAlbumInfoByName(orm, album.name, artist.name);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 		}
 		return info;
@@ -179,7 +179,7 @@ export class MetadataServiceExtendedInfo {
 			if (!info && folder.artist) {
 				info = await this.getArtistInfoByName(orm, folder.artist);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 		}
 		return info;
@@ -194,7 +194,7 @@ export class MetadataServiceExtendedInfo {
 			if (!info && folder.album && folder.artist) {
 				info = await this.getAlbumInfoByName(orm, folder.album, folder.artist);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 		}
 		return info;

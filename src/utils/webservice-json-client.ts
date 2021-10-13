@@ -84,7 +84,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 				return this.retry(Error(data.error), req);
 			}
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			return this.processError(e, req);
 		}
 	}

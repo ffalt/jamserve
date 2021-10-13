@@ -57,7 +57,7 @@ export class WaveformService {
 			if (result.file) {
 				try {
 					return (await fse.readFile(result.file.filename)).toString();
-				} catch (e) {
+				} catch (e: any) {
 					log.error(e);
 					return Promise.reject(GenericError('Invalid waveform result'));
 				}
@@ -79,7 +79,7 @@ export class WaveformService {
 			if (result.file) {
 				try {
 					return await fse.readJSON(result.file.filename);
-				} catch (e) {
+				} catch (e: any) {
 					log.error(e);
 					return Promise.reject(GenericError('Invalid json waveform result'));
 				}

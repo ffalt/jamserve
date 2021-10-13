@@ -92,7 +92,7 @@ export class LastFMClient extends WebserviceClient {
 			return {} as T;
 		}
 		try {
-			return response.json();
+			return await response.json() as any;
 		} catch (err) {
 			return Promise.reject(err);
 		}
@@ -113,7 +113,7 @@ export class LastFMClient extends WebserviceClient {
 				return {};
 			}
 			return LastFMClientBeautify.beautify(data) as LastFM.Result;
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 			return Promise.reject(e);
 		}

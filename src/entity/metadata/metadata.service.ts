@@ -231,7 +231,7 @@ export class MetaDataService {
 				result = await this.lyrics(orm, tag.albumArtist, song);
 			}
 			return result || {};
-		} catch (e) {
+		} catch (e: any) {
 			log.error(e);
 			return {};
 		}

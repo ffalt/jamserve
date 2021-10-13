@@ -82,13 +82,13 @@ export class EpisodeService {
 				episode.fileSize = stat.size;
 				episode.duration = result.mediaDuration;
 				episode.path = filename;
-			} catch (e) {
+			} catch (e: any) {
 				episode.status = PodcastStatus.error;
 				episode.error = (e || '').toString();
 			}
 			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-		} catch (e) {
+		} catch (e: any) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 			return Promise.reject(e);
 		}
@@ -138,7 +138,7 @@ export class EpisodeService {
 				if (buffer) {
 					return await this.imageModule.getBuffer(episode.id, buffer, size, format);
 				}
-			} catch (e) {
+			} catch (e: any) {
 				log.error('getImage', 'Extracting image from audio failed: ' + episode.path);
 			}
 		}

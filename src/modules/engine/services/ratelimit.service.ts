@@ -40,7 +40,7 @@ export class RateLimitService {
 			res.set('X-RateLimit-Remaining', `${resConsume.remainingPoints}`);
 			// res.set('X-RateLimit-Reset', `${new Date(Date.now() + resConsume.msBeforeNext)}`);
 			return false;
-		} catch (rlRejected) {
+		} catch (rlRejected: any) {
 			if (rlRejected instanceof Error) {
 				throw rlRejected;
 			} else {

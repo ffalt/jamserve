@@ -25,7 +25,7 @@ async function stop(): Promise<void> {
 	try {
 		await server.stop();
 		process.exit();
-	} catch (e) {
+	} catch (e: any) {
 		console.error('Error on server stop', e);
 		process.exit(1);
 	}

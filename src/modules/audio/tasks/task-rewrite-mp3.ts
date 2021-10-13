@@ -26,7 +26,7 @@ export async function rewriteAudio(param: string): Promise<void> {
 			await id3v2.write(tempFile, tag, 4, 0, {keepBackup: false, paddingSize: 10});
 		}
 		await fse.rename(tempFile, param);
-	} catch (e) {
+	} catch (e: any) {
 		await fileDeleteIfExists(tempFile);
 		return Promise.reject(e);
 	}

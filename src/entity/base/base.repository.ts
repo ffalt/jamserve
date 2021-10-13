@@ -93,7 +93,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	async oneOrFailByID(id: string): Promise<Entity> {
 		try {
 			return await super.findOneOrFailByID(id);
-		} catch (e) {
+		} catch (e: any) {
 			throw NotFoundError();
 		}
 	}
@@ -101,7 +101,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	async oneOrFail(options: FindOptions<Entity>): Promise<Entity> {
 		try {
 			return await super.findOneOrFail(options);
-		} catch (e) {
+		} catch (e: any) {
 			throw NotFoundError();
 		}
 	}
@@ -109,7 +109,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	async oneOrFailFilter(filter?: Filter, user?: User): Promise<Entity> {
 		try {
 			return await super.findOneOrFail(await this.buildFilter(filter, user));
-		} catch (e) {
+		} catch (e: any) {
 			throw NotFoundError();
 		}
 	}

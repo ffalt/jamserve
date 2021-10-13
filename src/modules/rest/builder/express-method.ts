@@ -97,7 +97,7 @@ export class ExpressMethod {
 			// eslint-disable-next-line prefer-spread
 			const result = await instance[method.methodName].apply(instance, args);
 			ApiBaseResponder.sendJSON(context.req, context.res, result);
-		} catch (e) {
+		} catch (e: any) {
 			// console.error(e);
 			log.error(e);
 			ApiBaseResponder.sendError(context.req, context.res, e);
@@ -136,7 +136,7 @@ export class ExpressMethod {
 					} as any;
 				}
 				await this.callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
-			} catch (e) {
+			} catch (e: any) {
 				ApiBaseResponder.sendError(req, res, e);
 			}
 		});
@@ -170,7 +170,7 @@ export class ExpressMethod {
 					} as any;
 				}
 				await this.callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
-			} catch (e) {
+			} catch (e: any) {
 				ApiBaseResponder.sendError(req, res, e);
 			}
 		});

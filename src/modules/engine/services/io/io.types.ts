@@ -50,7 +50,7 @@ export class IoRequest<T extends WorkerRequestParameters> {
 	async run(): Promise<Changes> {
 		try {
 			return await this.execute(this.parameters);
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e.stack);
 			// log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].includes(e.code)) {

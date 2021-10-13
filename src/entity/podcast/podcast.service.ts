@@ -115,7 +115,7 @@ export class PodcastService {
 			await fse.ensureDir(podcastPath);
 			try {
 				podcast.image = await this.imageModule.storeImage(podcastPath, 'cover', tag.image);
-			} catch (e) {
+			} catch (e: any) {
 				podcast.image = undefined;
 				log.info('Downloading Podcast image failed', e);
 			}
@@ -141,7 +141,7 @@ export class PodcastService {
 					podcast.status = PodcastStatus.error;
 					podcast.errorMessage = 'No Podcast Feed Data';
 				}
-			} catch (e) {
+			} catch (e: any) {
 				log.info('Refreshing Podcast failed', e);
 				podcast.status = PodcastStatus.error;
 				podcast.errorMessage = (e || '').toString();
@@ -149,7 +149,7 @@ export class PodcastService {
 			podcast.lastCheck = new Date();
 			await orm.Podcast.persistAndFlush(podcast);
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
-		} catch (e) {
+		} catch (e: any) {
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 			return Promise.reject(e);
 		}

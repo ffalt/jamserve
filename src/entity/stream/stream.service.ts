@@ -20,7 +20,7 @@ export class StreamService {
 		let stats: fse.Stats | undefined;
 		try {
 			stats = await fse.stat(filename);
-		} catch (e) {
+		} catch (e: any) {
 			stats = undefined;
 		}
 		if (!stats) {
