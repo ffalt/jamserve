@@ -131,7 +131,7 @@
     "@typescript-eslint/parser": "5.0.0",
     "chance": "1.1.8",
     "conventional-changelog-cli": "2.1.1",
-    "eslint": "8.0.0",
+    "eslint": "8.0.1",
     "jest": "27.2.5",
     "jest-openapi": "0.14.0",
     "nock": "13.1.3",
