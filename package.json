@@ -139,7 +139,7 @@
     "standard-version": "9.3.1",
     "supertest": "6.1.6",
     "tmp": "0.2.1",
-    "ts-jest": "27.0.5",
+    "ts-jest": "27.0.6",
     "ts-node": "10.3.0",
     "ts-node-dev": "1.1.8",
     "tsc-watch": "4.5.0",
