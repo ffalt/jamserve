@@ -119,7 +119,7 @@
     "@types/passport-jwt": "3.0.6",
     "@types/passport-local": "1.0.34",
     "@types/seedrandom": "3.0.1",
-    "@types/sharp": "0.29.2",
+    "@types/sharp": "0.29.3",
     "@types/shuffle-seed": "1.1.0",
     "@types/supertest": "2.0.11",
     "@types/tiny-async-pool": "1.0.0",
