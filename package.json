@@ -103,7 +103,7 @@
     "@types/express-session": "1.17.4",
     "@types/express-useragent": "1.0.1",
     "@types/feedparser": "2.2.4",
-    "@types/fluent-ffmpeg": "2.1.18",
+    "@types/fluent-ffmpeg": "2.1.19",
     "@types/fs-extra": "9.0.13",
     "@types/graphql-type-json": "0.3.2",
     "@types/jest": "27.0.2",
