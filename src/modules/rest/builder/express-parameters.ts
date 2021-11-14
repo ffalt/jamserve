@@ -59,7 +59,7 @@ export class ExpressParameters {
 		return val;
 	}
 
-	private validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): string | Array<string> {
+	private validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): string | Array<string> | undefined {
 		if (typeOptions.array) {
 			let array: Array<string> = [];
 			if (value && Array.isArray(value)) {
@@ -80,6 +80,9 @@ export class ExpressParameters {
 		} else {
 			const val = String(value);
 			if (val.length === 0) {
+				if (typeOptions.nullable) {
+					return;
+				}
 				throw InvalidParamError(param.name);
 			}
 			return val;
