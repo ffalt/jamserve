@@ -54,7 +54,7 @@ import {StateResolver} from '../../../entity/state/state.resolver';
 import {NowPlayingResolver} from '../../../entity/nowplaying/nowplaying.resolver';
 import {AdminResolver} from '../../../entity/admin/admin.resolver';
 import path from 'path';
-import {GraphQLRequestListener} from 'apollo-server-plugin-base/src/index';
+import {GraphQLRequestListener} from 'apollo-server-plugin-base';
 import {GraphQLRequestContext, GraphQLRequestContextWillSendResponse} from 'apollo-server-types';
 import {MetadataResolver} from '../../../entity/metadata/metadata.resolver';
 
@@ -172,13 +172,6 @@ export class ApolloMiddleware {
 				// }
 				return err;
 			},
-			// {
-			// cdnUrl: './graphql',
-			// settings: {
-			// 	'request.credentials': 'same-origin'
-			// 	// 'request.credentials': 'include',
-			// }
-			// },
 			context: async ({req, res}): Promise<Context> => {
 				if (!req.user) throw new AuthenticationError('you must be logged in');
 				return {
