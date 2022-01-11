@@ -138,7 +138,7 @@
     "eslint": "8.6.0",
     "jest": "27.4.7",
     "jest-openapi": "0.14.2",
-    "nock": "13.2.1",
+    "nock": "13.2.2",
     "openapi3-ts": "2.0.1",
     "standard-version": "9.3.2",
     "supertest": "6.1.6",
