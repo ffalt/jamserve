@@ -1,5 +1,5 @@
 import {EntityMetadata} from '../definitions/entity-metadata';
-import seq, {ModelAttributes, Sequelize} from 'sequelize';
+import seq, {Sequelize} from 'sequelize';
 import {ModelAttributeColumnOptions, ModelOptions} from 'sequelize/types/lib/model';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {DataType} from 'sequelize/types/lib/data-types';
@@ -198,8 +198,8 @@ export class ModelBuilder {
 	}
 
 	private async buildEntityModel(entity: EntityMetadata): Promise<void> {
-		const attributes: ModelAttributes = {};
-		const options: ModelOptions = {
+		const attributes: any = {};
+		const options: ModelOptions<any> = {
 			freezeTableName: true
 		};
 		for (const field of entity.fields) {
@@ -208,7 +208,7 @@ export class ModelBuilder {
 				attributes[field.name] = attribute;
 			}
 		}
-		const model = this.sequelize.define(entity.name, attributes, options);
+		const model = this.sequelize.define<any>(entity.name, attributes, options as any);
 		this.modelMap.set(entity.name, model);
 	}
 

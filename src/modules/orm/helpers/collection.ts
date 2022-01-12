@@ -61,7 +61,7 @@ export class Collection<T extends IDEntity<T>> {
 		options = options || this.getOrderOptions();
 		// TODO: get from entity cache
 		const sources: Array<Model<T>> = await func(options);
-		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source));
+		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source as any));
 		if (this.changeSet) {
 			if (this.changeSet.set) {
 				list = this.changeSet.set as Array<any>;
