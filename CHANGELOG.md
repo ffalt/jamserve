@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.6](https://github.com/ffalt/jamserve/compare/v0.5.5...v0.5.6) (2022-01-12)
+
+
+### Features
+
+* **deps:** bump dependencies ([da379ec](https://github.com/ffalt/jamserve/commit/da379ecb36cf39013cfde21a3cd072cb55e889c0))
+
+
+### Bug Fixes
+
+* **github:** do not cache pull request node_modules ([1b33cf7](https://github.com/ffalt/jamserve/commit/1b33cf769b32ddf3bf17006be494e71fc6f51f92))
+* **rest:** nullable empty strings will be null ([9a672b4](https://github.com/ffalt/jamserve/commit/9a672b4a8f89ec032f6bf8af53926ac5298377bc))
+
 ### [0.5.5](https://github.com/ffalt/jamserve/compare/v0.5.4...v0.5.5) (2021-10-29)
 
 * **deps:** bump dependencies
