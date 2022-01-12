@@ -69,6 +69,9 @@ export class ExpressParameters {
         else {
             const val = String(value);
             if (val.length === 0) {
+                if (typeOptions.nullable) {
+                    return;
+                }
                 throw InvalidParamError(param.name);
             }
             return val;

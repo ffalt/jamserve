@@ -1,7 +1,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import axios from 'axios';
+import axios, {AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 
 export interface HttpHeaders {
 	Authorization?: string;
@@ -26,10 +26,10 @@ export class JamHttpService {
 
 	async raw(url: string, options: HTTPOptions): Promise<{buffer: ArrayBuffer; contentType: string}> {
 		try {
-			const opts = {
-				headers: options.headers,
+			const opts:AxiosRequestConfig<any> = {
+				headers: options.headers as AxiosRequestHeaders,
 				params: options.params,
-				reportProgress: options.reportProgress,
+				// reportProgress: options.reportProgress,
 				responseType: 'arraybuffer' as const,
 				withCredentials: options.withCredentials
 			};
@@ -42,7 +42,7 @@ export class JamHttpService {
 
 	async get<T>(url: string, options: HTTPOptions): Promise<T> {
 		try {
-			const result = await axios.get(url, {params: options.params, headers: options.headers, withCredentials: options.withCredentials});
+			const result = await axios.get(url, {params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials});
 			return result.data;
 		} catch (e: any) {
 			return handleError(e);
@@ -54,7 +54,7 @@ export class JamHttpService {
 			const result = await axios.post(
 				url,
 				body,
-				{params: options.params, headers: options.headers, withCredentials: options.withCredentials}
+				{params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials}
 			);
 			return result.data;
 		} catch (e: any) {
@@ -69,7 +69,7 @@ export class JamHttpService {
 				body,
 				{
 					params: options.params,
-					headers: options.headers,
+					headers: options.headers as AxiosRequestHeaders,
 					onUploadProgress,
 					withCredentials: options.withCredentials
 				}
