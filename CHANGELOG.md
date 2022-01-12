@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.5.5](https://github.com/ffalt/jamserve/compare/v0.5.4...v0.5.5) (2021-10-29)
 
+* **deps:** bump dependencies
+
 ### [0.5.4](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.4) (2021-10-13)
 
 
