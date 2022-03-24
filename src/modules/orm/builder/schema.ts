@@ -1,8 +1,6 @@
 import {EntityMetadata} from '../definitions/entity-metadata';
-import seq, {Sequelize} from 'sequelize';
-import {ModelAttributeColumnOptions, ModelOptions} from 'sequelize/types/lib/model';
+import seq, {Sequelize, DataType, ModelAttributeColumnOptions, ModelOptions} from 'sequelize';
 import {PropertyMetadata} from '../definitions/property-metadata';
-import {DataType} from 'sequelize/types/lib/data-types';
 import {ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT} from '..';
 import {ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions} from '../definitions/types';
 import {MetadataStorage} from '../metadata/metadata-storage';

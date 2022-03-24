@@ -2,11 +2,10 @@ import {ManagedEntity} from '../definitions/managed-entity';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {AnyEntity} from '../typings';
 import {EntityMetadata} from '../definitions/entity-metadata';
-import {Model} from 'sequelize/types/lib/model';
+import {Model, Transaction} from 'sequelize';
 import {EntityManager} from './manager';
 import {Reference} from './reference';
 import {Collection} from './collection';
-import {Transaction} from 'sequelize/types/lib/transaction';
 
 function transformValueForDB(value: any, field: PropertyMetadata): any {
 	if (field.typeOptions.array) {

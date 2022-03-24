@@ -2,8 +2,7 @@ import {AnyEntity, Dictionary, EntityData, EntityName, IDEntity} from '../typing
 import {EntityRepository} from './repository';
 import {MetadataStorage} from '../metadata/metadata-storage';
 import {ORMConfig} from '../definitions/config';
-import {FindOptions, ModelStatic, Sequelize} from 'sequelize';
-import {Model} from 'sequelize/types/lib/model';
+import {FindOptions, Model, ModelStatic, Sequelize} from 'sequelize';
 import {ManagedEntity} from '../definitions/managed-entity';
 import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity';
 import {v4} from 'uuid';

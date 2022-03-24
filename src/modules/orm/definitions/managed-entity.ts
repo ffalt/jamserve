@@ -1,7 +1,7 @@
 import {IDEntity} from '../typings';
 import {EntityMetadata} from './entity-metadata';
 import {EntityManager} from '../helpers/manager';
-import {Model} from 'sequelize/types/lib/model';
+import {Model} from 'sequelize';
 
 export interface ManagedEntity extends IDEntity {
 	_source: Model & { [name: string]: any };

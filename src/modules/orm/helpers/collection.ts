@@ -1,8 +1,7 @@
 import {AnyEntity, IDEntity} from '../typings';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {ManagedEntity} from '../definitions/managed-entity';
-import {Model} from 'sequelize';
-import {Transaction} from 'sequelize/types/lib/transaction';
+import {Model, Transaction} from 'sequelize';
 import {FindOptions} from '..';
 import {OrderByOptions} from '../definitions/types';
 
