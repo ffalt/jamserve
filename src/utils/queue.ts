@@ -5,5 +5,7 @@ export async function processQueue<T>(concurrent: number, list: Array<T>, proces
 		return;
 	}
 	const maxConcurrent = 10;
-	await asyncPool(maxConcurrent, list, process);
+	for await (const _ of asyncPool(maxConcurrent, list, process)) {
+		//
+	}
 }
