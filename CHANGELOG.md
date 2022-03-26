@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.7](https://github.com/ffalt/jamserve/compare/v0.5.6...v0.5.7) (2022-03-26)
+
+
+### Features
+
+* **deps:** bump dependencies ([23ce0e1](https://github.com/ffalt/jamserve/commit/23ce0e1bcff78af1cf65cdac32b8297707ab4b59))
+* **deps:** bump dependencies ([b8d24e2](https://github.com/ffalt/jamserve/commit/b8d24e201b1cdf5988ee0fc260d5a41596444deb))
+* **deps:** bump dependencies ([afe339c](https://github.com/ffalt/jamserve/commit/afe339c1680adc29520d00f8ad23c11ca10973af))
+* **deps:** bump dependencies ([3e2ebd7](https://github.com/ffalt/jamserve/commit/3e2ebd7cf885ea48b45c1835462cfd62ed75e5af))
+* **deps:** bump dependencies ([e2496e9](https://github.com/ffalt/jamserve/commit/e2496e94fa8858a29207c892df5ba78bc7ec0c57))
+* **deps:** include limiter src until ts/js import is fixed ([1dcf5ef](https://github.com/ffalt/jamserve/commit/1dcf5ef80d3dc51d550869fc8aa72435787033cc))
+
 ### [0.5.6](https://github.com/ffalt/jamserve/compare/v0.5.5...v0.5.6) (2022-01-12)
 
 
