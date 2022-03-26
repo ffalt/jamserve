@@ -4,6 +4,7 @@ export async function processQueue(concurrent, list, process) {
         return;
     }
     const maxConcurrent = 10;
-    await asyncPool(maxConcurrent, list, process);
+    for await (const _ of asyncPool(maxConcurrent, list, process)) {
+    }
 }
 //# sourceMappingURL=queue.js.map
