@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.8](https://github.com/ffalt/jamserve/compare/v0.5.7...v0.5.8) (2022-03-27)
+
+
+### Features
+
+* **deps:** fix import ([ffa14fd](https://github.com/ffalt/jamserve/commit/ffa14fde98f2822f6b775025017330b81beeb244))
+
+
+### Bug Fixes
+
+* **deps:** fix broken import ([5f2c00b](https://github.com/ffalt/jamserve/commit/5f2c00bf1d8c8618f9b600d7926a5e75b77882ff))
+
 ### [0.5.7](https://github.com/ffalt/jamserve/compare/v0.5.6...v0.5.7) (2022-03-26)
 
 
