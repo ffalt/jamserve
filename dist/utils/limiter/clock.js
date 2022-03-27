@@ -1,6 +1,5 @@
-import { performance } from "just-performance";
 function hrtime(previousTimestamp) {
-    const clocktime = performance.now() * 1e-3;
+    const clocktime = Date.now() * 1e-3;
     let seconds = Math.floor(clocktime);
     let nanoseconds = Math.floor((clocktime % 1) * 1e9);
     if (previousTimestamp != undefined) {
