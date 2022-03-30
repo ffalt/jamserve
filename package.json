@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "apollo-server-core": "3.6.6",
-    "apollo-server-express": "3.6.6",
+    "apollo-server-express": "3.6.7",
     "apollo-server-plugin-base": "3.5.2",
     "apollo-server-types": "3.5.2",
     "archiver": "5.3.0",
