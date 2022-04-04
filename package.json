@@ -38,7 +38,7 @@
     "apollo-server-types": "3.5.2",
     "archiver": "5.3.0",
     "bcrypt": "5.0.1",
-    "body-parser": "1.19.2",
+    "body-parser": "1.20.0",
     "class-validator": "0.13.2",
     "common-password-checker": "0.1.0",
     "compression": "1.7.4",
