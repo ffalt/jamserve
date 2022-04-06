@@ -22,7 +22,7 @@ export class LyricsOVHClient extends WebserviceClient {
 
 	protected async parseResult<T>(response: Response): Promise<T | undefined> {
 		if (response.status === 404) {
-			return Promise.resolve(undefined);
+			return Promise.resolve({} as T);
 		}
 		return super.parseResult<T>(response);
 	}
@@ -30,7 +30,7 @@ export class LyricsOVHClient extends WebserviceClient {
 	async search(artistName: string, songName: string): Promise<LyricsResult | undefined> {
 		const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
 		log.info('requesting', url);
-		const data = await this.getJson<LyricsOVHResult | undefined>(url);
+		const data = await this.getJson<LyricsOVHResult | undefined>(url, undefined, true);
 		if (!data || !data.lyrics) {
 			return;
 		}
