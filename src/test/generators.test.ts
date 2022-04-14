@@ -8,6 +8,7 @@ import {bindMockConfig, DBConfigs} from './mock/mock.config';
 import {waitEngineStart} from './mock/mock.engine';
 import {initTest} from './init';
 import {Container, Snapshot} from 'typescript-ioc';
+import DoneCallback = jest.DoneCallback;
 
 initTest();
 
@@ -30,7 +31,7 @@ function downloadZip(req: supertest.SuperTest<supertest.Test>, url: string, done
 				return done(err);
 			}
 			let isClosedByError = false;
-			yauzl.fromBuffer(res.body, (e: Error | undefined, zipfile: ZipFile | undefined) => {
+			yauzl.fromBuffer(res.body, (e: Error | null, zipfile: ZipFile | undefined) => {
 				if (e) {
 					return done(e);
 				}
@@ -117,16 +118,16 @@ describe('Generators', () => {
 	});
 
 	describe('must download', () => {
-		it('angular-client.zip', (done) => {
+		it('angular-client.zip', (done: DoneCallback) => {
 			downloadZip(request, '/docs/angular-client.zip', done);
 		});
-		it('axios-client.zip', (done) => {
+		it('axios-client.zip', (done: DoneCallback) => {
 			downloadZip(request, '/docs/axios-client.zip', done);
 		});
-		it('openapi.json', (done) => {
+		it('openapi.json', (done: DoneCallback) => {
 			downloadJSON(request, '/docs/openapi.json', done);
 		});
-		it('schema.graphql', (done) => {
+		it('schema.graphql', (done: DoneCallback) => {
 			downloadContent(request, '/docs/schema.graphql', /application\/graphql/, done);
 		});
 	});
