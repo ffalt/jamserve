@@ -51,7 +51,7 @@ export class Collection<T extends IDEntity<T>> {
 		return (await this.getItems(options)).map(item => item.id);
 	}
 
-	async getItems(options?: FindOptions<T>): Promise<Array<T>> {
+	async getItems(options?: FindOptions<IDEntity<T>>): Promise<Array<T>> {
 		if (this.list) {
 			return this.list;
 		}
@@ -118,7 +118,7 @@ export class Collection<T extends IDEntity<T>> {
 		}
 	}
 
-	private getOrderOptions(): FindOptions<T> | undefined {
+	private getOrderOptions(): FindOptions<IDEntity<T>> | undefined {
 		const order = (this.field.typeOptions as OrderByOptions).order;
 		if (order && this.field.linkedEntity) {
 			return (this.owner as ManagedEntity)._em.getOrderFindOptions(this.field.linkedEntity.name, order);

@@ -1,12 +1,12 @@
-import seq, {FindOptions, Includeable, OrOperator, WhereOptions, WhereValue} from 'sequelize';
+import seq, {FindOptions, Includeable, WhereOptions, WhereAttributeHashValue} from 'sequelize';
 
 export class QHelper {
 
-	static eq<T, Entity>(value?: T): WhereValue<Entity> | undefined {
+	static eq<T>(value?: T): T | undefined {
 		return (value !== undefined && value !== null) ? value : undefined;
 	}
 
-	static like<Entity>(value?: string, dialect?: string): WhereValue<Entity> | undefined {
+	static like(value?: string, dialect?: string): WhereAttributeHashValue<string> | undefined {
 		if (dialect === 'postgres') {
 			return (value) ? {[seq.Op.iLike]: `%${value}%`} : undefined;
 		} else {
@@ -14,11 +14,11 @@ export class QHelper {
 		}
 	}
 
-	static gte<Entity>(value?: number): WhereValue<Entity> | undefined {
+	static gte(value?: number): WhereAttributeHashValue<number> | undefined {
 		return (value !== undefined) ? {[seq.Op.gte]: value} : undefined;
 	}
 
-	static lte<Entity>(value?: number): WhereValue<Entity> | undefined {
+	static lte(value?: number): WhereAttributeHashValue<number> | undefined {
 		return (value !== undefined) ? {[seq.Op.lte]: value} : undefined;
 	}
 
@@ -37,25 +37,29 @@ export class QHelper {
 		return [{[seq.Op.or]: expressions}];
 	}
 
-	static neq<Entity>(value?: string): WhereValue<Entity> | undefined {
+	static neq(value?: string): WhereAttributeHashValue<string> | undefined {
 		return (value !== undefined && value !== null) ? {[seq.Op.ne]: value} : undefined;
 	}
 
-	static inOrEqual<T, Entity>(list?: Array<T>): WhereValue<Entity> | undefined {
+	static or<Entity>(list: Array<WhereOptions<Entity> | any>): WhereAttributeHashValue<Entity | any> {
+		return {[seq.Op.or]: QHelper.cleanList<Entity>(list)};
+	}
+
+	static inOrEqual<T>(list?: Array<T>): WhereAttributeHashValue<any> | T | undefined {
 		if (!list || list.length === 0) {
 			return;
 		}
-		return list.length > 1 ? {[seq.Op.in]: list} : (list[0] as WhereValue<Entity>);
+		return list.length > 1 ? {[seq.Op.in]: list} as WhereAttributeHashValue<T> : list[0];
 	}
 
-	static cleanList<Entity>(list: Array<WhereOptions<Entity> | { [name: string]: undefined }>): Array<WhereOptions<Entity>> | undefined {
+	static cleanList<Entity>(list: Array<WhereOptions<Entity> | { [name: string]: undefined }>): Array<any> | undefined {
 		const result = list.filter(q => {
 			if (!q) {
 				return false;
 			}
 			const key = Object.keys(q)[0];
 			return (q as any)[key] !== undefined;
-		}) as Array<WhereOptions<Entity>>;
+		});
 		return result.length > 0 ? result : undefined;
 	}
 
@@ -94,9 +98,4 @@ export class QHelper {
 		return {where: {[seq.Op.and]: result}};
 	}
 
-	static or<Entity>(list: Array<WhereOptions<Entity> | any>): OrOperator {
-		return {
-			[seq.Op.or]: QHelper.cleanList<Entity>(list)
-		} as OrOperator;
-	}
 }

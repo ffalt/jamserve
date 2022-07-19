@@ -320,7 +320,7 @@ export class EntityManager {
 		return this.changeSet.length;
 	}
 
-	public getOrderFindOptions<T>(entityName: EntityName<T>, order: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<T> | undefined {
+	public getOrderFindOptions<T>(entityName: EntityName<T>, order: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<IDEntity<T>> | undefined {
 		const repo = this.getRepository(entityName);
 		if (repo) {
 			return repo.buildOrderByFindOptions(order);

@@ -309,7 +309,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		if (!options.where) {
 			return ids;
 		}
-		let where: WhereOptions<Entity> = {id: {[seq.Op.in]: ids}};
+		let where: WhereOptions = {id: {[seq.Op.in]: ids}};
 		if (options.where &&
 			(Object.keys(options.where).length > 0 ||
 				Object.getOwnPropertySymbols(options.where).length > 0)
