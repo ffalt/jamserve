@@ -100,7 +100,9 @@ export class AuthController {
 	}
 
 	@Post('/logout', {roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout'})
-	logout(@Ctx() {req}: Context): void {
-		req.logout();
+	async logout(@Ctx() {req}: Context): Promise<void> {
+		return new Promise<void>(resolve => {
+			req.logout(resolve);
+		});
 	}
 }
