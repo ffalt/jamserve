@@ -37,8 +37,8 @@ export class SessionService {
 			session = orm.Session.create({sessionID: sid});
 		}
 		session.jwth = data.jwth;
-		session.agent = data.userAgent;
-		session.client = data.client;
+		session.agent = data.userAgent || '';
+		session.client = data.client || '';
 		session.cookie = JSON.stringify(data.cookie);
 		session.mode = data.jwth ? SessionMode.jwt : SessionMode.browser;
 		if (session.user.id() !== data.passport.user) {
