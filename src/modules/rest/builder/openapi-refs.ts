@@ -195,7 +195,7 @@ export class OpenApiRefBuilder {
 		});
 	}
 
-	buildUploadSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject {
+	buildUploadSchema(param: RestParamMetadata, _: Schemas): SchemaObject {
 		return {
 			properties: {
 				[param.name]: {
@@ -211,9 +211,9 @@ export class OpenApiRefBuilder {
 		};
 	}
 
-	buildParameterSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject {
+	buildParameterSchema(param: RestParamMetadata, schemas: Schemas): SchemaObject | ReferenceObject {
 		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
-		let result: SchemaObject;
+		let result: SchemaObject | ReferenceObject;
 		if (typeOptions.isID) {
 			result = {$ref: SCHEMA_ID};
 		} else if (param.getType() === String) {
@@ -233,9 +233,9 @@ export class OpenApiRefBuilder {
 		if (typeOptions.array) {
 			result = {type: 'array', items: result};
 		}
-		if (this.extended || !result.$ref) {
-			result.description = param.description;
-			result.deprecated = param.deprecationReason ? true : undefined;
+		if (this.extended || !(result as ReferenceObject).$ref) {
+			(result as SchemaObject).description = param.description;
+			(result as SchemaObject).deprecated = param.deprecationReason ? true : undefined;
 		}
 		return result;
 	}
