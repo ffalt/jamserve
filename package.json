@@ -32,7 +32,7 @@
     "releaselog": "conventional-changelog -p angular -r 2 -o RELEASELOG.md"
   },
   "dependencies": {
-    "apollo-server-core": "3.10.1",
+    "apollo-server-core": "3.10.2",
     "apollo-server-express": "3.10.1",
     "apollo-server-plugin-base": "3.6.2",
     "apollo-server-types": "3.6.2",
