@@ -11,15 +11,15 @@ import {ORM} from './orm';
 export class EntityCache {
 	private cache = new Map<string, IDEntity>();
 
-	get<T>(entityName: EntityName<T>, id: string): IDEntity | undefined {
+	get<T extends AnyEntity<T>>(entityName: EntityName<T>, id: string): IDEntity | undefined {
 		return this.cache.get(`${entityName}${id}`);
 	}
 
-	set<T>(entityName: EntityName<T>, entity: IDEntity): void {
+	set<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: IDEntity): void {
 		this.cache.set(`${entityName}${entity.id}`, entity);
 	}
 
-	remove<T>(entityName: EntityName<T>, entity: IDEntity): void {
+	remove<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: IDEntity): void {
 		this.cache.delete(`${entityName}${entity.id}`);
 	}
 
@@ -267,7 +267,7 @@ export class EntityManager {
 		return await this.model(entityName).count(options);
 	}
 
-	model<T>(entityName: EntityName<T>): ModelStatic<any> {
+	model<T extends AnyEntity<T>>(entityName: EntityName<T>): ModelStatic<any> {
 		return this.sequelize.model(entityName as string);
 	}
 
@@ -320,7 +320,7 @@ export class EntityManager {
 		return this.changeSet.length;
 	}
 
-	public getOrderFindOptions<T>(entityName: EntityName<T>, order: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<IDEntity<T>> | undefined {
+	public getOrderFindOptions<T extends AnyEntity<T>>(entityName: EntityName<T>, order: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<IDEntity<T>> | undefined {
 		const repo = this.getRepository(entityName);
 		if (repo) {
 			return repo.buildOrderByFindOptions(order);
