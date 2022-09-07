@@ -75,7 +75,7 @@
     "passport-local": "1.0.0",
     "pg": "8.8.0",
     "pg-hstore": "2.3.4",
-    "rate-limiter-flexible": "2.3.8",
+    "rate-limiter-flexible": "2.3.9",
     "reflect-metadata": "0.1.13",
     "seedrandom": "3.0.5",
     "sequelize": "6.21.4",
