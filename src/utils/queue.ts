@@ -5,6 +5,7 @@ export async function processQueue<T>(concurrent: number, list: Array<T>, proces
 		return;
 	}
 	const maxConcurrent = 10;
+	// eslint-disable-next-line  @typescript-eslint/no-unused-vars
 	for await (const _ of asyncPool(maxConcurrent, list, process)) {
 		//
 	}
