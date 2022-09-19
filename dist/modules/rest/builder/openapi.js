@@ -18,7 +18,7 @@ class OpenApiBuilder {
             }
         }
         if (parameters.find(p => {
-            return p.schema?.$ref === SCHEMA_ID || p.schema?.items?.$ref === SCHEMA_ID;
+            return p.schema?.$ref === SCHEMA_ID || (p.schema?.items || {}).$ref === SCHEMA_ID;
         })) {
             responses['404'] = { description: Errors.itemNotFound };
         }

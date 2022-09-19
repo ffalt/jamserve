@@ -7,14 +7,14 @@ export class LyricsOVHClient extends WebserviceClient {
     }
     async parseResult(response) {
         if (response.status === 404) {
-            return Promise.resolve(undefined);
+            return Promise.resolve({});
         }
         return super.parseResult(response);
     }
     async search(artistName, songName) {
         const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
         log.info('requesting', url);
-        const data = await this.getJson(url);
+        const data = await this.getJson(url, undefined, true);
         if (!data || !data.lyrics) {
             return;
         }

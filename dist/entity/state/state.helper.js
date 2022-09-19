@@ -85,7 +85,7 @@ export class StateHelper {
     }
     async getFavedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({
-            where: { user: userID, destType, faved: { [seq.Op.ne]: null } },
+            where: { user: userID, destType, faved: { [seq.Op.ne]: undefined } },
             order: [['faved', 'DESC']]
         });
         return states.map(a => a.destID);

@@ -90,8 +90,10 @@ let AuthController = AuthController_1 = class AuthController {
             }
         };
     }
-    logout({ req }) {
-        req.logout();
+    async logout({ req }) {
+        return new Promise(resolve => {
+            req.logout(resolve);
+        });
     }
 };
 __decorate([
@@ -107,7 +109,7 @@ __decorate([
     __param(0, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
 AuthController = AuthController_1 = __decorate([
     Controller('/auth', { tags: ['Access'] })

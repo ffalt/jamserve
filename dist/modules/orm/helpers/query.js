@@ -34,6 +34,9 @@ export class QHelper {
     static neq(value) {
         return (value !== undefined && value !== null) ? { [seq.Op.ne]: value } : undefined;
     }
+    static or(list) {
+        return { [seq.Op.or]: QHelper.cleanList(list) };
+    }
     static inOrEqual(list) {
         if (!list || list.length === 0) {
             return;
@@ -82,11 +85,6 @@ export class QHelper {
             return { where: result[0] };
         }
         return { where: { [seq.Op.and]: result } };
-    }
-    static or(list) {
-        return {
-            [seq.Op.or]: QHelper.cleanList(list)
-        };
     }
 }
 //# sourceMappingURL=query.js.map

@@ -167,7 +167,7 @@ export class OpenApiRefBuilder {
             return result;
         });
     }
-    buildUploadSchema(param, schemas) {
+    buildUploadSchema(param, _) {
         return {
             properties: {
                 [param.name]: {
