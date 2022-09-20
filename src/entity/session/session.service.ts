@@ -27,7 +27,7 @@ export class SessionService {
 	async set(sid: string, data: SessionData): Promise<void> {
 		const orm = this.ormService.fork();
 		let session = await this.getSession(sid);
-		if (!data.passport.user) {
+		if (!data.passport || !data.passport.user) {
 			if (session) {
 				await orm.Session.removeAndFlush(session);
 			}
