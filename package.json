@@ -79,7 +79,7 @@
     "reflect-metadata": "0.1.13",
     "seedrandom": "3.0.5",
     "sequelize": "6.23.0",
-    "sharp": "0.31.0",
+    "sharp": "0.31.1",
     "shuffle-seed": "1.1.6",
     "sqlite3": "5.1.1",
     "tiny-async-pool": "2.1.0",
