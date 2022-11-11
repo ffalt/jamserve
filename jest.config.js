@@ -8,12 +8,13 @@ export default {
 	"roots": [
 		"<rootDir>/src"
 	],
-	globals: {
-		"ts-jest": {
-			useESM: true,
-			tsconfig: "tsconfig.jest.json",
-			diagnostics: true,
-			testEnvironment: "node"
-		}
+	transform: {
+		"^.+\\.tsx?$": [`ts-jest`,
+			{
+				useESM: true,
+				tsconfig: "tsconfig.jest.json",
+				diagnostics: true,
+				testEnvironment: "node"
+			}]
 	}
 };
