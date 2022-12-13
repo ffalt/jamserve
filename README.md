@@ -174,7 +174,7 @@ Example **config/firststart.config.json**:
     'audiobook' -- bunch of audiobook folders
    */
   "roots": [
-    {"name": "Music", ",path": "path/to/music", strategy: "auto"},
+    {"name": "Music", "path": "path/to/music", "strategy": "auto"},
     {"name": "Compilations", "path": "path/to/compilations", "strategy": "compilation"},
     {"name": "Soundtracks", "path": "path/to/soundtracks", "strategy": "compilation"},
     {"name": "Audiobooks", "path": "path/to/audiobooks", "strategy": "audiobook"}

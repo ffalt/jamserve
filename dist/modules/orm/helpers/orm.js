@@ -3,16 +3,16 @@ import seq, { Sequelize } from 'sequelize';
 import { getMetadataStorage } from '../metadata';
 import { ModelBuilder } from '../builder/schema';
 export class ORM {
-    constructor(sequelize, config) {
-        this.sequelize = sequelize;
-        this.config = config;
-        this.cache = new EntityCache();
-    }
     static async init(config) {
         const sequelize = new Sequelize(config.options);
         const orm = new ORM(sequelize, config);
         await orm.init();
         return orm;
+    }
+    constructor(sequelize, config) {
+        this.sequelize = sequelize;
+        this.config = config;
+        this.cache = new EntityCache();
     }
     async init() {
         const metadata = getMetadataStorage();

@@ -3,18 +3,6 @@ import path from 'path';
 import which from 'which';
 export const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
 const cache = {};
-async function whichAsync(name) {
-    return new Promise((resolve, reject) => {
-        which(name, (err, resolvedPath) => {
-            if (err) {
-                reject(err);
-            }
-            else {
-                resolve(resolvedPath);
-            }
-        });
-    });
-}
 async function localBin(name) {
     const s = path.join('.', 'bin', 'tools', name, process.platform, process.arch, name) + (isWindows ? '.exe' : '');
     const exists = await fse.pathExists(s);
@@ -47,7 +35,7 @@ export async function getBinPath(name, envName) {
     catch (e) {
     }
     try {
-        const s = await whichAsync(name);
+        const s = await which(name);
         if (s && s.length > 0) {
             cache[name] = s;
             return s;
