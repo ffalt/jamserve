@@ -135,7 +135,7 @@
     "@types/validator": "13.7.10",
     "@types/which": "2.0.1",
     "@types/yauzl": "2.10.0",
-    "@typescript-eslint/eslint-plugin": "5.42.1",
+    "@typescript-eslint/eslint-plugin": "5.46.1",
     "@typescript-eslint/parser": "5.42.1",
     "chance": "1.1.9",
     "conventional-changelog-cli": "2.2.2",
