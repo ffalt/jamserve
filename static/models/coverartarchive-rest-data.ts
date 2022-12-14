@@ -1,4 +1,5 @@
 // CoverArtArchive API Version 1.0
+/* eslint-disable @typescript-eslint/naming-convention */
 
 export declare namespace CoverArtArchive {
 

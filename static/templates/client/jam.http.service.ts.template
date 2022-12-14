@@ -57,7 +57,7 @@ export class JamHttpService {
 					params: options.params, headers: options.headers, reportProgress: options.reportProgress,
 					withCredentials: options.withCredentials, responseType: options.responseType as 'json'
 				}
-			).toPromise();
+			).toPromise() as Promise<T>;
 		} catch (e: any) {
 			return handleError(e);
 		}
@@ -67,7 +67,7 @@ export class JamHttpService {
 		try {
 			return await this.client.post<T>(url, body,
 				{params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials}
-			).toPromise();
+			).toPromise() as Promise<T>;
 		} catch (e: any) {
 			return handleError(e);
 		}

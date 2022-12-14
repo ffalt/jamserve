@@ -1,11 +1,9 @@
-import {ApolloServer, AuthenticationError} from 'apollo-server-express';
-import {ApolloServerPluginLandingPageDisabled} from 'apollo-server-core';
 import {OrmService} from '../../engine/services/orm.service';
 import {EngineService} from '../../engine/services/engine.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {Context} from './apollo.context';
 import express from 'express';
-import {AuthChecker, buildSchema, registerEnumType} from 'type-graphql';
+import {ArgumentValidationError, AuthChecker, buildSchema, registerEnumType} from 'type-graphql';
 import {
 	AlbumOrderFields,
 	AlbumType,
@@ -48,15 +46,18 @@ import {RootResolver, RootStatusResolver} from '../../../entity/root/root.resolv
 import {SeriesResolver} from '../../../entity/series/series.resolver';
 import {SessionResolver} from '../../../entity/session/session.resolver';
 import {TrackResolver} from '../../../entity/track/track.resolver';
-import {GraphQLSchema, printSchema} from 'graphql';
+import {GraphQLFormattedError, GraphQLError, GraphQLSchema, printSchema} from 'graphql';
 import {StatsResolver} from '../../../entity/stats/stats.resolver';
 import {StateResolver} from '../../../entity/state/state.resolver';
 import {NowPlayingResolver} from '../../../entity/nowplaying/nowplaying.resolver';
 import {AdminResolver} from '../../../entity/admin/admin.resolver';
 import path from 'path';
-import {GraphQLRequestListener} from 'apollo-server-plugin-base';
-import {GraphQLRequestContext, GraphQLRequestContextWillSendResponse} from 'apollo-server-types';
 import {MetadataResolver} from '../../../entity/metadata/metadata.resolver';
+import {ApolloServer} from '@apollo/server';
+import {ApolloServerPluginLandingPageDisabled} from '@apollo/server/plugin/disabled';
+import {expressMiddleware} from '@apollo/server/express4';
+import {unwrapResolverError} from '@apollo/server/errors';
+import type {ValidationError as ClassValidatorValidationError} from 'class-validator';
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
@@ -126,8 +127,62 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 			RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
 			SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
 		],
+		validate: {forbidUnknownValues: false},
 		authChecker: customAuthChecker
 	});
+}
+
+type IValidationError = Pick<
+	ClassValidatorValidationError,
+	'property' | 'value' | 'constraints' | 'children'
+>;
+
+function formatValidationErrors(
+	validationError: IValidationError
+): IValidationError {
+	return {
+		property: validationError.property,
+		...(validationError.value && {value: validationError.value}),
+		...(validationError.constraints && {
+			constraints: validationError.constraints
+		}),
+		...(validationError.children &&
+			validationError.children.length !== 0 && {
+				children: validationError.children.map((child) =>
+					formatValidationErrors(child)
+				)
+			})
+	};
+}
+
+export class ValidationError extends GraphQLError {
+	public constructor(validationErrors: ClassValidatorValidationError[]) {
+		super('Validation Error', {
+			extensions: {
+				code: 'BAD_USER_INPUT',
+				validationErrors: validationErrors.map((validationError) =>
+					formatValidationErrors(validationError)
+				)
+			}
+		});
+
+		Object.setPrototypeOf(this, ValidationError.prototype);
+	}
+}
+
+function formatGraphQLFormatError(
+	formattedError: GraphQLFormattedError,
+	error: unknown
+): GraphQLFormattedError {
+	const originalError = unwrapResolverError(error);
+
+	// Validation
+	if (originalError instanceof ArgumentValidationError) {
+		return new ValidationError(originalError.validationErrors);
+	}
+
+	// Generic
+	return formattedError;
 }
 
 @InRequestScope
@@ -144,18 +199,18 @@ export class ApolloMiddleware {
 		return api;
 	}
 
-	async middleware(): Promise<express.Router> {
+	async middleware(): Promise<express.RequestHandler> {
 		this.schema = await buildGraphQlSchema();
 		const apollo = new ApolloServer({
 			schema: this.schema,
-			debug: true,
 			plugins: [
 				{
-					async requestDidStart(_: GraphQLRequestContext<any>): Promise<GraphQLRequestListener<any> | void> {
+					async requestDidStart() {
 						return {
-							async willSendResponse(requestContext: GraphQLRequestContextWillSendResponse<any>): Promise<void> {
-								if (requestContext.errors) {
-									requestContext.errors.forEach((err: Error) => {
+							async willSendResponse(requestContext) {
+								const {errors} = requestContext;
+								if (errors) {
+									errors.forEach((err: Error) => {
 										console.error(err);
 									});
 								}
@@ -163,28 +218,24 @@ export class ApolloMiddleware {
 						};
 					}
 				},
-				ApolloServerPluginLandingPageDisabled
+				ApolloServerPluginLandingPageDisabled()
 			],
 			introspection: true,
-			formatError: (err): Error => {
-				// if (err.message.startsWith('Database Error: ')) {
-				// 	return new Error('Internal server error');
-				// }
-				return err;
-			},
-			context: async ({req, res}): Promise<Context> => {
-				if (!req.user) throw new AuthenticationError('you must be logged in');
+			formatError: formatGraphQLFormatError
+		});
+		await apollo.start();
+		return expressMiddleware(apollo, {
+			context: async ({req, res}) => {
+				if (!req.user) throw new Error('you must be logged in');
 				return {
 					req, res,
 					orm: this.orm.fork(),
 					engine: this.engine,
 					sessionID: req.session?.id,
 					user: req.user
-				} as any;
-			},
+				};
+			}
 		});
-		await apollo.start();
-		return apollo.getMiddleware({path: `/`, cors: false});
 	}
 
 	printSchema(): string {
