@@ -123,7 +123,7 @@
     "@types/node-fetch": "3.0.2",
     "@types/on-finished": "2.3.1",
     "@types/passport": "1.0.11",
-    "@types/passport-jwt": "3.0.7",
+    "@types/passport-jwt": "3.0.8",
     "@types/passport-local": "1.0.34",
     "@types/seedrandom": "3.0.2",
     "@types/sharp": "0.31.0",
