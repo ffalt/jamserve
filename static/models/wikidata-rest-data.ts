@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export declare namespace WikiData {
 
 	export interface SiteLink {

@@ -7,13 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ApolloServer, AuthenticationError } from 'apollo-server-express';
-import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
 import { OrmService } from '../../engine/services/orm.service';
 import { EngineService } from '../../engine/services/engine.service';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import { buildSchema, registerEnumType } from 'type-graphql';
+import { ArgumentValidationError, buildSchema, registerEnumType } from 'type-graphql';
 import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, DefaultOrderFields, EpisodeOrderFields, FolderOrderFields, FolderType, GenreOrderFields, ListType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackOrderFields, UserRole } from '../../../types/enums';
 import { UserFavoritesResolver, UserResolver } from '../../../entity/user/user.resolver';
 import { AlbumResolver } from '../../../entity/album/album.resolver';
@@ -33,13 +31,17 @@ import { RootResolver, RootStatusResolver } from '../../../entity/root/root.reso
 import { SeriesResolver } from '../../../entity/series/series.resolver';
 import { SessionResolver } from '../../../entity/session/session.resolver';
 import { TrackResolver } from '../../../entity/track/track.resolver';
-import { printSchema } from 'graphql';
+import { GraphQLError, printSchema } from 'graphql';
 import { StatsResolver } from '../../../entity/stats/stats.resolver';
 import { StateResolver } from '../../../entity/state/state.resolver';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver';
 import { AdminResolver } from '../../../entity/admin/admin.resolver';
 import path from 'path';
 import { MetadataResolver } from '../../../entity/metadata/metadata.resolver';
+import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+import { expressMiddleware } from '@apollo/server/express4';
+import { unwrapResolverError } from '@apollo/server/errors';
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });
@@ -105,8 +107,40 @@ export async function buildGraphQlSchema() {
             RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
             SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
         ],
+        validate: { forbidUnknownValues: false },
         authChecker: customAuthChecker
     });
+}
+function formatValidationErrors(validationError) {
+    return {
+        property: validationError.property,
+        ...(validationError.value && { value: validationError.value }),
+        ...(validationError.constraints && {
+            constraints: validationError.constraints
+        }),
+        ...(validationError.children &&
+            validationError.children.length !== 0 && {
+            children: validationError.children.map((child) => formatValidationErrors(child))
+        })
+    };
+}
+export class ValidationError extends GraphQLError {
+    constructor(validationErrors) {
+        super('Validation Error', {
+            extensions: {
+                code: 'BAD_USER_INPUT',
+                validationErrors: validationErrors.map((validationError) => formatValidationErrors(validationError))
+            }
+        });
+        Object.setPrototypeOf(this, ValidationError.prototype);
+    }
+}
+function formatGraphQLFormatError(formattedError, error) {
+    const originalError = unwrapResolverError(error);
+    if (originalError instanceof ArgumentValidationError) {
+        return new ValidationError(originalError.validationErrors);
+    }
+    return formattedError;
 }
 let ApolloMiddleware = class ApolloMiddleware {
     async playground() {
@@ -118,14 +152,14 @@ let ApolloMiddleware = class ApolloMiddleware {
         this.schema = await buildGraphQlSchema();
         const apollo = new ApolloServer({
             schema: this.schema,
-            debug: true,
             plugins: [
                 {
-                    async requestDidStart(_) {
+                    async requestDidStart() {
                         return {
                             async willSendResponse(requestContext) {
-                                if (requestContext.errors) {
-                                    requestContext.errors.forEach((err) => {
+                                const { errors } = requestContext;
+                                if (errors) {
+                                    errors.forEach((err) => {
                                         console.error(err);
                                     });
                                 }
@@ -133,15 +167,16 @@ let ApolloMiddleware = class ApolloMiddleware {
                         };
                     }
                 },
-                ApolloServerPluginLandingPageDisabled
+                ApolloServerPluginLandingPageDisabled()
             ],
             introspection: true,
-            formatError: (err) => {
-                return err;
-            },
+            formatError: formatGraphQLFormatError
+        });
+        await apollo.start();
+        return expressMiddleware(apollo, {
             context: async ({ req, res }) => {
                 if (!req.user)
-                    throw new AuthenticationError('you must be logged in');
+                    throw new Error('you must be logged in');
                 return {
                     req, res,
                     orm: this.orm.fork(),
@@ -149,10 +184,8 @@ let ApolloMiddleware = class ApolloMiddleware {
                     sessionID: req.session?.id,
                     user: req.user
                 };
-            },
+            }
         });
-        await apollo.start();
-        return apollo.getMiddleware({ path: `/`, cors: false });
     }
     printSchema() {
         return printSchema(this.schema);
