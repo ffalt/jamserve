@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+### [0.5.11](https://github.com/ffalt/jamserve/compare/v0.5.10...v0.5.11) (2022-12-17)
+
+### Features
+
+* **graphql:** update to graphql 16
+* **apollo:** update to apollo server 4
+
 ### [0.5.10](https://github.com/ffalt/jamserve/compare/v0.5.9...v0.5.10) (2022-12-13)
 
 
