@@ -64,7 +64,7 @@ jobs:
           npm run releaselog
 
       - name: Deploy to Release Branch 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: release # The branch the action should deploy to.
@@ -79,7 +79,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body_path: ./RELEASELOG.md
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Release ${{ github.ref }}
           files: |
             ./deploy/jamserve-release.zip
