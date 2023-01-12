@@ -5,13 +5,18 @@ import {Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL} from './playlist'
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry';
 import {PlaylistIndexArgs, PlaylistsArgs} from './playlist.args';
+import {NotFoundError} from '../../modules/rest';
 
 @Resolver(PlaylistQL)
 export class PlaylistResolver {
 
 	@Query(() => PlaylistQL, {description: 'Get a Playlist by Id'})
 	async playlist(@Arg('id', () => ID!) id: string, @Ctx() {orm, user}: Context): Promise<Playlist> {
-		return await orm.Playlist.oneOrFail({where: {id, user: user.id, isPublic: true}});
+		const list = await orm.Playlist.oneOrFail({where: {id}});
+		if (!list.isPublic && user.id !== list.user.id()) {
+			throw NotFoundError();
+		}
+		return list;
 	}
 
 	@Query(() => PlaylistPageQL, {description: 'Search Playlists'})

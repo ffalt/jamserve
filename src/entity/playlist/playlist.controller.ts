@@ -1,5 +1,5 @@
 import {Playlist, PlaylistIndex, PlaylistPage} from './playlist.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
+import {BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
 import {UserRole} from '../../types/enums';
 import {PlaylistEntryPage} from '../playlistentry/playlist-entry.model';
 import {IncludesTrackArgs} from '../track/track.args';
@@ -22,8 +22,12 @@ export class PlaylistController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@Ctx() {orm, engine, user}: Context
 	): Promise<Playlist> {
+		const list = await orm.Playlist.oneOrFail({where: {id}});
+		if (!list.isPublic && user.id !== list.user.id()) {
+			throw NotFoundError();
+		}
 		return engine.transform.playlist(
-			orm, await orm.Playlist.oneOrFailFilter({ids: [id]}, user),
+			orm, list,
 			playlistArgs, trackArgs, episodeArgs, user
 		);
 	}
