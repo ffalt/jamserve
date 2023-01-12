@@ -144,7 +144,7 @@
     "nock": "13.2.9",
     "supertest": "6.3.3",
     "tmp": "0.2.1",
-    "ts-jest": "29.0.3",
+    "ts-jest": "29.0.4",
     "ts-node": "10.9.1",
     "ts-node-dev": "2.0.0",
     "tsc-watch": "6.0.0",
