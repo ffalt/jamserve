@@ -39,6 +39,7 @@ import {FolderResolver} from '../../../entity/folder/folder.resolver';
 import {WaveformResolver} from '../../../entity/waveform/waveform.resolver';
 import {GenreResolver} from '../../../entity/genre/genre.resolver';
 import {PlaylistResolver} from '../../../entity/playlist/playlist.resolver';
+import {PlaylistEntryResolver} from '../../../entity/playlistentry/playlist-entry.resolver';
 import {PlayQueueResolver} from '../../../entity/playqueue/playqueue.resolver';
 import {PodcastResolver} from '../../../entity/podcast/podcast.resolver';
 import {RadioResolver} from '../../../entity/radio/radio.resolver';
@@ -123,8 +124,8 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 		resolvers: [
 			UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
 			EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
-			PlaylistResolver, PlayQueueResolver, PodcastResolver, RadioResolver, RootResolver,
-			RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
+			PlaylistResolver, PlaylistEntryResolver, PlayQueueResolver, PodcastResolver, RadioResolver,
+			RootResolver, RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
 			SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
 		],
 		validate: {forbidUnknownValues: false},
