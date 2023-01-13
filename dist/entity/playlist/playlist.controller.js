@@ -11,7 +11,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Playlist, PlaylistIndex, PlaylistPage } from './playlist.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
+import { BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams } from '../../modules/rest';
 import { UserRole } from '../../types/enums';
 import { PlaylistEntryPage } from '../playlistentry/playlist-entry.model';
 import { IncludesTrackArgs } from '../track/track.args';
@@ -21,7 +21,11 @@ import { ListArgs, PageArgs } from '../base/base.args';
 import { PlaylistEntryOrderArgs } from '../playlistentry/playlist-entry.args';
 let PlaylistController = class PlaylistController {
     async id(id, playlistArgs, trackArgs, episodeArgs, { orm, engine, user }) {
-        return engine.transform.playlist(orm, await orm.Playlist.oneOrFailFilter({ ids: [id] }, user), playlistArgs, trackArgs, episodeArgs, user);
+        const list = await orm.Playlist.oneOrFail({ where: { id } });
+        if (!list.isPublic && user.id !== list.user.id()) {
+            throw NotFoundError();
+        }
+        return engine.transform.playlist(orm, list, playlistArgs, trackArgs, episodeArgs, user);
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Playlist.indexFilter(filter, user);

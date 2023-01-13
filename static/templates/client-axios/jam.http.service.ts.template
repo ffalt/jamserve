@@ -34,7 +34,7 @@ export class JamHttpService {
 				withCredentials: options.withCredentials
 			};
 			const result = await axios.get(url, opts);
-			return {buffer: result.data, contentType: result.headers['content-type']};
+			return {buffer: result.data, contentType: result.headers['content-type'] || ''};
 		} catch (e: any) {
 			return handleError(e);
 		}

@@ -16,9 +16,14 @@ import { DBObjectType } from '../../types/enums';
 import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist';
 import { PlaylistEntryQL } from '../playlistentry/playlist-entry';
 import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args';
+import { NotFoundError } from '../../modules/rest';
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
-        return await orm.Playlist.oneOrFail({ where: { id, user: user.id, isPublic: true } });
+        const list = await orm.Playlist.oneOrFail({ where: { id } });
+        if (!list.isPublic && user.id !== list.user.id()) {
+            throw NotFoundError();
+        }
+        return list;
     }
     async playlists({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
