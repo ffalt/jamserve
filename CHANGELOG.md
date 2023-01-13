@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+### [0.5.12](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.12) (2023-01-13)
+
+
+### Bug Fixes
+
+* **graphql:** add missing playlist-entry.resolver ([a08c3d8](https://github.com/ffalt/jamserve/commit/a08c3d8ff813cf21d0cbca7708818e18fb07eca4))
+* **playlist:** allow accessing public playlists of other users by id ([858330f](https://github.com/ffalt/jamserve/commit/858330f52e4eada9fcad42492745fe618d7b07ae))
+* **template:** fix type in template ([f80568d](https://github.com/ffalt/jamserve/commit/f80568df05b357e9318208170df0d78264faa7a1))
+
 ### [0.5.11](https://github.com/ffalt/jamserve/compare/v0.5.10...v0.5.11) (2022-12-17)
 
 ### Features
