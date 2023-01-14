@@ -1,4 +1,6 @@
-import genreData from '../static/genres.json';
+import fs from 'fs';
+
+const genreData = JSON.parse(fs.readFileSync(new URL('../static/genres.json', import.meta.url)).toString());
 
 let GenresSlugs: { [slug: string]: string }; // will be build on first use
 
