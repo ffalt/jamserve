@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+### [0.5.14](https://github.com/ffalt/jamserve/compare/v0.5.13...v0.5.14) (2023-01-14)
+
+
+### Features
+
+* **github action:** use ref_name as release name [skip ci] ([a619137](https://github.com/ffalt/jamserve/commit/a619137c3ce159c736283d82a4b0af8a655ae1ff))
+
+
+### Bug Fixes
+
+* **nodejs:** include the json data ([a959880](https://github.com/ffalt/jamserve/commit/a959880c07a970f02c53d349107c41615b7c1f0e))
+
 ### [0.5.13](https://github.com/ffalt/jamserve/compare/v0.5.12...v0.5.13) (2023-01-14)
 
 
