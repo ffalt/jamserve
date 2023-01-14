@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+### [0.5.13](https://github.com/ffalt/jamserve/compare/v0.5.12...v0.5.13) (2023-01-14)
+
+
+### Bug Fixes
+
+* **nodejs:** different requirements for json in different nodejs version, just read it instead of importing/require ([5037d49](https://github.com/ffalt/jamserve/commit/5037d49f3c3e89a1f73eb9c2f496a96ec9d4578b))
+
 ### [0.5.12](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.12) (2023-01-13)
 
 
