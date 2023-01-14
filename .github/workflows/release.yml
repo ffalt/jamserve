@@ -79,6 +79,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body_path: ./RELEASELOG.md
-          name: Release ${{ github.ref }}
+          name: ${{ github.ref_name }}
           files: |
             ./deploy/jamserve-release.zip
