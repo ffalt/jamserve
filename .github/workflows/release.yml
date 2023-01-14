@@ -66,7 +66,6 @@ jobs:
       - name: Deploy to Release Branch 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: release # The branch the action should deploy to.
           FOLDER: deploy # The folder the action should deploy.
           CLEAN: true
