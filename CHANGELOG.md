@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.15](https://github.com/ffalt/jamserve/compare/v0.5.14...v0.5.15) (2023-01-24)
+
+
+### Bug Fixes
+
+* **favorites:** repair list query ([09848d3](https://github.com/ffalt/jamserve/commit/09848d3a391dd6537c7796a1c435e8d08ace2a4f))
+
 ### [0.5.14](https://github.com/ffalt/jamserve/compare/v0.5.13...v0.5.14) (2023-01-14)
 
 
