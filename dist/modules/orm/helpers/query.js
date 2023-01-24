@@ -32,7 +32,7 @@ export class QHelper {
         return [{ [seq.Op.or]: expressions }];
     }
     static neq(value) {
-        return (value !== undefined && value !== null) ? { [seq.Op.ne]: value } : undefined;
+        return (value !== undefined) ? { [seq.Op.ne]: value } : undefined;
     }
     static or(list) {
         return { [seq.Op.or]: QHelper.cleanList(list) };
