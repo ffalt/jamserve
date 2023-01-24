@@ -38,7 +38,7 @@ export class QHelper {
 	}
 
 	static neq(value?: string): WhereAttributeHashValue<string> | undefined {
-		return (value !== undefined && value !== null) ? {[seq.Op.ne]: value} : undefined;
+		return (value !== undefined) ? {[seq.Op.ne]: value} : undefined;
 	}
 
 	static or<Entity>(list: Array<WhereOptions<Entity> | any>): WhereAttributeHashValue<Entity | any> {
