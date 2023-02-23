@@ -19,7 +19,7 @@ export class AuthController {
 
 	private async loginUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
-			passport.authenticate('local', (err, user) => {
+			passport.authenticate('local', (err: Error, user: User) => {
 				if (err || !user) {
 					log.error(err);
 					return reject(UnauthError('Invalid Auth'));

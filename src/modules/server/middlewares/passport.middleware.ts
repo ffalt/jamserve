@@ -76,7 +76,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		const jwth = jwthash(token);
 		req.engine.rateLimit.loginSlowDown(req, res)
 			.then(() => {
-				passport.authenticate(name, {session: false}, (err, user, info: any) => {
+				passport.authenticate(name, {session: false}, (err: Error, user: User, info: any) => {
 					if (err) {
 						log.error(err);
 						return next();
