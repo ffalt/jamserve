@@ -78,7 +78,7 @@
     "sequelize": "6.29.0",
     "sharp": "0.31.3",
     "shuffle-seed": "1.1.6",
-    "sqlite3": "5.1.4",
+    "sqlite3": "5.1.5",
     "tiny-async-pool": "2.1.0",
     "type-graphql": "2.0.0-beta.1",
     "typescript-ioc": "3.2.2",
