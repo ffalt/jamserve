@@ -17,7 +17,7 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 	}
 
 	private static expired(data: SessionData): boolean {
-		return (data.cookie.expires || 0) < Date.now();
+		return (data.cookie.expires || 0).valueOf() < Date.now();
 	}
 
 	private async _get(sid: string): Promise<SessionData | undefined> {
