@@ -52,7 +52,7 @@
     "express-useragent": "1.0.15",
     "feedparser": "2.2.10",
     "fluent-ffmpeg": "2.1.2",
-    "fs-extra": "11.1.0",
+    "fs-extra": "11.1.1",
     "graphql": "16.6.0",
     "graphql-type-json": "0.3.2",
     "helmet": "6.0.1",
