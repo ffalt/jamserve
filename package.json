@@ -131,7 +131,7 @@
     "@types/tmp": "0.2.3",
     "@types/uuid": "9.0.1",
     "@types/validator": "13.7.14",
-    "@types/which": "2.0.2",
+    "@types/which": "3.0.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "5.55.0",
     "@typescript-eslint/parser": "5.55.0",
