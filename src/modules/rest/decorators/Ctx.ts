@@ -3,7 +3,7 @@ import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function Ctx(propertyName?: string): ParameterDecorator {
 	return (prototype, propertyKey, parameterIndex): void => {
-		if (typeof propertyKey === 'symbol') {
+		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
 			throw new SymbolKeysNotSupportedError();
 		}
 		getMetadataStorage().collectHandlerParamMetadata({

@@ -2,6 +2,7 @@ import {DecoratorTypeOptions, FieldOptions, ReturnTypeFunc, ValidateOptions} fro
 import {getMetadataStorage} from '../metadata';
 import {getTypeDecoratorParams} from '../helpers/decorators';
 import {getParamInfo} from '../helpers/params';
+import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export type PathParamOptions = DecoratorTypeOptions & ValidateOptions & FieldOptions;
 
@@ -17,6 +18,9 @@ export function PathParam(
 	maybeOptions?: PathParamOptions,
 ): ParameterDecorator {
 	return (prototype, propertyKey, parameterIndex) => {
+		if (typeof propertyKey === 'symbol' || typeof propertyKey === undefined) {
+			throw new SymbolKeysNotSupportedError();
+		}
 		const {options, returnTypeFunc} = getTypeDecoratorParams(
 			returnTypeFuncOrOptions,
 			maybeOptions,
@@ -29,7 +33,7 @@ export function PathParam(
 			description: (options as PathParamOptions).description,
 			example: (options as PathParamOptions).example,
 			deprecationReason: (options as PathParamOptions).deprecationReason,
-			...getParamInfo({prototype, propertyKey, parameterIndex, returnTypeFunc, options}),
+			...getParamInfo({prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options}),
 		});
 	};
 }

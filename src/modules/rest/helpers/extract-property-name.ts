@@ -9,6 +9,6 @@ function $args(func: Function): Array<string> {
 		.split(',').filter(Boolean); // split & filter [""]
 }
 
-export function extractPropertyName(prototype: Object, propertyKey: string | symbol, parameterIndex: number): string {
-	return `${$args((prototype as any)[propertyKey].toString())[parameterIndex]}`;
+export function extractPropertyName(prototype: Object, propertyKey: string | symbol | undefined, parameterIndex: number): string {
+	return `${$args((prototype as any)[propertyKey||''].toString())[parameterIndex]}`;
 }

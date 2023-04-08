@@ -18,14 +18,14 @@ export function getParamInfo({
   returnTypeFunc,
   options = {},
 }: ParamInfo): CommonArgMetadata {
-  if (typeof propertyKey === "symbol") {
+  if (typeof propertyKey === "symbol" || typeof propertyKey === undefined) {
     throw new SymbolKeysNotSupportedError();
   }
 
   const { getType, typeOptions } = findType({
     metadataKey: "design:paramtypes",
     prototype,
-    propertyKey,
+    propertyKey: propertyKey as string,
     parameterIndex,
     returnTypeFunc,
     typeOptions: options,
