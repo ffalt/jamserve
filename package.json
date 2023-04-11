@@ -55,7 +55,7 @@
     "fs-extra": "11.1.1",
     "graphql": "16.6.0",
     "graphql-type-json": "0.3.2",
-    "helmet": "6.1.1",
+    "helmet": "6.1.4",
     "jamp3": "0.5.0",
     "jimp": "0.22.7",
     "jsdom": "21.1.1",
