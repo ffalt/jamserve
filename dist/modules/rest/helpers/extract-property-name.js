@@ -8,6 +8,6 @@ function $args(func) {
         .split(',').filter(Boolean);
 }
 export function extractPropertyName(prototype, propertyKey, parameterIndex) {
-    return `${$args(prototype[propertyKey].toString())[parameterIndex]}`;
+    return `${$args(prototype[propertyKey || ''].toString())[parameterIndex]}`;
 }
 //# sourceMappingURL=extract-property-name.js.map

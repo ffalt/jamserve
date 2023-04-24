@@ -2,7 +2,7 @@ import { getMetadataStorage } from '../metadata';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function Ctx(propertyName) {
     return (prototype, propertyKey, parameterIndex) => {
-        if (typeof propertyKey === 'symbol') {
+        if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
             throw new SymbolKeysNotSupportedError();
         }
         getMetadataStorage().collectHandlerParamMetadata({

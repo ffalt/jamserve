@@ -1,13 +1,13 @@
 import { findType } from "./findType";
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function getParamInfo({ prototype, propertyKey, parameterIndex, returnTypeFunc, options = {}, }) {
-    if (typeof propertyKey === "symbol") {
+    if (typeof propertyKey === "symbol" || typeof propertyKey === undefined) {
         throw new SymbolKeysNotSupportedError();
     }
     const { getType, typeOptions } = findType({
         metadataKey: "design:paramtypes",
         prototype,
-        propertyKey,
+        propertyKey: propertyKey,
         parameterIndex,
         returnTypeFunc,
         typeOptions: options,

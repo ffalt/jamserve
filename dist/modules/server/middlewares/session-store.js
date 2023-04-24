@@ -48,7 +48,7 @@ export class ExpressSessionStore extends Store {
         this.cache.clear();
     }
     static expired(data) {
-        return (data.cookie.expires || 0) < Date.now();
+        return (data.cookie.expires || 0).valueOf() < Date.now();
     }
     async _get(sid) {
         const result = this.cache.get(sid);
