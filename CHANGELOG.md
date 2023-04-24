@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.16](https://github.com/ffalt/jamserve/compare/v0.5.15...v0.5.16) (2023-04-24)
+
+
+### Bug Fixes
+
+* **soundtracks:** don't register soundtracks with various artists as AlbumType.compilation ([4945f4f](https://github.com/ffalt/jamserve/commit/4945f4fc8b2b91d439fc771318af351f704d2745))
+
 ## [0.5.15](https://github.com/ffalt/jamserve/compare/v0.5.14...v0.5.15) (2023-01-24)
 
 
