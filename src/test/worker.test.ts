@@ -31,7 +31,7 @@ import {
 } from '../modules/engine/services/worker/worker.types';
 import {Track} from '../entity/track/track';
 import {mockImage, writeMockImage} from './mock/mock.image';
-import {buildMockRoot, buildSeriesMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot} from './mock/mock.root';
+import {buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot} from './mock/mock.root';
 import {writeMockFolder} from './mock/mock.folder';
 import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
@@ -484,6 +484,27 @@ describe('WorkerService', () => {
 						const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 						await fse.mkdir(mediaPath);
 						mockRoot = buildSeriesMockRoot(dir.name, 2, RootScanStrategy.audiobook);
+						const changes = await writeAndStoreMock(mockRoot, workerService, orm);
+						await validateMockRoot(mockRoot, changes, workerService, orm);
+					});
+
+					afterEach(async () => {
+						const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
+						await fse.remove(mediaPath);
+					});
+
+					it('should rescan', async () => {
+						const changes = await workerService.root.refresh({rootID: mockRoot.id});
+						expectChanges(changes, {});
+						await validateMock(mockRoot, workerService, orm);
+					});
+				});
+
+				describe('scan soundtrack albums as soundtrack albums', () => {
+					beforeEach(async () => {
+						const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
+						await fse.mkdir(mediaPath);
+						mockRoot = buildSoundtrackMockRoot(dir.name, 3, RootScanStrategy.auto);
 						const changes = await writeAndStoreMock(mockRoot, workerService, orm);
 						await validateMockRoot(mockRoot, changes, workerService, orm);
 					});

@@ -152,7 +152,7 @@ export class MatchNodeMetaStats {
 		if (mbAlbumType && albumType === AlbumType.unknown) {
 			albumType = MatchNodeMetaStats.getMusicbrainzAlbumType(mbAlbumType);
 		}
-		if (hasMultipleArtists) {
+		if (hasMultipleArtists && albumType !== AlbumType.soundtrack) {
 			albumType = AlbumType.compilation;
 		}
 		if (albumType === AlbumType.unknown) {

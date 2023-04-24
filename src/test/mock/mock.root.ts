@@ -723,6 +723,66 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 	return extendSpecMockRoot(rootDir, spec, strategy);
 }
 
+export function buildSoundtrackMockRoot(dir: string, nr: number, strategy: RootScanStrategy): MockRoot {
+	const rootDir = path.join(dir, `root${nr}`);
+	const spec: MockSpecRoot = {
+		id: '',
+		name: `root${nr}`,
+		folders: [
+			{
+				name: 'soundtrack OST',
+				genre: 'Soundtrack',
+				images: ['front.png'],
+				folders: [],
+				tracks: [{
+					name: '1 - title 1 - soundtrack 1.mp3',
+					artist: 'soundtrack artist 1',
+					album: 'soundtrack 1',
+					number: 1,
+					total: 3,
+					genre: 'soundtrack'
+				},
+					{
+						name: '2 - title 2 - soundtrack 2.mp3',
+						artist: 'soundtrack artist 2',
+						album: 'soundtrack 1',
+						number: 2,
+						total: 3,
+						genre: 'soundtrack'
+					},
+					{
+						name: '3 - title 3 - soundtrack 3.mp3',
+						artist: 'soundtrack artist 3',
+						album: 'soundtrack 1',
+						number: 3,
+						total: 3,
+						genre: 'soundtrack'
+					}],
+				expected: {
+					folderType: FolderType.album
+				}
+			}
+		],
+		images: ['folder.png'],
+		tracks: [],
+		albums: [
+			{artist: 'Various Artists', name: 'soundtrack 1', albumType: AlbumType.soundtrack}
+		],
+		expected: {
+			folders: 2,
+			tracks: 3,
+			series: 0,
+			artists: ['soundtrack artist 1', 'soundtrack artist 2', 'soundtrack artist 3', 'Various Artists'],
+			albums: 1,
+			genres: 1,
+			artworks: 1,
+			states: 3,
+			folderType: FolderType.collection
+		}
+	};
+	return extendSpecMockRoot(rootDir, spec, strategy);
+}
+
 export async function writeMockRoot(root: MockRoot): Promise<void> {
 	await fse.ensureDir(root.path);
 	for (const folder of root.folders) {
