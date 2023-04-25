@@ -134,7 +134,7 @@
     "@types/which": "3.0.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "5.59.0",
-    "@typescript-eslint/parser": "5.59.0",
+    "@typescript-eslint/parser": "5.59.1",
     "chance": "1.1.11",
     "commit-and-tag-version": "11.2.1",
     "conventional-changelog-cli": "2.2.2",
