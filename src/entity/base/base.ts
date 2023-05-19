@@ -29,8 +29,7 @@ export interface IndexResult<EntityGroup> {
 }
 
 export function IndexGroup<Entity, EntityQL>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
-	// `isAbstract` decorator option is mandatory to prevent registering in schema
-	@ObjectType({isAbstract: true})
+	@ObjectType()
 	abstract class IndexResultResponseClass implements IndexResultGroup<Entity> {
 		@Field(() => [EntityQLClass])
 		items!: Entity[];
@@ -42,8 +41,7 @@ export function IndexGroup<Entity, EntityQL>(EntityClass: ClassType<Entity>, Ent
 }
 
 export function Index<EntityQL>(EntityQLClass: ClassType<EntityQL>): any {
-	// `isAbstract` decorator option is mandatory to prevent registering in schema
-	@ObjectType({isAbstract: true})
+	@ObjectType()
 	abstract class IndexResponseClass implements IndexResult<EntityQL> {
 		@Field(() => [EntityQLClass])
 		groups!: EntityQL[];
@@ -54,8 +52,7 @@ export function Index<EntityQL>(EntityQLClass: ClassType<EntityQL>): any {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function PaginatedResponse<Entity, EntityQL>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
-	// `isAbstract` decorator option is mandatory to prevent registering in schema
-	@ObjectType({isAbstract: true})
+	@ObjectType()
 	abstract class PaginatedResponseClass {
 		// here we use the runtime argument
 		@Field(() => [EntityQLClass])

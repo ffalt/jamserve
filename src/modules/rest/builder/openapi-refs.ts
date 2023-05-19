@@ -1,8 +1,10 @@
 import {MethodMetadata} from '../definitions/method-metadata';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
-import {ParameterLocation, ParameterObject, ReferenceObject, SchemaObject} from 'openapi3-ts';
-import {exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas} from './openapi-helpers';
+import {
+	exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas,
+	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject
+} from './openapi-helpers';
 import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
 import {MetadataStorage} from '../metadata/metadata-storage';
 import {getMetadataStorage} from '../metadata';

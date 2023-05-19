@@ -3,11 +3,13 @@ import {getMetadataStorage} from '../metadata';
 import {CustomPathParameterAliasRouteOptions} from '../definitions/types';
 import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {MethodMetadata} from '../definitions/method-metadata';
-import {ContentObject, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ReferenceObject, ResponsesObject, RequestBodyObject, SchemaObject} from 'openapi3-ts';
 import {Errors} from './express-error';
 import {iterateControllers} from '../helpers/iterate-super';
 import {MetadataStorage} from '../metadata/metadata-storage';
-import {SCHEMA_ID, Schemas} from './openapi-helpers';
+import {
+	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ReferenceObject,
+	ResponsesObject, RequestBodyObject, SchemaObject, PathItemObject
+} from './openapi-helpers';
 import {OpenApiRefBuilder} from './openapi-refs';
 import {ClassType} from 'type-graphql';
 
@@ -158,13 +160,29 @@ class OpenApiBuilder {
 		}
 	}
 
+	private static getTags(p: PathItemObject): Array<string> | undefined {
+		if (p.get) {
+			return p.get.tags;
+		}
+		if (p.post) {
+			return p.post.tags;
+		}
+		if (p.put) {
+			return p.put.tags;
+		}
+		if (p.patch) {
+			return p.patch.tags;
+		}
+		return undefined;
+	}
+
 	private static buildExtensions(openapi: OpenAPIObject, schemas: Schemas) {
 		const apiTags = new Set();
 		const tags = [];
 		const tagNames = [];
 		for (const key of Object.keys(openapi.paths)) {
 			const p = openapi.paths[key];
-			const list = (p.get ? p.get.tags : p.post.tags) || [];
+			const list = OpenApiBuilder.getTags(p) || [];
 			for (const s of list) {
 				apiTags.add(s);
 			}

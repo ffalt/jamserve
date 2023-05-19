@@ -10,4 +10,5 @@ data/
 dist/
 local/
 deploy/
+bin/
 .env
