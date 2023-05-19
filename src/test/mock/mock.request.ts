@@ -287,7 +287,8 @@ export class MockRequests {
 			const api = apiPath.slice(1);
 			const operations = Object.keys(derefSpec.paths[apiPath]);
 			for (const operation of operations) {
-				requestMocks = requestMocks.concat(await MockRequests.generateRequestMock(api, operation, derefSpec.paths[apiPath][operation] as OperationObject));
+				const path = derefSpec.paths[apiPath];
+				requestMocks = requestMocks.concat(await MockRequests.generateRequestMock(api, operation, (path as any)[operation] as OperationObject));
 			}
 		}
 		return requestMocks;
