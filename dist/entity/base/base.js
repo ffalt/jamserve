@@ -41,7 +41,7 @@ export function IndexGroup(EntityClass, EntityQLClass) {
         __metadata("design:type", String)
     ], IndexResultResponseClass.prototype, "name", void 0);
     IndexResultResponseClass = __decorate([
-        ObjectType({ isAbstract: true })
+        ObjectType()
     ], IndexResultResponseClass);
     return IndexResultResponseClass;
 }
@@ -53,7 +53,7 @@ export function Index(EntityQLClass) {
         __metadata("design:type", Array)
     ], IndexResponseClass.prototype, "groups", void 0);
     IndexResponseClass = __decorate([
-        ObjectType({ isAbstract: true })
+        ObjectType()
     ], IndexResponseClass);
     return IndexResponseClass;
 }
@@ -77,7 +77,7 @@ export function PaginatedResponse(EntityClass, EntityQLClass) {
         __metadata("design:type", Number)
     ], PaginatedResponseClass.prototype, "skip", void 0);
     PaginatedResponseClass = __decorate([
-        ObjectType({ isAbstract: true })
+        ObjectType()
     ], PaginatedResponseClass);
     return PaginatedResponseClass;
 }

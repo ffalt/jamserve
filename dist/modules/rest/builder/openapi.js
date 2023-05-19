@@ -144,13 +144,28 @@ class OpenApiBuilder {
             }
         }
     }
+    static getTags(p) {
+        if (p.get) {
+            return p.get.tags;
+        }
+        if (p.post) {
+            return p.post.tags;
+        }
+        if (p.put) {
+            return p.put.tags;
+        }
+        if (p.patch) {
+            return p.patch.tags;
+        }
+        return undefined;
+    }
     static buildExtensions(openapi, schemas) {
         const apiTags = new Set();
         const tags = [];
         const tagNames = [];
         for (const key of Object.keys(openapi.paths)) {
             const p = openapi.paths[key];
-            const list = (p.get ? p.get.tags : p.post.tags) || [];
+            const list = OpenApiBuilder.getTags(p) || [];
             for (const s of list) {
                 apiTags.add(s);
             }
