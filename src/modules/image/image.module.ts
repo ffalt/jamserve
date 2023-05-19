@@ -68,7 +68,7 @@ export class ImageModule {
 
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		size = size || 320;
-		const image = new Jimp(360, 360, '#282828');
+		const image = new Jimp(360, 360, '#0f1217');
 		if (!this.font) {
 			this.font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
 		}
@@ -114,7 +114,7 @@ export class ImageModule {
 			if (!mime) {
 				return Promise.reject(`Unknown Image Format Request: ${format} ${filename}`);
 			}
-			const sharpy = sharp(filename, {failOnError: false});
+			const sharpy = sharp(filename, {failOn: 'none'});
 			if (size) {
 				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
 			}
