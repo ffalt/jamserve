@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.17](https://github.com/ffalt/jamserve/compare/v0.5.16...v0.5.17) (2023-05-19)
+
+
+### Features
+
+* **images:** darken missing image placeholder ([b7f71a2](https://github.com/ffalt/jamserve/commit/b7f71a2e8835e99fc237d99c9aa9cd72ca6ee9a9))
+
+
+### Bug Fixes
+
+* **graphql:** playlist item media optional by type ([7b5e716](https://github.com/ffalt/jamserve/commit/7b5e716058f6d20ea094e1092b2006c136b7e3b0))
+* **track:** like search is query, not name ([cb7419d](https://github.com/ffalt/jamserve/commit/cb7419db23552eae64f68a6dfe52c2426cbfd138))
+
 ## [0.5.16](https://github.com/ffalt/jamserve/compare/v0.5.15...v0.5.16) (2023-04-24)
 
 
