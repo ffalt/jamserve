@@ -987,8 +987,8 @@ type PlaylistEntryQL {
   updatedAt: DateTime!
   position: Float!
   playlist: PlaylistQL!
-  track: TrackQL!
-  episode: EpisodeQL!
+  track: TrackQL
+  episode: EpisodeQL
 }
 
 input PlaylistFilterArgsQL {
