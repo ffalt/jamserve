@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.18](https://github.com/ffalt/jamserve/compare/v0.5.17...v0.5.18) (2023-05-20)
+
+
+### Bug Fixes
+
+* **healthcheck:** repair testing mp3 ([a94406b](https://github.com/ffalt/jamserve/commit/a94406bfc2146c8167e4151ee5e8f7318a1faf83))
+
 ## [0.5.17](https://github.com/ffalt/jamserve/compare/v0.5.16...v0.5.17) (2023-05-19)
 
 
