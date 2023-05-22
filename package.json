@@ -140,7 +140,7 @@
     "chance": "1.1.11",
     "commit-and-tag-version": "11.2.1",
     "conventional-changelog-cli": "2.2.2",
-    "eslint": "8.40.0",
+    "eslint": "8.41.0",
     "jest": "29.5.0",
     "jest-openapi": "0.14.2",
     "nock": "13.3.1",
