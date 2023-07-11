@@ -85,7 +85,7 @@
     "wave-resampler": "^1.0.0",
     "waveform-data": "4.3.0",
     "which": "3.0.1",
-    "winston": "3.9.0",
+    "winston": "3.10.0",
     "yauzl": "2.10.0"
   },
   "overrides": {
