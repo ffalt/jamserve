@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.19](https://github.com/ffalt/jamserve/compare/v0.5.18...v0.5.19) (2023-11-17)
+
+
+### Bug Fixes
+
+* **healthcheck:** disable id3v1 removal hint ([ede9f16](https://github.com/ffalt/jamserve/commit/ede9f16c64114abc279ea1a891ccd67c91952b78))
+* **types:** timeout node type ([70a236d](https://github.com/ffalt/jamserve/commit/70a236d1932ef7a76150f3ab2d263c21bd1b19f8))
+
 ## [0.5.18](https://github.com/ffalt/jamserve/compare/v0.5.17...v0.5.18) (2023-05-20)
 
 
