@@ -72,17 +72,6 @@ const trackRules = [
         }
     },
     {
-        id: TrackHealthID.id3v2NoId3v1,
-        name: 'ID3v2 is available, ID3v1 is redundant',
-        mp3: true,
-        run: async (folder, track, tag, tagCache) => {
-            if (hasID3v2Tag(track, tag) && tagCache.id3v1) {
-                return {};
-            }
-            return;
-        }
-    },
-    {
         id: TrackHealthID.id3v2Exists,
         name: 'ID3v2 Tag is missing',
         mp3: true,

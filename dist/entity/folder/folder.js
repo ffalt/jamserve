@@ -7,7 +7,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var Folder_1;
 import { Artwork, ArtworkQL } from '../artwork/artwork';
 import { Root, RootQL } from '../root/root';
 import { Track, TrackQL } from '../track/track';
@@ -21,7 +20,7 @@ import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
 import { State, StateQL } from '../state/state';
 import { FolderHealthHint } from '../health/health.model';
 import { Genre, GenreQL } from '../genre/genre';
-let Folder = Folder_1 = class Folder extends Base {
+let Folder = class Folder extends Base {
     constructor() {
         super(...arguments);
         this.genres = new Collection(this);
@@ -127,12 +126,12 @@ __decorate([
 ], Folder.prototype, "genres", void 0);
 __decorate([
     Field(() => FolderQL, { nullable: true }),
-    ManyToOne(() => Folder_1, folder => folder.children, { nullable: true }),
+    ManyToOne(() => Folder, folder => folder.children, { nullable: true }),
     __metadata("design:type", Reference)
 ], Folder.prototype, "parent", void 0);
 __decorate([
     Field(() => [FolderQL]),
-    OneToMany(() => Folder_1, folder => folder.parent, { order: [{ orderBy: FolderOrderFields.name }] }),
+    OneToMany(() => Folder, folder => folder.parent, { order: [{ orderBy: FolderOrderFields.name }] }),
     __metadata("design:type", Collection)
 ], Folder.prototype, "children", void 0);
 __decorate([
@@ -165,7 +164,7 @@ __decorate([
     ManyToMany(() => Series, series => series.folders, { order: [{ orderBy: DefaultOrderFields.default }] }),
     __metadata("design:type", Collection)
 ], Folder.prototype, "series", void 0);
-Folder = Folder_1 = __decorate([
+Folder = __decorate([
     ObjectType(),
     Entity()
 ], Folder);
