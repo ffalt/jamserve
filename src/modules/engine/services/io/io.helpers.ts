@@ -4,7 +4,7 @@ import {IoRequest} from './io.types';
 interface DelayedRequest<T extends WorkerRequestParameters> {
 	request: IoRequest<T>;
 	rootID: string;
-	timeout?: NodeJS.Timeout;
+	timeout?: ReturnType<typeof setTimeout>;
 }
 
 export class DelayedRequests<T extends WorkerRequestParameters> {
@@ -36,6 +36,6 @@ export class DelayedRequests<T extends WorkerRequestParameters> {
 		delayedCmd.timeout = setTimeout(() => {
 			this.requests.delete(delayedCmd.rootID);
 			onStart(delayedCmd.request);
-		}, 10000) as unknown as NodeJS.Timer;
+		}, 10000);
 	}
 }

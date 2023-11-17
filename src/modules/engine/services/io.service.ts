@@ -27,7 +27,7 @@ export class IoService {
 	private current: IoRequest<WorkerRequestParameters> | undefined;
 	private queue: Array<IoRequest<WorkerRequestParameters>> = [];
 	private nextID: number = Date.now();
-	private afterScanTimeout: NodeJS.Timeout | undefined;
+	private afterScanTimeout: ReturnType<typeof setTimeout> | undefined;
 	private history: Array<{ id: string; error?: string; date: number }> = [];
 
 	public artwork = new IoCommandsArtwork(this);
@@ -69,7 +69,7 @@ export class IoService {
 						console.error(e);
 					});
 			}
-		}, 10000) as unknown as NodeJS.Timer;
+		}, 10000);
 	}
 
 	private clearAfterRefresh(): void {
