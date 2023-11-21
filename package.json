@@ -129,7 +129,7 @@
     "@types/seedrandom": "3.0.8",
     "@types/shuffle-seed": "1.1.2",
     "@types/supertest": "2.0.16",
-    "@types/tiny-async-pool": "2.0.2",
+    "@types/tiny-async-pool": "2.0.3",
     "@types/tmp": "0.2.6",
     "@types/uuid": "9.0.7",
     "@types/validator": "13.11.6",
