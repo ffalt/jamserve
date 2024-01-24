@@ -16,7 +16,7 @@ export function BodyParams(
 ): ParameterDecorator {
 	const {options, returnTypeFunc} = getTypeDecoratorParams(paramTypeFnOrOptions, maybeOptions);
 	return (prototype, propertyKey, parameterIndex): void => {
-		if (typeof propertyKey === 'symbol' || typeof propertyKey === undefined) {
+		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
 			throw new SymbolKeysNotSupportedError();
 		}
 		getMetadataStorage().collectHandlerParamMetadata({

@@ -18,7 +18,7 @@ export function BodyParam(
 	maybeOptions?: BodyParamOptions,
 ): ParameterDecorator {
 	return (prototype, propertyKey, parameterIndex): void => {
-		if (typeof propertyKey === 'symbol' || typeof propertyKey === undefined) {
+		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
 			throw new SymbolKeysNotSupportedError();
 		}
 		const {options, returnTypeFunc} = getTypeDecoratorParams(
