@@ -18,7 +18,7 @@ export function PathParam(
 	maybeOptions?: PathParamOptions,
 ): ParameterDecorator {
 	return (prototype, propertyKey, parameterIndex) => {
-		if (typeof propertyKey === 'symbol' || typeof propertyKey === undefined) {
+		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
 			throw new SymbolKeysNotSupportedError();
 		}
 		const {options, returnTypeFunc} = getTypeDecoratorParams(
