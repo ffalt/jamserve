@@ -16,6 +16,7 @@ import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} 
 import {initTest} from './init';
 import {Container, Snapshot} from 'typescript-ioc';
 import {OpenAPISpecObject} from 'openapi-validator';
+import TestAgent from 'supertest/lib/agent';
 
 initTest();
 
@@ -28,7 +29,7 @@ describe('REST', () => {
 			let server: Server;
 			let dir: tmp.DirResult;
 			let openapi: OpenAPIObject;
-			let request: supertest.SuperTest<supertest.Test>;
+			let request: TestAgent<supertest.Test>;
 			let mockCall: (mock: RequestMock, expected: number, token?: string) => supertest.Test;
 			let mockRoot: MockRoot;
 			const tokens: { [role: string]: string } = {

@@ -18,7 +18,7 @@ export function getParamInfo({
   returnTypeFunc,
   options = {},
 }: ParamInfo): CommonArgMetadata {
-  if (typeof propertyKey === "symbol" || typeof propertyKey === undefined) {
+  if (typeof propertyKey === "symbol" || propertyKey === undefined) {
     throw new SymbolKeysNotSupportedError();
   }
 

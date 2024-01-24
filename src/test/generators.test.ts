@@ -9,10 +9,11 @@ import {waitEngineStart} from './mock/mock.engine';
 import {initTest} from './init';
 import {Container, Snapshot} from 'typescript-ioc';
 import DoneCallback = jest.DoneCallback;
+import TestAgent from 'supertest/lib/agent';
 
 initTest();
 
-function downloadZip(req: supertest.SuperTest<supertest.Test>, url: string, done: (e?: Error) => void): void {
+function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Error) => void): void {
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', /application\/zip/)
@@ -62,7 +63,7 @@ function downloadZip(req: supertest.SuperTest<supertest.Test>, url: string, done
 		});
 }
 
-function downloadJSON(req: supertest.SuperTest<supertest.Test>, url: string, done: (e?: Error) => void): void {
+function downloadJSON(req: TestAgent<supertest.Test>, url: string, done: (e?: Error) => void): void {
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
@@ -77,11 +78,11 @@ function downloadJSON(req: supertest.SuperTest<supertest.Test>, url: string, don
 		});
 }
 
-function downloadContent(req: supertest.SuperTest<supertest.Test>, url: string, contentType: RegExp, done: (e?: Error) => void): void {
+function downloadContent(req: TestAgent<supertest.Test>, url: string, contentType: RegExp, done: (e?: Error) => void): void {
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', contentType)
-		.end((err, res) => {
+		.end((err, _) => {
 			if (err) {
 				return done(err);
 			}
@@ -92,7 +93,7 @@ function downloadContent(req: supertest.SuperTest<supertest.Test>, url: string, 
 describe('Generators', () => {
 	let server: Server;
 	let dir: tmp.DirResult;
-	let request: supertest.SuperTest<supertest.Test>;
+	let request: TestAgent<supertest.Test>;
 	let snapshot: Snapshot;
 
 	beforeAll(async () => {
