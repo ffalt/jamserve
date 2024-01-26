@@ -1,9 +1,8 @@
-import {Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
+import {Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
 import {Session, SessionPageQL, SessionQL} from './session';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
 import {SessionsArgs} from './session.args';
-import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 
 @Resolver(SessionQL)
 export class SessionResolver {

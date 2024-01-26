@@ -51,7 +51,7 @@ export class PageArgsQL extends PageArgs {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function PaginatedFilterArgs<TFilter, TOrder>(TFilterClass: ClassType<TFilter>, TOrderClass: ClassType<TOrder>) {
+export function PaginatedFilterArgs<TFilter extends object, TOrder extends object>(TFilterClass: ClassType<TFilter>, TOrderClass: ClassType<TOrder>) {
 
 	@ArgsType()
 	abstract class PaginatedArgsClass {
@@ -69,7 +69,7 @@ export function PaginatedFilterArgs<TFilter, TOrder>(TFilterClass: ClassType<TFi
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function FilterArgs<TFilter>(TFilterClass: ClassType<TFilter>) {
+export function FilterArgs<TFilter extends object>(TFilterClass: ClassType<TFilter>) {
 
 	@ArgsType()
 	abstract class FilterArgsClass {

@@ -1,4 +1,3 @@
-import {ensureReflectMetadataExists} from 'type-graphql/dist/metadata/utils';
 import {MethodMetadata} from '../definitions/method-metadata';
 import {ResultClassMetadata} from '../definitions/object-class-metdata';
 import {ClassMetadata} from '../definitions/class-metadata';
@@ -7,6 +6,7 @@ import {ControllerClassMetadata} from '../definitions/controller-metadata';
 import {FieldMetadata} from '../definitions/field-metadata';
 import {ParamMetadata} from '../definitions/param-metadata';
 import {TypeValue} from '../definitions/types';
+import {ensureReflectMetadataExists} from '../../../utils/reflect';
 
 export class MetadataStorage {
 	initialized = false;

@@ -1,8 +1,7 @@
-import {Arg, Args, Ctx, FieldResolver, ID, Query, Resolver} from 'type-graphql';
+import {Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver} from 'type-graphql';
 import {Bookmark, BookmarkPageQL, BookmarkQL} from './bookmark';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {Track, TrackQL} from '../track/track';
-import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 import {Episode, EpisodeQL} from '../episode/episode';
 import {BookmarksArgs} from './bookmark.args';
 

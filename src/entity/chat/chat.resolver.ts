@@ -1,8 +1,7 @@
-import {Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
+import {Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
 import {Chat, ChatQL} from './chat';
 import {ChatFilterArgs} from './chat.args';
 import {Context} from '../../modules/server/middlewares/apollo.context';
-import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 
 @Resolver(ChatQL)
 export class ChatResolver {

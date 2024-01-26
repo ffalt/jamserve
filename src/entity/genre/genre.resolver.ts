@@ -1,8 +1,7 @@
-import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver} from 'type-graphql';
+import {Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver} from 'type-graphql';
 import {Genre, GenreIndexQL, GenrePageQL, GenreQL} from './genre';
 import {Context} from '../../modules/server/middlewares/apollo.context';
 import {GenreIndexArgsQL, GenresArgsQL} from './genre.args';
-import {Root as GQLRoot} from 'type-graphql/dist/decorators/Root';
 import {AlbumPageQL} from '../album/album';
 import {TrackPageQL} from '../track/track';
 import {ArtistPageQL} from '../artist/artist';

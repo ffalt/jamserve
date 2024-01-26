@@ -1,7 +1,7 @@
-import {ensureReflectMetadataExists} from 'type-graphql/dist/metadata/utils';
 import {EntityMetadata} from '../definitions/entity-metadata';
 import {PropertyMetadata} from '../definitions/property-metadata';
 import {EnumMetadata} from '../../rest/definitions/enum-metadata';
+import {ensureReflectMetadataExists} from '../../../utils/reflect';
 
 export class MetadataStorage {
 	entities: EntityMetadata[] = [];

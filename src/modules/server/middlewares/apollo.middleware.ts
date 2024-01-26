@@ -179,7 +179,7 @@ function formatGraphQLFormatError(
 
 	// Validation
 	if (originalError instanceof ArgumentValidationError) {
-		return new ValidationError(originalError.validationErrors);
+		return new ValidationError(originalError.extensions.validationErrors);
 	}
 
 	// Generic

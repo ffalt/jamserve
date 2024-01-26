@@ -28,7 +28,7 @@ export interface IndexResult<EntityGroup> {
 	groups: EntityGroup[];
 }
 
-export function IndexGroup<Entity, EntityQL>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
+export function IndexGroup<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
 	@ObjectType()
 	abstract class IndexResultResponseClass implements IndexResultGroup<Entity> {
 		@Field(() => [EntityQLClass])
@@ -40,7 +40,7 @@ export function IndexGroup<Entity, EntityQL>(EntityClass: ClassType<Entity>, Ent
 	return IndexResultResponseClass;
 }
 
-export function Index<EntityQL>(EntityQLClass: ClassType<EntityQL>): any {
+export function Index<EntityQL extends object>(EntityQLClass: ClassType<EntityQL>): any {
 	@ObjectType()
 	abstract class IndexResponseClass implements IndexResult<EntityQL> {
 		@Field(() => [EntityQLClass])
@@ -51,7 +51,7 @@ export function Index<EntityQL>(EntityQLClass: ClassType<EntityQL>): any {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function PaginatedResponse<Entity, EntityQL>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
+export function PaginatedResponse<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
 	@ObjectType()
 	abstract class PaginatedResponseClass {
 		// here we use the runtime argument
