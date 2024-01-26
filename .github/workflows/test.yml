@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ffalt/jam-test
+      options: --user 1001
     env:
       JAM_DB_HOST: postgres
       NODE_ENV: development
