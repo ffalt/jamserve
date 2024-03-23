@@ -4,7 +4,7 @@ import { getParamInfo } from '../helpers/params';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function BodyParam(name, returnTypeFuncOrOptions, maybeOptions) {
     return (prototype, propertyKey, parameterIndex) => {
-        if (typeof propertyKey === 'symbol' || typeof propertyKey === undefined) {
+        if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
             throw new SymbolKeysNotSupportedError();
         }
         const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);

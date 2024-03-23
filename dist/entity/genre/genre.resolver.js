@@ -10,10 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver } from 'type-graphql';
+import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver } from 'type-graphql';
 import { Genre, GenreIndexQL, GenrePageQL, GenreQL } from './genre';
 import { GenreIndexArgsQL, GenresArgsQL } from './genre.args';
-import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
 import { AlbumPageQL } from '../album/album';
 import { TrackPageQL } from '../track/track';
 import { ArtistPageQL } from '../artist/artist';

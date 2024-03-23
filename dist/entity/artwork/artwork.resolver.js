@@ -10,10 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
+import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
 import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork';
 import { FolderQL } from '../folder/folder';
-import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
 import { ArtworksArgsQL } from './artwork.args';
 let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {

@@ -10,10 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
+import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
 import { ChatQL } from './chat';
 import { ChatFilterArgs } from './chat.args';
-import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
 let ChatResolver = class ChatResolver {
     async chats({ since }, { engine }) {
         return engine.chat.get(since);

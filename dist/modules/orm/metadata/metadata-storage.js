@@ -1,4 +1,4 @@
-import { ensureReflectMetadataExists } from 'type-graphql/dist/metadata/utils';
+import { ensureReflectMetadataExists } from '../../../utils/reflect';
 export class MetadataStorage {
     constructor() {
         this.entities = [];

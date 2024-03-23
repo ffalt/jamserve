@@ -139,7 +139,7 @@ export class ValidationError extends GraphQLError {
 function formatGraphQLFormatError(formattedError, error) {
     const originalError = unwrapResolverError(error);
     if (originalError instanceof ArgumentValidationError) {
-        return new ValidationError(originalError.validationErrors);
+        return new ValidationError(originalError.extensions.validationErrors);
     }
     return formattedError;
 }

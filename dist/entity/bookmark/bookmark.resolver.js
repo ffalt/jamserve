@@ -10,10 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
+import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
 import { Bookmark, BookmarkPageQL, BookmarkQL } from './bookmark';
 import { TrackQL } from '../track/track';
-import { Root as GQLRoot } from 'type-graphql/dist/decorators/Root';
 import { EpisodeQL } from '../episode/episode';
 import { BookmarksArgs } from './bookmark.args';
 let BookmarkResolver = class BookmarkResolver {
