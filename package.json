@@ -47,7 +47,7 @@
     "d3-selection": "3.0.0",
     "d3-shape": "3.2.0",
     "dotenv": "16.4.5",
-    "express": "4.19.1",
+    "express": "4.19.2",
     "express-session": "1.18.0",
     "express-useragent": "1.0.15",
     "feedparser": "2.2.10",
