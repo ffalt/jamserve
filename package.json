@@ -75,7 +75,7 @@
     "rate-limiter-flexible": "5.0.0",
     "reflect-metadata": "0.2.2",
     "seedrandom": "3.0.5",
-    "sequelize": "6.37.1",
+    "sequelize": "6.37.3",
     "sharp": "0.33.3",
     "shuffle-seed": "1.1.6",
     "sqlite3": "5.1.7",
