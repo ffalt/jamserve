@@ -94,7 +94,7 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "11.5.4",
+    "@apidevtools/json-schema-ref-parser": "11.6.1",
     "@mapbox/node-pre-gyp": "1.0.11",
     "@types/archiver": "6.0.2",
     "@types/bcrypt": "5.0.2",
