@@ -138,8 +138,8 @@ export class EpisodeService {
 				if (buffer) {
 					return await this.imageModule.getBuffer(episode.id, buffer, size, format);
 				}
-			} catch (e: any) {
-				log.error('getImage', 'Extracting image from audio failed: ' + episode.path);
+			} catch {
+				log.error('getImage', `Extracting image from audio failed: ${episode.path}`);
 			}
 		}
 		return;

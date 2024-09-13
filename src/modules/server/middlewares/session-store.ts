@@ -37,13 +37,13 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 		return;
 	}
 
-	get: (sid: string, callback: (err: any, data?: SessionData | undefined) => void) => void = (sid, callback) => {
+	get: (sid: string, callback: (err: Error | null | undefined, data?: SessionData | undefined) => void) => void = (sid, callback) => {
 		this._get(sid)
 			.then(data => callback(null, data))
 			.catch(callback);
 	};
 
-	set: (sid: string, data: SessionData, callback?: (err?: any) => void) => void = (sid, data, callback) => {
+	set: (sid: string, data: SessionData, callback?: (err?: Error | null | undefined | void) => void) => void = (sid, data, callback) => {
 		this.cache.set(sid, data);
 		this.sessionService.set(sid, data)
 			.then(callback)

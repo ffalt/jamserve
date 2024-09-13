@@ -3,6 +3,10 @@ import {WebserviceClient} from './webservice-client';
 
 const log = logger('WebserviceJSONClient');
 
+export interface StatusCodeError extends Error {
+	statusCode?: number;
+}
+
 export interface JSONRequest {
 	path: string;
 	query: { [name: string]: string | undefined };
@@ -36,7 +40,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		this.options = {...defaultOptions, ...options};
 	}
 
-	protected reqToHost(req: T): string {
+	protected reqToHost(_req: T): string {
 		const port = this.options.port !== 80 ? `:${this.options.port}` : '';
 		return `${this.options.host}${port}`;
 	}
@@ -49,11 +53,11 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		return `${this.reqToHost(req)}${req.path}${params}`;
 	}
 
-	protected async retry(error: Error, req: T): Promise<any> {
+	protected async retry(error: Error, req: T): Promise<R> {
 		if (this.options.retryOn && req.retry < (this.options.retryCount || 0)) {
 			req.retry++;
 			log.info(`rate limit hit, retrying in ${this.options.retryDelay}ms`);
-			return new Promise<any>((resolve, reject) => {
+			return new Promise<R>((resolve, reject) => {
 				setTimeout(() => {
 					this.get(req).then(resolve).catch(reject);
 				}, this.options.retryDelay || 3000);
@@ -62,8 +66,8 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		return Promise.reject(error);
 	}
 
-	protected async processError(e: Error | any, req: T): Promise<R> {
-		const statusCode = e.statusCode;
+	protected async processError(e: Error | StatusCodeError, req: T): Promise<R> {
+		const statusCode = (e as StatusCodeError).statusCode;
 		if (statusCode === 502 || statusCode === 503) {
 			return this.retry(e, req);
 		}
@@ -79,13 +83,13 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 
 		log.debug('requesting', url, JSON.stringify(req));
 		try {
-			const data = await this.getJson<any>(url, undefined);
-			if (this.isRateLimitError(data)) {
-				return this.retry(Error(data.error), req);
+			const data = await this.getJson<R, void>(url);
+			if (this.isRateLimitError(data as { error?: string })) {
+				return this.retry(Error((data as { error: string }).error), req);
 			}
 			return data;
-		} catch (e: any) {
-			return this.processError(e, req);
+		} catch (e) {
+			return this.processError(e as Error, req);
 		}
 	}
 }

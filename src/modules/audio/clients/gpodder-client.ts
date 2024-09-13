@@ -33,7 +33,7 @@ export class GpodderClient extends WebserviceClient {
 		}
 		const url = `https://gpodder.net/clientconfig.json`;
 		log.info('requesting', url);
-		const data = await this.getJson<GpodderClientConfig>(url);
+		const data = await this.getJson<GpodderClientConfig, void>(url);
 		const isValid = data && data.mygpo?.baseurl && data['mygpo-feedservice'].baseurl && (!isNaN(data.update_timeout));
 		if (!isValid) {
 			throw new Error('Gpodder API has changed & can not be used with this server version');
@@ -46,7 +46,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}toplist/${amount}.json`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
 		return data.map(d => this.transform(d));
 	}
 
@@ -54,7 +54,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}api/2/tags/${amount}.json`;
 		log.info('requesting', url);
-		return ((await this.getJson<Array<GpodderTag>>(url)) || [])
+		return ((await this.getJson<Array<GpodderTag>, void>(url)) || [])
 			.filter(d => !!d.tag);
 	}
 
@@ -62,7 +62,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}api/2/tag/${encodeURIComponent(tag)}/${amount}.json`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
 		return data.map(d => this.transform(d));
 	}
 
@@ -70,7 +70,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}search.json?q=${encodeURIComponent(name)}`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
 		return data.map(d => this.transform(d));
 	}
 

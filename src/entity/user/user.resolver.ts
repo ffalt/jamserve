@@ -121,17 +121,17 @@ export class UserResolver {
 	}
 
 	@FieldResolver(() => PlaylistPageQL)
-	async playlists(@GQLRoot() owner: User, @Ctx() {orm, user}: Context, @Args() {filter, order, page}: PlaylistPageArgsQL): Promise<PlaylistPageQL> {
+	async playlists(@GQLRoot() owner: User, @Ctx() {orm}: Context, @Args() {filter, order, page}: PlaylistPageArgsQL): Promise<PlaylistPageQL> {
 		return orm.Playlist.searchFilter({...filter, userIDs: [owner.id]}, order, page, owner);
 	}
 
 	@FieldResolver(() => BookmarkPageQL)
-	async bookmarks(@GQLRoot() owner: User, @Ctx() {orm, user}: Context, @Args() {filter, order, page}: BookmarksPageArgsQL): Promise<BookmarkPageQL> {
+	async bookmarks(@GQLRoot() owner: User, @Ctx() {orm}: Context, @Args() {filter, order, page}: BookmarksPageArgsQL): Promise<BookmarkPageQL> {
 		return orm.Bookmark.searchFilter({...filter, userIDs: [owner.id]}, order, page, owner);
 	}
 
 	@FieldResolver(() => SessionPageQL)
-	async sessions(@GQLRoot() owner: User, @Ctx() {orm, user}: Context, @Args() {filter, order, page}: SessionsPageArgsQL): Promise<SessionPageQL> {
+	async sessions(@GQLRoot() owner: User, @Ctx() {orm}: Context, @Args() {filter, order, page}: SessionsPageArgsQL): Promise<SessionPageQL> {
 		return orm.Session.searchFilter({...filter, userIDs: [owner.id]}, order, page, owner);
 	}
 

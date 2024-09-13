@@ -69,20 +69,17 @@ export class ExpressMethod {
 			const func = instance[method.methodName];
 			const args = this.buildArguments(method, context);
 			if (method.binary !== undefined) {
-				// eslint-disable-next-line prefer-spread
 				const result = await func.apply(instance, args);
 				ApiBaseResponder.sendBinary(context.req, context.res, result);
 				return;
 			}
 			if (method.getReturnType === undefined) {
-				// eslint-disable-next-line prefer-spread
 				await func.apply(instance, args);
 				ApiBaseResponder.sendOK(context.req, context.res);
 				return;
 			}
 			const target = method.getReturnType();
 			if (target === String) {
-				// eslint-disable-next-line prefer-spread
 				const result = await func.apply(instance, args);
 				ApiBaseResponder.sendString(context.req, context.res, result);
 				return;

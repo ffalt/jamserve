@@ -37,7 +37,7 @@ export async function getBinPath(name: string, envName: string): Promise<string 
 			cache[name] = s;
 			return s;
 		}
-	} catch (e: any) {
+	} catch {
 		// nop
 	}
 	try {
@@ -47,7 +47,7 @@ export async function getBinPath(name: string, envName: string): Promise<string 
 			cache[name] = s;
 			return s;
 		}
-	} catch (e: any) {
+	} catch {
 		// nop
 	}
 	try {
@@ -57,7 +57,7 @@ export async function getBinPath(name: string, envName: string): Promise<string 
 			cache[name] = s;
 			return s;
 		}
-	} catch (e: any) {
+	} catch {
 		// nop
 	}
 	return;

@@ -50,7 +50,6 @@ export function Index<EntityQL extends object>(EntityQLClass: ClassType<EntityQL
 	return IndexResponseClass;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function PaginatedResponse<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
 	@ObjectType()
 	abstract class PaginatedResponseClass {

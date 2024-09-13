@@ -4,6 +4,7 @@ import {FieldOptions, ReturnTypeFunc} from '../definitions/types';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function registerRelation(
+	// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 	prototype: Object,
 	propertyKey: string | symbol,
 	returnTypeFunc: ReturnTypeFunc,

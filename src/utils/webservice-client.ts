@@ -16,7 +16,7 @@ export class WebserviceClient {
 			return Promise.reject(Error(`${response.status} ${response.statusText || ''}`));
 		}
 		try {
-			return await response.json() as any;
+			return await response.json() as T;
 		} catch (err) {
 			return Promise.reject(err);
 		}
@@ -33,7 +33,7 @@ export class WebserviceClient {
 		await limiter.removeTokens(1);
 	}
 
-	protected async getJson<T>(url: string, parameters?: any | undefined, ignoreStatus?: boolean): Promise<T> {
+	protected async getJson<T, P>(url: string, parameters?: P, ignoreStatus?: boolean): Promise<T> {
 		this.checkDisabled();
 		await this.limit();
 		const params = parameters ? `?${new URLSearchParams(parameters)}` : '';

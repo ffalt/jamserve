@@ -1,8 +1,0 @@
-node_modules/
-data/
-coverage/
-dist/
-local/
-static/
-temp/
-*.json

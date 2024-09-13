@@ -55,7 +55,7 @@ export class AudioModuleMP3 {
 				...FORMAT.packID3v1JamServeTag(v1),
 				...FORMAT.packJamServeMedia(result.mpeg)
 			};
-		} catch (e: any) {
+		} catch {
 			return {format: TagFormatType.none};
 		}
 	}

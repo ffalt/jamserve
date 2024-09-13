@@ -106,7 +106,7 @@ function checkRole(role: string, context: Context): boolean {
 }
 
 export const customAuthChecker: AuthChecker<Context> =
-	({root, args, context, info}, roles) => {
+	({context /*root, args, context, info*/}, roles) => {
 		// here you can read user from context
 		// and check his permission in db against `roles` argument
 		// that comes from `@Authorized`, eg. ["ADMIN", "MODERATOR"]

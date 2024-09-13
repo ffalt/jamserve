@@ -58,7 +58,7 @@ export class PodcastResolver {
 	}
 
 	@Query(() => PodcastDiscoverTagPageQL, {description: 'Discover Podcast Tags via gpodder.net'})
-	async podcastsDiscoverTags(@Args() page: PageArgsQL, @Ctx() {engine, user}: Context): Promise<PodcastDiscoverTagPageQL> {
+	async podcastsDiscoverTags(@Args() page: PageArgsQL, @Ctx() {engine}: Context): Promise<PodcastDiscoverTagPageQL> {
 		return await engine.podcast.discoverTags(page);
 	}
 

@@ -9,17 +9,17 @@ import {Playlist, PlaylistQL} from '../playlist/playlist';
 export class PlaylistEntryResolver {
 
 	@FieldResolver(() => PlaylistQL)
-	async playlist(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() {orm, user}: Context): Promise<Playlist> {
+	async playlist(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() _context: Context): Promise<Playlist> {
 		return playlistEntry.playlist.getOrFail();
 	}
 
 	@FieldResolver(() => TrackQL, {nullable: true})
-	async track(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() {orm, user}: Context): Promise<Track | undefined> {
+	async track(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() _context: Context): Promise<Track | undefined> {
 		return playlistEntry.track.get();
 	}
 
 	@FieldResolver(() => EpisodeQL, {nullable: true})
-	async episode(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() {orm, user}: Context): Promise<Episode | undefined> {
+	async episode(@GQLRoot() playlistEntry: PlaylistEntry, @Ctx() _context: Context): Promise<Episode | undefined> {
 		return playlistEntry.episode.get();
 	}
 }

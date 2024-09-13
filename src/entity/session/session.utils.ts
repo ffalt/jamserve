@@ -4,7 +4,7 @@ import useragent from 'express-useragent';
 export function parseAgent(session: Session): useragent.Details | undefined {
 	try {
 		return useragent.parse(session.agent);
-	} catch (e: any) {
+	} catch {
 		//
 	}
 	return;

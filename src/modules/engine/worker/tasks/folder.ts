@@ -35,7 +35,7 @@ export class FolderWorker extends BaseWorker {
 		await FolderWorker.validateFolderTask(p, name);
 		try {
 			await fse.move(folder.path, newPath);
-		} catch (e: any) {
+		} catch {
 			return Promise.reject(Error('Folder moving failed'));
 		}
 		await FolderWorker.updateFolder(orm, folder, newParent, newPath, changes);
@@ -107,7 +107,7 @@ export class FolderWorker extends BaseWorker {
 			}
 			try {
 				await fse.move(folder.path, path.join(trashPath, `${Date.now()}_${path.basename(folder.path)}`));
-			} catch (e: any) {
+			} catch {
 				return Promise.reject(Error('Folder removing failed'));
 			}
 			const folders = await orm.Folder.findAllDescendants(folder);
@@ -136,7 +136,7 @@ export class FolderWorker extends BaseWorker {
 		await FolderWorker.validateFolderTask(p, name);
 		try {
 			await fse.rename(oldPath, newPath);
-		} catch (e: any) {
+		} catch {
 			return Promise.reject(Error('Folder renaming failed'));
 		}
 		const folders = await orm.Folder.findAllDescendants(folder);

@@ -9,6 +9,7 @@ function $args(func: Function): Array<string> {
 		.split(',').filter(Boolean); // split & filter [""]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 export function extractPropertyName(prototype: Object, propertyKey: string | symbol | undefined, parameterIndex: number): string {
 	return `${$args((prototype as any)[propertyKey||''].toString())[parameterIndex]}`;
 }
