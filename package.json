@@ -80,7 +80,7 @@
     "shuffle-seed": "1.1.6",
     "sqlite3": "5.1.7",
     "tiny-async-pool": "2.1.0",
-    "type-graphql": "2.0.0-beta.6",
+    "type-graphql": "2.0.0-rc.2",
     "typescript-ioc": "3.2.2",
     "wave-resampler": "1.0.0",
     "waveform-data": "4.3.0",
