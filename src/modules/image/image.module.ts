@@ -1,5 +1,4 @@
 import fse from 'fs-extra';
-import Jimp from 'jimp';
 import mimeTypes from 'mime-types';
 import path from 'path';
 import sharp, {FormatEnum} from 'sharp';
@@ -14,6 +13,8 @@ import {ImageResult} from './image.format';
 import {ConfigService} from '../engine/services/config.service';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {ImageFormatType} from '../../types/enums';
+import {Jimp, loadFont, VerticalAlign, HorizontalAlign} from 'jimp';
+import {SANS_32_WHITE} from 'jimp/fonts';
 
 export interface ImageInfo {
 	width: number;
@@ -68,26 +69,33 @@ export class ImageModule {
 
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		size = size || 320;
-		const image = new Jimp(360, 360, '#0f1217');
+		const image = new Jimp({width: 360, height: 360, color: '#0f1217'});
 		if (!this.font) {
-			this.font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
+			this.font = await loadFont(SANS_32_WHITE);
 		}
-		image.print(this.font, 10, 10, {
-			text,
-			alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-			alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE
-		}, 340, 340);
-		image.resize(size, size);
+		image.print({
+			font: this.font,
+			x: 10,
+			y: 10,
+			maxHeight: 340,
+			maxWidth: 340,
+			text: {
+				text,
+				alignmentX: HorizontalAlign.CENTER,
+				alignmentY: VerticalAlign.MIDDLE
+			}
+		});
+		image.resize({w: size, h: size});
 		const mime = mimeTypes.lookup(format ? format : this.format);
 		if (!mime) {
 			return Promise.reject('Unknown Image Format Request');
 		}
 		if (mime === 'image/webp') {
-			const png_buffer = await image.getBufferAsync('image/png');
+			const png_buffer = await image.getBuffer('image/png');
 			const buffer = await sharp(png_buffer).webp().toBuffer();
 			return {buffer: {buffer, contentType: mime}};
 		} else {
-			const buffer = await image.getBufferAsync(mime);
+			const buffer = await image.getBuffer(mime as 'image/png');
 			return {buffer: {buffer, contentType: mime}};
 		}
 	}
