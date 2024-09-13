@@ -9,7 +9,7 @@ An audio library server written in Typescript for NodeJS
 ## Preamble
 
 This is my long term pet project to manage/stream/edit my own music collection.
-It's work in progress and probably always be.
+It's work in progress and probably always will be.
 
 This is the backend development repository. See
 
