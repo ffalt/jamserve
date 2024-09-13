@@ -74,7 +74,7 @@ export class BaseRepository extends EntityRepository {
         try {
             return await super.findOneOrFailByID(id);
         }
-        catch (e) {
+        catch {
             throw NotFoundError();
         }
     }
@@ -82,7 +82,7 @@ export class BaseRepository extends EntityRepository {
         try {
             return await super.findOneOrFail(options);
         }
-        catch (e) {
+        catch {
             throw NotFoundError();
         }
     }
@@ -90,7 +90,7 @@ export class BaseRepository extends EntityRepository {
         try {
             return await super.findOneOrFail(await this.buildFilter(filter, user));
         }
-        catch (e) {
+        catch {
             throw NotFoundError();
         }
     }

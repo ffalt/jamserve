@@ -81,7 +81,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         try {
             await fse.copy(artworkFilename, destFile);
         }
-        catch (e) {
+        catch {
             return Promise.reject(Error(`Importing artwork failed`));
         }
         const artwork = orm.Artwork.create({
@@ -114,7 +114,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         try {
             await fse.copy(artworkFilename, path.join(artwork.path, artwork.name));
         }
-        catch (e) {
+        catch {
             return Promise.reject(Error(`Importing artwork failed`));
         }
         await this.updateArtworkImageFile(artwork);

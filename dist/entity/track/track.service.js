@@ -33,7 +33,7 @@ let TrackService = class TrackService {
             }
             return result;
         }
-        catch (e) {
+        catch {
             const tag = await track.tag.get();
             return tag ? trackTagToRawTag(tag) : undefined;
         }
@@ -51,7 +51,7 @@ let TrackService = class TrackService {
                     return await this.imageModule.getBuffer(track.id, buffer, size, format);
                 }
             }
-            catch (e) {
+            catch {
                 log.error('TrackService', 'Extracting image from audio failed: ' + path.join(track.path, track.fileName));
             }
         }

@@ -38,7 +38,7 @@ export class WikipediaClient extends WebserviceClient {
     async wikidata(id) {
         log.info('requesting wikidata entity', id);
         const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${(id)}`;
-        const data = await this.getJson(url, {});
+        const data = await this.getJson(url);
         if (!data || !data.entities) {
             return;
         }

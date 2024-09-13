@@ -18,7 +18,7 @@ export class FlacProcessorStream extends Transform {
         this.mdbPush = false;
         this.mdbLastWritten = false;
     }
-    _transform(buffer, encoding, callback) {
+    _transform(buffer, _encoding, callback) {
         const chunk = { buffer, pos: 0, length: buffer.length, done: false };
         while (!chunk.done) {
             this.process(chunk);

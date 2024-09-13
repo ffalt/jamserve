@@ -177,13 +177,13 @@ let UserResolver = class UserResolver {
     async stats(user, { orm, engine }) {
         return engine.stats.getUserStats(orm, user);
     }
-    async playlists(owner, { orm, user }, { filter, order, page }) {
+    async playlists(owner, { orm }, { filter, order, page }) {
         return orm.Playlist.searchFilter({ ...filter, userIDs: [owner.id] }, order, page, owner);
     }
-    async bookmarks(owner, { orm, user }, { filter, order, page }) {
+    async bookmarks(owner, { orm }, { filter, order, page }) {
         return orm.Bookmark.searchFilter({ ...filter, userIDs: [owner.id] }, order, page, owner);
     }
-    async sessions(owner, { orm, user }, { filter, order, page }) {
+    async sessions(owner, { orm }, { filter, order, page }) {
         return orm.Session.searchFilter({ ...filter, userIDs: [owner.id] }, order, page, owner);
     }
     async playQueue(user) {

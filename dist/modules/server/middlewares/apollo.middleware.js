@@ -90,7 +90,7 @@ function checkRole(role, context) {
     }
     return true;
 }
-export const customAuthChecker = ({ root, args, context, info }, roles) => {
+export const customAuthChecker = ({ context }, roles) => {
     for (const role of roles) {
         if (!checkRole(role, context)) {
             return false;

@@ -3,7 +3,7 @@ export function parseAgent(session) {
     try {
         return useragent.parse(session.agent);
     }
-    catch (e) {
+    catch {
     }
     return;
 }

@@ -36,7 +36,7 @@ export class BaseWorker {
         try {
             await fse.rename(path.join(dir, oldName), newPath);
         }
-        catch (e) {
+        catch {
             return Promise.reject(Error('File renaming failed'));
         }
         return name;
@@ -45,7 +45,7 @@ export class BaseWorker {
         try {
             await fse.move(path.join(dir, name), path.join(root.path, '.trash', `${Date.now()}_${name}`));
         }
-        catch (e) {
+        catch {
             return Promise.reject(Error('Moving to Trash failed'));
         }
     }

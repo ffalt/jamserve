@@ -21,7 +21,7 @@ let StreamService = class StreamService {
         try {
             stats = await fse.stat(filename);
         }
-        catch (e) {
+        catch {
             stats = undefined;
         }
         if (!stats) {
@@ -48,7 +48,7 @@ let StreamService = class StreamService {
         }
         return Promise.reject(GenericError('Podcast episode not ready'));
     }
-    async streamDBObject(o, type, format, maxBitRate, user) {
+    async streamDBObject(o, type, format, maxBitRate, _user) {
         switch (type) {
             case DBObjectType.track:
                 return this.streamTrack(o, format, maxBitRate);

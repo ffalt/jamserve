@@ -3,7 +3,7 @@ export class EntityRepository {
         this.em = em;
         this.entityName = entityName;
     }
-    buildOrderByFindOptions(order) {
+    buildOrderByFindOptions(_order) {
         return;
     }
     persist(entity, flush = false) {

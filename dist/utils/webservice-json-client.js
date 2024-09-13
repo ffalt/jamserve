@@ -15,7 +15,7 @@ export class WebserviceJSONClient extends WebserviceClient {
         };
         this.options = { ...defaultOptions, ...options };
     }
-    reqToHost(req) {
+    reqToHost(_req) {
         const port = this.options.port !== 80 ? `:${this.options.port}` : '';
         return `${this.options.host}${port}`;
     }
@@ -52,7 +52,7 @@ export class WebserviceJSONClient extends WebserviceClient {
         const url = this.reqToUrl(req);
         log.debug('requesting', url, JSON.stringify(req));
         try {
-            const data = await this.getJson(url, undefined);
+            const data = await this.getJson(url);
             if (this.isRateLimitError(data)) {
                 return this.retry(Error(data.error), req);
             }

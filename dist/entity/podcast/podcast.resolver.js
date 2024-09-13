@@ -48,7 +48,7 @@ let PodcastResolver = class PodcastResolver {
     async podcastsDiscover({ query }, { engine }) {
         return await engine.podcast.discover(query);
     }
-    async podcastsDiscoverTags(page, { engine, user }) {
+    async podcastsDiscoverTags(page, { engine }) {
         return await engine.podcast.discoverTags(page);
     }
     async podcastsDiscoverByTag({ tag }, page, { engine }) {

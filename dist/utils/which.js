@@ -32,7 +32,7 @@ export async function getBinPath(name, envName) {
             return s;
         }
     }
-    catch (e) {
+    catch {
     }
     try {
         const s = await which(name);
@@ -41,7 +41,7 @@ export async function getBinPath(name, envName) {
             return s;
         }
     }
-    catch (e) {
+    catch {
     }
     try {
         const s = await localBin(name);
@@ -50,7 +50,7 @@ export async function getBinPath(name, envName) {
             return s;
         }
     }
-    catch (e) {
+    catch {
     }
     return;
 }

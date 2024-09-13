@@ -16,13 +16,13 @@ import { TrackQL } from '../track/track';
 import { EpisodeQL } from '../episode/episode';
 import { PlaylistQL } from '../playlist/playlist';
 let PlaylistEntryResolver = class PlaylistEntryResolver {
-    async playlist(playlistEntry, { orm, user }) {
+    async playlist(playlistEntry, _context) {
         return playlistEntry.playlist.getOrFail();
     }
-    async track(playlistEntry, { orm, user }) {
+    async track(playlistEntry, _context) {
         return playlistEntry.track.get();
     }
-    async episode(playlistEntry, { orm, user }) {
+    async episode(playlistEntry, _context) {
         return playlistEntry.episode.get();
     }
 };

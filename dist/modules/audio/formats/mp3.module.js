@@ -45,7 +45,7 @@ export class AudioModuleMP3 {
                 ...FORMAT.packJamServeMedia(result.mpeg)
             };
         }
-        catch (e) {
+        catch {
             return { format: TagFormatType.none };
         }
     }
