@@ -183,8 +183,8 @@ type Query {
 
 type UserQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   email: String!
   maxBitRate: Int
@@ -198,14 +198,14 @@ type UserQL {
 }
 
 """
-The javascript `Date` as string. Type represents date and time as the ISO Date string.
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format.
 """
-scalar DateTime
+scalar DateTimeISO
 
 type PlayQueueQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   current: Int
   position: Float
   duration: Float
@@ -216,8 +216,8 @@ type PlayQueueQL {
 
 type PlayQueueEntryQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   position: Int!
   playQueue: PlayQueueQL!
   track: TrackQL
@@ -226,8 +226,8 @@ type PlayQueueEntryQL {
 
 type TrackQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   fileName: String!
   path: String!
@@ -246,14 +246,14 @@ type TrackQL {
   rawTag: MediaTagRawQL!
   lyrics: TrackLyricsQL!
   bookmarksCount: Int!
-  fileCreated: DateTime!
-  fileModified: DateTime!
+  fileCreated: DateTimeISO!
+  fileModified: DateTimeISO!
 }
 
 type SeriesQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   albumTypes: [AlbumType!]!
   artist: ArtistQL
@@ -285,8 +285,8 @@ enum AlbumType {
 
 type ArtistQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   slug: String!
   nameSort: String!
@@ -311,8 +311,8 @@ type ArtistQL {
 
 type GenreQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): TrackPageQL!
   albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
@@ -388,8 +388,8 @@ type AlbumPageQL {
 
 type AlbumQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   slug: String!
   albumType: AlbumType!
@@ -412,8 +412,8 @@ type AlbumQL {
 
 type RootQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   path: String!
   strategy: RootScanStrategy!
@@ -434,13 +434,13 @@ enum RootScanStrategy {
 
 type FolderQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   title: String!
   path: String!
-  statCreated: DateTime!
-  statModified: DateTime!
+  statCreated: DateTimeISO!
+  statModified: DateTimeISO!
   level: Int!
   album: String
   artist: String
@@ -484,13 +484,13 @@ enum FolderType {
 
 type ArtworkQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   path: String!
   types: [ArtworkImageType!]!
-  statCreated: DateTime!
-  statModified: DateTime!
+  statCreated: DateTimeISO!
+  statModified: DateTimeISO!
   fileSize: Int!
   width: Int
   height: Int
@@ -521,16 +521,16 @@ enum ArtworkImageType {
 
 type StateQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  faved: DateTime
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
+  faved: DateTimeISO
   played: Int
   rated: Int
-  lastPlayed: DateTime
+  lastPlayed: DateTimeISO
 }
 
 type RootStatusQL {
-  lastScan: DateTime
+  lastScan: DateTimeISO
   scanning: Boolean
   error: String
 }
@@ -615,8 +615,8 @@ enum ArtistOrderFields {
 
 type BookmarkQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   position: Float!
   track: TrackQL
   episode: EpisodeQL
@@ -625,8 +625,8 @@ type BookmarkQL {
 
 type EpisodeQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   status: PodcastStatus!
   fileSize: Int
@@ -642,9 +642,9 @@ type EpisodeQL {
   bookmarks: [BookmarkQL!]!
   bookmarksCount: Int!
   state: StateQL!
-  fileCreated: DateTime
-  fileModified: DateTime
-  date: DateTime!
+  fileCreated: DateTimeISO
+  fileModified: DateTimeISO
+  date: DateTimeISO!
   chapters: [EpisodeChapterQL!]
   enclosures: [EpisodeEnclosureQL!]
   waveform: WaveformQL!
@@ -660,8 +660,8 @@ enum PodcastStatus {
 
 type TagQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   format: TagFormatType!
   album: String
   albumSort: String
@@ -734,8 +734,8 @@ enum AudioFormatType {
 
 type PodcastQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   url: String!
   status: PodcastStatus!
@@ -750,7 +750,7 @@ type PodcastQL {
   categories: [String!]!
   episodes: [EpisodeQL!]!
   episodesCount: Int!
-  lastCheck: DateTime!
+  lastCheck: DateTimeISO!
   state: StateQL!
 }
 
@@ -968,8 +968,8 @@ type PlaylistPageQL {
 
 type PlaylistQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   comment: String
   isPublic: Boolean!
@@ -983,8 +983,8 @@ type PlaylistQL {
 
 type PlaylistEntryQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   position: Float!
   playlist: PlaylistQL!
   track: TrackQL
@@ -1100,11 +1100,11 @@ type SessionPageQL {
 
 type SessionQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   client: String!
   agent: String!
-  expires: DateTime!
+  expires: DateTimeISO!
   mode: SessionMode!
 }
 
@@ -1201,7 +1201,7 @@ type ArtworkPageQL {
 
 type ChatQL {
   message: String!
-  created: DateTime!
+  created: DateTimeISO!
   userName: String!
   userID: ID!
 }
@@ -1304,8 +1304,8 @@ type PodcastDiscoverPageQL {
 
 type RadioQL {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTimeISO!
+  updatedAt: DateTimeISO!
   name: String!
   url: String!
   homepage: String
