@@ -30,7 +30,7 @@ Features:
 
 ## Requirements
 
-*   install [NodeJS](https://nodejs.org/) >= 16.x and [NPM](https://www.npmjs.com/)
+*   install [NodeJS](https://nodejs.org/) and [NPM](https://www.npmjs.com/)
 
 *   install [FFMPEG](https://ffmpeg.org/)
 
