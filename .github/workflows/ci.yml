@@ -16,6 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install
+      - run: npm install --os=linux --cpu=x64 sharp
       - run: npm run test
     services:
       postgres:
