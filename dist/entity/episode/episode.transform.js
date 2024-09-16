@@ -8,10 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums';
-import { EpisodeService } from './episode.service';
-import { AudioModule } from '../../modules/audio/audio.module';
+import { BaseTransformService } from '../base/base.transform.js';
+import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums.js';
+import { EpisodeService } from './episode.service.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
 let EpisodeTransformService = class EpisodeTransformService extends BaseTransformService {
     async episodeBase(orm, o, episodeArgs, user) {
         const chapters = o.chaptersJSON ? JSON.parse(o.chaptersJSON) : undefined;

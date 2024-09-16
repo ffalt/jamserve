@@ -8,10 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { DBObjectType, FolderType } from '../../types/enums';
-import { MetaDataService } from '../metadata/metadata.service';
-import { GenreTransformService } from '../genre/genre.transform';
+import { BaseTransformService } from '../base/base.transform.js';
+import { DBObjectType, FolderType } from '../../types/enums.js';
+import { MetaDataService } from '../metadata/metadata.service.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
 let FolderTransformService = class FolderTransformService extends BaseTransformService {
     async folderBases(orm, list, folderArgs, user) {
         return await Promise.all(list.map(o => this.folderBase(orm, o, folderArgs, user)));

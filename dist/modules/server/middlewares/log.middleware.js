@@ -1,4 +1,4 @@
-import { logger } from '../../../utils/logger';
+import { logger } from '../../../utils/logger.js';
 const log = logger('Api');
 export function useLogMiddleware() {
     return (req, res, next) => {

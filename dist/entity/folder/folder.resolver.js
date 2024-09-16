@@ -10,17 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType } from '../../types/enums';
+import { DBObjectType } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { Folder, FolderIndexQL, FolderPageQL, FolderQL } from './folder';
-import { SeriesQL } from '../series/series';
-import { ArtistQL } from '../artist/artist';
-import { AlbumQL } from '../album/album';
-import { TrackQL } from '../track/track';
-import { ArtworkQL } from '../artwork/artwork';
-import { FolderIndexArgs, FoldersArgsQL } from './folder.args';
-import { GenreQL } from '../genre/genre';
+import { StateQL } from '../state/state.js';
+import { Folder, FolderIndexQL, FolderPageQL, FolderQL } from './folder.js';
+import { SeriesQL } from '../series/series.js';
+import { ArtistQL } from '../artist/artist.js';
+import { AlbumQL } from '../album/album.js';
+import { TrackQL } from '../track/track.js';
+import { ArtworkQL } from '../artwork/artwork.js';
+import { FolderIndexArgs, FoldersArgsQL } from './folder.args.js';
+import { GenreQL } from '../genre/genre.js';
 let FolderResolver = class FolderResolver {
     async folder(id, { orm }) {
         return await orm.Folder.oneOrFailByID(id);

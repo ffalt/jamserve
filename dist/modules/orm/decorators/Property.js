@@ -1,6 +1,6 @@
-import { findType } from '../helpers/findType';
-import { getMetadataStorage } from '../metadata';
-import { getTypeDecoratorParams } from '../helpers/decorators';
+import { findType } from '../helpers/findType.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getTypeDecoratorParams } from '../helpers/decorators.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function Property(returnTypeFuncOrOptions, maybeOptions) {
     return (prototype, propertyKey, _) => {

@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
+import { BaseTransformService } from '../base/base.transform.js';
 let BookmarkTransformService = class BookmarkTransformService extends BaseTransformService {
     async bookmarkBase(orm, o) {
         return {

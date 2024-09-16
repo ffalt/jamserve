@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { MetaDataResult } from './metadata.model';
-import { AcousticBrainzLookupArgs, AcoustidLookupArgs, CoverArtArchiveImageArgs, CoverArtArchiveLookupArgs, LastFMLookupArgs, LyricsOVHSearchArgs, MusicBrainzLookupArgs, MusicBrainzSearchArgs, WikidataLookupArgs, WikidataSummaryArgs, WikipediaSummaryArgs } from './metadata.args';
-import { ApiImageTypes } from '../../types/consts';
+import { Controller, Ctx, Get, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { MetaDataResult } from './metadata.model.js';
+import { AcousticBrainzLookupArgs, AcoustidLookupArgs, CoverArtArchiveImageArgs, CoverArtArchiveLookupArgs, LastFMLookupArgs, LyricsOVHSearchArgs, MusicBrainzLookupArgs, MusicBrainzSearchArgs, WikidataLookupArgs, WikidataSummaryArgs, WikipediaSummaryArgs } from './metadata.args.js';
+import { ApiImageTypes } from '../../types/consts.js';
 let MetaDataController = class MetaDataController {
     async lastfmLookup(args, { orm, engine }) {
         return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };

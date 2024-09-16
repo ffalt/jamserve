@@ -1,5 +1,5 @@
 import { spawn } from 'child_process';
-import { getBinPath } from './which';
+import { getBinPath } from './which.js';
 export async function spawnTool(binName, envName, args) {
     const bin = await getBinPath(binName, envName);
     if (!bin || bin.length === 0) {

@@ -5,11 +5,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RootWorker_1;
-import { DirScanner } from '../../../../utils/scan-dir';
-import { ObjLoadTrackMatch, WorkerScan } from '../scan';
-import { BaseWorker } from './base';
+import { DirScanner } from '../../../../utils/scan-dir.js';
+import { ObjLoadTrackMatch, WorkerScan } from '../scan.js';
+import { BaseWorker } from './base.js';
 import { InRequestScope } from 'typescript-ioc';
-import { WorkerMergeScan } from '../merge-scan';
+import { WorkerMergeScan } from '../merge-scan.js';
 let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
     static async validateRootPath(orm, dir) {
         const d = dir.trim();

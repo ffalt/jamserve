@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType, PodcastStatus } from '../../types/enums';
+import { DBObjectType, PodcastStatus } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL } from './podcast';
-import { PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL } from './podcast.args';
-import { EpisodeQL } from '../episode/episode';
-import { PageArgsQL } from '../base/base.args';
+import { StateQL } from '../state/state.js';
+import { Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL } from './podcast.js';
+import { PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL } from './podcast.args.js';
+import { EpisodeQL } from '../episode/episode.js';
+import { PageArgsQL } from '../base/base.args.js';
 let PodcastResolver = class PodcastResolver {
     async podcast(id, { orm }) {
         return await orm.Podcast.oneOrFailByID(id);

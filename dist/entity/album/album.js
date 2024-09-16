@@ -7,17 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Track, TrackQL } from '../track/track';
-import { Root, RootQL } from '../root/root';
-import { Folder, FolderQL } from '../folder/folder';
-import { Series, SeriesQL } from '../series/series';
-import { Artist, ArtistQL } from '../artist/artist';
-import { AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields } from '../../types/enums';
+import { Track, TrackQL } from '../track/track.js';
+import { Root, RootQL } from '../root/root.js';
+import { Folder, FolderQL } from '../folder/folder.js';
+import { Series, SeriesQL } from '../series/series.js';
+import { Artist, ArtistQL } from '../artist/artist.js';
+import { AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields } from '../../types/enums.js';
 import { Field, Float, Int, ObjectType } from 'type-graphql';
-import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
-import { State, StateQL } from '../state/state';
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Genre, GenreQL } from '../genre/genre';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Genre, GenreQL } from '../genre/genre.js';
 let Album = class Album extends Base {
     constructor() {
         super(...arguments);

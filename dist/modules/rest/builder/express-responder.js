@@ -1,5 +1,5 @@
 import path from 'path';
-import { ApiError } from './express-error';
+import { ApiError } from './express-error.js';
 export class ApiBaseResponder {
     static sendOK(req, res) {
         res.status(200).json({ ok: true });

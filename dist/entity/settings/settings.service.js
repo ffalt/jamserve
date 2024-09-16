@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SettingsService_1;
-import { JAMSERVE_VERSION } from '../../version';
+import { JAMSERVE_VERSION } from '../../version.js';
 import { InRequestScope } from 'typescript-ioc';
 export const defaultEngineSettings = {
     chat: {

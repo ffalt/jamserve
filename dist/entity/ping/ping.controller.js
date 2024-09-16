@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Controller, Get } from '../../modules/rest/decorators';
-import { Ping } from './ping.model';
-import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
+import { Controller, Get } from '../../modules/rest/index.js';
+import { Ping } from './ping.model.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 let PingController = class PingController {
     ping() {
         return { version: JAMAPI_VERSION };

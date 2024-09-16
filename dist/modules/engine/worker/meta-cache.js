@@ -1,7 +1,7 @@
-import { AlbumType } from '../../../types/enums';
-import { cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts';
-import { extractAlbumName } from '../../../utils/album-name';
-import { slugify } from '../../../utils/slug';
+import { AlbumType } from '../../../types/enums.js';
+import { cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
+import { slugify } from '../../../utils/slug.js';
 export function getAlbumName(trackInfo) {
     if (trackInfo.folder.albumType === AlbumType.compilation) {
         return trackInfo.folder.album || cUnknownAlbum;

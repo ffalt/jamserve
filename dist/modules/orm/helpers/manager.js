@@ -1,5 +1,5 @@
-import { EntityRepository } from './repository';
-import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity';
+import { EntityRepository } from './repository.js';
+import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity.js';
 import { v4 } from 'uuid';
 export class EntityCache {
     constructor() {

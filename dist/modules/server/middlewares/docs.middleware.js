@@ -9,9 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import { ApolloMiddleware } from './apollo.middleware';
-import { RestMiddleware } from './rest.middleware';
-import { ApiBaseResponder, buildAngularClientZip, buildAxiosClientZip, buildOpenApi } from '../../rest';
+import { ApolloMiddleware } from './apollo.middleware.js';
+import { RestMiddleware } from './rest.middleware.js';
+import { ApiBaseResponder, buildAngularClientZip, buildAxiosClientZip, buildOpenApi } from '../../rest/index.js';
 import path from 'path';
 let DocsMiddleware = class DocsMiddleware {
     getOpenApiSchema(extended = true) {

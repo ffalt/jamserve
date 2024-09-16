@@ -1,4 +1,4 @@
-import { getMetadataStorage } from '../metadata';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
 import archiver from 'archiver';

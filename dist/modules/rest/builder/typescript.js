@@ -1,4 +1,4 @@
-import { getMetadataStorage } from '../metadata';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 const tab = '\t';
 const tabtab = '\t\t';
 export function buildTSEnums() {

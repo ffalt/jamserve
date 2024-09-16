@@ -1,4 +1,4 @@
-import { ensureReflectMetadataExists } from '../../../utils/reflect';
+import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 export class MetadataStorage {
     constructor() {
         this.entities = [];

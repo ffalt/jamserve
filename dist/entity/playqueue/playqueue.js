@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { User } from '../user/user';
-import { PlayQueueEntry, PlayQueueEntryQL } from '../playqueueentry/playqueue-entry';
+import { User } from '../user/user.js';
+import { PlayQueueEntry, PlayQueueEntryQL } from '../playqueueentry/playqueue-entry.js';
 import { Field, Float, Int, ObjectType } from 'type-graphql';
-import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base } from '../base/base';
-import { PlayQueueEntryOrderFields } from '../../types/enums';
+import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base } from '../base/base.js';
+import { PlayQueueEntryOrderFields } from '../../types/enums.js';
 let PlayQueue = class PlayQueue extends Base {
     constructor() {
         super(...arguments);

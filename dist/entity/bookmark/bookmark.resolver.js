@@ -11,10 +11,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
-import { Bookmark, BookmarkPageQL, BookmarkQL } from './bookmark';
-import { TrackQL } from '../track/track';
-import { EpisodeQL } from '../episode/episode';
-import { BookmarksArgs } from './bookmark.args';
+import { Bookmark, BookmarkPageQL, BookmarkQL } from './bookmark.js';
+import { TrackQL } from '../track/track.js';
+import { EpisodeQL } from '../episode/episode.js';
+import { BookmarksArgs } from './bookmark.args.js';
 let BookmarkResolver = class BookmarkResolver {
     async bookmark(id, { orm, user }) {
         return await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id: id } } : { where: { id: id, user: user.id } });

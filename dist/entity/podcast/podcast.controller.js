@@ -10,14 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Podcast, PodcastDiscover, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus } from './podcast.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { EpisodePage } from '../episode/episode.model';
-import { IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs } from './podcast.args';
-import { EpisodeOrderArgs, IncludesEpisodeArgs } from '../episode/episode.args';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { logger } from '../../utils/logger';
+import { Podcast, PodcastDiscover, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus } from './podcast.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { EpisodePage } from '../episode/episode.model.js';
+import { IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs } from './podcast.args.js';
+import { EpisodeOrderArgs, IncludesEpisodeArgs } from '../episode/episode.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { logger } from '../../utils/logger.js';
 const log = logger('PodcastController');
 let PodcastController = class PodcastController {
     async id(id, podcastArgs, podcastChildrenArgs, episodeArgs, { orm, engine, user }) {

@@ -11,10 +11,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Ctx, FieldResolver, Resolver, Root as GQLRoot } from 'type-graphql';
-import { PlaylistEntry, PlaylistEntryQL } from './playlist-entry';
-import { TrackQL } from '../track/track';
-import { EpisodeQL } from '../episode/episode';
-import { PlaylistQL } from '../playlist/playlist';
+import { PlaylistEntry, PlaylistEntryQL } from './playlist-entry.js';
+import { TrackQL } from '../track/track.js';
+import { EpisodeQL } from '../episode/episode.js';
+import { PlaylistQL } from '../playlist/playlist.js';
 let PlaylistEntryResolver = class PlaylistEntryResolver {
     async playlist(playlistEntry, _context) {
         return playlistEntry.playlist.getOrFail();

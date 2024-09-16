@@ -11,7 +11,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Ctx, FieldResolver, ID, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { NowPlaying, NowPlayingQL } from './nowplaying';
+import { NowPlaying, NowPlayingQL } from './nowplaying.js';
 let NowPlayingResolver = class NowPlayingResolver {
     async nowPlaying({ engine }) {
         return engine.nowPlaying.getNowPlaying();

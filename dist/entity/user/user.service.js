@@ -7,17 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt';
-import { UserRole } from '../../types/enums';
+import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
+import { UserRole } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import { InvalidParamError, UnauthError } from '../../modules/rest';
-import { ConfigService } from '../../modules/engine/services/config.service';
-import { fileDeleteIfExists } from '../../utils/fs-utils';
-import { ImageModule } from '../../modules/image/image.module';
+import { InvalidParamError, UnauthError } from '../../modules/rest/index.js';
+import { ConfigService } from '../../modules/engine/services/config.service.js';
+import { fileDeleteIfExists } from '../../utils/fs-utils.js';
+import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
-import { randomString } from '../../utils/random';
+import { randomString } from '../../utils/random.js';
 let UserService = class UserService {
     constructor() {
         this.userAvatarPath = this.configService.getDataPath(['images']);

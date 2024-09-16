@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { FolderHealthID, TrackHealthID } from '../../types/enums';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { FolderHealthID, TrackHealthID } from '../../types/enums.js';
 let HealthHintDetail = class HealthHintDetail {
 };
 __decorate([

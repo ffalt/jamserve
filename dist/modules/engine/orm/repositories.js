@@ -1,25 +1,25 @@
-import { AlbumRepository } from '../../../entity/album/album.repository';
-import { ArtistRepository } from '../../../entity/artist/artist.repository';
-import { ArtworkRepository } from '../../../entity/artwork/artwork.repository';
-import { BookmarkRepository } from '../../../entity/bookmark/bookmark.repository';
-import { EpisodeRepository } from '../../../entity/episode/episode.repository';
-import { FolderRepository } from '../../../entity/folder/folder.repository';
-import { PlaylistRepository } from '../../../entity/playlist/playlist.repository';
-import { PodcastRepository } from '../../../entity/podcast/podcast.repository';
-import { SeriesRepository } from '../../../entity/series/series.repository';
-import { SessionRepository } from '../../../entity/session/session.repository';
-import { RadioRepository } from '../../../entity/radio/radio.repository';
-import { TrackRepository } from '../../../entity/track/track.repository';
-import { UserRepository } from '../../../entity/user/user.repository';
-import { TagRepository } from '../../../entity/tag/tag.repository';
-import { StateRepository } from '../../../entity/state/state.repository';
-import { RootRepository } from '../../../entity/root/root.repository';
-import { PlaylistEntryRepository } from '../../../entity/playlistentry/playlist-entry.repository';
-import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.repository';
-import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository';
-import { SettingsRepository } from '../../../entity/settings/settings.repository';
-import { MetaDataRepository } from '../../../entity/metadata/metadata.repository';
-import { GenreRepository } from '../../../entity/genre/genre.repository';
+import { AlbumRepository } from '../../../entity/album/album.repository.js';
+import { ArtistRepository } from '../../../entity/artist/artist.repository.js';
+import { ArtworkRepository } from '../../../entity/artwork/artwork.repository.js';
+import { BookmarkRepository } from '../../../entity/bookmark/bookmark.repository.js';
+import { EpisodeRepository } from '../../../entity/episode/episode.repository.js';
+import { FolderRepository } from '../../../entity/folder/folder.repository.js';
+import { PlaylistRepository } from '../../../entity/playlist/playlist.repository.js';
+import { PodcastRepository } from '../../../entity/podcast/podcast.repository.js';
+import { SeriesRepository } from '../../../entity/series/series.repository.js';
+import { SessionRepository } from '../../../entity/session/session.repository.js';
+import { RadioRepository } from '../../../entity/radio/radio.repository.js';
+import { TrackRepository } from '../../../entity/track/track.repository.js';
+import { UserRepository } from '../../../entity/user/user.repository.js';
+import { TagRepository } from '../../../entity/tag/tag.repository.js';
+import { StateRepository } from '../../../entity/state/state.repository.js';
+import { RootRepository } from '../../../entity/root/root.repository.js';
+import { PlaylistEntryRepository } from '../../../entity/playlistentry/playlist-entry.repository.js';
+import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.repository.js';
+import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository.js';
+import { SettingsRepository } from '../../../entity/settings/settings.repository.js';
+import { MetaDataRepository } from '../../../entity/metadata/metadata.repository.js';
+import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 export const ORMRepositories = {
     Album: AlbumRepository,
     Artist: ArtistRepository,

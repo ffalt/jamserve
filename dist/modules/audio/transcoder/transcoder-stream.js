@@ -1,7 +1,7 @@
 import ffmpeg from 'fluent-ffmpeg';
-import { SupportedTranscodeAudioFormat } from '../../../utils/filetype';
-import { logger } from '../../../utils/logger';
-import { AudioFormatType } from '../../../types/enums';
+import { SupportedTranscodeAudioFormat } from '../../../utils/filetype.js';
+import { logger } from '../../../utils/logger.js';
+import { AudioFormatType } from '../../../types/enums.js';
 const log = logger('transcoder.stream');
 export class TranscoderStream {
     static needsTranscoding(mediaFormat, format, maxBitRate) {

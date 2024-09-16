@@ -1,7 +1,7 @@
 import { ID3v1_GENRES, ID3v2 } from 'jamp3';
-import { cleanGenre } from '../../utils/genres';
-import { ID3TrackTagRawFormatTypes } from './audio.module';
-import { AudioFormatType, TagFormatType } from '../../types/enums';
+import { cleanGenre } from '../../utils/genres.js';
+import { ID3TrackTagRawFormatTypes } from './audio.module.js';
+import { AudioFormatType, TagFormatType } from '../../types/enums.js';
 export class FORMAT {
     static packJamServeMedia(data) {
         if (!data) {

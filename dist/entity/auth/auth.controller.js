@@ -11,14 +11,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var AuthController_1;
-import { Session } from '../session/session.model';
-import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest';
+import { Session } from '../session/session.model.js';
+import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest/index.js';
 import passport from 'passport';
-import { generateJWT, jwtHash } from '../../utils/jwt';
-import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
-import { CredentialsArgs } from './auth.args';
-import { UserRole } from '../../types/enums';
-import { logger } from '../../utils/logger';
+import { generateJWT, jwtHash } from '../../utils/jwt.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { CredentialsArgs } from './auth.args.js';
+import { UserRole } from '../../types/enums.js';
+import { logger } from '../../utils/logger.js';
 const log = logger('AuthController');
 let AuthController = AuthController_1 = class AuthController {
     async loginUser(req, res, next) {

@@ -1,8 +1,8 @@
 import path from 'path';
-import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums';
-import { MetaStatBuilder } from '../../../utils/stats-builder';
-import { extractAlbumName } from '../../../utils/album-name';
-import { MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts';
+import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
+import { MetaStatBuilder } from '../../../utils/stats-builder.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
 const typeByGenreNames = {
     audiobook: AlbumType.audiobook,
     'audio theater': AlbumType.audiobook,

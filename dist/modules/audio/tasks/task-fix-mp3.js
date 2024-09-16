@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import { parentPort } from 'worker_threads';
-import { mp3val } from '../tools/mp3val';
+import { mp3val } from '../tools/mp3val.js';
 export async function fixMP3(filename) {
     const backupFile = `${filename}.bak`;
     const exits = await fse.pathExists(backupFile);

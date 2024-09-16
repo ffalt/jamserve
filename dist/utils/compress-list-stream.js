@@ -1,5 +1,5 @@
 import path from 'path';
-import { BaseCompressStream } from './compress-base-stream';
+import { BaseCompressStream } from './compress-base-stream.js';
 export class CompressListStream extends BaseCompressStream {
     constructor(list, filename, format) {
         super(filename, format);

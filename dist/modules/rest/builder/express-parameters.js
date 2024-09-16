@@ -1,8 +1,8 @@
-import { getEnumReverseValuesMap } from '../helpers/enums';
-import { GenericError, InvalidParamError, MissingParamError } from './express-error';
-import { getMetadataStorage } from '../metadata';
-import { getDefaultValue } from '../helpers/default-value';
-import { iterateArguments } from '../helpers/iterate-super';
+import { getEnumReverseValuesMap } from '../helpers/enums.js';
+import { GenericError, InvalidParamError, MissingParamError } from './express-error.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getDefaultValue } from '../helpers/default-value.js';
+import { iterateArguments } from '../helpers/iterate-super.js';
 export class ExpressParameters {
     constructor() {
         this.metadata = getMetadataStorage();

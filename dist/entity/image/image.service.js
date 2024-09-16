@@ -10,18 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var ImageService_1;
 import path from 'path';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { ImageModule } from '../../modules/image/image.module';
-import { DBObjectType, FolderType } from '../../types/enums';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { PodcastService } from '../podcast/podcast.service';
-import { TrackService } from '../track/track.service';
-import { FolderService } from '../folder/folder.service';
-import { UserService } from '../user/user.service';
-import { AlbumService } from '../album/album.service';
-import { ArtistService } from '../artist/artist.service';
-import { SeriesService } from '../series/series.service';
-import { RootService } from '../root/root.service';
-import { ArtworkService } from '../artwork/artwork.service';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { DBObjectType, FolderType } from '../../types/enums.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { PodcastService } from '../podcast/podcast.service.js';
+import { TrackService } from '../track/track.service.js';
+import { FolderService } from '../folder/folder.service.js';
+import { UserService } from '../user/user.service.js';
+import { AlbumService } from '../album/album.service.js';
+import { ArtistService } from '../artist/artist.service.js';
+import { SeriesService } from '../series/series.service.js';
+import { RootService } from '../root/root.service.js';
+import { ArtworkService } from '../artwork/artwork.service.js';
 let ImageService = ImageService_1 = class ImageService {
     static getCoverArtTextFolder(folder) {
         let result;

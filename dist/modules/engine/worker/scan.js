@@ -1,11 +1,11 @@
-import { logger } from '../../../utils/logger';
-import { FileTyp, FolderType } from '../../../types/enums';
-import { splitDirectoryName } from '../../../utils/dir-name';
+import { logger } from '../../../utils/logger.js';
+import { FileTyp, FolderType } from '../../../types/enums.js';
+import { splitDirectoryName } from '../../../utils/dir-name.js';
 import path from 'path';
-import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils';
-import { artWorkImageNameToType } from '../../../utils/artwork-type';
+import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
+import { artWorkImageNameToType } from '../../../utils/artwork-type.js';
 import moment from 'moment';
-import { TrackUpdater } from './tasks/track';
+import { TrackUpdater } from './tasks/track.js';
 const log = logger('IO.Scan');
 export class OnDemandTrackMatch {
 }

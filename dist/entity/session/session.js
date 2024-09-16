@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { User } from '../user/user';
-import { SessionMode } from '../../types/enums';
+import { User } from '../user/user.js';
+import { SessionMode } from '../../types/enums.js';
 import { Field, ObjectType } from 'type-graphql';
-import { Entity, ManyToOne, ORM_DATETIME, Property, Reference } from '../../modules/orm';
-import { Base, PaginatedResponse } from '../base/base';
+import { Entity, ManyToOne, ORM_DATETIME, Property, Reference } from '../../modules/orm/index.js';
+import { Base, PaginatedResponse } from '../base/base.js';
 let Session = class Session extends Base {
     constructor() {
         super(...arguments);

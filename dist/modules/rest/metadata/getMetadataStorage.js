@@ -1,4 +1,4 @@
-import { MetadataStorage } from './metadata-storage';
+import { MetadataStorage } from './metadata-storage.js';
 let RESTMetadataStorage;
 export function getMetadataStorage() {
     return (RESTMetadataStorage || (RESTMetadataStorage = new MetadataStorage()));

@@ -1,4 +1,4 @@
-import { RateLimiter } from './limiter';
+import { RateLimiter } from './limiter/RateLimiter.js';
 import fetch from 'node-fetch';
 export class WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent) {

@@ -8,10 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { NotFoundError } from '../../modules/rest/builder';
-import { DBObjectType } from '../../types/enums';
-import { logger } from '../../utils/logger';
-import { StateService } from '../state/state.service';
+import { NotFoundError } from '../../modules/rest/index.js';
+import { DBObjectType } from '../../types/enums.js';
+import { logger } from '../../utils/logger.js';
+import { StateService } from '../state/state.service.js';
 const log = logger('NowPlayingService');
 let NowPlayingService = class NowPlayingService {
     constructor() {

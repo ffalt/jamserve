@@ -1,4 +1,4 @@
-import { BaseCompressStream } from './compress-base-stream';
+import { BaseCompressStream } from './compress-base-stream.js';
 export class CompressFolderStream extends BaseCompressStream {
     constructor(folder, filename, format) {
         super(filename, format);

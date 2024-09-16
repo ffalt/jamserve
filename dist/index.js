@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { JAMSERVE_VERSION } from './version';
+import { JAMSERVE_VERSION } from './version.js';
 import dotenv from 'dotenv';
-import { configureLogger, logger } from './utils/logger';
-import { Server } from './modules/server/server';
+import { configureLogger, logger } from './utils/logger.js';
+import { Server } from './modules/server/server.js';
 import { Container } from 'typescript-ioc';
 dotenv.config();
 configureLogger(process.env.JAM_LOG_LEVEL || 'info');

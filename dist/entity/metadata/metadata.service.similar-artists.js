@@ -1,4 +1,4 @@
-import { FolderType, LastFMLookupType } from '../../types/enums';
+import { FolderType, LastFMLookupType } from '../../types/enums.js';
 export class MetadataServiceSimilarArtists {
     constructor(service) {
         this.service = service;

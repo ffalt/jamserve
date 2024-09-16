@@ -1,5 +1,5 @@
-import { TokenBucket } from "./TokenBucket";
-import { getMilliseconds, wait } from "./clock";
+import { TokenBucket } from "./TokenBucket.js";
+import { getMilliseconds, wait } from "./clock.js";
 export class RateLimiter {
     constructor({ tokensPerInterval, interval, fireImmediately }) {
         this.tokenBucket = new TokenBucket({

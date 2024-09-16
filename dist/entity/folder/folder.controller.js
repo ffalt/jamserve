@@ -10,17 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Folder, FolderHealth, FolderIndex, FolderPage } from './folder.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { TrackPage } from '../track/track.model';
-import { ArtworkPage } from '../artwork/artwork.model';
-import { ExtendedInfoResult } from '../metadata/metadata.model';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args';
-import { FolderCreateArgs, FolderFilterArgs, FolderMoveArgs, FolderOrderArgs, FolderRenameArgs, IncludesFolderArgs, IncludesFolderChildrenArgs } from './folder.args';
-import { ArtworkOrderArgs, IncludesArtworkArgs } from '../artwork/artwork.args';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { AdminChangeQueueInfo } from '../admin/admin';
+import { Folder, FolderHealth, FolderIndex, FolderPage } from './folder.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { TrackPage } from '../track/track.model.js';
+import { ArtworkPage } from '../artwork/artwork.model.js';
+import { ExtendedInfoResult } from '../metadata/metadata.model.js';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
+import { FolderCreateArgs, FolderFilterArgs, FolderMoveArgs, FolderOrderArgs, FolderRenameArgs, IncludesFolderArgs, IncludesFolderChildrenArgs } from './folder.args.js';
+import { ArtworkOrderArgs, IncludesArtworkArgs } from '../artwork/artwork.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { AdminChangeQueueInfo } from '../admin/admin.js';
 let FolderController = class FolderController {
     async id(id, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, { orm, engine, user }) {
         return engine.transform.folder(orm, await orm.Folder.oneOrFailByID(id), folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user);

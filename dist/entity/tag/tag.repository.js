@@ -1,6 +1,6 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType } from '../../types/enums';
-import { basenameStripExt } from '../../utils/fs-utils';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType } from '../../types/enums.js';
+import { basenameStripExt } from '../../utils/fs-utils.js';
 export class TagRepository extends BaseRepository {
     constructor() {
         super(...arguments);

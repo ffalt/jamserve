@@ -1,6 +1,6 @@
 import Ffmpeg from 'fluent-ffmpeg';
 import { PassThrough, Transform } from 'stream';
-import { logger } from '../../../utils/logger';
+import { logger } from '../../../utils/logger.js';
 const log = logger('waveform.stream');
 export class WaveformStream extends Transform {
     constructor(atSamplesPerPixel, atSampleRate) {

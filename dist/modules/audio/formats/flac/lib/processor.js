@@ -1,8 +1,8 @@
 import { Transform } from 'stream';
-import { MetaDataBlock } from './block';
-import { MetaDataBlockPicture } from './block.picture';
-import { MetaDataBlockStreamInfo } from './block.streaminfo';
-import { BlockVorbiscomment } from './block.vorbiscomment';
+import { MetaDataBlock } from './block.js';
+import { MetaDataBlockPicture } from './block.picture.js';
+import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
+import { BlockVorbiscomment } from './block.vorbiscomment.js';
 export class FlacProcessorStream extends Transform {
     constructor(reportID3 = false, parseMetaDataBlocks = false, options) {
         super(options);

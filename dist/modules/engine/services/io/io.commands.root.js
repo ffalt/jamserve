@@ -1,4 +1,4 @@
-import { WorkerRequestMode } from './io.types';
+import { WorkerRequestMode } from './io.types.js';
 export class IoCommandsRoot {
     constructor(owner) {
         this.owner = owner;

@@ -1,6 +1,6 @@
-import { logger } from '../../../utils/logger';
-import { WebserviceClient } from '../../../utils/webservice-client';
-import { fpcalc } from '../tools/fpcalc';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
+import { fpcalc } from '../tools/fpcalc.js';
 const log = logger('Acoustid');
 const META_DEFAULT = 'recordings releases releasegroups tracks compress usermeta sources';
 export class AcoustidClient extends WebserviceClient {

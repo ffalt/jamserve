@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var PlaylistService_1;
 import { InRequestScope } from 'typescript-ioc';
-import { DBObjectType } from '../../types/enums';
-import { NotFoundError } from '../../modules/rest';
+import { DBObjectType } from '../../types/enums.js';
+import { NotFoundError } from '../../modules/rest/index.js';
 let PlaylistService = PlaylistService_1 = class PlaylistService {
     static async getDuration(media) {
         switch (media.objType) {

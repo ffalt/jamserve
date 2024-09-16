@@ -11,12 +11,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { DBObjectType } from '../../types/enums';
-import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist';
-import { PlaylistEntryQL } from '../playlistentry/playlist-entry';
-import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args';
-import { NotFoundError } from '../../modules/rest';
+import { StateQL } from '../state/state.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist.js';
+import { PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
+import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
+import { NotFoundError } from '../../modules/rest/index.js';
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
         const list = await orm.Playlist.oneOrFail({ where: { id } });

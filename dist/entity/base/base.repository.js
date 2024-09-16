@@ -1,10 +1,10 @@
-import { DefaultOrderFields, ListType } from '../../types/enums';
-import { InvalidParamError, NotFoundError } from '../../modules/rest/builder';
-import { OrderHelper } from './base';
-import { StateHelper } from '../state/state.helper';
-import { EntityRepository } from '../../modules/orm';
+import { DefaultOrderFields, ListType } from '../../types/enums.js';
+import { InvalidParamError, NotFoundError } from '../../modules/rest/index.js';
+import { OrderHelper } from './base.js';
+import { StateHelper } from '../state/state.helper.js';
+import { EntityRepository } from '../../modules/orm/index.js';
 import seq from 'sequelize';
-import { paginate } from './base.utils';
+import { paginate } from './base.utils.js';
 import shuffleSeed from 'shuffle-seed';
 export class BaseRepository extends EntityRepository {
     buildDefaultOrder(order) {

@@ -11,8 +11,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
-import { ChatQL } from './chat';
-import { ChatFilterArgs } from './chat.args';
+import { ChatQL } from './chat.js';
+import { ChatFilterArgs } from './chat.args.js';
 let ChatResolver = class ChatResolver {
     async chats({ since }, { engine }) {
         return engine.chat.get(since);

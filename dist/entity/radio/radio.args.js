@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
-import { ListType } from '../../types/enums';
-import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args';
-import { examples } from '../../modules/engine/rest/example.consts';
+import { ListType } from '../../types/enums.js';
+import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 let IncludesRadioArgs = class IncludesRadioArgs {
 };
 __decorate([

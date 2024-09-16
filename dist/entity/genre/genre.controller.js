@@ -10,17 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Genre, GenreIndex, GenrePage } from './genre.model';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/decorators';
-import { TrackOrderFields, UserRole } from '../../types/enums';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { GenreFilterArgs, GenreOrderArgs, IncludesGenreArgs } from './genre.args';
-import { TrackPage } from '../track/track.model';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args';
-import { AlbumPage } from '../album/album.model';
-import { ArtistOrderArgs, IncludesArtistArgs } from '../artist/artist.args';
-import { ArtistPage } from '../artist/artist.model';
+import { Genre, GenreIndex, GenrePage } from './genre.model.js';
+import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { TrackOrderFields, UserRole } from '../../types/enums.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { GenreFilterArgs, GenreOrderArgs, IncludesGenreArgs } from './genre.args.js';
+import { TrackPage } from '../track/track.model.js';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
+import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { AlbumPage } from '../album/album.model.js';
+import { ArtistOrderArgs, IncludesArtistArgs } from '../artist/artist.args.js';
+import { ArtistPage } from '../artist/artist.model.js';
 let GenreController = class GenreController {
     async id(id, genreArgs, { orm, engine, user }) {
         return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);

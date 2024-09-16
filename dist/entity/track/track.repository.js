@@ -1,8 +1,8 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType, TrackOrderFields } from '../../types/enums';
-import { OrderHelper } from '../base/base';
-import { Folder } from '../folder/folder';
-import { QHelper } from '../../modules/orm';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, TrackOrderFields } from '../../types/enums.js';
+import { OrderHelper } from '../base/base.js';
+import { Folder } from '../folder/folder.js';
+import { QHelper } from '../../modules/orm/index.js';
 export class TrackRepository extends BaseRepository {
     constructor() {
         super(...arguments);

@@ -1,5 +1,5 @@
 import session from 'express-session';
-import { ExpressSessionStore } from './session-store';
+import { ExpressSessionStore } from './session-store.js';
 export function useSessionMiddleware(configService, sessionService) {
     return session({
         name: 'jam.sid',

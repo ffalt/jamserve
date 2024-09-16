@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest';
-import { examples } from '../../modules/engine/rest/example.consts';
-import { SessionMode } from '../../types/enums';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
+import { SessionMode } from '../../types/enums.js';
 let UserSession = class UserSession {
 };
 __decorate([

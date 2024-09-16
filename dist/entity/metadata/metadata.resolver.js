@@ -11,8 +11,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Ctx, ID, Query, Resolver } from 'type-graphql';
-import { ExtendedInfoQL, ExtendedInfoResultQL } from './metadata.model';
-import { FolderType } from '../../types/enums';
+import { ExtendedInfoQL, ExtendedInfoResultQL } from './metadata.model.js';
+import { FolderType } from '../../types/enums.js';
 let MetadataResolver = class MetadataResolver {
     async folderInfo(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);

@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest';
-import { Base } from '../base/base.model';
-import { AlbumType, FolderType } from '../../types/enums';
-import { GenreBase } from '../genre/genre.model';
-import { ExtendedInfo } from '../metadata/metadata.model';
-import { examples } from '../../modules/engine/rest/example.consts';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { Base } from '../base/base.model.js';
+import { AlbumType, FolderType } from '../../types/enums.js';
+import { GenreBase } from '../genre/genre.model.js';
+import { ExtendedInfo } from '../metadata/metadata.model.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 let FolderTag = class FolderTag {
 };
 __decorate([

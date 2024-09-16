@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get, NotFoundError } from '../../modules/rest';
-import { ImageFormatType, UserRole } from '../../types/enums';
-import { ApiImageTypes } from '../../types/consts';
-import { ImageArgs } from './image.args';
-import { PathParams } from '../../modules/rest/decorators';
+import { Controller, Ctx, Get, NotFoundError } from '../../modules/rest/index.js';
+import { ImageFormatType, UserRole } from '../../types/enums.js';
+import { ApiImageTypes } from '../../types/consts.js';
+import { ImageArgs } from './image.args.js';
+import { PathParams } from '../../modules/rest/index.js';
 let ImageController = class ImageController {
     async image(imageArgs, { orm, engine }) {
         const result = await orm.findInImageTypes(imageArgs.id);

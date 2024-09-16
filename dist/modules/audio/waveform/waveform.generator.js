@@ -4,7 +4,7 @@ import { area } from 'd3-shape';
 import { select } from 'd3-selection';
 import fs from 'fs';
 import WaveformData from 'waveform-data';
-import { Waveform } from './waveform.class';
+import { Waveform } from './waveform.class.js';
 import { JSDOM } from 'jsdom';
 export class WaveformGenerator {
     async binary(filename) {

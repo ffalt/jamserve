@@ -11,19 +11,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { DBObjectType } from '../../types/enums';
-import { WaveformQL } from '../waveform/waveform';
-import { Track, TrackLyricsQL, TrackPageQL, TrackQL } from './track';
-import { FolderQL } from '../folder/folder';
-import { AlbumQL } from '../album/album';
-import { ArtistQL } from '../artist/artist';
-import { RootQL } from '../root/root';
-import { MediaTagRawQL, TagQL } from '../tag/tag';
-import { SeriesQL } from '../series/series';
-import { BookmarkQL } from '../bookmark/bookmark';
-import { TracksArgsQL } from './track.args';
-import { GenreQL } from '../genre/genre';
+import { StateQL } from '../state/state.js';
+import { DBObjectType } from '../../types/enums.js';
+import { WaveformQL } from '../waveform/waveform.js';
+import { Track, TrackLyricsQL, TrackPageQL, TrackQL } from './track.js';
+import { FolderQL } from '../folder/folder.js';
+import { AlbumQL } from '../album/album.js';
+import { ArtistQL } from '../artist/artist.js';
+import { RootQL } from '../root/root.js';
+import { MediaTagRawQL, TagQL } from '../tag/tag.js';
+import { SeriesQL } from '../series/series.js';
+import { BookmarkQL } from '../bookmark/bookmark.js';
+import { TracksArgsQL } from './track.args.js';
+import { GenreQL } from '../genre/genre.js';
 let TrackResolver = class TrackResolver {
     async track(id, { orm }) {
         return await orm.Track.oneOrFailByID(id);

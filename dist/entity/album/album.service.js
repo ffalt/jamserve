@@ -9,8 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var AlbumService_1;
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { TrackService } from '../track/track.service';
-import { FolderService } from '../folder/folder.service';
+import { TrackService } from '../track/track.service.js';
+import { FolderService } from '../folder/folder.service.js';
 let AlbumService = AlbumService_1 = class AlbumService {
     static async getAlbumFolder(album) {
         const folders = await album.folders.getItems();

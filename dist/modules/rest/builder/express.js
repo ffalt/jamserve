@@ -1,10 +1,10 @@
 import express from 'express';
-import { getMetadataStorage } from '../metadata';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
-import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils';
+import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
-import { ExpressMethod } from './express-method';
-import { iterateControllers } from '../helpers/iterate-super';
+import { ExpressMethod } from './express-method.js';
+import { iterateControllers } from '../helpers/iterate-super.js';
 export function restRouter(api, options) {
     const routeInfos = [];
     const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });

@@ -7,15 +7,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { WorkerService } from './worker.service';
-import { OrmService } from './orm.service';
-import { IoRequest } from './io/io.types';
+import { WorkerService } from './worker.service.js';
+import { OrmService } from './orm.service.js';
+import { IoRequest } from './io/io.types.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { logger } from '../../../utils/logger';
-import { IoCommandsArtwork } from './io/io.commands.artwork';
-import { IoCommandsFolder } from './io/io.commands.folder';
-import { IoCommandsRoot } from './io/io.commands.root';
-import { IoCommandsTrack } from './io/io.commands.track';
+import { logger } from '../../../utils/logger.js';
+import { IoCommandsArtwork } from './io/io.commands.artwork.js';
+import { IoCommandsFolder } from './io/io.commands.folder.js';
+import { IoCommandsRoot } from './io/io.commands.root.js';
+import { IoCommandsTrack } from './io/io.commands.track.js';
 const log = logger('IO');
 let IoService = class IoService {
     constructor() {

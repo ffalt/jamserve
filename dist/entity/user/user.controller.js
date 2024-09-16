@@ -11,12 +11,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var UserController_1;
-import { User, UserPage } from './user.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args';
-import { randomString } from '../../utils/random';
-import { PageArgs } from '../base/base.args';
+import { User, UserPage } from './user.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
+import { randomString } from '../../utils/random.js';
+import { PageArgs } from '../base/base.args.js';
 let UserController = UserController_1 = class UserController {
     async id(id, userArgs, { orm, engine, user }) {
         return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);

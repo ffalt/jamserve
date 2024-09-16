@@ -8,14 +8,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
-import { Entity, ManyToMany, Property } from '../../modules/orm/decorators';
-import { Collection } from '../../modules/orm';
-import { Track, TrackQL } from '../track/track';
-import { Album, AlbumQL } from '../album/album';
-import { Artist, ArtistQL } from '../artist/artist';
-import { Folder, FolderQL } from '../folder/folder';
-import { Series, SeriesQL } from '../series/series';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { Entity, ManyToMany, Property } from '../../modules/orm/index.js';
+import { Collection } from '../../modules/orm/index.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Album, AlbumQL } from '../album/album.js';
+import { Artist, ArtistQL } from '../artist/artist.js';
+import { Folder, FolderQL } from '../folder/folder.js';
+import { Series, SeriesQL } from '../series/series.js';
 let Genre = class Genre extends Base {
     constructor() {
         super(...arguments);

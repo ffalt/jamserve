@@ -9,17 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import fse from 'fs-extra';
 import path from 'path';
-import { ImageModule } from '../../modules/image/image.module';
-import { DebouncePromises } from '../../utils/debounce-promises';
-import { pathDeleteIfExists } from '../../utils/fs-utils';
-import { logger } from '../../utils/logger';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { DebouncePromises } from '../../utils/debounce-promises.js';
+import { pathDeleteIfExists } from '../../utils/fs-utils.js';
+import { logger } from '../../utils/logger.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { PodcastStatus } from '../../types/enums';
-import { ConfigService } from '../../modules/engine/services/config.service';
-import { Feed } from './podcast-feed';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { EpisodeService } from '../episode/episode.service';
-import { paginate } from '../base/base.utils';
+import { PodcastStatus } from '../../types/enums.js';
+import { ConfigService } from '../../modules/engine/services/config.service.js';
+import { Feed } from './podcast-feed.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { EpisodeService } from '../episode/episode.service.js';
+import { paginate } from '../base/base.utils.js';
 const log = logger('PodcastService');
 let PodcastService = class PodcastService {
     constructor() {

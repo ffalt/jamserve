@@ -1,4 +1,4 @@
-import { shuffle } from '../../utils/random';
+import { shuffle } from '../../utils/random.js';
 export class MetadataServiceSimilarTracks {
     constructor(service) {
         this.service = service;

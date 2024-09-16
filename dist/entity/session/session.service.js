@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var SessionService_1;
-import { OrmService } from '../../modules/engine/services/orm.service';
-import { SessionMode } from '../../types/enums';
+import { OrmService } from '../../modules/engine/services/orm.service.js';
+import { SessionMode } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import seq from 'sequelize';
 let SessionService = SessionService_1 = class SessionService {

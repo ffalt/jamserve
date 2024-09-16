@@ -1,6 +1,6 @@
-import { QHelper } from '../../modules/orm';
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType, UserRole } from '../../types/enums';
+import { QHelper } from '../../modules/orm/index.js';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, UserRole } from '../../types/enums.js';
 export class UserRepository extends BaseRepository {
     constructor() {
         super(...arguments);

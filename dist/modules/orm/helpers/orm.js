@@ -1,7 +1,7 @@
-import { EntityCache, EntityManager } from './manager';
+import { EntityCache, EntityManager } from './manager.js';
 import seq, { Sequelize } from 'sequelize';
-import { getMetadataStorage } from '../metadata';
-import { ModelBuilder } from '../builder/schema';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { ModelBuilder } from '../builder/schema.js';
 export class ORM {
     static async init(config) {
         const sequelize = new Sequelize(config.options);

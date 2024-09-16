@@ -1,9 +1,9 @@
-import { GenericError, UnauthError } from './express-error';
-import { ApiBaseResponder } from './express-responder';
-import { getMetadataStorage } from '../metadata';
-import { logger } from '../../../utils/logger';
-import { ExpressParameters } from './express-parameters';
-import { processCustomPathParameters } from './express-path-parameters';
+import { GenericError, UnauthError } from './express-error.js';
+import { ApiBaseResponder } from './express-responder.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { logger } from '../../../utils/logger.js';
+import { ExpressParameters } from './express-parameters.js';
+import { processCustomPathParameters } from './express-path-parameters.js';
 const log = logger('RestAPI');
 export class ExpressMethod {
     constructor() {

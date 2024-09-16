@@ -1,5 +1,5 @@
 import { NoExplicitTypeError } from 'type-graphql';
-import { bannedTypes } from '../definitions/types';
+import { bannedTypes } from '../definitions/types.js';
 export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }) {
     const options = { ...typeOptions };
     let metadataDesignType;

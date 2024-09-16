@@ -1,4 +1,4 @@
-import { MetadataStorage } from './metadata-storage';
+import { MetadataStorage } from './metadata-storage.js';
 let ORMMetadataStorage;
 export function getMetadataStorage() {
     return (ORMMetadataStorage || (ORMMetadataStorage = new MetadataStorage()));

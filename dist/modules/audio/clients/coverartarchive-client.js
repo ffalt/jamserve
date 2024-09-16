@@ -1,4 +1,4 @@
-import { WebserviceJSONClient } from '../../../utils/webservice-json-client';
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
 export class CoverArtArchiveClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {

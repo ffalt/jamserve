@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { AlbumType, ListType } from '../../types/enums';
-import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts';
+import { AlbumType, ListType } from '../../types/enums.js';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts.js';
 let StatsService = class StatsService {
     constructor() {
         this.stats = [];

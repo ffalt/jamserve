@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject } from 'typescript-ioc';
-import { FolderService } from '../folder/folder.service';
+import { FolderService } from '../folder/folder.service.js';
 export class RootService {
     async getImage(orm, root, size, format) {
         const folders = await root.folders.getItems();

@@ -1,5 +1,5 @@
-import { Reference } from './reference';
-import { Collection } from './collection';
+import { Reference } from './reference.js';
+import { Collection } from './collection.js';
 function transformValueForDB(value, field) {
     if (field.typeOptions.array) {
         const list = value || [];

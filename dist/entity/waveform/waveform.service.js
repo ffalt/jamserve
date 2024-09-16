@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import path from 'path';
 import fse from 'fs-extra';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { DBObjectType, WaveformFormatType } from '../../types/enums';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { DBObjectType, WaveformFormatType } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { logger } from '../../utils/logger';
-import { GenericError, InvalidParamError } from '../../modules/rest/builder';
+import { logger } from '../../utils/logger.js';
+import { GenericError, InvalidParamError } from '../../modules/rest/index.js';
 const log = logger('Waveform');
 export const WaveformDefaultFormat = WaveformFormatType.svg;
 let WaveformService = class WaveformService {

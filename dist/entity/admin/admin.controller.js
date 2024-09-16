@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { BodyParams, Controller, Ctx, Get, Post, QueryParam } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { AdminChangeQueueInfo, AdminSettings } from './admin';
-import { AdminSettingsArgs } from './admin.args';
+import { BodyParams, Controller, Ctx, Get, Post, QueryParam } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { AdminChangeQueueInfo, AdminSettings } from './admin.js';
+import { AdminSettingsArgs } from './admin.args.js';
 let AdminController = class AdminController {
     async settings({ engine }) {
         return engine.settings.get();

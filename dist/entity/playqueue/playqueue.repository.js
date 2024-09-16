@@ -1,5 +1,5 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType } from '../../types/enums';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType } from '../../types/enums.js';
 export class PlayQueueRepository extends BaseRepository {
     constructor() {
         super(...arguments);

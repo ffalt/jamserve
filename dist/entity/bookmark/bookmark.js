@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { User } from '../user/user';
-import { Track, TrackQL } from '../track/track';
-import { Episode, EpisodeQL } from '../episode/episode';
+import { User } from '../user/user.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Episode, EpisodeQL } from '../episode/episode.js';
 import { Field, Float, ObjectType } from 'type-graphql';
-import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base, PaginatedResponse } from '../base/base';
+import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, PaginatedResponse } from '../base/base.js';
 let Bookmark = class Bookmark extends Base {
     constructor() {
         super(...arguments);

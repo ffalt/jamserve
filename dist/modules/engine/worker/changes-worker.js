@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var ChangesWorker_1;
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseWorker } from './tasks/base';
-import { OrmService } from '../services/orm.service';
-import { MetaMerger } from './merge-meta';
-import { Changes, IdSet } from './changes';
-import { logger } from '../../../utils/logger';
+import { BaseWorker } from './tasks/base.js';
+import { OrmService } from '../services/orm.service.js';
+import { MetaMerger } from './merge-meta.js';
+import { Changes, IdSet } from './changes.js';
+import { logger } from '../../../utils/logger.js';
 import moment from 'moment';
 const log = logger('IO.Changes');
 let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {

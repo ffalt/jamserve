@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var FolderWorker_1;
 import fse from 'fs-extra';
 import path from 'path';
-import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils';
-import { FolderType } from '../../../../types/enums';
-import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name';
-import { BaseWorker } from './base';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { FolderType } from '../../../../types/enums.js';
+import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name.js';
+import { BaseWorker } from './base.js';
 import { InRequestScope } from 'typescript-ioc';
 let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
     static async validateFolderTask(destPath, destName) {

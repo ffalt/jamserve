@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Base, Page } from '../base/base.model';
-import { ArtworkImageType } from '../../types/enums';
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { FolderBase } from '../folder/folder-base.model';
+import { Base, Page } from '../base/base.model.js';
+import { ArtworkImageType } from '../../types/enums.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { FolderBase } from '../folder/folder-base.model.js';
 let ArtworkBase = class ArtworkBase extends Base {
 };
 __decorate([

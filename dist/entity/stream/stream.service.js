@@ -9,12 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import fse from 'fs-extra';
 import path from 'path';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream';
-import { fileSuffix } from '../../utils/fs-utils';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream.js';
+import { fileSuffix } from '../../utils/fs-utils.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { GenericError, InvalidParamError } from '../../modules/rest';
-import { AudioFormatType, DBObjectType } from '../../types/enums';
+import { GenericError, InvalidParamError } from '../../modules/rest/index.js';
+import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 let StreamService = class StreamService {
     async streamFile(filename, id, sourceFormat, destFormat, maxBitRate) {
         let stats;

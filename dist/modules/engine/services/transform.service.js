@@ -9,24 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import moment from 'moment';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { ChatTransformService } from '../../../entity/chat/chat.transform';
-import { GenreTransformService } from '../../../entity/genre/genre.transform';
-import { RadioTransformService } from '../../../entity/radio/radio.transform';
-import { RootTransformService } from '../../../entity/root/root.transform';
-import { PodcastTransformService } from '../../../entity/podcast/podcast.transform';
-import { EpisodeTransformService } from '../../../entity/episode/episode.transform';
-import { FolderTransformService } from '../../../entity/folder/folder.transform';
-import { TrackTransformService } from '../../../entity/track/track.transform';
-import { SeriesTransformService } from '../../../entity/series/series.transform';
-import { ArtistTransformService } from '../../../entity/artist/artist.transform';
-import { AlbumTransformService } from '../../../entity/album/album.transform';
-import { ArtworkTransformService } from '../../../entity/artwork/artwork.transform';
-import { PlaylistTransformService } from '../../../entity/playlist/playlist.transform';
-import { BookmarkTransformService } from '../../../entity/bookmark/bookmark.transform';
-import { PlayQueueTransformService } from '../../../entity/playqueue/playqueue.transform';
-import { BaseTransformService } from '../../../entity/base/base.transform';
-import { SessionTransformService } from '../../../entity/session/session.transform';
-import { UserTransformService } from '../../../entity/user/user.transform';
+import { ChatTransformService } from '../../../entity/chat/chat.transform.js';
+import { GenreTransformService } from '../../../entity/genre/genre.transform.js';
+import { RadioTransformService } from '../../../entity/radio/radio.transform.js';
+import { RootTransformService } from '../../../entity/root/root.transform.js';
+import { PodcastTransformService } from '../../../entity/podcast/podcast.transform.js';
+import { EpisodeTransformService } from '../../../entity/episode/episode.transform.js';
+import { FolderTransformService } from '../../../entity/folder/folder.transform.js';
+import { TrackTransformService } from '../../../entity/track/track.transform.js';
+import { SeriesTransformService } from '../../../entity/series/series.transform.js';
+import { ArtistTransformService } from '../../../entity/artist/artist.transform.js';
+import { AlbumTransformService } from '../../../entity/album/album.transform.js';
+import { ArtworkTransformService } from '../../../entity/artwork/artwork.transform.js';
+import { PlaylistTransformService } from '../../../entity/playlist/playlist.transform.js';
+import { BookmarkTransformService } from '../../../entity/bookmark/bookmark.transform.js';
+import { PlayQueueTransformService } from '../../../entity/playqueue/playqueue.transform.js';
+import { BaseTransformService } from '../../../entity/base/base.transform.js';
+import { SessionTransformService } from '../../../entity/session/session.transform.js';
+import { UserTransformService } from '../../../entity/user/user.transform.js';
 let TransformService = class TransformService {
     async album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistIncludes, user) {
         return {

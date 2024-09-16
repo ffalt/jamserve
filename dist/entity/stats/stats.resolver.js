@@ -11,8 +11,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Args, Ctx, Query, Resolver } from 'type-graphql';
-import { StatsQL } from './stats';
-import { StatsArgs } from './stats.args';
+import { StatsQL } from './stats.js';
+import { StatsArgs } from './stats.args.js';
 let StatsResolver = class StatsResolver {
     async stats(args, { engine, orm }) {
         return await engine.stats.getStats(orm, args?.rootID);

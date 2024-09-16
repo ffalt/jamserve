@@ -1,4 +1,4 @@
-import { JAMSERVE_VERSION } from '../version';
+import { JAMSERVE_VERSION } from '../version.js';
 export const userAgent = `JamServe/${JAMSERVE_VERSION}`;
 export const ThirdPartyConfig = {
     acoustid: { apiKey: 'bLwTKyNczi', userAgent },

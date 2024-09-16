@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var DownloadService_1;
 import path from 'path';
 import { InRequestScope } from 'typescript-ioc';
-import { InvalidParamError, UnauthError } from '../../modules/rest';
-import { CompressListStream } from '../../utils/compress-list-stream';
-import { CompressFolderStream } from '../../utils/compress-folder-stream';
-import { DBObjectType } from '../../types/enums';
+import { InvalidParamError, UnauthError } from '../../modules/rest/index.js';
+import { CompressListStream } from '../../utils/compress-list-stream.js';
+import { CompressFolderStream } from '../../utils/compress-folder-stream.js';
+import { DBObjectType } from '../../types/enums.js';
 let DownloadService = DownloadService_1 = class DownloadService {
     static async downloadEpisode(episode, format) {
         if (!episode.path) {

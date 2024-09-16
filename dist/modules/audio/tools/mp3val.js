@@ -1,4 +1,4 @@
-import { spawnTool } from '../../../utils/tool';
+import { spawnTool } from '../../../utils/tool.js';
 function parseMP3ValWarning(data) {
     let s = data;
     let i = s.indexOf('"');

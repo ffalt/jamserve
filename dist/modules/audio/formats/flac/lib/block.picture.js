@@ -1,4 +1,4 @@
-import { MetaWriteableDataBlock } from './block.writeable';
+import { MetaWriteableDataBlock } from './block.writeable.js';
 export class MetaDataBlockPicture extends MetaWriteableDataBlock {
     constructor(isLast) {
         super(isLast, 6);

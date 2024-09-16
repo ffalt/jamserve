@@ -1,5 +1,5 @@
-import { findType } from './findType';
-import { getMetadataStorage } from '../metadata';
+import { findType } from './findType.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
     if (typeof propertyKey === 'symbol') {

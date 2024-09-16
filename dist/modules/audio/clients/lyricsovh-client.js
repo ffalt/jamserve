@@ -1,5 +1,5 @@
-import { logger } from '../../../utils/logger';
-import { WebserviceClient } from '../../../utils/webservice-client';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
 const log = logger('LyricsOVHClient');
 export class LyricsOVHClient extends WebserviceClient {
     constructor(userAgent) {

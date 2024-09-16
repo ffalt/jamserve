@@ -1,5 +1,5 @@
-import { logger } from '../../../utils/logger';
-import { TranscoderStream } from './transcoder-stream';
+import { logger } from '../../../utils/logger.js';
+import { TranscoderStream } from './transcoder-stream.js';
 const log = logger('audio.transcoder.live');
 export class LiveTranscoderStream extends TranscoderStream {
     constructor(filename, format, maxBitRate) {

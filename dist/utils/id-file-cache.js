@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
-import { DebouncePromises } from './debounce-promises';
+import { DebouncePromises } from './debounce-promises.js';
 export class IDFolderCache {
     constructor(dataPath, filePrefix, resolveParams) {
         this.dataPath = dataPath;

@@ -1,6 +1,6 @@
-import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version';
-import { buildTSEnums, buildTSParameterTypes, buildTSResultTypes } from './typescript';
-import { buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType } from './clients';
+import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
+import { buildTSEnums, buildTSParameterTypes, buildTSResultTypes } from './typescript.js';
+import { buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType } from './clients.js';
 function generateUploadClientCalls(call, name, paramType, upload) {
     return [{
             name,

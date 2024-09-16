@@ -1,9 +1,9 @@
 import { ID3v2 } from 'jamp3';
 import path from 'path';
-import { ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module';
-import { flac_test } from '../../modules/audio/tools/flac';
-import { logger } from '../../utils/logger';
-import { AlbumTypesArtistMusic, AudioFormatType, TrackHealthID } from '../../types/enums';
+import { ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module.js';
+import { flac_test } from '../../modules/audio/tools/flac.js';
+import { logger } from '../../utils/logger.js';
+import { AlbumTypesArtistMusic, AudioFormatType, TrackHealthID } from '../../types/enums.js';
 const log = logger('TrackHealth');
 const analyzeErrors = {
     xing: [

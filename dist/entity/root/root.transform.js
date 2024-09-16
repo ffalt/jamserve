@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { IoService } from '../../modules/engine/services/io.service';
+import { BaseTransformService } from '../base/base.transform.js';
+import { IoService } from '../../modules/engine/services/io.service.js';
 let RootTransformService = class RootTransformService extends BaseTransformService {
     async root(orm, o, rootArgs, user) {
         return {

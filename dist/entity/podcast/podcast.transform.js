@@ -8,9 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { DBObjectType, PodcastStatus } from '../../types/enums';
-import { PodcastService } from './podcast.service';
+import { BaseTransformService } from '../base/base.transform.js';
+import { DBObjectType, PodcastStatus } from '../../types/enums.js';
+import { PodcastService } from './podcast.service.js';
 let PodcastTransformService = class PodcastTransformService extends BaseTransformService {
     async podcastBase(orm, o, podcastArgs, user) {
         return {

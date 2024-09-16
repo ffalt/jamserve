@@ -11,8 +11,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root as GQLRoot, Ctx, FieldResolver, Int, Query, Resolver } from 'type-graphql';
-import { PlayQueue, PlayQueueQL } from './playqueue';
-import { PlayQueueEntryQL } from '../playqueueentry/playqueue-entry';
+import { PlayQueue, PlayQueueQL } from './playqueue.js';
+import { PlayQueueEntryQL } from '../playqueueentry/playqueue-entry.js';
 let PlayQueueResolver = class PlayQueueResolver {
     async playQueue({ engine, orm, user }) {
         return engine.playQueue.get(orm, user);

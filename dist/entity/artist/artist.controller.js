@@ -10,18 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Artist, ArtistIndex, ArtistPage } from './artist.model';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { ExtendedInfoResult } from '../metadata/metadata.model';
-import { TrackPage } from '../track/track.model';
-import { AlbumPage } from '../album/album.model';
-import { SeriesPage } from '../series/series.model';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args';
-import { IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs } from '../series/series.args';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args';
-import { ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs } from './artist.args';
-import { ListArgs, PageArgs } from '../base/base.args';
+import { Artist, ArtistIndex, ArtistPage } from './artist.model.js';
+import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { ExtendedInfoResult } from '../metadata/metadata.model.js';
+import { TrackPage } from '../track/track.model.js';
+import { AlbumPage } from '../album/album.model.js';
+import { SeriesPage } from '../series/series.model.js';
+import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs } from '../series/series.args.js';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
+import { ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs } from './artist.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
 let ArtistController = class ArtistController {
     async id(id, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, { orm, engine, user }) {
         return engine.transform.artist(orm, await orm.Artist.oneOrFailByID(id), artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user);

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import moment from 'moment';
-import { SettingsService } from '../settings/settings.service';
+import { SettingsService } from '../settings/settings.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 let ChatService = class ChatService {
     constructor() {

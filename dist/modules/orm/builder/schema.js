@@ -1,5 +1,5 @@
 import seq from 'sequelize';
-import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '..';
+import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '../definitions/orm-types.js';
 export class DBModel {
 }
 export class ModelBuilder {

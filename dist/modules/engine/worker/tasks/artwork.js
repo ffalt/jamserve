@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var ArtworkWorker_1;
 import fse from 'fs-extra';
 import path from 'path';
-import { basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils';
-import { artWorkImageNameToType } from '../../../../utils/artwork-type';
-import { BaseWorker } from './base';
+import { basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
+import { artWorkImageNameToType } from '../../../../utils/artwork-type.js';
+import { BaseWorker } from './base.js';
 import { InRequestScope } from 'typescript-ioc';
 export const FolderTypeImageName = {
     unknown: 'folder',

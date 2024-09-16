@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Artwork, ArtworkPage } from './artwork.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs } from './artwork.args';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { AdminChangeQueueInfo } from '../admin/admin';
-import { IncludesFolderArgs } from '../folder/folder.args';
+import { Artwork, ArtworkPage } from './artwork.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs } from './artwork.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { AdminChangeQueueInfo } from '../admin/admin.js';
+import { IncludesFolderArgs } from '../folder/folder.args.js';
 let ArtworkController = class ArtworkController {
     async id(id, artworkArgs, artworkChildrenArgs, folderArgs, { orm, engine, user }) {
         return engine.transform.artwork(orm, await orm.Artwork.oneOrFailByID(id), artworkArgs, artworkChildrenArgs, folderArgs, user);

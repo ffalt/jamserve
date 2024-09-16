@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get, QueryParams } from '../../modules/rest/decorators';
-import { AutoComplete } from './autocomplete.model';
-import { UserRole } from '../../types/enums';
-import { AutoCompleteFilterArgs } from './autocomplete.args';
+import { Controller, Ctx, Get, QueryParams } from '../../modules/rest/index.js';
+import { AutoComplete } from './autocomplete.model.js';
+import { UserRole } from '../../types/enums.js';
+import { AutoCompleteFilterArgs } from './autocomplete.args.js';
 let AutocompleteController = class AutocompleteController {
     async autocomplete(filter, { orm, user }) {
         const result = {};

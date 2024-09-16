@@ -10,14 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, GenericError, Get, QueryParam } from '../../modules/rest';
-import { UserRole, WaveformFormatType } from '../../types/enums';
-import { NotFoundError } from '../../modules/rest/builder';
-import { PathParam, PathParams, QueryParams } from '../../modules/rest/decorators';
+import { Controller, Ctx, GenericError, Get, QueryParam } from '../../modules/rest/index.js';
+import { UserRole, WaveformFormatType } from '../../types/enums.js';
+import { NotFoundError } from '../../modules/rest/index.js';
+import { PathParam, PathParams, QueryParams } from '../../modules/rest/index.js';
 import fse from 'fs-extra';
-import { WaveformArgs, WaveformSVGArgs } from './waveform.args';
-import { WaveFormData } from './waveform.model';
-import { ApiWaveformTypes } from '../../types/consts';
+import { WaveformArgs, WaveformSVGArgs } from './waveform.args.js';
+import { WaveFormData } from './waveform.model.js';
+import { ApiWaveformTypes } from '../../types/consts.js';
 let WaveformController = class WaveformController {
     async json(id, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);

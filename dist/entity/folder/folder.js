@@ -7,19 +7,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Artwork, ArtworkQL } from '../artwork/artwork';
-import { Root, RootQL } from '../root/root';
-import { Track, TrackQL } from '../track/track';
-import { Album, AlbumQL } from '../album/album';
-import { Artist, ArtistQL } from '../artist/artist';
-import { Series, SeriesQL } from '../series/series';
-import { AlbumOrderFields, AlbumType, ArtistOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields } from '../../types/enums';
+import { Artwork, ArtworkQL } from '../artwork/artwork.js';
+import { Root, RootQL } from '../root/root.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Album, AlbumQL } from '../album/album.js';
+import { Artist, ArtistQL } from '../artist/artist.js';
+import { Series, SeriesQL } from '../series/series.js';
+import { AlbumOrderFields, AlbumType, ArtistOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields } from '../../types/enums.js';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
-import { State, StateQL } from '../state/state';
-import { FolderHealthHint } from '../health/health.model';
-import { Genre, GenreQL } from '../genre/genre';
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
+import { FolderHealthHint } from '../health/health.model.js';
+import { Genre, GenreQL } from '../genre/genre.js';
 let Folder = class Folder extends Base {
     constructor() {
         super(...arguments);

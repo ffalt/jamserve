@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums';
-import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
-import { examples } from '../../modules/engine/rest/example.consts';
+import { CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 let LastFMLookupArgs = class LastFMLookupArgs {
 };
 __decorate([

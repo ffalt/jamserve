@@ -12,18 +12,20 @@ import fse from 'fs-extra';
 import mimeTypes from 'mime-types';
 import path from 'path';
 import sharp from 'sharp';
-import { downloadFile } from '../../utils/download';
-import { SupportedWriteImageFormat } from '../../utils/filetype';
-import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils';
-import { IDFolderCache } from '../../utils/id-file-cache';
-import { logger } from '../../utils/logger';
-import { randomString } from '../../utils/random';
-import { AvatarGen } from './image.avatar';
-import { ConfigService } from '../engine/services/config.service';
+import { downloadFile } from '../../utils/download.js';
+import { SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
+import { IDFolderCache } from '../../utils/id-file-cache.js';
+import { logger } from '../../utils/logger.js';
+import { randomString } from '../../utils/random.js';
+import { AvatarGen } from './image.avatar.js';
+import { ConfigService } from '../engine/services/config.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { ImageFormatType } from '../../types/enums';
+import { ImageFormatType } from '../../types/enums.js';
 import { Jimp, loadFont, VerticalAlign, HorizontalAlign } from 'jimp';
-import { SANS_32_WHITE } from 'jimp/fonts';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const log = logger('Images');
 sharp.cache(false);
 sharp.simd(false);
@@ -55,7 +57,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
         size = size || 320;
         const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
         if (!this.font) {
-            this.font = await loadFont(SANS_32_WHITE);
+            this.font = await loadFont(path.join(__dirname, 'open-sans-32-white.fnt'));
         }
         image.print({
             font: this.font,

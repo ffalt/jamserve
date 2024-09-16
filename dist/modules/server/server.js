@@ -10,22 +10,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'path';
 import express from 'express';
-import { EngineService } from '../engine/services/engine.service';
+import { EngineService } from '../engine/services/engine.service.js';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import { useEngineMiddleware } from './middlewares/engine.middleware';
-import { ConfigService } from '../engine/services/config.service';
-import { logger } from '../../utils/logger';
-import { ApolloMiddleware } from './middlewares/apollo.middleware';
-import { useSessionMiddleware } from './middlewares/session.middleware';
-import { useLogMiddleware } from './middlewares/log.middleware';
-import { RestMiddleware } from './middlewares/rest.middleware';
-import { usePassPortMiddleWare } from './middlewares/passport.middleware';
-import { JAMAPI_URL_VERSION } from '../engine/rest/version';
-import { DocsMiddleware } from './middlewares/docs.middleware';
-import { useAuthenticatedCors } from './middlewares/cors.middleware';
-import { SessionService } from '../../entity/session/session.service';
-import { useCSPMiddleware } from './middlewares/csp.middleware';
+import { useEngineMiddleware } from './middlewares/engine.middleware.js';
+import { ConfigService } from '../engine/services/config.service.js';
+import { logger } from '../../utils/logger.js';
+import { ApolloMiddleware } from './middlewares/apollo.middleware.js';
+import { useSessionMiddleware } from './middlewares/session.middleware.js';
+import { useLogMiddleware } from './middlewares/log.middleware.js';
+import { RestMiddleware } from './middlewares/rest.middleware.js';
+import { usePassPortMiddleWare } from './middlewares/passport.middleware.js';
+import { JAMAPI_URL_VERSION } from '../engine/rest/version.js';
+import { DocsMiddleware } from './middlewares/docs.middleware.js';
+import { useAuthenticatedCors } from './middlewares/cors.middleware.js';
+import { SessionService } from '../../entity/session/session.service.js';
+import { useCSPMiddleware } from './middlewares/csp.middleware.js';
 const log = logger('Server');
 let Server = class Server {
     async init() {

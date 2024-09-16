@@ -1,5 +1,5 @@
-import { WebserviceJSONClient } from '../../../utils/webservice-json-client';
-import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types';
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
+import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types.js';
 export class MusicbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {

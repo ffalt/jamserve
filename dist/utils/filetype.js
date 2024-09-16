@@ -1,5 +1,5 @@
-import { fileSuffix } from './fs-utils';
-import { AudioFormatType, FileTyp } from '../types/enums';
+import { fileSuffix } from './fs-utils.js';
+import { AudioFormatType, FileTyp } from '../types/enums.js';
 export const SupportedReadImageFormat = ['png', 'jpeg', 'jpg', 'gif', 'tiff', 'webp'];
 export const SupportedWriteImageFormat = ['png', 'jpeg', 'jpg', 'tiff', 'webp'];
 export const SupportedAudioFormat = [

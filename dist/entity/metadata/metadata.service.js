@@ -10,16 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MetaDataService_1;
 import moment from 'moment';
 import path from 'path';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { logger } from '../../utils/logger';
-import { MetadataServiceExtendedInfo } from './metadata.service.extended-info';
-import { MetadataServiceSimilarArtists } from './metadata.service.similar-artists';
-import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks';
-import { MetadataServiceTopTracks } from './metadata.service.top-tracks';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { logger } from '../../utils/logger.js';
+import { MetadataServiceExtendedInfo } from './metadata.service.extended-info.js';
+import { MetadataServiceSimilarArtists } from './metadata.service.similar-artists.js';
+import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks.js';
+import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums';
+import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
 import seq from 'sequelize';
-import { InvalidParamError } from '../../modules/rest';
+import { InvalidParamError } from '../../modules/rest/index.js';
 import fetch from 'node-fetch';
 const log = logger('Metadata');
 let MetaDataService = MetaDataService_1 = class MetaDataService {

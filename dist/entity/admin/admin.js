@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Min } from 'class-validator';
-import { ObjField, ObjParamsType, ResultType } from '../../modules/rest/decorators';
+import { ObjField, ObjParamsType, ResultType } from '../../modules/rest/index.js';
 const AdminSettingsChatMaxAgeDesc = {
     _: 'Admin Chat Maximum Age Settings',
     value: 'Value of Maximum Age',

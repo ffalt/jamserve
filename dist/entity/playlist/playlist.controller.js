@@ -10,15 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Playlist, PlaylistIndex, PlaylistPage } from './playlist.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { PlaylistEntryPage } from '../playlistentry/playlist-entry.model';
-import { IncludesTrackArgs } from '../track/track.args';
-import { IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs } from './playlist.args';
-import { IncludesEpisodeArgs } from '../episode/episode.args';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { PlaylistEntryOrderArgs } from '../playlistentry/playlist-entry.args';
+import { Playlist, PlaylistIndex, PlaylistPage } from './playlist.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { PlaylistEntryPage } from '../playlistentry/playlist-entry.model.js';
+import { IncludesTrackArgs } from '../track/track.args.js';
+import { IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs } from './playlist.args.js';
+import { IncludesEpisodeArgs } from '../episode/episode.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { PlaylistEntryOrderArgs } from '../playlistentry/playlist-entry.args.js';
 let PlaylistController = class PlaylistController {
     async id(id, playlistArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         const list = await orm.Playlist.oneOrFail({ where: { id } });

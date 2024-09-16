@@ -1,4 +1,4 @@
-import { registerRelation } from '../helpers/relation-register';
+import { registerRelation } from '../helpers/relation-register.js';
 export function OneToOne(returnTypeFunc, mappedBy, options) {
     return (prototype, propertyKey, _) => {
         const opt = (options || {});

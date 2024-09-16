@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
-import { AlbumType, FolderOrderFields, FolderType, ListType } from '../../types/enums';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { AlbumType, FolderOrderFields, FolderType, ListType } from '../../types/enums.js';
 import { ArgsType, Field, Float, ID, InputType, Int } from 'type-graphql';
-import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args';
-import { examples } from '../../modules/engine/rest/example.consts';
+import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 let IncludesFolderArgs = class IncludesFolderArgs {
 };
 __decorate([

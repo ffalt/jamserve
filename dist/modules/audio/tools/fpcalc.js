@@ -1,4 +1,4 @@
-import { spawnToolJson } from '../../../utils/tool';
+import { spawnToolJson } from '../../../utils/tool.js';
 export async function fpcalc(filename, options) {
     const cmds = ['-json'];
     if (options.length) {

@@ -1,6 +1,6 @@
-import { TranscoderStream } from './transcoder-stream';
-import { IDFolderCache } from '../../../utils/id-file-cache';
-import { logger } from '../../../utils/logger';
+import { TranscoderStream } from './transcoder-stream.js';
+import { IDFolderCache } from '../../../utils/id-file-cache.js';
+import { logger } from '../../../utils/logger.js';
 const log = logger('Audio:Transcoder');
 export class TranscoderModule {
     constructor(transcodeCachePath) {

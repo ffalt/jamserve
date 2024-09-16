@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
+import { BaseTransformService } from '../base/base.transform.js';
 let PlayQueueTransformService = class PlayQueueTransformService extends BaseTransformService {
     async playQueueBase(orm, o, playQueueArgs, user) {
         const u = o.user.id() === user.id ? user : await o.user.getOrFail();

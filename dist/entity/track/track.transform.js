@@ -8,10 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { DBObjectType, JamObjectType } from '../../types/enums';
-import { BaseTransformService } from '../base/base.transform';
-import { TrackService } from './track.service';
-import { GenreTransformService } from '../genre/genre.transform';
+import { DBObjectType, JamObjectType } from '../../types/enums.js';
+import { BaseTransformService } from '../base/base.transform.js';
+import { TrackService } from './track.service.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
 let TrackTransformService = class TrackTransformService extends BaseTransformService {
     async trackBases(orm, list, trackArgs, user) {
         return await Promise.all(list.map(t => this.trackBase(orm, t, trackArgs, user)));

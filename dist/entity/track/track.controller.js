@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs } from './track.args';
-import { MediaIDTagRaw } from '../tag/tag.model';
-import { ListArgs, PageArgs } from '../base/base.args';
-import { AdminChangeQueueInfo } from '../admin/admin';
+import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs } from './track.args.js';
+import { MediaIDTagRaw } from '../tag/tag.model.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { AdminChangeQueueInfo } from '../admin/admin.js';
 let TrackController = class TrackController {
     async id(id, trackArgs, { orm, engine, user }) {
         return engine.transform.track(orm, await orm.Track.oneOrFailByID(id), trackArgs, user);

@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { DBObjectType } from '../../types/enums';
-import { BaseTransformService } from '../base/base.transform';
+import { DBObjectType } from '../../types/enums.js';
+import { BaseTransformService } from '../base/base.transform.js';
 let GenreTransformService = class GenreTransformService extends BaseTransformService {
     async genreBases(orm, list, genreArgs, user) {
         return await Promise.all(list.map(g => this.genreBase(orm, g, {}, user)));

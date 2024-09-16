@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { SessionUser } from './session-user.model';
-import { ObjField, ResultType } from '../../modules/rest';
-import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
-import { examples } from '../../modules/engine/rest/example.consts';
+import { SessionUser } from './session-user.model.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 let Session = class Session {
 };
 __decorate([

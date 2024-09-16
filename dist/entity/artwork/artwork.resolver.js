@@ -11,9 +11,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
-import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork';
-import { FolderQL } from '../folder/folder';
-import { ArtworksArgsQL } from './artwork.args';
+import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork.js';
+import { FolderQL } from '../folder/folder.js';
+import { ArtworksArgsQL } from './artwork.args.js';
 let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {
         return await orm.Artwork.oneOrFailByID(id);

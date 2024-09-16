@@ -1,4 +1,4 @@
-import { findType } from './findType';
+import { findType } from './findType.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 export function getMethodMetadata(prototype, propertyKey, route, returnTypeFunc, options = {}) {
     if (typeof propertyKey === 'symbol') {

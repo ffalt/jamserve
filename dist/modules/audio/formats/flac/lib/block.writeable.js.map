@@ -1,1 +1,1 @@
-{"version":3,"file":"block.writeable.js","sourceRoot":"","sources":["../../../../../../src/modules/audio/formats/flac/lib/block.writeable.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,aAAa,EAAC,MAAM,SAAS,CAAC;AAEtC,MAAM,OAAgB,sBAAuB,SAAQ,aAAa;CAEjE"}
+{"version":3,"file":"block.writeable.js","sourceRoot":"","sources":["../../../../../../src/modules/audio/formats/flac/lib/block.writeable.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,aAAa,EAAC,MAAM,YAAY,CAAC;AAEzC,MAAM,OAAgB,sBAAuB,SAAQ,aAAa;CAEjE"}

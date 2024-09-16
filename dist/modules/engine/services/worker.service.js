@@ -7,19 +7,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ArtworkWorker } from '../worker/tasks/artwork';
-import { FolderWorker } from '../worker/tasks/folder';
-import { RootWorker } from '../worker/tasks/root';
-import { TrackWorker } from '../worker/tasks/track';
-import { SettingsService } from '../../../entity/settings/settings.service';
-import { AudioModule } from '../../audio/audio.module';
-import { ImageModule } from '../../image/image.module';
+import { ArtworkWorker } from '../worker/tasks/artwork.js';
+import { FolderWorker } from '../worker/tasks/folder.js';
+import { RootWorker } from '../worker/tasks/root.js';
+import { TrackWorker } from '../worker/tasks/track.js';
+import { SettingsService } from '../../../entity/settings/settings.service.js';
+import { AudioModule } from '../../audio/audio.module.js';
+import { ImageModule } from '../../image/image.module.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { WorkerCommandsFolder } from './worker/worker.commands.folder';
-import { WorkerCommandsArtwork } from './worker/worker.commands.artwork';
-import { WorkerCommandsRoot } from './worker/worker.commands.root';
-import { WorkerCommandsTrack } from './worker/worker.commands.track';
-import { ChangesWorker } from '../worker/changes-worker';
+import { WorkerCommandsFolder } from './worker/worker.commands.folder.js';
+import { WorkerCommandsArtwork } from './worker/worker.commands.artwork.js';
+import { WorkerCommandsRoot } from './worker/worker.commands.root.js';
+import { WorkerCommandsTrack } from './worker/worker.commands.track.js';
+import { ChangesWorker } from '../worker/changes-worker.js';
 let WorkerService = class WorkerService {
     constructor() {
         this.folder = new WorkerCommandsFolder(this);

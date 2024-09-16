@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { Base } from '../base/base.model';
-import { examples } from '../../modules/engine/rest/example.consts';
-import { JamObjectType } from '../../types/enums';
-import { GenreBase } from '../genre/genre.model';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { Base } from '../base/base.model.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
+import { JamObjectType } from '../../types/enums.js';
+import { GenreBase } from '../genre/genre.model.js';
 let MediaTagRaw = class MediaTagRaw {
 };
 __decorate([

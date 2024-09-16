@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var TrackWorker_1;
 import fse from 'fs-extra';
 import path from 'path';
-import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils';
-import { TrackHealthID } from '../../../../types/enums';
-import { processQueue } from '../../../../utils/queue';
-import { BaseWorker } from './base';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { TrackHealthID } from '../../../../types/enums.js';
+import { processQueue } from '../../../../utils/queue.js';
+import { BaseWorker } from './base.js';
 import { InRequestScope } from 'typescript-ioc';
 export class TrackUpdater {
     constructor(orm, audioModule, changes) {

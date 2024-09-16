@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { containsFolderSystemChars, fileExt, replaceFolderSystemChars } from '../../../../utils/fs-utils';
+import { containsFolderSystemChars, fileExt, replaceFolderSystemChars } from '../../../../utils/fs-utils.js';
 import path from 'path';
 import fse from 'fs-extra';
-import { ImageModule } from '../../../image/image.module';
-import { AudioModule } from '../../../audio/audio.module';
+import { ImageModule } from '../../../image/image.module.js';
+import { AudioModule } from '../../../audio/audio.module.js';
 import { Inject } from 'typescript-ioc';
 export class BaseWorker {
     async renameFile(dir, oldName, newName) {

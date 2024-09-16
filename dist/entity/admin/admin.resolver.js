@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { UserRole } from '../../types/enums';
+import { UserRole } from '../../types/enums.js';
 import { Arg, Authorized, Ctx, ID, Query, Resolver } from 'type-graphql';
-import { AdminChangeQueueInfoQL, AdminSettingsQL } from './admin';
+import { AdminChangeQueueInfoQL, AdminSettingsQL } from './admin.js';
 class AdminChangeQueueInfo {
 }
 let AdminResolver = class AdminResolver {

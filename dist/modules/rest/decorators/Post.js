@@ -1,6 +1,6 @@
-import { getMetadataStorage } from '../metadata';
-import { getMethodMetadata } from '../helpers/method-metadata';
-import { getTypeDecoratorParams } from '../helpers/decorators';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getMethodMetadata } from '../helpers/method-metadata.js';
+import { getTypeDecoratorParams } from '../helpers/decorators.js';
 export function Post(route, returnTypeFuncOrOptions, maybeOptions) {
     const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
     return (prototype, methodName) => {

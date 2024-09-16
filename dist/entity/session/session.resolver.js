@@ -11,9 +11,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
-import { SessionPageQL, SessionQL } from './session';
-import { JAMAPI_VERSION } from '../../modules/engine/rest/version';
-import { SessionsArgs } from './session.args';
+import { SessionPageQL, SessionQL } from './session.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { SessionsArgs } from './session.args.js';
 let SessionResolver = class SessionResolver {
     async version() {
         return JAMAPI_VERSION;

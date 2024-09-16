@@ -7,13 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { User } from '../user/user';
-import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry';
+import { User } from '../user/user.js';
+import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
 import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
-import { Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
-import { State, StateQL } from '../state/state';
-import { PlaylistEntryOrderFields } from '../../types/enums';
+import { Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
+import { PlaylistEntryOrderFields } from '../../types/enums.js';
 let Playlist = class Playlist extends Base {
     constructor() {
         super(...arguments);

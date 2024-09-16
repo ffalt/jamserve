@@ -1,4 +1,4 @@
-import { getMetadataStorage } from '../metadata';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 export function getEnumReverseValuesMap(enumObject) {
     const enumKeys = Object.keys(enumObject).filter(key => isNaN(parseInt(key, 10)));
     return enumKeys.reduce((map, key) => {

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Field, ID, Int, ObjectType } from 'type-graphql';
-import { Entity, PrimaryKey } from '../../modules/orm';
+import { Entity, PrimaryKey } from '../../modules/orm/index.js';
 let Base = class Base {
 };
 __decorate([

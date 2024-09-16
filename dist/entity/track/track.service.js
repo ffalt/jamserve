@@ -8,15 +8,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import path from 'path';
-import { AudioModule } from '../../modules/audio/audio.module';
-import { ImageModule } from '../../modules/image/image.module';
-import { logger } from '../../utils/logger';
-import { trackTagToRawTag } from '../../modules/audio/metadata';
-import { processQueue } from '../../utils/queue';
-import { TrackRulesChecker } from '../health/track.rule';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { logger } from '../../utils/logger.js';
+import { trackTagToRawTag } from '../../modules/audio/metadata.js';
+import { processQueue } from '../../utils/queue.js';
+import { TrackRulesChecker } from '../health/track.rule.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { FolderService } from '../folder/folder.service';
-import { basenameStripExt } from '../../utils/fs-utils';
+import { FolderService } from '../folder/folder.service.js';
+import { basenameStripExt } from '../../utils/fs-utils.js';
 const log = logger('TrackService');
 let TrackService = class TrackService {
     constructor() {

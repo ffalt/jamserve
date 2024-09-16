@@ -1,8 +1,8 @@
 import fse from 'fs-extra';
-import { FORMAT } from '../audio.format';
-import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata';
-import { Flac } from './flac';
-import { TagFormatType } from '../../../types/enums';
+import { FORMAT } from '../audio.format.js';
+import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js';
+import { Flac } from './flac/index.js';
+import { TagFormatType } from '../../../types/enums.js';
 export class AudioModuleFLAC {
     constructor(imageModule) {
         this.imageModule = imageModule;

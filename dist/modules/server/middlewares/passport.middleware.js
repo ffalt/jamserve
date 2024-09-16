@@ -1,8 +1,8 @@
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
 import passport from 'passport';
-import { logger } from '../../../utils/logger';
-import { hashMD5 } from '../../../utils/md5';
+import { logger } from '../../../utils/logger.js';
+import { hashMD5 } from '../../../utils/md5.js';
 const log = logger('Passport');
 function jwthash(token) {
     return hashMD5(token);

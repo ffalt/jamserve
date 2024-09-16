@@ -1,4 +1,4 @@
-import { WaveformStream } from './waveform.stream';
+import { WaveformStream } from './waveform.stream.js';
 export class Waveform {
     constructor(stream, opts) {
         this.stream = stream;

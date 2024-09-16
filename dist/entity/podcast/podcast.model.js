@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { examples } from '../../modules/engine/rest/example.consts';
-import { PodcastStatus } from '../../types/enums';
-import { Base, Page } from '../base/base.model';
-import { EpisodeBase } from '../episode/episode.model';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
+import { PodcastStatus } from '../../types/enums.js';
+import { Base, Page } from '../base/base.model.js';
+import { EpisodeBase } from '../episode/episode.model.js';
 let PodcastBase = class PodcastBase extends Base {
 };
 __decorate([

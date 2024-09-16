@@ -1,6 +1,6 @@
-import { getMetadataStorage } from '../metadata';
-import { getMethodMetadata } from '../helpers/method-metadata';
-import { getTypeDecoratorParams } from '../helpers/decorators';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getMethodMetadata } from '../helpers/method-metadata.js';
+import { getTypeDecoratorParams } from '../helpers/decorators.js';
 export function Get(routeOrReturnTypeFuncOrOptions, returnTypeFuncOrOptions, maybeOptions) {
     let route = undefined;
     if (typeof routeOrReturnTypeFuncOrOptions !== 'string') {

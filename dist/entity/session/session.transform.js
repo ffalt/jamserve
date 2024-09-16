@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { parseAgent } from './session.utils';
+import { parseAgent } from './session.utils.js';
 let SessionTransformService = class SessionTransformService {
     userSession(orm, o) {
         const ua = parseAgent(o);

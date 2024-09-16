@@ -1,7 +1,7 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType, GenreOrderFields } from '../../types/enums';
-import { OrderHelper } from '../base/base';
-import { QHelper } from '../../modules/orm';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, GenreOrderFields } from '../../types/enums.js';
+import { OrderHelper } from '../base/base.js';
+import { QHelper } from '../../modules/orm/index.js';
 export class GenreRepository extends BaseRepository {
     constructor() {
         super(...arguments);

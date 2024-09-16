@@ -7,15 +7,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Base, Page } from '../base/base.model';
-import { AlbumType } from '../../types/enums';
-import { TrackBase } from '../track/track.model';
-import { SeriesBase } from '../series/series.model';
-import { AlbumBase } from '../album/album.model';
-import { ExtendedInfo } from '../metadata/metadata.model';
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { examples } from '../../modules/engine/rest/example.consts';
-import { GenreBase } from '../genre/genre.model';
+import { Base, Page } from '../base/base.model.js';
+import { AlbumType } from '../../types/enums.js';
+import { TrackBase } from '../track/track.model.js';
+import { SeriesBase } from '../series/series.model.js';
+import { AlbumBase } from '../album/album.model.js';
+import { ExtendedInfo } from '../metadata/metadata.model.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
+import { GenreBase } from '../genre/genre.model.js';
 let ArtistBase = class ArtistBase extends Base {
 };
 __decorate([

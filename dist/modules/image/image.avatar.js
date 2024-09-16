@@ -1,4 +1,4 @@
-import { AvatarGenerator } from './avatar-generator';
+import { AvatarGenerator } from './avatar-generator.js';
 export class AvatarGen {
     constructor() {
         this.avatar = new AvatarGenerator();

@@ -10,16 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Series, SeriesIndex, SeriesPage } from './series.model';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { ExtendedInfoResult } from '../metadata/metadata.model';
-import { TrackPage } from '../track/track.model';
-import { AlbumPage } from '../album/album.model';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args';
-import { IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs } from './series.args';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args';
-import { ListArgs, PageArgs } from '../base/base.args';
+import { Series, SeriesIndex, SeriesPage } from './series.model.js';
+import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { ExtendedInfoResult } from '../metadata/metadata.model.js';
+import { TrackPage } from '../track/track.model.js';
+import { AlbumPage } from '../album/album.model.js';
+import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
 let SeriesController = class SeriesController {
     async id(id, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, { orm, engine, user }) {
         return engine.transform.series(orm, await orm.Series.oneOrFailByID(id), seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user);

@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Page } from '../base/base.model';
-import { TrackBase } from '../track/track.model';
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { Artwork } from '../artwork/artwork.model';
-import { FolderHealthHint } from '../health/health.model';
-import { FolderBase } from './folder-base.model';
+import { Page } from '../base/base.model.js';
+import { TrackBase } from '../track/track.model.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { Artwork } from '../artwork/artwork.model.js';
+import { FolderHealthHint } from '../health/health.model.js';
+import { FolderBase } from './folder-base.model.js';
 let Folder = class Folder extends FolderBase {
 };
 __decorate([

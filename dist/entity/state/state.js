@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { DBObjectType } from '../../types/enums';
+import { DBObjectType } from '../../types/enums.js';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Base } from '../base/base';
-import { Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference } from '../../modules/orm';
+import { Base } from '../base/base.js';
+import { Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 let State = class State extends Base {
     constructor() {
         super(...arguments);

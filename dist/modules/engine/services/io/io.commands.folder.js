@@ -1,4 +1,4 @@
-import { WorkerRequestMode } from './io.types';
+import { WorkerRequestMode } from './io.types.js';
 export class IoCommandsFolder {
     constructor(owner) {
         this.owner = owner;

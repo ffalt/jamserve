@@ -1,4 +1,4 @@
-import { getMilliseconds, wait } from "./clock";
+import { getMilliseconds, wait } from "./clock.js";
 export class TokenBucket {
     constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
         this.bucketSize = bucketSize;

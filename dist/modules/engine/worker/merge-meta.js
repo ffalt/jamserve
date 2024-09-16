@@ -1,10 +1,10 @@
-import { MetaMergerCache } from './meta-cache';
-import { logger } from '../../../utils/logger';
-import { cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts';
-import { AlbumType, FolderType } from '../../../types/enums';
-import { MetaStatBuilder } from '../../../utils/stats-builder';
-import { slugify } from '../../../utils/slug';
-import { extractAlbumName } from '../../../utils/album-name';
+import { MetaMergerCache } from './meta-cache.js';
+import { logger } from '../../../utils/logger.js';
+import { cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
+import { AlbumType, FolderType } from '../../../types/enums.js';
+import { MetaStatBuilder } from '../../../utils/stats-builder.js';
+import { slugify } from '../../../utils/slug.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
 const log = logger('Worker.MetaMerger');
 export class MetaMerger {
     constructor(orm, changes, rootID) {

@@ -1,7 +1,7 @@
-import { exampleID, SCHEMA_ID, SCHEMA_JSON } from './openapi-helpers';
-import { getMetadataStorage } from '../metadata';
-import { getDefaultValue } from '../helpers/default-value';
-import { iterateArguments } from '../helpers/iterate-super';
+import { exampleID, SCHEMA_ID, SCHEMA_JSON } from './openapi-helpers.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getDefaultValue } from '../helpers/default-value.js';
+import { iterateArguments } from '../helpers/iterate-super.js';
 export class OpenApiRefBuilder {
     constructor(extended = true) {
         this.extended = extended;

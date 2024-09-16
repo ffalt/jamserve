@@ -10,16 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType } from '../../types/enums';
+import { DBObjectType } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { Series, SeriesIndexQL, SeriesPageQL, SeriesQL } from './series';
-import { SeriesArgsQL, SeriesIndexArgsQL } from './series.args';
-import { AlbumQL } from '../album/album';
-import { TrackQL } from '../track/track';
-import { FolderQL } from '../folder/folder';
-import { RootQL } from '../root/root';
-import { ArtistQL } from '../artist/artist';
+import { StateQL } from '../state/state.js';
+import { Series, SeriesIndexQL, SeriesPageQL, SeriesQL } from './series.js';
+import { SeriesArgsQL, SeriesIndexArgsQL } from './series.args.js';
+import { AlbumQL } from '../album/album.js';
+import { TrackQL } from '../track/track.js';
+import { FolderQL } from '../folder/folder.js';
+import { RootQL } from '../root/root.js';
+import { ArtistQL } from '../artist/artist.js';
 let SeriesResolver = class SeriesResolver {
     async series(id, { orm }) {
         return await orm.Series.oneOrFailByID(id);

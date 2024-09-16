@@ -8,9 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts';
-import { FolderService } from '../folder/folder.service';
-import { FolderType } from '../../types/enums';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts.js';
+import { FolderService } from '../folder/folder.service.js';
+import { FolderType } from '../../types/enums.js';
 let ArtistService = class ArtistService {
     canHaveArtistImage(artist) {
         return (artist.albumTypes.length > 0 && artist.mbArtistID !== MUSICBRAINZ_VARIOUS_ARTISTS_ID);

@@ -10,15 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType, PodcastStatus } from '../../types/enums';
+import { DBObjectType, PodcastStatus } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { WaveformQL } from '../waveform/waveform';
-import { Episode, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL } from './episode';
-import { TagQL } from '../tag/tag';
-import { PodcastQL } from '../podcast/podcast';
-import { BookmarkQL } from '../bookmark/bookmark';
-import { EpisodesArgsQL } from './episode.args';
+import { StateQL } from '../state/state.js';
+import { WaveformQL } from '../waveform/waveform.js';
+import { Episode, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL } from './episode.js';
+import { TagQL } from '../tag/tag.js';
+import { PodcastQL } from '../podcast/podcast.js';
+import { BookmarkQL } from '../bookmark/bookmark.js';
+import { EpisodesArgsQL } from './episode.args.js';
 let EpisodeResolver = class EpisodeResolver {
     async episode(id, { orm }) {
         return await orm.Episode.oneOrFailByID(id);

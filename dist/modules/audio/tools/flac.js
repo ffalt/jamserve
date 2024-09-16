@@ -1,4 +1,4 @@
-import { spawnTool } from '../../../utils/tool';
+import { spawnTool } from '../../../utils/tool.js';
 export async function flac_test(filename) {
     const cmds = ['-wst'];
     const result = await spawnTool('flac', 'FLAC_PATH', [...cmds, filename]);

@@ -8,9 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { DBObjectType } from '../../types/enums';
-import { MetaDataService } from '../metadata/metadata.service';
+import { BaseTransformService } from '../base/base.transform.js';
+import { DBObjectType } from '../../types/enums.js';
+import { MetaDataService } from '../metadata/metadata.service.js';
 let SeriesTransformService = class SeriesTransformService extends BaseTransformService {
     async seriesBases(orm, list, seriesArgs, user) {
         return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesArgs, user)));

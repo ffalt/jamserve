@@ -1,7 +1,7 @@
 import { ID3v2, ID3V24TagBuilder, ITagID } from 'jamp3';
 import moment from 'moment';
-import { MetaDataBlockPicture } from './formats/flac/lib/block.picture';
-import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment';
+import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
+import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 function prepareFrame(frame) {
     if (frame && frame.value && frame.value.bin) {
         const binValue = frame.value;

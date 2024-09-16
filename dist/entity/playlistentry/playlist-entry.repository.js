@@ -1,7 +1,7 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType, PlaylistEntryOrderFields } from '../../types/enums';
-import { QHelper } from '../../modules/orm';
-import { OrderHelper } from '../base/base';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, PlaylistEntryOrderFields } from '../../types/enums.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { OrderHelper } from '../base/base.js';
 export class PlaylistEntryRepository extends BaseRepository {
     constructor() {
         super(...arguments);

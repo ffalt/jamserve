@@ -1,6 +1,6 @@
-import { logger } from '../../utils/logger';
-import { MetaDataFormat } from './metadata.format';
-import { LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums';
+import { logger } from '../../utils/logger.js';
+import { MetaDataFormat } from './metadata.format.js';
+import { LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
 const log = logger('Metadata');
 export class MetadataServiceExtendedInfo {
     constructor(service) {

@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { BodyParams, Controller, Ctx, Get, Post, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { Chat } from './chat.model';
-import { ChatCreateArgs, ChatFilterArgs, ChatRemoveArgs } from './chat.args';
+import { BodyParams, Controller, Ctx, Get, Post, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { Chat } from './chat.model.js';
+import { ChatCreateArgs, ChatFilterArgs, ChatRemoveArgs } from './chat.args.js';
 let ChatController = class ChatController {
     async list({ since }, { engine }) {
         return engine.transform.Chat.chats(await engine.chat.get(since));

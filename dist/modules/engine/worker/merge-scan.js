@@ -1,9 +1,9 @@
-import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums';
-import { splitDirectoryName } from '../../../utils/dir-name';
+import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
+import { splitDirectoryName } from '../../../utils/dir-name.js';
 import path from 'path';
-import { logger } from '../../../utils/logger';
-import { MatchNodeMetaStats } from './meta-stats';
-import { QHelper } from '../../orm';
+import { logger } from '../../../utils/logger.js';
+import { MatchNodeMetaStats } from './meta-stats.js';
+import { QHelper } from '../../orm/index.js';
 const log = logger('IO.MergeScan');
 export class WorkerMergeScan {
     constructor(orm, strategy, changes) {

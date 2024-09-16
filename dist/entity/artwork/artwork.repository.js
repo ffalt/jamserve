@@ -1,7 +1,7 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType } from '../../types/enums';
-import { Folder } from '../folder/folder';
-import { QHelper } from '../../modules/orm';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Folder } from '../folder/folder.js';
+import { QHelper } from '../../modules/orm/index.js';
 export class ArtworkRepository extends BaseRepository {
     constructor() {
         super(...arguments);

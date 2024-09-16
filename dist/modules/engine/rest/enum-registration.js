@@ -1,5 +1,5 @@
-import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, CoverArtArchiveLookupType, DefaultOrderFields, DownloadFormatType, EpisodeOrderFields, GenreOrderFields, FolderHealthID, FolderOrderFields, FolderType, ImageFormatType, JamObjectType, LastFMLookupType, ListType, MusicBrainzLookupType, MusicBrainzSearchType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackHealthID, TrackOrderFields, UserRole, WaveformFormatType } from '../../../types/enums';
-import { registerEnumType } from '../../rest/helpers/enums';
+import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, CoverArtArchiveLookupType, DefaultOrderFields, DownloadFormatType, EpisodeOrderFields, GenreOrderFields, FolderHealthID, FolderOrderFields, FolderType, ImageFormatType, JamObjectType, LastFMLookupType, ListType, MusicBrainzLookupType, MusicBrainzSearchType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackHealthID, TrackOrderFields, UserRole, WaveformFormatType } from '../../../types/enums.js';
+import { registerEnumType } from '../../rest/helpers/enums.js';
 export function registerRestEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });

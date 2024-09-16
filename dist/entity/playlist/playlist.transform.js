@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { BaseTransformService } from '../base/base.transform';
-import { DBObjectType } from '../../types/enums';
+import { BaseTransformService } from '../base/base.transform.js';
+import { DBObjectType } from '../../types/enums.js';
 let PlaylistTransformService = class PlaylistTransformService extends BaseTransformService {
     async playlistBase(orm, o, playlistArgs, user) {
         const u = await o.user.getOrFail();

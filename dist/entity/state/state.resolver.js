@@ -11,8 +11,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Ctx, ID, Int, Mutation, Query, Resolver } from 'type-graphql';
-import { StateQL } from './state';
-import { NotFoundError } from '../../modules/rest/builder';
+import { StateQL } from './state.js';
+import { NotFoundError } from '../../modules/rest/index.js';
 let StateResolver = class StateResolver {
     async state(id, { orm, user }) {
         const result = await orm.findInStateTypes(id);

@@ -1,5 +1,5 @@
-import { logger } from '../../../utils/logger';
-import { WebserviceClient } from '../../../utils/webservice-client';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
 const log = logger('GPodderClient');
 export class GpodderClient extends WebserviceClient {
     constructor(userAgent) {

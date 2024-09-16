@@ -1,5 +1,5 @@
-import { InvalidParamError, MissingParamError } from './express-error';
-import { getMetadataStorage } from '../metadata';
+import { InvalidParamError, MissingParamError } from './express-error.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 function validateCustomPathParameterValue(rElement, group) {
     const type = group.getType();
     let value = rElement || '';

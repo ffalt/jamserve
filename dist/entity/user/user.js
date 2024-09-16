@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { PlayQueueQL } from '../playqueue/playqueue';
+import { PlayQueueQL } from '../playqueue/playqueue.js';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base';
-import { BookmarkOrderFields, SessionOrderFields, UserRole } from '../../types/enums';
-import { UserStatsQL } from '../stats/stats';
+import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { BookmarkOrderFields, SessionOrderFields, UserRole } from '../../types/enums.js';
+import { UserStatsQL } from '../stats/stats.js';
 let User = class User extends Base {
     constructor() {
         super(...arguments);

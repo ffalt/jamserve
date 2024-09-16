@@ -1,4 +1,4 @@
-import { MetaDataBlock } from './block';
+import { MetaDataBlock } from './block.js';
 export class MetaDataBlockStreamInfo extends MetaDataBlock {
     constructor(isLast) {
         super(isLast, 0);

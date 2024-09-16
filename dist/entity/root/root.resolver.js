@@ -11,13 +11,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { Root, RootPageQL, RootQL, RootStatusQL } from './root';
-import { RootsArgs } from './root.args';
-import { TrackQL } from '../track/track';
-import { FolderQL } from '../folder/folder';
-import { AlbumQL } from '../album/album';
-import { SeriesQL } from '../series/series';
-import { ArtistQL } from '../artist/artist';
+import { Root, RootPageQL, RootQL, RootStatusQL } from './root.js';
+import { RootsArgs } from './root.args.js';
+import { TrackQL } from '../track/track.js';
+import { FolderQL } from '../folder/folder.js';
+import { AlbumQL } from '../album/album.js';
+import { SeriesQL } from '../series/series.js';
+import { ArtistQL } from '../artist/artist.js';
 let RootResolver = class RootResolver {
     async root(id, { orm }) {
         return await orm.Root.oneOrFailByID(id);

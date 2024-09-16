@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
-import { PlaylistEntryOrderFields } from '../../types/enums';
-import { OrderByArgs } from '../base/base.args';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { PlaylistEntryOrderFields } from '../../types/enums.js';
+import { OrderByArgs } from '../base/base.args.js';
 import { Field, ID, InputType } from 'type-graphql';
 let PlaylistEntryOrderArgs = class PlaylistEntryOrderArgs extends OrderByArgs {
 };

@@ -8,9 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { IoService } from '../../modules/engine/services/io.service';
+import { IoService } from '../../modules/engine/services/io.service.js';
 import path from 'path';
-import { ImageModule } from '../../modules/image/image.module';
+import { ImageModule } from '../../modules/image/image.module.js';
 let ArtworkService = class ArtworkService {
     async createByUrl(folder, url, types) {
         return this.ioService.artwork.download(folder.id, url, types, folder.root.idOrFail());

@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Radio, RadioIndex, RadioPage } from './radio.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs } from './radio.args';
-import { PageArgs } from '../base/base.args';
+import { Radio, RadioIndex, RadioPage } from './radio.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs } from './radio.args.js';
+import { PageArgs } from '../base/base.args.js';
 let RadioController = class RadioController {
     async id(id, radioArgs, { orm, engine, user }) {
         return engine.transform.Radio.radio(orm, await orm.Radio.oneOrFailByID(id), radioArgs, user);

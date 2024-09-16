@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { FolderService } from '../folder/folder.service';
-import { FolderType } from '../../types/enums';
+import { FolderService } from '../folder/folder.service.js';
+import { FolderType } from '../../types/enums.js';
 let SeriesService = class SeriesService {
     async getImage(orm, series, size, format) {
         const folders = await series.folders.getItems();

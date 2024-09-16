@@ -10,11 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get } from '../../modules/rest';
-import { AudioFormatType, UserRole } from '../../types/enums';
-import { NotFoundError, PathParam, PathParams } from '../../modules/rest/';
-import { StreamArgs } from './stream.args';
-import { ApiStreamTypes } from '../../types/consts';
+import { Controller, Ctx, Get, NotFoundError, PathParam, PathParams } from '../../modules/rest/index.js';
+import { AudioFormatType, UserRole } from '../../types/enums.js';
+import { StreamArgs } from './stream.args.js';
+import { ApiStreamTypes } from '../../types/consts.js';
 let StreamController = class StreamController {
     async stream(id, streamArgs, { orm, engine, user }) {
         const result = await orm.findInStreamTypes(id);

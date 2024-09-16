@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Base, Page } from '../base/base.model';
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { examples } from '../../modules/engine/rest/example.consts';
-import { MediaBase } from '../tag/tag.model';
+import { Base, Page } from '../base/base.model.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
+import { MediaBase } from '../tag/tag.model.js';
 let PlaylistBase = class PlaylistBase extends Base {
 };
 __decorate([

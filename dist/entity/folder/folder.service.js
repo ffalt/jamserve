@@ -7,11 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ArtworkImageType, FolderType } from '../../types/enums';
+import { ArtworkImageType, FolderType } from '../../types/enums.js';
 import path from 'path';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { FolderRulesChecker } from '../health/folder.rule';
-import { ImageModule } from '../../modules/image/image.module';
+import { FolderRulesChecker } from '../health/folder.rule.js';
+import { ImageModule } from '../../modules/image/image.module.js';
 export async function getFolderDisplayArtwork(orm, folder) {
     const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
     return (await folder.artworks.getItems()).find(a => a.types.includes(search));

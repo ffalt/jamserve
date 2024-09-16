@@ -1,5 +1,5 @@
-import { getMetadataStorage } from '../metadata/getMetadataStorage';
-import { getNameDecoratorParams } from '../helpers/decorators';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getNameDecoratorParams } from '../helpers/decorators.js';
 export function Entity(nameOrOptions, maybeOptions) {
     const { name, options } = getNameDecoratorParams(nameOrOptions, maybeOptions);
     return target => {

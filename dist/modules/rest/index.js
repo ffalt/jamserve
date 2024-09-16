@@ -1,5 +1,5 @@
-export * from './decorators/';
-export * from './metadata/';
-export * from './builder/';
-export * from './definitions/upload-file';
+export * from './decorators/index.js';
+export * from './metadata/getMetadataStorage.js';
+export * from './builder/index.js';
+export * from './definitions/upload-file.js';
 //# sourceMappingURL=index.js.map

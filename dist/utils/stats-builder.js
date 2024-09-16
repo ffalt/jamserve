@@ -1,4 +1,4 @@
-import { slugify } from './slug';
+import { slugify } from './slug.js';
 export class MetaStatBuilder {
     constructor() {
         this.stats = {};

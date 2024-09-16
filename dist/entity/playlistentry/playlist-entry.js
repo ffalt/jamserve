@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Track, TrackQL } from '../track/track';
-import { Episode, EpisodeQL } from '../episode/episode';
-import { Playlist, PlaylistQL } from '../playlist/playlist';
+import { Track, TrackQL } from '../track/track.js';
+import { Episode, EpisodeQL } from '../episode/episode.js';
+import { Playlist, PlaylistQL } from '../playlist/playlist.js';
 import { Field, Float, ObjectType } from 'type-graphql';
-import { Base } from '../base/base';
-import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm';
+import { Base } from '../base/base.js';
+import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 let PlaylistEntry = class PlaylistEntry extends Base {
     constructor() {
         super(...arguments);

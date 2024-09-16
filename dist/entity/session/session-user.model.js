@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/decorators';
-import { UserRoles } from '../user/user.model';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { UserRoles } from '../user/user.model.js';
 let SessionUser = class SessionUser {
 };
 __decorate([

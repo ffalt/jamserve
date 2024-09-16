@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { MetaDataType } from '../../types/enums';
-import { Entity, Property } from '../../modules/orm';
-import { Base } from '../base/base';
+import { MetaDataType } from '../../types/enums.js';
+import { Entity, Property } from '../../modules/orm/index.js';
+import { Base } from '../base/base.js';
 let MetaData = class MetaData extends Base {
 };
 __decorate([

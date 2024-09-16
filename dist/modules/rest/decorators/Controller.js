@@ -1,4 +1,4 @@
-import { getMetadataStorage } from '../metadata';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 function extractClassName(target) {
     const s = target.toString().split(' ');
     return s[1];

@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { NotFoundError } from '../../modules/rest/';
-import { DBObjectType } from '../../types/enums';
+import { NotFoundError } from '../../modules/rest/index.js';
+import { DBObjectType } from '../../types/enums.js';
 import seq from 'sequelize';
 let BookmarkService = class BookmarkService {
     async create(orm, destID, user, position, comment) {

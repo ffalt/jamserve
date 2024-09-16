@@ -1,6 +1,6 @@
 import fs from 'fs';
 import fse from 'fs-extra';
-import { FlacProcessorStream } from './lib/processor';
+import { FlacProcessorStream } from './lib/processor.js';
 export class Flac {
     async read(filename) {
         const result = {};

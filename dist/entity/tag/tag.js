@@ -7,13 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { AudioFormatType, TagFormatType } from '../../types/enums';
+import { AudioFormatType, TagFormatType } from '../../types/enums.js';
 import { Field, Float, Int, ObjectType } from 'type-graphql';
-import { Entity, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm';
-import { Base } from '../base/base';
+import { Entity, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base } from '../base/base.js';
 import { GraphQLJSON } from 'graphql-type-json';
-import { Episode } from '../episode/episode';
-import { Track } from '../track/track';
+import { Episode } from '../episode/episode.js';
+import { Track } from '../track/track.js';
 let Tag = class Tag extends Base {
     constructor() {
         super(...arguments);

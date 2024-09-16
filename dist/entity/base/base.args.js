@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { DefaultOrderFields, ListType } from '../../types/enums';
-import { ObjField, ObjParamsType } from '../../modules/rest';
+import { DefaultOrderFields, ListType } from '../../types/enums.js';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { ArgsType, Field, InputType, Int } from 'type-graphql';
 import { Max, Min } from 'class-validator';
 let ListArgs = class ListArgs {

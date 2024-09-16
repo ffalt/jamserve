@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Root, RootPage, RootUpdateStatus } from './root.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs } from './root.args';
-import { AdminChangeQueueInfo } from '../admin/admin';
-import { PageArgs } from '../base/base.args';
+import { Root, RootPage, RootUpdateStatus } from './root.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs } from './root.args.js';
+import { AdminChangeQueueInfo } from '../admin/admin.js';
+import { PageArgs } from '../base/base.args.js';
 let RootController = class RootController {
     async id(id, rootArgs, { orm, engine, user }) {
         return engine.transform.Root.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);

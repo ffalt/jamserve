@@ -1,7 +1,7 @@
 import path from 'path';
-import { fileSuffix, replaceFolderSystemChars } from '../../utils/fs-utils';
-import { AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum } from '../../types/enums';
-import { getFolderDisplayArtwork } from '../folder/folder.service';
+import { fileSuffix, replaceFolderSystemChars } from '../../utils/fs-utils.js';
+import { AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum } from '../../types/enums.js';
+import { getFolderDisplayArtwork } from '../folder/folder.service.js';
 function isAlbumTopMostFolder(orm, folder, parents) {
     if (folder.folderType === FolderType.multialbum) {
         const parent = parents[parents.length - 1];

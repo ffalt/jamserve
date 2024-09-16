@@ -1,5 +1,5 @@
-import { IoRequest, WorkerRequestMode } from './io.types';
-import { DelayedRequests } from './io.helpers';
+import { IoRequest, WorkerRequestMode } from './io.types.js';
+import { DelayedRequests } from './io.helpers.js';
 export class IoCommandsTrack {
     constructor(owner) {
         this.owner = owner;

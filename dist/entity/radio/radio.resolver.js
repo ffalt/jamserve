@@ -11,10 +11,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot } from 'type-graphql';
-import { StateQL } from '../state/state';
-import { DBObjectType } from '../../types/enums';
-import { Radio, RadioIndexQL, RadioPageQL, RadioQL } from './radio';
-import { RadioIndexArgs, RadiosArgs } from './radio.args';
+import { StateQL } from '../state/state.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Radio, RadioIndexQL, RadioPageQL, RadioQL } from './radio.js';
+import { RadioIndexArgs, RadiosArgs } from './radio.args.js';
 let RadioResolver = class RadioResolver {
     async radio(id, { orm }) {
         return await orm.Radio.oneOrFailByID(id);

@@ -1,9 +1,9 @@
-import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version';
-import { getMetadataStorage } from '../metadata';
-import { Errors } from './express-error';
-import { iterateControllers } from '../helpers/iterate-super';
-import { SCHEMA_ID } from './openapi-helpers';
-import { OpenApiRefBuilder } from './openapi-refs';
+import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { Errors } from './express-error.js';
+import { iterateControllers } from '../helpers/iterate-super.js';
+import { SCHEMA_ID } from './openapi-helpers.js';
+import { OpenApiRefBuilder } from './openapi-refs.js';
 class OpenApiBuilder {
     constructor(extended = true) {
         this.extended = extended;

@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { NotFoundError } from '../../modules/rest/builder';
-import { StateHelper } from './state.helper';
+import { NotFoundError } from '../../modules/rest/index.js';
+import { StateHelper } from './state.helper.js';
 let StateService = class StateService {
     async fav(orm, id, remove, user) {
         const result = await orm.findInStateTypes(id);

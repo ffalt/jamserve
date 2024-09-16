@@ -1,6 +1,6 @@
 import archiver from 'archiver';
-import { replaceFileSystemChars } from './fs-utils';
-import { logger } from './logger';
+import { replaceFileSystemChars } from './fs-utils.js';
+import { logger } from './logger.js';
 const log = logger('BaseCompressStream');
 export class BaseCompressStream {
     constructor(filename, format) {

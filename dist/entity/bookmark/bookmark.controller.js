@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Bookmark, BookmarkPage } from './bookmark.model';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest';
-import { UserRole } from '../../types/enums';
-import { IncludesTrackArgs } from '../track/track.args';
-import { BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs } from './bookmark.args';
-import { IncludesEpisodeArgs } from '../episode/episode.args';
-import { PageArgs } from '../base/base.args';
+import { Bookmark, BookmarkPage } from './bookmark.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesTrackArgs } from '../track/track.args.js';
+import { BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs } from './bookmark.args.js';
+import { IncludesEpisodeArgs } from '../episode/episode.args.js';
+import { PageArgs } from '../base/base.args.js';
 let BookmarkController = class BookmarkController {
     async id(id, bookmarkChildrenArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         return engine.transform.bookmark(orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }), bookmarkChildrenArgs, trackArgs, episodeArgs, user);

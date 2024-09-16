@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ThirdPartyConfig } from '../../../config/thirdparty.config';
+import { ThirdPartyConfig } from '../../../config/thirdparty.config.js';
 import { InRequestScope } from 'typescript-ioc';
 import path from 'path';
-import { getMaxAge } from '../../../utils/max-age';
+import { getMaxAge } from '../../../utils/max-age.js';
 import fse from 'fs-extra';
 let ConfigService = class ConfigService {
     constructor() {

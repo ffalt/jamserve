@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Track, TrackQL } from '../track/track';
-import { Episode, EpisodeQL } from '../episode/episode';
+import { Track, TrackQL } from '../track/track.js';
+import { Episode, EpisodeQL } from '../episode/episode.js';
 import { Field, Float, ID, ObjectType } from 'type-graphql';
 let NowPlaying = class NowPlaying {
 };

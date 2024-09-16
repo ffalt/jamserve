@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/decorators';
-import { DownloadFormatType } from '../../types/enums';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { DownloadFormatType } from '../../types/enums.js';
 let DownloadArgs = class DownloadArgs {
 };
 __decorate([

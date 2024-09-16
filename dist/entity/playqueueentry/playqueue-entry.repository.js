@@ -1,6 +1,6 @@
-import { BaseRepository } from '../base/base.repository';
-import { DBObjectType, PlayQueueEntryOrderFields } from '../../types/enums';
-import { OrderHelper } from '../base/base';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, PlayQueueEntryOrderFields } from '../../types/enums.js';
+import { OrderHelper } from '../base/base.js';
 export class PlayQueueEntryRepository extends BaseRepository {
     constructor() {
         super(...arguments);
