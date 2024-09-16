@@ -27,6 +27,8 @@ jobs:
           key: ${{ runner.os }}-modules-build-${{ hashFiles('**/package-lock.json') }}
       - run: npm install
       - run: npm install --os=linux --cpu=x64 sharp
+      - name: Try to build
+        run: npm run build
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
