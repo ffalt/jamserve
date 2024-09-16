@@ -138,7 +138,7 @@
     "@types/which": "3.0.4",
     "@types/yauzl": "2.10.3",
     "chance": "1.1.12",
-    "commit-and-tag-version": "12.4.3",
+    "commit-and-tag-version": "12.4.4",
     "conventional-changelog-cli": "5.0.0",
     "eslint": "9.10.0",
     "eslint-plugin-jest": "28.8.3",
