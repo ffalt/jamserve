@@ -1,6 +1,6 @@
-import {Orm} from '../../engine/services/orm.service';
-import {User} from '../../../entity/user/user';
-import {EngineService} from '../../engine/services/engine.service';
+import {Orm} from '../../engine/services/orm.service.js';
+import {User} from '../../../entity/user/user.js';
+import {EngineService} from '../../engine/services/engine.service.js';
 
 export interface Context {
 	req: Express.Request;

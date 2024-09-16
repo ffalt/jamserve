@@ -1,9 +1,9 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {Series} from './series';
-import {User} from '../user/user';
-import {SeriesFilterArgs, SeriesOrderArgs} from './series.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Series} from './series.js';
+import {User} from '../user/user.js';
+import {SeriesFilterArgs, SeriesOrderArgs} from './series.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 // @Repository(Series)
 export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, SeriesOrderArgs> {

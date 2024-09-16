@@ -1,5 +1,5 @@
-import {WorkerRequestParameters} from '../worker/worker.types';
-import {IoRequest} from './io.types';
+import {WorkerRequestParameters} from '../worker/worker.types.js';
+import {IoRequest} from './io.types.js';
 
 interface DelayedRequest<T extends WorkerRequestParameters> {
 	request: IoRequest<T>;

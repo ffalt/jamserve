@@ -1,4 +1,4 @@
-import {RateLimiter} from './limiter';
+import {RateLimiter} from './limiter/RateLimiter.js';
 import fetch, {Response} from 'node-fetch';
 
 export class WebserviceClient {

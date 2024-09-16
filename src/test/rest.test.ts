@@ -1,22 +1,22 @@
 import jestOpenAPI from 'jest-openapi';
 import nock from 'nock';
-import {Server} from '../modules/server/server';
+import {Server} from '../modules/server/server.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import {OpenAPIObject} from '../modules/rest/builder/openapi-helpers';
+import {OpenAPIObject} from '../modules/rest/builder/openapi-helpers.js';
 import supertest from 'supertest';
-import {JAMAPI_URL_VERSION} from '../modules/engine/rest/version';
-import {bindMockConfig, DBConfigs} from './mock/mock.config';
-import {FolderType, RootScanStrategy, UserRole} from '../types/enums';
-import {waitEngineStart} from './mock/mock.engine';
-import {MockRequests, RequestMock} from './mock/mock.request';
-import {ensureTrailingPathSeparator} from '../utils/fs-utils';
+import {JAMAPI_URL_VERSION} from '../modules/engine/rest/version.js';
+import {bindMockConfig, DBConfigs} from './mock/mock.config.js';
+import {FolderType, RootScanStrategy, UserRole} from '../types/enums.js';
+import {waitEngineStart} from './mock/mock.engine.js';
+import {MockRequests, RequestMock} from './mock/mock.request.js';
+import {ensureTrailingPathSeparator} from '../utils/fs-utils.js';
 import path from 'path';
-import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} from './mock/mock.root';
-import {initTest} from './init';
+import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} from './mock/mock.root.js';
+import {initTest} from './init.js';
 import {Container, Snapshot} from 'typescript-ioc';
 import {OpenAPISpecObject} from 'openapi-validator';
-import TestAgent from 'supertest/lib/agent';
+import TestAgent from 'supertest/lib/agent.js';
 
 initTest();
 

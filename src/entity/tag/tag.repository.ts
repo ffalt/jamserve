@@ -1,11 +1,11 @@
-import {BaseRepository} from '../base/base.repository';
-import {Tag} from './tag';
-import {DBObjectType} from '../../types/enums';
-import {User} from '../user/user';
-import {FindOptions, OrderItem} from '../../modules/orm';
-import {AudioScanResult} from '../../modules/audio/audio.module';
-import {basenameStripExt} from '../../utils/fs-utils';
-import {DefaultOrderArgs} from '../base/base.args';
+import {BaseRepository} from '../base/base.repository.js';
+import {Tag} from './tag.js';
+import {DBObjectType} from '../../types/enums.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem} from '../../modules/orm/index.js';
+import {AudioScanResult} from '../../modules/audio/audio.module.js';
+import {basenameStripExt} from '../../utils/fs-utils.js';
+import {DefaultOrderArgs} from '../base/base.args.js';
 
 export class TagRepository extends BaseRepository<Tag, void, DefaultOrderArgs> {
 	objType = DBObjectType.tag;

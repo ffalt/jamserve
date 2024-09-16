@@ -1,8 +1,8 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {ListType, PodcastOrderFields, PodcastStatus} from '../../types/enums';
-import {FilterArgs, OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
+import {ListType, PodcastOrderFields, PodcastStatus} from '../../types/enums.js';
+import {FilterArgs, OrderByArgs, PaginatedFilterArgs} from '../base/base.args.js';
 
 @ObjParamsType()
 export class IncludesPodcastArgs {

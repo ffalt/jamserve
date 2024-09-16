@@ -1,5 +1,5 @@
-import {Reference} from './helpers/reference';
-import {Collection} from './helpers/collection';
+import {Reference} from './helpers/reference.js';
+import {Collection} from './helpers/collection.js';
 
 export declare type Constructor<T> = new (...args: any[]) => T;
 

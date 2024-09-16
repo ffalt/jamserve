@@ -1,9 +1,9 @@
 import {ID3v1_GENRES, ID3v2, IID3V1, IID3V2, IMP3} from 'jamp3';
-import {cleanGenre} from '../../utils/genres';
-import {ID3TrackTagRawFormatTypes} from './audio.module';
-import {FlacComment, FlacMedia, FlacPicture} from './formats/flac';
-import {ProbeResult} from './tools/ffprobe';
-import {AudioFormatType, TagFormatType} from '../../types/enums';
+import {cleanGenre} from '../../utils/genres.js';
+import {ID3TrackTagRawFormatTypes} from './audio.module.js';
+import {FlacComment, FlacMedia, FlacPicture} from './formats/flac/index.js';
+import {ProbeResult} from './tools/ffprobe.js';
+import {AudioFormatType, TagFormatType} from '../../types/enums.js';
 
 export interface TrackTag {
 	format: TagFormatType;

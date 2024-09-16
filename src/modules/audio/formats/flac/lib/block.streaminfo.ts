@@ -1,4 +1,4 @@
-import {MetaDataBlock} from './block';
+import {MetaDataBlock} from './block.js';
 
 export class MetaDataBlockStreamInfo extends MetaDataBlock {
 	minBlockSize = 0;

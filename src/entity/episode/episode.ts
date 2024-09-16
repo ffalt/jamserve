@@ -1,14 +1,14 @@
-import {Podcast, PodcastQL} from '../podcast/podcast';
-import {Tag, TagQL} from '../tag/tag';
-import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {BookmarkOrderFields, PodcastStatus} from '../../types/enums';
+import {Podcast, PodcastQL} from '../podcast/podcast.js';
+import {Tag, TagQL} from '../tag/tag.js';
+import {Bookmark, BookmarkQL} from '../bookmark/bookmark.js';
+import {BookmarkOrderFields, PodcastStatus} from '../../types/enums.js';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
-import {Base, PaginatedResponse} from '../base/base';
-import {State, StateQL} from '../state/state';
-import {Waveform, WaveformQL} from '../waveform/waveform';
-import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
-import {PlaylistEntry} from '../playlistentry/playlist-entry';
+import {Collection, Entity, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import {Base, PaginatedResponse} from '../base/base.js';
+import {State, StateQL} from '../state/state.js';
+import {Waveform, WaveformQL} from '../waveform/waveform.js';
+import {PlayQueueEntry} from '../playqueueentry/playqueue-entry.js';
+import {PlaylistEntry} from '../playlistentry/playlist-entry.js';
 
 @ObjectType()
 export class EpisodeChapter {

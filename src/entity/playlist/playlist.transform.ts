@@ -1,12 +1,12 @@
 import {InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Playlist as ORMPlaylist} from './playlist';
-import {IncludesPlaylistArgs} from './playlist.args';
-import {User} from '../user/user';
-import {PlaylistBase, PlaylistIndex} from './playlist.model';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Playlist as ORMPlaylist} from './playlist.js';
+import {IncludesPlaylistArgs} from './playlist.args.js';
+import {User} from '../user/user.js';
+import {PlaylistBase, PlaylistIndex} from './playlist.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
 
 @InRequestScope
 export class PlaylistTransformService extends BaseTransformService {

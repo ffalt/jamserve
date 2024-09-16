@@ -1,6 +1,6 @@
 import {NoExplicitTypeError} from 'type-graphql';
-import {bannedTypes, ReturnTypeFunc, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types';
-import {getMetadataStorage} from '../metadata';
+import {bannedTypes, ReturnTypeFunc, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 
 export type MetadataKey = 'design:type' | 'design:returntype' | 'design:paramtypes';
 

@@ -1,7 +1,7 @@
-import {TrackBase} from '../track/track.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {EpisodeBase} from '../episode/episode.model';
-import {Page} from '../base/base.model';
+import {TrackBase} from '../track/track.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {EpisodeBase} from '../episode/episode.model.js';
+import {Page} from '../base/base.model.js';
 
 @ResultType({description: 'Now Playing Data'})
 export class NowPlaying {

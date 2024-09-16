@@ -1,10 +1,10 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {logger} from './logger';
-import {FileTyp} from '../types/enums';
-import {ensureTrailingPathSeparator} from './fs-utils';
-import {processQueue} from './queue';
-import {getFileType} from './filetype';
+import {logger} from './logger.js';
+import {FileTyp} from '../types/enums.js';
+import {ensureTrailingPathSeparator} from './fs-utils.js';
+import {processQueue} from './queue.js';
+import {getFileType} from './filetype.js';
 
 const log = logger('IO.DirScanner');
 

@@ -1,4 +1,4 @@
-import {ParamMetadata} from './param-metadata';
+import {ParamMetadata} from './param-metadata.js';
 
 export interface BaseControllerMetadata {
 	methodName: string;

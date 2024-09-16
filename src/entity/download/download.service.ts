@@ -1,20 +1,20 @@
 import path from 'path';
 import {InRequestScope} from 'typescript-ioc';
-import {Episode} from '../episode/episode';
-import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest';
-import {Track} from '../track/track';
-import {Folder} from '../folder/folder';
-import {Artist} from '../artist/artist';
-import {Series} from '../series/series';
-import {Album} from '../album/album';
-import {Podcast} from '../podcast/podcast';
-import {Playlist} from '../playlist/playlist';
-import {CompressListStream} from '../../utils/compress-list-stream';
-import {CompressFolderStream} from '../../utils/compress-folder-stream';
-import {User} from '../user/user';
-import {DBObjectType} from '../../types/enums';
-import {Base} from '../base/base';
-import {Artwork} from '../artwork/artwork';
+import {Episode} from '../episode/episode.js';
+import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest/index.js';
+import {Track} from '../track/track.js';
+import {Folder} from '../folder/folder.js';
+import {Artist} from '../artist/artist.js';
+import {Series} from '../series/series.js';
+import {Album} from '../album/album.js';
+import {Podcast} from '../podcast/podcast.js';
+import {Playlist} from '../playlist/playlist.js';
+import {CompressListStream} from '../../utils/compress-list-stream.js';
+import {CompressFolderStream} from '../../utils/compress-folder-stream.js';
+import {User} from '../user/user.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Base} from '../base/base.js';
+import {Artwork} from '../artwork/artwork.js';
 
 @InRequestScope
 export class DownloadService {

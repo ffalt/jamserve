@@ -1,9 +1,9 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {Radio} from './radio';
-import {User} from '../user/user';
-import {RadioFilterArgs, RadioOrderArgs} from './radio.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Radio} from './radio.js';
+import {User} from '../user/user.js';
+import {RadioFilterArgs, RadioOrderArgs} from './radio.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, RadioOrderArgs> {
 	objType = DBObjectType.radio;

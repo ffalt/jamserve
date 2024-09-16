@@ -1,9 +1,9 @@
-import {Track} from '../track/track';
-import {MetaDataService} from './metadata.service';
-import {Song} from './metadata.service.similar-tracks';
-import {PageResult} from '../base/base';
-import {PageArgs} from '../base/base.args';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {Track} from '../track/track.js';
+import {MetaDataService} from './metadata.service.js';
+import {Song} from './metadata.service.similar-tracks.js';
+import {PageResult} from '../base/base.js';
+import {PageArgs} from '../base/base.args.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 export class MetadataServiceTopTracks {
 	constructor(private service: MetaDataService) {

@@ -1,8 +1,8 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {ListType} from '../../types/enums';
-import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ListType} from '../../types/enums.js';
+import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ObjParamsType()
 export class IncludesPlaylistArgs {

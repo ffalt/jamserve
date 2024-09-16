@@ -1,8 +1,8 @@
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, UserRole} from '../../types/enums';
-import {User} from './user';
-import {UserFilterArgs, UserOrderArgs} from './user.args';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, UserRole} from '../../types/enums.js';
+import {User} from './user.js';
+import {UserFilterArgs, UserOrderArgs} from './user.args.js';
 
 export class UserRepository extends BaseRepository<User, UserFilterArgs, UserOrderArgs> {
 	objType = DBObjectType.user;

@@ -1,5 +1,5 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {UserRoles} from '../user/user.model';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {UserRoles} from '../user/user.model.js';
 
 @ResultType()
 export class SessionUser {

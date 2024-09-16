@@ -1,8 +1,8 @@
-import {Settings} from './settings';
-import {JAMSERVE_VERSION} from '../../version';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {Settings} from './settings.js';
+import {JAMSERVE_VERSION} from '../../version.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 import {InRequestScope} from 'typescript-ioc';
-import {AdminSettings} from '../admin/admin';
+import {AdminSettings} from '../admin/admin.js';
 
 export const defaultEngineSettings: AdminSettings = {
 	chat: {

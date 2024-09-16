@@ -1,8 +1,8 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ListType, RootScanStrategy} from '../../types/enums';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {ListType, RootScanStrategy} from '../../types/enums.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {DefaultOrderArgs, PaginatedFilterArgs} from '../base/base.args';
+import {DefaultOrderArgs, PaginatedFilterArgs} from '../base/base.args.js';
 
 @ObjParamsType()
 export class IncludesRootArgs {

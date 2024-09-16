@@ -1,13 +1,13 @@
-import {shuffle} from '../../utils/random';
-import {Album} from '../album/album';
-import {Artist} from '../artist/artist';
-import {Folder} from '../folder/folder';
-import {Track} from '../track/track';
-import {MetaDataService} from './metadata.service';
-import {LastFM} from '../../modules/audio/clients/lastfm-rest-data';
-import {PageResult} from '../base/base';
-import {PageArgs} from '../base/base.args';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {shuffle} from '../../utils/random.js';
+import {Album} from '../album/album.js';
+import {Artist} from '../artist/artist.js';
+import {Folder} from '../folder/folder.js';
+import {Track} from '../track/track.js';
+import {MetaDataService} from './metadata.service.js';
+import {LastFM} from '../../modules/audio/clients/lastfm-rest-data.js';
+import {PageResult} from '../base/base.js';
+import {PageArgs} from '../base/base.args.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 export interface Song {
 	name: string;

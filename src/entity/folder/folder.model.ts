@@ -1,9 +1,9 @@
-import {Page} from '../base/base.model';
-import {TrackBase} from '../track/track.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {Artwork} from '../artwork/artwork.model';
-import {FolderHealthHint} from '../health/health.model';
-import {FolderBase} from './folder-base.model';
+import {Page} from '../base/base.model.js';
+import {TrackBase} from '../track/track.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {Artwork} from '../artwork/artwork.model.js';
+import {FolderHealthHint} from '../health/health.model.js';
+import {FolderBase} from './folder-base.model.js';
 
 @ResultType({description: 'Folder with tracks'})
 export class Folder extends FolderBase {

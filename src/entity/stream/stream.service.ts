@@ -1,15 +1,15 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {TranscoderStream} from '../../modules/audio/transcoder/transcoder-stream';
-import {fileSuffix} from '../../utils/fs-utils';
-import {Episode} from '../episode/episode';
-import {Track} from '../track/track';
-import {User} from '../user/user';
+import {AudioModule} from '../../modules/audio/audio.module.js';
+import {TranscoderStream} from '../../modules/audio/transcoder/transcoder-stream.js';
+import {fileSuffix} from '../../utils/fs-utils.js';
+import {Episode} from '../episode/episode.js';
+import {Track} from '../track/track.js';
+import {User} from '../user/user.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {ApiBinaryResult, GenericError, InvalidParamError} from '../../modules/rest';
-import {AudioFormatType, DBObjectType} from '../../types/enums';
-import {Base} from '../base/base';
+import {ApiBinaryResult, GenericError, InvalidParamError} from '../../modules/rest/index.js';
+import {AudioFormatType, DBObjectType} from '../../types/enums.js';
+import {Base} from '../base/base.js';
 
 @InRequestScope
 export class StreamService {

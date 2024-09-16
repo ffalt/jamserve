@@ -2,7 +2,7 @@
 	Third Party Web Services
  */
 
-import {JAMSERVE_VERSION} from '../version';
+import {JAMSERVE_VERSION} from '../version.js';
 
 export interface ThirdpartyToolsConfig {
 	acoustid: {

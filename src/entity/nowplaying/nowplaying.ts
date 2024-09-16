@@ -1,6 +1,6 @@
-import {Track, TrackQL} from '../track/track';
-import {Episode, EpisodeQL} from '../episode/episode';
-import {User} from '../user/user';
+import {Track, TrackQL} from '../track/track.js';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {User} from '../user/user.js';
 import {Field, Float, ID, ObjectType} from 'type-graphql';
 
 @ObjectType()

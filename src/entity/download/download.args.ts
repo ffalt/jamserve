@@ -1,5 +1,5 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {DownloadFormatType} from '../../types/enums';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {DownloadFormatType} from '../../types/enums.js';
 
 @ObjParamsType()
 export class DownloadArgs {

@@ -1,4 +1,4 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 
 @ObjParamsType()
 export class AutoCompleteFilterArgs {

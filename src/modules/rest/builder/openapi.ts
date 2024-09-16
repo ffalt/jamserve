@@ -1,16 +1,16 @@
-import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
-import {getMetadataStorage} from '../metadata';
-import {CustomPathParameterAliasRouteOptions} from '../definitions/types';
-import {ControllerClassMetadata} from '../definitions/controller-metadata';
-import {MethodMetadata} from '../definitions/method-metadata';
-import {Errors} from './express-error';
-import {iterateControllers} from '../helpers/iterate-super';
-import {MetadataStorage} from '../metadata/metadata-storage';
+import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {CustomPathParameterAliasRouteOptions} from '../definitions/types.js';
+import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {Errors} from './express-error.js';
+import {iterateControllers} from '../helpers/iterate-super.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
 import {
 	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ReferenceObject,
 	ResponsesObject, RequestBodyObject, SchemaObject, PathItemObject
-} from './openapi-helpers';
-import {OpenApiRefBuilder} from './openapi-refs';
+} from './openapi-helpers.js';
+import {OpenApiRefBuilder} from './openapi-refs.js';
 import {ClassType} from 'type-graphql';
 
 class OpenApiBuilder {

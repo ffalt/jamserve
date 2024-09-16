@@ -1,16 +1,16 @@
-import {Artist, ArtistIndex, ArtistPage} from './artist.model';
-import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {ExtendedInfoResult} from '../metadata/metadata.model';
-import {TrackPage} from '../track/track.model';
-import {AlbumPage} from '../album/album.model';
-import {SeriesPage} from '../series/series.model';
-import {AlbumOrderArgs, IncludesAlbumArgs} from '../album/album.args';
-import {IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs} from '../series/series.args';
-import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
-import {ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs} from './artist.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Artist, ArtistIndex, ArtistPage} from './artist.model.js';
+import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {ExtendedInfoResult} from '../metadata/metadata.model.js';
+import {TrackPage} from '../track/track.model.js';
+import {AlbumPage} from '../album/album.model.js';
+import {SeriesPage} from '../series/series.model.js';
+import {AlbumOrderArgs, IncludesAlbumArgs} from '../album/album.args.js';
+import {IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs} from '../series/series.args.js';
+import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args.js';
+import {ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs} from './artist.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/artist', {tags: ['Artist'], roles: [UserRole.stream]})
 export class ArtistController {

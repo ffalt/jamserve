@@ -1,18 +1,18 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {ImageModule} from '../../modules/image/image.module';
-import {downloadFile} from '../../utils/download';
-import {SupportedAudioFormat} from '../../utils/filetype';
-import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils';
-import {logger} from '../../utils/logger';
+import {AudioModule} from '../../modules/audio/audio.module.js';
+import {ImageModule} from '../../modules/image/image.module.js';
+import {downloadFile} from '../../utils/download.js';
+import {SupportedAudioFormat} from '../../utils/filetype.js';
+import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils.js';
+import {logger} from '../../utils/logger.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {DebouncePromises} from '../../utils/debounce-promises';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Episode, EpisodeEnclosure} from './episode';
-import {AudioFormatType, PodcastStatus} from '../../types/enums';
-import {ApiBinaryResult} from '../../modules/rest';
-import {ConfigService} from '../../modules/engine/services/config.service';
+import {DebouncePromises} from '../../utils/debounce-promises.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Episode, EpisodeEnclosure} from './episode.js';
+import {AudioFormatType, PodcastStatus} from '../../types/enums.js';
+import {ApiBinaryResult} from '../../modules/rest/index.js';
+import {ConfigService} from '../../modules/engine/services/config.service.js';
 
 const log = logger('EpisodeService');
 

@@ -1,6 +1,6 @@
-import {WorkerService} from '../worker.service';
-import {WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestMoveArtworks, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork} from './worker.types';
-import {Changes} from '../../worker/changes';
+import {WorkerService} from '../worker.service.js';
+import {WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestMoveArtworks, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork} from './worker.types.js';
+import {Changes} from '../../worker/changes.js';
 
 export class WorkerCommandsArtwork {
 	constructor(private owner: WorkerService) {

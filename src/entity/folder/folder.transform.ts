@@ -1,17 +1,17 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Folder as ORMFolder} from './folder';
-import {IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args';
-import {User} from '../user/user';
-import {FolderIndex} from './folder.model';
-import {DBObjectType, FolderType} from '../../types/enums';
-import {MetaDataService} from '../metadata/metadata.service';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {GenreTransformService} from '../genre/genre.transform';
-import {ExtendedInfo} from '../metadata/metadata.model';
-import {GenreBase} from '../genre/genre.model';
-import {FolderBase, FolderParent, FolderTag} from './folder-base.model';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Folder as ORMFolder} from './folder.js';
+import {IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args.js';
+import {User} from '../user/user.js';
+import {FolderIndex} from './folder.model.js';
+import {DBObjectType, FolderType} from '../../types/enums.js';
+import {MetaDataService} from '../metadata/metadata.service.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {GenreTransformService} from '../genre/genre.transform.js';
+import {ExtendedInfo} from '../metadata/metadata.model.js';
+import {GenreBase} from '../genre/genre.model.js';
+import {FolderBase, FolderParent, FolderTag} from './folder-base.model.js';
 
 @InRequestScope
 export class FolderTransformService extends BaseTransformService {

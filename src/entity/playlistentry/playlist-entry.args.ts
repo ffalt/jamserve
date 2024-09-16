@@ -1,6 +1,6 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {PlaylistEntryOrderFields} from '../../types/enums';
-import {OrderByArgs} from '../base/base.args';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {PlaylistEntryOrderFields} from '../../types/enums.js';
+import {OrderByArgs} from '../base/base.args.js';
 import {Field, ID, InputType} from 'type-graphql';
 
 @InputType()

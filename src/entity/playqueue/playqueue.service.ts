@@ -1,13 +1,13 @@
-import {Track} from '../track/track';
+import {Track} from '../track/track.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {User} from '../user/user';
-import {DBObjectType} from '../../types/enums';
-import {NotFoundError} from '../../modules/rest';
-import {Episode} from '../episode/episode';
-import {Base} from '../base/base';
-import {PlayQueueSetArgs} from './playqueue.args';
-import {PlayQueue} from './playqueue';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {User} from '../user/user.js';
+import {DBObjectType} from '../../types/enums.js';
+import {NotFoundError} from '../../modules/rest/index.js';
+import {Episode} from '../episode/episode.js';
+import {Base} from '../base/base.js';
+import {PlayQueueSetArgs} from './playqueue.args.js';
+import {PlayQueue} from './playqueue.js';
 
 @InRequestScope
 export class PlayQueueService {

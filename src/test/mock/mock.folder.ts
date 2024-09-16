@@ -1,4 +1,4 @@
-import {AlbumType, FolderType} from '../../types/enums';
+import {AlbumType, FolderType} from '../../types/enums.js';
 import path from 'path';
 import fse from 'fs-extra';
 import {writeImage} from './mock.image';

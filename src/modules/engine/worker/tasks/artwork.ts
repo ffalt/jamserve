@@ -1,15 +1,15 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix} from '../../../../utils/fs-utils';
-import {Changes} from '../changes';
-import {Artwork} from '../../../../entity/artwork/artwork';
-import {artWorkImageNameToType} from '../../../../utils/artwork-type';
-import {ArtworkImageType} from '../../../../types/enums';
-import {BaseWorker} from './base';
-import {Root} from '../../../../entity/root/root';
-import {Folder} from '../../../../entity/folder/folder';
+import {basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix} from '../../../../utils/fs-utils.js';
+import {Changes} from '../changes.js';
+import {Artwork} from '../../../../entity/artwork/artwork.js';
+import {artWorkImageNameToType} from '../../../../utils/artwork-type.js';
+import {ArtworkImageType} from '../../../../types/enums.js';
+import {BaseWorker} from './base.js';
+import {Root} from '../../../../entity/root/root.js';
+import {Folder} from '../../../../entity/folder/folder.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service';
+import {Orm} from '../../services/orm.service.js';
 
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',

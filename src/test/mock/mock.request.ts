@@ -1,5 +1,5 @@
 import {Chance} from 'chance';
-import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../modules/rest/builder/openapi-helpers';
+import {OpenAPIObject, OperationObject, ParameterObject, SchemaObject} from '../../modules/rest/builder/openapi-helpers.js';
 import refParser from '@apidevtools/json-schema-ref-parser';
 import {v4} from 'uuid';
 

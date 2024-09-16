@@ -1,5 +1,5 @@
-import {EntityManager} from './manager';
-import {EntityData, EntityName, IDEntity} from '../typings';
+import {EntityManager} from './manager.js';
+import {EntityData, EntityName, IDEntity} from '../typings.js';
 import {FindOptions} from 'sequelize';
 
 export class EntityRepository<Entity extends IDEntity<Entity>> {

@@ -1,22 +1,22 @@
-import {Root, RootQL} from '../root/root';
-import {Folder, FolderQL} from '../folder/folder';
-import {Series, SeriesQL} from '../series/series';
-import {Album, AlbumQL} from '../album/album';
-import {Artist, ArtistQL} from '../artist/artist';
-import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
-import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
+import {Root, RootQL} from '../root/root.js';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {Series, SeriesQL} from '../series/series.js';
+import {Album, AlbumQL} from '../album/album.js';
+import {Artist, ArtistQL} from '../artist/artist.js';
+import {MediaTagRawQL, Tag, TagQL} from '../tag/tag.js';
+import {Bookmark, BookmarkQL} from '../bookmark/bookmark.js';
 import {Field, Float, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
-import {Base, PaginatedResponse} from '../base/base';
-import {State, StateQL} from '../state/state';
-import {Waveform, WaveformQL} from '../waveform/waveform';
-import {TrackHealthHint} from '../health/health.model';
-import {MediaTagRaw} from '../tag/tag.model';
-import {TrackLyrics} from './track.model';
-import {PlayQueueEntry} from '../playqueueentry/playqueue-entry';
-import {PlaylistEntry} from '../playlistentry/playlist-entry';
-import {BookmarkOrderFields} from '../../types/enums';
-import {Genre, GenreQL} from '../genre/genre';
+import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import {Base, PaginatedResponse} from '../base/base.js';
+import {State, StateQL} from '../state/state.js';
+import {Waveform, WaveformQL} from '../waveform/waveform.js';
+import {TrackHealthHint} from '../health/health.model.js';
+import {MediaTagRaw} from '../tag/tag.model.js';
+import {TrackLyrics} from './track.model.js';
+import {PlayQueueEntry} from '../playqueueentry/playqueue-entry.js';
+import {PlaylistEntry} from '../playlistentry/playlist-entry.js';
+import {BookmarkOrderFields} from '../../types/enums.js';
+import {Genre, GenreQL} from '../genre/genre.js';
 
 @ObjectType()
 @Entity()

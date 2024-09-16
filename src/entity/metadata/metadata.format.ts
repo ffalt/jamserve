@@ -1,4 +1,4 @@
-import {ExtendedInfo} from './metadata.model';
+import {ExtendedInfo} from './metadata.model.js';
 
 export class MetaDataFormat {
 

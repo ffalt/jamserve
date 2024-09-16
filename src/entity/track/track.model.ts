@@ -1,7 +1,7 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {MediaBase} from '../tag/tag.model';
-import {TrackHealthHint} from '../health/health.model';
-import {Page} from '../base/base.model';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {MediaBase} from '../tag/tag.model.js';
+import {TrackHealthHint} from '../health/health.model.js';
+import {Page} from '../base/base.model.js';
 
 @ResultType({description: 'Track Base'})
 export class TrackBase extends MediaBase {

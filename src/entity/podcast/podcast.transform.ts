@@ -1,13 +1,13 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Podcast as ORMPodcast} from './podcast';
-import {IncludesPodcastArgs} from './podcast.args';
-import {User} from '../user/user';
-import {PodcastBase, PodcastIndex, PodcastUpdateStatus} from './podcast.model';
-import {DBObjectType, PodcastStatus} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {PodcastService} from './podcast.service';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Podcast as ORMPodcast} from './podcast.js';
+import {IncludesPodcastArgs} from './podcast.args.js';
+import {User} from '../user/user.js';
+import {PodcastBase, PodcastIndex, PodcastUpdateStatus} from './podcast.model.js';
+import {DBObjectType, PodcastStatus} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {PodcastService} from './podcast.service.js';
 
 @InRequestScope
 export class PodcastTransformService extends BaseTransformService {

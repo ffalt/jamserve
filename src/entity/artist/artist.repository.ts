@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {ArtistOrderFields, DBObjectType} from '../../types/enums';
-import {Artist} from './artist';
-import {OrderHelper} from '../base/base';
-import {ArtistFilterArgs, ArtistOrderArgs} from './artist.args';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {ArtistOrderFields, DBObjectType} from '../../types/enums.js';
+import {Artist} from './artist.js';
+import {OrderHelper} from '../base/base.js';
+import {ArtistFilterArgs, ArtistOrderArgs} from './artist.args.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, ArtistOrderArgs> {
 	objType = DBObjectType.artist;

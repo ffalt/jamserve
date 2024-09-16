@@ -1,9 +1,9 @@
 import {Ctx, FieldResolver, Resolver, Root as GQLRoot} from 'type-graphql';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {PlaylistEntry, PlaylistEntryQL} from './playlist-entry';
-import {Track, TrackQL} from '../track/track';
-import {Episode, EpisodeQL} from '../episode/episode';
-import {Playlist, PlaylistQL} from '../playlist/playlist';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {PlaylistEntry, PlaylistEntryQL} from './playlist-entry.js';
+import {Track, TrackQL} from '../track/track.js';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {Playlist, PlaylistQL} from '../playlist/playlist.js';
 
 @Resolver(PlaylistEntryQL)
 export class PlaylistEntryResolver {

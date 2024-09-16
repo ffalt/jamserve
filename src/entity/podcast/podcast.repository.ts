@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, PodcastOrderFields} from '../../types/enums';
-import {Podcast} from './podcast';
-import {OrderHelper} from '../base/base';
-import {User} from '../user/user';
-import {PodcastFilterArgs, PodcastOrderArgs} from './podcast.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, PodcastOrderFields} from '../../types/enums.js';
+import {Podcast} from './podcast.js';
+import {OrderHelper} from '../base/base.js';
+import {User} from '../user/user.js';
+import {PodcastFilterArgs, PodcastOrderArgs} from './podcast.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs, PodcastOrderArgs> {
 	objType = DBObjectType.podcast;

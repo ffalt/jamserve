@@ -1,7 +1,7 @@
-import {Base, Page} from '../base/base.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {MediaBase} from '../tag/tag.model';
+import {Base, Page} from '../base/base.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {MediaBase} from '../tag/tag.model.js';
 
 @ResultType({description: 'Playlist'})
 export class PlaylistBase extends Base {

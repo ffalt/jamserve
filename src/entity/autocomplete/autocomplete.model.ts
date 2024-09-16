@@ -1,4 +1,4 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
 
 @ResultType({description: 'AutoComplete Entry'})
 export class AutoCompleteEntry {

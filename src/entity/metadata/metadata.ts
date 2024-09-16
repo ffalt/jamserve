@@ -1,6 +1,6 @@
-import {MetaDataType} from '../../types/enums';
-import {Entity, Property} from '../../modules/orm';
-import {Base} from '../base/base';
+import {MetaDataType} from '../../types/enums.js';
+import {Entity, Property} from '../../modules/orm/index.js';
+import {Base} from '../base/base.js';
 
 @Entity()
 export class MetaData extends Base {

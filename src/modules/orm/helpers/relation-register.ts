@@ -1,6 +1,6 @@
-import {findType} from './findType';
-import {getMetadataStorage} from '../metadata';
-import {FieldOptions, ReturnTypeFunc} from '../definitions/types';
+import {findType} from './findType.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {FieldOptions, ReturnTypeFunc} from '../definitions/types.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function registerRelation(

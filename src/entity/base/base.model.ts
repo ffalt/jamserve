@@ -1,6 +1,6 @@
-import {State} from '../state/state.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {State} from '../state/state.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ResultType()
 export class Base {

@@ -1,13 +1,13 @@
-import {Session} from '../session/session';
-import {Bookmark} from '../bookmark/bookmark';
-import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue';
+import {Session} from '../session/session.js';
+import {Bookmark} from '../bookmark/bookmark.js';
+import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue.js';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {State} from '../state/state';
-import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference} from '../../modules/orm';
-import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {BookmarkOrderFields, SessionOrderFields, UserRole} from '../../types/enums';
-import {Playlist} from '../playlist/playlist';
-import {UserStatsQL} from '../stats/stats';
+import {State} from '../state/state.js';
+import {Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base.js';
+import {BookmarkOrderFields, SessionOrderFields, UserRole} from '../../types/enums.js';
+import {Playlist} from '../playlist/playlist.js';
+import {UserStatsQL} from '../stats/stats.js';
 
 @ObjectType()
 @Entity()

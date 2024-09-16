@@ -1,4 +1,4 @@
-import {spawnTool} from '../../../utils/tool';
+import {spawnTool} from '../../../utils/tool.js';
 
 export interface MP3ValWarning {
 	offset?: string;

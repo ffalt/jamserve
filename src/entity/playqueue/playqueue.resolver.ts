@@ -1,7 +1,7 @@
 import {Root as GQLRoot, Ctx, FieldResolver, Int, Query, Resolver} from 'type-graphql';
-import {PlayQueue, PlayQueueQL} from './playqueue';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entry';
+import {PlayQueue, PlayQueueQL} from './playqueue.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {PlayQueueEntry, PlayQueueEntryQL} from '../playqueueentry/playqueue-entry.js';
 
 @Resolver(PlayQueueQL)
 export class PlayQueueResolver {

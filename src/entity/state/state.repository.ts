@@ -1,9 +1,9 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {State} from './state';
-import {User} from '../user/user';
-import {FindOptions, OrderItem} from '../../modules/orm';
-import {DefaultOrderArgs} from '../base/base.args';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {State} from './state.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem} from '../../modules/orm/index.js';
+import {DefaultOrderArgs} from '../base/base.args.js';
 
 export class StateRepository extends BaseRepository<State, void, DefaultOrderArgs> {
 	objType = DBObjectType.state;

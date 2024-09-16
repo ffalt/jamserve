@@ -1,13 +1,13 @@
-import {Root} from '../../../../entity/root/root';
-import {RootScanStrategy} from '../../../../types/enums';
-import {DirScanner} from '../../../../utils/scan-dir';
-import {ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan} from '../scan';
-import {Changes} from '../changes';
-import {BaseWorker} from './base';
+import {Root} from '../../../../entity/root/root.js';
+import {RootScanStrategy} from '../../../../types/enums.js';
+import {DirScanner} from '../../../../utils/scan-dir.js';
+import {ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan} from '../scan.js';
+import {Changes} from '../changes.js';
+import {BaseWorker} from './base.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service';
-import {MergeNode, WorkerMergeScan} from '../merge-scan';
-import {Folder} from '../../../../entity/folder/folder';
+import {Orm} from '../../services/orm.service.js';
+import {MergeNode, WorkerMergeScan} from '../merge-scan.js';
+import {Folder} from '../../../../entity/folder/folder.js';
 
 @InRequestScope
 export class RootWorker extends BaseWorker {

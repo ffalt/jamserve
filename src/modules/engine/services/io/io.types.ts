@@ -1,5 +1,5 @@
-import {Changes} from '../../worker/changes';
-import {WorkerRequestParameters} from '../worker/worker.types';
+import {Changes} from '../../worker/changes.js';
+import {WorkerRequestParameters} from '../worker/worker.types.js';
 
 export interface RootStatus {
 	lastScan: number;

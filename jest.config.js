@@ -8,6 +8,9 @@ export default {
 	"roots": [
 		"<rootDir>/src"
 	],
+	moduleNameMapper: {
+		"^(\\.\\.?\\/.+)\\.jsx?$": "$1"
+	},
 	transform: {
 		"^.+\\.tsx?$": [`ts-jest`,
 			{

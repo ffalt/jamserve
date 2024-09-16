@@ -1,14 +1,14 @@
-import {MethodMetadata} from '../definitions/method-metadata';
-import {RestContext} from '../helpers/context';
-import {GenericError, UnauthError} from './express-error';
-import {ApiBaseResponder} from './express-responder';
-import {getMetadataStorage} from '../metadata';
-import {logger} from '../../../utils/logger';
-import {ExpressParameters} from './express-parameters';
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {ControllerClassMetadata} from '../definitions/controller-metadata';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {RestContext} from '../helpers/context.js';
+import {GenericError, UnauthError} from './express-error.js';
+import {ApiBaseResponder} from './express-responder.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {logger} from '../../../utils/logger.js';
+import {ExpressParameters} from './express-parameters.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
 import express, {Router} from 'express';
-import {processCustomPathParameters} from './express-path-parameters';
+import {processCustomPathParameters} from './express-path-parameters.js';
 
 const log = logger('RestAPI');
 

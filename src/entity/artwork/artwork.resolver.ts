@@ -1,8 +1,8 @@
 import {Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver} from 'type-graphql';
-import {Artwork, ArtworkPageQL, ArtworkQL} from './artwork';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {Folder, FolderQL} from '../folder/folder';
-import {ArtworksArgsQL} from './artwork.args';
+import {Artwork, ArtworkPageQL, ArtworkQL} from './artwork.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {ArtworksArgsQL} from './artwork.args.js';
 
 @Resolver(ArtworkQL)
 export class ArtworkResolver {

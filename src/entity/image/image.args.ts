@@ -1,5 +1,5 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ImageFormatType} from '../../types/enums';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {ImageFormatType} from '../../types/enums.js';
 
 @ObjParamsType()
 export class ImageSizeArgs {

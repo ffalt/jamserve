@@ -1,5 +1,5 @@
 import session, {Cookie} from 'express-session';
-import { User as OwnUser } from '../entity/user/user';
+import { User as OwnUser } from '../entity/user/user.js';
 
 export interface SessionData extends Partial<session.SessionData> {
 	passport: { user: string };

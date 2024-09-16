@@ -1,16 +1,16 @@
-import {Session} from '../session/session.model';
-import {BodyParams, Controller, Ctx, Post, UnauthError} from '../../modules/rest';
+import {Session} from '../session/session.model.js';
+import {BodyParams, Controller, Ctx, Post, UnauthError} from '../../modules/rest/index.js';
 import passport from 'passport';
-import {generateJWT, jwtHash} from '../../utils/jwt';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {CredentialsArgs} from './auth.args';
-import {UserRole} from '../../types/enums';
-import {logger} from '../../utils/logger';
-import {Context} from '../../modules/engine/rest/context';
-import {User} from '../user/user';
-import {EngineService} from '../../modules/engine/services/engine.service';
+import {generateJWT, jwtHash} from '../../utils/jwt.js';
+import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
+import {CredentialsArgs} from './auth.args.js';
+import {UserRole} from '../../types/enums.js';
+import {logger} from '../../utils/logger.js';
+import {Context} from '../../modules/engine/rest/context.js';
+import {User} from '../user/user.js';
+import {EngineService} from '../../modules/engine/services/engine.service.js';
 import express from 'express';
-import {SessionData} from '../../types/express';
+import {SessionData} from '../../types/express.js';
 
 const log = logger('AuthController');
 

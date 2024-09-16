@@ -1,4 +1,4 @@
-import {DescriptionOptions, ReturnTypeFunc} from '../definitions/types';
+import {DescriptionOptions, ReturnTypeFunc} from '../definitions/types.js';
 
 export interface TypeDecoratorParams<T> {
 	options: Partial<T>;

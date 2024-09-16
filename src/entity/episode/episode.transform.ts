@@ -1,13 +1,13 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure} from './episode';
-import {IncludesEpisodeArgs} from './episode.args';
-import {User} from '../user/user';
-import {EpisodeBase, EpisodeUpdateStatus} from './episode.model';
-import {DBObjectType, JamObjectType, PodcastStatus} from '../../types/enums';
-import {EpisodeService} from './episode.service';
-import {AudioModule} from '../../modules/audio/audio.module';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure} from './episode.js';
+import {IncludesEpisodeArgs} from './episode.args.js';
+import {User} from '../user/user.js';
+import {EpisodeBase, EpisodeUpdateStatus} from './episode.model.js';
+import {DBObjectType, JamObjectType, PodcastStatus} from '../../types/enums.js';
+import {EpisodeService} from './episode.service.js';
+import {AudioModule} from '../../modules/audio/audio.module.js';
 
 @InRequestScope
 export class EpisodeTransformService extends BaseTransformService {

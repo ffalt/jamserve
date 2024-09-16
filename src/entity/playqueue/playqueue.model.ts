@@ -1,6 +1,6 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {MediaBase} from '../tag/tag.model';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {MediaBase} from '../tag/tag.model.js';
 
 @ResultType({description: 'PlayQueue'})
 export class PlayQueueBase {

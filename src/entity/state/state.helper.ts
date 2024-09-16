@@ -1,8 +1,8 @@
-import {State} from './state';
-import {DBObjectType} from '../../types/enums';
-import {User} from '../user/user';
+import {State} from './state.js';
+import {DBObjectType} from '../../types/enums.js';
+import {User} from '../user/user.js';
 import seq from 'sequelize';
-import {EntityManager, EntityRepository} from '../../modules/orm';
+import {EntityManager, EntityRepository} from '../../modules/orm/index.js';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
 export class StateHelper {

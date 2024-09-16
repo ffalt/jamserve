@@ -1,5 +1,5 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 import {ArgsType, Field, Float} from 'type-graphql';
 
 @ObjParamsType()

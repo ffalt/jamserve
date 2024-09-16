@@ -1,7 +1,7 @@
 import {Arg, Ctx, ID, Query, Resolver} from 'type-graphql';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {ExtendedInfoQL, ExtendedInfoResult, ExtendedInfoResultQL} from './metadata.model';
-import {FolderType} from '../../types/enums';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {ExtendedInfoQL, ExtendedInfoResult, ExtendedInfoResultQL} from './metadata.model.js';
+import {FolderType} from '../../types/enums.js';
 
 @Resolver(ExtendedInfoQL)
 export class MetadataResolver {

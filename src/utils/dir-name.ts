@@ -1,5 +1,5 @@
 import path from 'path';
-import {containsFolderSystemChars, replaceFolderSystemChars} from './fs-utils';
+import {containsFolderSystemChars, replaceFolderSystemChars} from './fs-utils.js';
 
 export function splitDirectoryName(name: string): { title: string; year?: number } {
 	const result: { title: string; year?: number } = {title: path.basename(name).trim()};

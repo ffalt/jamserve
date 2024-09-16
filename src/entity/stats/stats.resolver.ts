@@ -1,7 +1,7 @@
 import {Args, Ctx, Query, Resolver} from 'type-graphql';
-import {StatsQL} from './stats';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {StatsArgs} from './stats.args';
+import {StatsQL} from './stats.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {StatsArgs} from './stats.args.js';
 
 @Resolver(StatsQL)
 export class StatsResolver {

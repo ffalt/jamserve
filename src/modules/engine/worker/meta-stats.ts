@@ -1,11 +1,11 @@
 import path from 'path';
-import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
-import {MetaStatBuilder} from '../../../utils/stats-builder';
-import {extractAlbumName} from '../../../utils/album-name';
-import {MatchTrack} from './scan';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
-import {Folder} from '../../../entity/folder/folder';
-import {MergeNode} from './merge-scan';
+import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums.js';
+import {MetaStatBuilder} from '../../../utils/stats-builder.js';
+import {extractAlbumName} from '../../../utils/album-name.js';
+import {MatchTrack} from './scan.js';
+import {MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
+import {Folder} from '../../../entity/folder/folder.js';
+import {MergeNode} from './merge-scan.js';
 
 export interface MetaStat {
 	artist?: string;

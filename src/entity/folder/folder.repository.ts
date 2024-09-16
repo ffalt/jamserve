@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, FolderOrderFields} from '../../types/enums';
-import {Folder} from './folder';
-import {OrderHelper} from '../base/base';
-import {FolderFilterArgs, FolderOrderArgs} from './folder.args';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, FolderOrderFields} from '../../types/enums.js';
+import {Folder} from './folder.js';
+import {OrderHelper} from '../base/base.js';
+import {FolderFilterArgs, FolderOrderArgs} from './folder.args.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, FolderOrderArgs> {
 	objType = DBObjectType.folder;

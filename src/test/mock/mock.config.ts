@@ -1,8 +1,8 @@
-import {ConfigService, ENVConfig, ENVConfigDB} from '../../modules/engine/services/config.service';
+import {ConfigService, ENVConfig, ENVConfigDB} from '../../modules/engine/services/config.service.js';
 import path from 'path';
 import {ThirdPartyConfig} from '../../config/thirdparty.config';
 import {Container, Scope} from 'typescript-ioc';
-import {OrmService} from '../../modules/engine/services/orm.service';
+import {OrmService} from '../../modules/engine/services/orm.service.js';
 
 export const DBConfigs: Array<ENVConfigDB> = [
 	{dialect: 'sqlite', name: 'jamtest'}

@@ -1,13 +1,13 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Series as ORMSeries} from './series';
-import {IncludesSeriesArgs} from './series.args';
-import {User} from '../user/user';
-import {SeriesBase, SeriesIndex} from './series.model';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {MetaDataService} from '../metadata/metadata.service';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Series as ORMSeries} from './series.js';
+import {IncludesSeriesArgs} from './series.args.js';
+import {User} from '../user/user.js';
+import {SeriesBase, SeriesIndex} from './series.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {MetaDataService} from '../metadata/metadata.service.js';
 
 @InRequestScope
 export class SeriesTransformService extends BaseTransformService {

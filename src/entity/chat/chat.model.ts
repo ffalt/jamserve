@@ -1,5 +1,5 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ResultType({description: 'Chat'})
 export class Chat {

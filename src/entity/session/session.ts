@@ -1,8 +1,8 @@
-import {User} from '../user/user';
-import {SessionMode} from '../../types/enums';
+import {User} from '../user/user.js';
+import {SessionMode} from '../../types/enums.js';
 import {Field, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_DATETIME, Property, Reference} from '../../modules/orm';
-import {Base, PaginatedResponse} from '../base/base';
+import {Entity, ManyToOne, ORM_DATETIME, Property, Reference} from '../../modules/orm/index.js';
+import {Base, PaginatedResponse} from '../base/base.js';
 
 @ObjectType()
 @Entity()

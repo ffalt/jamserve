@@ -1,6 +1,6 @@
-import {ApiBinaryResult, Controller, Ctx, Get, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {MetaDataResult} from './metadata.model';
+import {ApiBinaryResult, Controller, Ctx, Get, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {MetaDataResult} from './metadata.model.js';
 import {
 	AcousticBrainzLookupArgs,
 	AcoustidLookupArgs,
@@ -13,9 +13,9 @@ import {
 	WikidataLookupArgs,
 	WikidataSummaryArgs,
 	WikipediaSummaryArgs
-} from './metadata.args';
-import {Context} from '../../modules/engine/rest/context';
-import {ApiImageTypes} from '../../types/consts';
+} from './metadata.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
+import {ApiImageTypes} from '../../types/consts.js';
 
 @Controller('/metadata', {tags: ['Meta Data'], roles: [UserRole.stream]})
 export class MetaDataController {

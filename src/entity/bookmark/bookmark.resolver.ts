@@ -1,9 +1,9 @@
 import {Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver} from 'type-graphql';
-import {Bookmark, BookmarkPageQL, BookmarkQL} from './bookmark';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {Track, TrackQL} from '../track/track';
-import {Episode, EpisodeQL} from '../episode/episode';
-import {BookmarksArgs} from './bookmark.args';
+import {Bookmark, BookmarkPageQL, BookmarkQL} from './bookmark.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {Track, TrackQL} from '../track/track.js';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {BookmarksArgs} from './bookmark.args.js';
 
 @Resolver(BookmarkQL)
 export class BookmarkResolver {

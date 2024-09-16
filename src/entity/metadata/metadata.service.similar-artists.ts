@@ -1,11 +1,11 @@
-import {MetaDataService} from './metadata.service';
-import {Folder} from '../folder/folder';
-import {LastFM} from '../../modules/audio/clients/lastfm-rest-data';
-import {FolderType, LastFMLookupType} from '../../types/enums';
-import {Artist} from '../artist/artist';
-import {PageResult} from '../base/base';
-import {PageArgs} from '../base/base.args';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {MetaDataService} from './metadata.service.js';
+import {Folder} from '../folder/folder.js';
+import {LastFM} from '../../modules/audio/clients/lastfm-rest-data.js';
+import {FolderType, LastFMLookupType} from '../../types/enums.js';
+import {Artist} from '../artist/artist.js';
+import {PageResult} from '../base/base.js';
+import {PageArgs} from '../base/base.args.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 import SimilarArtist = LastFM.SimilarArtist;
 
 export class MetadataServiceSimilarArtists {

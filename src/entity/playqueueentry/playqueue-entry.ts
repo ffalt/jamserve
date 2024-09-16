@@ -1,9 +1,9 @@
-import {Track, TrackQL} from '../track/track';
-import {Episode, EpisodeQL} from '../episode/episode';
-import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue';
+import {Track, TrackQL} from '../track/track.js';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {PlayQueue, PlayQueueQL} from '../playqueue/playqueue.js';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_INT, Property, Reference} from '../../modules/orm';
-import {Base} from '../base/base';
+import {Entity, ManyToOne, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import {Base} from '../base/base.js';
 
 @ObjectType()
 @Entity()

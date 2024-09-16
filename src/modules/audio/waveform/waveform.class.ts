@@ -6,7 +6,7 @@
  */
 
 import {Stream} from 'stream';
-import {WaveformStream} from './waveform.stream';
+import {WaveformStream} from './waveform.stream.js';
 
 export interface WaveformOptions {
 	samplesPerPixel: number;

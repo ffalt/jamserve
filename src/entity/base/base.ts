@@ -1,6 +1,6 @@
 import {ClassType, Field, ID, Int, ObjectType} from 'type-graphql';
-import {Entity, PrimaryKey} from '../../modules/orm';
-import {OrderByArgs} from './base.args';
+import {Entity, PrimaryKey} from '../../modules/orm/index.js';
+import {OrderByArgs} from './base.args.js';
 
 @ObjectType()
 @Entity({isAbstract: true})

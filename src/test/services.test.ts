@@ -1,15 +1,15 @@
-import {EngineService} from '../modules/engine/services/engine.service';
+import {EngineService} from '../modules/engine/services/engine.service.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import {bindMockConfig, DBConfigs} from './mock/mock.config';
-import {waitEngineStart} from './mock/mock.engine';
-import {initTest} from './init';
-import {MockFeed1} from './mock/mock.rss-feed';
-import {Podcast} from '../entity/podcast/podcast';
-import {mockNock, mockNockURL} from './mock/mock.nock';
-import {Orm} from '../modules/engine/services/orm.service';
+import {bindMockConfig, DBConfigs} from './mock/mock.config.js';
+import {waitEngineStart} from './mock/mock.engine.js';
+import {initTest} from './init.js';
+import {MockFeed1} from './mock/mock.rss-feed.js';
+import {Podcast} from '../entity/podcast/podcast.js';
+import {mockNock, mockNockURL} from './mock/mock.nock.js';
+import {Orm} from '../modules/engine/services/orm.service.js';
 import {Container, Snapshot} from 'typescript-ioc';
-import {PodcastStatus} from '../types/enums';
+import {PodcastStatus} from '../types/enums.js';
 import nock from 'nock';
 
 initTest();

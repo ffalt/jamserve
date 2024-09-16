@@ -1,12 +1,12 @@
 import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from 'jamp3';
 import moment from 'moment';
-import {ImageModule} from '../image/image.module';
-import {FlacInfo} from './formats/flac';
-import {MetaDataBlockPicture} from './formats/flac/lib/block.picture';
-import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment';
-import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable';
-import {ID3v2Frames, RawTag} from './rawTag';
-import {TrackTag} from './audio.format';
+import {ImageModule} from '../image/image.module.js';
+import {FlacInfo} from './formats/flac/index.js';
+import {MetaDataBlockPicture} from './formats/flac/lib/block.picture.js';
+import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment.js';
+import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable.js';
+import {ID3v2Frames, RawTag} from './rawTag.js';
+import {TrackTag} from './audio.format.js';
 
 function prepareFrame(frame: ID3v2Frames.Frame): void {
 	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {

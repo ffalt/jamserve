@@ -1,8 +1,8 @@
-import {ApiBinaryResult, Controller, Ctx, Get, NotFoundError, PathParam, PathParams} from '../../modules/rest';
-import {DownloadFormatType, UserRole} from '../../types/enums';
-import {ApiDownloadTypes} from '../../types/consts';
-import {DownloadArgs} from './download.args';
-import {Context} from '../../modules/engine/rest/context';
+import {ApiBinaryResult, Controller, Ctx, Get, NotFoundError, PathParam, PathParams} from '../../modules/rest/index.js';
+import {DownloadFormatType, UserRole} from '../../types/enums.js';
+import {ApiDownloadTypes} from '../../types/consts.js';
+import {DownloadArgs} from './download.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 

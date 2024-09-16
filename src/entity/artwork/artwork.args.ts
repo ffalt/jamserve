@@ -1,8 +1,8 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {ArtworkImageType, ListType} from '../../types/enums';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {ArtworkImageType, ListType} from '../../types/enums.js';
 import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
-import {DefaultOrderArgs, PaginatedFilterArgs} from '../base/base.args';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {DefaultOrderArgs, PaginatedFilterArgs} from '../base/base.args.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ObjParamsType()
 export class IncludesArtworkArgs {

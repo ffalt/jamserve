@@ -1,11 +1,11 @@
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Bookmark} from './bookmark';
-import {NotFoundError} from '../../modules/rest/';
-import {DBObjectType} from '../../types/enums';
-import {Track} from '../track/track';
-import {Episode} from '../episode/episode';
-import {User} from '../user/user';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Bookmark} from './bookmark.js';
+import {NotFoundError} from '../../modules/rest/index.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Track} from '../track/track.js';
+import {Episode} from '../episode/episode.js';
+import {User} from '../user/user.js';
 import seq from 'sequelize';
 
 @InRequestScope

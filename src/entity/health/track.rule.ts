@@ -1,14 +1,14 @@
 import {ID3v2, IID3V1, IID3V2, IMP3Analyzer} from 'jamp3';
 import path from 'path';
-import {AudioModule, ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module';
-import {flac_test} from '../../modules/audio/tools/flac';
-import {logger} from '../../utils/logger';
-import {Track} from '../track/track';
-import {RuleResult} from './rule';
-import {AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../types/enums';
-import {TrackHealthHint} from './health.model';
-import {Tag} from '../tag/tag';
-import {Folder} from '../folder/folder';
+import {AudioModule, ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module.js';
+import {flac_test} from '../../modules/audio/tools/flac.js';
+import {logger} from '../../utils/logger.js';
+import {Track} from '../track/track.js';
+import {RuleResult} from './rule.js';
+import {AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../types/enums.js';
+import {TrackHealthHint} from './health.model.js';
+import {Tag} from '../tag/tag.js';
+import {Folder} from '../folder/folder.js';
 
 const log = logger('TrackHealth');
 

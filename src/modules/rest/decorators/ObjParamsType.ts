@@ -1,4 +1,4 @@
-import {getMetadataStorage} from '../metadata';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 
 export function ObjParamsType(): ClassDecorator {
   return target => {

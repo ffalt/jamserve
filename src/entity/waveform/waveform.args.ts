@@ -1,5 +1,5 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {WaveformFormatType} from '../../types/enums';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {WaveformFormatType} from '../../types/enums.js';
 
 @ObjParamsType()
 export class WaveformArgs {

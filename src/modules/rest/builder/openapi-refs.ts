@@ -1,17 +1,17 @@
-import {MethodMetadata} from '../definitions/method-metadata';
-import {ControllerClassMetadata} from '../definitions/controller-metadata';
-import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
+import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types.js';
 import {
 	exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas,
 	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject
-} from './openapi-helpers';
-import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {getMetadataStorage} from '../metadata';
-import {EnumMetadata} from '../definitions/enum-metadata';
-import {ClassMetadata} from '../definitions/class-metadata';
-import {getDefaultValue} from '../helpers/default-value';
-import {iterateArguments} from '../helpers/iterate-super';
+} from './openapi-helpers.js';
+import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {EnumMetadata} from '../definitions/enum-metadata.js';
+import {ClassMetadata} from '../definitions/class-metadata.js';
+import {getDefaultValue} from '../helpers/default-value.js';
+import {iterateArguments} from '../helpers/iterate-super.js';
 
 export class OpenApiRefBuilder {
 	private readonly metadata: MetadataStorage;

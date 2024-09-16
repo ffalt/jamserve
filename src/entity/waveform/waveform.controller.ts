@@ -1,12 +1,12 @@
-import {Controller, Ctx, GenericError, Get, QueryParam} from '../../modules/rest';
-import {UserRole, WaveformFormatType} from '../../types/enums';
-import {ApiBinaryResult, NotFoundError} from '../../modules/rest/builder';
-import {PathParam, PathParams, QueryParams} from '../../modules/rest/decorators';
+import {Controller, Ctx, GenericError, Get, QueryParam} from '../../modules/rest/index.js';
+import {UserRole, WaveformFormatType} from '../../types/enums.js';
+import {ApiBinaryResult, NotFoundError} from '../../modules/rest/index.js';
+import {PathParam, PathParams, QueryParams} from '../../modules/rest/index.js';
 import fse from 'fs-extra';
-import {WaveformArgs, WaveformSVGArgs} from './waveform.args';
-import {WaveFormData} from './waveform.model';
-import {ApiWaveformTypes} from '../../types/consts';
-import {Context} from '../../modules/engine/rest/context';
+import {WaveformArgs, WaveformSVGArgs} from './waveform.args.js';
+import {WaveFormData} from './waveform.model.js';
+import {ApiWaveformTypes} from '../../types/consts.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/waveform', {tags: ['Waveform'], roles: [UserRole.stream]})
 export class WaveformController {

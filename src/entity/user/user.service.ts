@@ -1,18 +1,18 @@
-import {User} from './user';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {bcryptComparePassword, bcryptPassword} from '../../utils/bcrypt';
-import {UserRole} from '../../types/enums';
-import {JWTPayload} from '../../utils/jwt';
+import {User} from './user.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {bcryptComparePassword, bcryptPassword} from '../../utils/bcrypt.js';
+import {UserRole} from '../../types/enums.js';
+import {JWTPayload} from '../../utils/jwt.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest';
-import {ConfigService} from '../../modules/engine/services/config.service';
-import {fileDeleteIfExists} from '../../utils/fs-utils';
-import {ImageModule} from '../../modules/image/image.module';
+import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest/index.js';
+import {ConfigService} from '../../modules/engine/services/config.service.js';
+import {fileDeleteIfExists} from '../../utils/fs-utils.js';
+import {ImageModule} from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
-import {UserMutateArgs} from './user.args';
-import {randomString} from '../../utils/random';
+import {UserMutateArgs} from './user.args.js';
+import {randomString} from '../../utils/random.js';
 
 @InRequestScope
 export class UserService {

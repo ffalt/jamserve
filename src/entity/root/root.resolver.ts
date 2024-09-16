@@ -1,13 +1,13 @@
 import {Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {Root, RootPageQL, RootQL, RootStatusQL} from './root';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {RootStatus} from '../../modules/engine/services/io/io.types';
-import {RootsArgs} from './root.args';
-import {Track, TrackQL} from '../track/track';
-import {Folder, FolderQL} from '../folder/folder';
-import {Album, AlbumQL} from '../album/album';
-import {Series, SeriesQL} from '../series/series';
-import {Artist, ArtistQL} from '../artist/artist';
+import {Root, RootPageQL, RootQL, RootStatusQL} from './root.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {RootStatus} from '../../modules/engine/services/io/io.types.js';
+import {RootsArgs} from './root.args.js';
+import {Track, TrackQL} from '../track/track.js';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {Album, AlbumQL} from '../album/album.js';
+import {Series, SeriesQL} from '../series/series.js';
+import {Artist, ArtistQL} from '../artist/artist.js';
 
 @Resolver(RootQL)
 export class RootResolver {

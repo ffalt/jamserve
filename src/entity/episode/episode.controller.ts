@@ -1,11 +1,11 @@
-import {Episode, EpisodePage, EpisodeUpdateStatus} from './episode.model';
-import {BodyParam, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {IncludesPodcastArgs} from '../podcast/podcast.args';
-import {EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs} from './episode.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {logger} from '../../utils/logger';
-import {Context} from '../../modules/engine/rest/context';
+import {Episode, EpisodePage, EpisodeUpdateStatus} from './episode.model.js';
+import {BodyParam, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {IncludesPodcastArgs} from '../podcast/podcast.args.js';
+import {EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs} from './episode.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {logger} from '../../utils/logger.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 const log = logger('EpisodeController');
 

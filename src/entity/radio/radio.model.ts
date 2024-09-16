@@ -1,6 +1,6 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {Base, Page} from '../base/base.model';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {Base, Page} from '../base/base.model.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ResultType({description: 'Radio'})
 export class Radio extends Base {

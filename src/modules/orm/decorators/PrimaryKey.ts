@@ -1,7 +1,7 @@
-import {getMetadataStorage} from '../metadata';
-import {MethodAndPropDecorator, PrimaryFieldOptions} from '../definitions/types';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {MethodAndPropDecorator, PrimaryFieldOptions} from '../definitions/types.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
-import {ORM_ID} from '../definitions/orm-types';
+import {ORM_ID} from '../definitions/orm-types.js';
 
 export function PrimaryKey(): MethodAndPropDecorator;
 export function PrimaryKey(): MethodDecorator | PropertyDecorator {

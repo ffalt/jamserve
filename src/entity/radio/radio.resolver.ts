@@ -1,9 +1,9 @@
 import {Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {DBObjectType} from '../../types/enums';
-import {Radio, RadioIndexQL, RadioPageQL, RadioQL} from './radio';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {RadioIndexArgs, RadiosArgs} from './radio.args';
+import {State, StateQL} from '../state/state.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Radio, RadioIndexQL, RadioPageQL, RadioQL} from './radio.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {RadioIndexArgs, RadiosArgs} from './radio.args.js';
 
 @Resolver(RadioQL)
 export class RadioResolver {

@@ -1,14 +1,14 @@
-import {Changes} from './changes';
-import {MatchNode, OnDemandTrackMatch} from './scan';
-import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums';
-import {splitDirectoryName} from '../../../utils/dir-name';
+import {Changes} from './changes.js';
+import {MatchNode, OnDemandTrackMatch} from './scan.js';
+import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums.js';
+import {splitDirectoryName} from '../../../utils/dir-name.js';
 import path from 'path';
-import {logger} from '../../../utils/logger';
-import {MatchNodeMetaStats, MetaStat} from './meta-stats';
-import {Orm} from '../services/orm.service';
-import {Folder} from '../../../entity/folder/folder';
-import {QHelper} from '../../orm';
-import {Genre} from '../../../entity/genre/genre';
+import {logger} from '../../../utils/logger.js';
+import {MatchNodeMetaStats, MetaStat} from './meta-stats.js';
+import {Orm} from '../services/orm.service.js';
+import {Folder} from '../../../entity/folder/folder.js';
+import {QHelper} from '../../orm/index.js';
+import {Genre} from '../../../entity/genre/genre.js';
 
 const log = logger('IO.MergeScan');
 

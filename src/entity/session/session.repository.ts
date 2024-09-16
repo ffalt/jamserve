@@ -1,10 +1,10 @@
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, SessionOrderFields} from '../../types/enums';
-import {Session} from './session';
-import {User} from '../user/user';
-import {SessionFilterArgs, SessionOrderArgs} from './session.args';
-import {OrderHelper} from '../base/base';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, SessionOrderFields} from '../../types/enums.js';
+import {Session} from './session.js';
+import {User} from '../user/user.js';
+import {SessionFilterArgs, SessionOrderArgs} from './session.args.js';
+import {OrderHelper} from '../base/base.js';
 
 export class SessionRepository extends BaseRepository<Session, SessionFilterArgs, SessionOrderArgs> {
 	objType = DBObjectType.session;

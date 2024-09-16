@@ -1,8 +1,8 @@
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Session as ORMSession} from './session';
-import {UserSession} from './user-session.model';
-import {parseAgent} from './session.utils';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Session as ORMSession} from './session.js';
+import {UserSession} from './user-session.model.js';
+import {parseAgent} from './session.utils.js';
 
 @InRequestScope
 export class SessionTransformService {

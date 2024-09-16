@@ -1,10 +1,10 @@
-import {Session} from './session.model';
-import {BodyParam, Controller, Ctx, Get, Post} from '../../modules/rest/decorators';
-import {SessionUser} from './session-user.model';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {UserSession} from './user-session.model';
-import {UserRole} from '../../types/enums';
-import {Context} from '../../modules/engine/rest/context';
+import {Session} from './session.model.js';
+import {BodyParam, Controller, Ctx, Get, Post} from '../../modules/rest/index.js';
+import {SessionUser} from './session-user.model.js';
+import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
+import {UserSession} from './user-session.model.js';
+import {UserRole} from '../../types/enums.js';
+import {Context} from '../../modules/engine/rest/context.js';
 @Controller('/session', {tags: ['Access']})
 export class SessionController {
 

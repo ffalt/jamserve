@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import {hashMD5} from './md5';
+import {hashMD5} from './md5.js';
 
 export interface JWTPayload {
 	id: string;

@@ -1,4 +1,4 @@
-import {ArtworkImageType} from '../types/enums';
+import {ArtworkImageType} from '../types/enums.js';
 
 export function artWorkImageNameToType(name: string): Array<ArtworkImageType> {
 	const lname = name.toLowerCase();

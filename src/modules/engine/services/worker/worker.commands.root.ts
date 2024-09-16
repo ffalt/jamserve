@@ -1,6 +1,6 @@
-import {WorkerService} from '../worker.service';
-import {WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta, WorkerRequestRemoveRoot, WorkerRequestUpdateRoot} from './worker.types';
-import {Changes} from '../../worker/changes';
+import {WorkerService} from '../worker.service.js';
+import {WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta, WorkerRequestRemoveRoot, WorkerRequestUpdateRoot} from './worker.types.js';
+import {Changes} from '../../worker/changes.js';
 
 export class WorkerCommandsRoot {
 	constructor(private owner: WorkerService) {

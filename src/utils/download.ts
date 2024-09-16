@@ -1,6 +1,6 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
-import {fileDeleteIfExists} from './fs-utils';
+import {fileDeleteIfExists} from './fs-utils.js';
 
 export async function downloadFile(url: string, filename: string): Promise<void> {
 	const response = await fetch(url);

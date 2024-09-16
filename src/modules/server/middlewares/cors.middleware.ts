@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-import {ConfigService} from '../../engine/services/config.service';
+import {ConfigService} from '../../engine/services/config.service.js';
 
 /*
 export function registerPublicCORS(_: express.Router): express.RequestHandler {

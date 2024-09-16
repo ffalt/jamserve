@@ -1,14 +1,14 @@
 import path from 'path';
 import fse from 'fs-extra';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {WaveformResult} from '../../modules/audio/waveform/waveform.module';
-import {DBObjectType, WaveformFormatType} from '../../types/enums';
-import {Track} from '../track/track';
-import {Episode} from '../episode/episode';
-import {Base} from '../base/base';
+import {AudioModule} from '../../modules/audio/audio.module.js';
+import {WaveformResult} from '../../modules/audio/waveform/waveform.module.js';
+import {DBObjectType, WaveformFormatType} from '../../types/enums.js';
+import {Track} from '../track/track.js';
+import {Episode} from '../episode/episode.js';
+import {Base} from '../base/base.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {logger} from '../../utils/logger';
-import {GenericError, InvalidParamError} from '../../modules/rest/builder';
+import {logger} from '../../utils/logger.js';
+import {GenericError, InvalidParamError} from '../../modules/rest/index.js';
 
 const log = logger('Waveform');
 

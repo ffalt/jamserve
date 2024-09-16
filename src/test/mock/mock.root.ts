@@ -1,13 +1,13 @@
 import path from 'path';
 import fse from 'fs-extra';
-import {AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums';
-import {WorkerService} from '../../modules/engine/services/worker.service';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils';
+import {AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums.js';
+import {WorkerService} from '../../modules/engine/services/worker.service.js';
+import {ensureTrailingPathSeparator} from '../../utils/fs-utils.js';
 import {extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder} from './mock.folder';
 import {extendSpecMockTrack, MockTrack} from './mock.track';
-import {Changes} from '../../modules/engine/worker/changes';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {StateHelper} from '../../entity/state/state.helper';
+import {Changes} from '../../modules/engine/worker/changes.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {StateHelper} from '../../entity/state/state.helper.js';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;

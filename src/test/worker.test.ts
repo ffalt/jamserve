@@ -1,16 +1,16 @@
-import {EngineService} from '../modules/engine/services/engine.service';
+import {EngineService} from '../modules/engine/services/engine.service.js';
 import path from 'path';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import {WorkerService} from '../modules/engine/services/worker.service';
-import {ensureTrailingPathSeparator} from '../utils/fs-utils';
-import {AlbumType, ArtworkImageType, DBObjectType, FolderType, RootScanStrategy} from '../types/enums';
-import {randomString} from '../utils/random';
-import {bindMockConfig, DBConfigs} from './mock/mock.config';
-import {waitEngineStart} from './mock/mock.engine';
-import {Folder} from '../entity/folder/folder';
-import {mockNock, mockNockURL} from './mock/mock.nock';
-import {Artwork} from '../entity/artwork/artwork';
+import {WorkerService} from '../modules/engine/services/worker.service.js';
+import {ensureTrailingPathSeparator} from '../utils/fs-utils.js';
+import {AlbumType, ArtworkImageType, DBObjectType, FolderType, RootScanStrategy} from '../types/enums.js';
+import {randomString} from '../utils/random.js';
+import {bindMockConfig, DBConfigs} from './mock/mock.config.js';
+import {waitEngineStart} from './mock/mock.engine.js';
+import {Folder} from '../entity/folder/folder.js';
+import {mockNock, mockNockURL} from './mock/mock.nock.js';
+import {Artwork} from '../entity/artwork/artwork.js';
 import {Container} from 'typescript-ioc';
 import {jest} from '@jest/globals';
 
@@ -28,17 +28,17 @@ import {
 	WorkerRequestReplaceArtwork,
 	WorkerRequestUpdateRoot,
 	WorkerRequestWriteTrackTags
-} from '../modules/engine/services/worker/worker.types';
-import {Track} from '../entity/track/track';
+} from '../modules/engine/services/worker/worker.types.js';
+import {Track} from '../entity/track/track.js';
 import {mockImage, writeMockImage} from './mock/mock.image';
 import {buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot} from './mock/mock.root';
 import {writeMockFolder} from './mock/mock.folder';
 import {initTest} from './init';
 import {expectChanges, validateMockRoot} from './mock/mock.changes';
-import {Orm} from '../modules/engine/services/orm.service';
+import {Orm} from '../modules/engine/services/orm.service.js';
 import {v4} from 'uuid';
 import nock from 'nock';
-import {StateHelper} from '../entity/state/state.helper';
+import {StateHelper} from '../entity/state/state.helper.js';
 
 const UNKNOWN_UUID = v4();
 

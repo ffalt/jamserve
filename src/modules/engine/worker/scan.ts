@@ -1,20 +1,20 @@
-import {logger} from '../../../utils/logger';
-import {ScanDir, ScanFile} from '../../../utils/scan-dir';
-import {Folder} from '../../../entity/folder/folder';
-import {Root} from '../../../entity/root/root';
-import {Changes} from './changes';
-import {FileTyp, FolderType} from '../../../types/enums';
-import {splitDirectoryName} from '../../../utils/dir-name';
-import {Track} from '../../../entity/track/track';
+import {logger} from '../../../utils/logger.js';
+import {ScanDir, ScanFile} from '../../../utils/scan-dir.js';
+import {Folder} from '../../../entity/folder/folder.js';
+import {Root} from '../../../entity/root/root.js';
+import {Changes} from './changes.js';
+import {FileTyp, FolderType} from '../../../types/enums.js';
+import {splitDirectoryName} from '../../../utils/dir-name.js';
+import {Track} from '../../../entity/track/track.js';
 import path from 'path';
-import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils';
-import {AudioModule} from '../../audio/audio.module';
-import {Orm} from '../services/orm.service';
-import {Artwork} from '../../../entity/artwork/artwork';
-import {artWorkImageNameToType} from '../../../utils/artwork-type';
-import {ImageModule} from '../../image/image.module';
+import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils.js';
+import {AudioModule} from '../../audio/audio.module.js';
+import {Orm} from '../services/orm.service.js';
+import {Artwork} from '../../../entity/artwork/artwork.js';
+import {artWorkImageNameToType} from '../../../utils/artwork-type.js';
+import {ImageModule} from '../../image/image.module.js';
 import moment from 'moment';
-import {TrackUpdater} from './tasks/track';
+import {TrackUpdater} from './tasks/track.js';
 
 const log = logger('IO.Scan');
 

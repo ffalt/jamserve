@@ -1,9 +1,9 @@
-import {EntityMetadata} from '../definitions/entity-metadata';
+import {EntityMetadata} from '../definitions/entity-metadata.js';
 import seq, {Sequelize, DataType, ModelAttributeColumnOptions, ModelOptions} from 'sequelize';
-import {PropertyMetadata} from '../definitions/property-metadata';
-import {ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT} from '..';
-import {ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions} from '../definitions/types';
-import {MetadataStorage} from '../metadata/metadata-storage';
+import {PropertyMetadata} from '../definitions/property-metadata.js';
+import {ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT} from '../definitions/orm-types.js';
+import {ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions} from '../definitions/types.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
 
 export class DBModel {
 

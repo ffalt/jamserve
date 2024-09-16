@@ -1,7 +1,7 @@
-import {TranscoderStream} from './transcoder-stream';
-import {IDFolderCache} from '../../../utils/id-file-cache';
-import {logger} from '../../../utils/logger';
-import {AudioFormatType} from '../../../types/enums';
+import {TranscoderStream} from './transcoder-stream.js';
+import {IDFolderCache} from '../../../utils/id-file-cache.js';
+import {logger} from '../../../utils/logger.js';
+import {AudioFormatType} from '../../../types/enums.js';
 
 const log = logger('Audio:Transcoder');
 

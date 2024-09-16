@@ -1,7 +1,7 @@
-import {findType} from '../helpers/findType';
-import {getMetadataStorage} from '../metadata';
-import {getTypeDecoratorParams} from '../helpers/decorators';
-import {FieldOptions, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types';
+import {findType} from '../helpers/findType.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {getTypeDecoratorParams} from '../helpers/decorators.js';
+import {FieldOptions, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function Property(): MethodAndPropDecorator;

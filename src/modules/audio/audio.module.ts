@@ -1,25 +1,25 @@
-import {fileSuffix} from '../../utils/fs-utils';
-import {ImageModule} from '../image/image.module';
-import {FORMAT, TrackMedia, TrackTag} from './audio.format';
-import {AcousticbrainzClient} from './clients/acousticbrainz-client';
-import {AcoustidClient} from './clients/acoustid-client';
-import {CoverArtArchiveClient} from './clients/coverartarchive-client';
-import {LastFMClient} from './clients/lastfm-client';
-import {LyricsOVHClient} from './clients/lyricsovh-client';
-import {MusicbrainzClient} from './clients/musicbrainz-client';
-import {WikipediaClient} from './clients/wikipedia-client';
-import {AudioModuleFLAC} from './formats/flac.module';
-import {AudioModuleMP3} from './formats/mp3.module';
-import {probe} from './tools/ffprobe';
-import {TranscoderModule} from './transcoder/transcoder.module';
-import {WaveformModule} from './waveform/waveform.module';
-import {AudioFormatType, TagFormatType} from '../../types/enums';
-import {SettingsService} from '../../entity/settings/settings.service';
-import {RawTag} from './rawTag';
-import {ConfigService} from '../engine/services/config.service';
+import {fileSuffix} from '../../utils/fs-utils.js';
+import {ImageModule} from '../image/image.module.js';
+import {FORMAT, TrackMedia, TrackTag} from './audio.format.js';
+import {AcousticbrainzClient} from './clients/acousticbrainz-client.js';
+import {AcoustidClient} from './clients/acoustid-client.js';
+import {CoverArtArchiveClient} from './clients/coverartarchive-client.js';
+import {LastFMClient} from './clients/lastfm-client.js';
+import {LyricsOVHClient} from './clients/lyricsovh-client.js';
+import {MusicbrainzClient} from './clients/musicbrainz-client.js';
+import {WikipediaClient} from './clients/wikipedia-client.js';
+import {AudioModuleFLAC} from './formats/flac.module.js';
+import {AudioModuleMP3} from './formats/mp3.module.js';
+import {probe} from './tools/ffprobe.js';
+import {TranscoderModule} from './transcoder/transcoder.module.js';
+import {WaveformModule} from './waveform/waveform.module.js';
+import {AudioFormatType, TagFormatType} from '../../types/enums.js';
+import {SettingsService} from '../../entity/settings/settings.service.js';
+import {RawTag} from './rawTag.js';
+import {ConfigService} from '../engine/services/config.service.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {AdminSettingsExternal} from '../../entity/admin/admin';
-import {GpodderClient} from './clients/gpodder-client';
+import {AdminSettingsExternal} from '../../entity/admin/admin.js';
+import {GpodderClient} from './clients/gpodder-client.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }

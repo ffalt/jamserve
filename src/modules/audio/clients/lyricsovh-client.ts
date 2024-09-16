@@ -1,5 +1,5 @@
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
+import {logger} from '../../../utils/logger.js';
+import {WebserviceClient} from '../../../utils/webservice-client.js';
 import {Response} from 'node-fetch';
 
 const log = logger('LyricsOVHClient');

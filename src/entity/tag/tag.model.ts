@@ -1,8 +1,8 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {Base} from '../base/base.model';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {JamObjectType} from '../../types/enums';
-import {GenreBase} from '../genre/genre.model';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {Base} from '../base/base.model.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {JamObjectType} from '../../types/enums.js';
+import {GenreBase} from '../genre/genre.model.js';
 
 @ResultType({description: 'Media Raw Tag'})
 export class MediaTagRaw {

@@ -1,8 +1,8 @@
 import express from 'express';
 import session from 'express-session';
-import {ConfigService} from '../../engine/services/config.service';
-import {ExpressSessionStore} from './session-store';
-import {SessionService} from '../../../entity/session/session.service';
+import {ConfigService} from '../../engine/services/config.service.js';
+import {ExpressSessionStore} from './session-store.js';
+import {SessionService} from '../../../entity/session/session.service.js';
 
 export function useSessionMiddleware(configService: ConfigService, sessionService: SessionService): express.RequestHandler {
 	return session({

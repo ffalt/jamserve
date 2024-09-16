@@ -1,8 +1,8 @@
-import {Controller, Ctx, Get, QueryParams} from '../../modules/rest/decorators';
-import {AutoComplete} from './autocomplete.model';
-import {UserRole} from '../../types/enums';
-import {AutoCompleteFilterArgs} from './autocomplete.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Controller, Ctx, Get, QueryParams} from '../../modules/rest/index.js';
+import {AutoComplete} from './autocomplete.model.js';
+import {UserRole} from '../../types/enums.js';
+import {AutoCompleteFilterArgs} from './autocomplete.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/autocomplete', {tags: ['Various'], roles: [UserRole.stream]})
 export class AutocompleteController {

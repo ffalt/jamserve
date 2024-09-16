@@ -1,5 +1,5 @@
-import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
-import {AcousticBrainz} from './acousticbrainz-rest-data';
+import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client.js';
+import {AcousticBrainz} from './acousticbrainz-rest-data.js';
 
 export class AcousticbrainzClient extends WebserviceJSONClient<JSONRequest, AcousticBrainz.Response> {
 

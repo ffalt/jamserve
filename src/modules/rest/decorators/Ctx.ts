@@ -1,4 +1,4 @@
-import {getMetadataStorage} from '../metadata';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function Ctx(propertyName?: string): ParameterDecorator {

@@ -1,7 +1,7 @@
-import {Base, Page} from '../base/base.model';
-import {ArtworkImageType} from '../../types/enums';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {FolderBase} from '../folder/folder-base.model';
+import {Base, Page} from '../base/base.model.js';
+import {ArtworkImageType} from '../../types/enums.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {FolderBase} from '../folder/folder-base.model.js';
 
 @ResultType({description: 'Artwork'})
 export class ArtworkBase extends Base {

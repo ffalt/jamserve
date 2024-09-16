@@ -1,6 +1,6 @@
-import {WorkerService} from '../worker.service';
-import {WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRefreshFolders, WorkerRequestRenameFolder} from './worker.types';
-import {Changes} from '../../worker/changes';
+import {WorkerService} from '../worker.service.js';
+import {WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRefreshFolders, WorkerRequestRenameFolder} from './worker.types.js';
+import {Changes} from '../../worker/changes.js';
 
 export class WorkerCommandsFolder {
 	constructor(private owner: WorkerService) {

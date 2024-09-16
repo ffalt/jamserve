@@ -1,14 +1,14 @@
-import {CustomPathParameters} from '../definitions/types';
-import {MethodMetadata} from '../definitions/method-metadata';
-import {getMetadataStorage} from '../metadata';
+import {CustomPathParameters} from '../definitions/types.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
-import {ApiBinaryResult} from './express-responder';
+import {ApiBinaryResult} from './express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
 import path from 'path';
-import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
-import {MetadataStorage} from '../metadata/metadata-storage';
+import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
 
 export interface MustacheDataClientCallFunction {
 	name: string;

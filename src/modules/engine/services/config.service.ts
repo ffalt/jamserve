@@ -1,8 +1,8 @@
-import {ThirdPartyConfig, ThirdpartyToolsConfig} from '../../../config/thirdparty.config';
+import {ThirdPartyConfig, ThirdpartyToolsConfig} from '../../../config/thirdparty.config.js';
 import {InRequestScope} from 'typescript-ioc';
 import path from 'path';
-import {FirstStartConfig} from '../../../config/firststart.config';
-import {getMaxAge} from '../../../utils/max-age';
+import {FirstStartConfig} from '../../../config/firststart.config.js';
+import {getMaxAge} from '../../../utils/max-age.js';
 import {Dialect} from 'sequelize';
 import fse from 'fs-extra';
 

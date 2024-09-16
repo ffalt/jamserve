@@ -1,12 +1,12 @@
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Genre as ORMGenre} from './genre';
-import {IncludesGenreArgs} from './genre.args';
-import {User} from '../user/user';
-import {Genre, GenreBase, GenreIndex} from './genre.model';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {BaseTransformService} from '../base/base.transform';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Genre as ORMGenre} from './genre.js';
+import {IncludesGenreArgs} from './genre.args.js';
+import {User} from '../user/user.js';
+import {Genre, GenreBase, GenreIndex} from './genre.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {BaseTransformService} from '../base/base.transform.js';
 
 @InRequestScope
 export class GenreTransformService extends BaseTransformService {

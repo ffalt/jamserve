@@ -1,8 +1,8 @@
-import {BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {State, States} from './state.model';
-import {FavArgs, RateArgs, StatesArgs} from './state.args';
-import {Context} from '../../modules/engine/rest/context';
+import {BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {State, States} from './state.model.js';
+import {FavArgs, RateArgs, StatesArgs} from './state.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 
 @Controller('/state', {tags: ['State'], roles: [UserRole.stream]})

@@ -1,6 +1,6 @@
 import {InRequestScope} from 'typescript-ioc';
-import {Chat as ORMChat} from './chat';
-import {Chat} from './chat.model';
+import {Chat as ORMChat} from './chat.js';
+import {Chat} from './chat.model.js';
 
 @InRequestScope
 export class ChatTransformService {

@@ -1,13 +1,13 @@
-import {logger} from '../../utils/logger';
-import {Album} from '../album/album';
-import {Artist} from '../artist/artist';
-import {Folder} from '../folder/folder';
-import {Series} from '../series/series';
-import {MetaDataService} from './metadata.service';
-import {MetaDataFormat} from './metadata.format';
-import {ExtendedInfo} from './metadata.model';
-import {LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../types/enums';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {logger} from '../../utils/logger.js';
+import {Album} from '../album/album.js';
+import {Artist} from '../artist/artist.js';
+import {Folder} from '../folder/folder.js';
+import {Series} from '../series/series.js';
+import {MetaDataService} from './metadata.service.js';
+import {MetaDataFormat} from './metadata.format.js';
+import {ExtendedInfo} from './metadata.model.js';
+import {LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../types/enums.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 const log = logger('Metadata');
 

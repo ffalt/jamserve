@@ -1,6 +1,6 @@
 import {Arg, Ctx, FieldResolver, ID, Mutation, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {NowPlaying, NowPlayingQL} from './nowplaying';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {NowPlaying, NowPlayingQL} from './nowplaying.js';
 
 @Resolver(NowPlayingQL)
 export class NowPlayingResolver {

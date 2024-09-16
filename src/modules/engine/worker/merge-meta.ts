@@ -1,18 +1,18 @@
-import {MetaMergerCache, MetaMergeTrackInfo} from './meta-cache';
-import {logger} from '../../../utils/logger';
-import {Changes} from './changes';
-import {Root} from '../../../entity/root/root';
-import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
-import {Artist} from '../../../entity/artist/artist';
-import {Orm} from '../services/orm.service';
-import {AlbumType, FolderType} from '../../../types/enums';
-import {Folder} from '../../../entity/folder/folder';
-import {MetaStatBuilder} from '../../../utils/stats-builder';
-import {slugify} from '../../../utils/slug';
-import {Genre} from '../../../entity/genre/genre';
-import {extractAlbumName} from '../../../utils/album-name';
-import {Album} from '../../../entity/album/album';
-import {Track} from '../../../entity/track/track';
+import {MetaMergerCache, MetaMergeTrackInfo} from './meta-cache.js';
+import {logger} from '../../../utils/logger.js';
+import {Changes} from './changes.js';
+import {Root} from '../../../entity/root/root.js';
+import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
+import {Artist} from '../../../entity/artist/artist.js';
+import {Orm} from '../services/orm.service.js';
+import {AlbumType, FolderType} from '../../../types/enums.js';
+import {Folder} from '../../../entity/folder/folder.js';
+import {MetaStatBuilder} from '../../../utils/stats-builder.js';
+import {slugify} from '../../../utils/slug.js';
+import {Genre} from '../../../entity/genre/genre.js';
+import {extractAlbumName} from '../../../utils/album-name.js';
+import {Album} from '../../../entity/album/album.js';
+import {Track} from '../../../entity/track/track.js';
 
 const log = logger('Worker.MetaMerger');
 

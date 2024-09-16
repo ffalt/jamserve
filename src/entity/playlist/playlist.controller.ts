@@ -1,13 +1,13 @@
-import {Playlist, PlaylistIndex, PlaylistPage} from './playlist.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {PlaylistEntryPage} from '../playlistentry/playlist-entry.model';
-import {IncludesTrackArgs} from '../track/track.args';
-import {IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs} from './playlist.args';
-import {IncludesEpisodeArgs} from '../episode/episode.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {PlaylistEntryOrderArgs} from '../playlistentry/playlist-entry.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Playlist, PlaylistIndex, PlaylistPage} from './playlist.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {PlaylistEntryPage} from '../playlistentry/playlist-entry.model.js';
+import {IncludesTrackArgs} from '../track/track.args.js';
+import {IncludesPlaylistArgs, PlaylistFilterArgs, PlaylistMutateArgs, PlaylistOrderArgs} from './playlist.args.js';
+import {IncludesEpisodeArgs} from '../episode/episode.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {PlaylistEntryOrderArgs} from '../playlistentry/playlist-entry.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/playlist', {tags: ['Playlist'], roles: [UserRole.stream]})
 export class PlaylistController {

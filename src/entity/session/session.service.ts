@@ -1,9 +1,9 @@
-import {OrmService} from '../../modules/engine/services/orm.service';
-import {Session} from './session';
-import {SessionMode} from '../../types/enums';
+import {OrmService} from '../../modules/engine/services/orm.service.js';
+import {Session} from './session.js';
+import {SessionMode} from '../../types/enums.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import seq from 'sequelize';
-import {SessionData} from '../../types/express';
+import {SessionData} from '../../types/express.js';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;

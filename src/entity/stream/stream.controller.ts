@@ -1,9 +1,8 @@
-import {Controller, Ctx, Get} from '../../modules/rest';
-import {AudioFormatType, UserRole} from '../../types/enums';
-import {ApiBinaryResult, NotFoundError, PathParam, PathParams} from '../../modules/rest/';
-import {StreamArgs} from './stream.args';
-import {ApiStreamTypes} from '../../types/consts';
-import {Context} from '../../modules/engine/rest/context';
+import {Controller, Ctx, Get, ApiBinaryResult, NotFoundError, PathParam, PathParams} from '../../modules/rest/index.js';
+import {AudioFormatType, UserRole} from '../../types/enums.js';
+import {StreamArgs} from './stream.args.js';
+import {ApiStreamTypes} from '../../types/consts.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/stream', {tags: ['Stream'], roles: [UserRole.stream]})
 export class StreamController {

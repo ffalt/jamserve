@@ -1,10 +1,10 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Series} from './series';
-import {ApiBinaryResult} from '../../modules/rest';
-import {FolderService} from '../folder/folder.service';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {FolderType} from '../../types/enums';
-import {Folder} from '../folder/folder';
+import {Series} from './series.js';
+import {ApiBinaryResult} from '../../modules/rest/index.js';
+import {FolderService} from '../folder/folder.service.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {FolderType} from '../../types/enums.js';
+import {Folder} from '../folder/folder.js';
 
 @InRequestScope
 export class SeriesService {

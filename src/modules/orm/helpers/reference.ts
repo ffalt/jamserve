@@ -1,6 +1,6 @@
-import {AnyEntity, IDEntity} from '../typings';
-import {PropertyMetadata} from '../definitions/property-metadata';
-import {ManagedEntity} from '../definitions/managed-entity';
+import {AnyEntity, IDEntity} from '../typings.js';
+import {PropertyMetadata} from '../definitions/property-metadata.js';
+import {ManagedEntity} from '../definitions/managed-entity.js';
 
 export class Reference<T extends IDEntity<T>> {
 	private initialized = false;

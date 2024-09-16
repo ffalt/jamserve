@@ -1,6 +1,6 @@
-import {ControllerClassMetadata} from './controller-metadata';
-import {ParamMetadata} from './param-metadata';
-import {AuthOptions, BinaryOptions, CustomPathParameterOptions, TypeOptions, TypeValueThunk} from './types';
+import {ControllerClassMetadata} from './controller-metadata.js';
+import {ParamMetadata} from './param-metadata.js';
+import {AuthOptions, BinaryOptions, CustomPathParameterOptions, TypeOptions, TypeValueThunk} from './types.js';
 
 export interface MethodMetadata extends CustomPathParameterOptions, BinaryOptions, AuthOptions {
 	methodName: string;

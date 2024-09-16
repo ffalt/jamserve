@@ -1,7 +1,7 @@
-import {getMetadataStorage} from '../metadata';
-import {MethodOptions, ReturnTypeFunc} from '../definitions/types';
-import {getMethodMetadata} from '../helpers/method-metadata';
-import {getTypeDecoratorParams} from '../helpers/decorators';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {MethodOptions, ReturnTypeFunc} from '../definitions/types.js';
+import {getMethodMetadata} from '../helpers/method-metadata.js';
+import {getTypeDecoratorParams} from '../helpers/decorators.js';
 
 export function Post(
 	route: string,

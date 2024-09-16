@@ -1,11 +1,11 @@
 import express from 'express';
-import {getMetadataStorage} from '../metadata';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
-import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs-utils';
+import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
-import {ExpressMethod, RestOptions, RouteInfo} from './express-method';
-import {MethodMetadata} from '../definitions/method-metadata';
-import {iterateControllers} from '../helpers/iterate-super';
+import {ExpressMethod, RestOptions, RouteInfo} from './express-method.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {iterateControllers} from '../helpers/iterate-super.js';
 
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];

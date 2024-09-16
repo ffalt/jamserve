@@ -1,9 +1,9 @@
 import fse from 'fs-extra';
 import {ID3v2, IID3V2} from 'jamp3';
 import {parentPort} from 'worker_threads';
-import {fileDeleteIfExists, fileSuffix} from '../../../utils/fs-utils';
-import {rewriteWriteFFmpeg} from '../tools/ffmpeg-rewrite';
-import {AudioFormatType} from '../../../types/enums';
+import {fileDeleteIfExists, fileSuffix} from '../../../utils/fs-utils.js';
+import {rewriteWriteFFmpeg} from '../tools/ffmpeg-rewrite.js';
+import {AudioFormatType} from '../../../types/enums.js';
 
 export async function rewriteAudio(param: string): Promise<void> {
 	const tempFile = `${param}.tmp`;

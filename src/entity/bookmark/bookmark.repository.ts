@@ -1,10 +1,10 @@
-import {Bookmark} from './bookmark';
-import {BaseRepository} from '../base/base.repository';
-import {BookmarkOrderFields, DBObjectType} from '../../types/enums';
-import {BookmarkFilterArgs, BookmarkOrderArgs} from './bookmark.args';
-import {User} from '../user/user';
-import {OrderHelper} from '../base/base';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {Bookmark} from './bookmark.js';
+import {BaseRepository} from '../base/base.repository.js';
+import {BookmarkOrderFields, DBObjectType} from '../../types/enums.js';
+import {BookmarkFilterArgs, BookmarkOrderArgs} from './bookmark.args.js';
+import {User} from '../user/user.js';
+import {OrderHelper} from '../base/base.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterArgs, BookmarkOrderArgs> {
 	objType = DBObjectType.bookmark;

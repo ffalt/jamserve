@@ -1,14 +1,14 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Album as ORMAlbum} from './album';
-import {IncludesAlbumArgs} from './album.args';
-import {User} from '../user/user';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {Album, AlbumIndex} from './album.model';
-import {MetaDataService} from '../metadata/metadata.service';
-import {GenreTransformService} from '../genre/genre.transform';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Album as ORMAlbum} from './album.js';
+import {IncludesAlbumArgs} from './album.args.js';
+import {User} from '../user/user.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {Album, AlbumIndex} from './album.model.js';
+import {MetaDataService} from '../metadata/metadata.service.js';
+import {GenreTransformService} from '../genre/genre.transform.js';
 
 @InRequestScope
 export class AlbumTransformService extends BaseTransformService {

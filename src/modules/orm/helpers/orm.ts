@@ -1,8 +1,8 @@
-import {EntityCache, EntityManager} from './manager';
+import {EntityCache, EntityManager} from './manager.js';
 import seq, {Sequelize} from 'sequelize';
-import {getMetadataStorage} from '../metadata';
-import {ORMConfig} from '../definitions/config';
-import {ModelBuilder} from '../builder/schema';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {ORMConfig} from '../definitions/config.js';
+import {ModelBuilder} from '../builder/schema.js';
 
 export class ORM {
 	public cache = new EntityCache();

@@ -1,5 +1,5 @@
-import {Base} from '../base/base';
-import {Entity, Property} from '../../modules/orm';
+import {Base} from '../base/base.js';
+import {Entity, Property} from '../../modules/orm/index.js';
 
 @Entity()
 export class Settings extends Base {

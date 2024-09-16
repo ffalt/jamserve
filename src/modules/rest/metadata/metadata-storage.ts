@@ -1,12 +1,12 @@
-import {MethodMetadata} from '../definitions/method-metadata';
-import {ResultClassMetadata} from '../definitions/object-class-metdata';
-import {ClassMetadata} from '../definitions/class-metadata';
-import {EnumMetadata} from '../definitions/enum-metadata';
-import {ControllerClassMetadata} from '../definitions/controller-metadata';
-import {FieldMetadata} from '../definitions/field-metadata';
-import {ParamMetadata} from '../definitions/param-metadata';
-import {TypeValue} from '../definitions/types';
-import {ensureReflectMetadataExists} from '../../../utils/reflect';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {ResultClassMetadata} from '../definitions/object-class-metdata.js';
+import {ClassMetadata} from '../definitions/class-metadata.js';
+import {EnumMetadata} from '../definitions/enum-metadata.js';
+import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
+import {FieldMetadata} from '../definitions/field-metadata.js';
+import {ParamMetadata} from '../definitions/param-metadata.js';
+import {TypeValue} from '../definitions/types.js';
+import {ensureReflectMetadataExists} from '../../../utils/reflect.js';
 
 export class MetadataStorage {
 	initialized = false;

@@ -1,6 +1,6 @@
-import {WorkerService} from '../worker.service';
-import {WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRefreshTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags} from './worker.types';
-import {Changes} from '../../worker/changes';
+import {WorkerService} from '../worker.service.js';
+import {WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRefreshTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags} from './worker.types.js';
+import {Changes} from '../../worker/changes.js';
 
 export class WorkerCommandsTrack {
 	constructor(private owner: WorkerService) {

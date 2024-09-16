@@ -1,15 +1,15 @@
-import {DBObjectType} from '../../types/enums';
+import {DBObjectType} from '../../types/enums.js';
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {Album, AlbumIndexQL, AlbumPageQL, AlbumQL} from './album';
-import {Artist, ArtistQL} from '../artist/artist';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {Track, TrackQL} from '../track/track';
-import {Root, RootQL} from '../root/root';
-import {Folder, FolderQL} from '../folder/folder';
-import {Series, SeriesQL} from '../series/series';
-import {AlbumIndexArgsQL, AlbumsArgsQL} from './album.args';
-import {Genre, GenreQL} from '../genre/genre';
+import {State, StateQL} from '../state/state.js';
+import {Album, AlbumIndexQL, AlbumPageQL, AlbumQL} from './album.js';
+import {Artist, ArtistQL} from '../artist/artist.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {Track, TrackQL} from '../track/track.js';
+import {Root, RootQL} from '../root/root.js';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {Series, SeriesQL} from '../series/series.js';
+import {AlbumIndexArgsQL, AlbumsArgsQL} from './album.args.js';
+import {Genre, GenreQL} from '../genre/genre.js';
 
 @Resolver(AlbumQL)
 export class AlbumResolver {

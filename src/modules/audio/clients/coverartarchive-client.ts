@@ -1,5 +1,5 @@
-import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client';
-import {CoverArtArchive} from './coverartarchive-rest-data';
+import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client.js';
+import {CoverArtArchive} from './coverartarchive-rest-data.js';
 import {Response} from 'node-fetch';
 
 export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, CoverArtArchive.Response> {

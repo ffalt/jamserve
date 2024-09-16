@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import {ApiError} from './express-error';
+import {ApiError} from './express-error.js';
 
 export interface StreamData {
 	pipe(stream: express.Response): void;

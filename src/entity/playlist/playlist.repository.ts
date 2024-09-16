@@ -1,9 +1,9 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {Playlist} from './playlist';
-import {User} from '../user/user';
-import {PlaylistFilterArgs, PlaylistOrderArgs} from './playlist.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Playlist} from './playlist.js';
+import {User} from '../user/user.js';
+import {PlaylistFilterArgs, PlaylistOrderArgs} from './playlist.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 // @Repository(Playlist)
 export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterArgs, PlaylistOrderArgs> {

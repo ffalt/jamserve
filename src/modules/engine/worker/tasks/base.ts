@@ -1,9 +1,9 @@
-import {containsFolderSystemChars, fileExt, replaceFolderSystemChars} from '../../../../utils/fs-utils';
+import {containsFolderSystemChars, fileExt, replaceFolderSystemChars} from '../../../../utils/fs-utils.js';
 import path from 'path';
 import fse from 'fs-extra';
-import {ImageModule} from '../../../image/image.module';
-import {AudioModule} from '../../../audio/audio.module';
-import {Root} from '../../../../entity/root/root';
+import {ImageModule} from '../../../image/image.module.js';
+import {AudioModule} from '../../../audio/audio.module.js';
+import {Root} from '../../../../entity/root/root.js';
 import {Inject} from 'typescript-ioc';
 
 export class BaseWorker {

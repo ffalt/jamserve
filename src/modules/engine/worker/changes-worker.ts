@@ -1,11 +1,11 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseWorker} from './tasks/base';
-import {Orm, OrmService} from '../services/orm.service';
-import {Root} from '../../../entity/root/root';
-import {MetaMerger} from './merge-meta';
-import {Base} from '../../../entity/base/base';
-import {Changes, ChangeSet, IdSet} from './changes';
-import {logger} from '../../../utils/logger';
+import {BaseWorker} from './tasks/base.js';
+import {Orm, OrmService} from '../services/orm.service.js';
+import {Root} from '../../../entity/root/root.js';
+import {MetaMerger} from './merge-meta.js';
+import {Base} from '../../../entity/base/base.js';
+import {Changes, ChangeSet, IdSet} from './changes.js';
+import {logger} from '../../../utils/logger.js';
 import moment from 'moment';
 
 const log = logger('IO.Changes');

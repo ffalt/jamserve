@@ -1,7 +1,7 @@
-import {getMetadataStorage} from '../metadata';
-import {ReturnTypeFunc, ValidateOptions} from '../definitions/types';
-import {getTypeDecoratorParams} from '../helpers/decorators';
-import {getParamInfo} from '../helpers/params';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {ReturnTypeFunc, ValidateOptions} from '../definitions/types.js';
+import {getTypeDecoratorParams} from '../helpers/decorators.js';
+import {getParamInfo} from '../helpers/params.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function BodyParams(): ParameterDecorator;

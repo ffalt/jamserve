@@ -1,13 +1,13 @@
-import {DBObjectType, PodcastStatus} from '../../types/enums';
+import {DBObjectType, PodcastStatus} from '../../types/enums.js';
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {Waveform, WaveformQL} from '../waveform/waveform';
-import {Episode, EpisodeChapter, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL} from './episode';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {Tag, TagQL} from '../tag/tag';
-import {Podcast, PodcastQL} from '../podcast/podcast';
-import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {EpisodesArgsQL} from './episode.args';
+import {State, StateQL} from '../state/state.js';
+import {Waveform, WaveformQL} from '../waveform/waveform.js';
+import {Episode, EpisodeChapter, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL} from './episode.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {Tag, TagQL} from '../tag/tag.js';
+import {Podcast, PodcastQL} from '../podcast/podcast.js';
+import {Bookmark, BookmarkQL} from '../bookmark/bookmark.js';
+import {EpisodesArgsQL} from './episode.args.js';
 
 @Resolver(EpisodeQL)
 export class EpisodeResolver {

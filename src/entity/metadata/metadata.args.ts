@@ -1,6 +1,6 @@
-import {CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../types/enums';
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../types/enums.js';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ObjParamsType()
 export class LastFMLookupArgs {

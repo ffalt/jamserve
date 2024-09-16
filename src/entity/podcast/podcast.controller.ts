@@ -1,12 +1,12 @@
-import {Podcast, PodcastDiscover, PodcastDiscoverPage, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus} from './podcast.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {Episode, EpisodePage} from '../episode/episode.model';
-import {IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs} from './podcast.args';
-import {EpisodeOrderArgs, IncludesEpisodeArgs} from '../episode/episode.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {logger} from '../../utils/logger';
-import {Context} from '../../modules/engine/rest/context';
+import {Podcast, PodcastDiscover, PodcastDiscoverPage, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus} from './podcast.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {Episode, EpisodePage} from '../episode/episode.model.js';
+import {IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs} from './podcast.args.js';
+import {EpisodeOrderArgs, IncludesEpisodeArgs} from '../episode/episode.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {logger} from '../../utils/logger.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 const log = logger('PodcastController');
 

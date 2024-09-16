@@ -1,4 +1,4 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
 import {Field, ObjectType} from 'type-graphql';
 
 @ObjectType()

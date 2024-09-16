@@ -1,11 +1,11 @@
 import path from 'path';
-import {fileSuffix, replaceFolderSystemChars} from '../../utils/fs-utils';
-import {RuleResult} from './rule';
-import {AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum} from '../../types/enums';
-import {Folder} from '../folder/folder';
-import {FolderHealthHint} from './health.model';
-import {getFolderDisplayArtwork} from '../folder/folder.service';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {fileSuffix, replaceFolderSystemChars} from '../../utils/fs-utils.js';
+import {RuleResult} from './rule.js';
+import {AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum} from '../../types/enums.js';
+import {Folder} from '../folder/folder.js';
+import {FolderHealthHint} from './health.model.js';
+import {getFolderDisplayArtwork} from '../folder/folder.service.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 interface FolderRuleInfo {
 	id: FolderHealthID;

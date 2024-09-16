@@ -1,4 +1,4 @@
-import {ReturnTypeFunc, SchemaNameOptions} from '../definitions/types';
+import {ReturnTypeFunc, SchemaNameOptions} from '../definitions/types.js';
 
 export interface TypeDecoratorParams<T> {
 	options: Partial<T>;

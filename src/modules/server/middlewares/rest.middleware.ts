@@ -1,11 +1,11 @@
 import express from 'express';
-import {buildRestMeta, restRouter, RestOptions} from '../../rest';
-import {UserRole} from '../../../types/enums';
+import {buildRestMeta, restRouter, RestOptions} from '../../rest/index.js';
+import {UserRole} from '../../../types/enums.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {logger} from '../../../utils/logger';
-import {RestControllers} from '../../engine/rest/controllers';
-import {ConfigService} from '../../engine/services/config.service';
-import {registerRestEnums} from '../../engine/rest/enum-registration';
+import {logger} from '../../../utils/logger.js';
+import {RestControllers} from '../../engine/rest/controllers.js';
+import {ConfigService} from '../../engine/services/config.service.js';
+import {registerRestEnums} from '../../engine/rest/enum-registration.js';
 
 const log = logger('REST');
 

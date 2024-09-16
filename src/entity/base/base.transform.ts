@@ -1,11 +1,11 @@
 import {InRequestScope} from 'typescript-ioc';
-import {IndexResult, IndexResultGroup} from './base';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {State as ORMState} from '../state/state';
-import {State} from '../state/state.model';
-import {DBObjectType} from '../../types/enums';
-import {Tag as ORMTag} from '../tag/tag';
-import {MediaInfo, MediaTag} from '../tag/tag.model';
+import {IndexResult, IndexResultGroup} from './base.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {State as ORMState} from '../state/state.js';
+import {State} from '../state/state.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Tag as ORMTag} from '../tag/tag.js';
+import {MediaInfo, MediaTag} from '../tag/tag.model.js';
 
 @InRequestScope
 export class BaseTransformService {

@@ -1,5 +1,5 @@
-import {MappedByFunc, MethodAndPropDecorator, OneToManyFieldOptions, OneToManyFieldRelation, ReturnTypeFunc} from '../definitions/types';
-import {registerRelation} from '../helpers/relation-register';
+import {MappedByFunc, MethodAndPropDecorator, OneToManyFieldOptions, OneToManyFieldRelation, ReturnTypeFunc} from '../definitions/types.js';
+import {registerRelation} from '../helpers/relation-register.js';
 
 export function OneToMany<T>(
 	returnTypeFunction: ReturnTypeFunc,

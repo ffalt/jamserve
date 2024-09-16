@@ -2,11 +2,11 @@ import express from 'express';
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
 import passport from 'passport';
-import {EngineService} from '../../engine/services/engine.service';
-import {User} from '../../../entity/user/user';
-import {EngineRequest} from './engine.middleware';
-import {logger} from '../../../utils/logger';
-import {hashMD5} from '../../../utils/md5';
+import {EngineService} from '../../engine/services/engine.service.js';
+import {User} from '../../../entity/user/user.js';
+import {EngineRequest} from './engine.middleware.js';
+import {logger} from '../../../utils/logger.js';
+import {hashMD5} from '../../../utils/md5.js';
 
 const log = logger('Passport');
 

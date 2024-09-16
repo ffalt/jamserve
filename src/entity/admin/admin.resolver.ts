@@ -1,7 +1,7 @@
-import {UserRole} from '../../types/enums';
+import {UserRole} from '../../types/enums.js';
 import {Arg, Authorized, Ctx, ID, Query, Resolver} from 'type-graphql';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {AdminChangeQueueInfoQL, AdminSettings, AdminSettingsQL} from './admin';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {AdminChangeQueueInfoQL, AdminSettings, AdminSettingsQL} from './admin.js';
 
 class AdminChangeQueueInfo {
 }

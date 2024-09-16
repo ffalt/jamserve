@@ -1,11 +1,11 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {BaseTransformService} from '../base/base.transform';
-import {User} from '../user/user';
-import {Root as ORMRoot} from './root';
-import {IncludesRootArgs} from './root.args';
-import {Root, RootUpdateStatus} from './root.model';
-import {IoService} from '../../modules/engine/services/io.service';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {BaseTransformService} from '../base/base.transform.js';
+import {User} from '../user/user.js';
+import {Root as ORMRoot} from './root.js';
+import {IncludesRootArgs} from './root.args.js';
+import {Root, RootUpdateStatus} from './root.model.js';
+import {IoService} from '../../modules/engine/services/io.service.js';
 
 @InRequestScope
 export class RootTransformService extends BaseTransformService {

@@ -1,8 +1,8 @@
-import {BodyParams, Controller, Ctx, Get, Post, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {Chat} from './chat.model';
-import {ChatCreateArgs, ChatFilterArgs, ChatRemoveArgs} from './chat.args';
-import {Context} from '../../modules/engine/rest/context';
+import {BodyParams, Controller, Ctx, Get, Post, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {Chat} from './chat.model.js';
+import {ChatCreateArgs, ChatFilterArgs, ChatRemoveArgs} from './chat.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 @Controller('/chat', {tags: ['Chat'], roles: [UserRole.stream]})
 export class ChatController {
 	@Get('/list', () => [Chat], {description: 'Get Chat Messages', summary: 'Get Chat'})

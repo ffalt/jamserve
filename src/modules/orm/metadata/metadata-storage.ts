@@ -1,7 +1,7 @@
-import {EntityMetadata} from '../definitions/entity-metadata';
-import {PropertyMetadata} from '../definitions/property-metadata';
-import {EnumMetadata} from '../../rest/definitions/enum-metadata';
-import {ensureReflectMetadataExists} from '../../../utils/reflect';
+import {EntityMetadata} from '../definitions/entity-metadata.js';
+import {PropertyMetadata} from '../definitions/property-metadata.js';
+import {EnumMetadata} from '../../rest/definitions/enum-metadata.js';
+import {ensureReflectMetadataExists} from '../../../utils/reflect.js';
 
 export class MetadataStorage {
 	entities: EntityMetadata[] = [];

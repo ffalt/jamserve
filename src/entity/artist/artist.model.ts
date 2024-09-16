@@ -1,12 +1,12 @@
-import {Base, Page} from '../base/base.model';
-import {AlbumType} from '../../types/enums';
-import {TrackBase} from '../track/track.model';
-import {SeriesBase} from '../series/series.model';
-import {AlbumBase} from '../album/album.model';
-import {ExtendedInfo} from '../metadata/metadata.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {GenreBase} from '../genre/genre.model';
+import {Base, Page} from '../base/base.model.js';
+import {AlbumType} from '../../types/enums.js';
+import {TrackBase} from '../track/track.model.js';
+import {SeriesBase} from '../series/series.model.js';
+import {AlbumBase} from '../album/album.model.js';
+import {ExtendedInfo} from '../metadata/metadata.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {GenreBase} from '../genre/genre.model.js';
 
 @ResultType({description: 'Artist'})
 export class ArtistBase extends Base {

@@ -1,7 +1,7 @@
-import {SessionUser} from './session-user.model';
-import {ObjField, ResultType} from '../../modules/rest';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {SessionUser} from './session-user.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ResultType({description: 'Session Data'})
 export class Session {

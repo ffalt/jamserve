@@ -1,18 +1,18 @@
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module';
-import {ImageModule} from '../../modules/image/image.module';
-import {Track, TrackHealth} from './track';
-import {logger} from '../../utils/logger';
-import {trackTagToRawTag} from '../../modules/audio/metadata';
-import {processQueue} from '../../utils/queue';
-import {TrackRulesChecker} from '../health/track.rule';
+import {AudioModule} from '../../modules/audio/audio.module.js';
+import {ImageModule} from '../../modules/image/image.module.js';
+import {Track, TrackHealth} from './track.js';
+import {logger} from '../../utils/logger.js';
+import {trackTagToRawTag} from '../../modules/audio/metadata.js';
+import {processQueue} from '../../utils/queue.js';
+import {TrackRulesChecker} from '../health/track.rule.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {RawTag} from '../../modules/audio/rawTag';
-import {ApiBinaryResult} from '../../modules/rest';
-import {FolderService} from '../folder/folder.service';
-import {TrackHealthHint} from '../health/health.model';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {basenameStripExt} from '../../utils/fs-utils';
+import {RawTag} from '../../modules/audio/rawTag.js';
+import {ApiBinaryResult} from '../../modules/rest/index.js';
+import {FolderService} from '../folder/folder.service.js';
+import {TrackHealthHint} from '../health/health.model.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {basenameStripExt} from '../../utils/fs-utils.js';
 
 const log = logger('TrackService');
 

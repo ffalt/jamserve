@@ -1,7 +1,7 @@
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
-import {LastFM} from './lastfm-rest-data';
-import {LastFMClientApiOptions} from './lastfm-client.interface';
+import {logger} from '../../../utils/logger.js';
+import {WebserviceClient} from '../../../utils/webservice-client.js';
+import {LastFM} from './lastfm-rest-data.js';
+import {LastFMClientApiOptions} from './lastfm-client.interface.js';
 import {Response} from 'node-fetch';
 
 const log = logger('LastFM');

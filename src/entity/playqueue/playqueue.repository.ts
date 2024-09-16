@@ -1,9 +1,9 @@
-import {FindOptions, OrderItem} from '../../modules/orm';
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {PlayQueue} from './playqueue';
-import {User} from '../user/user';
-import {DefaultOrderArgs} from '../base/base.args';
+import {FindOptions, OrderItem} from '../../modules/orm/index.js';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {PlayQueue} from './playqueue.js';
+import {User} from '../user/user.js';
+import {DefaultOrderArgs} from '../base/base.args.js';
 
 export class PlayQueueRepository extends BaseRepository<PlayQueue, void, DefaultOrderArgs> {
 	objType = DBObjectType.playqueue;

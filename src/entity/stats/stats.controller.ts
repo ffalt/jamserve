@@ -1,8 +1,8 @@
-import {Controller, Ctx, Get, QueryParams} from '../../modules/rest/decorators';
-import {Stats, UserStats} from './stats.model';
-import {StatsFilter} from './stats.filter';
-import {UserRole} from '../../types/enums';
-import {Context} from '../../modules/engine/rest/context';
+import {Controller, Ctx, Get, QueryParams} from '../../modules/rest/index.js';
+import {Stats, UserStats} from './stats.model.js';
+import {StatsFilter} from './stats.filter.js';
+import {UserRole} from '../../types/enums.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/stats', {tags: ['Various'], roles: [UserRole.stream]})
 export class StatsController {

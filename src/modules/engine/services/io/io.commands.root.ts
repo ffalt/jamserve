@@ -1,8 +1,8 @@
-import {IoService} from '../io.service';
-import {RootScanStrategy} from '../../../../types/enums';
-import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types';
-import {WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta, WorkerRequestRemoveRoot, WorkerRequestUpdateRoot} from '../worker/worker.types';
-import {Orm} from '../orm.service';
+import {IoService} from '../io.service.js';
+import {RootScanStrategy} from '../../../../types/enums.js';
+import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types.js';
+import {WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefreshRootMeta, WorkerRequestRemoveRoot, WorkerRequestUpdateRoot} from '../worker/worker.types.js';
+import {Orm} from '../orm.service.js';
 
 export class IoCommandsRoot {
 	constructor(private owner: IoService) {

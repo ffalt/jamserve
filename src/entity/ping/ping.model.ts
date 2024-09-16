@@ -1,5 +1,5 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
 
 @ResultType()
 export class Ping {

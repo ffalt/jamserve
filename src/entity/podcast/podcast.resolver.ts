@@ -1,11 +1,11 @@
-import {DBObjectType, PodcastStatus} from '../../types/enums';
+import {DBObjectType, PodcastStatus} from '../../types/enums.js';
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL} from './podcast';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL} from './podcast.args';
-import {Episode, EpisodeQL} from '../episode/episode';
-import {PageArgsQL} from '../base/base.args';
+import {State, StateQL} from '../state/state.js';
+import {Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL} from './podcast.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL} from './podcast.args.js';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {PageArgsQL} from '../base/base.args.js';
 
 @Resolver(PodcastQL)
 export class PodcastResolver {

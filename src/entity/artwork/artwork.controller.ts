@@ -1,11 +1,11 @@
-import {Artwork, ArtworkPage} from './artwork.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs} from './artwork.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {AdminChangeQueueInfo} from '../admin/admin';
-import {IncludesFolderArgs} from '../folder/folder.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Artwork, ArtworkPage} from './artwork.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs} from './artwork.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {AdminChangeQueueInfo} from '../admin/admin.js';
+import {IncludesFolderArgs} from '../folder/folder.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/artwork', {tags: ['Artwork'], roles: [UserRole.stream]})
 export class ArtworkController {

@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, GenreOrderFields} from '../../types/enums';
-import {OrderHelper} from '../base/base';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
-import {Genre} from './genre';
-import {GenreFilterArgs, GenreOrderArgs} from './genre.args';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, GenreOrderFields} from '../../types/enums.js';
+import {OrderHelper} from '../base/base.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
+import {Genre} from './genre.js';
+import {GenreFilterArgs, GenreOrderArgs} from './genre.args.js';
 
 export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, GenreOrderArgs> {
 	objType = DBObjectType.genre;

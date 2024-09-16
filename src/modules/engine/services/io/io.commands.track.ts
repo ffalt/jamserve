@@ -1,9 +1,9 @@
-import {IoService} from '../io.service';
-import {AdminChangeQueueInfo, IoRequest, WorkerRequestMode} from './io.types';
-import {WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags} from '../worker/worker.types';
-import {RawTag} from '../../../audio/rawTag';
-import {TrackHealthID} from '../../../../types/enums';
-import {DelayedRequests} from './io.helpers';
+import {IoService} from '../io.service.js';
+import {AdminChangeQueueInfo, IoRequest, WorkerRequestMode} from './io.types.js';
+import {WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags} from '../worker/worker.types.js';
+import {RawTag} from '../../../audio/rawTag.js';
+import {TrackHealthID} from '../../../../types/enums.js';
+import {DelayedRequests} from './io.helpers.js';
 
 export class IoCommandsTrack {
 	delayedTrackTagWrite = new DelayedRequests<WorkerRequestWriteTrackTags>();

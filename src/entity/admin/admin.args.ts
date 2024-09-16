@@ -1,5 +1,5 @@
-import {AdminSettings} from './admin';
-import {ObjParamsType} from '../../modules/rest/decorators';
+import {AdminSettings} from './admin.js';
+import {ObjParamsType} from '../../modules/rest/index.js';
 
 @ObjParamsType()
 export class AdminSettingsArgs extends AdminSettings {

@@ -1,6 +1,6 @@
 import express from 'express';
-import {logger} from '../../../utils/logger';
-import {TranscoderStream} from './transcoder-stream';
+import {logger} from '../../../utils/logger.js';
+import {TranscoderStream} from './transcoder-stream.js';
 
 const log = logger('audio.transcoder.live');
 

@@ -1,6 +1,6 @@
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {ControllerClassMetadata} from '../definitions/controller-metadata';
-import {ClassMetadata} from '../definitions/class-metadata';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
+import {ClassMetadata} from '../definitions/class-metadata.js';
 
 export function iterateControllers(metadata: MetadataStorage, ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void): void {
 	onControl(ctrl);

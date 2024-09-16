@@ -1,5 +1,5 @@
-import {AnyEntity, Constructor} from '../typings';
-import {EntityRepository} from '../helpers/repository';
+import {AnyEntity, Constructor} from '../typings.js';
+import {EntityRepository} from '../helpers/repository.js';
 import {Options} from 'sequelize';
 
 export interface ORMConfigRepositories {

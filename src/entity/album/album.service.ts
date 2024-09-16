@@ -1,10 +1,10 @@
-import {Folder} from '../folder/folder';
-import {Album} from './album';
+import {Folder} from '../folder/folder.js';
+import {Album} from './album.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {ApiBinaryResult} from '../../modules/rest';
-import {TrackService} from '../track/track.service';
-import {FolderService} from '../folder/folder.service';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {ApiBinaryResult} from '../../modules/rest/index.js';
+import {TrackService} from '../track/track.service.js';
+import {FolderService} from '../folder/folder.service.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 @InRequestScope
 export class AlbumService {

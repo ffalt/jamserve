@@ -1,20 +1,20 @@
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {DBObjectType} from '../../types/enums';
-import {Waveform, WaveformQL} from '../waveform/waveform';
-import {Track, TrackLyricsQL, TrackPageQL, TrackQL} from './track';
-import {Folder, FolderQL} from '../folder/folder';
-import {Album, AlbumQL} from '../album/album';
-import {Artist, ArtistQL} from '../artist/artist';
-import {Root, RootQL} from '../root/root';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {TrackLyrics} from './track.model';
-import {MediaTagRawQL, Tag, TagQL} from '../tag/tag';
-import {MediaTagRaw} from '../tag/tag.model';
-import {Series, SeriesQL} from '../series/series';
-import {Bookmark, BookmarkQL} from '../bookmark/bookmark';
-import {TracksArgsQL} from './track.args';
-import {Genre, GenreQL} from '../genre/genre';
+import {State, StateQL} from '../state/state.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Waveform, WaveformQL} from '../waveform/waveform.js';
+import {Track, TrackLyricsQL, TrackPageQL, TrackQL} from './track.js';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {Album, AlbumQL} from '../album/album.js';
+import {Artist, ArtistQL} from '../artist/artist.js';
+import {Root, RootQL} from '../root/root.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {TrackLyrics} from './track.model.js';
+import {MediaTagRawQL, Tag, TagQL} from '../tag/tag.js';
+import {MediaTagRaw} from '../tag/tag.model.js';
+import {Series, SeriesQL} from '../series/series.js';
+import {Bookmark, BookmarkQL} from '../bookmark/bookmark.js';
+import {TracksArgsQL} from './track.args.js';
+import {Genre, GenreQL} from '../genre/genre.js';
 
 @Resolver(TrackQL)
 export class TrackResolver {

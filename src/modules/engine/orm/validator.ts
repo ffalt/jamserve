@@ -1,6 +1,6 @@
-import {logger} from '../../../utils/logger';
-import {Collection, Reference} from '../../orm';
-import {Orm} from '../services/orm.service';
+import {logger} from '../../../utils/logger.js';
+import {Collection, Reference} from '../../orm/index.js';
+import {Orm} from '../services/orm.service.js';
 
 const log = logger('Validator');
 

@@ -1,11 +1,11 @@
 import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state';
-import {DBObjectType} from '../../types/enums';
-import {Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL} from './playlist';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry';
-import {PlaylistIndexArgs, PlaylistsArgs} from './playlist.args';
-import {NotFoundError} from '../../modules/rest';
+import {State, StateQL} from '../state/state.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL} from './playlist.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {PlaylistEntry, PlaylistEntryQL} from '../playlistentry/playlist-entry.js';
+import {PlaylistIndexArgs, PlaylistsArgs} from './playlist.args.js';
+import {NotFoundError} from '../../modules/rest/index.js';
 
 @Resolver(PlaylistQL)
 export class PlaylistResolver {

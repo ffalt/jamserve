@@ -1,6 +1,6 @@
 import archiver from 'archiver';
 import path from 'path';
-import {BaseCompressStream} from './compress-base-stream';
+import {BaseCompressStream} from './compress-base-stream.js';
 
 export class CompressListStream extends BaseCompressStream {
 	public list: Array<string> = [];

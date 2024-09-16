@@ -1,9 +1,8 @@
-import {AnyEntity, IDEntity} from '../typings';
-import {PropertyMetadata} from '../definitions/property-metadata';
-import {ManagedEntity} from '../definitions/managed-entity';
-import {Model, Transaction} from 'sequelize';
-import {FindOptions} from '..';
-import {OrderByOptions} from '../definitions/types';
+import {AnyEntity, IDEntity} from '../typings.js';
+import {PropertyMetadata} from '../definitions/property-metadata.js';
+import {ManagedEntity} from '../definitions/managed-entity.js';
+import {Model, Transaction, FindOptions} from 'sequelize';
+import {OrderByOptions} from '../definitions/types.js';
 
 export class Collection<T extends IDEntity<T>> {
 	private initialized = false;

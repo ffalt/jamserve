@@ -3,8 +3,8 @@ import iconv from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
 import zlib from 'zlib';
-import {Podcast} from './podcast';
-import {EpisodeChapter} from '../episode/episode';
+import {Podcast} from './podcast.js';
+import {EpisodeChapter} from '../episode/episode.js';
 
 export interface PodcastTag {
 	title?: string;

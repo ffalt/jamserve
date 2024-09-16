@@ -1,5 +1,5 @@
-import {PageResult} from './base';
-import {PageArgs} from './base.args';
+import {PageResult} from './base.js';
+import {PageArgs} from './base.args.js';
 
 export function paginate<T>(list: Array<T>, page: PageArgs | undefined): PageResult<T> {
 	if (!page) {

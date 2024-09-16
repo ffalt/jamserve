@@ -1,5 +1,5 @@
-import {ManyToOneFieldOptions, ManyToOneFieldRelation, MappedByFunc, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types';
-import {registerRelation} from '../helpers/relation-register';
+import {ManyToOneFieldOptions, ManyToOneFieldRelation, MappedByFunc, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types.js';
+import {registerRelation} from '../helpers/relation-register.js';
 
 export function ManyToOne<T>(
 	returnTypeFunction: ReturnTypeFunc,

@@ -1,6 +1,6 @@
-import {findType} from './findType';
-import {MethodOptions, ReturnTypeFunc} from '../definitions/types';
-import {MethodMetadata} from '../definitions/method-metadata';
+import {findType} from './findType.js';
+import {MethodOptions, ReturnTypeFunc} from '../definitions/types.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function getMethodMetadata(

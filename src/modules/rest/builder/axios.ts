@@ -1,9 +1,9 @@
-import {MethodMetadata} from '../definitions/method-metadata';
-import {RestParamMetadata} from '../definitions/param-metadata';
-import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version';
-import {ApiBinaryResult} from './express-responder';
-import {buildTSEnums, buildTSParameterTypes, buildTSResultTypes} from './typescript';
-import {buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part} from './clients';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {RestParamMetadata} from '../definitions/param-metadata.js';
+import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version.js';
+import {ApiBinaryResult} from './express-responder.js';
+import {buildTSEnums, buildTSParameterTypes, buildTSResultTypes} from './typescript.js';
+import {buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part} from './clients.js';
 
 function generateUploadClientCalls(call: MethodMetadata, name: string, paramType: string, upload: RestParamMetadata): Array<MustacheDataClientCallFunction> {
 	return [{

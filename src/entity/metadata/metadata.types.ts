@@ -1,4 +1,4 @@
-import {WikiData} from '../../modules/audio/clients/wikidata-rest-data';
+import {WikiData} from '../../modules/audio/clients/wikidata-rest-data.js';
 
 export enum MetaDataType {
 	musicbrainz,

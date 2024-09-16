@@ -1,9 +1,9 @@
-import {getMetadataStorage} from '../metadata';
-import {MethodMetadata} from '../definitions/method-metadata';
-import {RestParamsMetadata} from '../definitions/param-metadata';
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {FieldMetadata} from '../definitions/field-metadata';
-import {ClassMetadata} from '../definitions/class-metadata';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {RestParamsMetadata} from '../definitions/param-metadata.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {FieldMetadata} from '../definitions/field-metadata.js';
+import {ClassMetadata} from '../definitions/class-metadata.js';
 
 const tab = '\t';
 const tabtab = '\t\t';

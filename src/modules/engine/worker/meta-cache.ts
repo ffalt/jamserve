@@ -1,16 +1,16 @@
-import {AlbumType} from '../../../types/enums';
-import {Track} from '../../../entity/track/track';
-import {Folder} from '../../../entity/folder/folder';
-import {cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts';
-import {extractAlbumName} from '../../../utils/album-name';
-import {slugify} from '../../../utils/slug';
-import {Artist} from '../../../entity/artist/artist';
-import {Series} from '../../../entity/series/series';
-import {Album} from '../../../entity/album/album';
-import {Changes} from './changes';
-import {Tag} from '../../../entity/tag/tag';
-import {Root} from '../../../entity/root/root';
-import {Orm} from '../services/orm.service';
+import {AlbumType} from '../../../types/enums.js';
+import {Track} from '../../../entity/track/track.js';
+import {Folder} from '../../../entity/folder/folder.js';
+import {cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
+import {extractAlbumName} from '../../../utils/album-name.js';
+import {slugify} from '../../../utils/slug.js';
+import {Artist} from '../../../entity/artist/artist.js';
+import {Series} from '../../../entity/series/series.js';
+import {Album} from '../../../entity/album/album.js';
+import {Changes} from './changes.js';
+import {Tag} from '../../../entity/tag/tag.js';
+import {Root} from '../../../entity/root/root.js';
+import {Orm} from '../services/orm.service.js';
 
 export interface MetaMergeTrackInfo {
 	track: Track;

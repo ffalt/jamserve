@@ -1,11 +1,11 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {Artwork} from './artwork';
-import {Folder} from '../folder/folder';
-import {FolderRepository} from '../folder/folder.repository';
-import {User} from '../user/user';
-import {ArtworkFilterArgs, ArtworkOrderArgs} from './artwork.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Artwork} from './artwork.js';
+import {Folder} from '../folder/folder.js';
+import {FolderRepository} from '../folder/folder.repository.js';
+import {User} from '../user/user.js';
+import {ArtworkFilterArgs, ArtworkOrderArgs} from './artwork.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs, ArtworkOrderArgs> {
 	objType = DBObjectType.artwork;

@@ -1,13 +1,13 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {User} from '../user/user';
-import {DBObjectType, JamObjectType} from '../../types/enums';
-import {BaseTransformService} from '../base/base.transform';
-import {Track as ORMTrack} from './track';
-import {IncludesTrackArgs} from './track.args';
-import {TrackBase} from './track.model';
-import {TrackService} from './track.service';
-import {GenreTransformService} from '../genre/genre.transform';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {User} from '../user/user.js';
+import {DBObjectType, JamObjectType} from '../../types/enums.js';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Track as ORMTrack} from './track.js';
+import {IncludesTrackArgs} from './track.args.js';
+import {TrackBase} from './track.model.js';
+import {TrackService} from './track.service.js';
+import {GenreTransformService} from '../genre/genre.transform.js';
 
 @InRequestScope
 export class TrackTransformService extends BaseTransformService {

@@ -1,6 +1,6 @@
-import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types';
-import {WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRenameFolder} from '../worker/worker.types';
-import {IoService} from '../io.service';
+import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types.js';
+import {WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRenameFolder} from '../worker/worker.types.js';
+import {IoService} from '../io.service.js';
 
 export class IoCommandsFolder {
 	constructor(private owner: IoService) {

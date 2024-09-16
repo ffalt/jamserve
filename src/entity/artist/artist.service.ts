@@ -1,11 +1,11 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Artist} from './artist';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts';
-import {Folder} from '../folder/folder';
-import {ApiBinaryResult} from '../../modules/rest';
-import {FolderService} from '../folder/folder.service';
-import {FolderType} from '../../types/enums';
-import {Orm} from '../../modules/engine/services/orm.service';
+import {Artist} from './artist.js';
+import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts.js';
+import {Folder} from '../folder/folder.js';
+import {ApiBinaryResult} from '../../modules/rest/index.js';
+import {FolderService} from '../folder/folder.service.js';
+import {FolderType} from '../../types/enums.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
 
 @InRequestScope
 export class ArtistService {

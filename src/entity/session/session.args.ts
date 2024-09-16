@@ -1,8 +1,8 @@
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args';
-import {SessionMode, SessionOrderFields} from '../../types/enums';
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args.js';
+import {SessionMode, SessionOrderFields} from '../../types/enums.js';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @InputType()
 @ObjParamsType()

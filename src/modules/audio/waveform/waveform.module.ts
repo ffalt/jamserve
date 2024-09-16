@@ -1,8 +1,8 @@
-import {IDFolderCache} from '../../../utils/id-file-cache';
-import {WaveformGenerator} from './waveform.generator';
+import {IDFolderCache} from '../../../utils/id-file-cache.js';
+import {WaveformGenerator} from './waveform.generator.js';
 import fse from 'fs-extra';
-import {logger} from '../../../utils/logger';
-import {WaveformFormatType} from '../../../types/enums';
+import {logger} from '../../../utils/logger.js';
+import {WaveformFormatType} from '../../../types/enums.js';
 
 const log = logger('Audio:Waveform');
 

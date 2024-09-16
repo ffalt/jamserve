@@ -1,5 +1,5 @@
 import archiver from 'archiver';
-import {BaseCompressStream} from './compress-base-stream';
+import {BaseCompressStream} from './compress-base-stream.js';
 
 export class CompressFolderStream extends BaseCompressStream {
 

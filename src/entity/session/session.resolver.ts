@@ -1,8 +1,8 @@
 import {Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver} from 'type-graphql';
-import {Session, SessionPageQL, SessionQL} from './session';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version';
-import {SessionsArgs} from './session.args';
+import {Session, SessionPageQL, SessionQL} from './session.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
+import {SessionsArgs} from './session.args.js';
 
 @Resolver(SessionQL)
 export class SessionResolver {

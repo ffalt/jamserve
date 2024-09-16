@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, EpisodeOrderFields} from '../../types/enums';
-import {OrderHelper} from '../base/base';
-import {Episode} from './episode';
-import {EpisodeFilterArgs, EpisodeOrderArgs} from './episode.args';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, EpisodeOrderFields} from '../../types/enums.js';
+import {OrderHelper} from '../base/base.js';
+import {Episode} from './episode.js';
+import {EpisodeFilterArgs, EpisodeOrderArgs} from './episode.args.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs, EpisodeOrderArgs> {
 	objType = DBObjectType.episode;

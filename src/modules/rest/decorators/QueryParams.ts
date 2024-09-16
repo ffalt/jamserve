@@ -1,8 +1,8 @@
-import {ReturnTypeFunc, ValidateOptions} from '../definitions/types';
-import {getMetadataStorage} from '../metadata';
-import {getTypeDecoratorParams} from '../helpers/decorators';
-import {getParamInfo} from '../helpers/params';
-import {extractPropertyName} from '../helpers/extract-property-name';
+import {ReturnTypeFunc, ValidateOptions} from '../definitions/types.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {getTypeDecoratorParams} from '../helpers/decorators.js';
+import {getParamInfo} from '../helpers/params.js';
+import {extractPropertyName} from '../helpers/extract-property-name.js';
 import {SymbolKeysNotSupportedError} from 'type-graphql';
 
 export function QueryParams(): ParameterDecorator;

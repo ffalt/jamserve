@@ -1,9 +1,9 @@
-import {Radio, RadioIndex, RadioPage} from './radio.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs} from './radio.args';
-import {PageArgs} from '../base/base.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Radio, RadioIndex, RadioPage} from './radio.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs} from './radio.args.js';
+import {PageArgs} from '../base/base.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/radio', {tags: ['Radio'], roles: [UserRole.stream]})
 export class RadioController {

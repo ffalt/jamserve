@@ -1,14 +1,14 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {Folder} from '../../../../entity/folder/folder';
-import {ensureTrailingPathSeparator} from '../../../../utils/fs-utils';
-import {FolderType} from '../../../../types/enums';
-import {Root} from '../../../../entity/root/root';
-import {Changes} from '../changes';
-import {splitDirectoryName, validateFolderName} from '../../../../utils/dir-name';
-import {BaseWorker} from './base';
+import {Folder} from '../../../../entity/folder/folder.js';
+import {ensureTrailingPathSeparator} from '../../../../utils/fs-utils.js';
+import {FolderType} from '../../../../types/enums.js';
+import {Root} from '../../../../entity/root/root.js';
+import {Changes} from '../changes.js';
+import {splitDirectoryName, validateFolderName} from '../../../../utils/dir-name.js';
+import {BaseWorker} from './base.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service';
+import {Orm} from '../../services/orm.service.js';
 
 @InRequestScope
 export class FolderWorker extends BaseWorker {

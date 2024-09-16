@@ -1,5 +1,5 @@
-import {logger} from './logger';
-import {WebserviceClient} from './webservice-client';
+import {logger} from './logger.js';
+import {WebserviceClient} from './webservice-client.js';
 
 const log = logger('WebserviceJSONClient');
 

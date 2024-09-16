@@ -1,12 +1,12 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType, TrackOrderFields} from '../../types/enums';
-import {Track} from './track';
-import {OrderHelper} from '../base/base';
-import {Folder} from '../folder/folder';
-import {FolderRepository} from '../folder/folder.repository';
-import {TrackFilterArgs, TrackOrderArgs} from './track.args';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType, TrackOrderFields} from '../../types/enums.js';
+import {Track} from './track.js';
+import {OrderHelper} from '../base/base.js';
+import {Folder} from '../folder/folder.js';
+import {FolderRepository} from '../folder/folder.repository.js';
+import {TrackFilterArgs, TrackOrderArgs} from './track.args.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, TrackOrderArgs> {
 	objType = DBObjectType.track;

@@ -1,8 +1,8 @@
-import {Folder, FolderQL} from '../folder/folder';
-import {ArtworkImageType} from '../../types/enums';
+import {Folder, FolderQL} from '../folder/folder.js';
+import {ArtworkImageType} from '../../types/enums.js';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm';
-import {Base, PaginatedResponse} from '../base/base';
+import {Entity, ManyToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import {Base, PaginatedResponse} from '../base/base.js';
 
 @ObjectType()
 @Entity()

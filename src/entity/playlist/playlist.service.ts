@@ -1,13 +1,13 @@
-import {Track} from '../track/track';
-import {Playlist} from './playlist';
+import {Track} from '../track/track.js';
+import {Playlist} from './playlist.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {PlaylistMutateArgs} from './playlist.args';
-import {User} from '../user/user';
-import {DBObjectType} from '../../types/enums';
-import {NotFoundError} from '../../modules/rest';
-import {Episode} from '../episode/episode';
-import {Base} from '../base/base';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {PlaylistMutateArgs} from './playlist.args.js';
+import {User} from '../user/user.js';
+import {DBObjectType} from '../../types/enums.js';
+import {NotFoundError} from '../../modules/rest/index.js';
+import {Episode} from '../episode/episode.js';
+import {Base} from '../base/base.js';
 
 @InRequestScope
 export class PlaylistService {

@@ -1,14 +1,14 @@
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Artist as ORMArtist} from './artist';
-import {IncludesArtistArgs} from './artist.args';
-import {User} from '../user/user';
-import {ArtistBase, ArtistIndex} from './artist.model';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
-import {MetaDataService} from '../metadata/metadata.service';
-import {GenreTransformService} from '../genre/genre.transform';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Artist as ORMArtist} from './artist.js';
+import {IncludesArtistArgs} from './artist.args.js';
+import {User} from '../user/user.js';
+import {ArtistBase, ArtistIndex} from './artist.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
+import {MetaDataService} from '../metadata/metadata.service.js';
+import {GenreTransformService} from '../genre/genre.transform.js';
 
 @InRequestScope
 export class ArtistTransformService extends BaseTransformService {

@@ -1,13 +1,13 @@
-import {Episode} from '../episode/episode';
-import {Track} from '../track/track';
-import {User} from '../user/user';
-import {NowPlaying} from './nowplaying';
+import {Episode} from '../episode/episode.js';
+import {Track} from '../track/track.js';
+import {User} from '../user/user.js';
+import {NowPlaying} from './nowplaying.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {NotFoundError} from '../../modules/rest/builder';
-import {DBObjectType} from '../../types/enums';
-import {logger} from '../../utils/logger';
-import {StateService} from '../state/state.service';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {NotFoundError} from '../../modules/rest/index.js';
+import {DBObjectType} from '../../types/enums.js';
+import {logger} from '../../utils/logger.js';
+import {StateService} from '../state/state.service.js';
 
 const log = logger('NowPlayingService');
 

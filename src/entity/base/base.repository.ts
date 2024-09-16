@@ -1,12 +1,12 @@
-import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums';
-import {InvalidParamError, NotFoundError} from '../../modules/rest/builder';
-import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base';
-import {StateHelper} from '../state/state.helper';
-import {EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions} from '../../modules/orm';
+import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums.js';
+import {InvalidParamError, NotFoundError} from '../../modules/rest/index.js';
+import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base.js';
+import {StateHelper} from '../state/state.helper.js';
+import {EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions} from '../../modules/orm/index.js';
 import seq from 'sequelize';
-import {User} from '../user/user';
-import {DefaultOrderArgs, PageArgs} from './base.args';
-import {paginate} from './base.utils';
+import {User} from '../user/user.js';
+import {DefaultOrderArgs, PageArgs} from './base.args.js';
+import {paginate} from './base.utils.js';
 import {Includeable} from 'sequelize';
 import shuffleSeed from 'shuffle-seed';
 

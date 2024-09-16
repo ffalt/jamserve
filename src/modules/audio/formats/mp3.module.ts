@@ -1,16 +1,16 @@
 import {ID3v1, ID3v2, IID3V2, IMP3Analyzer, MP3} from 'jamp3';
 import {StaticPool} from 'node-worker-threads-pool';
-import {logger} from '../../../utils/logger';
-import {FORMAT} from '../audio.format';
-import {AudioScanResult} from '../audio.module';
-import {id3v2ToRawTag, rawTagToID3v2} from '../metadata';
+import {logger} from '../../../utils/logger.js';
+import {FORMAT} from '../audio.format.js';
+import {AudioScanResult} from '../audio.module.js';
+import {id3v2ToRawTag, rawTagToID3v2} from '../metadata.js';
 import path, {dirname} from 'path';
-import {TagFormatType} from '../../../types/enums';
-import {RawTag} from '../rawTag';
-import {analyzeMP3} from '../tasks/task-analyze-mp3';
-import {rewriteAudio} from '../tasks/task-rewrite-mp3';
-import {fixMP3} from '../tasks/task-fix-mp3';
-import {removeID3v1} from '../tasks/task-remove-id3v1';
+import {TagFormatType} from '../../../types/enums.js';
+import {RawTag} from '../rawTag.js';
+import {analyzeMP3} from '../tasks/task-analyze-mp3.js';
+import {rewriteAudio} from '../tasks/task-rewrite-mp3.js';
+import {fixMP3} from '../tasks/task-fix-mp3.js';
+import {removeID3v1} from '../tasks/task-remove-id3v1.js';
 import {fileURLToPath} from 'url';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;

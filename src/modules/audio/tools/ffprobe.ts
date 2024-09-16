@@ -1,4 +1,4 @@
-import {spawnToolJson} from '../../../utils/tool';
+import {spawnToolJson} from '../../../utils/tool.js';
 
 export interface ProbeResult {
 	format: {

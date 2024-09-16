@@ -1,6 +1,6 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage';
-import {getNameDecoratorParams} from '../helpers/decorators';
-import {EntityTypeOptions} from '../definitions/types';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {getNameDecoratorParams} from '../helpers/decorators.js';
+import {EntityTypeOptions} from '../definitions/types.js';
 
 export function Entity(): ClassDecorator;
 export function Entity(options: EntityTypeOptions): ClassDecorator;

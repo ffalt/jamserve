@@ -1,10 +1,10 @@
-import {Root, RootPage, RootUpdateStatus} from './root.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs} from './root.args';
-import {AdminChangeQueueInfo} from '../admin/admin';
-import {PageArgs} from '../base/base.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Root, RootPage, RootUpdateStatus} from './root.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs} from './root.args.js';
+import {AdminChangeQueueInfo} from '../admin/admin.js';
+import {PageArgs} from '../base/base.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/root', {tags: ['Root'], roles: [UserRole.stream]})
 export class RootController {

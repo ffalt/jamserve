@@ -1,5 +1,5 @@
-import {DefaultOrderFields, ListType} from '../../types/enums';
-import {ObjField, ObjParamsType} from '../../modules/rest';
+import {DefaultOrderFields, ListType} from '../../types/enums.js';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 import {ArgsType, ClassType, Field, InputType, Int} from 'type-graphql';
 import {Max, Min} from 'class-validator';
 

@@ -1,16 +1,16 @@
-import {ClassMetadata} from '../definitions/class-metadata';
-import {FieldOptions, TypeOptions, TypeValue} from '../definitions/types';
-import {ParamMetadata, RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata';
-import {FieldMetadata} from '../definitions/field-metadata';
-import {EnumMetadata} from '../definitions/enum-metadata';
-import {getEnumReverseValuesMap} from '../helpers/enums';
-import {GenericError, InvalidParamError, MissingParamError} from './express-error';
-import {RestContext} from '../helpers/context';
-import {getMetadataStorage} from '../metadata';
-import {getDefaultValue} from '../helpers/default-value';
-import {UploadFile} from '../definitions/upload-file';
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {iterateArguments} from '../helpers/iterate-super';
+import {ClassMetadata} from '../definitions/class-metadata.js';
+import {FieldOptions, TypeOptions, TypeValue} from '../definitions/types.js';
+import {ParamMetadata, RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
+import {FieldMetadata} from '../definitions/field-metadata.js';
+import {EnumMetadata} from '../definitions/enum-metadata.js';
+import {getEnumReverseValuesMap} from '../helpers/enums.js';
+import {GenericError, InvalidParamError, MissingParamError} from './express-error.js';
+import {RestContext} from '../helpers/context.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import {getDefaultValue} from '../helpers/default-value.js';
+import {UploadFile} from '../definitions/upload-file.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {iterateArguments} from '../helpers/iterate-super.js';
 
 export class ExpressParameters {
 	private readonly metadata: MetadataStorage;

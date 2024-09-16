@@ -1,6 +1,6 @@
-import {Base, Page} from '../base/base.model';
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {RootScanStrategy, UserRole} from '../../types/enums';
+import {Base, Page} from '../base/base.model.js';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {RootScanStrategy, UserRole} from '../../types/enums.js';
 
 @ResultType({description: 'Root Scan Info'})
 export class RootUpdateStatus {

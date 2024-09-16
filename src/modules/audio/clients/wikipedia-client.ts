@@ -1,6 +1,6 @@
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
-import {WikiData} from './wikidata-rest-data';
+import {logger} from '../../../utils/logger.js';
+import {WebserviceClient} from '../../../utils/webservice-client.js';
+import {WikiData} from './wikidata-rest-data.js';
 
 const log = logger('Wikipedia');
 

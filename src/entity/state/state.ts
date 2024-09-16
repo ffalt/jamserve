@@ -1,8 +1,8 @@
-import {User} from '../user/user';
-import {DBObjectType} from '../../types/enums';
+import {User} from '../user/user.js';
+import {DBObjectType} from '../../types/enums.js';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Base} from '../base/base';
-import {Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference} from '../../modules/orm';
+import {Base} from '../base/base.js';
+import {Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
 
 @ObjectType()
 @Entity()

@@ -1,13 +1,13 @@
 import {Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver} from 'type-graphql';
-import {Genre, GenreIndexQL, GenrePageQL, GenreQL} from './genre';
-import {Context} from '../../modules/server/middlewares/apollo.context';
-import {GenreIndexArgsQL, GenresArgsQL} from './genre.args';
-import {AlbumPageQL} from '../album/album';
-import {TrackPageQL} from '../track/track';
-import {ArtistPageQL} from '../artist/artist';
-import {TrackPageArgsQL} from '../track/track.args';
-import {AlbumPageArgsQL} from '../album/album.args';
-import {ArtistPageArgsQL} from '../artist/artist.args';
+import {Genre, GenreIndexQL, GenrePageQL, GenreQL} from './genre.js';
+import {Context} from '../../modules/server/middlewares/apollo.context.js';
+import {GenreIndexArgsQL, GenresArgsQL} from './genre.args.js';
+import {AlbumPageQL} from '../album/album.js';
+import {TrackPageQL} from '../track/track.js';
+import {ArtistPageQL} from '../artist/artist.js';
+import {TrackPageArgsQL} from '../track/track.args.js';
+import {AlbumPageArgsQL} from '../album/album.args.js';
+import {ArtistPageArgsQL} from '../artist/artist.args.js';
 
 @Resolver(GenreQL)
 export class GenreResolver {

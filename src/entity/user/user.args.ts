@@ -1,8 +1,8 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {UserRole} from '../../types/enums';
+import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {UserRole} from '../../types/enums.js';
 
 @ObjParamsType()
 export class IncludesUserArgs {

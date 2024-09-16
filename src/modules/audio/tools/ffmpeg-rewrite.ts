@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg';
-import {fileSuffix} from '../../../utils/fs-utils';
+import {fileSuffix} from '../../../utils/fs-utils.js';
 
 // 	// ffmpeg -i input.mp3 -map_metadata -1 -c:a copy -c:v copy output.mp3
 

@@ -1,6 +1,6 @@
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
-import {GpodderPodcast, GpodderTag} from './gpodder-rest-data';
+import {logger} from '../../../utils/logger.js';
+import {WebserviceClient} from '../../../utils/webservice-client.js';
+import {GpodderPodcast, GpodderTag} from './gpodder-rest-data.js';
 import {Response} from 'node-fetch';
 
 const log = logger('GPodderClient');

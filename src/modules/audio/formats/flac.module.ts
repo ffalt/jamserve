@@ -1,12 +1,12 @@
 import fse from 'fs-extra';
-import {ImageModule} from '../../image/image.module';
-import {FORMAT} from '../audio.format';
-import {AudioScanResult} from '../audio.module';
-import {flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2} from '../metadata';
-import {Flac} from './flac';
-import {MetaWriteableDataBlock} from './flac/lib/block.writeable';
-import {TagFormatType} from '../../../types/enums';
-import {RawTag} from '../rawTag';
+import {ImageModule} from '../../image/image.module.js';
+import {FORMAT} from '../audio.format.js';
+import {AudioScanResult} from '../audio.module.js';
+import {flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2} from '../metadata.js';
+import {Flac} from './flac/index.js';
+import {MetaWriteableDataBlock} from './flac/lib/block.writeable.js';
+import {TagFormatType} from '../../../types/enums.js';
+import {RawTag} from '../rawTag.js';
 
 export class AudioModuleFLAC {
 

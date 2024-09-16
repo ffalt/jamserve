@@ -1,10 +1,10 @@
-import {Episode, EpisodeQL} from '../episode/episode';
-import {EpisodeOrderFields, PodcastStatus} from '../../types/enums';
+import {Episode, EpisodeQL} from '../episode/episode.js';
+import {EpisodeOrderFields, PodcastStatus} from '../../types/enums.js';
 import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, OneToMany, ORM_DATETIME, Property} from '../../modules/orm';
-import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base';
-import {State, StateQL} from '../state/state';
-import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data';
+import {Collection, Entity, OneToMany, ORM_DATETIME, Property} from '../../modules/orm/index.js';
+import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base.js';
+import {State, StateQL} from '../state/state.js';
+import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data.js';
 
 @ObjectType()
 @Entity()

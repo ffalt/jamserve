@@ -1,8 +1,8 @@
-import {BodyParams, Controller, Ctx, Get, Post, QueryParam} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {AdminChangeQueueInfo, AdminSettings} from './admin';
-import {AdminSettingsArgs} from './admin.args';
-import {Context} from '../../modules/engine/rest/context';
+import {BodyParams, Controller, Ctx, Get, Post, QueryParam} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {AdminChangeQueueInfo, AdminSettings} from './admin.js';
+import {AdminSettingsArgs} from './admin.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/admin', {tags: ['Administration'], roles: [UserRole.admin]})
 export class AdminController {

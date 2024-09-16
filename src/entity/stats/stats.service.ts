@@ -1,9 +1,9 @@
-import {Stats, UserDetailStats, UserStats} from './stats.model';
+import {Stats, UserDetailStats, UserStats} from './stats.model.js';
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {AlbumType, ListType} from '../../types/enums';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts';
-import {User} from '../user/user';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {AlbumType, ListType} from '../../types/enums.js';
+import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts.js';
+import {User} from '../user/user.js';
 
 @InRequestScope
 export class StatsService {

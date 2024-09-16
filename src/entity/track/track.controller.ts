@@ -1,11 +1,11 @@
-import {Track, TrackHealth, TrackLyrics, TrackPage} from './track.model';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs} from './track.args';
-import {MediaIDTagRaw} from '../tag/tag.model';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {AdminChangeQueueInfo} from '../admin/admin';
-import {Context} from '../../modules/engine/rest/context';
+import {Track, TrackHealth, TrackLyrics, TrackPage} from './track.model.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs} from './track.args.js';
+import {MediaIDTagRaw} from '../tag/tag.model.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {AdminChangeQueueInfo} from '../admin/admin.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/track', {tags: ['Track'], roles: [UserRole.stream]})
 export class TrackController {

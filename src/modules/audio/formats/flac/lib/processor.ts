@@ -4,10 +4,10 @@
  **/
 
 import {Transform, TransformCallback, TransformOptions} from 'stream';
-import {MetaDataBlock} from './block';
-import {MetaDataBlockPicture} from './block.picture';
-import {MetaDataBlockStreamInfo} from './block.streaminfo';
-import {BlockVorbiscomment} from './block.vorbiscomment';
+import {MetaDataBlock} from './block.js';
+import {MetaDataBlockPicture} from './block.picture.js';
+import {MetaDataBlockStreamInfo} from './block.streaminfo.js';
+import {BlockVorbiscomment} from './block.vorbiscomment.js';
 
 const enum STATE {
 	IDLE = 0,

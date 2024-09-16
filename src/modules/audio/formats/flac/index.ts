@@ -1,11 +1,11 @@
 import fs from 'fs';
 import fse from 'fs-extra';
-import {MetaDataBlock} from './lib/block';
-import {MetaDataBlockPicture} from './lib/block.picture';
-import {MetaDataBlockStreamInfo} from './lib/block.streaminfo';
-import {BlockVorbiscomment} from './lib/block.vorbiscomment';
-import {MetaWriteableDataBlock} from './lib/block.writeable';
-import {FlacProcessorStream, MDB_TYPE} from './lib/processor';
+import {MetaDataBlock} from './lib/block.js';
+import {MetaDataBlockPicture} from './lib/block.picture.js';
+import {MetaDataBlockStreamInfo} from './lib/block.streaminfo.js';
+import {BlockVorbiscomment} from './lib/block.vorbiscomment.js';
+import {MetaWriteableDataBlock} from './lib/block.writeable.js';
+import {FlacProcessorStream, MDB_TYPE} from './lib/processor.js';
 
 export interface FlacComment {
 	vendor: string;

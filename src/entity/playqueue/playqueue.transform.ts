@@ -1,10 +1,10 @@
 import {InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {PlayQueue as ORMPlayQueue} from './playqueue';
-import {IncludesPlayQueueArgs} from './playqueue.args';
-import {User} from '../user/user';
-import {PlayQueueBase} from './playqueue.model';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {PlayQueue as ORMPlayQueue} from './playqueue.js';
+import {IncludesPlayQueueArgs} from './playqueue.args.js';
+import {User} from '../user/user.js';
+import {PlayQueueBase} from './playqueue.model.js';
 
 @InRequestScope
 export class PlayQueueTransformService extends BaseTransformService {

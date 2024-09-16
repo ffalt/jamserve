@@ -1,14 +1,14 @@
-import {Series, SeriesIndex, SeriesPage} from './series.model';
-import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {ExtendedInfoResult} from '../metadata/metadata.model';
-import {TrackPage} from '../track/track.model';
-import {AlbumPage} from '../album/album.model';
-import {AlbumOrderArgs, IncludesAlbumArgs} from '../album/album.args';
-import {IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs} from './series.args';
-import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args';
-import {ListArgs, PageArgs} from '../base/base.args';
-import {Context} from '../../modules/engine/rest/context';
+import {Series, SeriesIndex, SeriesPage} from './series.model.js';
+import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {ExtendedInfoResult} from '../metadata/metadata.model.js';
+import {TrackPage} from '../track/track.model.js';
+import {AlbumPage} from '../album/album.model.js';
+import {AlbumOrderArgs, IncludesAlbumArgs} from '../album/album.args.js';
+import {IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs} from './series.args.js';
+import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args.js';
+import {ListArgs, PageArgs} from '../base/base.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
 
 @Controller('/series', {tags: ['Series'], roles: [UserRole.stream]})
 export class SeriesController {

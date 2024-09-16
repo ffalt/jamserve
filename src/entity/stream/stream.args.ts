@@ -1,5 +1,5 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/decorators';
-import {AudioFormatType} from '../../types/enums';
+import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import {AudioFormatType} from '../../types/enums.js';
 
 @ObjParamsType()
 export class StreamArgs {

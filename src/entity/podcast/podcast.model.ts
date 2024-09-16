@@ -1,9 +1,9 @@
-import {ObjField, ResultType} from '../../modules/rest/decorators';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {PodcastStatus} from '../../types/enums';
-import {Base, Page} from '../base/base.model';
-import {EpisodeBase} from '../episode/episode.model';
-import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {PodcastStatus} from '../../types/enums.js';
+import {Base, Page} from '../base/base.model.js';
+import {EpisodeBase} from '../episode/episode.model.js';
+import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data.js';
 
 @ResultType({description: 'Podcast Base'})
 export class PodcastBase extends Base {

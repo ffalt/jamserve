@@ -1,9 +1,9 @@
 import express from 'express';
 import ffmpeg from 'fluent-ffmpeg';
-import {SupportedTranscodeAudioFormat} from '../../../utils/filetype';
-import {logger} from '../../../utils/logger';
-import {AudioFormatType} from '../../../types/enums';
-import {StreamData} from '../../rest';
+import {SupportedTranscodeAudioFormat} from '../../../utils/filetype.js';
+import {logger} from '../../../utils/logger.js';
+import {AudioFormatType} from '../../../types/enums.js';
+import {StreamData} from '../../rest/index.js';
 
 const log = logger('transcoder.stream');
 

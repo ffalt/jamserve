@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {AlbumOrderFields, DBObjectType} from '../../types/enums';
-import {Album} from './album';
-import {OrderHelper} from '../base/base';
-import {AlbumFilterArgs, AlbumOrderArgs} from './album.args';
-import {User} from '../user/user';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {AlbumOrderFields, DBObjectType} from '../../types/enums.js';
+import {Album} from './album.js';
+import {OrderHelper} from '../base/base.js';
+import {AlbumFilterArgs, AlbumOrderArgs} from './album.args.js';
+import {User} from '../user/user.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 import Sequelize from 'sequelize';
 
 export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, AlbumOrderArgs> {

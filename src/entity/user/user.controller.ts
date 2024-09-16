@@ -1,13 +1,13 @@
-import {User, UserPage} from './user.model';
-import {User as ORMUser} from './user';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile} from '../../modules/rest';
-import {UserRole} from '../../types/enums';
-import {IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs} from './user.args';
-import {randomString} from '../../utils/random';
-import {PageArgs} from '../base/base.args';
-import {Context} from '../../modules/engine/rest/context';
-import {EngineService} from '../../modules/engine/services/engine.service';
+import {User, UserPage} from './user.model.js';
+import {User as ORMUser} from './user.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile} from '../../modules/rest/index.js';
+import {UserRole} from '../../types/enums.js';
+import {IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs} from './user.args.js';
+import {randomString} from '../../utils/random.js';
+import {PageArgs} from '../base/base.args.js';
+import {Context} from '../../modules/engine/rest/context.js';
+import {EngineService} from '../../modules/engine/services/engine.service.js';
 
 @Controller('/user', {tags: ['User']})
 export class UserController {

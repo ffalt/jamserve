@@ -1,6 +1,6 @@
-import {IDEntity} from '../typings';
-import {EntityMetadata} from './entity-metadata';
-import {EntityManager} from '../helpers/manager';
+import {IDEntity} from '../typings.js';
+import {EntityMetadata} from './entity-metadata.js';
+import {EntityManager} from '../helpers/manager.js';
 import {Model} from 'sequelize';
 
 export interface ManagedEntity extends IDEntity {

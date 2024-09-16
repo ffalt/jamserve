@@ -1,7 +1,7 @@
-import {IoService} from '../io.service';
-import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types';
-import {WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork} from '../worker/worker.types';
-import {ArtworkImageType} from '../../../../types/enums';
+import {IoService} from '../io.service.js';
+import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types.js';
+import {WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork} from '../worker/worker.types.js';
+import {ArtworkImageType} from '../../../../types/enums.js';
 
 export class IoCommandsArtwork {
 	constructor(private owner: IoService) {

@@ -1,12 +1,12 @@
 import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {BaseTransformService} from '../base/base.transform';
-import {Radio as ORMRadio} from './radio';
-import {IncludesRadioArgs} from './radio.args';
-import {User} from '../user/user';
-import {Radio, RadioIndex} from './radio.model';
-import {DBObjectType} from '../../types/enums';
-import {IndexResult, IndexResultGroup} from '../base/base';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Radio as ORMRadio} from './radio.js';
+import {IncludesRadioArgs} from './radio.args.js';
+import {User} from '../user/user.js';
+import {Radio, RadioIndex} from './radio.model.js';
+import {DBObjectType} from '../../types/enums.js';
+import {IndexResult, IndexResultGroup} from '../base/base.js';
 
 @InRequestScope
 export class RadioTransformService extends BaseTransformService {

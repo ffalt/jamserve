@@ -1,12 +1,12 @@
-import {AnyEntity, Dictionary, EntityData, EntityName, IDEntity} from '../typings';
-import {EntityRepository} from './repository';
-import {MetadataStorage} from '../metadata/metadata-storage';
-import {ORMConfig} from '../definitions/config';
+import {AnyEntity, Dictionary, EntityData, EntityName, IDEntity} from '../typings.js';
+import {EntityRepository} from './repository.js';
+import {MetadataStorage} from '../metadata/metadata-storage.js';
+import {ORMConfig} from '../definitions/config.js';
 import {FindOptions, Model, ModelStatic, Sequelize} from 'sequelize';
-import {ManagedEntity} from '../definitions/managed-entity';
-import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity';
+import {ManagedEntity} from '../definitions/managed-entity.js';
+import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity.js';
 import {v4} from 'uuid';
-import {ORM} from './orm';
+import {ORM} from './orm.js';
 
 export class EntityCache {
 	private cache = new Map<string, IDEntity>();

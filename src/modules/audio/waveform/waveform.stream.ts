@@ -7,7 +7,7 @@
 
 import Ffmpeg from 'fluent-ffmpeg';
 import {PassThrough, Readable, Transform, TransformCallback} from 'stream';
-import {logger} from '../../../utils/logger';
+import {logger} from '../../../utils/logger.js';
 
 const log = logger('waveform.stream');
 

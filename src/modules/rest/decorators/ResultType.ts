@@ -1,6 +1,6 @@
-import { getMetadataStorage } from "../metadata/getMetadataStorage";
-import { getNameDecoratorParams } from "../helpers/decorators";
-import { DescriptionOptions, AbstractClassOptions, ImplementsClassOptions } from "../definitions/types";
+import { getMetadataStorage } from "../metadata/getMetadataStorage.js";
+import { getNameDecoratorParams } from "../helpers/decorators.js";
+import { DescriptionOptions, AbstractClassOptions, ImplementsClassOptions } from "../definitions/types.js";
 
 export type ObjectTypeOptions = DescriptionOptions &
 	AbstractClassOptions &

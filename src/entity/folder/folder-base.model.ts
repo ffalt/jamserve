@@ -1,9 +1,9 @@
-import {ObjField, ResultType} from '../../modules/rest';
-import {Base} from '../base/base.model';
-import {AlbumType, FolderType} from '../../types/enums';
-import {GenreBase} from '../genre/genre.model';
-import {ExtendedInfo} from '../metadata/metadata.model';
-import {examples} from '../../modules/engine/rest/example.consts';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {Base} from '../base/base.model.js';
+import {AlbumType, FolderType} from '../../types/enums.js';
+import {GenreBase} from '../genre/genre.model.js';
+import {ExtendedInfo} from '../metadata/metadata.model.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
 
 @ResultType({description: 'Folder Meta Information'})
 export class FolderTag {

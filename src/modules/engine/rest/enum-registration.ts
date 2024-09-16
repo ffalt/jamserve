@@ -29,8 +29,8 @@ import {
 	TrackOrderFields,
 	UserRole,
 	WaveformFormatType
-} from '../../../types/enums';
-import {registerEnumType} from '../../rest/helpers/enums';
+} from '../../../types/enums.js';
+import {registerEnumType} from '../../rest/helpers/enums.js';
 
 export function registerRestEnums(): void {
 

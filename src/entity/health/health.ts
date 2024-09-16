@@ -1,5 +1,5 @@
-import {TrackHealthHint} from './health.model';
-import {Track} from '../track/track';
+import {TrackHealthHint} from './health.model.js';
+import {Track} from '../track/track.js';
 
 export class TrackHealth {
 	track!: Track;

@@ -1,7 +1,7 @@
-import {CustomPathParameterGroup, CustomPathParameters} from '../definitions/types';
-import {MethodMetadata} from '../definitions/method-metadata';
-import {InvalidParamError, MissingParamError} from './express-error';
-import {getMetadataStorage} from '../metadata';
+import {CustomPathParameterGroup, CustomPathParameters} from '../definitions/types.js';
+import {MethodMetadata} from '../definitions/method-metadata.js';
+import {InvalidParamError, MissingParamError} from './express-error.js';
+import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
 
 function validateCustomPathParameterValue(rElement: string | undefined, group: CustomPathParameterGroup): any {
 	const type = group.getType();

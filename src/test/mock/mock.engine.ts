@@ -1,4 +1,4 @@
-import {EngineService} from '../../modules/engine/services/engine.service';
+import {EngineService} from '../../modules/engine/services/engine.service.js';
 
 export async function waitEngineStart(engine: EngineService): Promise<void> {
 	function wait(cb: () => void): void {

@@ -1,6 +1,6 @@
-import {ObjField, ResultType} from '../../modules/rest';
-import {examples} from '../../modules/engine/rest/example.consts';
-import {SessionMode} from '../../types/enums';
+import {ObjField, ResultType} from '../../modules/rest/index.js';
+import {examples} from '../../modules/engine/rest/example.consts.js';
+import {SessionMode} from '../../types/enums.js';
 
 @ResultType({description: 'User Session'})
 export class UserSession {

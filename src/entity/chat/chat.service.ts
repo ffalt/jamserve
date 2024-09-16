@@ -1,7 +1,7 @@
 import moment from 'moment';
-import {Chat} from './chat';
-import {SettingsService} from '../settings/settings.service';
-import {User} from '../user/user';
+import {Chat} from './chat.js';
+import {SettingsService} from '../settings/settings.service.js';
+import {User} from '../user/user.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 
 @InRequestScope

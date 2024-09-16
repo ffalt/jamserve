@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository';
-import {DBObjectType} from '../../types/enums';
-import {Root} from './root';
-import {DefaultOrderArgs} from '../base/base.args';
-import {User} from '../user/user';
-import {RootFilterArgs, RootOrderArgs} from './root.args';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm';
+import {BaseRepository} from '../base/base.repository.js';
+import {DBObjectType} from '../../types/enums.js';
+import {Root} from './root.js';
+import {DefaultOrderArgs} from '../base/base.args.js';
+import {User} from '../user/user.js';
+import {RootFilterArgs, RootOrderArgs} from './root.args.js';
+import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
 
 // @Repository(Root)
 export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrderArgs> {

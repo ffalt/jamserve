@@ -1,8 +1,8 @@
 import {InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform';
-import {Orm} from '../../modules/engine/services/orm.service';
-import {Bookmark as ORMBookmark} from './bookmark';
-import {BookmarkBase} from './bookmark.model';
+import {BaseTransformService} from '../base/base.transform.js';
+import {Orm} from '../../modules/engine/services/orm.service.js';
+import {Bookmark as ORMBookmark} from './bookmark.js';
+import {BookmarkBase} from './bookmark.model.js';
 
 @InRequestScope
 export class BookmarkTransformService extends BaseTransformService {

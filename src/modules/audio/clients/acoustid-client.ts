@@ -1,7 +1,7 @@
-import {logger} from '../../../utils/logger';
-import {WebserviceClient} from '../../../utils/webservice-client';
-import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc';
-import {Acoustid} from './acoustid-rest-data';
+import {logger} from '../../../utils/logger.js';
+import {WebserviceClient} from '../../../utils/webservice-client.js';
+import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc.js';
+import {Acoustid} from './acoustid-rest-data.js';
 
 const log = logger('Acoustid');
 
