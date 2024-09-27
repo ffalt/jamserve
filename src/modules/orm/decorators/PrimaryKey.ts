@@ -10,7 +10,7 @@ export function PrimaryKey(): MethodDecorator | PropertyDecorator {
 			throw new SymbolKeysNotSupportedError();
 		}
 		const opt: PrimaryFieldOptions = {primaryKey: true};
-		getMetadataStorage().collectPropertyMetadata({
+		getMetadataStorage().fields.push({
 			name: propertyKey,
 			getType: () => ORM_ID,
 			isRelation: false,

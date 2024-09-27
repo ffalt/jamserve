@@ -8,7 +8,7 @@ import {Episode} from '../episode/episode.js';
 import {Base} from '../base/base.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../utils/logger.js';
-import {GenericError, InvalidParamError} from '../../modules/rest/index.js';
+import {GenericError, InvalidParamError} from '../../modules/deco/express/express-error.js';
 
 const log = logger('Waveform');
 

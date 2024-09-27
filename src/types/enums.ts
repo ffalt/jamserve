@@ -304,7 +304,9 @@ export enum FolderOrderFields {
 	level = 'level',
 	name = 'name',
 	title = 'title',
-	year = 'year'
+	year = 'year',
+	artist = 'artist',
+	album = 'album'
 }
 
 export enum PlaylistEntryOrderFields {

@@ -1,8 +1,16 @@
-import {BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
 import {UserRole} from '../../types/enums.js';
 import {State, States} from './state.model.js';
 import {FavArgs, RateArgs, StatesArgs} from './state.args.js';
 import {Context} from '../../modules/engine/rest/context.js';
+import {Controller} from '../../modules/rest/decorators/Controller.js';
+import {Get} from '../../modules/rest/decorators/Get.js';
+import {QueryParam} from '../../modules/rest/decorators/QueryParam.js';
+import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import {Post} from '../../modules/rest/decorators/Post.js';
+import {BodyParams} from '../../modules/rest/decorators/BodyParams.js';
+import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
+
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 
 @Controller('/state', {tags: ['State'], roles: [UserRole.stream]})

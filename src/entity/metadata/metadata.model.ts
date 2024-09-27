@@ -1,5 +1,6 @@
-import {ObjField, ResultType} from '../../modules/rest/index.js';
 import {Field, ObjectType} from 'type-graphql';
+import {ResultType} from '../../modules/rest/decorators/ResultType.js';
+import {ObjField} from '../../modules/rest/decorators/ObjField.js';
 
 @ObjectType()
 @ResultType({description: 'Track/Folder/Artist/Album Info Data'})

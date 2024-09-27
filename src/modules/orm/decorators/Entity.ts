@@ -5,13 +5,10 @@ import {EntityTypeOptions} from '../definitions/types.js';
 export function Entity(): ClassDecorator;
 export function Entity(options: EntityTypeOptions): ClassDecorator;
 export function Entity(name: string, options?: EntityTypeOptions): ClassDecorator;
-export function Entity(
-	nameOrOptions?: string | EntityTypeOptions,
-	maybeOptions?: EntityTypeOptions,
-): ClassDecorator {
+export function Entity(nameOrOptions?: string | EntityTypeOptions, maybeOptions?: EntityTypeOptions): ClassDecorator {
 	const {name, options} = getNameDecoratorParams(nameOrOptions, maybeOptions);
 	return target => {
-		getMetadataStorage().collectEntityMetadata({
+		getMetadataStorage().entities.push({
 			name: name || target.name,
 			target,
 			fields: [],

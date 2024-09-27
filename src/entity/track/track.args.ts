@@ -1,8 +1,9 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 import {ListType, TrackHealthID, TrackOrderFields} from '../../types/enums.js';
 import {ArgsType, Field, Float, ID, InputType, Int} from 'type-graphql';
 import {OrderByArgs, PaginatedFilterArgs} from '../base/base.args.js';
 import {examples} from '../../modules/engine/rest/example.consts.js';
+import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
+import {ObjField} from '../../modules/rest/decorators/ObjField.js';
 
 @ObjParamsType()
 export class IncludesTrackArgs {

@@ -1,7 +1,8 @@
 import {SessionUser} from './session-user.model.js';
-import {ObjField, ResultType} from '../../modules/rest/index.js';
 import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
 import {examples} from '../../modules/engine/rest/example.consts.js';
+import {ResultType} from '../../modules/rest/decorators/ResultType.js';
+import {ObjField} from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({description: 'Session Data'})
 export class Session {

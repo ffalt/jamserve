@@ -30,41 +30,42 @@ import {
 	UserRole,
 	WaveformFormatType
 } from '../../../types/enums.js';
-import {registerEnumType} from '../../rest/helpers/enums.js';
+import {registerEnumType} from '../../deco/helpers/enums.js';
+import {EnumMetadata} from '../../deco/definitions/enum-metadata.js';
+import {getMetadataStorage} from '../../rest/metadata/getMetadataStorage.js';
 
 export function registerRestEnums(): void {
-
-	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'});
-	registerEnumType(PodcastOrderFields, {name: 'PodcastOrderFields'});
-	registerEnumType(TrackOrderFields, {name: 'TrackOrderFields'});
-	registerEnumType(ArtistOrderFields, {name: 'ArtistOrderFields'});
-	registerEnumType(FolderOrderFields, {name: 'FolderOrderFields'});
-	registerEnumType(PlaylistEntryOrderFields, {name: 'PlaylistEntryOrderFields'});
-	registerEnumType(PlayQueueEntryOrderFields, {name: 'PlayQueueEntryOrderFields'});
-	registerEnumType(BookmarkOrderFields, {name: 'BookmarkOrderFields'});
-	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'});
-	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'});
-	registerEnumType(GenreOrderFields, {name: 'GenreOrderFields'});
-	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'});
-	registerEnumType(JamObjectType, {name: 'JamObjectType'});
-	registerEnumType(FolderHealthID, {name: 'FolderHealthID'});
-	registerEnumType(TrackHealthID, {name: 'TrackHealthID'});
-	registerEnumType(MusicBrainzSearchType, {name: 'MusicBrainzSearchType'});
-	registerEnumType(MusicBrainzLookupType, {name: 'MusicBrainzLookupType'});
-	registerEnumType(LastFMLookupType, {name: 'LastFMLookupType'});
-	registerEnumType(CoverArtArchiveLookupType, {name: 'CoverArtArchiveLookupType'});
-	registerEnumType(WaveformFormatType, {name: 'WaveformFormatType'});
-	registerEnumType(DownloadFormatType, {name: 'DownloadFormatType'});
-	registerEnumType(ImageFormatType, {name: 'ImageFormatType'});
-	registerEnumType(PodcastStatus, {name: 'PodcastStatus'});
-	registerEnumType(AudioFormatType, {name: 'AudioFormatType'});
-	registerEnumType(ArtworkImageType, {name: 'ArtworkImageType'});
-	registerEnumType(RootScanStrategy, {name: 'RootScanStrategy'});
-	registerEnumType(TagFormatType, {name: 'TagFormatType'});
-	registerEnumType(FolderType, {name: 'FolderType'});
-	registerEnumType(AlbumType, {name: 'AlbumType'});
-	registerEnumType(SessionMode, {name: 'SessionMode'});
-	registerEnumType(UserRole, {name: 'UserRole'});
-	registerEnumType(ListType, {name: 'ListType', description: 'Type of List Request'});
-
+	const enums: EnumMetadata[] = getMetadataStorage().enums;
+	registerEnumType(DefaultOrderFields, {name: 'DefaultOrderFields'}, enums);
+	registerEnumType(PodcastOrderFields, {name: 'PodcastOrderFields'}, enums);
+	registerEnumType(TrackOrderFields, {name: 'TrackOrderFields'}, enums);
+	registerEnumType(ArtistOrderFields, {name: 'ArtistOrderFields'}, enums);
+	registerEnumType(FolderOrderFields, {name: 'FolderOrderFields'}, enums);
+	registerEnumType(PlaylistEntryOrderFields, {name: 'PlaylistEntryOrderFields'}, enums);
+	registerEnumType(PlayQueueEntryOrderFields, {name: 'PlayQueueEntryOrderFields'}, enums);
+	registerEnumType(BookmarkOrderFields, {name: 'BookmarkOrderFields'}, enums);
+	registerEnumType(SessionOrderFields, {name: 'SessionOrderFields'}, enums);
+	registerEnumType(EpisodeOrderFields, {name: 'EpisodeOrderFields'}, enums);
+	registerEnumType(GenreOrderFields, {name: 'GenreOrderFields'}, enums);
+	registerEnumType(AlbumOrderFields, {name: 'AlbumOrderFields'}, enums);
+	registerEnumType(JamObjectType, {name: 'JamObjectType'}, enums);
+	registerEnumType(FolderHealthID, {name: 'FolderHealthID'}, enums);
+	registerEnumType(TrackHealthID, {name: 'TrackHealthID'}, enums);
+	registerEnumType(MusicBrainzSearchType, {name: 'MusicBrainzSearchType'}, enums);
+	registerEnumType(MusicBrainzLookupType, {name: 'MusicBrainzLookupType'}, enums);
+	registerEnumType(LastFMLookupType, {name: 'LastFMLookupType'}, enums);
+	registerEnumType(CoverArtArchiveLookupType, {name: 'CoverArtArchiveLookupType'}, enums);
+	registerEnumType(WaveformFormatType, {name: 'WaveformFormatType'}, enums);
+	registerEnumType(DownloadFormatType, {name: 'DownloadFormatType'}, enums);
+	registerEnumType(ImageFormatType, {name: 'ImageFormatType'}, enums);
+	registerEnumType(PodcastStatus, {name: 'PodcastStatus'}, enums);
+	registerEnumType(AudioFormatType, {name: 'AudioFormatType'}, enums);
+	registerEnumType(ArtworkImageType, {name: 'ArtworkImageType'}, enums);
+	registerEnumType(RootScanStrategy, {name: 'RootScanStrategy'}, enums);
+	registerEnumType(TagFormatType, {name: 'TagFormatType'}, enums);
+	registerEnumType(FolderType, {name: 'FolderType'}, enums);
+	registerEnumType(AlbumType, {name: 'AlbumType'}, enums);
+	registerEnumType(SessionMode, {name: 'SessionMode'}, enums);
+	registerEnumType(UserRole, {name: 'UserRole'}, enums);
+	registerEnumType(ListType, {name: 'ListType', description: 'Type of List Request'}, enums);
 }

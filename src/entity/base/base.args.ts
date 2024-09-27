@@ -1,7 +1,8 @@
 import {DefaultOrderFields, ListType} from '../../types/enums.js';
-import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
 import {ArgsType, ClassType, Field, InputType, Int} from 'type-graphql';
 import {Max, Min} from 'class-validator';
+import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
+import {ObjField} from '../../modules/rest/decorators/ObjField.js';
 
 @ObjParamsType()
 export class ListArgs {

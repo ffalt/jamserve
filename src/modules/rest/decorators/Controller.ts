@@ -1,22 +1,7 @@
 import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {ControllerOptions} from '../definitions/types.js';
-
-function extractClassName(target: Function): string {
-	const s = target.toString().split(' ');
-	return s[1];
-}
+import {ControllerOptions} from '../../deco/definitions/types.js';
+import {BaseController} from '../../deco/decorators/Controller.js';
 
 export function Controller(route: string, options?: ControllerOptions): ClassDecorator {
-	return (target): void => {
-		getMetadataStorage().collectControllerClassMetadata({
-			target,
-			route,
-			name: extractClassName(target),
-			description: options?.description,
-			roles: options?.roles,
-			tags: options?.tags,
-			abstract: options?.abstract,
-			deprecationReason: options?.deprecationReason
-		});
-	};
+	return BaseController(getMetadataStorage(), route, options);
 }

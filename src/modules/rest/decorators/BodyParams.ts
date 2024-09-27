@@ -1,29 +1,10 @@
 import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {ReturnTypeFunc, ValidateOptions} from '../definitions/types.js';
-import {getTypeDecoratorParams} from '../helpers/decorators.js';
-import {getParamInfo} from '../helpers/params.js';
-import {SymbolKeysNotSupportedError} from 'type-graphql';
+import {ReturnTypeFunc, ValidateOptions} from '../../deco/definitions/types.js';
+import {BaseBodyParams} from '../../deco/decorators/BodyParams.js';
 
 export function BodyParams(): ParameterDecorator;
 export function BodyParams(options: ValidateOptions): ParameterDecorator;
-export function BodyParams(
-	paramTypeFunction: ReturnTypeFunc,
-	options?: ValidateOptions,
-): ParameterDecorator;
-export function BodyParams(
-	paramTypeFnOrOptions?: ReturnTypeFunc | ValidateOptions,
-	maybeOptions?: ValidateOptions,
-): ParameterDecorator {
-	const {options, returnTypeFunc} = getTypeDecoratorParams(paramTypeFnOrOptions, maybeOptions);
-	return (prototype, propertyKey, parameterIndex): void => {
-		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
-			throw new SymbolKeysNotSupportedError();
-		}
-		getMetadataStorage().collectHandlerParamMetadata({
-			kind: 'args',
-			mode: 'body',
-			propertyName: String(propertyKey),
-			...getParamInfo({prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options}),
-		});
-	};
+export function BodyParams(paramTypeFunction: ReturnTypeFunc, options?: ValidateOptions): ParameterDecorator;
+export function BodyParams(paramTypeFnOrOptions?: ReturnTypeFunc | ValidateOptions, maybeOptions?: ValidateOptions): ParameterDecorator {
+	return BaseBodyParams(getMetadataStorage(), paramTypeFnOrOptions, maybeOptions)
 }

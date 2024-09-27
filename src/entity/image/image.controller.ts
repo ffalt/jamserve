@@ -1,9 +1,13 @@
-import {ApiBinaryResult, Controller, Ctx, Get, NotFoundError} from '../../modules/rest/index.js';
 import {ImageFormatType, UserRole} from '../../types/enums.js';
 import {ApiImageTypes} from '../../types/consts.js';
 import {ImageArgs} from './image.args.js';
-import {PathParams} from '../../modules/rest/index.js';
 import {Context} from '../../modules/engine/rest/context.js';
+import {Controller} from '../../modules/rest/decorators/Controller.js';
+import {Get} from '../../modules/rest/decorators/Get.js';
+import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import {PathParams} from '../../modules/rest/decorators/PathParams.js';
 
 @Controller('/image', {tags: ['Image'], roles: [UserRole.stream]})
 export class ImageController {

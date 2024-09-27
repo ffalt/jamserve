@@ -11,13 +11,13 @@ import {PodcastStatus} from '../../types/enums.js';
 import {ConfigService} from '../../modules/engine/services/config.service.js';
 import {Episode} from '../episode/episode.js';
 import {EpisodeData, Feed, PodcastTag} from './podcast-feed.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
 import {AudioModule} from '../../modules/audio/audio.module.js';
 import {EpisodeService} from '../episode/episode.service.js';
 import {GpodderPodcast, GpodderTag} from '../../modules/audio/clients/gpodder-rest-data.js';
 import {PageResult} from '../base/base.js';
 import {paginate} from '../base/base.utils.js';
 import {PageArgs} from '../base/base.args.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 const log = logger('PodcastService');
 

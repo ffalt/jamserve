@@ -1,0 +1,8213 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"description": "Api for Subsonic",
+		"version": "1.16.0",
+		"title": "SubsonicApi"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:4040/rest/",
+			"description": "A local Subsonic API"
+		}
+	],
+	"paths": {
+		"/addChatMessage.view": {
+			"get": {
+				"operationId": "addChatMessage.view",
+				"summary": "Adds a message to the chat log.",
+				"tags": [
+					"Chat"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "message",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The chat message.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/changePassword.view": {
+			"get": {
+				"operationId": "changePassword.view",
+				"summary": "Changes the password of an existing Subsonic user, using the following parameters. You can only change your own password unless you have admin privileges.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the user which should change its password.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "password",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The new password of the new user, either in clear text of hex-encoded.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/createBookmark.view": {
+			"get": {
+				"operationId": "createBookmark.view",
+				"summary": "Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.",
+				"tags": [
+					"Bookmarks"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID of the media file to bookmark. If a bookmark already exists for this file it will be overwritten.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "position",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The position (in milliseconds) within the media file.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "comment",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A user-defined comment.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/createPlaylist.view": {
+			"get": {
+				"operationId": "createPlaylist.view",
+				"summary": "Creates (or updates) a playlist.",
+				"tags": [
+					"Playlists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlist": {
+											"$ref": "#/components/schemas/Subsonic.PlaylistWithSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlist",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlist": {
+											"$ref": "#/components/schemas/Subsonic.PlaylistWithSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlist",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "playlistId",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The playlist ID. (if updating)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The human-readable name of the playlist.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "ID of a song in the playlist. Use one songId parameter for each song in the playlist.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/createPodcastChannel.view": {
+			"get": {
+				"operationId": "createPodcastChannel.view",
+				"summary": "Adds a new Podcast channel.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "url",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The URL of the Podcast to add.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/createShare.view": {
+			"get": {
+				"operationId": "createShare.view",
+				"summary": "Creates a public URL that can be used by anyone to stream music or video from the Subsonic server. The URL is short and suitable for posting on Facebook, Twitter etc.",
+				"tags": [
+					"Sharing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID of a song, album or video to share. Use one id parameter for each entry to share.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "description",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A user-defined description that will be displayed to people visiting the shared media.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "expires",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The time at which the share expires. Given as milliseconds since 1970.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/createUser.view": {
+			"get": {
+				"operationId": "createUser.view",
+				"summary": "Creates a new Subsonic user.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the new user.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "password",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The password of the new user, either in clear text of hex-encoded (see above).",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "email",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The email address of the new user.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ldapAuthenticated",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is authenicated in LDAP.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "adminRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is administrator.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "settingsRole",
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to change personal settings and password.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "streamRole",
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to play files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "jukeboxRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to play files in jukebox mode.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "downloadRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to download files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "uploadRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to upload files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "coverArtRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to change cover art and tags.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "commentRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to create and edit comments and ratings.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to administrate Podcasts.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlistRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to create and delete playlists.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "shareRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to share files with anyone.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "videoConversionRole",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to start video conversions.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "number"
+									}
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						"description": "IDs of the music folders the user is allowed access to. Include the parameter once for each folder.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/deleteBookmark.view": {
+			"get": {
+				"operationId": "deleteBookmark.view",
+				"summary": "Deletes the bookmark for a given file.",
+				"tags": [
+					"Bookmarks"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deleteInternetRadioStation.view": {
+			"get": {
+				"operationId": "deleteInternetRadioStation.view",
+				"summary": "Deletes an existing internet radio station.",
+				"tags": [
+					"InternetRadio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deletePlaylist.view": {
+			"get": {
+				"operationId": "deletePlaylist.view",
+				"summary": "Deletes a saved playlist.",
+				"tags": [
+					"Playlists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deletePodcastChannel.view": {
+			"get": {
+				"operationId": "deletePodcastChannel.view",
+				"summary": "Deletes a Podcast channel.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deletePodcastEpisode.view": {
+			"get": {
+				"operationId": "deletePodcastEpisode.view",
+				"summary": "Deletes a Podcast episode.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deleteShare.view": {
+			"get": {
+				"operationId": "deleteShare.view",
+				"summary": "Deletes an existing share.",
+				"tags": [
+					"Sharing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/deleteUser.view": {
+			"get": {
+				"operationId": "deleteUser.view",
+				"summary": "Deletes an existing Subsonic user.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/downloadPodcastEpisode.view": {
+			"get": {
+				"operationId": "downloadPodcastEpisode.view",
+				"summary": "Request the server to start downloading a given Podcast episode.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getAlbum.view": {
+			"get": {
+				"operationId": "getAlbum.view",
+				"summary": "Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"album": {
+											"$ref": "#/components/schemas/Subsonic.AlbumWithSongsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"album",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"album": {
+											"$ref": "#/components/schemas/Subsonic.AlbumWithSongsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"album",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getAlbumInfo.view": {
+			"get": {
+				"operationId": "getAlbumInfo.view",
+				"summary": "Returns album notes, image URLs etc, using data from last.fm.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumInfo": {
+											"$ref": "#/components/schemas/Subsonic.AlbumInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumInfo",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumInfo": {
+											"$ref": "#/components/schemas/Subsonic.AlbumInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumInfo",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getAlbumInfo2.view": {
+			"get": {
+				"operationId": "getAlbumInfo2.view",
+				"summary": "Similar to getAlbumInfo, but organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumInfo": {
+											"$ref": "#/components/schemas/Subsonic.AlbumInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumInfo",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumInfo": {
+											"$ref": "#/components/schemas/Subsonic.AlbumInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumInfo",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getAlbumList.view": {
+			"get": {
+				"operationId": "getAlbumList.view",
+				"summary": "Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumList": {
+											"$ref": "#/components/schemas/Subsonic.AlbumList"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumList",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumList": {
+											"$ref": "#/components/schemas/Subsonic.AlbumList"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumList",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "type",
+						"schema": {
+							"$ref": "#/components/schemas/SubsonicParameters.AlbumListType"
+						},
+						"description": "The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"type": "integer",
+							"maximum": 500,
+							"default": 10
+						},
+						"description": "The number of albums to return. Max 500.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						},
+						"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the genre, e.g., \"Rock\".",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"type": "number"
+						},
+						"description": "The first year in the range. If fromYear > toYear a reverse chronological list is returned.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The last year in the range.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getAlbumList2.view": {
+			"get": {
+				"operationId": "getAlbumList2.view",
+				"summary": "Similar to getAlbumList, but organizes music according to ID3 tags.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumList2": {
+											"$ref": "#/components/schemas/Subsonic.AlbumList2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumList2",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"albumList2": {
+											"$ref": "#/components/schemas/Subsonic.AlbumList2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"albumList2",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "type",
+						"schema": {
+							"$ref": "#/components/schemas/SubsonicParameters.AlbumListType"
+						},
+						"description": "The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"type": "integer",
+							"maximum": 500,
+							"default": 10
+						},
+						"description": "The number of albums to return. Max 500.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"type": "integer",
+							"default": 0
+						},
+						"description": "The list offset. Useful if you for example want to page through the list of newest albums.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the genre, e.g., \"Rock\".",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"type": "number"
+						},
+						"description": "The first year in the range. If fromYear > toYear a reverse chronological list is returned.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The last year in the range.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return albums in the music folder with the given ID. See getMusicFolders.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getArtist.view": {
+			"get": {
+				"operationId": "getArtist.view",
+				"summary": "Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artist": {
+											"$ref": "#/components/schemas/Subsonic.ArtistWithAlbumsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artist",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artist": {
+											"$ref": "#/components/schemas/Subsonic.ArtistWithAlbumsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artist",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getArtistInfo.view": {
+			"get": {
+				"operationId": "getArtistInfo.view",
+				"summary": "Returns artist info with biography, image URLs and similar artists, using data from last.fm.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artistInfo": {
+											"$ref": "#/components/schemas/Subsonic.ArtistInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artistInfo",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artistInfo": {
+											"$ref": "#/components/schemas/Subsonic.ArtistInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artistInfo",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist, album or song ID.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 20,
+							"minimum": 1
+						},
+						"description": "Max number of similar artists to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "includeNotPresent",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether to return artists that are not present in the media library.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getArtistInfo2.view": {
+			"get": {
+				"operationId": "getArtistInfo2.view",
+				"summary": "Similar to getArtistInfo, but organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artistInfo2": {
+											"$ref": "#/components/schemas/Subsonic.ArtistInfo2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artistInfo2",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artistInfo2": {
+											"$ref": "#/components/schemas/Subsonic.ArtistInfo2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artistInfo2",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist, album or song ID.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 20,
+							"minimum": 1
+						},
+						"description": "Max number of similar artists to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "includeNotPresent",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Whether to return artists that are not present in the media library.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getArtists.view": {
+			"get": {
+				"operationId": "getArtists.view",
+				"summary": "Similar to getIndexes, but organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artists": {
+											"$ref": "#/components/schemas/Subsonic.ArtistsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artists",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"artists": {
+											"$ref": "#/components/schemas/Subsonic.ArtistsID3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"artists",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getBookmarks.view": {
+			"get": {
+				"operationId": "getBookmarks.view",
+				"summary": "Returns all bookmarks for this user. A bookmark is a position within a certain media file.",
+				"tags": [
+					"Bookmarks"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"bookmarks": {
+											"$ref": "#/components/schemas/Subsonic.Bookmarks"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"bookmarks",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"bookmarks": {
+											"$ref": "#/components/schemas/Subsonic.Bookmarks"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"bookmarks",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getChatMessages.view": {
+			"get": {
+				"operationId": "getChatMessages.view",
+				"summary": "Returns the current visible (non-expired) chat messages.",
+				"tags": [
+					"Chat"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"chatMessages": {
+											"$ref": "#/components/schemas/Subsonic.ChatMessages"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"chatMessages",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"chatMessages": {
+											"$ref": "#/components/schemas/Subsonic.ChatMessages"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"chatMessages",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "since",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return messages newer than this time (in millis since Jan 1 1970).",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getGenres.view": {
+			"get": {
+				"operationId": "getGenres.view",
+				"summary": "Returns all genres.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"genres": {
+											"$ref": "#/components/schemas/Subsonic.Genres"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"genres",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"genres": {
+											"$ref": "#/components/schemas/Subsonic.Genres"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"genres",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getIndexes.view": {
+			"get": {
+				"operationId": "getIndexes.view",
+				"summary": "Returns an indexed structure of all artists.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"indexes": {
+											"$ref": "#/components/schemas/Subsonic.Indexes"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"indexes",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"indexes": {
+											"$ref": "#/components/schemas/Subsonic.Indexes"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"indexes",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ifModifiedSince",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getInternetRadioStations.view": {
+			"get": {
+				"operationId": "getInternetRadioStations.view",
+				"summary": "Returns all internet radio stations.",
+				"tags": [
+					"InternetRadio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"internetRadioStations": {
+											"$ref": "#/components/schemas/Subsonic.InternetRadioStations"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"internetRadioStations",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"internetRadioStations": {
+											"$ref": "#/components/schemas/Subsonic.InternetRadioStations"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"internetRadioStations",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/createInternetRadioStation.view": {
+			"get": {
+				"operationId": "createInternetRadioStation.view",
+				"summary": "Adds a new internet radio station.",
+				"tags": [
+					"InternetRadio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "streamUrl",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The stream URL for the station.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The user-defined name for the station.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "homepageUrl",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The home page URL for the station.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/updateInternetRadioStation.view": {
+			"get": {
+				"operationId": "updateInternetRadioStation.view",
+				"summary": "Updates an existing internet radio station.",
+				"tags": [
+					"InternetRadio"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID for the station.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "streamUrl",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The stream URL for the station.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The user-defined name for the station.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "homepageUrl",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The home page URL for the station.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getLicense.view": {
+			"get": {
+				"operationId": "getLicense.view",
+				"summary": "Get details about the software license.",
+				"tags": [
+					"System"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"license": {
+											"$ref": "#/components/schemas/Subsonic.License"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"license",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"license": {
+											"$ref": "#/components/schemas/Subsonic.License"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"license",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getLyrics.view": {
+			"get": {
+				"operationId": "getLyrics.view",
+				"summary": "Searches for and returns lyrics for a given song.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"lyrics": {
+											"$ref": "#/components/schemas/Subsonic.Lyrics"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"lyrics",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"lyrics": {
+											"$ref": "#/components/schemas/Subsonic.Lyrics"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"lyrics",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist name.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The song title.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getMusicDirectory.view": {
+			"get": {
+				"operationId": "getMusicDirectory.view",
+				"summary": "Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"directory": {
+											"$ref": "#/components/schemas/Subsonic.Directory"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"directory",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"directory": {
+											"$ref": "#/components/schemas/Subsonic.Directory"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"directory",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getMusicFolders.view": {
+			"get": {
+				"operationId": "getMusicFolders.view",
+				"summary": "Returns all configured top-level music folders.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"musicFolders": {
+											"$ref": "#/components/schemas/Subsonic.MusicFolders"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"musicFolders",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"musicFolders": {
+											"$ref": "#/components/schemas/Subsonic.MusicFolders"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"musicFolders",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getNewestPodcasts.view": {
+			"get": {
+				"operationId": "getNewestPodcasts.view",
+				"summary": "Returns the most recently published Podcast episodes.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"newestPodcasts": {
+											"$ref": "#/components/schemas/Subsonic.NewestPodcasts"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"newestPodcasts",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"newestPodcasts": {
+											"$ref": "#/components/schemas/Subsonic.NewestPodcasts"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"newestPodcasts",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 20,
+							"minimum": 0
+						},
+						"description": "The maximum number of episodes to return.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getNowPlaying.view": {
+			"get": {
+				"operationId": "getNowPlaying.view",
+				"summary": "Returns what is currently being played by all users.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"nowPlaying": {
+											"$ref": "#/components/schemas/Subsonic.NowPlaying"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"nowPlaying",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"nowPlaying": {
+											"$ref": "#/components/schemas/Subsonic.NowPlaying"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"nowPlaying",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getPlaylist.view": {
+			"get": {
+				"operationId": "getPlaylist.view",
+				"summary": "Returns a listing of files in a saved playlist.",
+				"tags": [
+					"Playlists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlist": {
+											"$ref": "#/components/schemas/Subsonic.PlaylistWithSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlist",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlist": {
+											"$ref": "#/components/schemas/Subsonic.PlaylistWithSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlist",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getPlaylists.view": {
+			"get": {
+				"operationId": "getPlaylists.view",
+				"summary": "Returns all playlists a user is allowed to play.",
+				"tags": [
+					"Playlists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlists": {
+											"$ref": "#/components/schemas/Subsonic.Playlists"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlists",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playlists": {
+											"$ref": "#/components/schemas/Subsonic.Playlists"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playlists",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "If specified, return playlists for this user rather than for the authenticated user. The authenticated user must have admin role if this parameter is used.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getPlayQueue.view": {
+			"get": {
+				"operationId": "getPlayQueue.view",
+				"summary": "Returns the state of the play queue for this user (as set by savePlayQueue). This includes the tracks in the play queue, the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).",
+				"tags": [
+					"Bookmarks"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playQueue": {
+											"$ref": "#/components/schemas/Subsonic.PlayQueue"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playQueue",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"playQueue": {
+											"$ref": "#/components/schemas/Subsonic.PlayQueue"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"playQueue",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getPodcasts.view": {
+			"get": {
+				"operationId": "getPodcasts.view",
+				"summary": "Returns all Podcast channels the server subscribes to, and (optionally) their episodes. This method can also be used to return details for only one channel - refer to the id parameter. A typical use case for this method would be to first retrieve all channels without episodes, and then retrieve all episodes for the single channel the user selects.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"podcasts": {
+											"$ref": "#/components/schemas/Subsonic.Podcasts"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"podcasts",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"podcasts": {
+											"$ref": "#/components/schemas/Subsonic.Podcasts"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"podcasts",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "If specified, only return the Podcast channel with this ID.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "includeEpisodes",
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						},
+						"description": "Whether to include Podcast episodes in the returned result.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getRandomSongs.view": {
+			"get": {
+				"operationId": "getRandomSongs.view",
+				"summary": "Returns random songs matching the given criteria.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"randomSongs": {
+											"$ref": "#/components/schemas/Subsonic.Songs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"randomSongs",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"randomSongs": {
+											"$ref": "#/components/schemas/Subsonic.Songs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"randomSongs",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"type": "integer",
+							"default": 10,
+							"minimum": 1,
+							"maximum": 500
+						},
+						"description": "The maximum number of songs to return. Max 500.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return songs in the music folder with the given ID. See getMusicFolders.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Only returns songs belonging to this genre.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "fromYear",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "Only return songs published after or in this year.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "toYear",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "Only return songs published before or in this year.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getScanStatus.view": {
+			"get": {
+				"operationId": "getScanStatus.view",
+				"summary": "Returns the current status for media library scanning.",
+				"tags": [
+					"Library"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"scanStatus": {
+											"$ref": "#/components/schemas/Subsonic.ScanStatus"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"scanStatus",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"scanStatus": {
+											"$ref": "#/components/schemas/Subsonic.ScanStatus"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"scanStatus",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/startScan.view": {
+			"get": {
+				"operationId": "startScan.view",
+				"summary": "Initiates a rescan of the media libraries.",
+				"tags": [
+					"Library"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getShares.view": {
+			"get": {
+				"operationId": "getShares.view",
+				"summary": "Returns information about shared media this user is allowed to manage.",
+				"tags": [
+					"Sharing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"shares": {
+											"$ref": "#/components/schemas/Subsonic.Shares"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"shares",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"shares": {
+											"$ref": "#/components/schemas/Subsonic.Shares"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"shares",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getSimilarSongs.view": {
+			"get": {
+				"operationId": "getSimilarSongs.view",
+				"summary": "Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"similarSongs": {
+											"$ref": "#/components/schemas/Subsonic.SimilarSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"similarSongs",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"similarSongs": {
+											"$ref": "#/components/schemas/Subsonic.SimilarSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"similarSongs",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist, album or song ID.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 50,
+							"minimum": 1
+						},
+						"description": "Max number of songs to return.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getSimilarSongs2.view": {
+			"get": {
+				"operationId": "getSimilarSongs2.view",
+				"summary": "Similar to getSimilarSongs, but organizes music according to ID3 tags.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"similarSongs2": {
+											"$ref": "#/components/schemas/Subsonic.SimilarSongs2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"similarSongs2",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"similarSongs2": {
+											"$ref": "#/components/schemas/Subsonic.SimilarSongs2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"similarSongs2",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist, album or song ID.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 50,
+							"minimum": 1
+						},
+						"description": "Max number of songs to return.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getSong.view": {
+			"get": {
+				"operationId": "getSong.view",
+				"summary": "Returns details for a song.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"song": {
+											"$ref": "#/components/schemas/Subsonic.Child"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"song",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"song": {
+											"$ref": "#/components/schemas/Subsonic.Child"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"song",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getSongsByGenre.view": {
+			"get": {
+				"operationId": "getSongsByGenre.view",
+				"summary": "Returns songs in a given genre.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"songsByGenre": {
+											"$ref": "#/components/schemas/Subsonic.Songs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"songsByGenre",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"songsByGenre": {
+											"$ref": "#/components/schemas/Subsonic.Songs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"songsByGenre",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "genre",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The genre, as returned by getGenres.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 10,
+							"maximum": 500,
+							"minimum": 1
+						},
+						"description": "The maximum number of songs to return. Max 500.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0
+						},
+						"description": "The offset. Useful if you want to page through the songs in a genre.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return albums in the music folder with the given ID. See getMusicFolders",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getStarred.view": {
+			"get": {
+				"operationId": "getStarred.view",
+				"summary": "Returns starred songs, albums and artists.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"starred": {
+											"$ref": "#/components/schemas/Subsonic.Starred"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"starred",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"starred": {
+											"$ref": "#/components/schemas/Subsonic.Starred"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"starred",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getStarred2.view": {
+			"get": {
+				"operationId": "getStarred2.view",
+				"summary": "Similar to getStarred, but organizes music according to ID3 tags.",
+				"tags": [
+					"Lists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"starred2": {
+											"$ref": "#/components/schemas/Subsonic.Starred2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"starred2",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"starred2": {
+											"$ref": "#/components/schemas/Subsonic.Starred2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"starred2",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getTopSongs.view": {
+			"get": {
+				"operationId": "getTopSongs.view",
+				"summary": "Returns top songs for the given artist, using data from last.fm.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"topSongs": {
+											"$ref": "#/components/schemas/Subsonic.TopSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"topSongs",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"topSongs": {
+											"$ref": "#/components/schemas/Subsonic.TopSongs"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"topSongs",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The artist name.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 50,
+							"minimum": 1
+						},
+						"description": "Max number of songs to return.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getUser.view": {
+			"get": {
+				"operationId": "getUser.view",
+				"summary": "Get details about a given user, including which authorization roles and folder access it has. Can be used to enable/disable certain features in the client, such as jukebox control.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/Subsonic.User"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"user",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/Subsonic.User"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"user",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getUsers.view": {
+			"get": {
+				"operationId": "getUsers.view",
+				"summary": "Get details about all users, including which authorization roles and folder access they have.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"users": {
+											"$ref": "#/components/schemas/Subsonic.Users"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"users",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"users": {
+											"$ref": "#/components/schemas/Subsonic.Users"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"users",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/getVideoInfo.view": {
+			"get": {
+				"operationId": "getVideoInfo.view",
+				"summary": "Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"videoInfo": {
+											"$ref": "#/components/schemas/Subsonic.VideoInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"videoInfo",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"videoInfo": {
+											"$ref": "#/components/schemas/Subsonic.VideoInfo"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"videoInfo",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The item ID",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getVideos.view": {
+			"get": {
+				"operationId": "getVideos.view",
+				"summary": "Returns all video files.",
+				"tags": [
+					"Browsing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"videos": {
+											"$ref": "#/components/schemas/Subsonic.Videos"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"videos",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"videos": {
+											"$ref": "#/components/schemas/Subsonic.Videos"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"videos",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/jukeboxControl.view": {
+			"get": {
+				"operationId": "jukeboxControl.view",
+				"summary": "Controls the jukebox, i.e., playback directly on the server's audio hardware. Note",
+				"tags": [
+					"System"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"jukeboxStatus": {
+											"$ref": "#/components/schemas/Subsonic.JukeboxStatus"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"jukeboxStatus",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"jukeboxStatus": {
+											"$ref": "#/components/schemas/Subsonic.JukeboxStatus"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"jukeboxStatus",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "action",
+						"schema": {
+							"$ref": "#/components/schemas/SubsonicParameters.JukeboxAction"
+						},
+						"description": "The operation to perform.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "index",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "Used by skip and remove. Zero-based index of the song to skip to or remove.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"type": "integer",
+							"default": 0,
+							"minimum": 0
+						},
+						"description": "Used by skip. Start playing this many seconds into the track.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Used by add and set. ID of song to add to the jukebox playlist. Use multiple id parameters to add many songs in the same request. (set is similar to a clear followed by a add, but will not change the currently playing track.)",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "gain",
+						"schema": {
+							"type": "number",
+							"minimum": 0,
+							"maximum": 1
+						},
+						"description": "Used by setGain to control the playback volume. A float value between 0.0 and 1.0.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/ping.view": {
+			"get": {
+				"operationId": "ping.view",
+				"summary": "Used to test connectivity with the server.",
+				"tags": [
+					"System"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/refreshPodcasts.view": {
+			"get": {
+				"operationId": "refreshPodcasts.view",
+				"summary": "Requests the server to check for new Podcast episodes.",
+				"tags": [
+					"Podcast"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/savePlayQueue.view": {
+			"get": {
+				"operationId": "savePlayQueue.view",
+				"summary": "Saves the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).",
+				"tags": [
+					"Bookmarks"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "ID of a song in the play queue. Use one id parameter for each song in the play queue.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "current",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of the current playing song.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "position",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The position in milliseconds within the currently playing song.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/scrobble.view": {
+			"get": {
+				"operationId": "scrobble.view",
+				"summary": "Registers the local playback of one or more media files. Typically used when playing media that is cached on the client.",
+				"tags": [
+					"Annotation"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A string which uniquely identifies the file to scrobble.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "time",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The time (in milliseconds since 1 Jan 1970) at which the song was listened to.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "submission",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether this is a \"submission\" or a \"now playing\" notification.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/search.view": {
+			"get": {
+				"operationId": "search.view",
+				"summary": "Returns a listing of files matching the given search criteria. Supports paging through the result.",
+				"tags": [
+					"Searching"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "any",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Searches all fields.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Artist to search for.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Album to search for.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Song title to search for.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "count",
+						"schema": {
+							"type": "integer",
+							"default": 20,
+							"minimum": 1
+						},
+						"description": "Maximum number of results to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "offset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "newerThan",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return matches that are newer than this. Given as milliseconds since 1970.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/search2.view": {
+			"get": {
+				"operationId": "search2.view",
+				"summary": "Returns albums, artists and songs matching the given search criteria. Supports paging through the result.",
+				"tags": [
+					"Searching"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult2": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult2",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult2": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult2"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult2",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Search query.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of artists to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for artists. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of albums to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for albums. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of songs to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for songs. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/search3.view": {
+			"get": {
+				"operationId": "search3.view",
+				"summary": "Similar to search2, but organizes music according to ID3 tags.",
+				"tags": [
+					"Searching"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult3": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult3",
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"searchResult3": {
+											"$ref": "#/components/schemas/Subsonic.SearchResult3"
+										},
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"searchResult3",
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Search query.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of artists to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for artists. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of albums to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for albums. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songCount",
+						"schema": {
+							"type": "integer",
+							"minimum": 1,
+							"default": 20
+						},
+						"description": "Maximum number of songs to return.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						},
+						"description": "Search result offset for songs. Used for paging.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"type": "number"
+						},
+						"description": "Only return results from the music folder with the given ID. See getMusicFolders.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/setRating.view": {
+			"get": {
+				"operationId": "setRating.view",
+				"summary": "Sets the rating for a music file.",
+				"tags": [
+					"Annotation"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A string which uniquely identifies the file (song) or folder (album/artist) to rate.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "rating",
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 5
+						},
+						"description": "The rating between 1 and 5 (inclusive), or 0 to remove the rating.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/star.view": {
+			"get": {
+				"operationId": "star.view",
+				"summary": "Attaches a star to a song, album or artist.",
+				"tags": [
+					"Annotation"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/unstar.view": {
+			"get": {
+				"operationId": "unstar.view",
+				"summary": "Removes the star from a song, album or artist.",
+				"tags": [
+					"Annotation"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "albumId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "artistId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/updatePlaylist.view": {
+			"get": {
+				"operationId": "updatePlaylist.view",
+				"summary": "Updates a playlist. Only the owner of a playlist is allowed to update it.",
+				"tags": [
+					"Playlists"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "playlistId",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The playlist ID.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The human-readable name of the playlist.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "comment",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The playlist comment.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "public",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "true if the playlist should be visible to all users, false otherwise.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songIdToAdd",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"description": "Add this song with this ID to the playlist. Multiple parameters allowed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "songIndexToRemove",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "number"
+									}
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						"description": "Remove the song at this position in the playlist. Multiple parameters allowed.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/updateShare.view": {
+			"get": {
+				"operationId": "updateShare.view",
+				"summary": "Updates the description and/or expiration date for an existing share.",
+				"tags": [
+					"Sharing"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "ID of a song, album or video to share. Use one id parameter for each entry to share.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "description",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A user-defined description that will be displayed to people visiting the shared media.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "expires",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "The time at which the share expires. Given as milliseconds since 1970.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/updateUser.view": {
+			"get": {
+				"operationId": "updateUser.view",
+				"summary": "Modifies an existing Subsonic user.",
+				"tags": [
+					"User"
+				],
+				"responses": {
+					"200": {
+						"description": "ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"$ref": "#/components/schemas/Subsonic.ResponseStatus"
+										},
+										"error": {
+											"$ref": "#/components/schemas/Subsonic.Error"
+										},
+										"version": {
+											"$ref": "#/components/schemas/Subsonic.Version"
+										}
+									},
+									"required": [
+										"status",
+										"version"
+									]
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the user.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "password",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The password of the user, either in clear text of hex-encoded.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "email",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The email address of the user.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "ldapAuthenticated",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is authenicated in LDAP.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "adminRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is administrator.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "settingsRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to change personal settings and password.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "streamRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to play files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "jukeboxRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to play files in jukebox mode.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "downloadRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to download files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "uploadRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to upload files.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "coverArtRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to change cover art and tags.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "commentRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to create and edit comments and ratings.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "podcastRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to administrate Podcasts.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "playlistRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to create and delete playlists.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "shareRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to share files with anyone.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "videoConversionRole",
+						"schema": {
+							"type": "boolean"
+						},
+						"description": "Whether the user is allowed to start video conversions.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "musicFolderId",
+						"schema": {
+							"anyOf": [
+								{
+									"type": "array",
+									"items": {
+										"type": "number"
+									}
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						"description": "IDs of the music folders the user is allowed access to. Include the parameter once for each folder.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "maxBitRate",
+						"schema": {
+							"type": "integer"
+						},
+						"description": "The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getAvatar.view": {
+			"get": {
+				"operationId": "getAvatar.view",
+				"summary": "Returns the avatar (personal image) for a user.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/png": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "username",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.",
+						"required": true
+					}
+				]
+			}
+		},
+		"/getCaptions.view": {
+			"get": {
+				"operationId": "getCaptions.view",
+				"summary": "Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of the video.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "format",
+						"schema": {
+							"enum": [
+								"srt",
+								"vtt"
+							],
+							"type": "string"
+						},
+						"description": "Preferred captions format (\"srt\" or \"vtt\").",
+						"required": false
+					}
+				]
+			}
+		},
+		"/getCoverArt.view": {
+			"get": {
+				"operationId": "getCoverArt.view",
+				"summary": "Returns a cover art image.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/png": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of a song, album or artist.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"type": "number"
+						},
+						"description": "If specified, scale image to this size.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/hls.view": {
+			"get": {
+				"operationId": "hls.view",
+				"summary": "Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio. HLS is a streaming protocol implemented by Apple and works by breaking the overall stream into a sequence of small HTTP-based file downloads. It's supported by iOS and newer versions of Android. This method also supports adaptive bitrate streaming, see the bitRate parameter.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"application/vnd.apple.mpegurl": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A string which uniquely identifies the media file to stream.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "bitRate",
+						"schema": {
+							"type": "string"
+						},
+						"description": "If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If this parameter is specified more than once,\nthe server will create a variant playlist, suitable for adaptive bitrate streaming.\nThe playlist will support streaming at all the specified bitrates. The server will automatically choose video dimensions that are suitable for the given bitrates.\nSince 1.9.0 you may explicitly request a certain width (480) and height (360) like so: bitRate=1000@480x360",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "audioTrack",
+						"schema": {
+							"type": "string"
+						},
+						"description": "The ID of the audio track to use. See getVideoInfo for how to get the list of available audio tracks for a video.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/stream.view": {
+			"get": {
+				"operationId": "stream.view",
+				"summary": "Streams a given media file.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"audio/mpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/flac": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/mp4": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/ogg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/x-flv": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A string which uniquely identifies the file to stream. Obtained by calls to getMusicDirectory.",
+						"required": true
+					},
+					{
+						"in": "query",
+						"name": "maxBitRate",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If set to zero, no limit is imposed.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "timeOffset",
+						"schema": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"description": "Only applicable to video streaming. If specified, start streaming at the given offset (in seconds) into the video. Typically used to implement video skipping.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "size",
+						"schema": {
+							"type": "string"
+						},
+						"description": "Only applicable to video streaming. Requested video size specified as WxH, for instance \"640x480\".",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "converted",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to \"true\" will cause the converted video to be returned instead of the original.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "estimateContentLength",
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						},
+						"description": "if set to \"true\", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.",
+						"required": false
+					},
+					{
+						"in": "query",
+						"name": "format",
+						"schema": {
+							"enum": [
+								"flv",
+								"mp3",
+								"raw"
+							],
+							"type": "string"
+						},
+						"description": "Specifies the preferred target format (e.g., \"mp3\" or \"flv\") in case there are multiple applicable transcodings. Starting with 1.9.0 you can use the special value \"raw\" to disable transcoding.",
+						"required": false
+					}
+				]
+			}
+		},
+		"/download.view": {
+			"get": {
+				"operationId": "download.view",
+				"summary": "Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.",
+				"tags": [
+					"MediaRetrieval"
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"audio/mpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/flac": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/mp4": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/ogg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"audio/x-flv": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"schema": {
+							"type": "string"
+						},
+						"description": "A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.",
+						"required": true
+					}
+				]
+			}
+		}
+	},
+	"security": [
+		{
+			"userAuth": [],
+			"passwdAuth": [],
+			"tokenAuth": [],
+			"saltAuth": [],
+			"versionAuth": [],
+			"clientAuth": [],
+			"formatAuth": []
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"userAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "u",
+				"description": "The username."
+			},
+			"passwdAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "p",
+				"description": "The password, either in clear text or hex-encoded with a \"enc:\" prefix."
+			},
+			"tokenAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "t",
+				"description": "The authentication token computed as md5(password + salt)."
+			},
+			"saltAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "s",
+				"description": "A random string (\"salt\") used as input for computing the password hash. See below for details."
+			},
+			"versionAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "v",
+				"description": "The protocol version implemented by the client"
+			},
+			"clientAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "c",
+				"description": "A unique string identifying the client application."
+			},
+			"formatAuth": {
+				"type": "apiKey",
+				"in": "query",
+				"name": "f",
+				"description": "Request data to be returned in this format. Supported values are \"xml\", \"json\" and \"jsonp\". If using jsonp, specify name of javascript callback function using a callback parameter."
+			}
+		},
+		"schemas": {
+			"Subsonic.ResponseStatus": {
+				"enum": [
+					"failed",
+					"ok"
+				],
+				"type": "string"
+			},
+			"Subsonic.Error": {
+				"type": "object",
+				"properties": {
+					"code": {
+						"type": "number"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"code"
+				]
+			},
+			"Subsonic.Version": {
+				"enum": [
+					"1.16.0"
+				],
+				"type": "string"
+			},
+			"Subsonic.PlaylistWithSongs": {
+				"type": "object",
+				"properties": {
+					"entry": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"allowedUser": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"owner": {
+						"type": "string"
+					},
+					"public": {
+						"type": "boolean"
+					},
+					"songCount": {
+						"type": "number"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"changed": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"changed",
+					"created",
+					"duration",
+					"id",
+					"name",
+					"songCount"
+				]
+			},
+			"Subsonic.Child": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"isDir": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"track": {
+						"type": "number"
+					},
+					"year": {
+						"type": "number"
+					},
+					"genre": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"suffix": {
+						"type": "string"
+					},
+					"transcodedContentType": {
+						"type": "string"
+					},
+					"transcodedSuffix": {
+						"type": "string"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"bitRate": {
+						"type": "number"
+					},
+					"path": {
+						"type": "string"
+					},
+					"isVideo": {
+						"type": "boolean"
+					},
+					"userRating": {
+						"type": "number"
+					},
+					"averageRating": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					},
+					"discNumber": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"albumId": {
+						"type": "string"
+					},
+					"artistId": {
+						"type": "string"
+					},
+					"type": {
+						"enum": [
+							"audiobook",
+							"music",
+							"podcast",
+							"video"
+						],
+						"type": "string"
+					},
+					"bookmarkPosition": {
+						"type": "number"
+					},
+					"originalWidth": {
+						"type": "number"
+					},
+					"originalHeight": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id",
+					"isDir",
+					"title"
+				]
+			},
+			"Subsonic.AlbumWithSongsID3": {
+				"type": "object",
+				"properties": {
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"artistId": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"songCount": {
+						"type": "number"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"year": {
+						"type": "number"
+					},
+					"genre": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"created",
+					"duration",
+					"id",
+					"name",
+					"songCount"
+				]
+			},
+			"Subsonic.AlbumInfo": {
+				"type": "object",
+				"properties": {
+					"notes": {
+						"type": "string"
+					},
+					"musicBrainzId": {
+						"type": "string"
+					},
+					"lastFmUrl": {
+						"type": "string"
+					},
+					"smallImageUrl": {
+						"type": "string"
+					},
+					"mediumImageUrl": {
+						"type": "string"
+					},
+					"largeImageUrl": {
+						"type": "string"
+					}
+				}
+			},
+			"Subsonic.AlbumList": {
+				"type": "object",
+				"properties": {
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"SubsonicParameters.AlbumListType": {
+				"enum": [
+					"alphabeticalByArtist",
+					"alphabeticalByName",
+					"byGenre",
+					"byYear",
+					"frequent",
+					"highest",
+					"newest",
+					"random",
+					"recent",
+					"starred"
+				],
+				"type": "string"
+			},
+			"Subsonic.AlbumList2": {
+				"type": "object",
+				"properties": {
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.AlbumID3"
+						}
+					}
+				}
+			},
+			"Subsonic.AlbumID3": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"artistId": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"songCount": {
+						"type": "number"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"year": {
+						"type": "number"
+					},
+					"genre": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"created",
+					"duration",
+					"id",
+					"name",
+					"songCount"
+				]
+			},
+			"Subsonic.ArtistWithAlbumsID3": {
+				"type": "object",
+				"properties": {
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.AlbumID3"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"albumCount": {
+						"type": "number"
+					},
+					"starred": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"albumCount",
+					"id",
+					"name"
+				]
+			},
+			"Subsonic.ArtistInfo": {
+				"type": "object",
+				"properties": {
+					"similarArtist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Artist"
+						}
+					},
+					"biography": {
+						"type": "string"
+					},
+					"musicBrainzId": {
+						"type": "string"
+					},
+					"lastFmUrl": {
+						"type": "string"
+					},
+					"smallImageUrl": {
+						"type": "string"
+					},
+					"mediumImageUrl": {
+						"type": "string"
+					},
+					"largeImageUrl": {
+						"type": "string"
+					}
+				}
+			},
+			"Subsonic.Artist": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"userRating": {
+						"type": "number"
+					},
+					"averageRating": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				]
+			},
+			"Subsonic.ArtistInfo2": {
+				"type": "object",
+				"properties": {
+					"similarArtist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.ArtistID3"
+						}
+					},
+					"biography": {
+						"type": "string"
+					},
+					"musicBrainzId": {
+						"type": "string"
+					},
+					"lastFmUrl": {
+						"type": "string"
+					},
+					"smallImageUrl": {
+						"type": "string"
+					},
+					"mediumImageUrl": {
+						"type": "string"
+					},
+					"largeImageUrl": {
+						"type": "string"
+					}
+				}
+			},
+			"Subsonic.ArtistID3": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"albumCount": {
+						"type": "number"
+					},
+					"starred": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"albumCount",
+					"id",
+					"name"
+				]
+			},
+			"Subsonic.ArtistsID3": {
+				"type": "object",
+				"properties": {
+					"index": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.IndexID3"
+						}
+					},
+					"ignoredArticles": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"ignoredArticles"
+				]
+			},
+			"Subsonic.IndexID3": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.ArtistID3"
+						}
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				]
+			},
+			"Subsonic.Bookmarks": {
+				"type": "object",
+				"properties": {
+					"bookmark": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Bookmark"
+						}
+					}
+				}
+			},
+			"Subsonic.Bookmark": {
+				"type": "object",
+				"properties": {
+					"entry": {
+						"$ref": "#/components/schemas/Subsonic.Child"
+					},
+					"position": {
+						"type": "number"
+					},
+					"username": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string"
+					},
+					"changed": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"changed",
+					"created",
+					"entry",
+					"position",
+					"username"
+				]
+			},
+			"Subsonic.ChatMessages": {
+				"type": "object",
+				"properties": {
+					"chatMessage": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.ChatMessage"
+						}
+					}
+				}
+			},
+			"Subsonic.ChatMessage": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"time": {
+						"type": "number"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message",
+					"time",
+					"username"
+				]
+			},
+			"Subsonic.Genres": {
+				"type": "object",
+				"properties": {
+					"genre": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Genre"
+						}
+					}
+				}
+			},
+			"Subsonic.Genre": {
+				"type": "object",
+				"properties": {
+					"content": {
+						"type": "string"
+					},
+					"songCount": {
+						"type": "number"
+					},
+					"albumCount": {
+						"type": "number"
+					},
+					"artistCount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"albumCount",
+					"artistCount",
+					"content",
+					"songCount"
+				]
+			},
+			"Subsonic.Indexes": {
+				"type": "object",
+				"properties": {
+					"shortcut": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Artist"
+						}
+					},
+					"index": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Index"
+						}
+					},
+					"child": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"lastModified": {
+						"type": "number"
+					},
+					"ignoredArticles": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"ignoredArticles",
+					"lastModified"
+				]
+			},
+			"Subsonic.Index": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Artist"
+						}
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				]
+			},
+			"Subsonic.InternetRadioStations": {
+				"type": "object",
+				"properties": {
+					"internetRadioStation": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.InternetRadioStation"
+						}
+					}
+				}
+			},
+			"Subsonic.InternetRadioStation": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"streamUrl": {
+						"type": "string"
+					},
+					"homePageUrl": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"streamUrl"
+				]
+			},
+			"Subsonic.License": {
+				"type": "object",
+				"properties": {
+					"valid": {
+						"type": "boolean"
+					},
+					"email": {
+						"type": "string"
+					},
+					"licenseExpires": {
+						"type": "string"
+					},
+					"trialExpires": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"valid"
+				]
+			},
+			"Subsonic.Lyrics": {
+				"type": "object",
+				"properties": {
+					"content": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"content"
+				]
+			},
+			"Subsonic.Directory": {
+				"type": "object",
+				"properties": {
+					"child": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"userRating": {
+						"type": "number"
+					},
+					"averageRating": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				]
+			},
+			"Subsonic.MusicFolders": {
+				"type": "object",
+				"properties": {
+					"musicFolder": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.MusicFolder"
+						}
+					}
+				}
+			},
+			"Subsonic.MusicFolder": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"Subsonic.NewestPodcasts": {
+				"type": "object",
+				"properties": {
+					"episode": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.PodcastEpisode"
+						}
+					}
+				}
+			},
+			"Subsonic.PodcastEpisode": {
+				"type": "object",
+				"properties": {
+					"streamId": {
+						"type": "string"
+					},
+					"channelId": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/Subsonic.PodcastStatus"
+					},
+					"publishDate": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"isDir": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"track": {
+						"type": "number"
+					},
+					"year": {
+						"type": "number"
+					},
+					"genre": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"suffix": {
+						"type": "string"
+					},
+					"transcodedContentType": {
+						"type": "string"
+					},
+					"transcodedSuffix": {
+						"type": "string"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"bitRate": {
+						"type": "number"
+					},
+					"path": {
+						"type": "string"
+					},
+					"isVideo": {
+						"type": "boolean"
+					},
+					"userRating": {
+						"type": "number"
+					},
+					"averageRating": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					},
+					"discNumber": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"albumId": {
+						"type": "string"
+					},
+					"artistId": {
+						"type": "string"
+					},
+					"type": {
+						"enum": [
+							"audiobook",
+							"music",
+							"podcast",
+							"video"
+						],
+						"type": "string"
+					},
+					"bookmarkPosition": {
+						"type": "number"
+					},
+					"originalWidth": {
+						"type": "number"
+					},
+					"originalHeight": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"channelId",
+					"id",
+					"isDir",
+					"status",
+					"title"
+				]
+			},
+			"Subsonic.PodcastStatus": {
+				"enum": [
+					"completed",
+					"deleted",
+					"downloading",
+					"error",
+					"new",
+					"skipped"
+				],
+				"type": "string"
+			},
+			"Subsonic.NowPlaying": {
+				"type": "object",
+				"properties": {
+					"entry": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.NowPlayingEntry"
+						}
+					}
+				}
+			},
+			"Subsonic.NowPlayingEntry": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"minutesAgo": {
+						"type": "number"
+					},
+					"playerId": {
+						"type": "number"
+					},
+					"playerName": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"isDir": {
+						"type": "boolean"
+					},
+					"title": {
+						"type": "string"
+					},
+					"album": {
+						"type": "string"
+					},
+					"artist": {
+						"type": "string"
+					},
+					"track": {
+						"type": "number"
+					},
+					"year": {
+						"type": "number"
+					},
+					"genre": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number"
+					},
+					"contentType": {
+						"type": "string"
+					},
+					"suffix": {
+						"type": "string"
+					},
+					"transcodedContentType": {
+						"type": "string"
+					},
+					"transcodedSuffix": {
+						"type": "string"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"bitRate": {
+						"type": "number"
+					},
+					"path": {
+						"type": "string"
+					},
+					"isVideo": {
+						"type": "boolean"
+					},
+					"userRating": {
+						"type": "number"
+					},
+					"averageRating": {
+						"type": "number"
+					},
+					"playCount": {
+						"type": "number"
+					},
+					"discNumber": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"starred": {
+						"type": "string"
+					},
+					"albumId": {
+						"type": "string"
+					},
+					"artistId": {
+						"type": "string"
+					},
+					"type": {
+						"enum": [
+							"audiobook",
+							"music",
+							"podcast",
+							"video"
+						],
+						"type": "string"
+					},
+					"bookmarkPosition": {
+						"type": "number"
+					},
+					"originalWidth": {
+						"type": "number"
+					},
+					"originalHeight": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id",
+					"isDir",
+					"minutesAgo",
+					"playerId",
+					"title",
+					"username"
+				]
+			},
+			"Subsonic.Playlists": {
+				"type": "object",
+				"properties": {
+					"playlist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Playlist"
+						}
+					}
+				}
+			},
+			"Subsonic.Playlist": {
+				"type": "object",
+				"properties": {
+					"allowedUser": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"comment": {
+						"type": "string"
+					},
+					"owner": {
+						"type": "string"
+					},
+					"public": {
+						"type": "boolean"
+					},
+					"songCount": {
+						"type": "number"
+					},
+					"duration": {
+						"type": "number"
+					},
+					"created": {
+						"type": "string"
+					},
+					"changed": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"changed",
+					"created",
+					"duration",
+					"id",
+					"name",
+					"songCount"
+				]
+			},
+			"Subsonic.PlayQueue": {
+				"type": "object",
+				"properties": {
+					"entry": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"current": {
+						"type": "number"
+					},
+					"position": {
+						"type": "number"
+					},
+					"username": {
+						"type": "string"
+					},
+					"changed": {
+						"type": "string"
+					},
+					"changedBy": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"changed",
+					"changedBy",
+					"username"
+				]
+			},
+			"Subsonic.Podcasts": {
+				"type": "object",
+				"properties": {
+					"channel": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.PodcastChannel"
+						}
+					}
+				}
+			},
+			"Subsonic.PodcastChannel": {
+				"type": "object",
+				"properties": {
+					"episode": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.PodcastEpisode"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"coverArt": {
+						"type": "string"
+					},
+					"originalImageUrl": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/Subsonic.PodcastStatus"
+					},
+					"errorMessage": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"status",
+					"url"
+				]
+			},
+			"Subsonic.Songs": {
+				"type": "object",
+				"properties": {
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.ScanStatus": {
+				"type": "object",
+				"properties": {
+					"scanning": {
+						"type": "boolean"
+					},
+					"count": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"scanning"
+				]
+			},
+			"Subsonic.Shares": {
+				"type": "object",
+				"properties": {
+					"share": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Share"
+						}
+					}
+				}
+			},
+			"Subsonic.Share": {
+				"type": "object",
+				"properties": {
+					"entry": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"id": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"created": {
+						"type": "string"
+					},
+					"expires": {
+						"type": "string"
+					},
+					"lastVisited": {
+						"type": "string"
+					},
+					"visitCount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"created",
+					"id",
+					"url",
+					"username",
+					"visitCount"
+				]
+			},
+			"Subsonic.SimilarSongs": {
+				"type": "object",
+				"properties": {
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.SimilarSongs2": {
+				"type": "object",
+				"properties": {
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.Starred": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Artist"
+						}
+					},
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.Starred2": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.ArtistID3"
+						}
+					},
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.AlbumID3"
+						}
+					},
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.TopSongs": {
+				"type": "object",
+				"properties": {
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.User": {
+				"type": "object",
+				"properties": {
+					"folder": {
+						"type": "array",
+						"items": {
+							"type": "number"
+						}
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"scrobblingEnabled": {
+						"type": "boolean"
+					},
+					"maxBitRate": {
+						"type": "number"
+					},
+					"adminRole": {
+						"type": "boolean"
+					},
+					"settingsRole": {
+						"type": "boolean"
+					},
+					"downloadRole": {
+						"type": "boolean"
+					},
+					"uploadRole": {
+						"type": "boolean"
+					},
+					"playlistRole": {
+						"type": "boolean"
+					},
+					"coverArtRole": {
+						"type": "boolean"
+					},
+					"commentRole": {
+						"type": "boolean"
+					},
+					"podcastRole": {
+						"type": "boolean"
+					},
+					"streamRole": {
+						"type": "boolean"
+					},
+					"jukeboxRole": {
+						"type": "boolean"
+					},
+					"shareRole": {
+						"type": "boolean"
+					},
+					"videoConversionRole": {
+						"type": "boolean"
+					},
+					"avatarLastChanged": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"adminRole",
+					"commentRole",
+					"coverArtRole",
+					"downloadRole",
+					"jukeboxRole",
+					"playlistRole",
+					"podcastRole",
+					"scrobblingEnabled",
+					"settingsRole",
+					"shareRole",
+					"streamRole",
+					"uploadRole",
+					"username",
+					"videoConversionRole"
+				]
+			},
+			"Subsonic.Users": {
+				"type": "object",
+				"properties": {
+					"user": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.User"
+						}
+					}
+				}
+			},
+			"Subsonic.VideoInfo": {
+				"type": "object",
+				"properties": {
+					"captions": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Captions"
+						}
+					},
+					"audioTrack": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.AudioTrack"
+						}
+					},
+					"conversion": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.VideoConversion"
+						}
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"Subsonic.Captions": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"Subsonic.AudioTrack": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"languageCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"Subsonic.VideoConversion": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"bitRate": {
+						"type": "number"
+					},
+					"audioTrackId": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"Subsonic.Videos": {
+				"type": "object",
+				"properties": {
+					"video": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.JukeboxStatus": {
+				"type": "object",
+				"properties": {
+					"currentIndex": {
+						"type": "number"
+					},
+					"playing": {
+						"type": "boolean"
+					},
+					"gain": {
+						"type": "number"
+					},
+					"position": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"currentIndex",
+					"gain",
+					"playing"
+				]
+			},
+			"SubsonicParameters.JukeboxAction": {
+				"enum": [
+					"add",
+					"clear",
+					"get",
+					"remove",
+					"set",
+					"setGain",
+					"shuffle",
+					"skip",
+					"start",
+					"status",
+					"stop"
+				],
+				"type": "string"
+			},
+			"Subsonic.SearchResult": {
+				"type": "object",
+				"properties": {
+					"match": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"offset": {
+						"type": "number"
+					},
+					"totalHits": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"offset",
+					"totalHits"
+				]
+			},
+			"Subsonic.SearchResult2": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Artist"
+						}
+					},
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					},
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			},
+			"Subsonic.SearchResult3": {
+				"type": "object",
+				"properties": {
+					"artist": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.ArtistID3"
+						}
+					},
+					"album": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.AlbumID3"
+						}
+					},
+					"song": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Subsonic.Child"
+						}
+					}
+				}
+			}
+		}
+	}
+}

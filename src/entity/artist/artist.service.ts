@@ -2,10 +2,10 @@ import {Inject, InRequestScope} from 'typescript-ioc';
 import {Artist} from './artist.js';
 import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts.js';
 import {Folder} from '../folder/folder.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
 import {FolderService} from '../folder/folder.service.js';
 import {FolderType} from '../../types/enums.js';
 import {Orm} from '../../modules/engine/services/orm.service.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class ArtistService {

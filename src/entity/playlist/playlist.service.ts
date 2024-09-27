@@ -5,9 +5,9 @@ import {Orm} from '../../modules/engine/services/orm.service.js';
 import {PlaylistMutateArgs} from './playlist.args.js';
 import {User} from '../user/user.js';
 import {DBObjectType} from '../../types/enums.js';
-import {NotFoundError} from '../../modules/rest/index.js';
 import {Episode} from '../episode/episode.js';
 import {Base} from '../base/base.js';
+import {NotFoundError} from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlaylistService {

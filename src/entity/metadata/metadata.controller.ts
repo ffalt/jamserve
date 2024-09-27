@@ -1,4 +1,3 @@
-import {ApiBinaryResult, Controller, Ctx, Get, QueryParams} from '../../modules/rest/index.js';
 import {UserRole} from '../../types/enums.js';
 import {MetaDataResult} from './metadata.model.js';
 import {
@@ -16,6 +15,11 @@ import {
 } from './metadata.args.js';
 import {Context} from '../../modules/engine/rest/context.js';
 import {ApiImageTypes} from '../../types/consts.js';
+import {Controller} from '../../modules/rest/decorators/Controller.js';
+import {Get} from '../../modules/rest/decorators/Get.js';
+import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
+import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 @Controller('/metadata', {tags: ['Meta Data'], roles: [UserRole.stream]})
 export class MetaDataController {

@@ -51,9 +51,9 @@ import {ORMRepositories} from '../orm/repositories.js';
 import {registerORMEnums} from '../orm/enum-registration.js';
 import {ConfigService} from './config.service.js';
 import {Options} from 'sequelize';
-import {NotFoundError} from '../../rest/index.js';
 import {GenreRepository} from '../../../entity/genre/genre.repository.js';
 import {Genre} from '../../../entity/genre/genre.js';
+import {NotFoundError} from '../../deco/express/express-error.js';
 
 registerORMEnums();
 
@@ -156,6 +156,10 @@ export class Orm {
 			this.Track,
 			this.User
 		].find(repo => repo.objType === destType);
+	}
+
+	public async findInRepos(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		return Orm.findInReposTypes(id, repos);
 	}
 
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {

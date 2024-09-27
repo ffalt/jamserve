@@ -6,13 +6,14 @@ import {JWTPayload} from '../../utils/jwt.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import {ApiBinaryResult, InvalidParamError, UnauthError} from '../../modules/rest/index.js';
 import {ConfigService} from '../../modules/engine/services/config.service.js';
 import {fileDeleteIfExists} from '../../utils/fs-utils.js';
 import {ImageModule} from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import {UserMutateArgs} from './user.args.js';
 import {randomString} from '../../utils/random.js';
+import {InvalidParamError, UnauthError} from '../../modules/deco/express/express-error.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class UserService {

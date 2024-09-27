@@ -43,6 +43,4 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 			: [{user: user?.roleAdmin ? undefined : user?.id}]
 		);
 	}
-
-
 }

@@ -1,10 +1,16 @@
 import {PlayQueue} from './playqueue.model.js';
-import {BodyParams, Controller, Ctx, Get, Post, QueryParams} from '../../modules/rest/index.js';
 import {UserRole} from '../../types/enums.js';
 import {IncludesTrackArgs} from '../track/track.args.js';
 import {IncludesPlayQueueArgs, PlayQueueSetArgs} from './playqueue.args.js';
 import {IncludesEpisodeArgs} from '../episode/episode.args.js';
 import {Context} from '../../modules/engine/rest/context.js';
+import {Controller} from '../../modules/rest/decorators/Controller.js';
+import {Get} from '../../modules/rest/decorators/Get.js';
+import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
+import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import {Post} from '../../modules/rest/decorators/Post.js';
+import {BodyParams} from '../../modules/rest/decorators/BodyParams.js';
+
 @Controller('/playqueue', {tags: ['PlayQueue'], roles: [UserRole.stream]})
 export class PlayQueueController {
 	@Get('/get',

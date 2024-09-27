@@ -1,8 +1,14 @@
-import {Controller, Ctx, Get, ApiBinaryResult, NotFoundError, PathParam, PathParams} from '../../modules/rest/index.js';
 import {AudioFormatType, UserRole} from '../../types/enums.js';
 import {StreamArgs} from './stream.args.js';
 import {ApiStreamTypes} from '../../types/consts.js';
 import {Context} from '../../modules/engine/rest/context.js';
+import {Controller} from '../../modules/rest/decorators/Controller.js';
+import {Get} from '../../modules/rest/decorators/Get.js';
+import {PathParam} from '../../modules/rest/decorators/PathParam.js';
+import {PathParams} from '../../modules/rest/decorators/PathParams.js';
+import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import {NotFoundError} from '../../modules/deco/express/express-error.js';
 
 @Controller('/stream', {tags: ['Stream'], roles: [UserRole.stream]})
 export class StreamController {

@@ -2,7 +2,7 @@ import archiver from 'archiver';
 import express from 'express';
 import {replaceFileSystemChars} from './fs-utils.js';
 import {logger} from './logger.js';
-import {StreamData} from '../modules/rest/builder/express-responder.js';
+import {StreamData} from '../modules/deco/express/express-responder.js';
 
 const log = logger('BaseCompressStream');
 

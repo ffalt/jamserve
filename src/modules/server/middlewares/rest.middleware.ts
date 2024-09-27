@@ -1,11 +1,15 @@
 import express from 'express';
-import {buildRestMeta, restRouter, RestOptions} from '../../rest/index.js';
 import {UserRole} from '../../../types/enums.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {logger} from '../../../utils/logger.js';
 import {RestControllers} from '../../engine/rest/controllers.js';
 import {ConfigService} from '../../engine/services/config.service.js';
 import {registerRestEnums} from '../../engine/rest/enum-registration.js';
+import {buildRestMeta} from '../../rest/metadata/builder.js';
+import {RestOptions} from '../../deco/express/express-method.js';
+import {restRouter} from '../../rest/builder/express.js';
+import {getMetadataStorage} from '../../rest/metadata/getMetadataStorage.js';
+import {ApiResponder} from '../../rest/response.js';
 
 const log = logger('REST');
 
@@ -18,10 +22,14 @@ export class RestMiddleware {
 
 	middleware(): express.Router {
 		const api = express.Router();
+		RestControllers();
 		buildRestMeta();
+		const metadata = getMetadataStorage();
 		const options: RestOptions = {
+			enums: metadata.enums,
+			resultTypes: metadata.resultTypes,
+			responder: new ApiResponder(),
 			tmpPath: this.configService.getDataPath(['cache', 'uploads']),
-			controllers: RestControllers(),
 			validateRoles: (user, roles) => {
 				if (roles.length > 0) {
 					if (!user) {

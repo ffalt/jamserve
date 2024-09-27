@@ -13,7 +13,6 @@ import {Album} from '../album/album.js';
 import {Artist} from '../artist/artist.js';
 import {User} from '../user/user.js';
 import {Root} from '../root/root.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
 import {AudioModule} from '../../modules/audio/audio.module.js';
 import {PodcastService} from '../podcast/podcast.service.js';
 import {TrackService} from '../track/track.service.js';
@@ -26,6 +25,7 @@ import {RootService} from '../root/root.service.js';
 import {Artwork} from '../artwork/artwork.js';
 import {ArtworkService} from '../artwork/artwork.service.js';
 import {Orm} from '../../modules/engine/services/orm.service.js';
+import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class ImageService {
