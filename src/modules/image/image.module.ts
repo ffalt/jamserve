@@ -14,11 +14,7 @@ import {ConfigService} from '../engine/services/config.service.js';
 import {Inject, InRequestScope} from 'typescript-ioc';
 import {ImageFormatType} from '../../types/enums.js';
 import {Jimp, loadFont, VerticalAlign, HorizontalAlign} from 'jimp';
-import {dirname} from 'path';
-import {fileURLToPath} from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
+import {SANS_32_WHITE} from './image.font.js';
 
 export interface ImageInfo {
 	width: number;
@@ -75,7 +71,7 @@ export class ImageModule {
 		size = size || 320;
 		const image = new Jimp({width: 360, height: 360, color: '#0f1217'});
 		if (!this.font) {
-			this.font = await loadFont(path.join(__dirname, 'open-sans-32-white.fnt'));
+			this.font = await loadFont(SANS_32_WHITE);
 		}
 		image.print({
 			font: this.font,

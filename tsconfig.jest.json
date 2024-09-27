@@ -1,9 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "Node16",
-    "moduleResolution": "node",
-    "types": ["node", "jest"],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": [
+      "node",
+      "jest"
+    ],
     "rootDir": "./"
   },
   "include": [
@@ -19,7 +22,6 @@
     "specs",
     "local",
     "static",
-    "node_modules",
     ".git",
     ".idea"
   ]
