@@ -26,12 +26,13 @@ let AuthController = AuthController_1 = class AuthController {
             passport.authenticate('local', (err, user) => {
                 if (err || !user) {
                     log.error(err);
+                    log.error(`Login failed for [${req.ip}]`);
                     return reject(UnauthError('Invalid Auth'));
                 }
                 req.login(user, (err2) => {
                     if (err2) {
                         log.error(err2);
-                        console.error(err2);
+                        log.error(`Login failed for [${req.ip}]`);
                         return reject(UnauthError('Invalid Auth'));
                     }
                     resolve(user);

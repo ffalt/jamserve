@@ -4,7 +4,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var RateLimitService_1;
 import { InRequestScope } from 'typescript-ioc';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits) {
@@ -13,7 +12,7 @@ function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits) {
     }
     return getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 1) + getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 2);
 }
-let RateLimitService = RateLimitService_1 = class RateLimitService {
+let RateLimitService = class RateLimitService {
     constructor() {
         this.loginLimiterOption = {
             points: 5,
@@ -27,12 +26,8 @@ let RateLimitService = RateLimitService_1 = class RateLimitService {
             duration: 0,
         });
     }
-    static getReqID(req) {
-        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
-        return Array.isArray(ip) ? ip[0] : ip;
-    }
     async loginSlowDown(req, res) {
-        const key = RateLimitService_1.getReqID(req);
+        const key = req.ip;
         try {
             const resConsume = await this.loginLimiter.consume(key);
             if (resConsume.remainingPoints <= 0) {
@@ -56,12 +51,12 @@ let RateLimitService = RateLimitService_1 = class RateLimitService {
         }
     }
     async loginSlowDownReset(req) {
-        const key = RateLimitService_1.getReqID(req);
+        const key = req.ip;
         await this.limiterConsecutiveOutOfLimits.delete(key);
         await this.loginLimiter.delete(key);
     }
 };
-RateLimitService = RateLimitService_1 = __decorate([
+RateLimitService = __decorate([
     InRequestScope
 ], RateLimitService);
 export { RateLimitService };
