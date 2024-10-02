@@ -6,7 +6,7 @@ plugins:
     enabled: false
   eslint:
     enabled: true
-    channel: "eslint-9"
+    channel: "eslint-8"
   markdownlint:
     enabled: true
   tslint:
