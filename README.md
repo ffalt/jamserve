@@ -23,16 +23,16 @@ This is the backend development repository. See
 
 Features:
 
-*   REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
-*   API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
-*   Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
-*   Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
+* REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
+* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
+* Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH & AcoustID
+* Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
 
 ## Requirements
 
-*   install [NodeJS](https://nodejs.org/) and [NPM](https://www.npmjs.com/)
+* install [NodeJS](https://nodejs.org/) and [NPM](https://www.npmjs.com/)
 
-*   install [FFMPEG](https://ffmpeg.org/)
+* install [FFMPEG](https://ffmpeg.org/)
 
     `apt-get install ffmpeg`
 
@@ -40,19 +40,19 @@ Features:
 
 optional for metadata matching & mp3 repair support
 
-*   install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
+* install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
 
     `apt-get install libchromaprint-tools`
 
      manual installation: available in PATH or environment variable *FPCALC_PATH*
 
-*   install [mp3val](http://mp3val.sourceforge.net/)
+* install [mp3val](http://mp3val.sourceforge.net/)
 
     `apt-get install mp3val`
 
      manual installation: available in PATH or environment variable *MP3VAL_PATH*
 
-*   install [flac](https://xiph.org/flac/)
+* install [flac](https://xiph.org/flac/)
 
     `apt-get install flac`
 
@@ -60,11 +60,11 @@ optional for metadata matching & mp3 repair support
 
 ## Installation
 
-*   run command `npm install` in the root folder of this repository
-*   in folder `config`: 
-    copy file `firststart.config.dist.json` to `firststart.config.json` and 
+* run command `npm install` in the root folder of this repository
+* in folder `config`:
+    copy file `firststart.config.dist.json` to `firststart.config.json` and
     add an admin user / add some media folders (can be changed on runtime via the frontend UI)
-*   set environment variables or create an environment variables file `.env`
+* set environment variables or create an environment variables file `.env`
 
 ## Environment Variables
 
