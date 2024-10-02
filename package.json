@@ -16,7 +16,6 @@
   "scripts": {
     "start": "node --experimental-modules --es-module-specifier-resolution=node dist/index.js",
     "develop": "tsc-watch --onSuccess \"node --experimental-modules --es-module-specifier-resolution=node ./dist/index.js\"",
-    "develop:tsnode": "node --experimental-modules --es-module-specifier-resolution=node --loader ts-node/esm src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc",
