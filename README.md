@@ -148,7 +148,7 @@ JAM_DB_PORT=5432
 
 Example **config/firststart.config.json**:
 
-```json lines
+```json5
 /*
   Add Admin user and media folders on first start
  */
