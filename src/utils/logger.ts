@@ -1,8 +1,8 @@
 import winston from 'winston';
-import {Table} from 'console-table-printer';
-import {createStream, Generator, Options, RotatingFileStream} from 'rotating-file-stream';
+import { Table } from 'console-table-printer';
+import { createStream, Generator, Options, RotatingFileStream } from 'rotating-file-stream';
 import TransportStream from 'winston-transport';
-import {MESSAGE} from 'triple-beam';
+import { MESSAGE } from 'triple-beam';
 
 export interface WinstonRotatingFileOptions extends TransportStream.TransportStreamOptions {
 	filename: string | Generator;
@@ -37,7 +37,7 @@ export function configureLogger(level: string, logfile?: string): void {
 				// winston.format.json()
 			)
 	});
-	const transports: Array<TransportStream> = [console_logger]
+	const transports: Array<TransportStream> = [console_logger];
 	if (logfile) {
 		transports.push(new WinstonRotatingFile({
 			filename: logfile,
@@ -46,13 +46,13 @@ export function configureLogger(level: string, logfile?: string): void {
 				winston.format.simple()
 			),
 			rfsOptions: {
-				size: "10M", // rotate every 10 MegaBytes written
-				interval: "1d", // rotate daily
-				compress: "gzip" // compress rotated files
+				size: '10M', // rotate every 10 MegaBytes written
+				interval: '1d', // rotate daily
+				compress: 'gzip' // compress rotated files
 			}
-		}))
+		}));
 	}
-	winston.configure({level, transports});
+	winston.configure({ level, transports });
 }
 
 export class Logger {
@@ -85,7 +85,7 @@ export class Logger {
 
 	table(items: Array<any>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
 		if (winston.level === 'info') {
-			const p = new Table({columns});
+			const p = new Table({ columns });
 			p.addRows(items);
 			p.printTable();
 		}

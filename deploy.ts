@@ -1,11 +1,11 @@
 import fse from 'fs-extra';
-import {exec} from 'child_process';
+import { exec } from 'child_process';
 
 export async function spawnNPM(): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		exec('npm i -q', {
-			cwd: './deploy',
-		}, function(error, stdout, _stderr) {
+			cwd: './deploy'
+		}, function (error, stdout, _stderr) {
 			console.log(stdout);
 			if (error) {
 				reject(error);
@@ -35,9 +35,9 @@ async function start(): Promise<void> {
 			start: 'node --experimental-modules --es-module-specifier-resolution=node dist/index.js'
 		},
 		engines: pack.engines,
-		dependencies: pack.dependencies,
+		dependencies: pack.dependencies
 	};
-	await fse.writeJson('deploy/package.json', result, {spaces: 2});
+	await fse.writeJson('deploy/package.json', result, { spaces: 2 });
 	console.log('Create production package-lock.json');
 	await spawnNPM();
 	console.log('Copy software files');

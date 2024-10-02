@@ -1,15 +1,15 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module.js';
-import {TranscoderStream} from '../../modules/audio/transcoder/transcoder-stream.js';
-import {fileSuffix} from '../../utils/fs-utils.js';
-import {Episode} from '../episode/episode.js';
-import {Track} from '../track/track.js';
-import {User} from '../user/user.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {ApiBinaryResult, GenericError, InvalidParamError} from '../../modules/rest/index.js';
-import {AudioFormatType, DBObjectType} from '../../types/enums.js';
-import {Base} from '../base/base.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream.js';
+import { fileSuffix } from '../../utils/fs-utils.js';
+import { Episode } from '../episode/episode.js';
+import { Track } from '../track/track.js';
+import { User } from '../user/user.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { ApiBinaryResult, GenericError, InvalidParamError } from '../../modules/rest/index.js';
+import { AudioFormatType, DBObjectType } from '../../types/enums.js';
+import { Base } from '../base/base.js';
 
 @InRequestScope
 export class StreamService {
@@ -34,7 +34,7 @@ export class StreamService {
 		if (destFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat || fileSuffix(filename), destFormat, bitRate)) {
 			return this.audioModule.transcoder.get(filename, id, destFormat, bitRate);
 		}
-		return {file: {filename, name: `${id}.${destFormat}`}};
+		return { file: { filename, name: `${id}.${destFormat}` } };
 	}
 
 	async streamTrack(track: Track, format: string | undefined, maxBitRate: number | undefined): Promise<ApiBinaryResult> {
@@ -60,5 +60,4 @@ export class StreamService {
 		}
 		return Promise.reject(InvalidParamError('Invalid Object Type for Streaming'));
 	}
-
 }

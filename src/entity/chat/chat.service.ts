@@ -1,8 +1,8 @@
 import moment from 'moment';
-import {Chat} from './chat.js';
-import {SettingsService} from '../settings/settings.service.js';
-import {User} from '../user/user.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
+import { Chat } from './chat.js';
+import { SettingsService } from '../settings/settings.service.js';
+import { User } from '../user/user.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
 
 @InRequestScope
 export class ChatService {
@@ -59,5 +59,4 @@ export class ChatService {
 		}
 		return c;
 	}
-
 }

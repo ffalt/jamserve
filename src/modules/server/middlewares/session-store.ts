@@ -1,6 +1,6 @@
-import {Store} from 'express-session';
-import {SessionNotifyEventObject, SessionService} from '../../../entity/session/session.service.js';
-import {SessionData} from '../../../types/express.js';
+import { Store } from 'express-session';
+import { SessionNotifyEventObject, SessionService } from '../../../entity/session/session.service.js';
+import { SessionData } from '../../../types/express.js';
 
 export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
 	private cache = new Map<string, SessionData>();
@@ -80,9 +80,4 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 			.then(callback)
 			.catch(callback);
 	};
-
-	// touch: (sid: string, session: Express.Session, callback?: (err?: any) => void) => void = (sid, session, callback) => {
-	// 	this.set(sid, session, callback);
-	// };
-
 }

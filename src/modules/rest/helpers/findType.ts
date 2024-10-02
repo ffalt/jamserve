@@ -1,5 +1,5 @@
-import {NoExplicitTypeError} from 'type-graphql';
-import {bannedTypes, ReturnTypeFunc, TypeOptions, TypeValue, TypeValueThunk} from '../definitions/types.js';
+import { NoExplicitTypeError } from 'type-graphql';
+import { bannedTypes, ReturnTypeFunc, TypeOptions, TypeValue, TypeValueThunk } from '../definitions/types.js';
 
 export type MetadataKey = 'design:type' | 'design:returntype' | 'design:paramtypes';
 
@@ -17,14 +17,10 @@ export interface GetTypeParams {
 	parameterIndex?: number;
 }
 
-export function findType({metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex}: GetTypeParams): TypeInfo {
-	const options: TypeOptions = {...typeOptions};
+export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }: GetTypeParams): TypeInfo {
+	const options: TypeOptions = { ...typeOptions };
 	let metadataDesignType: Function | undefined;
-	const reflectedType: Function[] | Function | undefined = Reflect.getMetadata(
-		metadataKey,
-		prototype,
-		propertyKey,
-	);
+	const reflectedType: Function[] | Function | undefined = Reflect.getMetadata(metadataKey, prototype, propertyKey);
 	if (metadataKey === 'design:paramtypes') {
 		metadataDesignType = (reflectedType as Function[])[parameterIndex!];
 	} else {
@@ -51,12 +47,12 @@ export function findType({metadataKey, prototype, propertyKey, returnTypeFunc, t
 		};
 		return {
 			getType,
-			typeOptions: options,
+			typeOptions: options
 		};
 	} else if (metadataDesignType) {
 		return {
 			getType: () => metadataDesignType!,
-			typeOptions: options,
+			typeOptions: options
 		};
 	} else {
 		throw new NoExplicitTypeError(prototype.constructor.name, propertyKey, parameterIndex);

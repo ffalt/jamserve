@@ -1,14 +1,14 @@
-import {ID3v2, IID3V1, IID3V2, IMP3Analyzer} from 'jamp3';
+import { ID3v2, IID3V1, IID3V2, IMP3Analyzer } from 'jamp3';
 import path from 'path';
-import {AudioModule, ID3TrackTagRawFormatTypes} from '../../modules/audio/audio.module.js';
-import {flac_test} from '../../modules/audio/tools/flac.js';
-import {logger} from '../../utils/logger.js';
-import {Track} from '../track/track.js';
-import {RuleResult} from './rule.js';
-import {AlbumTypesArtistMusic, AudioFormatType, TrackHealthID} from '../../types/enums.js';
-import {TrackHealthHint} from './health.model.js';
-import {Tag} from '../tag/tag.js';
-import {Folder} from '../folder/folder.js';
+import { AudioModule, ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module.js';
+import { flac_test } from '../../modules/audio/tools/flac.js';
+import { logger } from '../../utils/logger.js';
+import { Track } from '../track/track.js';
+import { RuleResult } from './rule.js';
+import { AlbumTypesArtistMusic, AudioFormatType, TrackHealthID } from '../../types/enums.js';
+import { TrackHealthHint } from './health.model.js';
+import { Tag } from '../tag/tag.js';
+import { Folder } from '../folder/folder.js';
 
 const log = logger('TrackHealth');
 
@@ -101,7 +101,7 @@ const trackRules: Array<TrackRuleInfo> = [
 				missing.push('year');
 			}
 			if (missing.length > 0) {
-				return {details: missing.map(m => ({reason: m}))};
+				return { details: missing.map(m => ({ reason: m })) };
 			}
 			return;
 		}
@@ -136,7 +136,7 @@ const trackRules: Array<TrackRuleInfo> = [
 			if (tagCache.mp3Warnings && tagCache.mp3Warnings.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
 				return {
 					details: tagCache.mp3Warnings.id3v2.map(m => {
-						return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+						return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
 					})
 				};
 			}
@@ -159,7 +159,7 @@ const trackRules: Array<TrackRuleInfo> = [
 					});
 					return {
 						details: ids.map(m => {
-							return {reason: m};
+							return { reason: m };
 						})
 					};
 				}
@@ -177,7 +177,7 @@ const trackRules: Array<TrackRuleInfo> = [
 				if (warnings.length > 0) {
 					return {
 						details: warnings.map(m => {
-							return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+							return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
 						})
 					};
 				}
@@ -211,7 +211,7 @@ const trackRules: Array<TrackRuleInfo> = [
 				if (warnings.length > 0) {
 					return {
 						details: warnings.map(m => {
-							return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+							return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
 						})
 					};
 				}
@@ -229,7 +229,7 @@ const trackRules: Array<TrackRuleInfo> = [
 				if (mp3Warnings.length > 0) {
 					return {
 						details: mp3Warnings.map(m => {
-							return {reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString()};
+							return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
 						})
 					};
 				}
@@ -243,7 +243,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		mp3: true,
 		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.flacWarnings) {
-				return {details: [{reason: tagCache.flacWarnings}]};
+				return { details: [{ reason: tagCache.flacWarnings }] };
 			}
 			return;
 		}
@@ -251,7 +251,6 @@ const trackRules: Array<TrackRuleInfo> = [
 ];
 
 export class TrackRulesChecker {
-
 	constructor(private audiomodule: AudioModule) {
 	}
 
@@ -311,5 +310,4 @@ export class TrackRulesChecker {
 		}
 		return result;
 	}
-
 }

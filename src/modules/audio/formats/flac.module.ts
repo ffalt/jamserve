@@ -1,15 +1,14 @@
 import fse from 'fs-extra';
-import {ImageModule} from '../../image/image.module.js';
-import {FORMAT} from '../audio.format.js';
-import {AudioScanResult} from '../audio.module.js';
-import {flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2} from '../metadata.js';
-import {Flac} from './flac/index.js';
-import {MetaWriteableDataBlock} from './flac/lib/block.writeable.js';
-import {TagFormatType} from '../../../types/enums.js';
-import {RawTag} from '../rawTag.js';
+import { ImageModule } from '../../image/image.module.js';
+import { FORMAT } from '../audio.format.js';
+import { AudioScanResult } from '../audio.module.js';
+import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js';
+import { Flac } from './flac/index.js';
+import { MetaWriteableDataBlock } from './flac/lib/block.writeable.js';
+import { TagFormatType } from '../../../types/enums.js';
+import { RawTag } from '../rawTag.js';
 
 export class AudioModuleFLAC {
-
 	constructor(private imageModule: ImageModule) {
 	}
 
@@ -24,7 +23,7 @@ export class AudioModuleFLAC {
 			};
 		} catch (e: any) {
 			console.error(e);
-			return {format: TagFormatType.none};
+			return { format: TagFormatType.none };
 		}
 	}
 
@@ -53,7 +52,7 @@ export class AudioModuleFLAC {
 		const flac = new Flac();
 		const tag = await flac.read(filename);
 		if (tag && tag.pictures) {
-			let pic = tag.pictures.find(p => p.pictureType === 3 /*ID3v2 picture type "cover front" used in FLAC */);
+			let pic = tag.pictures.find(p => p.pictureType === 3 /* ID3v2 picture type "cover front" used in FLAC */);
 			if (!pic) {
 				pic = tag.pictures[0];
 			}
@@ -63,5 +62,4 @@ export class AudioModuleFLAC {
 		}
 		return;
 	}
-
 }

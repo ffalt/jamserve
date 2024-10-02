@@ -1,11 +1,11 @@
 import path from 'path';
-import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums.js';
-import {MetaStatBuilder} from '../../../utils/stats-builder.js';
-import {extractAlbumName} from '../../../utils/album-name.js';
-import {MatchTrack} from './scan.js';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {MergeNode} from './merge-scan.js';
+import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
+import { MetaStatBuilder } from '../../../utils/stats-builder.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
+import { MatchTrack } from './scan.js';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { MergeNode } from './merge-scan.js';
 
 export interface MetaStat {
 	artist?: string;
@@ -27,26 +27,25 @@ export interface MetaStat {
 }
 
 const typeByGenreNames: { [name: string]: AlbumType } = {
-	audiobook: AlbumType.audiobook,
+	'audiobook': AlbumType.audiobook,
 	'audio theater': AlbumType.audiobook,
 	'audio drama': AlbumType.audiobook,
 	'audio series': AlbumType.audiobook,
-	soundtrack: AlbumType.soundtrack
+	'soundtrack': AlbumType.soundtrack
 };
 
 const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string> }> = [
-	{type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series']},
-	{type: AlbumType.bootleg, names: ['bootleg']},
-	{type: AlbumType.compilation, names: ['compilation']},
-	{type: AlbumType.live, names: ['live']},
-	{type: AlbumType.soundtrack, names: ['soundtrack']},
-	{type: AlbumType.ep, names: ['ep']},
-	{type: AlbumType.single, names: ['single']},
-	{type: AlbumType.album, names: ['album']}
+	{ type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series'] },
+	{ type: AlbumType.bootleg, names: ['bootleg'] },
+	{ type: AlbumType.compilation, names: ['compilation'] },
+	{ type: AlbumType.live, names: ['live'] },
+	{ type: AlbumType.soundtrack, names: ['soundtrack'] },
+	{ type: AlbumType.ep, names: ['ep'] },
+	{ type: AlbumType.single, names: ['single'] },
+	{ type: AlbumType.album, names: ['album'] }
 ];
 
 export class MatchNodeMetaStats {
-
 	private static getGenreAlbumType(genre: string): AlbumType {
 		return typeByGenreNames[genre.toLowerCase()] || AlbumType.unknown;
 	}
@@ -127,7 +126,7 @@ export class MatchNodeMetaStats {
 			}
 			subFolderTrackCount += child.nrOfTracks;
 		}
-		return {subFolderTrackCount, subFolderCount};
+		return { subFolderTrackCount, subFolderCount };
 	}
 
 	private static async buildSubFoldersSlugs(dir: MergeNode, builder: MetaStatBuilder): Promise<void> {
@@ -164,16 +163,15 @@ export class MatchNodeMetaStats {
 				albumType = AlbumType.series;
 			}
 		}
-		return {albumType, artist, hasMultipleArtists, mbAlbumType, genres: builder.asStringList('genre')};
+		return { albumType, artist, hasMultipleArtists, mbAlbumType, genres: builder.asStringList('genre') };
 	}
-
 
 	static async buildMetaStat(node: MergeNode, strategy: RootScanStrategy): Promise<MetaStat> {
 		const builder = new MetaStatBuilder();
 		await MatchNodeMetaStats.buildTracksSlugs(node, builder);
-		const {subFolderTrackCount, subFolderCount} = MatchNodeMetaStats.recursiveCount(node);
+		const { subFolderTrackCount, subFolderCount } = MatchNodeMetaStats.recursiveCount(node);
 		await MatchNodeMetaStats.buildSubFoldersSlugs(node, builder);
-		const {albumType, artist, hasMultipleArtists, mbAlbumType, genres} = MatchNodeMetaStats.getAlbumInfo(builder, strategy);
+		const { albumType, artist, hasMultipleArtists, mbAlbumType, genres } = MatchNodeMetaStats.getAlbumInfo(builder, strategy);
 		return {
 			trackCount: node.nrOfTracks,
 			folderCount: node.children.filter(c => c.folder.folderType !== FolderType.extras).length,

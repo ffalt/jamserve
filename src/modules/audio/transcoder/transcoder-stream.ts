@@ -1,9 +1,9 @@
 import express from 'express';
 import ffmpeg from 'fluent-ffmpeg';
-import {SupportedTranscodeAudioFormat} from '../../../utils/filetype.js';
-import {logger} from '../../../utils/logger.js';
-import {AudioFormatType} from '../../../types/enums.js';
-import {StreamData} from '../../rest/index.js';
+import { SupportedTranscodeAudioFormat } from '../../../utils/filetype.js';
+import { logger } from '../../../utils/logger.js';
+import { AudioFormatType } from '../../../types/enums.js';
+import { StreamData } from '../../rest/index.js';
 
 const log = logger('transcoder.stream');
 
@@ -23,14 +23,14 @@ export abstract class TranscoderStream implements StreamData {
 					return reject(err);
 				}
 				resolve(Object.keys(formats).filter(key => formats[key].canDemux).map(key => {
-					return {format: key, name: formats[key].description};
+					return { format: key, name: formats[key].description };
 				}));
 			});
 		});
 	}
 
 	static getTranscodeProc(source: string, format: string, maxBitRate: number): ffmpeg.FfmpegCommand {
-		const proc = ffmpeg({source})
+		const proc = ffmpeg({ source })
 			.withNoVideo();
 		switch (format) {
 			case AudioFormatType.flv:
@@ -54,7 +54,7 @@ export abstract class TranscoderStream implements StreamData {
 				return proc
 					.toFormat('webm')
 					// .withAudioBitrate(`${maxBitRate || 128}k`) TODO: which max bitrate/audiocodec for webm
-					;
+				;
 			}
 			default:
 				return proc

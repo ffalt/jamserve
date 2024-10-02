@@ -1,19 +1,20 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Album as ORMAlbum} from './album.js';
-import {IncludesAlbumArgs} from './album.args.js';
-import {User} from '../user/user.js';
-import {DBObjectType} from '../../types/enums.js';
-import {IndexResult, IndexResultGroup} from '../base/base.js';
-import {Album, AlbumIndex} from './album.model.js';
-import {MetaDataService} from '../metadata/metadata.service.js';
-import {GenreTransformService} from '../genre/genre.transform.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Album as ORMAlbum } from './album.js';
+import { IncludesAlbumArgs } from './album.args.js';
+import { User } from '../user/user.js';
+import { DBObjectType } from '../../types/enums.js';
+import { IndexResult, IndexResultGroup } from '../base/base.js';
+import { Album, AlbumIndex } from './album.model.js';
+import { MetaDataService } from '../metadata/metadata.service.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
 
 @InRequestScope
 export class AlbumTransformService extends BaseTransformService {
 	@Inject
 	public metaData!: MetaDataService;
+
 	@Inject
 	public Genre!: GenreTransformService;
 
@@ -47,16 +48,15 @@ export class AlbumTransformService extends BaseTransformService {
 	}
 
 	async albumIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMAlbum>>): Promise<AlbumIndex> {
-		return this.index(result, async (item) => {
-				const artist = await item.artist.get();
-				return {
-					id: item.id,
-					name: item.name,
-					artist: artist?.name || '[INVALID ARTIST]',
-					artistID: artist?.id || (await item.artist.id()) || 'INVALID_ARTIST_ID',
-					trackCount: await item.tracks.count()
-				};
+		return this.index(result, async item => {
+			const artist = await item.artist.get();
+			return {
+				id: item.id,
+				name: item.name,
+				artist: artist?.name || '[INVALID ARTIST]',
+				artistID: artist?.id || (await item.artist.id()) || 'INVALID_ARTIST_ID',
+				trackCount: await item.tracks.count()
+			};
 		});
 	}
-
 }

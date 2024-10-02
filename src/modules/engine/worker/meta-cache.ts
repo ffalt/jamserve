@@ -1,16 +1,16 @@
-import {AlbumType} from '../../../types/enums.js';
-import {Track} from '../../../entity/track/track.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
-import {extractAlbumName} from '../../../utils/album-name.js';
-import {slugify} from '../../../utils/slug.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Series} from '../../../entity/series/series.js';
-import {Album} from '../../../entity/album/album.js';
-import {Changes} from './changes.js';
-import {Tag} from '../../../entity/tag/tag.js';
-import {Root} from '../../../entity/root/root.js';
-import {Orm} from '../services/orm.service.js';
+import { AlbumType } from '../../../types/enums.js';
+import { Track } from '../../../entity/track/track.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { cUnknownAlbum, cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
+import { slugify } from '../../../utils/slug.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Series } from '../../../entity/series/series.js';
+import { Album } from '../../../entity/album/album.js';
+import { Changes } from './changes.js';
+import { Tag } from '../../../entity/tag/tag.js';
+import { Root } from '../../../entity/root/root.js';
+import { Orm } from '../services/orm.service.js';
 
 export interface MetaMergeTrackInfo {
 	track: Track;
@@ -64,7 +64,7 @@ export class MetaMergerCache {
 		}
 		const series = await this.orm.Series.findOneByID(id);
 		if (series) {
-			this.seriesCache.push({series, artist: await series.artist.getOrFail()});
+			this.seriesCache.push({ series, artist: await series.artist.getOrFail() });
 			if (changes && !changes.series.added.has(series)) {
 				changes.series.updated.add(series);
 			}
@@ -77,7 +77,7 @@ export class MetaMergerCache {
 		if (series) {
 			return series;
 		}
-		series = await this.orm.Series.findOne({where: {name: trackInfo.tag.series, artist: artist.id}});
+		series = await this.orm.Series.findOne({ where: { name: trackInfo.tag.series, artist: artist.id } });
 		if (!series) {
 			series = await this.buildSeries(trackInfo, artist);
 			this.changes.series.added.add(series);
@@ -85,7 +85,7 @@ export class MetaMergerCache {
 			this.changes.series.updated.add(series);
 		}
 		await series.albums.add(album);
-		this.seriesCache.push({series, artist});
+		this.seriesCache.push({ series, artist });
 		return series;
 	}
 
@@ -111,12 +111,12 @@ export class MetaMergerCache {
 
 	private async findAlbumInDB(trackInfo: MetaMergeTrackInfo, artist: Artist): Promise<Album | undefined> {
 		if (trackInfo.tag.mbReleaseID) {
-			const album = await this.orm.Album.findOne({where: {mbReleaseID: trackInfo.tag.mbReleaseID}});
+			const album = await this.orm.Album.findOne({ where: { mbReleaseID: trackInfo.tag.mbReleaseID } });
 			if (album) {
 				return album;
 			}
 		}
-		return await this.orm.Album.findOne({where: {slug: getAlbumSlug(trackInfo), artist: artist.id}}) || undefined;
+		return await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } }) || undefined;
 	}
 
 	private async findAlbumInCache(trackInfo: MetaMergeTrackInfo, artist: Artist): Promise<Album | undefined> {
@@ -147,7 +147,7 @@ export class MetaMergerCache {
 		}
 		const album = await this.orm.Album.findOneByID(id);
 		if (album) {
-			this.albumCache.push({album, artist: await album.artist.getOrFail(), series: (await album.series.get())?.name});
+			this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: (await album.series.get())?.name });
 			this.changes.albums.updated.add(album);
 		}
 		return album || undefined;
@@ -165,7 +165,7 @@ export class MetaMergerCache {
 		} else {
 			this.changes.albums.updated.add(album);
 		}
-		this.albumCache.push({album, artist, series: trackInfo.tag.series});
+		this.albumCache.push({ album, artist, series: trackInfo.tag.series });
 		return album;
 	}
 
@@ -174,19 +174,19 @@ export class MetaMergerCache {
 	private async findArtistInDB(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
 		const mbArtistID = albumArtist ? (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.mbArtistID) : trackInfo.tag.mbArtistID;
 		if (mbArtistID) {
-			const artist = await this.orm.Artist.findOne({where: {mbArtistID}});
+			const artist = await this.orm.Artist.findOne({ where: { mbArtistID } });
 			if (artist) {
 				return artist;
 			}
 		}
 		const slug = slugify((albumArtist ? (trackInfo.tag.albumArtist || trackInfo.tag.artist) : trackInfo.tag.artist) || cUnknownArtist);
-		return (await this.orm.Artist.findOne({where: {slug}})) || undefined;
+		return (await this.orm.Artist.findOne({ where: { slug } })) || undefined;
 	}
 
 	private async findArtistInCache(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
-		let aa = {mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist};
+		let aa = { mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist };
 		if (albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist)) {
-			aa = {mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist};
+			aa = { mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist };
 		}
 		const slug = slugify(aa.name || cUnknownArtist);
 		if (aa.mbArtistID) {
@@ -219,7 +219,7 @@ export class MetaMergerCache {
 		}
 		const artist = await this.orm.Artist.findOneByID(id);
 		if (artist) {
-			this.artistCache.push({artist, slugs: [artist.slug]});
+			this.artistCache.push({ artist, slugs: [artist.slug] });
 			this.changes.artists.updated.add(artist);
 		}
 		return artist || undefined;
@@ -230,18 +230,18 @@ export class MetaMergerCache {
 		if (artistCache) {
 			return artistCache.artist;
 		}
-		const artist = await this.orm.Artist.findOne({where: {mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID}});
+		const artist = await this.orm.Artist.findOne({ where: { mbArtistID: MUSICBRAINZ_VARIOUS_ARTISTS_ID } });
 		if (artist) {
 			this.changes.artists.updated.add(artist);
-			this.artistCache.push({artist, slugs: [artist.slug]});
+			this.artistCache.push({ artist, slugs: [artist.slug] });
 		}
 		return artist || undefined;
 	}
 
 	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
-		let aa = {mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist, nameSort: trackInfo.tag.artistSort};
+		let aa = { mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist, nameSort: trackInfo.tag.artistSort };
 		if (albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist)) {
-			aa = {mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist, nameSort: trackInfo.tag.albumArtistSort};
+			aa = { mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist, nameSort: trackInfo.tag.albumArtistSort };
 		}
 		aa.name = aa.name || cUnknownArtist;
 		const artist = this.orm.Artist.create({
@@ -249,7 +249,7 @@ export class MetaMergerCache {
 			name: aa.name,
 			nameSort: aa.nameSort || aa.name,
 			mbArtistID: aa.mbArtistID,
-			albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [],
+			albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : []
 		});
 		await artist.roots.add(this.root);
 		await artist.folders.add(trackInfo.folder);
@@ -269,7 +269,7 @@ export class MetaMergerCache {
 				albumTypes: [AlbumType.compilation]
 			});
 			this.changes.artists.added.add(artist);
-			this.artistCache.push({artist, slugs: [artist.slug]});
+			this.artistCache.push({ artist, slugs: [artist.slug] });
 			this.orm.Artist.persistLater(artist);
 			return artist;
 		} else if (!this.changes.artists.added.has(artist)) {
@@ -294,7 +294,7 @@ export class MetaMergerCache {
 		} else {
 			this.changes.artists.updated.add(artist);
 		}
-		this.artistCache.push({artist, slugs: [artist.slug]});
+		this.artistCache.push({ artist, slugs: [artist.slug] });
 		return artist;
 	}
 

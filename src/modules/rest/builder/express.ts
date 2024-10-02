@@ -1,15 +1,15 @@
 import express from 'express';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
-import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs-utils.js';
+import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
-import {ExpressMethod, RestOptions, RouteInfo} from './express-method.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {iterateControllers} from '../helpers/iterate-super.js';
+import { ExpressMethod, RestOptions, RouteInfo } from './express-method.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { iterateControllers } from '../helpers/iterate-super.js';
 
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
-	const upload = multer({dest: ensureTrailingPathSeparator(options.tmpPath)});
+	const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });
 	const metadata = getMetadataStorage();
 	const method = new ExpressMethod();
 
@@ -40,10 +40,10 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 		const router = express.Router();
 		let gets: Array<MethodMetadata> = [];
 		let posts: Array<MethodMetadata> = [];
-		iterateControllers(metadata, ctrl, (ctrlClass => {
+		iterateControllers(metadata, ctrl, ctrlClass => {
 			gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
 			posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
-		}));
+		});
 		for (const get of gets) {
 			routeInfos.push(method.GET(get, ctrl, router, options));
 		}

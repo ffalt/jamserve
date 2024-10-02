@@ -3,11 +3,11 @@
  License: MIT
  **/
 
-import {Transform, TransformCallback, TransformOptions} from 'stream';
-import {MetaDataBlock} from './block.js';
-import {MetaDataBlockPicture} from './block.picture.js';
-import {MetaDataBlockStreamInfo} from './block.streaminfo.js';
-import {BlockVorbiscomment} from './block.vorbiscomment.js';
+import { Transform, TransformCallback, TransformOptions } from 'stream';
+import { MetaDataBlock } from './block.js';
+import { MetaDataBlockPicture } from './block.picture.js';
+import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
+import { BlockVorbiscomment } from './block.vorbiscomment.js';
 
 const enum STATE {
 	IDLE = 0,
@@ -55,7 +55,7 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	_transform(buffer: any, _encoding: string, callback: TransformCallback): void {
-		const chunk: Chunk = {buffer, pos: 0, length: buffer.length, done: false};
+		const chunk: Chunk = { buffer, pos: 0, length: buffer.length, done: false };
 		while (!chunk.done) {
 			this.process(chunk);
 		}
@@ -173,7 +173,7 @@ export class FlacProcessorStream extends Transform {
 		if (this.safePush(chunk, 4, true, slice => this.validateMarker(slice))) {
 			this.state = (!this.isFlac && this.hasID3) ?
 				STATE.SCAN_MARKER :
-				(this.isFlac ? STATE.MDB_HEADER : STATE.PASS_THROUGH);
+					(this.isFlac ? STATE.MDB_HEADER : STATE.PASS_THROUGH);
 		} else {
 			chunk.done = true;
 		}
@@ -300,5 +300,4 @@ export class FlacProcessorStream extends Transform {
 		}
 		return this.mdbPush;
 	}
-
 }

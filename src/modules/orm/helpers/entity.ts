@@ -1,11 +1,11 @@
-import {ManagedEntity} from '../definitions/managed-entity.js';
-import {PropertyMetadata} from '../definitions/property-metadata.js';
-import {AnyEntity} from '../typings.js';
-import {EntityMetadata} from '../definitions/entity-metadata.js';
-import {Model, Transaction} from 'sequelize';
-import {EntityManager} from './manager.js';
-import {Reference} from './reference.js';
-import {Collection} from './collection.js';
+import { ManagedEntity } from '../definitions/managed-entity.js';
+import { PropertyMetadata } from '../definitions/property-metadata.js';
+import { AnyEntity } from '../typings.js';
+import { EntityMetadata } from '../definitions/entity-metadata.js';
+import { Model, Transaction } from 'sequelize';
+import { EntityManager } from './manager.js';
+import { Reference } from './reference.js';
+import { Collection } from './collection.js';
 
 function transformValueForDB(value: any, field: PropertyMetadata): any {
 	if (field.typeOptions.array) {
@@ -79,9 +79,9 @@ export async function saveManagedEntityRelations(instance: ManagedEntity, transa
 
 export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata, source: Model, em: EntityManager): T {
 	const entity = new (meta.target as any)();
-	Object.defineProperty(entity, '_em', {enumerable: false, value: em, writable: false});
-	Object.defineProperty(entity, '_source', {enumerable: false, value: source, writable: false});
-	Object.defineProperty(entity, '_meta', {enumerable: false, value: meta, writable: false});
+	Object.defineProperty(entity, '_em', { enumerable: false, value: em, writable: false });
+	Object.defineProperty(entity, '_source', { enumerable: false, value: source, writable: false });
+	Object.defineProperty(entity, '_meta', { enumerable: false, value: meta, writable: false });
 	meta.fields.forEach(field => {
 		if (field.isRelation) {
 			const refOrCollection = entity[field.name];

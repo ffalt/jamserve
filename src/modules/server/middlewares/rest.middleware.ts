@@ -1,11 +1,11 @@
 import express from 'express';
-import {buildRestMeta, restRouter, RestOptions} from '../../rest/index.js';
-import {UserRole} from '../../../types/enums.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {logger} from '../../../utils/logger.js';
-import {RestControllers} from '../../engine/rest/controllers.js';
-import {ConfigService} from '../../engine/services/config.service.js';
-import {registerRestEnums} from '../../engine/rest/enum-registration.js';
+import { buildRestMeta, restRouter, RestOptions } from '../../rest/index.js';
+import { UserRole } from '../../../types/enums.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger.js';
+import { RestControllers } from '../../engine/rest/controllers.js';
+import { ConfigService } from '../../engine/services/config.service.js';
+import { registerRestEnums } from '../../engine/rest/enum-registration.js';
 
 const log = logger('REST');
 
@@ -47,10 +47,10 @@ export class RestMiddleware {
 		const routeInfos = restRouter(api, options);
 		if (process.env.NODE_ENV !== 'production') {
 			log.table(routeInfos, [
-				{name: 'method', alignment: 'right'},
-				{name: 'endpoint', alignment: 'left'},
-				{name: 'role', alignment: 'right'},
-				{name: 'format', alignment: 'left'}
+				{ name: 'method', alignment: 'right' },
+				{ name: 'endpoint', alignment: 'left' },
+				{ name: 'role', alignment: 'right' },
+				{ name: 'format', alignment: 'left' }
 			]);
 		}
 

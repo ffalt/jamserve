@@ -1,8 +1,8 @@
-import {EntityCache, EntityManager} from './manager.js';
-import seq, {Sequelize} from 'sequelize';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {ORMConfig} from '../definitions/config.js';
-import {ModelBuilder} from '../builder/schema.js';
+import { EntityCache, EntityManager } from './manager.js';
+import seq, { Sequelize } from 'sequelize';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { ORMConfig } from '../definitions/config.js';
+import { ModelBuilder } from '../builder/schema.js';
 
 export class ORM {
 	public cache = new EntityCache();
@@ -34,7 +34,7 @@ export class ORM {
 		let table = await queryInterface.describeTable('State');
 		if (table?.played && table.played.type !== 'INTEGER') {
 			await queryInterface.removeColumn('State', 'played');
-			await queryInterface.addColumn('State', 'played', {type: seq.DataTypes.INTEGER, allowNull: true});
+			await queryInterface.addColumn('State', 'played', { type: seq.DataTypes.INTEGER, allowNull: true });
 		}
 		table = await queryInterface.describeTable('Artist');
 		if (table?.genres) {
@@ -79,5 +79,4 @@ export class ORM {
 	async close(): Promise<void> {
 		await this.sequelize.close();
 	}
-
 }

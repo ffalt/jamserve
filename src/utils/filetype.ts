@@ -1,5 +1,5 @@
-import {fileSuffix} from './fs-utils.js';
-import {AudioFormatType, FileTyp} from '../types/enums.js';
+import { fileSuffix } from './fs-utils.js';
+import { AudioFormatType, FileTyp } from '../types/enums.js';
 
 // TODO: 'bmp' is not supported by sharp, preconvert with jimp?
 export const SupportedReadImageFormat = ['png', 'jpeg', 'jpg', 'gif', 'tiff', 'webp'];

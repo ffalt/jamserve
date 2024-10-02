@@ -1,21 +1,20 @@
-import {EngineService} from '../modules/engine/services/engine.service.js';
+import { EngineService } from '../modules/engine/services/engine.service.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import {bindMockConfig, DBConfigs} from './mock/mock.config.js';
-import {waitEngineStart} from './mock/mock.engine.js';
-import {initTest} from './init.js';
-import {MockFeed1} from './mock/mock.rss-feed.js';
-import {Podcast} from '../entity/podcast/podcast.js';
-import {mockNock, mockNockURL} from './mock/mock.nock.js';
-import {Orm} from '../modules/engine/services/orm.service.js';
-import {Container, Snapshot} from 'typescript-ioc';
-import {PodcastStatus} from '../types/enums.js';
+import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { waitEngineStart } from './mock/mock.engine.js';
+import { initTest } from './init.js';
+import { MockFeed1 } from './mock/mock.rss-feed.js';
+import { Podcast } from '../entity/podcast/podcast.js';
+import { mockNock, mockNockURL } from './mock/mock.nock.js';
+import { Orm } from '../modules/engine/services/orm.service.js';
+import { Container, Snapshot } from 'typescript-ioc';
+import { PodcastStatus } from '../types/enums.js';
 import nock from 'nock';
 
 initTest();
 
 describe('Services', () => {
-
 	for (const db of DBConfigs) {
 		describe(db.dialect, () => {
 			let engine: EngineService;
@@ -68,7 +67,7 @@ describe('Services', () => {
 				it('should handle an invalid feed', async () => {
 					const feed = '';
 					const scope = mockNock()
-						.get('/podcast.xml').reply(200, feed, {'Content-Type': ''});
+						.get('/podcast.xml').reply(200, feed, { 'Content-Type': '' });
 					await engine.podcast.refresh(orm, podcast);
 					expect(podcast.status).toBe(PodcastStatus.error);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'
@@ -76,7 +75,7 @@ describe('Services', () => {
 
 				it('should refresh a podcast', async () => {
 					const scope = mockNock()
-						.get('/podcast.xml').reply(200, MockFeed1.xml, {'Content-Type': 'application/xml; charset=utf-8'});
+						.get('/podcast.xml').reply(200, MockFeed1.xml, { 'Content-Type': 'application/xml; charset=utf-8' });
 					await engine.podcast.refresh(orm, podcast);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'
 					expect(podcast).toEqual(expect.objectContaining(MockFeed1.expected.podcast));
@@ -87,11 +86,11 @@ describe('Services', () => {
 
 				it('should update a podcast', async () => {
 					let scope = mockNock()
-						.get('/podcast.xml').reply(200, MockFeed1.xml, {'Content-Type': 'application/xml; charset=utf-8'});
+						.get('/podcast.xml').reply(200, MockFeed1.xml, { 'Content-Type': 'application/xml; charset=utf-8' });
 					await engine.podcast.refresh(orm, podcast);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'
 					scope = mockNock()
-						.get('/podcast.xml').reply(200, MockFeed1.xml_update, {'Content-Type': 'application/xml; charset=utf-8'});
+						.get('/podcast.xml').reply(200, MockFeed1.xml_update, { 'Content-Type': 'application/xml; charset=utf-8' });
 					await engine.podcast.refresh(orm, podcast);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'
 
@@ -101,10 +100,7 @@ describe('Services', () => {
 					expect(items.find(i => i.guid === MockFeed1.expected.episode1.guid)).toEqual(expect.objectContaining(MockFeed1.expected.episode1));
 					expect(items.find(i => i.guid === MockFeed1.expected.episode2.guid)).toEqual(expect.objectContaining(MockFeed1.expected.episode2));
 				});
-
 			});
-
 		});
 	}
-
 });

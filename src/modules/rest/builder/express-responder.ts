@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import {ApiError} from './express-error.js';
+import { ApiError } from './express-error.js';
 
 export interface StreamData {
 	pipe(stream: express.Response): void;
@@ -18,9 +18,8 @@ export interface ApiBinaryResult {
 }
 
 export class ApiBaseResponder {
-
 	static sendOK(req: express.Request, res: express.Response): void {
-		res.status(200).json({ok: true});
+		res.status(200).json({ ok: true });
 	}
 
 	static sendString(req: express.Request, res: express.Response, data: string): void {
@@ -46,7 +45,7 @@ export class ApiBaseResponder {
 	}
 
 	static sendErrorMsg(req: express.Request, res: express.Response, code: number, msg: string): void {
-		res.status(code).json({error: msg});
+		res.status(code).json({ error: msg });
 	}
 
 	static sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
@@ -57,10 +56,10 @@ export class ApiBaseResponder {
 		} else if (data.buffer) {
 			res.set('Content-Type', data.buffer.contentType);
 			res.set('Content-Length', data.buffer.buffer.length.toString());
-// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
+			// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
-			res.sendFile(data.file.filename, {filename: data.file.name || path.basename(data.file.filename)});
+			res.sendFile(data.file.filename, { filename: data.file.name || path.basename(data.file.filename) });
 		}
 	}
 }

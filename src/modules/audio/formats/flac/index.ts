@@ -1,11 +1,11 @@
 import fs from 'fs';
 import fse from 'fs-extra';
-import {MetaDataBlock} from './lib/block.js';
-import {MetaDataBlockPicture} from './lib/block.picture.js';
-import {MetaDataBlockStreamInfo} from './lib/block.streaminfo.js';
-import {BlockVorbiscomment} from './lib/block.vorbiscomment.js';
-import {MetaWriteableDataBlock} from './lib/block.writeable.js';
-import {FlacProcessorStream, MDB_TYPE} from './lib/processor.js';
+import { MetaDataBlock } from './lib/block.js';
+import { MetaDataBlockPicture } from './lib/block.picture.js';
+import { MetaDataBlockStreamInfo } from './lib/block.streaminfo.js';
+import { BlockVorbiscomment } from './lib/block.vorbiscomment.js';
+import { MetaWriteableDataBlock } from './lib/block.writeable.js';
+import { FlacProcessorStream, MDB_TYPE } from './lib/processor.js';
 
 export interface FlacComment {
 	vendor: string;
@@ -45,7 +45,6 @@ export interface FlacInfo {
 }
 
 export class Flac {
-
 	async read(filename: string): Promise<FlacInfo> {
 		const result: FlacInfo = {};
 		return new Promise<FlacInfo>((resolve, reject) => {
@@ -155,7 +154,7 @@ export class Flac {
 			}
 			tag[key + suffix] = line.slice(pos + 1);
 		});
-		return {vendor: mdb.vendor, tag};
+		return { vendor: mdb.vendor, tag };
 	}
 
 	private static formatMediaBlock(mdb: MetaDataBlockStreamInfo): FlacMedia {
@@ -184,5 +183,4 @@ export class Flac {
 			pictureData: mdb.pictureData as Buffer
 		};
 	}
-
 }

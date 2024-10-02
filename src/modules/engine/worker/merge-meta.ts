@@ -1,18 +1,18 @@
-import {MetaMergerCache, MetaMergeTrackInfo} from './meta-cache.js';
-import {logger} from '../../../utils/logger.js';
-import {Changes} from './changes.js';
-import {Root} from '../../../entity/root/root.js';
-import {cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME} from '../../../types/consts.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Orm} from '../services/orm.service.js';
-import {AlbumType, FolderType} from '../../../types/enums.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {MetaStatBuilder} from '../../../utils/stats-builder.js';
-import {slugify} from '../../../utils/slug.js';
-import {Genre} from '../../../entity/genre/genre.js';
-import {extractAlbumName} from '../../../utils/album-name.js';
-import {Album} from '../../../entity/album/album.js';
-import {Track} from '../../../entity/track/track.js';
+import { MetaMergerCache, MetaMergeTrackInfo } from './meta-cache.js';
+import { logger } from '../../../utils/logger.js';
+import { Changes } from './changes.js';
+import { Root } from '../../../entity/root/root.js';
+import { cUnknownArtist, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Orm } from '../services/orm.service.js';
+import { AlbumType, FolderType } from '../../../types/enums.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { MetaStatBuilder } from '../../../utils/stats-builder.js';
+import { slugify } from '../../../utils/slug.js';
+import { Genre } from '../../../entity/genre/genre.js';
+import { extractAlbumName } from '../../../utils/album-name.js';
+import { Album } from '../../../entity/album/album.js';
+import { Track } from '../../../entity/track/track.js';
 
 const log = logger('Worker.MetaMerger');
 
@@ -38,7 +38,7 @@ export class MetaMerger {
 			}
 		}
 		const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
-		return {artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name};
+		return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name };
 	}
 
 	private static async collectArtistAlbumTypes(artist: Artist): Promise<Array<AlbumType>> {
@@ -96,15 +96,15 @@ export class MetaMerger {
 		if (trackIDs.length > 0) {
 			log.info('Updating Metadata');
 			// Load all artists/albums/series for track, in case track artist changed
-			const artists = await this.orm.Artist.findIDsFilter({trackIDs});
+			const artists = await this.orm.Artist.findIDsFilter({ trackIDs });
 			this.changes.artists.updated.appendIDs(artists);
-			const albumArtists = await this.orm.Artist.findIDsFilter({albumTrackIDs: trackIDs});
+			const albumArtists = await this.orm.Artist.findIDsFilter({ albumTrackIDs: trackIDs });
 			this.changes.artists.updated.appendIDs(albumArtists);
-			const albums = await this.orm.Album.findIDsFilter({trackIDs});
+			const albums = await this.orm.Album.findIDsFilter({ trackIDs });
 			this.changes.albums.updated.appendIDs(albums);
-			const series = await this.orm.Series.findIDsFilter({trackIDs});
+			const series = await this.orm.Series.findIDsFilter({ trackIDs });
 			this.changes.series.updated.appendIDs(series);
-			const genres = await this.orm.Genre.findIDsFilter({trackIDs});
+			const genres = await this.orm.Genre.findIDsFilter({ trackIDs });
 			this.changes.genres.updated.appendIDs(genres.filter(id => !this.changes.genres.added.hasID(id)));
 		}
 		await this.flush('Track/Folder');
@@ -133,7 +133,7 @@ export class MetaMerger {
 		}
 		const tag = await track.tag.get();
 		if (tag && folder) {
-			const trackInfo: MetaMergeTrackInfo = {track, tag, folder};
+			const trackInfo: MetaMergeTrackInfo = { track, tag, folder };
 			await this.addMeta(trackInfo);
 		}
 	}
@@ -151,10 +151,10 @@ export class MetaMerger {
 	private async applyChangedArtistMeta(id: string): Promise<void> {
 		const artist = await this.orm.Artist.oneOrFailByID(id);
 		log.debug('Updating artist', artist.name);
-		const currentTracks = await this.orm.Track.findFilter({artistIDs: [id]});
+		const currentTracks = await this.orm.Track.findFilter({ artistIDs: [id] });
 		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await artist.tracks.set(tracks);
-		const currentAlbumArtistTracks = await this.orm.Track.findFilter({albumArtistIDs: [id]});
+		const currentAlbumArtistTracks = await this.orm.Track.findFilter({ albumArtistIDs: [id] });
 		const albumTracks = currentAlbumArtistTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await artist.albumTracks.set(albumTracks);
 		const allTracks = tracks.concat(albumTracks);
@@ -168,7 +168,7 @@ export class MetaMerger {
 
 	private async updateArtistMeta(artist: Artist, tracks: Array<Track>): Promise<void> {
 		if (artist.name !== MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
-			const {artistName, artistSortName, slug} = await MetaMerger.collectArtistNames(artist);
+			const { artistName, artistSortName, slug } = await MetaMerger.collectArtistNames(artist);
 			artist.name = artistName;
 			artist.slug = slug;
 			artist.nameSort = artistSortName;
@@ -216,7 +216,7 @@ export class MetaMerger {
 		log.debug('Updating series', series.name);
 		const albumTypes = new Set<AlbumType>();
 		const albums = (await series.albums.getItems()).filter(t => !this.changes.albums.removed.has(t));
-		const currentTracks = await this.orm.Track.findFilter({seriesIDs: [id]});
+		const currentTracks = await this.orm.Track.findFilter({ seriesIDs: [id] });
 		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await series.tracks.set(tracks);
 		if (tracks.length === 0) {
@@ -247,7 +247,7 @@ export class MetaMerger {
 	private async applyChangedAlbumMeta(id: string): Promise<void> {
 		const album = await this.orm.Album.oneOrFailByID(id);
 		log.debug('Updating album', album.name);
-		const currentTracks = await this.orm.Track.findFilter({albumIDs: [id]});
+		const currentTracks = await this.orm.Track.findFilter({ albumIDs: [id] });
 		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await album.tracks.set(tracks);
 		if (tracks.length === 0) {
@@ -312,7 +312,7 @@ export class MetaMerger {
 	private async applyChangedGenreMeta(id: string): Promise<void> {
 		const genre = await this.orm.Genre.oneOrFailByID(id);
 		log.debug('Updating genre', genre.name);
-		const currentTracks = await this.orm.Track.findFilter({genreIDs: [id]});
+		const currentTracks = await this.orm.Track.findFilter({ genreIDs: [id] });
 		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 		if (tracks.length === 0) {
 			this.changes.genres.removed.add(genre);
@@ -326,7 +326,7 @@ export class MetaMerger {
 
 	private async applyChangedGenresMeta(): Promise<void> {
 		const trackIDs = this.changes.tracks.removed.ids();
-		const updateGenreIDs = trackIDs.length === 0 ? [] : await this.orm.Genre.findIDsFilter({trackIDs});
+		const updateGenreIDs = trackIDs.length === 0 ? [] : await this.orm.Genre.findIDsFilter({ trackIDs });
 		this.changes.genres.updated.appendIDs(updateGenreIDs);
 		const genreIDs = this.changes.genres.updated.ids();
 		for (const id of genreIDs) {

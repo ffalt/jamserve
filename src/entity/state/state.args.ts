@@ -1,23 +1,25 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 
 @ObjParamsType()
 export class FavArgs {
-	@ObjField({description: 'ID', isID: true})
+	@ObjField({ description: 'ID', isID: true })
 	id!: string;
-	@ObjField({description: 'add or remove the item fav', example: false, defaultValue: false})
+
+	@ObjField({ description: 'add or remove the item fav', example: false, defaultValue: false })
 	remove?: boolean;
 }
 
 @ObjParamsType()
 export class RateArgs {
-	@ObjField({description: 'ID', isID: true})
+	@ObjField({ description: 'ID', isID: true })
 	id!: string;
-	@ObjField({description: 'Rating', example: false, min: 0, max: 5})
+
+	@ObjField({ description: 'Rating', example: false, min: 0, max: 5 })
 	rating!: number;
 }
 
 @ObjParamsType()
 export class StatesArgs {
-	@ObjField(() => [String], {description: 'IDs', isID: true})
+	@ObjField(() => [String], { description: 'IDs', isID: true })
 	ids!: Array<string>;
 }

@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {DebouncePromises} from './debounce-promises.js';
+import { DebouncePromises } from './debounce-promises.js';
 
 export interface IDCacheResult {
 	file: {
@@ -13,7 +13,6 @@ export class IDFolderCache<T> {
 	private cacheDebounce = new DebouncePromises<IDCacheResult>();
 
 	constructor(public dataPath: string, public filePrefix: string, private resolveParams: (params: T) => string) {
-
 	}
 
 	prefixCacheFilename(id: string): string {
@@ -45,7 +44,7 @@ export class IDFolderCache<T> {
 		const cachefile = path.join(this.dataPath, cacheID);
 		const exists = await fse.pathExists(cachefile);
 		if (exists) {
-			return {file: {filename: cachefile, name: cacheID}};
+			return { file: { filename: cachefile, name: cacheID } };
 		}
 		return;
 	}
@@ -62,14 +61,12 @@ export class IDFolderCache<T> {
 			if (!exists) {
 				await build(cachefile);
 			}
-			const result: IDCacheResult = {file: {filename: cachefile, name: cacheID}};
+			const result: IDCacheResult = { file: { filename: cachefile, name: cacheID } };
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
 		} catch (e) {
 			this.cacheDebounce.reject(cacheID, e as Error);
 			return Promise.reject(e);
 		}
-
 	}
-
 }

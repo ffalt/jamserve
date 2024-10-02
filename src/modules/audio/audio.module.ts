@@ -1,25 +1,25 @@
-import {fileSuffix} from '../../utils/fs-utils.js';
-import {ImageModule} from '../image/image.module.js';
-import {FORMAT, TrackMedia, TrackTag} from './audio.format.js';
-import {AcousticbrainzClient} from './clients/acousticbrainz-client.js';
-import {AcoustidClient} from './clients/acoustid-client.js';
-import {CoverArtArchiveClient} from './clients/coverartarchive-client.js';
-import {LastFMClient} from './clients/lastfm-client.js';
-import {LyricsOVHClient} from './clients/lyricsovh-client.js';
-import {MusicbrainzClient} from './clients/musicbrainz-client.js';
-import {WikipediaClient} from './clients/wikipedia-client.js';
-import {AudioModuleFLAC} from './formats/flac.module.js';
-import {AudioModuleMP3} from './formats/mp3.module.js';
-import {probe} from './tools/ffprobe.js';
-import {TranscoderModule} from './transcoder/transcoder.module.js';
-import {WaveformModule} from './waveform/waveform.module.js';
-import {AudioFormatType, TagFormatType} from '../../types/enums.js';
-import {SettingsService} from '../../entity/settings/settings.service.js';
-import {RawTag} from './rawTag.js';
-import {ConfigService} from '../engine/services/config.service.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {AdminSettingsExternal} from '../../entity/admin/admin.js';
-import {GpodderClient} from './clients/gpodder-client.js';
+import { fileSuffix } from '../../utils/fs-utils.js';
+import { ImageModule } from '../image/image.module.js';
+import { FORMAT, TrackMedia, TrackTag } from './audio.format.js';
+import { AcousticbrainzClient } from './clients/acousticbrainz-client.js';
+import { AcoustidClient } from './clients/acoustid-client.js';
+import { CoverArtArchiveClient } from './clients/coverartarchive-client.js';
+import { LastFMClient } from './clients/lastfm-client.js';
+import { LyricsOVHClient } from './clients/lyricsovh-client.js';
+import { MusicbrainzClient } from './clients/musicbrainz-client.js';
+import { WikipediaClient } from './clients/wikipedia-client.js';
+import { AudioModuleFLAC } from './formats/flac.module.js';
+import { AudioModuleMP3 } from './formats/mp3.module.js';
+import { probe } from './tools/ffprobe.js';
+import { TranscoderModule } from './transcoder/transcoder.module.js';
+import { WaveformModule } from './waveform/waveform.module.js';
+import { AudioFormatType, TagFormatType } from '../../types/enums.js';
+import { SettingsService } from '../../entity/settings/settings.service.js';
+import { RawTag } from './rawTag.js';
+import { ConfigService } from '../engine/services/config.service.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { AdminSettingsExternal } from '../../entity/admin/admin.js';
+import { GpodderClient } from './clients/gpodder-client.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
@@ -44,23 +44,25 @@ export class AudioModule {
 	transcodeCachePath: string;
 	@Inject
 	private configService!: ConfigService;
+
 	@Inject
 	private settingsService!: SettingsService;
+
 	@Inject
 	private imageModule!: ImageModule;
 
 	constructor() {
 		this.waveformCachePath = this.configService.getDataPath(['cache', 'waveforms']);
 		this.transcodeCachePath = this.configService.getDataPath(['cache', 'transcode']);
-		this.musicbrainz = new MusicbrainzClient({userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true});
-		this.acousticbrainz = new AcousticbrainzClient({userAgent: this.configService.tools.acousticbrainz.userAgent, retryOn: true});
-		this.lastFM = new LastFMClient({key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent});
-		this.acoustid = new AcoustidClient({key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent});
+		this.musicbrainz = new MusicbrainzClient({ userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true });
+		this.acousticbrainz = new AcousticbrainzClient({ userAgent: this.configService.tools.acousticbrainz.userAgent, retryOn: true });
+		this.lastFM = new LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
+		this.acoustid = new AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
 		this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
 		this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
 		this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
 
-		this.coverArtArchive = new CoverArtArchiveClient({userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true});
+		this.coverArtArchive = new CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
 		this.transcoder = new TranscoderModule(this.transcodeCachePath);
 		this.mp3 = new AudioModuleMP3();
 		this.flac = new AudioModuleFLAC(this.imageModule);
@@ -93,9 +95,9 @@ export class AudioModule {
 		}
 		const p = await probe(filename, []);
 		if (!p) {
-			return {format: TagFormatType.none};
+			return { format: TagFormatType.none };
 		}
-		return {...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType)};
+		return { ...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType) };
 	}
 
 	async readRawTag(filename: string): Promise<RawTag | undefined> {
@@ -139,5 +141,4 @@ export class AudioModule {
 		await this.transcoder.clearCacheByIDs(ids);
 		await this.waveform.clearCacheByIDs(ids);
 	}
-
 }

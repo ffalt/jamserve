@@ -1,15 +1,15 @@
-import {logger} from '../../../utils/logger.js';
-import {WebserviceClient} from '../../../utils/webservice-client.js';
-import {GpodderPodcast, GpodderTag} from './gpodder-rest-data.js';
-import {Response} from 'node-fetch';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
+import { GpodderPodcast, GpodderTag } from './gpodder-rest-data.js';
+import { Response } from 'node-fetch';
 
 const log = logger('GPodderClient');
 
 export interface GpodderClientConfig {
-	mygpo: { baseurl: string };
+	'mygpo': { baseurl: string };
 	'mygpo-feedservice': { baseurl: string };
-	update_timeout: number;
-	valid_until: number; //custom - not in response
+	'update_timeout': number;
+	'valid_until': number; // custom - not in response
 }
 
 export class GpodderClient extends WebserviceClient {
@@ -38,7 +38,7 @@ export class GpodderClient extends WebserviceClient {
 		if (!isValid) {
 			throw new Error('Gpodder API has changed & can not be used with this server version');
 		}
-		this.clientConfig = {...data, valid_until: data.update_timeout + now};
+		this.clientConfig = { ...data, valid_until: data.update_timeout + now };
 		return this.clientConfig;
 	}
 

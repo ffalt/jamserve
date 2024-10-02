@@ -1,15 +1,14 @@
-import {Session} from './session.model.js';
-import {BodyParam, Controller, Ctx, Get, Post} from '../../modules/rest/index.js';
-import {SessionUser} from './session-user.model.js';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
-import {UserSession} from './user-session.model.js';
-import {UserRole} from '../../types/enums.js';
-import {Context} from '../../modules/engine/rest/context.js';
-@Controller('/session', {tags: ['Access']})
+import { Session } from './session.model.js';
+import { BodyParam, Controller, Ctx, Get, Post } from '../../modules/rest/index.js';
+import { SessionUser } from './session-user.model.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { UserSession } from './user-session.model.js';
+import { UserRole } from '../../types/enums.js';
+import { Context } from '../../modules/engine/rest/context.js';
+@Controller('/session', { tags: ['Access'] })
 export class SessionController {
-
-	@Get(() => Session, {description: 'Check the Login State', summary: 'Check Session'})
-	session(@Ctx() {engine, user}: Context): Session {
+	@Get(() => Session, { description: 'Check the Login State', summary: 'Check Session' })
+	session(@Ctx() { engine, user }: Context): Session {
 		let sessionUser: SessionUser | undefined;
 		if (user) {
 			sessionUser = {
@@ -31,9 +30,9 @@ export class SessionController {
 	}
 
 	@Get('/list', () => [UserSession],
-		{roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions'})
+		{ roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions' })
 	async list(
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<Array<UserSession>> {
 		const sessions = await engine.session.byUserID(user.id);
 		return sessions.map(session => engine.transform.Session.userSession(orm, session));
@@ -41,11 +40,11 @@ export class SessionController {
 
 	@Post(
 		'/remove',
-		{roles: [UserRole.stream], description: 'Remove a user session', summary: 'Remove Session'}
+		{ roles: [UserRole.stream], description: 'Remove a user session', summary: 'Remove Session' }
 	)
 	async remove(
-		@BodyParam('id', {description: 'User Session Id', isID: true}) id: string,
-		@Ctx() {engine, user}: Context
+		@BodyParam('id', { description: 'User Session Id', isID: true }) id: string,
+		@Ctx() { engine, user }: Context
 	): Promise<void> {
 		await engine.session.removeUserSession(id, user.id);
 	}

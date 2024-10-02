@@ -57,7 +57,7 @@ export class AvatarGenerator {
 	// 	return Object.keys(this._variants);
 	// }
 
-	private static BuildVariantsMap({parts, partsLocation, imageExtension}: AvatarGenearatorSettings): VariantsMap {
+	private static BuildVariantsMap({ parts, partsLocation, imageExtension }: AvatarGenearatorSettings): VariantsMap {
 		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
 		const discriminators = fs
 			.readdirSync(partsLocation)
@@ -69,17 +69,17 @@ export class AvatarGenerator {
 			(variants, discriminator) => {
 				const dir = path.join(partsLocation, discriminator);
 				variants[discriminator] = fs.readdirSync(dir).reduce((ps: PartsMap, fileName: string) => {
-						const match = fileRegex.exec(fileName);
-						if (match) {
-							const part = match[1] as AvatarPart;
-							if (!ps[part]) {
-								ps[part] = [];
-							}
-							ps[part][Number(match[2])] = path.join(dir, fileName);
+					const match = fileRegex.exec(fileName);
+					if (match) {
+						const part = match[1] as AvatarPart;
+						if (!ps[part]) {
+							ps[part] = [];
 						}
-						return ps;
-					},
-					{} as PartsMap
+						ps[part][Number(match[2])] = path.join(dir, fileName);
+					}
+					return ps;
+				},
+				{} as PartsMap
 				);
 				return variants;
 			},
@@ -115,7 +115,7 @@ export class AvatarGenerator {
 		if (!parts.length) {
 			throw new Error(`variant '${variant}'does not contain any parts`);
 		}
-		const {width, height} = await sharp(parts[0]).metadata();
+		const { width, height } = await sharp(parts[0]).metadata();
 		if (width === undefined || height === undefined) {
 			throw new Error(`Invalid part file found`);
 		}
@@ -132,7 +132,7 @@ export class AvatarGenerator {
 		}
 		return sharp(composite, options)
 			.composite(parts.map(p => {
-				return {input: p};
+				return { input: p };
 			}));
 	}
 }

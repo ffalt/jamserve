@@ -1,7 +1,6 @@
-import {ExtendedInfo} from './metadata.model.js';
+import { ExtendedInfo } from './metadata.model.js';
 
 export class MetaDataFormat {
-
 	static stripInlineLastFM(content: string): string {
 		return (content || '').replace(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
 			.replace(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
@@ -34,5 +33,4 @@ export class MetaDataFormat {
 			licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
 		};
 	}
-
 }

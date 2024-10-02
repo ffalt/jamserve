@@ -1,16 +1,15 @@
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Genre as ORMGenre} from './genre.js';
-import {IncludesGenreArgs} from './genre.args.js';
-import {User} from '../user/user.js';
-import {Genre, GenreBase, GenreIndex} from './genre.model.js';
-import {DBObjectType} from '../../types/enums.js';
-import {IndexResult, IndexResultGroup} from '../base/base.js';
-import {BaseTransformService} from '../base/base.transform.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Genre as ORMGenre } from './genre.js';
+import { IncludesGenreArgs } from './genre.args.js';
+import { User } from '../user/user.js';
+import { Genre, GenreBase, GenreIndex } from './genre.model.js';
+import { DBObjectType } from '../../types/enums.js';
+import { IndexResult, IndexResultGroup } from '../base/base.js';
+import { BaseTransformService } from '../base/base.transform.js';
 
 @InRequestScope
 export class GenreTransformService extends BaseTransformService {
-
 	async genreBases(orm: Orm, list: Array<ORMGenre>, genreArgs: IncludesGenreArgs, user: User): Promise<Array<GenreBase>> {
 		return await Promise.all(list.map(g => this.genreBase(orm, g, {}, user)));
 	}
@@ -35,7 +34,7 @@ export class GenreTransformService extends BaseTransformService {
 	}
 
 	async genreIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMGenre>>): Promise<GenreIndex> {
-		return this.index(result, async (item) => {
+		return this.index(result, async item => {
 			return {
 				id: item.id,
 				name: item.name,
@@ -46,5 +45,4 @@ export class GenreTransformService extends BaseTransformService {
 			};
 		});
 	}
-
 }

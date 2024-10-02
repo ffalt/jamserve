@@ -1,13 +1,13 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
-import {PlaylistEntryOrderFields} from '../../types/enums.js';
-import {OrderByArgs} from '../base/base.args.js';
-import {Field, ID, InputType} from 'type-graphql';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { PlaylistEntryOrderFields } from '../../types/enums.js';
+import { OrderByArgs } from '../base/base.args.js';
+import { Field, ID, InputType } from 'type-graphql';
 
 @InputType()
 @ObjParamsType()
 export class PlaylistEntryOrderArgs extends OrderByArgs {
-	@ObjField(() => PlaylistEntryOrderFields, {nullable: true, description: 'order by field'})
-	@Field(() => PlaylistEntryOrderFields, {nullable: true})
+	@ObjField(() => PlaylistEntryOrderFields, { nullable: true, description: 'order by field' })
+	@Field(() => PlaylistEntryOrderFields, { nullable: true })
 	orderBy?: PlaylistEntryOrderFields;
 }
 
@@ -18,7 +18,7 @@ export class PlaylistEntryOrderArgsQL extends PlaylistEntryOrderArgs {
 @ObjParamsType()
 @InputType()
 export class PlaylistEntryFilterArgs {
-	@Field(() => [ID], {nullable: true})
-	@ObjField(() => [String], {nullable: true, description: 'filter by Playlist Ids', isID: true})
+	@Field(() => [ID], { nullable: true })
+	@ObjField(() => [String], { nullable: true, description: 'filter by Playlist Ids', isID: true })
 	playlistIDs?: Array<string>;
 }

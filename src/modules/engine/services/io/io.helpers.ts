@@ -1,5 +1,5 @@
-import {WorkerRequestParameters} from '../worker/worker.types.js';
-import {IoRequest} from './io.types.js';
+import { WorkerRequestParameters } from '../worker/worker.types.js';
+import { IoRequest } from './io.types.js';
 
 interface DelayedRequest<T extends WorkerRequestParameters> {
 	request: IoRequest<T>;
@@ -24,7 +24,7 @@ export class DelayedRequests<T extends WorkerRequestParameters> {
 	}
 
 	register(rootID: string, request: IoRequest<T>): DelayedRequest<T> {
-		const cmd = {request, timeout: undefined, rootID};
+		const cmd = { request, timeout: undefined, rootID };
 		this.requests.set(rootID, cmd);
 		return cmd;
 	}

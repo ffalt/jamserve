@@ -1,14 +1,14 @@
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {RestContext} from '../helpers/context.js';
-import {GenericError, UnauthError} from './express-error.js';
-import {ApiBaseResponder} from './express-responder.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {logger} from '../../../utils/logger.js';
-import {ExpressParameters} from './express-parameters.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
-import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
-import express, {Router} from 'express';
-import {processCustomPathParameters} from './express-path-parameters.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { RestContext } from '../helpers/context.js';
+import { GenericError, UnauthError } from './express-error.js';
+import { ApiBaseResponder } from './express-responder.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { logger } from '../../../utils/logger.js';
+import { ExpressParameters } from './express-parameters.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
+import express, { Router } from 'express';
+import { processCustomPathParameters } from './express-path-parameters.js';
 
 const log = logger('RestAPI');
 
@@ -88,7 +88,7 @@ export class ExpressMethod {
 			if (!resultType) {
 				throw GenericError(
 					`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
-					`is not a class decorated with '@ResultType' decorator!`,
+					`is not a class decorated with '@ResultType' decorator!`
 				);
 			}
 			// eslint-disable-next-line prefer-spread
@@ -132,7 +132,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post');
+				await this.callMethod(post, { req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user }, 'Post');
 			} catch (e: any) {
 				ApiBaseResponder.sendError(req, res, e);
 			}
@@ -166,7 +166,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get');
+				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get');
 			} catch (e: any) {
 				ApiBaseResponder.sendError(req, res, e);
 			}

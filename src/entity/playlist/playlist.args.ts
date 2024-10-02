@@ -1,68 +1,73 @@
-import {ObjField, ObjParamsType} from '../../modules/rest/index.js';
-import {ArgsType, Field, Float, ID, InputType} from 'type-graphql';
-import {ListType} from '../../types/enums.js';
-import {DefaultOrderArgs, FilterArgs, PaginatedFilterArgs} from '../base/base.args.js';
-import {examples} from '../../modules/engine/rest/example.consts.js';
+import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
+import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ListType } from '../../types/enums.js';
+import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
+import { examples } from '../../modules/engine/rest/example.consts.js';
 
 @ObjParamsType()
 export class IncludesPlaylistArgs {
-	@ObjField({nullable: true, description: 'include entries on playlist', defaultValue: false, example: false})
+	@ObjField({ nullable: true, description: 'include entries on playlist', defaultValue: false, example: false })
 	playlistIncEntries?: boolean;
-	@ObjField({nullable: true, description: 'include entry ids on playlist', defaultValue: false, example: false})
+
+	@ObjField({ nullable: true, description: 'include entry ids on playlist', defaultValue: false, example: false })
 	playlistIncEntriesIDs?: boolean;
-	@ObjField({nullable: true, description: 'include user state on playlist', defaultValue: false, example: false})
+
+	@ObjField({ nullable: true, description: 'include user state on playlist', defaultValue: false, example: false })
 	playlistIncState?: boolean;
 }
 
 @ObjParamsType()
 export class PlaylistMutateArgs {
-	@ObjField({nullable: true, description: 'Playlist Name'})
+	@ObjField({ nullable: true, description: 'Playlist Name' })
 	name?: string;
-	@ObjField({nullable: true, description: 'Comment', example: 'Awesome!'})
+
+	@ObjField({ nullable: true, description: 'Comment', example: 'Awesome!' })
 	comment?: string;
-	@ObjField({nullable: true, description: 'Playlist is public?', example: false})
+
+	@ObjField({ nullable: true, description: 'Playlist is public?', example: false })
 	isPublic?: boolean;
-	@ObjField(() => [String], {nullable: true, description: 'Track/Episode IDs of the playlist, may include duplicates', isID: true})
+
+	@ObjField(() => [String], { nullable: true, description: 'Track/Episode IDs of the playlist, may include duplicates', isID: true })
 	mediaIDs?: Array<string>;
 }
 
 @InputType()
 @ObjParamsType()
 export class PlaylistFilterArgs {
-	@Field(() => String, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by Search Query', example: 'awesome'})
+	@Field(() => String, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by Search Query', example: 'awesome' })
 	query?: string;
 
-	@Field(() => String, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by Name', example: 'Awesome Playlist'})
+	@Field(() => String, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by Name', example: 'Awesome Playlist' })
 	name?: string;
 
-	@Field(() => String, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by Comment', example: 'Awesome Comment'})
+	@Field(() => String, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by Comment', example: 'Awesome Comment' })
 	comment?: string;
 
-	@Field(() => [ID], {nullable: true})
-	@ObjField(() => [String], {nullable: true, description: 'filter by Playlist Ids', isID: true})
+	@Field(() => [ID], { nullable: true })
+	@ObjField(() => [String], { nullable: true, description: 'filter by Playlist Ids', isID: true })
 	ids?: Array<string>;
 
-	@Field(() => Float, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp})
+	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 
-	@Field(() => [ID], {nullable: true})
-	@ObjField(() => [String], {nullable: true, description: 'filter by User Ids', isID: true})
+	@Field(() => [ID], { nullable: true })
+	@ObjField(() => [String], { nullable: true, description: 'filter by User Ids', isID: true })
 	userIDs?: Array<string>;
 
-	@Field(() => Boolean, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by isPublic Flag', example: true})
+	@Field(() => Boolean, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by isPublic Flag', example: true })
 	isPublic?: boolean;
 
-	@Field(() => Float, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by since Playlist duration', min: 0, example: examples.timestamp})
+	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by since Playlist duration', min: 0, example: examples.timestamp })
 	durationFrom?: number;
 
-	@Field(() => Float, {nullable: true})
-	@ObjField({nullable: true, description: 'filter by until Playlist duration', min: 0, example: examples.timestamp})
+	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by until Playlist duration', min: 0, example: examples.timestamp })
 	durationTo?: number;
 }
 
@@ -89,9 +94,9 @@ export class PlaylistPageArgsQL extends PaginatedFilterArgs(PlaylistFilterArgsQL
 
 @ArgsType()
 export class PlaylistsArgs extends PlaylistPageArgsQL {
-	@Field(() => ListType, {nullable: true})
+	@Field(() => ListType, { nullable: true })
 	list?: ListType;
-	@Field(() => String, {nullable: true})
+
+	@Field(() => String, { nullable: true })
 	seed?: string;
 }
-

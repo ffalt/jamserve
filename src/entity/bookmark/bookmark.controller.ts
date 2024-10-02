@@ -1,27 +1,27 @@
-import {Bookmark, BookmarkPage} from './bookmark.model.js';
-import {BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams} from '../../modules/rest/index.js';
-import {UserRole} from '../../types/enums.js';
-import {IncludesTrackArgs} from '../track/track.args.js';
-import {BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs} from './bookmark.args.js';
-import {IncludesEpisodeArgs} from '../episode/episode.args.js';
-import {PageArgs} from '../base/base.args.js';
-import {Context} from '../../modules/engine/rest/context.js';
+import { Bookmark, BookmarkPage } from './bookmark.model.js';
+import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { IncludesTrackArgs } from '../track/track.args.js';
+import { BookmarkCreateArgs, BookmarkFilterArgs, BookmarkOrderArgs, IncludesBookmarkChildrenArgs } from './bookmark.args.js';
+import { IncludesEpisodeArgs } from '../episode/episode.args.js';
+import { PageArgs } from '../base/base.args.js';
+import { Context } from '../../modules/engine/rest/context.js';
 
-@Controller('/bookmark', {tags: ['Bookmark'], roles: [UserRole.stream]})
+@Controller('/bookmark', { tags: ['Bookmark'], roles: [UserRole.stream] })
 export class BookmarkController {
 	@Get('/id',
 		() => Bookmark,
-		{description: 'Get a Bookmark by Id', summary: 'Get Bookmark'}
+		{ description: 'Get a Bookmark by Id', summary: 'Get Bookmark' }
 	)
 	async id(
-		@QueryParam('id', {description: 'Bookmark Id', isID: true}) id: string,
+		@QueryParam('id', { description: 'Bookmark Id', isID: true }) id: string,
 		@QueryParams() bookmarkChildrenArgs: IncludesBookmarkChildrenArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<Bookmark> {
 		return engine.transform.bookmark(
-			orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? {where: {id}} : {where: {id, user: user.id}}),
+			orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }),
 			bookmarkChildrenArgs, trackArgs, episodeArgs, user
 		);
 	}
@@ -29,7 +29,7 @@ export class BookmarkController {
 	@Get(
 		'/search',
 		() => BookmarkPage,
-		{description: 'Search Bookmarks'}
+		{ description: 'Search Bookmarks' }
 	)
 	async search(
 		@QueryParams() page: PageArgs,
@@ -38,7 +38,7 @@ export class BookmarkController {
 		@QueryParams() episodeArgs: IncludesEpisodeArgs,
 		@QueryParams() filter: BookmarkFilterArgs,
 		@QueryParams() order: BookmarkOrderArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<BookmarkPage> {
 		return await orm.Bookmark.searchTransformFilter(
 			filter, [order], page, user,
@@ -49,11 +49,11 @@ export class BookmarkController {
 	@Post(
 		'/create',
 		() => Bookmark,
-		{description: 'Create a Bookmark', summary: 'Create Bookmark'}
+		{ description: 'Create a Bookmark', summary: 'Create Bookmark' }
 	)
 	async create(
 		@BodyParams() createArgs: BookmarkCreateArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<Bookmark> {
 		return await engine.transform.bookmark(
 			orm, await engine.bookmark.create(orm, createArgs.mediaID, user, createArgs.position, createArgs.comment),
@@ -63,22 +63,22 @@ export class BookmarkController {
 
 	@Post(
 		'/remove',
-		{description: 'Remove a Bookmark by Id', summary: 'Remove Bookmark'}
+		{ description: 'Remove a Bookmark by Id', summary: 'Remove Bookmark' }
 	)
 	async remove(
-		@BodyParam('id', {description: 'Bookmark Id', isID: true}) id: string,
-		@Ctx() {orm, engine, user}: Context
+		@BodyParam('id', { description: 'Bookmark Id', isID: true }) id: string,
+		@Ctx() { orm, engine, user }: Context
 	): Promise<void> {
 		await engine.bookmark.remove(orm, id, user.id);
 	}
 
 	@Post(
 		'/removeByMedia',
-		{description: 'Remove Bookmarks by Media Id [Track/Episode]', summary: 'Remove Bookmarks'}
+		{ description: 'Remove Bookmarks by Media Id [Track/Episode]', summary: 'Remove Bookmarks' }
 	)
 	async removeByMedia(
-		@BodyParam('id', {description: 'Track or Episode Id', isID: true}) id: string,
-		@Ctx() {orm, engine, user}: Context
+		@BodyParam('id', { description: 'Track or Episode Id', isID: true }) id: string,
+		@Ctx() { orm, engine, user }: Context
 	): Promise<void> {
 		await engine.bookmark.removeByDest(orm, id, user.id);
 	}

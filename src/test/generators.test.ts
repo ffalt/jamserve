@@ -1,13 +1,13 @@
 import nock from 'nock';
-import {Server} from '../modules/server/server';
+import { Server } from '../modules/server/server';
 import tmp from 'tmp';
-import yauzl, {Entry, ZipFile} from 'yauzl';
+import yauzl, { Entry, ZipFile } from 'yauzl';
 import fse from 'fs-extra';
 import supertest from 'supertest';
-import {bindMockConfig, DBConfigs} from './mock/mock.config';
-import {waitEngineStart} from './mock/mock.engine';
-import {initTest} from './init';
-import {Container, Snapshot} from 'typescript-ioc';
+import { bindMockConfig, DBConfigs } from './mock/mock.config';
+import { waitEngineStart } from './mock/mock.engine';
+import { initTest } from './init';
+import { Container, Snapshot } from 'typescript-ioc';
 import DoneCallback = jest.DoneCallback;
 import TestAgent from 'supertest/lib/agent';
 
@@ -20,9 +20,7 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Err
 		.parse((res, fn) => {
 			res.setEncoding('binary');
 			let data = '';
-			res.on('data', (chunk) => {
-				data += chunk;
-			});
+			res.on('data', chunk => data += chunk);
 			res.on('end', () => {
 				fn(null, Buffer.from(data, 'binary'));
 			});

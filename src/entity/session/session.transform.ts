@@ -1,12 +1,11 @@
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Session as ORMSession} from './session.js';
-import {UserSession} from './user-session.model.js';
-import {parseAgent} from './session.utils.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Session as ORMSession } from './session.js';
+import { UserSession } from './user-session.model.js';
+import { parseAgent } from './session.utils.js';
 
 @InRequestScope
 export class SessionTransformService {
-
 	userSession(orm: Orm, o: ORMSession): UserSession {
 		const ua = parseAgent(o);
 		return {
@@ -19,5 +18,4 @@ export class SessionTransformService {
 			agent: o.agent
 		};
 	}
-
 }

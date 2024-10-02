@@ -1,8 +1,8 @@
 import archiver from 'archiver';
 import express from 'express';
-import {replaceFileSystemChars} from './fs-utils.js';
-import {logger} from './logger.js';
-import {StreamData} from '../modules/rest/builder/express-responder.js';
+import { replaceFileSystemChars } from './fs-utils.js';
+import { logger } from './logger.js';
+import { StreamData } from '../modules/rest/builder/express-responder.js';
 
 const log = logger('BaseCompressStream');
 
@@ -26,7 +26,7 @@ export abstract class BaseCompressStream implements StreamData {
 	pipe(stream: express.Response): void {
 		// log.verbose('Start streaming');
 		const format = 'zip';
-		const archive = archiver(this.format as archiver.Format, {zlib: {level: 0}});
+		const archive = archiver(this.format as archiver.Format, { zlib: { level: 0 } });
 		archive.on('error', err => {
 			// log.error('archiver err ' + err);
 			throw err;

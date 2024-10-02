@@ -1,17 +1,17 @@
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
-import {CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue} from '../definitions/types.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
+import { CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue } from '../definitions/types.js';
 import {
 	exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas,
 	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject
 } from './openapi-helpers.js';
-import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {EnumMetadata} from '../definitions/enum-metadata.js';
-import {ClassMetadata} from '../definitions/class-metadata.js';
-import {getDefaultValue} from '../helpers/default-value.js';
-import {iterateArguments} from '../helpers/iterate-super.js';
+import { RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { EnumMetadata } from '../definitions/enum-metadata.js';
+import { ClassMetadata } from '../definitions/class-metadata.js';
+import { getDefaultValue } from '../helpers/default-value.js';
+import { iterateArguments } from '../helpers/iterate-super.js';
 
 export class OpenApiRefBuilder {
 	private readonly metadata: MetadataStorage;
@@ -23,27 +23,27 @@ export class OpenApiRefBuilder {
 	private static getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
 		const name = enumInfo.name;
 		if (!schemas[name]) {
-			schemas[name] = {type: 'string', enum: Object.values(enumInfo.enumObj)};
+			schemas[name] = { type: 'string', enum: Object.values(enumInfo.enumObj) };
 		}
 		return '#/components/schemas/' + name;
 	}
 
 	private buildFieldSchema(type: TypeValue, typeOptions: FieldOptions & TypeOptions, schemas: Schemas): Property | undefined {
 		if (typeOptions.isID) {
-			return {$ref: SCHEMA_ID};
+			return { $ref: SCHEMA_ID };
 		} else if (type === String) {
-			return {type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
+			return { type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
 		} else if (type === Number) {
 			return {
 				type: 'integer', default: typeOptions.defaultValue,
 				minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
 			};
 		} else if (type === Boolean) {
-			return {type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined};
+			return { type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
 		} else {
 			const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
 			if (enumInfo) {
-				return {$ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas)};
+				return { $ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas) };
 			}
 		}
 		return;
@@ -75,7 +75,7 @@ export class OpenApiRefBuilder {
 				throw new Error(`Unknown Argument Type, did you forget to register an enum? ${JSON.stringify(field)}`);
 			}
 			if (typeOptions.array) {
-				o.schema = {type: 'array', items: o.schema};
+				o.schema = { type: 'array', items: o.schema };
 			}
 			parameters.push(o);
 		});
@@ -106,7 +106,7 @@ export class OpenApiRefBuilder {
 		if (!argumentType) {
 			throw new Error(
 				`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
-				`is not a class decorated with '@ObjParamsType' decorator!`,
+				`is not a class decorated with '@ObjParamsType' decorator!`
 			);
 		}
 		iterateArguments(this.metadata, argumentType, argument => {
@@ -131,9 +131,9 @@ export class OpenApiRefBuilder {
 			const type = field.getType();
 			let f: Property | undefined = this.buildFieldSchema(type, typeOptions, schemas);
 			if (!f) {
-				f = {$ref: recursiveBuild(type, argumentType.name, schemas)};
+				f = { $ref: recursiveBuild(type, argumentType.name, schemas) };
 			}
-			properties[field.name] = typeOptions.array ? {type: 'array', items: f} : f;
+			properties[field.name] = typeOptions.array ? { type: 'array', items: f } : f;
 		}
 		schemas[argumentType.name] = {
 			type: 'object',
@@ -142,14 +142,14 @@ export class OpenApiRefBuilder {
 		};
 		const superClass = Object.getPrototypeOf(argumentType.target);
 		if (superClass.prototype !== undefined) {
-			const allOf: (SchemaObject | ReferenceObject)[] = [{$ref: recursiveBuild(superClass, argumentType.name, schemas)}];
+			const allOf: (SchemaObject | ReferenceObject)[] = [{ $ref: recursiveBuild(superClass, argumentType.name, schemas) }];
 			if (Object.keys(properties).length > 0) {
 				allOf.push({
 					properties,
 					required: required.length > 0 ? required : undefined
 				});
 			}
-			schemas[argumentType.name] = {allOf};
+			schemas[argumentType.name] = { allOf };
 		}
 	}
 
@@ -204,8 +204,8 @@ export class OpenApiRefBuilder {
 					type: 'object',
 					description: param.description,
 					properties: {
-						type: {description: 'Mime Type', type: 'string'},
-						file: {description: 'Binary Data', type: 'string', format: 'binary'}
+						type: { description: 'Mime Type', type: 'string' },
+						file: { description: 'Binary Data', type: 'string', format: 'binary' }
 					},
 					required: ['type', 'file']
 				}
@@ -217,23 +217,23 @@ export class OpenApiRefBuilder {
 		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
 		let result: SchemaObject | ReferenceObject;
 		if (typeOptions.isID) {
-			result = {$ref: SCHEMA_ID};
+			result = { $ref: SCHEMA_ID };
 		} else if (param.getType() === String) {
-			result = {type: 'string'};
+			result = { type: 'string' };
 		} else if (param.getType() === Number) {
-			result = {type: 'integer', default: typeOptions.defaultValue, minimum: typeOptions.min, maximum: typeOptions.max};
+			result = { type: 'integer', default: typeOptions.defaultValue, minimum: typeOptions.min, maximum: typeOptions.max };
 		} else if (param.getType() === Boolean) {
-			result = {type: 'boolean', default: typeOptions.defaultValue};
+			result = { type: 'boolean', default: typeOptions.defaultValue };
 		} else {
 			const enumInfo = this.metadata.enums.find(e => e.enumObj === param.getType());
 			if (enumInfo) {
-				result = {$ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas)};
+				result = { $ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas) };
 			} else {
 				throw new Error(`Implement OpenApi collectParameter ${JSON.stringify(param)}`);
 			}
 		}
 		if (typeOptions.array) {
-			result = {type: 'array', items: result};
+			result = { type: 'array', items: result };
 		}
 		if (this.extended || !(result as ReferenceObject).$ref) {
 			(result as SchemaObject).description = param.description;
@@ -241,5 +241,4 @@ export class OpenApiRefBuilder {
 		}
 		return result;
 	}
-
 }

@@ -1,5 +1,5 @@
-import {logger} from './logger.js';
-import {WebserviceClient} from './webservice-client.js';
+import { logger } from './logger.js';
+import { WebserviceClient } from './webservice-client.js';
 
 const log = logger('WebserviceJSONClient');
 
@@ -37,7 +37,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			retryDelay: 3000,
 			retryCount: 3
 		};
-		this.options = {...defaultOptions, ...options};
+		this.options = { ...defaultOptions, ...options };
 	}
 
 	protected reqToHost(_req: T): string {

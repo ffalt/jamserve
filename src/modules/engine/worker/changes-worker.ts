@@ -1,11 +1,11 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseWorker} from './tasks/base.js';
-import {Orm, OrmService} from '../services/orm.service.js';
-import {Root} from '../../../entity/root/root.js';
-import {MetaMerger} from './merge-meta.js';
-import {Base} from '../../../entity/base/base.js';
-import {Changes, ChangeSet, IdSet} from './changes.js';
-import {logger} from '../../../utils/logger.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseWorker } from './tasks/base.js';
+import { Orm, OrmService } from '../services/orm.service.js';
+import { Root } from '../../../entity/root/root.js';
+import { MetaMerger } from './merge-meta.js';
+import { Base } from '../../../entity/base/base.js';
+import { Changes, ChangeSet, IdSet } from './changes.js';
+import { logger } from '../../../utils/logger.js';
 import moment from 'moment';
 
 const log = logger('IO.Changes');
@@ -18,7 +18,7 @@ export class ChangesWorker extends BaseWorker {
 	async start(rootID: string): Promise<{ changes: Changes; orm: Orm; root: Root }> {
 		const orm = this.ormService.fork(true);
 		const root = await orm.Root.findOneOrFailByID(rootID);
-		return {root, orm, changes: new Changes()};
+		return { root, orm, changes: new Changes() };
 	}
 
 	async finish(orm: Orm, changes: Changes, root: Root): Promise<Changes> {
@@ -70,12 +70,12 @@ export class ChangesWorker extends BaseWorker {
 		stateCleanIds.appendIDs(changes.roots.removed.ids());
 		stateCleanIds.appendIDs(changes.series.removed.ids());
 
-		const stateBookmarkIDs = await orm.Bookmark.findIDs({where: {track: trackIDs}});
+		const stateBookmarkIDs = await orm.Bookmark.findIDs({ where: { track: trackIDs } });
 		if (stateBookmarkIDs.length > 0) {
 			await orm.Bookmark.removeLaterByIDs(stateBookmarkIDs);
 			stateCleanIds.appendIDs(stateBookmarkIDs);
 		}
-		const playlistEntryIDs = await orm.PlaylistEntry.findIDs({where: {track: trackIDs}});
+		const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
 		if (playlistEntryIDs.length > 0) {
 			await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
 			stateCleanIds.appendIDs(playlistEntryIDs);
@@ -88,7 +88,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 		const stateDestIDs = stateCleanIds.ids();
 		if (stateDestIDs.length > 0) {
-			const states = await orm.State.findIDs({where: {destID: stateDestIDs}});
+			const states = await orm.State.findIDs({ where: { destID: stateDestIDs } });
 			await orm.State.removeLaterByIDs(states);
 		}
 		if (orm.em.hasChanges()) {
@@ -113,7 +113,6 @@ export class ChangesWorker extends BaseWorker {
 	}
 
 	private logChanges(changes: Changes): void {
-
 		function logChange(name: string, list: IdSet<any>): void {
 			if (list.size > 0) {
 				log.info(name, list.size);
@@ -137,5 +136,4 @@ export class ChangesWorker extends BaseWorker {
 		logChangeSet('Roots', changes.roots);
 		logChangeSet('Genres', changes.genres);
 	}
-
 }

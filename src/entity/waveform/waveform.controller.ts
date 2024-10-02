@@ -1,22 +1,22 @@
-import {Controller, Ctx, GenericError, Get, QueryParam} from '../../modules/rest/index.js';
-import {UserRole, WaveformFormatType} from '../../types/enums.js';
-import {ApiBinaryResult, NotFoundError} from '../../modules/rest/index.js';
-import {PathParam, PathParams, QueryParams} from '../../modules/rest/index.js';
+import { Controller, Ctx, GenericError, Get, QueryParam } from '../../modules/rest/index.js';
+import { UserRole, WaveformFormatType } from '../../types/enums.js';
+import { ApiBinaryResult, NotFoundError } from '../../modules/rest/index.js';
+import { PathParam, PathParams, QueryParams } from '../../modules/rest/index.js';
 import fse from 'fs-extra';
-import {WaveformArgs, WaveformSVGArgs} from './waveform.args.js';
-import {WaveFormData} from './waveform.model.js';
-import {ApiWaveformTypes} from '../../types/consts.js';
-import {Context} from '../../modules/engine/rest/context.js';
+import { WaveformArgs, WaveformSVGArgs } from './waveform.args.js';
+import { WaveFormData } from './waveform.model.js';
+import { ApiWaveformTypes } from '../../types/consts.js';
+import { Context } from '../../modules/engine/rest/context.js';
 
-@Controller('/waveform', {tags: ['Waveform'], roles: [UserRole.stream]})
+@Controller('/waveform', { tags: ['Waveform'], roles: [UserRole.stream] })
 export class WaveformController {
 	@Get('/json',
 		() => WaveFormData,
-		{description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON'}
+		{ description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }
 	)
 	async json(
-		@QueryParam('id', {description: 'Object Id', isID: true}) id: string,
-		@Ctx() {orm, engine}: Context
+		@QueryParam('id', { description: 'Object Id', isID: true }) id: string,
+		@Ctx() { orm, engine }: Context
 	): Promise<WaveFormData | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
@@ -44,7 +44,7 @@ export class WaveformController {
 	)
 	async svg(
 		@QueryParams() args: WaveformSVGArgs,
-		@Ctx() {orm, engine}: Context
+		@Ctx() { orm, engine }: Context
 	): Promise<string> {
 		const result = await orm.findInWaveformTypes(args.id);
 		if (!result) {
@@ -68,21 +68,21 @@ export class WaveformController {
 			customPathParameters: {
 				regex: /(.*?)(_.*?)?(\..*)?$/,
 				groups: [
-					{name: 'id', getType: () => String},
-					{name: 'width', getType: () => Number, prefix: '_', min: 100, max: 4000},
-					{name: 'format', getType: () => WaveformFormatType, prefix: '.'}
+					{ name: 'id', getType: () => String },
+					{ name: 'width', getType: () => Number, prefix: '_', min: 100, max: 4000 },
+					{ name: 'format', getType: () => WaveformFormatType, prefix: '.' }
 				]
 			},
 			aliasRoutes: [
-				{route: '/{id}.{format}', name: 'by Id and Format', hideParameters: ['width']},
-				{route: '/{id}', name: 'by Id', hideParameters: ['width', 'format']}
+				{ route: '/{id}.{format}', name: 'by Id and Format', hideParameters: ['width'] },
+				{ route: '/{id}', name: 'by Id', hideParameters: ['width', 'format'] }
 			]
 		}
 	)
 	async waveform(
-		@PathParam('id', {description: 'Media Id', isID: true}) id: string,
+		@PathParam('id', { description: 'Media Id', isID: true }) id: string,
 		@PathParams() waveformArgs: WaveformArgs,
-		@Ctx() {orm, engine}: Context
+		@Ctx() { orm, engine }: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
@@ -90,5 +90,4 @@ export class WaveformController {
 		}
 		return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
 	}
-
 }

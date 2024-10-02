@@ -1,59 +1,59 @@
-import {Album} from '../../../entity/album/album.js';
-import {State} from '../../../entity/state/state.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Artwork} from '../../../entity/artwork/artwork.js';
-import {Bookmark} from '../../../entity/bookmark/bookmark.js';
-import {Episode} from '../../../entity/episode/episode.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {Root} from '../../../entity/root/root.js';
-import {PlayQueue} from '../../../entity/playqueue/playqueue.js';
-import {Playlist} from '../../../entity/playlist/playlist.js';
-import {Podcast} from '../../../entity/podcast/podcast.js';
-import {Series} from '../../../entity/series/series.js';
-import {Radio} from '../../../entity/radio/radio.js';
-import {Session} from '../../../entity/session/session.js';
-import {Settings} from '../../../entity/settings/settings.js';
-import {Track} from '../../../entity/track/track.js';
-import {User} from '../../../entity/user/user.js';
-import {Tag} from '../../../entity/tag/tag.js';
-import {InRequestScope} from 'typescript-ioc';
-import {MetaData} from '../../../entity/metadata/metadata.js';
-import {PlaylistEntry} from '../../../entity/playlistentry/playlist-entry.js';
-import {PlayQueueEntry} from '../../../entity/playqueueentry/playqueue-entry.js';
-import {Base} from '../../../entity/base/base.js';
-import {DBObjectType} from '../../../types/enums.js';
-import {BaseRepository} from '../../../entity/base/base.repository.js';
-import {AlbumRepository} from '../../../entity/album/album.repository.js';
-import {UserRepository} from '../../../entity/user/user.repository.js';
-import {TrackRepository} from '../../../entity/track/track.repository.js';
-import {TagRepository} from '../../../entity/tag/tag.repository.js';
-import {SessionRepository} from '../../../entity/session/session.repository.js';
-import {SeriesRepository} from '../../../entity/series/series.repository.js';
-import {RadioRepository} from '../../../entity/radio/radio.repository.js';
-import {PlaylistEntryRepository} from '../../../entity/playlistentry/playlist-entry.repository.js';
-import {PlaylistRepository} from '../../../entity/playlist/playlist.repository.js';
-import {RootRepository} from '../../../entity/root/root.repository.js';
-import {FolderRepository} from '../../../entity/folder/folder.repository.js';
-import {EpisodeRepository} from '../../../entity/episode/episode.repository.js';
-import {BookmarkRepository} from '../../../entity/bookmark/bookmark.repository.js';
-import {ArtworkRepository} from '../../../entity/artwork/artwork.repository.js';
-import {ArtistRepository} from '../../../entity/artist/artist.repository.js';
-import {StateRepository} from '../../../entity/state/state.repository.js';
-import {MetaDataRepository} from '../../../entity/metadata/metadata.repository.js';
-import {PlayQueueRepository} from '../../../entity/playqueue/playqueue.repository.js';
-import {PlayQueueEntryRepository} from '../../../entity/playqueueentry/playqueue-entry.repository.js';
-import {PodcastRepository} from '../../../entity/podcast/podcast.repository.js';
-import {SettingsRepository} from '../../../entity/settings/settings.repository.js';
+import { Album } from '../../../entity/album/album.js';
+import { State } from '../../../entity/state/state.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Artwork } from '../../../entity/artwork/artwork.js';
+import { Bookmark } from '../../../entity/bookmark/bookmark.js';
+import { Episode } from '../../../entity/episode/episode.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { Root } from '../../../entity/root/root.js';
+import { PlayQueue } from '../../../entity/playqueue/playqueue.js';
+import { Playlist } from '../../../entity/playlist/playlist.js';
+import { Podcast } from '../../../entity/podcast/podcast.js';
+import { Series } from '../../../entity/series/series.js';
+import { Radio } from '../../../entity/radio/radio.js';
+import { Session } from '../../../entity/session/session.js';
+import { Settings } from '../../../entity/settings/settings.js';
+import { Track } from '../../../entity/track/track.js';
+import { User } from '../../../entity/user/user.js';
+import { Tag } from '../../../entity/tag/tag.js';
+import { InRequestScope } from 'typescript-ioc';
+import { MetaData } from '../../../entity/metadata/metadata.js';
+import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
+import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
+import { Base } from '../../../entity/base/base.js';
+import { DBObjectType } from '../../../types/enums.js';
+import { BaseRepository } from '../../../entity/base/base.repository.js';
+import { AlbumRepository } from '../../../entity/album/album.repository.js';
+import { UserRepository } from '../../../entity/user/user.repository.js';
+import { TrackRepository } from '../../../entity/track/track.repository.js';
+import { TagRepository } from '../../../entity/tag/tag.repository.js';
+import { SessionRepository } from '../../../entity/session/session.repository.js';
+import { SeriesRepository } from '../../../entity/series/series.repository.js';
+import { RadioRepository } from '../../../entity/radio/radio.repository.js';
+import { PlaylistEntryRepository } from '../../../entity/playlistentry/playlist-entry.repository.js';
+import { PlaylistRepository } from '../../../entity/playlist/playlist.repository.js';
+import { RootRepository } from '../../../entity/root/root.repository.js';
+import { FolderRepository } from '../../../entity/folder/folder.repository.js';
+import { EpisodeRepository } from '../../../entity/episode/episode.repository.js';
+import { BookmarkRepository } from '../../../entity/bookmark/bookmark.repository.js';
+import { ArtworkRepository } from '../../../entity/artwork/artwork.repository.js';
+import { ArtistRepository } from '../../../entity/artist/artist.repository.js';
+import { StateRepository } from '../../../entity/state/state.repository.js';
+import { MetaDataRepository } from '../../../entity/metadata/metadata.repository.js';
+import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.repository.js';
+import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository.js';
+import { PodcastRepository } from '../../../entity/podcast/podcast.repository.js';
+import { SettingsRepository } from '../../../entity/settings/settings.repository.js';
 import path from 'path';
-import {EntityManager, ORM} from '../../orm/index.js';
-import {ORMEntities} from '../orm/entities.js';
-import {ORMRepositories} from '../orm/repositories.js';
-import {registerORMEnums} from '../orm/enum-registration.js';
-import {ConfigService} from './config.service.js';
-import {Options} from 'sequelize';
-import {NotFoundError} from '../../rest/index.js';
-import {GenreRepository} from '../../../entity/genre/genre.repository.js';
-import {Genre} from '../../../entity/genre/genre.js';
+import { EntityManager, ORM } from '../../orm/index.js';
+import { ORMEntities } from '../orm/entities.js';
+import { ORMRepositories } from '../orm/repositories.js';
+import { registerORMEnums } from '../orm/enum-registration.js';
+import { ConfigService } from './config.service.js';
+import { Options } from 'sequelize';
+import { NotFoundError } from '../../rest/index.js';
+import { GenreRepository } from '../../../entity/genre/genre.repository.js';
+import { Genre } from '../../../entity/genre/genre.js';
 
 registerORMEnums();
 
@@ -110,7 +110,7 @@ export class Orm {
 		for (const repo of repos) {
 			const obj = await repo.findOneByID(id);
 			if (obj) {
-				return {obj: obj as any, objType: repo.objType};
+				return { obj: obj as any, objType: repo.objType };
 			}
 		}
 		return;
@@ -212,24 +212,24 @@ export class Orm {
 	}
 }
 
-
 @InRequestScope
 export class OrmService {
 	private orm!: ORM;
 
 	async init(config: ConfigService): Promise<void> {
-		const db: Partial<Options> = config.env.db.dialect === 'sqlite' ? {
-				dialect: 'sqlite',
-				storage: path.resolve(config.env.paths.data, 'jam.sqlite')
-			} :
-			{
-				dialect: config.env.db.dialect,
-				username: config.env.db.user,
-				password: config.env.db.password,
-				database: config.env.db.name,
-				host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
-				port: config.env.db.port ? Number(config.env.db.port) : undefined
-			};
+		const db: Partial<Options> = config.env.db.dialect === 'sqlite' ?
+				{
+					dialect: 'sqlite',
+					storage: path.resolve(config.env.paths.data, 'jam.sqlite')
+				} :
+				{
+					dialect: config.env.db.dialect,
+					username: config.env.db.user,
+					password: config.env.db.password,
+					database: config.env.db.name,
+					host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+					port: config.env.db.port ? Number(config.env.db.port) : undefined
+				};
 
 		this.orm = await ORM.init({
 			entities: ORMEntities,
@@ -241,7 +241,7 @@ export class OrmService {
 				// },
 				logging: false,
 				logQueryParameters: true,
-				retry: {max: 0}
+				retry: { max: 0 }
 			}
 		});
 	}

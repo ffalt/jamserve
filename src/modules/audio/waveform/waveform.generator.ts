@@ -1,14 +1,13 @@
-import {max, min} from 'd3-array';
-import {scaleLinear} from 'd3-scale';
-import {area} from 'd3-shape';
-import {select} from 'd3-selection';
+import { max, min } from 'd3-array';
+import { scaleLinear } from 'd3-scale';
+import { area } from 'd3-shape';
+import { select } from 'd3-selection';
 import fs from 'fs';
 import WaveformData from 'waveform-data';
-import {WaveDataResponse, Waveform} from './waveform.class.js';
-import {JSDOM} from 'jsdom';
+import { WaveDataResponse, Waveform } from './waveform.class.js';
+import { JSDOM } from 'jsdom';
 
 export class WaveformGenerator {
-
 	async binary(filename: string): Promise<Buffer> {
 		const wf: Waveform = await this.generateWaveform(filename);
 		return wf.asBinary();
@@ -53,7 +52,7 @@ export class WaveformGenerator {
 		let wfd = WaveformData.create(data);
 		if (width !== undefined) {
 			const samplesPerPixel = Math.floor(wfd.duration * wfd.sample_rate / width);
-			wfd = wfd.resample({width: width * 2, scale: (samplesPerPixel < wfd.scale) ? wfd.scale : undefined});
+			wfd = wfd.resample({ width: width * 2, scale: (samplesPerPixel < wfd.scale) ? wfd.scale : undefined });
 		} else {
 			width = 4000;
 		}
@@ -65,7 +64,7 @@ export class WaveformGenerator {
 		const waveArea = area()
 			.x((a, i) => x(i))
 			.y0((b, i) => y(minArray[i]))
-			.y1((c) => y(c as any));
+			.y1(c => y(c as any));
 		const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 		const d3Element = select(fakedom.window.document).select('body');
 		const svg = d3Element.append('svg')
@@ -83,5 +82,4 @@ export class WaveformGenerator {
 		const node = svg.node();
 		return node?.outerHTML || '';
 	}
-
 }

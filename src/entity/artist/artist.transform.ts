@@ -1,19 +1,20 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Artist as ORMArtist} from './artist.js';
-import {IncludesArtistArgs} from './artist.args.js';
-import {User} from '../user/user.js';
-import {ArtistBase, ArtistIndex} from './artist.model.js';
-import {DBObjectType} from '../../types/enums.js';
-import {IndexResult, IndexResultGroup} from '../base/base.js';
-import {MetaDataService} from '../metadata/metadata.service.js';
-import {GenreTransformService} from '../genre/genre.transform.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Artist as ORMArtist } from './artist.js';
+import { IncludesArtistArgs } from './artist.args.js';
+import { User } from '../user/user.js';
+import { ArtistBase, ArtistIndex } from './artist.model.js';
+import { DBObjectType } from '../../types/enums.js';
+import { IndexResult, IndexResultGroup } from '../base/base.js';
+import { MetaDataService } from '../metadata/metadata.service.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
 
 @InRequestScope
 export class ArtistTransformService extends BaseTransformService {
 	@Inject
 	public metaData!: MetaDataService;
+
 	@Inject
 	public Genre!: GenreTransformService;
 
@@ -41,7 +42,7 @@ export class ArtistTransformService extends BaseTransformService {
 	}
 
 	async artistIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMArtist>>): Promise<ArtistIndex> {
-		return this.index(result, async (item) => {
+		return this.index(result, async item => {
 			return {
 				id: item.id,
 				name: item.name,
@@ -50,6 +51,4 @@ export class ArtistTransformService extends BaseTransformService {
 			};
 		});
 	}
-
-
 }

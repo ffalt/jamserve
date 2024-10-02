@@ -1,11 +1,11 @@
 import path from 'path';
-import {fileSuffix, replaceFolderSystemChars} from '../../utils/fs-utils.js';
-import {RuleResult} from './rule.js';
-import {AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum} from '../../types/enums.js';
-import {Folder} from '../folder/folder.js';
-import {FolderHealthHint} from './health.model.js';
-import {getFolderDisplayArtwork} from '../folder/folder.service.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { fileSuffix, replaceFolderSystemChars } from '../../utils/fs-utils.js';
+import { RuleResult } from './rule.js';
+import { AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum } from '../../types/enums.js';
+import { Folder } from '../folder/folder.js';
+import { FolderHealthHint } from './health.model.js';
+import { getFolderDisplayArtwork } from '../folder/folder.service.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 interface FolderRuleInfo {
 	id: FolderHealthID;
@@ -27,7 +27,7 @@ function isAlbumTopMostFolder(orm: Orm, folder: Folder, parents: Array<Folder>):
 async function validateFolderArtwork(orm: Orm, folder: Folder): Promise<RuleResult | undefined> {
 	const artwork = await getFolderDisplayArtwork(orm, folder);
 	if (artwork && (artwork.format === 'invalid')) {
-		return {details: [{reason: 'Broken or unsupported File Format'}]};
+		return { details: [{ reason: 'Broken or unsupported File Format' }] };
 	}
 	if (artwork && artwork.path) {
 		let actual = fileSuffix(artwork.name);
@@ -36,7 +36,7 @@ async function validateFolderArtwork(orm: Orm, folder: Folder): Promise<RuleResu
 		}
 		const expected = artwork.format;
 		if (actual !== expected) {
-			return {details: [{reason: 'Wrong File Extension', actual, expected}]};
+			return { details: [{ reason: 'Wrong File Extension', actual, expected }] };
 		}
 	}
 	return;
@@ -69,7 +69,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (missing.length > 0) {
 					return {
 						details: missing.map(m => {
-							return {reason: 'value empty', expected: m};
+							return { reason: 'value empty', expected: m };
 						})
 					};
 				}
@@ -93,7 +93,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (missing.length > 0) {
 					return {
 						details: missing.map(m => {
-							return {reason: 'value empty', expected: m};
+							return { reason: 'value empty', expected: m };
 						})
 					};
 				}
@@ -106,11 +106,11 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Album folder seems to be incomplete',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
 			if ((folder.folderType === FolderType.album) && (folder.albumTrackCount)) {
-				const trackCount = await orm.Track.countFilter({childOfID: folder.id});
+				const trackCount = await orm.Track.countFilter({ childOfID: folder.id });
 				if (trackCount !== folder.albumTrackCount) {
 					return {
 						details: [
-							{reason: 'not equal', expected: folder.albumTrackCount.toString(), actual: trackCount.toString()}
+							{ reason: 'not equal', expected: folder.albumTrackCount.toString(), actual: trackCount.toString() }
 						]
 					};
 				}
@@ -122,7 +122,6 @@ const folderRules: Array<FolderRuleInfo> = [
 		id: FolderHealthID.albumNameConform,
 		name: 'Album folder name is not conform',
 		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
-
 			function sanitizeName(s: string): string {
 				return s
 					.replace(/[!?]/g, '_')
@@ -156,7 +155,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				const nameSlug = slug(folder.path);
 				const nicenameSlug = niceSlug(nicename);
 				if (nameSlug.localeCompare(nicenameSlug) !== 0) {
-					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: nicename}]};
+					return { details: [{ reason: 'not equal', actual: path.basename(folder.path), expected: nicename }] };
 				}
 				return;
 			}
@@ -205,7 +204,7 @@ const folderRules: Array<FolderRuleInfo> = [
 			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const artwork = await getFolderDisplayArtwork(orm, folder);
 				if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
-					return {details: [{reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300'}]};
+					return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
 				}
 			}
 			return;
@@ -243,7 +242,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				const artistName = replaceFolderSystemChars(folder.artist, '_');
 				const artistNameSlug = artistName.replace(/[_:!?/ ]/g, '').toLowerCase();
 				if (nameSlug.localeCompare(artistNameSlug) !== 0) {
-					return {details: [{reason: 'not equal', actual: path.basename(folder.path), expected: artistName}]};
+					return { details: [{ reason: 'not equal', actual: path.basename(folder.path), expected: artistName }] };
 				}
 			}
 			return;
@@ -252,7 +251,6 @@ const folderRules: Array<FolderRuleInfo> = [
 ];
 
 export class FolderRulesChecker {
-
 	async run(orm: Orm, folder: Folder, parents: Array<Folder>): Promise<Array<FolderHealthHint>> {
 		const result: Array<FolderHealthHint> = [];
 		for (const rule of folderRules) {
@@ -267,5 +265,4 @@ export class FolderRulesChecker {
 		}
 		return result;
 	}
-
 }

@@ -1,8 +1,8 @@
-import {User} from '../user/user.js';
-import {DBObjectType} from '../../types/enums.js';
-import {Field, Int, ObjectType} from 'type-graphql';
-import {Base} from '../base/base.js';
-import {Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
+import { User } from '../user/user.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Base } from '../base/base.js';
+import { Entity, ManyToOne, ORM_DATETIME, ORM_ID, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 
 @ObjectType()
 @Entity()
@@ -13,20 +13,20 @@ export class State extends Base {
 	@Property(() => DBObjectType)
 	destType!: DBObjectType;
 
-	@Field(() => Date, {nullable: true})
-	@Property(() => ORM_DATETIME, {nullable: true})
+	@Field(() => Date, { nullable: true })
+	@Property(() => ORM_DATETIME, { nullable: true })
 	faved?: Date;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	played?: number;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	rated?: number;
 
-	@Field(() => Date, {nullable: true})
-	@Property(() => ORM_DATETIME, {nullable: true})
+	@Field(() => Date, { nullable: true })
+	@Property(() => ORM_DATETIME, { nullable: true })
 	lastPlayed?: Date;
 
 	@ManyToOne<User>(() => 'User', user => user.states)

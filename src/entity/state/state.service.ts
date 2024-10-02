@@ -1,14 +1,13 @@
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {User} from '../user/user.js';
-import {State} from './state.js';
-import {NotFoundError} from '../../modules/rest/index.js';
-import {StateHelper} from './state.helper.js';
-import {DBObjectType} from '../../types/enums.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { User } from '../user/user.js';
+import { State } from './state.js';
+import { NotFoundError } from '../../modules/rest/index.js';
+import { StateHelper } from './state.helper.js';
+import { DBObjectType } from '../../types/enums.js';
 
 @InRequestScope
 export class StateService {
-
 	async fav(
 		orm: Orm,
 		id: string,

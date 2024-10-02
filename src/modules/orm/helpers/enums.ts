@@ -1,5 +1,5 @@
-import {EnumConfig} from '../definitions/types.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import { EnumConfig } from '../definitions/types.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 /*
 export function getEnumValuesMap<T extends object>(enumObject: T): any {
 	const enumKeys = Object.keys(enumObject).filter(key => isNaN(parseInt(key, 10)));
@@ -20,6 +20,6 @@ export function registerEnumType<T extends object>(enumObj: T, enumConfig: EnumC
 	getMetadataStorage().collectEnumMetadata({
 		enumObj,
 		name: enumConfig.name,
-		description: enumConfig.description,
+		description: enumConfig.description
 	});
 }

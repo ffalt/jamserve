@@ -1,11 +1,11 @@
-import {Track} from '../../../entity/track/track.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Album} from '../../../entity/album/album.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {Series} from '../../../entity/series/series.js';
-import {Root} from '../../../entity/root/root.js';
-import {Artwork} from '../../../entity/artwork/artwork.js';
-import {Genre} from '../../../entity/genre/genre.js';
+import { Track } from '../../../entity/track/track.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Album } from '../../../entity/album/album.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { Series } from '../../../entity/series/series.js';
+import { Root } from '../../../entity/root/root.js';
+import { Artwork } from '../../../entity/artwork/artwork.js';
+import { Genre } from '../../../entity/genre/genre.js';
 
 export class IdSet<T extends { id: string }> {
 	private set = new Set<string>();

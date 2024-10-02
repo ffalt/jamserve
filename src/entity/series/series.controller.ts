@@ -1,29 +1,29 @@
-import {Series, SeriesIndex, SeriesPage} from './series.model.js';
-import {Controller, Ctx, Get, QueryParam, QueryParams} from '../../modules/rest/index.js';
-import {UserRole} from '../../types/enums.js';
-import {ExtendedInfoResult} from '../metadata/metadata.model.js';
-import {TrackPage} from '../track/track.model.js';
-import {AlbumPage} from '../album/album.model.js';
-import {AlbumOrderArgs, IncludesAlbumArgs} from '../album/album.args.js';
-import {IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs} from './series.args.js';
-import {IncludesTrackArgs, TrackOrderArgs} from '../track/track.args.js';
-import {ListArgs, PageArgs} from '../base/base.args.js';
-import {Context} from '../../modules/engine/rest/context.js';
+import { Series, SeriesIndex, SeriesPage } from './series.model.js';
+import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
+import { UserRole } from '../../types/enums.js';
+import { ExtendedInfoResult } from '../metadata/metadata.model.js';
+import { TrackPage } from '../track/track.model.js';
+import { AlbumPage } from '../album/album.model.js';
+import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
+import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
+import { ListArgs, PageArgs } from '../base/base.args.js';
+import { Context } from '../../modules/engine/rest/context.js';
 
-@Controller('/series', {tags: ['Series'], roles: [UserRole.stream]})
+@Controller('/series', { tags: ['Series'], roles: [UserRole.stream] })
 export class SeriesController {
 	@Get(
 		'/id',
 		() => Series,
-		{description: 'Get a Series by Id', summary: 'Get Series'}
+		{ description: 'Get a Series by Id', summary: 'Get Series' }
 	)
 	async id(
-		@QueryParam('id', {description: 'Series Id', isID: true}) id: string,
+		@QueryParam('id', { description: 'Series Id', isID: true }) id: string,
 		@QueryParams() seriesArgs: IncludesSeriesArgs,
 		@QueryParams() seriesChildrenArgs: IncludesSeriesChildrenArgs,
 		@QueryParams() albumArgs: IncludesAlbumArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<Series> {
 		return engine.transform.series(
 			orm, await orm.Series.oneOrFailByID(id),
@@ -34,9 +34,9 @@ export class SeriesController {
 	@Get(
 		'/index',
 		() => SeriesIndex,
-		{description: 'Get the Navigation Index for Series', summary: 'Get Index'}
+		{ description: 'Get the Navigation Index for Series', summary: 'Get Index' }
 	)
-	async index(@QueryParams() filter: SeriesFilterArgs, @Ctx() {orm, engine, user}: Context): Promise<SeriesIndex> {
+	async index(@QueryParams() filter: SeriesFilterArgs, @Ctx() { orm, engine, user }: Context): Promise<SeriesIndex> {
 		const result = await orm.Series.indexFilter(filter, user);
 		return engine.transform.Series.seriesIndex(orm, result);
 	}
@@ -44,7 +44,7 @@ export class SeriesController {
 	@Get(
 		'/search',
 		() => SeriesPage,
-		{description: 'Search Series'}
+		{ description: 'Search Series' }
 	)
 	async search(
 		@QueryParams() page: PageArgs,
@@ -55,7 +55,7 @@ export class SeriesController {
 		@QueryParams() filter: SeriesFilterArgs,
 		@QueryParams() order: SeriesOrderArgs,
 		@QueryParams() list: ListArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<SeriesPage> {
 		if (list.list) {
 			return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
@@ -71,31 +71,31 @@ export class SeriesController {
 	@Get(
 		'/info',
 		() => ExtendedInfoResult,
-		{description: 'Get Meta Data Info of a Series by Id (External Service)', summary: 'Get Info'}
+		{ description: 'Get Meta Data Info of a Series by Id (External Service)', summary: 'Get Info' }
 	)
 	async info(
-		@QueryParam('id', {description: 'Series Id', isID: true}) id: string,
-		@Ctx() {orm, engine}: Context
+		@QueryParam('id', { description: 'Series Id', isID: true }) id: string,
+		@Ctx() { orm, engine }: Context
 	): Promise<ExtendedInfoResult> {
 		const series = await orm.Series.oneOrFailByID(id);
-		return {info: await engine.metadata.extInfo.bySeries(orm, series)};
+		return { info: await engine.metadata.extInfo.bySeries(orm, series) };
 	}
 
 	@Get(
 		'/albums',
 		() => AlbumPage,
-		{description: 'Get Albums of Series', summary: 'Get Albums'}
+		{ description: 'Get Albums of Series', summary: 'Get Albums' }
 	)
 	async albums(
 		@QueryParams() page: PageArgs,
 		@QueryParams() albumArgs: IncludesAlbumArgs,
 		@QueryParams() filter: SeriesFilterArgs,
 		@QueryParams() order: AlbumOrderArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<AlbumPage> {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
-			{seriesIDs}, [order], page, user,
+			{ seriesIDs }, [order], page, user,
 			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
 		);
 	}
@@ -103,18 +103,18 @@ export class SeriesController {
 	@Get(
 		'/tracks',
 		() => TrackPage,
-		{description: 'Get Tracks of Series', summary: 'Get Tracks'}
+		{ description: 'Get Tracks of Series', summary: 'Get Tracks' }
 	)
 	async tracks(
 		@QueryParams() page: PageArgs,
 		@QueryParams() trackArgs: IncludesTrackArgs,
 		@QueryParams() filter: SeriesFilterArgs,
 		@QueryParams() order: TrackOrderArgs,
-		@Ctx() {orm, engine, user}: Context
+		@Ctx() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
-			{seriesIDs}, [order], page, user,
+			{ seriesIDs }, [order], page, user,
 			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
 		);
 	}

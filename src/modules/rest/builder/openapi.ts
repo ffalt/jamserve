@@ -1,17 +1,17 @@
-import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {CustomPathParameterAliasRouteOptions} from '../definitions/types.js';
-import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {Errors} from './express-error.js';
-import {iterateControllers} from '../helpers/iterate-super.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
+import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { CustomPathParameterAliasRouteOptions } from '../definitions/types.js';
+import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { Errors } from './express-error.js';
+import { iterateControllers } from '../helpers/iterate-super.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
 import {
 	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ReferenceObject,
 	ResponsesObject, RequestBodyObject, SchemaObject, PathItemObject
 } from './openapi-helpers.js';
-import {OpenApiRefBuilder} from './openapi-refs.js';
-import {ClassType} from 'type-graphql';
+import { OpenApiRefBuilder } from './openapi-refs.js';
+import { ClassType } from 'type-graphql';
 
 class OpenApiBuilder {
 	metadata: MetadataStorage;
@@ -24,18 +24,18 @@ class OpenApiBuilder {
 
 	private fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
 		if (parameters.length > 0) {
-			responses['422'] = {description: Errors.invalidParameter};
+			responses['422'] = { description: Errors.invalidParameter };
 			if (parameters.find(p => p.required)) {
-				responses['400'] = {description: Errors.missingParameter};
+				responses['400'] = { description: Errors.missingParameter };
 			}
 		}
 		if (parameters.find(p => {
 			return (p.schema as ReferenceObject)?.$ref === SCHEMA_ID || (((p.schema as SchemaObject)?.items || {}) as ReferenceObject).$ref === SCHEMA_ID;
 		})) {
-			responses['404'] = {description: Errors.itemNotFound};
+			responses['404'] = { description: Errors.itemNotFound };
 		}
 		if (roles.length > 0) {
-			responses['401'] = {description: Errors.unauthorized};
+			responses['401'] = { description: Errors.unauthorized };
 		}
 	}
 
@@ -51,7 +51,7 @@ class OpenApiBuilder {
 				this.fillJSONResponses(type, method, schemas, responses);
 			}
 		} else {
-			responses['200'] = {description: 'ok'};
+			responses['200'] = { description: 'ok' };
 		}
 		this.fillErrorResponses(method, parameters, roles, responses);
 		return responses;
@@ -59,25 +59,25 @@ class OpenApiBuilder {
 
 	private fillJSONResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
 		const content: ContentObject = {};
-		let schema: SchemaObject | ReferenceObject = {$ref: this.refsBuilder.getResultRef(type, method.methodName, schemas)};
+		let schema: SchemaObject | ReferenceObject = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
 		if (method.returnTypeOptions?.array) {
-			schema = {type: 'array', items: schema};
+			schema = { type: 'array', items: schema };
 		}
-		content['application/json'] = {schema};
-		responses['200'] = {description: 'json data', content};
+		content['application/json'] = { schema };
+		responses['200'] = { description: 'json data', content };
 	}
 
 	private fillStringResponse(method: MethodMetadata, responses: ResponsesObject): void {
 		const content: ContentObject = {};
 		const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
-		mimeTypes.forEach(mime => content[mime] = {schema: {type: 'string'}});
-		responses['200'] = {description: 'string data', content};
+		mimeTypes.forEach(mime => content[mime] = { schema: { type: 'string' } });
+		responses['200'] = { description: 'string data', content };
 	}
 
 	private fillBinaryResponses(binary: Array<string>, responses: ResponsesObject): void {
 		const content: ContentObject = {};
-		binary.forEach(mime => content[mime] = {schema: {type: 'string', format: 'binary'}});
-		responses['200'] = {description: 'binary data', content};
+		binary.forEach(mime => content[mime] = { schema: { type: 'string', format: 'binary' } });
+		responses['200'] = { description: 'binary data', content };
 	}
 
 	private buildRequestBody(method: MethodMetadata, schemas: Schemas): RequestBodyObject | undefined {
@@ -86,10 +86,10 @@ class OpenApiBuilder {
 		let isJson = true;
 		for (const param of params) {
 			if (param.kind === 'args' && param.mode === 'body') {
-				refs.push({$ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas)});
+				refs.push({ $ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas) });
 			} else if (param.kind === 'arg' && param.mode === 'body') {
 				const schema = this.refsBuilder.buildParameterSchema(param, schemas);
-				refs.push({properties: {[param.name]: schema}, description: param.description, required: [param.name]});
+				refs.push({ properties: { [param.name]: schema }, description: param.description, required: [param.name] });
 			} else if (param.kind === 'arg' && param.mode === 'file') {
 				isJson = false;
 				refs.push(this.refsBuilder.buildUploadSchema(param, schemas));
@@ -98,7 +98,7 @@ class OpenApiBuilder {
 		if (refs.length > 0) {
 			return {
 				required: true,
-				content: {[isJson ? 'application/json' : 'multipart/form-data']: {schema: refs.length === 1 ? refs[0] : {allOf: refs}}}
+				content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: refs.length === 1 ? refs[0] : { allOf: refs } } }
 			};
 		}
 		return;
@@ -117,9 +117,9 @@ class OpenApiBuilder {
 			parameters,
 			requestBody: isPost ? this.buildRequestBody(method, schemas) : undefined,
 			responses: this.buildResponses(method, parameters, roles, schemas),
-			security: roles.length === 0 ? [] : [{cookieAuth: roles}, {bearerAuth: roles}]
+			security: roles.length === 0 ? [] : [{ cookieAuth: roles }, { bearerAuth: roles }]
 		};
-		return {path, o};
+		return { path, o };
 	}
 
 	private static buildOpenApiBase(version: string): OpenAPIObject {
@@ -127,18 +127,18 @@ class OpenApiBuilder {
 			openapi: '3.0.0',
 			info: {
 				title: 'JamApi', description: 'Api for JamServe', version,
-				license: {name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE'}
+				license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
 			},
 			servers: [{
 				url: 'http://localhost:4040/jam/{version}',
 				description: 'A local JamServe API',
-				variables: {version: {enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION}}
+				variables: { version: { enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION } }
 			}],
 			tags: [], paths: {},
 			components: {
 				securitySchemes: {
-					cookieAuth: {type: 'apiKey', in: 'cookie', name: 'jam.sid'},
-					bearerAuth: {type: 'http', scheme: 'bearer', bearerFormat: 'JWT'}
+					cookieAuth: { type: 'apiKey', in: 'cookie', name: 'jam.sid' },
+					bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
 				},
 				schemas: {}
 			},
@@ -148,7 +148,7 @@ class OpenApiBuilder {
 
 	private buildOpenApiMethods(methods: Array<MethodMetadata>, ctrl: ControllerClassMetadata, schemas: Schemas, paths: PathsObject, isPost: boolean): void {
 		for (const method of methods) {
-			const {path, o} = this.buildOpenApiMethod(method, ctrl, schemas, isPost);
+			const { path, o } = this.buildOpenApiMethod(method, ctrl, schemas, isPost);
 			const mode = isPost ? 'post' : 'get';
 			paths[path] = paths[path] || {};
 			paths[path][mode] = o;
@@ -200,8 +200,8 @@ class OpenApiBuilder {
 		tagNames.sort();
 		openapi.tags = tags;
 		openapi['x-tagGroups'] = [
-			{name: 'API', tags: [...apiTags]},
-			{name: 'Models', tags: tagNames}
+			{ name: 'API', tags: [...apiTags] },
+			{ name: 'Models', tags: tagNames }
 		];
 	}
 
@@ -212,10 +212,10 @@ class OpenApiBuilder {
 		for (const ctrl of controllers) {
 			let gets: Array<MethodMetadata> = [];
 			let posts: Array<MethodMetadata> = [];
-			iterateControllers(this.metadata, ctrl, (ctrlClass => {
+			iterateControllers(this.metadata, ctrl, ctrlClass => {
 				gets = gets.concat(this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
 				posts = posts.concat(this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
-			}));
+			});
 			this.buildOpenApiMethods(gets, ctrl, schemas, openapi.paths, false);
 			this.buildOpenApiMethods(posts, ctrl, schemas, openapi.paths, true);
 		}
@@ -224,21 +224,19 @@ class OpenApiBuilder {
 	build(): OpenAPIObject {
 		const openapi: OpenAPIObject = OpenApiBuilder.buildOpenApiBase(JAMAPI_VERSION);
 		const schemas: Schemas = {
-			'ID': {type: 'string', format: 'uuid'},
-			'JSON': {type: 'object'}
+			ID: { type: 'string', format: 'uuid' },
+			JSON: { type: 'object' }
 		};
 		this.buildControllers(schemas, openapi);
-		openapi.components = {schemas, securitySchemes: openapi.components?.securitySchemes};
+		openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
 		if (this.extended) {
 			OpenApiBuilder.buildExtensions(openapi, schemas);
 		}
 		return openapi;
 	}
-
 }
 
 export function buildOpenApi(extended: boolean = true): OpenAPIObject {
 	const builder = new OpenApiBuilder(extended);
 	return builder.build();
 }
-

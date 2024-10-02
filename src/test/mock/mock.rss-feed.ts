@@ -93,7 +93,7 @@ export const MockFeed1 = {
 			author: 'Gimlet',
 			description: `"'A podcast about the internet' that is actually an unfailingly original exploration of modern life and how to survive it." - The Guardian. Hosted by PJ Vogt and Alex Goldman, from Gimlet.`,
 			title: 'Reply All',
-			link: 'http://gimletmedia.com/shows/reply-all',
+			link: 'http://gimletmedia.com/shows/reply-all'
 		},
 		episode1: {
 			name: '#163 Candidate One',
@@ -124,4 +124,3 @@ export const MockFeed1 = {
 		}
 	}
 };
-

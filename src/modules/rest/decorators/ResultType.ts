@@ -1,6 +1,6 @@
-import { getMetadataStorage } from "../metadata/getMetadataStorage.js";
-import { getNameDecoratorParams } from "../helpers/decorators.js";
-import { DescriptionOptions, AbstractClassOptions, ImplementsClassOptions } from "../definitions/types.js";
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { getNameDecoratorParams } from '../helpers/decorators.js';
+import { DescriptionOptions, AbstractClassOptions, ImplementsClassOptions } from '../definitions/types.js';
 
 export type ObjectTypeOptions = DescriptionOptions &
 	AbstractClassOptions &
@@ -9,10 +9,7 @@ export type ObjectTypeOptions = DescriptionOptions &
 export function ResultType(): ClassDecorator;
 export function ResultType(options: ObjectTypeOptions): ClassDecorator;
 export function ResultType(name: string, options?: ObjectTypeOptions): ClassDecorator;
-export function ResultType(
-	nameOrOptions?: string | ObjectTypeOptions,
-	maybeOptions?: ObjectTypeOptions,
-): ClassDecorator {
+export function ResultType(nameOrOptions?: string | ObjectTypeOptions, maybeOptions?: ObjectTypeOptions): ClassDecorator {
 	const { name, options } = getNameDecoratorParams(nameOrOptions, maybeOptions);
 	const interfaceClasses = options.implements && ([] as Function[]).concat(options.implements);
 

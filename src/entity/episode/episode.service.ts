@@ -1,18 +1,18 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module.js';
-import {ImageModule} from '../../modules/image/image.module.js';
-import {downloadFile} from '../../utils/download.js';
-import {SupportedAudioFormat} from '../../utils/filetype.js';
-import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils.js';
-import {logger} from '../../utils/logger.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {DebouncePromises} from '../../utils/debounce-promises.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Episode, EpisodeEnclosure} from './episode.js';
-import {AudioFormatType, PodcastStatus} from '../../types/enums.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
-import {ConfigService} from '../../modules/engine/services/config.service.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { downloadFile } from '../../utils/download.js';
+import { SupportedAudioFormat } from '../../utils/filetype.js';
+import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
+import { logger } from '../../utils/logger.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { DebouncePromises } from '../../utils/debounce-promises.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Episode, EpisodeEnclosure } from './episode.js';
+import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
+import { ApiBinaryResult } from '../../modules/rest/index.js';
+import { ConfigService } from '../../modules/engine/services/config.service.js';
 
 const log = logger('EpisodeService');
 
@@ -22,8 +22,10 @@ export class EpisodeService {
 	private readonly podcastsPath: string;
 	@Inject
 	private audioModule!: AudioModule;
+
 	@Inject
 	private imageModule!: ImageModule;
+
 	@Inject
 	private configService!: ConfigService;
 
@@ -95,7 +97,7 @@ export class EpisodeService {
 	}
 
 	async removeEpisodes(orm: Orm, podcastID: string): Promise<void> {
-		const removeEpisodes = await orm.Episode.find({where: {podcast: podcastID}});
+		const removeEpisodes = await orm.Episode.find({ where: { podcast: podcastID } });
 		await this.imageModule.clearImageCacheByIDs(removeEpisodes.map(it => it.id));
 		for (const episode of removeEpisodes) {
 			orm.Episode.removeLater(episode);
@@ -144,5 +146,4 @@ export class EpisodeService {
 		}
 		return;
 	}
-
 }

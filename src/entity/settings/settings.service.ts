@@ -1,13 +1,13 @@
-import {Settings} from './settings.js';
-import {JAMSERVE_VERSION} from '../../version.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {InRequestScope} from 'typescript-ioc';
-import {AdminSettings} from '../admin/admin.js';
+import { Settings } from './settings.js';
+import { JAMSERVE_VERSION } from '../../version.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { InRequestScope } from 'typescript-ioc';
+import { AdminSettings } from '../admin/admin.js';
 
 export const defaultEngineSettings: AdminSettings = {
 	chat: {
 		maxMessages: 100,
-		maxAge: {value: 1, unit: 'day'}
+		maxAge: { value: 1, unit: 'day' }
 	},
 	index: {
 		ignoreArticles: ['The', 'El', 'La', 'Los', 'Las', 'Le', 'Les', 'Die']
@@ -24,7 +24,7 @@ export type SettingChangesListener = () => Promise<void>;
 
 @InRequestScope
 export class SettingsService {
-	public settings: AdminSettings = {...defaultEngineSettings};
+	public settings: AdminSettings = { ...defaultEngineSettings };
 	private settingsChangeListeners: Array<SettingChangesListener> = [];
 
 	async get(): Promise<AdminSettings> {
@@ -51,7 +51,7 @@ export class SettingsService {
 	}
 
 	private static async getSettings(orm: Orm): Promise<Settings> {
-		let settingsStore = await orm.Settings.findOne({where: {section: 'jamserve'}});
+		let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });
 		if (!settingsStore) {
 			settingsStore = orm.Settings.create({
 				section: 'jamserve',
@@ -63,7 +63,7 @@ export class SettingsService {
 	}
 
 	async updateSettings(orm: Orm, settings: AdminSettings): Promise<void> {
-		await this.setSettings({...this.settings, ...settings});
+		await this.setSettings({ ...this.settings, ...settings });
 		await this.saveSettings(orm);
 	}
 
@@ -81,6 +81,4 @@ export class SettingsService {
 	unRegisterChangeListener(listener: SettingChangesListener): void {
 		this.settingsChangeListeners = this.settingsChangeListeners.filter(l => l !== listener);
 	}
-
-
 }

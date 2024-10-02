@@ -1,12 +1,12 @@
-import {Folder, FolderHealth} from './folder.js';
-import {Artwork} from '../artwork/artwork.js';
-import {ArtworkImageType, FolderType} from '../../types/enums.js';
+import { Folder, FolderHealth } from './folder.js';
+import { Artwork } from '../artwork/artwork.js';
+import { ArtworkImageType, FolderType } from '../../types/enums.js';
 import path from 'path';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {FolderRulesChecker} from '../health/folder.rule.js';
-import {ImageModule} from '../../modules/image/image.module.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { FolderRulesChecker } from '../health/folder.rule.js';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { ApiBinaryResult } from '../../modules/rest/index.js';
 
 export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise<Artwork | undefined> {
 	const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
@@ -47,10 +47,9 @@ export class FolderService {
 			const parents = await this.collectFolderPath(await folder.parent.get());
 			const health = await this.checker.run(orm, folder, parents);
 			if (health && health.length > 0) {
-				result.push({folder, health});
+				result.push({ folder, health });
 			}
 		}
 		return result;
 	}
-
 }

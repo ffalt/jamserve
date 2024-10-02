@@ -1,8 +1,8 @@
-import {AnyEntity, IDEntity} from '../typings.js';
-import {PropertyMetadata} from '../definitions/property-metadata.js';
-import {ManagedEntity} from '../definitions/managed-entity.js';
-import {Model, Transaction, FindOptions} from 'sequelize';
-import {OrderByOptions} from '../definitions/types.js';
+import { AnyEntity, IDEntity } from '../typings.js';
+import { PropertyMetadata } from '../definitions/property-metadata.js';
+import { ManagedEntity } from '../definitions/managed-entity.js';
+import { Model, Transaction, FindOptions } from 'sequelize';
+import { OrderByOptions } from '../definitions/types.js';
 
 export class Collection<T extends IDEntity<T>> {
 	private initialized = false;
@@ -78,7 +78,7 @@ export class Collection<T extends IDEntity<T>> {
 	}
 
 	async set(items: Array<T>): Promise<void> {
-		this.changeSet = {set: items as Array<any>};
+		this.changeSet = { set: items as Array<any> };
 		if (this.list) {
 			this.list = items;
 		}
@@ -92,15 +92,15 @@ export class Collection<T extends IDEntity<T>> {
 		if (this.changeSet) {
 			if (this.changeSet.set) {
 				const func = this.sourceFunc('set');
-				await func(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), {transaction});
+				await func(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			if (this.changeSet.add) {
 				const func = this.sourceFunc('add');
-				await func(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), {transaction});
+				await func(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			if (this.changeSet.remove) {
 				const func = this.sourceFunc('remove');
-				await func(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), {transaction});
+				await func(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			this.changeSet = undefined;
 		}

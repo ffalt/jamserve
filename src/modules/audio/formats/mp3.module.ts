@@ -1,17 +1,17 @@
-import {ID3v1, ID3v2, IID3V2, IMP3Analyzer, MP3} from 'jamp3';
-import {StaticPool} from 'node-worker-threads-pool';
-import {logger} from '../../../utils/logger.js';
-import {FORMAT} from '../audio.format.js';
-import {AudioScanResult} from '../audio.module.js';
-import {id3v2ToRawTag, rawTagToID3v2} from '../metadata.js';
-import path, {dirname} from 'path';
-import {TagFormatType} from '../../../types/enums.js';
-import {RawTag} from '../rawTag.js';
-import {analyzeMP3} from '../tasks/task-analyze-mp3.js';
-import {rewriteAudio} from '../tasks/task-rewrite-mp3.js';
-import {fixMP3} from '../tasks/task-fix-mp3.js';
-import {removeID3v1} from '../tasks/task-remove-id3v1.js';
-import {fileURLToPath} from 'url';
+import { ID3v1, ID3v2, IID3V2, IMP3Analyzer, MP3 } from 'jamp3';
+import { StaticPool } from 'node-worker-threads-pool';
+import { logger } from '../../../utils/logger.js';
+import { FORMAT } from '../audio.format.js';
+import { AudioScanResult } from '../audio.module.js';
+import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
+import path, { dirname } from 'path';
+import { TagFormatType } from '../../../types/enums.js';
+import { RawTag } from '../rawTag.js';
+import { analyzeMP3 } from '../tasks/task-analyze-mp3.js';
+import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
+import { fixMP3 } from '../tasks/task-fix-mp3.js';
+import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
+import { fileURLToPath } from 'url';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;
 
@@ -34,9 +34,9 @@ export class AudioModuleMP3 {
 	async read(filename: string): Promise<AudioScanResult> {
 		const mp3 = new MP3();
 		try {
-			const result = await mp3.read(filename, {mpegQuick: true, mpeg: true, id3v2: true});
+			const result = await mp3.read(filename, { mpegQuick: true, mpeg: true, id3v2: true });
 			if (!result) {
-				return {format: TagFormatType.none};
+				return { format: TagFormatType.none };
 			}
 			if (result.id3v2) {
 				return {
@@ -48,7 +48,7 @@ export class AudioModuleMP3 {
 			const id3v1 = new ID3v1();
 			const v1 = await id3v1.read(filename);
 			if (!v1) {
-				return {format: TagFormatType.none, ...FORMAT.packJamServeMedia(result.mpeg)};
+				return { format: TagFormatType.none, ...FORMAT.packJamServeMedia(result.mpeg) };
 			}
 			return {
 				format: TagFormatType.none,
@@ -56,7 +56,7 @@ export class AudioModuleMP3 {
 				...FORMAT.packJamServeMedia(result.mpeg)
 			};
 		} catch {
-			return {format: TagFormatType.none};
+			return { format: TagFormatType.none };
 		}
 	}
 
@@ -72,7 +72,7 @@ export class AudioModuleMP3 {
 	async write(filename: string, tag: RawTag): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
 		const id3v2 = new ID3v2();
-		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, {keepBackup: false, paddingSize: 10});
+		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, { keepBackup: false, paddingSize: 10 });
 	}
 
 	async removeID3v1(filename: string): Promise<void> {
@@ -134,7 +134,7 @@ export class AudioModuleMP3 {
 		const tag = await id3v2.read(filename);
 		if (tag) {
 			const frames = tag.frames.filter(f => ['APIC', 'PIC'].includes(f.id)) as Array<IID3V2.Frames.PicFrame>;
-			let frame = frames.find(f => f.value.pictureType === 3 /*ID3v2 picture type "cover front" */);
+			let frame = frames.find(f => f.value.pictureType === 3 /* ID3v2 picture type "cover front" */);
 			if (!frame) {
 				frame = frames[0];
 			}
@@ -144,5 +144,4 @@ export class AudioModuleMP3 {
 		}
 		return;
 	}
-
 }

@@ -1,16 +1,19 @@
-import {Track, TrackQL} from '../track/track.js';
-import {Episode, EpisodeQL} from '../episode/episode.js';
-import {User} from '../user/user.js';
-import {Field, Float, ID, ObjectType} from 'type-graphql';
+import { Track, TrackQL } from '../track/track.js';
+import { Episode, EpisodeQL } from '../episode/episode.js';
+import { User } from '../user/user.js';
+import { Field, Float, ID, ObjectType } from 'type-graphql';
 
 @ObjectType()
 export class NowPlaying {
 	@Field(() => Float)
 	time!: number;
-	@Field(() => TrackQL, {nullable: true})
+
+	@Field(() => TrackQL, { nullable: true })
 	track?: Track;
-	@Field(() => EpisodeQL, {nullable: true})
+
+	@Field(() => EpisodeQL, { nullable: true })
 	episode?: Episode;
+
 	user!: User;
 }
 
@@ -18,6 +21,7 @@ export class NowPlaying {
 export class NowPlayingQL extends NowPlaying {
 	@Field(() => String)
 	userName!: string;
+
 	@Field(() => ID)
 	userID!: string;
 }

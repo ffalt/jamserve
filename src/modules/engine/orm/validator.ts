@@ -1,11 +1,10 @@
-import {logger} from '../../../utils/logger.js';
-import {Collection, Reference} from '../../orm/index.js';
-import {Orm} from '../services/orm.service.js';
+import { logger } from '../../../utils/logger.js';
+import { Collection, Reference } from '../../orm/index.js';
+import { Orm } from '../services/orm.service.js';
 
 const log = logger('Validator');
 
 export class Validator {
-
 	private static async validateCollection(objID: string, collection: Collection<any>, property: string, object: string): Promise<void> {
 		const count = await collection.count();
 		const items = await collection.getItems();

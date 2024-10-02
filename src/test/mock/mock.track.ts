@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
-import {ID3v2, ID3V24TagBuilder} from 'jamp3';
+import { ID3v2, ID3V24TagBuilder } from 'jamp3';
 import path from 'path';
-import {mockImage} from './mock.image';
+import { mockImage } from './mock.image';
 
 export interface MockSpecTrack {
 	name: string;
@@ -39,7 +39,7 @@ export async function writeMP3Track(filename: string): Promise<void> {
 }
 
 export function extendSpecMockTrack(dir: string, mock: MockSpecTrack): MockTrack {
-	return {...mock, path: path.join(dir, mock.name)};
+	return { ...mock, path: path.join(dir, mock.name) };
 }
 
 export async function writeMockTrack(mock: MockTrack): Promise<void> {
@@ -62,5 +62,5 @@ export async function writeMockTrack(mock: MockTrack): Promise<void> {
 		builder.picture(0, 'track image', image.mime, image.buffer);
 	}
 	const id3v2 = new ID3v2();
-	await id3v2.writeBuilder(mock.path, builder, {keepBackup: false});
+	await id3v2.writeBuilder(mock.path, builder, { keepBackup: false });
 }

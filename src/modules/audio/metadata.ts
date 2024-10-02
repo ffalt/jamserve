@@ -1,12 +1,12 @@
-import {ID3v2, ID3V24TagBuilder, IID3V2, ITagID} from 'jamp3';
+import { ID3v2, ID3V24TagBuilder, IID3V2, ITagID } from 'jamp3';
 import moment from 'moment';
-import {ImageModule} from '../image/image.module.js';
-import {FlacInfo} from './formats/flac/index.js';
-import {MetaDataBlockPicture} from './formats/flac/lib/block.picture.js';
-import {BlockVorbiscomment} from './formats/flac/lib/block.vorbiscomment.js';
-import {MetaWriteableDataBlock} from './formats/flac/lib/block.writeable.js';
-import {ID3v2Frames, RawTag} from './rawTag.js';
-import {TrackTag} from './audio.format.js';
+import { ImageModule } from '../image/image.module.js';
+import { FlacInfo } from './formats/flac/index.js';
+import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
+import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
+import { MetaWriteableDataBlock } from './formats/flac/lib/block.writeable.js';
+import { ID3v2Frames, RawTag } from './rawTag.js';
+import { TrackTag } from './audio.format.js';
 
 function prepareFrame(frame: ID3v2Frames.Frame): void {
 	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
@@ -160,7 +160,7 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefin
 	flacToRawTagBase(builder, simple);
 	flacToRawTagChapters(builder, simple);
 	flacToRawTagPictures(builder, flacInfo);
-	const tag = {version: 4, frames: builder.rawBuilder.build()};
+	const tag = { version: 4, frames: builder.rawBuilder.build() };
 	prepareResponseTag(tag);
 	return tag;
 }
@@ -172,7 +172,7 @@ export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<RawTag | unde
 	};
 	id3v2tag.frames.forEach(frame => {
 		const f = tag.frames[frame.id] || [];
-		f.push({id: frame.id, value: frame.value});
+		f.push({ id: frame.id, value: frame.value });
 		tag.frames[frame.id] = f;
 	});
 	prepareResponseTag(tag);
@@ -211,7 +211,7 @@ export function trackTagToRawTag(tag: TrackTag): RawTag {
 		.track(tag.trackNr, tag.trackTotal)
 		.disc(tag.disc, tag.discTotal)
 		.date(tag.year ? tag.year.toString() : undefined);
-	return {version: 4, frames: builder.rawBuilder.build()};
+	return { version: 4, frames: builder.rawBuilder.build() };
 }
 
 function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {

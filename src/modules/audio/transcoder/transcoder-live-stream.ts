@@ -1,11 +1,10 @@
 import express from 'express';
-import {logger} from '../../../utils/logger.js';
-import {TranscoderStream} from './transcoder-stream.js';
+import { logger } from '../../../utils/logger.js';
+import { TranscoderStream } from './transcoder-stream.js';
 
 const log = logger('audio.transcoder.live');
 
 export class LiveTranscoderStream extends TranscoderStream {
-
 	constructor(public filename: string, public format: string, public maxBitRate: number) {
 		super();
 		if (maxBitRate <= 0) {
@@ -24,7 +23,6 @@ export class LiveTranscoderStream extends TranscoderStream {
 			.on('error', (err: Error) => {
 				log.error(`an error happened while transcoding: ${err.message}`);
 			})
-			.writeToStream(stream, {end: true});
+			.writeToStream(stream, { end: true });
 	}
-
 }

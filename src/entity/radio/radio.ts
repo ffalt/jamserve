@@ -1,7 +1,7 @@
-import {Field, ObjectType} from 'type-graphql';
-import {Entity, Property} from '../../modules/orm/index.js';
-import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base.js';
-import {State, StateQL} from '../state/state.js';
+import { Field, ObjectType } from 'type-graphql';
+import { Entity, Property } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
 
 @ObjectType()
 @Entity()
@@ -14,8 +14,8 @@ export class Radio extends Base {
 	@Property(() => String)
 	url!: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	homepage?: string;
 
 	@Field(() => Boolean)

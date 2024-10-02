@@ -1,4 +1,4 @@
-import {ReferenceObject, SchemaObject} from 'openapi3-ts/oas30';
+import { ReferenceObject, SchemaObject } from 'openapi3-ts/oas30';
 
 export const exampleID = 'c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0';
 export type Schemas = { [schema: string]: SchemaObject | ReferenceObject };

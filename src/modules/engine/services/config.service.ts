@@ -1,9 +1,9 @@
-import {ThirdPartyConfig, ThirdpartyToolsConfig} from '../../../config/thirdparty.config.js';
-import {InRequestScope} from 'typescript-ioc';
+import { ThirdPartyConfig, ThirdpartyToolsConfig } from '../../../config/thirdparty.config.js';
+import { InRequestScope } from 'typescript-ioc';
 import path from 'path';
-import {FirstStartConfig} from '../../../config/firststart.config.js';
-import {getMaxAge} from '../../../utils/max-age.js';
-import {Dialect} from 'sequelize';
+import { FirstStartConfig } from '../../../config/firststart.config.js';
+import { getMaxAge } from '../../../utils/max-age.js';
+import { Dialect } from 'sequelize';
 import fse from 'fs-extra';
 
 export interface ENVConfigDB {
@@ -38,7 +38,6 @@ export interface ENVConfig {
 	db: ENVConfigDB;
 }
 
-
 @InRequestScope
 export class ConfigService {
 	env: ENVConfig = {
@@ -47,7 +46,7 @@ export class ConfigService {
 		port: Number(process.env.JAM_PORT) || 4040,
 		jwt: {
 			secret: process.env.JAM_JWT_SECRET || 'keyboard cat is sad because no secret has been set',
-			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE),
+			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
 		},
 		session: {
 			secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
@@ -70,6 +69,7 @@ export class ConfigService {
 			port: Number(process.env.JAM_DB_PORT) || undefined
 		}
 	};
+
 	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts);
 	tools: ThirdpartyToolsConfig = ThirdPartyConfig;
 	firstStart?: FirstStartConfig;
@@ -86,5 +86,4 @@ export class ConfigService {
 			};
 		}
 	}
-
 }

@@ -1,5 +1,5 @@
-import {ArtworkImageType, RootScanStrategy, TrackHealthID} from '../../../../types/enums.js';
-import {RawTag} from '../../../audio/rawTag.js';
+import { ArtworkImageType, RootScanStrategy, TrackHealthID } from '../../../../types/enums.js';
+import { RawTag } from '../../../audio/rawTag.js';
 
 export interface WorkerRequestParameters {
 	rootID: string;

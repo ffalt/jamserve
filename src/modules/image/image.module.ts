@@ -1,20 +1,20 @@
 import fse from 'fs-extra';
 import mimeTypes from 'mime-types';
 import path from 'path';
-import sharp, {FormatEnum} from 'sharp';
-import {downloadFile} from '../../utils/download.js';
-import {SupportedWriteImageFormat} from '../../utils/filetype.js';
-import {fileDeleteIfExists, fileSuffix} from '../../utils/fs-utils.js';
-import {IDFolderCache} from '../../utils/id-file-cache.js';
-import {logger} from '../../utils/logger.js';
-import {randomString} from '../../utils/random.js';
-import {AvatarGen} from './image.avatar.js';
-import {ImageResult} from './image.format.js';
-import {ConfigService} from '../engine/services/config.service.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {ImageFormatType} from '../../types/enums.js';
-import {Jimp, loadFont, VerticalAlign, HorizontalAlign} from 'jimp';
-import {SANS_32_WHITE} from './image.font.js';
+import sharp, { FormatEnum } from 'sharp';
+import { downloadFile } from '../../utils/download.js';
+import { SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
+import { IDFolderCache } from '../../utils/id-file-cache.js';
+import { logger } from '../../utils/logger.js';
+import { randomString } from '../../utils/random.js';
+import { AvatarGen } from './image.avatar.js';
+import { ImageResult } from './image.format.js';
+import { ConfigService } from '../engine/services/config.service.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { ImageFormatType } from '../../types/enums.js';
+import { Jimp, loadFont, VerticalAlign, HorizontalAlign } from 'jimp';
+import { SANS_32_WHITE } from './image.font.js';
 
 export interface ImageInfo {
 	width: number;
@@ -69,7 +69,7 @@ export class ImageModule {
 
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		size = size || 320;
-		const image = new Jimp({width: 360, height: 360, color: '#0f1217'});
+		const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
 		if (!this.font) {
 			this.font = await loadFont(SANS_32_WHITE);
 		}
@@ -85,7 +85,7 @@ export class ImageModule {
 				alignmentY: VerticalAlign.MIDDLE
 			}
 		});
-		image.resize({w: size, h: size});
+		image.resize({ w: size, h: size });
 		const mime = mimeTypes.lookup(format ? format : this.format);
 		if (!mime) {
 			return Promise.reject('Unknown Image Format Request');
@@ -93,16 +93,16 @@ export class ImageModule {
 		if (mime === 'image/webp') {
 			const png_buffer = await image.getBuffer('image/png');
 			const buffer = await sharp(png_buffer).webp().toBuffer();
-			return {buffer: {buffer, contentType: mime}};
+			return { buffer: { buffer, contentType: mime } };
 		} else {
 			const buffer = await image.getBuffer(mime as 'image/png');
-			return {buffer: {buffer, contentType: mime}};
+			return { buffer: { buffer, contentType: mime } };
 		}
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<ImageResult> {
 		if (!size) {
-			return {file: {filename, name}};
+			return { file: { filename, name } };
 		}
 		let fileFormat = fileSuffix(filename);
 		if (!SupportedWriteImageFormat.includes(fileFormat)) {
@@ -122,15 +122,15 @@ export class ImageModule {
 			if (!mime) {
 				return Promise.reject(`Unknown Image Format Request: ${format} ${filename}`);
 			}
-			const sharpy = sharp(filename, {failOn: 'none'});
+			const sharpy = sharp(filename, { failOn: 'none' });
 			if (size) {
-				sharpy.resize(size, size, {fit: sharp.fit.cover, position: sharp.strategy.entropy});
+				sharpy.resize(size, size, { fit: sharp.fit.cover, position: sharp.strategy.entropy });
 			}
 			sharpy.toFormat(format as keyof FormatEnum);
 			const buffer = await sharpy.toBuffer();
-			return {buffer: {buffer, contentType: mime}};
+			return { buffer: { buffer, contentType: mime } };
 		}
-		return {file: {filename, name}};
+		return { file: { filename, name } };
 	}
 
 	private async getImageBufferAs(buffer: Buffer, format: string | undefined, size: number | undefined): Promise<ImageResult> {
@@ -146,8 +146,8 @@ export class ImageModule {
 		if (size) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer, {failOnError: false})
-						.resize(size, size, {fit: sharp.fit.cover})
+					buffer: await sharp(buffer, { failOnError: false })
+						.resize(size, size, { fit: sharp.fit.cover })
 						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
@@ -157,7 +157,7 @@ export class ImageModule {
 		if (format && info.format !== destFormat) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer, {failOnError: false})
+					buffer: await sharp(buffer, { failOnError: false })
 						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
@@ -165,19 +165,19 @@ export class ImageModule {
 			};
 		}
 		return {
-			buffer: {buffer, contentType}
+			buffer: { buffer, contentType }
 		};
 	}
 
 	async getExisting(id: string, size: number | undefined, format?: string): Promise<ImageResult | undefined> {
-		return this.cache.getExisting(id, {size, format});
+		return this.cache.getExisting(id, { size, format });
 	}
 
 	async getBuffer(id: string, buffer: Buffer, size: number | undefined, format?: string): Promise<ImageResult> {
 		if (format && !SupportedWriteImageFormat.includes(format)) {
 			return Promise.reject(Error('Invalid Format'));
 		}
-		return this.cache.get(id, {size, format}, async cachefile => {
+		return this.cache.get(id, { size, format }, async cachefile => {
 			const result = await this.getImageBufferAs(buffer, format, size);
 			if (result.buffer) {
 				log.debug('Writing image cache file', cachefile);
@@ -199,7 +199,7 @@ export class ImageModule {
 			format = undefined;
 		}
 		if (format || size) {
-			return this.cache.get(id, {size, format}, async cachefile => {
+			return this.cache.get(id, { size, format }, async cachefile => {
 				const name = path.basename(cachefile);
 				const result = format ?
 					await ImageModule.getImageAs(filename, format, size, name) :
@@ -220,8 +220,8 @@ export class ImageModule {
 	// }
 
 	async resizeImagePNG(filename: string, destination: string, size: number): Promise<void> {
-		await sharp(filename, {failOnError: false})
-			.resize(size, size, {fit: sharp.fit.cover})
+		await sharp(filename, { failOnError: false })
+			.resize(size, size, { fit: sharp.fit.cover })
 			.png()
 			.toFile(destination);
 	}
@@ -261,16 +261,15 @@ export class ImageModule {
 				colors: 0
 			};
 		} catch {
-			return {width: 0, height: 0, format: 'invalid', colorDepth: 0, colors: 0};
+			return { width: 0, height: 0, format: 'invalid', colorDepth: 0, colors: 0 };
 		}
 	}
 
 	async getImageInfo(filename: string): Promise<ImageInfo> {
-		return ImageModule.formatImageInfo(sharp(filename, {failOnError: false}));
+		return ImageModule.formatImageInfo(sharp(filename, { failOnError: false }));
 	}
 
 	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
-		return ImageModule.formatImageInfo(sharp(bin, {failOnError: false}));
+		return ImageModule.formatImageInfo(sharp(bin, { failOnError: false }));
 	}
-
 }

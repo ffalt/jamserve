@@ -1,9 +1,9 @@
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {RestParamMetadata} from '../definitions/param-metadata.js';
-import {JAMAPI_URL_VERSION, JAMAPI_VERSION} from '../../engine/rest/version.js';
-import {ApiBinaryResult} from './express-responder.js';
-import {buildTSEnums, buildTSParameterTypes, buildTSResultTypes} from './typescript.js';
-import {buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part} from './clients.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { RestParamMetadata } from '../definitions/param-metadata.js';
+import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
+import { ApiBinaryResult } from './express-responder.js';
+import { buildTSEnums, buildTSParameterTypes, buildTSResultTypes } from './typescript.js';
+import { buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part } from './clients.js';
 
 function generateUploadClientCalls(call: MethodMetadata, name: string, paramType: string, upload: RestParamMetadata): Array<MustacheDataClientCallFunction> {
 	return [{
@@ -25,7 +25,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, paramsType: s
 	let validate = undefined;
 	let baseParam = 'params';
 	if (call.customPathParameters) {
-		const {validateCode, paramRoute} = getCustomParameterTemplate(call.customPathParameters, call, `return ''`);
+		const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `return ''`);
 		validate = validateCode;
 		route = paramRoute;
 		baseParam = '{}';
@@ -51,7 +51,7 @@ function generateBinClientCall(call: MethodMetadata, name: string, paramsType: s
 	let validate = undefined;
 	let baseParam = 'params';
 	if (call.customPathParameters) {
-		const {validateCode, paramRoute} = getCustomParameterTemplate(call.customPathParameters, call, `throw new Error('Invalid Parameter')`);
+		const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `throw new Error('Invalid Parameter')`);
 		validate = validateCode;
 		route = paramRoute;
 		baseParam = '{}';
@@ -84,9 +84,9 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramTyp
 		resultType: resultType ? resultType : 'void',
 		baseFuncResultType: resultType || '',
 		baseFunc:
-			resultType
-				? (method === 'post' ? 'requestPostData' : 'requestData')
-				: (method === 'post' ? 'requestPostDataOK' : 'requestOK'),
+			resultType ?
+					(method === 'post' ? 'requestPostData' : 'requestData') :
+					(method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 		baseFuncParameters: paramType ? 'params' : '{}',
 		tick: call.customPathParameters ? '`' : '\'',
 		apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
@@ -101,17 +101,17 @@ export async function buildAxiosClientList(): Promise<Array<{ name: string; cont
 		generateUploadClientCalls,
 		(key, part, calls) => buildPartService('./static/templates/client-axios/jam.part.service.ts.template', key, part, calls)
 	);
-	return parts.map(part => ({name: `services/jam.${part.name}.service.ts`, content: part.content}))
+	return parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }))
 		.concat([
-			{name: 'jam.service.ts', content: await buildParts('./static/templates/client-axios/jam.service.ts.template', parts)},
-			{name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.base.service.ts.template')},
-			{name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.http.service.ts.template')},
-			{name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client-axios/jam.configuration.ts.template')},
-			{name: `index.ts`, content: await buildTemplate('./static/templates/client-axios/index.ts.template')},
-			{name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.auth.service.ts.template', {apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION})},
-			{name: 'model/jam-rest-data.ts', content: buildTSResultTypes()},
-			{name: 'model/jam-rest-params.ts', content: buildTSParameterTypes()},
-			{name: 'model/jam-enums.ts', content: buildTSEnums()}
+			{ name: 'jam.service.ts', content: await buildParts('./static/templates/client-axios/jam.service.ts.template', parts) },
+			{ name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.base.service.ts.template') },
+			{ name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.http.service.ts.template') },
+			{ name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client-axios/jam.configuration.ts.template') },
+			{ name: `index.ts`, content: await buildTemplate('./static/templates/client-axios/index.ts.template') },
+			{ name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.auth.service.ts.template', { apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION }) },
+			{ name: 'model/jam-rest-data.ts', content: buildTSResultTypes() },
+			{ name: 'model/jam-rest-params.ts', content: buildTSParameterTypes() },
+			{ name: 'model/jam-enums.ts', content: buildTSEnums() }
 		]);
 }
 

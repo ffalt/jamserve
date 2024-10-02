@@ -1,5 +1,5 @@
-import {ParamMetadata} from './param-metadata.js';
-import {FieldOptions, TypeOptions, TypeValueThunk} from './types.js';
+import { ParamMetadata } from './param-metadata.js';
+import { FieldOptions, TypeOptions, TypeValueThunk } from './types.js';
 
 export interface FieldMetadata {
 	target: Function;

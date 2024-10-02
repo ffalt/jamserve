@@ -1,14 +1,14 @@
-import {CustomPathParameters} from '../definitions/types.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import { CustomPathParameters } from '../definitions/types.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
-import {ApiBinaryResult} from './express-responder.js';
+import { ApiBinaryResult } from './express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
 import path from 'path';
-import {RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
+import { RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
 
 export interface MustacheDataClientCallFunction {
 	name: string;
@@ -75,19 +75,19 @@ export async function buildServiceParts(
 	const parts: Array<Part> = [];
 	for (const key of keys) {
 		const part = key[0].toUpperCase() + key.slice(1);
-		parts.push({name: key.toLowerCase(), part, content: await buildPartService(key, part, sections[key])});
+		parts.push({ name: key.toLowerCase(), part, content: await buildPartService(key, part, sections[key]) });
 	}
 	return parts;
 }
 
 export async function buildPartService(template: string, key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<string> {
 	const list = calls.map(call => {
-		return {...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType)};
+		return { ...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType) };
 	});
 	const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
 	const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
 	const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
-	return buildTemplate(template, {list, part, withHttpEvent, withJam, withJamParam});
+	return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam });
 }
 
 export function buildCallSections(
@@ -119,7 +119,7 @@ export async function buildParts(template: string, serviceParts: Array<Part>): P
 	list.forEach((p, i) => {
 		p.isLast = i === list.length - 1;
 	});
-	return buildTemplate(template, {list});
+	return buildTemplate(template, { list });
 }
 
 export function getResultType(call: MethodMetadata): string | undefined {
@@ -222,7 +222,7 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 		}
 	});
 	const validateCode = 'if (' + validateNames.map(s => '!params.' + s).join(' && ') + ') { ' + result + '; }';
-	return {paramRoute: `/${routeParts.join('')}`, validateCode};
+	return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
 
 export async function getClientZip(filename: string, list: Array<{ name: string; content: string }>, models: Array<string>): Promise<ApiBinaryResult> {
@@ -230,7 +230,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 		pipe: {
 			pipe: (res: express.Response): void => {
 				// log.verbose('Start streaming');
-				const archive = archiver('zip', {zlib: {level: 9}});
+				const archive = archiver('zip', { zlib: { level: 9 } });
 				archive.on('error', err => {
 					// log.error('archiver err ' + err);
 					throw err;
@@ -243,10 +243,10 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 					// log.verbose('streamed ' + archive.pointer() + ' total bytes');
 				});
 				for (const entry of list) {
-					archive.append(entry.content, {name: entry.name});
+					archive.append(entry.content, { name: entry.name });
 				}
 				for (const entry of models) {
-					archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), {name: `model/${entry}`});
+					archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
 				}
 				archive.pipe(res);
 				archive.finalize().catch(e => {
@@ -255,5 +255,4 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 			}
 		}
 	};
-
 }

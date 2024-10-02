@@ -1,9 +1,9 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {RestParamsMetadata} from '../definitions/param-metadata.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
-import {FieldMetadata} from '../definitions/field-metadata.js';
-import {ClassMetadata} from '../definitions/class-metadata.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { RestParamsMetadata } from '../definitions/param-metadata.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { FieldMetadata } from '../definitions/field-metadata.js';
+import { ClassMetadata } from '../definitions/class-metadata.js';
 
 const tab = '\t';
 const tabtab = '\t\t';
@@ -12,7 +12,7 @@ export function buildTSEnums(): string {
 	const metadata = getMetadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
-		'// This file was automatically generated and should not be edited.\n',
+		'// This file was automatically generated and should not be edited.\n'
 	];
 	for (const enumInfo of metadata.enums) {
 		const enumObj = enumInfo.enumObj as any;
@@ -152,4 +152,3 @@ export function buildTSParameterTypes(): string {
 	}
 	return sl.join('\n') + '}\n';
 }
-

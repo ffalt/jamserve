@@ -1,54 +1,64 @@
 import path from 'path';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {ImageModule} from '../../modules/image/image.module.js';
-import {Folder} from '../folder/folder.js';
-import {DBObjectType, FolderType} from '../../types/enums.js';
-import {Episode} from '../episode/episode.js';
-import {Track} from '../track/track.js';
-import {Podcast} from '../podcast/podcast.js';
-import {Base} from '../base/base.js';
-import {Playlist} from '../playlist/playlist.js';
-import {Series} from '../series/series.js';
-import {Album} from '../album/album.js';
-import {Artist} from '../artist/artist.js';
-import {User} from '../user/user.js';
-import {Root} from '../root/root.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
-import {AudioModule} from '../../modules/audio/audio.module.js';
-import {PodcastService} from '../podcast/podcast.service.js';
-import {TrackService} from '../track/track.service.js';
-import {FolderService} from '../folder/folder.service.js';
-import {UserService} from '../user/user.service.js';
-import {AlbumService} from '../album/album.service.js';
-import {ArtistService} from '../artist/artist.service.js';
-import {SeriesService} from '../series/series.service.js';
-import {RootService} from '../root/root.service.js';
-import {Artwork} from '../artwork/artwork.js';
-import {ArtworkService} from '../artwork/artwork.service.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { Folder } from '../folder/folder.js';
+import { DBObjectType, FolderType } from '../../types/enums.js';
+import { Episode } from '../episode/episode.js';
+import { Track } from '../track/track.js';
+import { Podcast } from '../podcast/podcast.js';
+import { Base } from '../base/base.js';
+import { Playlist } from '../playlist/playlist.js';
+import { Series } from '../series/series.js';
+import { Album } from '../album/album.js';
+import { Artist } from '../artist/artist.js';
+import { User } from '../user/user.js';
+import { Root } from '../root/root.js';
+import { ApiBinaryResult } from '../../modules/rest/index.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { PodcastService } from '../podcast/podcast.service.js';
+import { TrackService } from '../track/track.service.js';
+import { FolderService } from '../folder/folder.service.js';
+import { UserService } from '../user/user.service.js';
+import { AlbumService } from '../album/album.service.js';
+import { ArtistService } from '../artist/artist.service.js';
+import { SeriesService } from '../series/series.service.js';
+import { RootService } from '../root/root.service.js';
+import { Artwork } from '../artwork/artwork.js';
+import { ArtworkService } from '../artwork/artwork.service.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 @InRequestScope
 export class ImageService {
 	@Inject
 	private imageModule!: ImageModule;
+
 	@Inject
 	private audioModule!: AudioModule;
+
 	@Inject
 	private podcastService!: PodcastService;
+
 	@Inject
 	private trackService!: TrackService;
+
 	@Inject
 	private folderService!: FolderService;
+
 	@Inject
 	private userService!: UserService;
+
 	@Inject
 	private rootService!: RootService;
+
 	@Inject
 	private seriesService!: SeriesService;
+
 	@Inject
 	private artistService!: ArtistService;
+
 	@Inject
 	private albumService!: AlbumService;
+
 	@Inject
 	private artworkService!: ArtworkService;
 
@@ -149,5 +159,4 @@ export class ImageService {
 		const s = await ImageService.getCoverArtText(obj, type);
 		return this.imageModule.paint(s, size || 128, format);
 	}
-
 }

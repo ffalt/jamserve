@@ -1,16 +1,12 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
+import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import {ApolloMiddleware} from './apollo.middleware.js';
-import {RestMiddleware} from './rest.middleware.js';
-import {ApiBaseResponder, buildAngularClientZip, buildAxiosClientZip, buildOpenApi} from '../../rest/index.js';
+import { ApolloMiddleware } from './apollo.middleware.js';
+import { ApiBaseResponder, buildAngularClientZip, buildAxiosClientZip, buildOpenApi } from '../../rest/index.js';
 import path from 'path';
 
 @InRequestScope
 export class DocsMiddleware {
-	@Inject
-	private apollo!: ApolloMiddleware;
-	@Inject
-	private rest!: RestMiddleware;
+	@Inject private apollo!: ApolloMiddleware;
 
 	getOpenApiSchema(extended: boolean = true): string {
 		const openapi = buildOpenApi(extended);

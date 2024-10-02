@@ -1,4 +1,4 @@
-import {InRequestScope} from 'typescript-ioc';
+import { InRequestScope } from 'typescript-ioc';
 
 @InRequestScope
 export class GenreService {

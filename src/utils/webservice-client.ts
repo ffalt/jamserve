@@ -1,5 +1,5 @@
-import {RateLimiter} from './limiter/RateLimiter.js';
-import fetch, {Response} from 'node-fetch';
+import { RateLimiter } from './limiter/RateLimiter.js';
+import fetch, { Response } from 'node-fetch';
 
 export class WebserviceClient {
 	enabled = false;
@@ -7,7 +7,7 @@ export class WebserviceClient {
 	private readonly userAgent: string;
 
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
-		this.limiter = new RateLimiter({tokensPerInterval: requestPerInterval, interval: requestIntervalMS, fireImmediately: true});
+		this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS, fireImmediately: true });
 		this.userAgent = userAgent;
 	}
 
@@ -38,8 +38,8 @@ export class WebserviceClient {
 		await this.limit();
 		const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
 		const response = await fetch(url + params, {
-			headers: {'User-Agent': this.userAgent},
-			//timeout: 20000
+			headers: { 'User-Agent': this.userAgent }
+			// timeout: 20000
 		});
 		if (!ignoreStatus && response.status !== 200) {
 			return Promise.reject(new Error('Invalid Result'));

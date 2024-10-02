@@ -1,10 +1,10 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {logger} from './logger.js';
-import {FileTyp} from '../types/enums.js';
-import {ensureTrailingPathSeparator} from './fs-utils.js';
-import {processQueue} from './queue.js';
-import {getFileType} from './filetype.js';
+import { logger } from './logger.js';
+import { FileTyp } from '../types/enums.js';
+import { ensureTrailingPathSeparator } from './fs-utils.js';
+import { processQueue } from './queue.js';
+import { getFileType } from './filetype.js';
 
 const log = logger('IO.DirScanner');
 
@@ -26,7 +26,6 @@ export interface ScanFile {
 }
 
 export class DirScanner {
-
 	private async scanDirR(dir: string, stat: fse.Stats, level: number): Promise<ScanDir> {
 		log.debug('Scanning:', dir);
 		const result: ScanDir = {
@@ -44,7 +43,7 @@ export class DirScanner {
 				const sub = path.join(dir, filename);
 				const subStat = await fse.stat(sub);
 				if (subStat.isDirectory()) {
-					folders.push({dir: sub, stat: subStat});
+					folders.push({ dir: sub, stat: subStat });
 				} else {
 					const file: ScanFile = {
 						path: sub,
@@ -71,5 +70,4 @@ export class DirScanner {
 		const stat = await fse.stat(dir);
 		return this.scanDirR(dir, stat, 0);
 	}
-
 }

@@ -2,11 +2,11 @@ import express from 'express';
 import passportJWT from 'passport-jwt';
 import passportLocal from 'passport-local';
 import passport from 'passport';
-import {EngineService} from '../../engine/services/engine.service.js';
-import {User} from '../../../entity/user/user.js';
-import {EngineRequest} from './engine.middleware.js';
-import {logger} from '../../../utils/logger.js';
-import {hashMD5} from '../../../utils/md5.js';
+import { EngineService } from '../../engine/services/engine.service.js';
+import { User } from '../../../entity/user/user.js';
+import { EngineRequest } from './engine.middleware.js';
+import { logger } from '../../../utils/logger.js';
+import { hashMD5 } from '../../../utils/md5.js';
 
 const log = logger('Passport');
 
@@ -33,7 +33,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 	});
 
 	passport.use('local', new passportLocal.Strategy(
-		{usernameField: 'username', passwordField: 'password'},
+		{ usernameField: 'username', passwordField: 'password' },
 		(username, password, done) => {
 			engine.user.auth(engine.orm.fork(), username, password).then(user => done(null, user ? user : false)).catch(done);
 		}
@@ -44,15 +44,13 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 			.catch(done);
 	};
 	passport.use('jwt-header', new passportJWT.Strategy({
-			jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: engine.config.env.jwt.secret
-		}, resolvePayload
-	));
+		jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
+		secretOrKey: engine.config.env.jwt.secret
+	}, resolvePayload));
 	passport.use('jwt-parameter', new passportJWT.Strategy({
-			jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
-			secretOrKey: engine.config.env.jwt.secret
-		}, resolvePayload
-	));
+		jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
+		secretOrKey: engine.config.env.jwt.secret
+	}, resolvePayload));
 
 	function jwtAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 		if (req.user) {
@@ -76,7 +74,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		const jwth = jwthash(token);
 		req.engine.rateLimit.loginSlowDown(req, res)
 			.then(() => {
-				passport.authenticate(name, {session: false}, (err: Error, user: User, info: any) => {
+				passport.authenticate(name, { session: false }, (err: Error, user: User, info: any) => {
 					if (err) {
 						log.error(err);
 						return next();

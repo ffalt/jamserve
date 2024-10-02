@@ -1,8 +1,8 @@
-import {ApiBinaryResult} from '../../modules/rest/index.js';
-import {Inject} from 'typescript-ioc';
-import {FolderService} from '../folder/folder.service.js';
-import {Root} from './root.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { ApiBinaryResult } from '../../modules/rest/index.js';
+import { Inject } from 'typescript-ioc';
+import { FolderService } from '../folder/folder.service.js';
+import { Root } from './root.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export class RootService {
 	@Inject

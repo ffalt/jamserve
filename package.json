@@ -98,6 +98,7 @@
     "@apidevtools/json-schema-ref-parser": "11.7.0",
     "@eslint/js": "9.11.1",
     "@mapbox/node-pre-gyp": "1.0.11",
+    "@stylistic/eslint-plugin": "^2.8.0",
     "@types/archiver": "6.0.2",
     "@types/bcrypt": "5.0.2",
     "@types/chance": "1.1.6",
@@ -152,7 +153,7 @@
     "ts-node": "10.9.2",
     "ts-node-dev": "2.0.0",
     "tsc-watch": "6.2.0",
-    "typescript": "5.6.2",
+    "typescript": "5.5.4",
     "typescript-eslint": "8.8.0"
   }
 }

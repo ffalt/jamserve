@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository.js';
-import {AlbumOrderFields, DBObjectType} from '../../types/enums.js';
-import {Album} from './album.js';
-import {OrderHelper} from '../base/base.js';
-import {AlbumFilterArgs, AlbumOrderArgs} from './album.args.js';
-import {User} from '../user/user.js';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
+import { BaseRepository } from '../base/base.repository.js';
+import { AlbumOrderFields, DBObjectType } from '../../types/enums.js';
+import { Album } from './album.js';
+import { OrderHelper } from '../base/base.js';
+import { AlbumFilterArgs, AlbumOrderArgs } from './album.args.js';
+import { User } from '../user/user.js';
+import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
 import Sequelize from 'sequelize';
 
 export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, AlbumOrderArgs> {
@@ -65,29 +65,28 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 			return {};
 		}
 		const result = QHelper.buildQuery<Album>([
-				{id: filter.ids},
-				{name: QHelper.like(filter.query, this.em.dialect)},
-				{name: QHelper.eq(filter.name)},
-				{mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs)},
-				{mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs)},
-				{mbArtistID: QHelper.neq(filter.notMbArtistID)},
-				{albumType: QHelper.inOrEqual(filter.albumTypes)},
-				{createdAt: QHelper.gte(filter.since)},
-				{artist: QHelper.inOrEqual(filter.artistIDs)},
-				{year: QHelper.lte(filter.toYear)},
-				{year: QHelper.gte(filter.fromYear)}
-			]
+			{ id: filter.ids },
+			{ name: QHelper.like(filter.query, this.em.dialect) },
+			{ name: QHelper.eq(filter.name) },
+			{ mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs) },
+			{ mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs) },
+			{ mbArtistID: QHelper.neq(filter.notMbArtistID) },
+			{ albumType: QHelper.inOrEqual(filter.albumTypes) },
+			{ createdAt: QHelper.gte(filter.since) },
+			{ artist: QHelper.inOrEqual(filter.artistIDs) },
+			{ year: QHelper.lte(filter.toYear) },
+			{ year: QHelper.gte(filter.fromYear) }
+		]
 		);
 		result.include = QHelper.includeQueries([
-			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]},
-			{genres: [{name: QHelper.inOrEqual(filter.genres)}]},
-			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
-			{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
-			{artist: [{name: QHelper.eq(filter.artist)}]},
-			{folders: [{id: QHelper.inOrEqual(filter.folderIDs)}]},
-			{roots: [{id: QHelper.inOrEqual(filter.rootIDs)}]}
+			{ genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },
+			{ genres: [{ name: QHelper.inOrEqual(filter.genres) }] },
+			{ tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
+			{ series: [{ id: QHelper.inOrEqual(filter.seriesIDs) }] },
+			{ artist: [{ name: QHelper.eq(filter.artist) }] },
+			{ folders: [{ id: QHelper.inOrEqual(filter.folderIDs) }] },
+			{ roots: [{ id: QHelper.inOrEqual(filter.rootIDs) }] }
 		]);
 		return result;
 	}
-
 }

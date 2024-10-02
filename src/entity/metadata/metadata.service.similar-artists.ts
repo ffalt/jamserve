@@ -1,11 +1,11 @@
-import {MetaDataService} from './metadata.service.js';
-import {Folder} from '../folder/folder.js';
-import {LastFM} from '../../modules/audio/clients/lastfm-rest-data.js';
-import {FolderType, LastFMLookupType} from '../../types/enums.js';
-import {Artist} from '../artist/artist.js';
-import {PageResult} from '../base/base.js';
-import {PageArgs} from '../base/base.args.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { MetaDataService } from './metadata.service.js';
+import { Folder } from '../folder/folder.js';
+import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
+import { FolderType, LastFMLookupType } from '../../types/enums.js';
+import { Artist } from '../artist/artist.js';
+import { PageResult } from '../base/base.js';
+import { PageArgs } from '../base/base.args.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 import SimilarArtist = LastFM.SimilarArtist;
 
 export class MetadataServiceSimilarArtists {
@@ -28,7 +28,7 @@ export class MetadataServiceSimilarArtists {
 				names.push(a.name);
 			}
 		});
-		return await orm.Folder.search({where: {folderType: FolderType.artist, artist: names}, limit: page?.take, offset: page?.skip});
+		return await orm.Folder.search({ where: { folderType: FolderType.artist, artist: names }, limit: page?.take, offset: page?.skip });
 	}
 
 	private async findSimilarArtists(orm: Orm, similarArtists: Array<SimilarArtist>, page?: PageArgs): Promise<PageResult<Artist>> {
@@ -38,7 +38,7 @@ export class MetadataServiceSimilarArtists {
 				names.push(a.name);
 			}
 		});
-		return await orm.Artist.search({where: {name: names}, limit: page?.take, offset: page?.skip});
+		return await orm.Artist.search({ where: { name: names }, limit: page?.take, offset: page?.skip });
 	}
 
 	async byArtistIdName(orm: Orm, mbArtistID?: string, artist?: string): Promise<Array<SimilarArtist>> {
@@ -59,7 +59,7 @@ export class MetadataServiceSimilarArtists {
 		if (similar && similar.length > 0) {
 			return this.findSimilarArtists(orm, similar, page);
 		}
-		return {items: [], ...(page || {}), total: 0};
+		return { items: [], ...(page || {}), total: 0 };
 	}
 
 	async byFolder(orm: Orm, folder: Folder, page?: PageArgs): Promise<PageResult<Folder>> {
@@ -67,7 +67,6 @@ export class MetadataServiceSimilarArtists {
 		if (similar && similar.length > 0) {
 			return this.findSimilarArtistFolders(orm, similar, page);
 		}
-		return {items: [], ...(page || {}), total: 0};
+		return { items: [], ...(page || {}), total: 0 };
 	}
-
 }

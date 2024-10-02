@@ -1,14 +1,14 @@
-import {Changes} from './changes.js';
-import {MatchNode, OnDemandTrackMatch} from './scan.js';
-import {AlbumType, FolderType, RootScanStrategy} from '../../../types/enums.js';
-import {splitDirectoryName} from '../../../utils/dir-name.js';
+import { Changes } from './changes.js';
+import { MatchNode, OnDemandTrackMatch } from './scan.js';
+import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
+import { splitDirectoryName } from '../../../utils/dir-name.js';
 import path from 'path';
-import {logger} from '../../../utils/logger.js';
-import {MatchNodeMetaStats, MetaStat} from './meta-stats.js';
-import {Orm} from '../services/orm.service.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {QHelper} from '../../orm/index.js';
-import {Genre} from '../../../entity/genre/genre.js';
+import { logger } from '../../../utils/logger.js';
+import { MatchNodeMetaStats, MetaStat } from './meta-stats.js';
+import { Orm } from '../services/orm.service.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { QHelper } from '../../orm/index.js';
+import { Genre } from '../../../entity/genre/genre.js';
 
 const log = logger('IO.MergeScan');
 
@@ -22,7 +22,6 @@ export interface MergeNode {
 }
 
 export class WorkerMergeScan {
-
 	constructor(private orm: Orm, private strategy: RootScanStrategy, private changes: Changes) {
 	}
 
@@ -160,7 +159,7 @@ export class WorkerMergeScan {
 		log.debug('Merge Folder Meta', node.path);
 		const metaStat = await MatchNodeMetaStats.buildMetaStat(node, this.strategy);
 		const name = path.basename(node.path);
-		const {title, year} = splitDirectoryName(node.path);
+		const { title, year } = splitDirectoryName(node.path);
 		const folder = node.folder;
 		folder.album = metaStat.album;
 		folder.albumType = metaStat.albumType;
@@ -179,7 +178,7 @@ export class WorkerMergeScan {
 		const genreNames = metaStat.genres || [];
 		let genres: Array<Genre> = [];
 		if (genreNames.length > 0) {
-			genres = await this.orm.Genre.find({where: {name: QHelper.inOrEqual(genreNames)}});
+			genres = await this.orm.Genre.find({ where: { name: QHelper.inOrEqual(genreNames) } });
 		}
 		await folder.genres.set(genres);
 

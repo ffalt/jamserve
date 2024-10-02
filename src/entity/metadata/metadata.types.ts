@@ -1,4 +1,4 @@
-import {WikiData} from '../../modules/audio/clients/wikidata-rest-data.js';
+import { WikiData } from '../../modules/audio/clients/wikidata-rest-data.js';
 
 export enum MetaDataType {
 	musicbrainz,
@@ -10,7 +10,6 @@ export enum MetaDataType {
 	lastfm,
 	lyrics
 }
-
 
 export interface WikipediaSummary {
 	title: string;
@@ -26,4 +25,3 @@ export interface WikidataLookupResponse {
 	entity?: WikiData.Entity;
 	data?: WikiData.Entity;
 }
-

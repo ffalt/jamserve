@@ -1,4 +1,4 @@
-import {spawnTool} from '../../../utils/tool.js';
+import { spawnTool } from '../../../utils/tool.js';
 
 export interface MP3ValWarning {
 	offset?: string;
@@ -33,12 +33,12 @@ function parseMP3ValWarning(data: string): MP3ValWarning {
 	}
 	i = s.indexOf(':');
 	s = s.slice(i).trim();
-	return {offset, msg: s};
+	return { offset, msg: s };
 }
 
 function parseMP3ValResult(data: string): MP3ValResult {
 	const lines = data.split('\n');
-	const result: MP3ValResult = {fixed: false, warnings: []};
+	const result: MP3ValResult = { fixed: false, warnings: [] };
 	for (const line of lines) {
 		if (line.startsWith('WARNING:')) {
 			result.warnings.push(parseMP3ValWarning(line));

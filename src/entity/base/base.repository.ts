@@ -1,13 +1,13 @@
-import {DBObjectType, DefaultOrderFields, ListType} from '../../types/enums.js';
-import {InvalidParamError, NotFoundError} from '../../modules/rest/index.js';
-import {IndexResult, IndexResultGroup, OrderHelper, PageResult} from './base.js';
-import {StateHelper} from '../state/state.helper.js';
-import {EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions} from '../../modules/orm/index.js';
+import { DBObjectType, DefaultOrderFields, ListType } from '../../types/enums.js';
+import { InvalidParamError, NotFoundError } from '../../modules/rest/index.js';
+import { IndexResult, IndexResultGroup, OrderHelper, PageResult } from './base.js';
+import { StateHelper } from '../state/state.helper.js';
+import { EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions } from '../../modules/orm/index.js';
 import seq from 'sequelize';
-import {User} from '../user/user.js';
-import {DefaultOrderArgs, PageArgs} from './base.args.js';
-import {paginate} from './base.utils.js';
-import {Includeable} from 'sequelize';
+import { User } from '../user/user.js';
+import { DefaultOrderArgs, PageArgs } from './base.args.js';
+import { paginate } from './base.utils.js';
+import { Includeable } from 'sequelize';
 import shuffleSeed from 'shuffle-seed';
 
 export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
@@ -33,7 +33,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	buildOrderByFindOptions(order?: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<Entity> | undefined {
-		const options = {order: this.buildOrderBy(order as Array<any>)};
+		const options = { order: this.buildOrderBy(order as Array<any>) };
 		this.ensureOrderIncludes(options);
 		return options;
 	}
@@ -51,14 +51,14 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		let hasOrder = false;
 		if (options.order) {
 			(options.order as OrderItem[]).forEach(o => {
-				const array = (o as Array<any>);
+				const array = o as Array<any>;
 				hasOrder = true;
 				if (array.length === 3) {
 					const key = array[0];
 					const list: Includeable[] = (options.include as Includeable[]) || [];
 					const includeEntry: any = list.find((i: any) => i.association === key);
 					if (!includeEntry) {
-						list.push({association: key, attributes: [array[1]]});
+						list.push({ association: key, attributes: [array[1]] });
 						options.include = list;
 					} else {
 						includeEntry.attributes.push(array[1]);
@@ -87,7 +87,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async all(): Promise<Array<Entity>> {
-		return this.find({order: [['createdAt', 'ASC']]});
+		return this.find({ order: [['createdAt', 'ASC']] });
 	}
 
 	async oneOrFailByID(id: string): Promise<Entity> {
@@ -123,17 +123,17 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async search(options: FindOptions<Entity>): Promise<PageResult<Entity>> {
-		const {entities, count} = await this.findAndCount(options);
-		return {skip: options.offset, take: options.limit, total: count, items: entities};
+		const { entities, count } = await this.findAndCount(options);
+		return { skip: options.offset, take: options.limit, total: count, items: entities };
 	}
 
 	async searchTransform<T>(
 		options: FindOptions<Entity>,
 		transform: (item: Entity) => Promise<T>
 	): Promise<PageResult<T>> {
-		const {count, entities} = await this.findAndCount(options);
+		const { count, entities } = await this.findAndCount(options);
 		const items = await Promise.all(entities.map(o => transform(o)));
-		return {skip: options.offset, take: options.limit, total: count, items};
+		return { skip: options.offset, take: options.limit, total: count, items };
 	}
 
 	private static getIndexChar(name: string): string {
@@ -180,7 +180,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				return av.localeCompare(bv);
 			});
 		});
-		return {groups};
+		return { groups };
 	}
 
 	/* unused
@@ -202,13 +202,13 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async countList(list: ListType, options: FindOptions<Entity>, userID: string): Promise<number> {
-		const result = await this.getListIDs(list, undefined, {...options, limit: 0}, userID);
+		const result = await this.getListIDs(list, undefined, { ...options, limit: 0 }, userID);
 		return result.total;
 	}
 
 	async countListFilter(list: ListType, filter: Filter | undefined, user: User): Promise<number> {
 		const options = await this.buildFilter(filter, user);
-		const result = await this.getListIDs(list, undefined, {...options, limit: 0}, user.id);
+		const result = await this.getListIDs(list, undefined, { ...options, limit: 0 }, user.id);
 		return result.total;
 	}
 
@@ -266,8 +266,8 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	private async getListIDs(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
-		const opts = {...options, limit: undefined, offset: undefined};
-		const page = {skip: options.offset, take: options.limit};
+		const opts = { ...options, limit: undefined, offset: undefined };
+		const page = { skip: options.offset, take: options.limit };
 		switch (list) {
 			case ListType.random: {
 				ids = await this.findIDs(opts);
@@ -302,21 +302,21 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		}
 		const total = ids.length;
 		ids = paginate(ids, page).items;
-		return {total, ...page, items: ids};
+		return { total, ...page, items: ids };
 	}
 
 	private async getFilteredIDs(ids: Array<string>, options: FindOptions<Entity>): Promise<Array<string>> {
 		if (!options.where) {
 			return ids;
 		}
-		let where: WhereOptions = {id: {[seq.Op.in]: ids}};
+		let where: WhereOptions = { id: { [seq.Op.in]: ids } };
 		if (options.where &&
 			(Object.keys(options.where).length > 0 ||
 				Object.getOwnPropertySymbols(options.where).length > 0)
 		) {
-			where = {[seq.Op.and]: [where, options.where]};
+			where = { [seq.Op.and]: [where, options.where] };
 		}
-		const list = await this.findIDs({...options, where});
+		const list = await this.findIDs({ ...options, where });
 		return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));
 	}
 
@@ -358,5 +358,4 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			}
 		}
 	}
-
 }

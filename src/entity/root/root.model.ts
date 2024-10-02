@@ -1,29 +1,33 @@
-import {Base, Page} from '../base/base.model.js';
-import {ObjField, ResultType} from '../../modules/rest/index.js';
-import {RootScanStrategy, UserRole} from '../../types/enums.js';
+import { Base, Page } from '../base/base.model.js';
+import { ObjField, ResultType } from '../../modules/rest/index.js';
+import { RootScanStrategy, UserRole } from '../../types/enums.js';
 
-@ResultType({description: 'Root Scan Info'})
+@ResultType({ description: 'Root Scan Info' })
 export class RootUpdateStatus {
-	@ObjField({description: 'Last Scan Timestamp'})
+	@ObjField({ description: 'Last Scan Timestamp' })
 	lastScan!: number;
-	@ObjField({nullable: true, description: 'Last Error (if any)'})
+
+	@ObjField({ nullable: true, description: 'Last Error (if any)' })
 	error?: string;
-	@ObjField({nullable: true, description: 'Is currently scanning?'})
+
+	@ObjField({ nullable: true, description: 'Is currently scanning?' })
 	scanning?: boolean;
 }
 
-@ResultType({description: 'Root Data'})
+@ResultType({ description: 'Root Data' })
 export class Root extends Base {
-	@ObjField({description: 'Root Path', roles: [UserRole.admin]})
+	@ObjField({ description: 'Root Path', roles: [UserRole.admin] })
 	path?: string;
-	@ObjField(() => RootUpdateStatus, {description: 'Root Update Status'})
+
+	@ObjField(() => RootUpdateStatus, { description: 'Root Update Status' })
 	status!: RootUpdateStatus;
-	@ObjField(() => RootScanStrategy, {description: 'Root Scan Strategy', example: RootScanStrategy.auto})
+
+	@ObjField(() => RootScanStrategy, { description: 'Root Scan Strategy', example: RootScanStrategy.auto })
 	strategy!: RootScanStrategy;
 }
 
-@ResultType({description: 'Roots Page'})
+@ResultType({ description: 'Roots Page' })
 export class RootPage extends Page {
-	@ObjField(() => Root, {description: 'List of Roots'})
+	@ObjField(() => Root, { description: 'List of Roots' })
 	items!: Array<Root>;
 }

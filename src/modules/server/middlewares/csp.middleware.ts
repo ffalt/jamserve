@@ -30,6 +30,6 @@ export function useCSPMiddleware(): express.RequestHandler {
 			workerSrc: [self],
 			fontSrc: [self, 'data:'],
 			reportUri: '/csp/report-violation'
-		},
+		}
 	});
 }

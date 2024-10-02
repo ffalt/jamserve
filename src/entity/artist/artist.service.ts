@@ -1,11 +1,11 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {Artist} from './artist.js';
-import {MUSICBRAINZ_VARIOUS_ARTISTS_ID} from '../../types/consts.js';
-import {Folder} from '../folder/folder.js';
-import {ApiBinaryResult} from '../../modules/rest/index.js';
-import {FolderService} from '../folder/folder.service.js';
-import {FolderType} from '../../types/enums.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { Artist } from './artist.js';
+import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts.js';
+import { Folder } from '../folder/folder.js';
+import { ApiBinaryResult } from '../../modules/rest/index.js';
+import { FolderService } from '../folder/folder.service.js';
+import { FolderType } from '../../types/enums.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 @InRequestScope
 export class ArtistService {
@@ -17,7 +17,7 @@ export class ArtistService {
 	}
 
 	async getArtistFolder(orm: Orm, artist: Artist): Promise<Folder | undefined> {
-		return orm.Folder.findOneFilter({artistIDs: [artist.id], folderTypes: [FolderType.artist]});
+		return orm.Folder.findOneFilter({ artistIDs: [artist.id], folderTypes: [FolderType.artist] });
 	}
 
 	async getImage(orm: Orm, artist: Artist, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
@@ -29,5 +29,4 @@ export class ArtistService {
 		}
 		return;
 	}
-
 }

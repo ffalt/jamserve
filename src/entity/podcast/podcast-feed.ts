@@ -3,8 +3,8 @@ import iconv from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
 import zlib from 'zlib';
-import {Podcast} from './podcast.js';
-import {EpisodeChapter} from '../episode/episode.js';
+import { Podcast } from './podcast.js';
+import { EpisodeChapter } from '../episode/episode.js';
 
 export interface PodcastTag {
 	title?: string;
@@ -36,7 +36,6 @@ export interface EpisodeData {
 }
 
 export class Feed {
-
 	static parseDurationMilliseconds(s: string): number {
 		return moment.duration(s).as('milliseconds');
 	}
@@ -108,7 +107,7 @@ export class Feed {
 					if (err) {
 						reject(err);
 					} else {
-						resolve({feed, posts});
+						resolve({ feed, posts });
 					}
 				};
 				const feedParser = new FeedParser({});
@@ -166,7 +165,7 @@ export class Feed {
 				if (pscChap) {
 					chapters = pscChap.map(item => {
 						const entry = item['@'];
-						return {start: Feed.parseDurationMilliseconds(entry.start), title: entry.title};
+						return { start: Feed.parseDurationMilliseconds(entry.start), title: entry.title };
 					}).sort((a, b) => a.start - b.start);
 				}
 			}
@@ -176,7 +175,7 @@ export class Feed {
 				guid: post.guid || post.link,
 				summary: post.summary,
 				enclosures: (post.enclosures || []).map(e => {
-					return {...e, length: e.length ? Number(e.length) : undefined};
+					return { ...e, length: e.length ? Number(e.length) : undefined };
 				}),
 				date: post.date ? post.date : undefined,
 				name: post.title,
@@ -184,7 +183,6 @@ export class Feed {
 				chapters
 			};
 		});
-		return {tag, episodes};
+		return { tag, episodes };
 	}
-
 }

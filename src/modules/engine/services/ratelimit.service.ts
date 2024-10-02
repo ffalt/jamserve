@@ -1,6 +1,6 @@
-import {InRequestScope} from 'typescript-ioc';
+import { InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import {RateLimiterMemory} from 'rate-limiter-flexible';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits: number): number {
 	if (countConsecutiveOutOfLimits <= 1) {
@@ -16,11 +16,12 @@ export class RateLimitService {
 		duration: 15 * 60, // within 15 minutes
 		keyPrefix: 'login'
 	};
+
 	loginLimiter = new RateLimiterMemory(this.loginLimiterOption);
 	limiterConsecutiveOutOfLimits = new RateLimiterMemory({
 		keyPrefix: 'login_consecutive_outoflimits',
 		points: 99999, // doesn't matter much, this is just counter
-		duration: 0, // never expire
+		duration: 0 // never expire
 	});
 
 	async loginSlowDown(req: express.Request, res: express.Response): Promise<boolean> {
@@ -52,5 +53,4 @@ export class RateLimitService {
 		await this.limiterConsecutiveOutOfLimits.delete(key);
 		await this.loginLimiter.delete(key);
 	}
-
 }

@@ -2,7 +2,6 @@ export class ApiError extends Error {
 	failCode: number;
 
 	constructor(message: string, failCode: number) {
-
 		// Calling parent constructor of base Error class.
 		super(message);
 
