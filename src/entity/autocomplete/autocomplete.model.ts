@@ -1,5 +1,5 @@
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'AutoComplete Entry' })
 export class AutoCompleteEntry {

@@ -1,6 +1,6 @@
 import { Base, Page } from '../base/base.model.js';
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Genre' })
 export class GenreBase extends Base {

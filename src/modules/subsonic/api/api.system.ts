@@ -1,12 +1,11 @@
-import {SubsonicParameterJukebox} from '../model/subsonic-rest-params.js';
-import {SubsonicApiBase} from './api.base.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicResponseJukeboxStatus, SubsonicResponseLicense} from '../model/subsonic-rest-data.js';
+import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
+import { SubsonicApiBase } from './api.base.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
 
 export class SubsonicSystemApi extends SubsonicApiBase {
-
 	/**
 	 * Get details about the software license. Takes no extra parameters.
 	 * Since 1.0.0
@@ -15,7 +14,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('getLicense.view', () => SubsonicResponseLicense)
 	async getLicense(_query: unknown, _ctx: Context): Promise<SubsonicResponseLicense> {
-		return {license: {valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0'}};
+		return { license: { valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0' } };
 	}
 
 	/**
@@ -44,6 +43,6 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 		 id 	No 		Used by add and set. ID of song to add to the jukebox playlist. Use multiple id parameters to add many songs in the same request. (set is similar to a clear followed by a add, but will not change the currently playing track.)
 		 gain 	No 		Used by setGain to control the playback volume. A float value between 0.0 and 1.0.
 		 */
-		return {jukeboxStatus: {currentIndex: 0, playing: false, gain: 0}};
+		return { jukeboxStatus: { currentIndex: 0, playing: false, gain: 0 } };
 	}
 }

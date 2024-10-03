@@ -1,6 +1,6 @@
 import express from 'express';
-import {User} from '../../entity/user/user.js';
-import {EngineRequest} from '../../modules/server/middlewares/engine.middleware.js';
+import { User } from '../../entity/user/user.js';
+import { EngineRequest } from '../../modules/server/middlewares/engine.middleware.js';
 
 export interface SubsonicBaseParams {
 	username: string;

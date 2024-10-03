@@ -20,8 +20,8 @@ import { CoverArtArchive } from '../../modules/audio/clients/coverartarchive-res
 import { MusicBrainz } from '../../modules/audio/clients/musicbrainz-rest-data.js';
 import seq from 'sequelize';
 import fetch from 'node-fetch';
-import {InvalidParamError} from '../../modules/deco/express/express-error.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import { InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('Metadata');
 

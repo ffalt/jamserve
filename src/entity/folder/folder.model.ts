@@ -3,8 +3,8 @@ import { TrackBase } from '../track/track.model.js';
 import { Artwork } from '../artwork/artwork.model.js';
 import { FolderHealthHint } from '../health/health.model.js';
 import { FolderBase } from './folder-base.model.js';
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Folder with tracks' })
 export class Folder extends FolderBase {

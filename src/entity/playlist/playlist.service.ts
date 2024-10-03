@@ -7,7 +7,7 @@ import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
-import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlaylistService {

@@ -6,14 +6,13 @@ import {
 	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject
 } from './openapi-helpers.js';
 import { RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
-import {MetadataStorage} from '../definitions/metadata-storage.js';
+import { MetadataStorage } from '../definitions/metadata-storage.js';
 import { EnumMetadata } from '../definitions/enum-metadata.js';
 import { ClassMetadata } from '../definitions/class-metadata.js';
 import { getDefaultValue } from '../helpers/default-value.js';
 import { iterateArguments } from '../helpers/iterate-super.js';
 
 export class OpenApiRefBuilder {
-
 	constructor(public extended: boolean = true, private readonly metadata: MetadataStorage) {
 	}
 
@@ -80,7 +79,7 @@ export class OpenApiRefBuilder {
 
 	private collectParameter(
 		param: RestParamMetadata, parameters: Array<ParameterObject>,
-		ctrl: ControllerClassMetadata| undefined, schemas: Schemas, hideParameters?: string[]
+		ctrl: ControllerClassMetadata | undefined, schemas: Schemas, hideParameters?: string[]
 	): void {
 		if (hideParameters && hideParameters.includes(param.name)) {
 			return;

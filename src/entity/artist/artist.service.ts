@@ -5,7 +5,7 @@ import { Folder } from '../folder/folder.js';
 import { FolderService } from '../folder/folder.service.js';
 import { FolderType } from '../../types/enums.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class ArtistService {

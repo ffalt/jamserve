@@ -1,12 +1,12 @@
-import {Playlist} from '../../../entity/playlist/playlist.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {DBObjectType} from '../../../types/enums.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate} from '../model/subsonic-rest-params.js';
-import {SubsonicPlaylists, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs} from '../model/subsonic-rest-data.js';
+import { Playlist } from '../../../entity/playlist/playlist.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { DBObjectType } from '../../../types/enums.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-params.js';
+import { SubsonicPlaylists, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
 
 export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	/**
@@ -25,7 +25,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 */
 		let playlist: Playlist | undefined;
 		if (!query.playlistId && !query.name) {
-			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
+			return Promise.reject({ fail: FORMAT.FAIL.PARAMETER });
 		}
 		if (query.playlistId) {
 			const updateQuery: SubsonicParameterPlaylistUpdate = {
@@ -43,12 +43,12 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 			}, ctx.user);
 		}
 		if (!playlist) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		const entries = await playlist.entries.getItems();
 		const tracks = (await Promise.all(entries.map(e => e.track.get()))).filter(t => !!t);
 		const states = await ctx.orm.State.findMany(tracks.map(t => t.id), DBObjectType.track, ctx.user.id);
-		return {playlist: await FORMAT.packPlaylistWithSongs(playlist, tracks, states)};
+		return { playlist: await FORMAT.packPlaylistWithSongs(playlist, tracks, states) };
 	}
 
 	/**
@@ -58,7 +58,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('updatePlaylist.view')
-	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, {orm, engine, user}: Context): Promise<void> {
+	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, { orm, engine, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes 		The playlist ID.
@@ -70,7 +70,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.playlistId);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 		}
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(e => e.track.id());
@@ -96,14 +96,14 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deletePlaylist.view')
-	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, {orm, engine, user}: Context): Promise<void> {
+	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 		}
 		await engine.playlist.remove(orm, playlist);
 	}
@@ -115,7 +115,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <playlists> element on success.
 	 */
 	@SubsonicRoute('getPlaylists.view', () => SubsonicResponsePlaylists)
-	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, {orm, engine, user}: Context): Promise<SubsonicResponsePlaylists> {
+	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	no 		(Since 1.8.0) If specified, return playlists for this user rather than for the authenticated user. The authenticated user must have admin role if this parameter is used.
@@ -123,20 +123,20 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		let userID = user.id;
 		if ((query.username) && (query.username !== user.name)) {
 			if (!user.roleAdmin) {
-				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+				return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 			}
 			const u = await engine.user.findByName(orm, query.username);
 			if (!u) {
-				return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+				return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 			}
 			userID = u.id;
 		}
-		const list = await orm.Playlist.findFilter({userIDs: [userID], isPublic: user.id !== userID});
+		const list = await orm.Playlist.findFilter({ userIDs: [userID], isPublic: user.id !== userID });
 		const playlists: SubsonicPlaylists = {};
 		playlists.playlist = await Promise.all(
 			list.map(async plist => this.preparePlaylist(orm, plist, user))
 		);
-		return {playlists};
+		return { playlists };
 	}
 
 	/**
@@ -146,16 +146,16 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <playlist> element on success.
 	 */
 	@SubsonicRoute('getPlaylist.view', () => SubsonicResponsePlaylist)
-	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, {orm, user}: Context): Promise<SubsonicResponsePlaylist> {
+	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (playlist.user.id() !== user.id) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 		}
 		const result = await this.preparePlaylist(orm, playlist, user);
-		return {playlist: result};
+		return { playlist: result };
 	}
 }

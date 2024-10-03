@@ -12,7 +12,7 @@ import { ApolloMiddleware } from './middlewares/apollo.middleware.js';
 import { useSessionMiddleware } from './middlewares/session.middleware.js';
 import { useLogMiddleware } from './middlewares/log.middleware.js';
 import { RestMiddleware } from './middlewares/rest.middleware.js';
-import {SubsonicMiddleware} from './middlewares/subsonic.middleware.js';
+import { SubsonicMiddleware } from './middlewares/subsonic.middleware.js';
 import { usePassPortMiddleWare } from './middlewares/passport.middleware.js';
 import { JAMAPI_URL_VERSION } from '../engine/rest/version.js';
 import { DocsMiddleware } from './middlewares/docs.middleware.js';
@@ -26,18 +26,25 @@ const log = logger('Server');
 export class Server {
 	@Inject
 	engine!: EngineService;
+
 	@Inject
 	apollo!: ApolloMiddleware;
+
 	@Inject
 	rest!: RestMiddleware;
+
 	@Inject
-	subsonic!:SubsonicMiddleware;
+	subsonic!: SubsonicMiddleware;
+
 	@Inject
 	configService!: ConfigService;
+
 	@Inject
 	sessionService!: SessionService;
+
 	@Inject
 	docs!: DocsMiddleware;
+
 	app!: express.Application;
 	server: http.Server | undefined;
 

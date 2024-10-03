@@ -1,9 +1,9 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import {MethodMetadata} from '../../deco/definitions/method-metadata.js';
-import {RestParamsMetadata} from '../../deco/definitions/param-metadata.js';
-import {MetadataStorage} from '../../deco/definitions/metadata-storage.js';
-import {FieldMetadata} from '../../deco/definitions/field-metadata.js';
-import {ClassMetadata} from '../../deco/definitions/class-metadata.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
+import { RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
+import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
+import { FieldMetadata } from '../../deco/definitions/field-metadata.js';
+import { ClassMetadata } from '../../deco/definitions/class-metadata.js';
 
 const tab = '\t';
 const tabtab = '\t\t';

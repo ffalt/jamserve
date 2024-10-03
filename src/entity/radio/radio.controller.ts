@@ -3,14 +3,14 @@ import { UserRole } from '../../types/enums.js';
 import { IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs } from './radio.args.js';
 import { PageArgs } from '../base/base.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {QueryParam} from '../../modules/rest/decorators/QueryParam.js';
-import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
-import {Post} from '../../modules/rest/decorators/Post.js';
-import {BodyParam} from '../../modules/rest/decorators/BodyParam.js';
-import {BodyParams} from '../../modules/rest/decorators/BodyParams.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
 
 @Controller('/radio', { tags: ['Radio'], roles: [UserRole.stream] })
 export class RadioController {

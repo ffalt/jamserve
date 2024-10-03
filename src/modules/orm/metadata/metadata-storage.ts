@@ -1,6 +1,6 @@
 import { EntityMetadata } from '../definitions/entity-metadata.js';
 import { PropertyMetadata } from '../definitions/property-metadata.js';
-import {EnumMetadata} from '../../deco/definitions/enum-metadata.js';
+import { EnumMetadata } from '../../deco/definitions/enum-metadata.js';
 import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 
 export class MetadataStorage {

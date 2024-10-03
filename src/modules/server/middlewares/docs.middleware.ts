@@ -2,11 +2,11 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
 import { ApolloMiddleware } from './apollo.middleware.js';
 import path from 'path';
-import {buildOpenApi} from '../../rest/builder/openapi.js';
-import {buildAngularClientZip} from '../../rest/builder/angular.js';
-import {buildAxiosClientZip} from '../../rest/builder/axios.js';
-import {ApiResponder} from '../../rest/response.js';
-import {buildSubsonicOpenApi} from '../../subsonic/builder/openapi.js';
+import { buildOpenApi } from '../../rest/builder/openapi.js';
+import { buildAngularClientZip } from '../../rest/builder/angular.js';
+import { buildAxiosClientZip } from '../../rest/builder/axios.js';
+import { ApiResponder } from '../../rest/response.js';
+import { buildSubsonicOpenApi } from '../../subsonic/builder/openapi.js';
 
 @InRequestScope
 export class DocsMiddleware {

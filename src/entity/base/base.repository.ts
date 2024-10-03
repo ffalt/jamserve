@@ -8,7 +8,7 @@ import { DefaultOrderArgs, PageArgs } from './base.args.js';
 import { paginate } from './base.utils.js';
 import { Includeable } from 'sequelize';
 import shuffleSeed from 'shuffle-seed';
-import {InvalidParamError, NotFoundError} from '../../modules/deco/express/express-error.js';
+import { InvalidParamError, NotFoundError } from '../../modules/deco/express/express-error.js';
 
 export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;

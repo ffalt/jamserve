@@ -1,14 +1,14 @@
 import express from 'express';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {logger} from '../../../utils/logger.js';
-import {ConfigService} from '../../engine/services/config.service.js';
-import {subsonicRouter} from '../../subsonic/builder/express.js';
-import {UserRole} from '../../../types/enums.js';
-import {buildSubsonicMeta} from '../../subsonic/metadata/builder.js';
-import {SubsonicApi} from '../../subsonic/api/api.js';
-import {RestOptions} from '../../deco/express/express-method.js';
-import {getMetadataStorage} from '../../rest/metadata/getMetadataStorage.js';
-import {ApiResponder} from '../../subsonic/response.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger.js';
+import { ConfigService } from '../../engine/services/config.service.js';
+import { subsonicRouter } from '../../subsonic/builder/express.js';
+import { UserRole } from '../../../types/enums.js';
+import { buildSubsonicMeta } from '../../subsonic/metadata/builder.js';
+import { SubsonicApi } from '../../subsonic/api/api.js';
+import { RestOptions } from '../../deco/express/express-method.js';
+import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
+import { ApiResponder } from '../../subsonic/response.js';
 
 const log = logger('SUBSONIC');
 
@@ -16,6 +16,7 @@ const log = logger('SUBSONIC');
 export class SubsonicMiddleware {
 	@Inject
 	configService!: ConfigService;
+
 	api = new SubsonicApi();
 
 	middleware(): express.Router {
@@ -52,10 +53,10 @@ export class SubsonicMiddleware {
 		const routeInfos = subsonicRouter(router, options);
 		if (process.env.NODE_ENV !== 'production') {
 			log.table(routeInfos, [
-				{name: 'method', alignment: 'right'},
-				{name: 'endpoint', alignment: 'left'},
-				{name: 'role', alignment: 'right'},
-				{name: 'format', alignment: 'left'}
+				{ name: 'method', alignment: 'right' },
+				{ name: 'endpoint', alignment: 'left' },
+				{ name: 'role', alignment: 'right' },
+				{ name: 'format', alignment: 'left' }
 			]);
 		}
 		router.use((req, res) => {

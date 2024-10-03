@@ -3,9 +3,9 @@ import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
 import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
-import {ExpressMethod, RestOptions, RouteInfo} from '../../deco/express/express-method.js';
-import {MethodMetadata} from '../../deco/definitions/method-metadata.js';
-import {iterateControllers} from '../../deco/helpers/iterate-super.js';
+import { ExpressMethod, RestOptions, RouteInfo } from '../../deco/express/express-method.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
+import { iterateControllers } from '../../deco/helpers/iterate-super.js';
 
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];

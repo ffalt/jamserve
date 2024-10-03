@@ -22,12 +22,12 @@ http://your-server/rest/ping.view?u=joe&t=26719a1196d2a940705a59634eb18eab&s=c19
  */
 
 import express from 'express';
-import {User} from '../../entity/user/user.js';
-import {FORMAT} from './format.js';
-import {SubsonicParameterRequest} from './parameters.js';
-import {ApiResponder} from './response.js';
-import {EngineService} from '../../modules/engine/services/engine.service.js';
-import {Orm} from '../engine/services/orm.service.js';
+import { User } from '../../entity/user/user.js';
+import { FORMAT } from './format.js';
+import { SubsonicParameterRequest } from './parameters.js';
+import { ApiResponder } from './response.js';
+import { EngineService } from '../../modules/engine/services/engine.service.js';
+import { Orm } from '../engine/services/orm.service.js';
 
 export function hexEncode(n: string): string {
 	const i: Array<string> = [];
@@ -99,5 +99,5 @@ export function CheckAuthMiddleWare(req: SubsonicRequest, res: express.Response,
 	if (req.user) {
 		return next();
 	}
-	return (new ApiResponder()).sendError(req, res, {fail: FORMAT.FAIL.UNAUTH});
+	return (new ApiResponder()).sendError(req, res, { fail: FORMAT.FAIL.UNAUTH });
 }

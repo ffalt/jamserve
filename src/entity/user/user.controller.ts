@@ -7,17 +7,17 @@ import { randomString } from '../../utils/random.js';
 import { PageArgs } from '../base/base.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
 import { EngineService } from '../../modules/engine/services/engine.service.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {QueryParam} from '../../modules/rest/decorators/QueryParam.js';
-import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
-import {Post} from '../../modules/rest/decorators/Post.js';
-import {BodyParams} from '../../modules/rest/decorators/BodyParams.js';
-import {BodyParam} from '../../modules/rest/decorators/BodyParam.js';
-import {InvalidParamError, UnauthError} from '../../modules/deco/express/express-error.js';
-import {UploadFile} from '../../modules/deco/definitions/upload-file.js';
-import {Upload} from '../../modules/rest/decorators/Upload.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
+import { Upload } from '../../modules/rest/decorators/Upload.js';
 
 @Controller('/user', { tags: ['User'] })
 export class UserController {

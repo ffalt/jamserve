@@ -1,28 +1,28 @@
 import moment from 'moment';
 import path from 'path';
-import {Album} from '../../entity/album/album.js';
-import {Artist} from '../../entity/artist/artist.js';
-import {Bookmark} from '../../entity/bookmark/bookmark.js';
-import {Chat} from '../../entity/chat/chat.js';
-import {Episode} from '../../entity/episode/episode.js';
-import {Folder} from '../../entity/folder/folder.js';
-import {Genre} from '../../entity/genre/genre.js';
-import {NowPlaying} from '../../entity/nowplaying/nowplaying.js';
-import {Playlist} from '../../entity/playlist/playlist.js';
-import {PlayQueue} from '../../entity/playqueue/playqueue.js';
-import {Podcast} from '../../entity/podcast/podcast.js';
-import {Radio} from '../../entity/radio/radio.js';
-import {Root} from '../../entity/root/root.js';
-import {State} from '../../entity/state/state.js';
-import {Track} from '../../entity/track/track.js';
-import {User} from '../../entity/user/user.js';
-import {fileSuffix} from '../../utils/fs-utils.js';
-import {AudioFormatType, PodcastStatus} from '../../types/enums.js';
+import { Album } from '../../entity/album/album.js';
+import { Artist } from '../../entity/artist/artist.js';
+import { Bookmark } from '../../entity/bookmark/bookmark.js';
+import { Chat } from '../../entity/chat/chat.js';
+import { Episode } from '../../entity/episode/episode.js';
+import { Folder } from '../../entity/folder/folder.js';
+import { Genre } from '../../entity/genre/genre.js';
+import { NowPlaying } from '../../entity/nowplaying/nowplaying.js';
+import { Playlist } from '../../entity/playlist/playlist.js';
+import { PlayQueue } from '../../entity/playqueue/playqueue.js';
+import { Podcast } from '../../entity/podcast/podcast.js';
+import { Radio } from '../../entity/radio/radio.js';
+import { Root } from '../../entity/root/root.js';
+import { State } from '../../entity/state/state.js';
+import { Track } from '../../entity/track/track.js';
+import { User } from '../../entity/user/user.js';
+import { fileSuffix } from '../../utils/fs-utils.js';
+import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
 import mimeTypes from 'mime-types';
-import {FolderIndex, FolderIndexEntry} from '../../entity/folder/folder.model.js';
-import {LastFM} from '../audio/clients/lastfm-rest-data.js';
-import {IndexResult, IndexResultGroup} from '../../entity/base/base.js';
-import {Collection} from '../orm/index.js';
+import { FolderIndex, FolderIndexEntry } from '../../entity/folder/folder.model.js';
+import { LastFM } from '../audio/clients/lastfm-rest-data.js';
+import { IndexResult, IndexResultGroup } from '../../entity/base/base.js';
+import { Collection } from '../orm/index.js';
 import {
 	SubsonicAlbumID3,
 	SubsonicAlbumInfo,
@@ -101,7 +101,7 @@ export class FORMAT {
 
 	static packResponse(o: SubsonicResponse): SubsonicAPIResponse {
 		return {
-			'subsonic-response': {...FORMAT.defaultProperties(), ...o}
+			'subsonic-response': { ...FORMAT.defaultProperties(), ...o }
 		};
 	}
 
@@ -119,7 +119,7 @@ export class FORMAT {
 	}
 
 	static packRoot(root: Root): SubsonicMusicFolder {
-		return {id: parseInt(root.id, 10), name: root.name};
+		return { id: parseInt(root.id, 10), name: root.name };
 	}
 
 	static packUser(user: User): SubsonicUser {
@@ -129,7 +129,7 @@ export class FORMAT {
 			maxBitRate: user.maxBitRate,
 			avatarLastChanged: undefined, // user.avatarLastChanged !== undefined ? FORMAT.formatSubSonicDate(user.avatarLastChanged) : undefined,
 			folder: undefined,
-			scrobblingEnabled: false, //user.scrobblingEnabled,
+			scrobblingEnabled: false, // user.scrobblingEnabled,
 			adminRole: user.roleAdmin,
 			settingsRole: user.roleAdmin, // user.roles.settingsRole,
 			downloadRole: user.roleStream, // user.roles.downloadRole,
@@ -183,7 +183,7 @@ export class FORMAT {
 		return Promise.all(index.groups.map(async i => ({
 			name: i.name,
 			artist: await Promise.all(i.items.map(e => FORMAT.packArtist(e, states.find(s => s.id === e.id))))
-		})))
+		})));
 	}
 
 	static packDirectory(folder: Folder, state: State): SubsonicDirectory {
@@ -486,7 +486,7 @@ export class FORMAT {
 			size: episode.fileSize ? Math.trunc(episode.fileSize / 10) : undefined,
 			created: FORMAT.formatSubSonicDate(episode.statCreated),
 			duration: (tag?.mediaDuration !== undefined && !isNaN(tag.mediaDuration)) ? Math.trunc(tag.mediaDuration) : -1,
-			bitRate: (tag?.mediaBitRate !== undefined) ? Math.round(tag.mediaBitRate / 1000) : -1,
+			bitRate: (tag?.mediaBitRate !== undefined) ? Math.round(tag.mediaBitRate / 1000) : -1
 		};
 		if (episode.path) {
 			result.suffix = fileSuffix(episode.path);
@@ -513,7 +513,7 @@ export class FORMAT {
 			created: FORMAT.formatSubSonicDate(playlist.createdAt) as string,
 			changed: FORMAT.formatSubSonicDate(playlist.updatedAt) as string,
 			coverArt: playlist.coverArt,
-			allowedUser: [], //playlist.allowedUser,
+			allowedUser: [], // playlist.allowedUser,
 			songCount: await playlist.entries.count(),
 			owner: playlist.user.id()
 		};

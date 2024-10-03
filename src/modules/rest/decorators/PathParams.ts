@@ -1,6 +1,6 @@
-import {ReturnTypeFunc, ValidateOptions} from '../../deco/definitions/types.js';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {BasePathParams} from '../../deco/decorators/PathParams.js';
+import { ReturnTypeFunc, ValidateOptions } from '../../deco/definitions/types.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { BasePathParams } from '../../deco/decorators/PathParams.js';
 
 export function PathParams(): ParameterDecorator;
 export function PathParams(options: ValidateOptions): ParameterDecorator;

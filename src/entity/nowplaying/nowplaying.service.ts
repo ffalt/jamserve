@@ -7,7 +7,7 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import { DBObjectType } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
 import { StateService } from '../state/state.service.js';
-import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 const log = logger('NowPlayingService');
 

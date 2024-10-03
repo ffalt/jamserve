@@ -1,4 +1,4 @@
-import {SubsonicResultType} from '../decorators/SubsonicResultType.js';
+import { SubsonicResultType } from '../decorators/SubsonicResultType.js';
 
 export class SubsonicResponse {
 	album?: SubsonicAlbumWithSongsID3;
@@ -51,212 +51,212 @@ export class SubsonicResponse {
 
 @SubsonicResultType()
 export class SubsonicResponseBookmarks {
-	bookmarks!: SubsonicBookmarks
+	bookmarks!: SubsonicBookmarks;
 }
 
 @SubsonicResultType()
 export class SubsonicResponsePlayQueue {
-	playQueue!: SubsonicPlayQueue
+	playQueue!: SubsonicPlayQueue;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseArtistWithAlbumsID3 {
-	artist!: SubsonicArtistWithAlbumsID3
+	artist!: SubsonicArtistWithAlbumsID3;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseAlbumWithSongsID3 {
-	album!: SubsonicAlbumWithSongsID3
+	album!: SubsonicAlbumWithSongsID3;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseArtistInfo {
-	artistInfo!: SubsonicArtistInfo
+	artistInfo!: SubsonicArtistInfo;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseArtistInfo2 {
-	artistInfo2!: SubsonicArtistInfo2
+	artistInfo2!: SubsonicArtistInfo2;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseAlbumInfo {
-	albumInfo!: SubsonicAlbumInfo
+	albumInfo!: SubsonicAlbumInfo;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseIndexes {
-	indexes!: SubsonicIndexes
+	indexes!: SubsonicIndexes;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseArtistsID3 {
-	artists!: SubsonicArtistsID3
+	artists!: SubsonicArtistsID3;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseDirectory {
-	directory!: SubsonicDirectory
+	directory!: SubsonicDirectory;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseGenres {
-	genres!: SubsonicGenres
+	genres!: SubsonicGenres;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseMusicFolders {
-	musicFolders!: SubsonicMusicFolders
+	musicFolders!: SubsonicMusicFolders;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSimilarSongs {
-	similarSongs!: SubsonicSimilarSongs
+	similarSongs!: SubsonicSimilarSongs;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSimilarSongs2 {
-	similarSongs2!: SubsonicSimilarSongs2
+	similarSongs2!: SubsonicSimilarSongs2;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSong {
-	song!: SubsonicChild
+	song!: SubsonicChild;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseTopSongs {
-	topSongs!: SubsonicTopSongs
+	topSongs!: SubsonicTopSongs;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseVideos {
-	videos!: SubsonicVideos
+	videos!: SubsonicVideos;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseVideoInfo {
-	videoInfo!: SubsonicVideoInfo
+	videoInfo!: SubsonicVideoInfo;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseChatMessages {
-	chatMessages!: SubsonicChatMessages
+	chatMessages!: SubsonicChatMessages;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseInternetRadioStations {
-	internetRadioStations!: SubsonicInternetRadioStations
+	internetRadioStations!: SubsonicInternetRadioStations;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseScanStatus {
-	scanStatus!: SubsonicScanStatus
+	scanStatus!: SubsonicScanStatus;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseRandomSongs {
-	randomSongs!: SubsonicSongs
+	randomSongs!: SubsonicSongs;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseNowPlaying {
-	nowPlaying!: SubsonicNowPlaying
+	nowPlaying!: SubsonicNowPlaying;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseAlbumList {
-	albumList!: SubsonicAlbumList
+	albumList!: SubsonicAlbumList;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseAlbumList2 {
-	albumList2!: SubsonicAlbumList2
+	albumList2!: SubsonicAlbumList2;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSongsByGenre {
-	songsByGenre!: SubsonicSongs
+	songsByGenre!: SubsonicSongs;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseStarred {
-	starred!: SubsonicStarred
+	starred!: SubsonicStarred;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseStarred2 {
-	starred2!: SubsonicStarred2
+	starred2!: SubsonicStarred2;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseLyrics {
-	lyrics!: SubsonicLyrics
+	lyrics!: SubsonicLyrics;
 }
 
 @SubsonicResultType()
 export class SubsonicResponsePlaylistWithSongs {
-	playlist!: SubsonicPlaylistWithSongs
+	playlist!: SubsonicPlaylistWithSongs;
 }
 
 @SubsonicResultType()
 export class SubsonicResponsePlaylists {
-	playlists!: SubsonicPlaylists
+	playlists!: SubsonicPlaylists;
 }
 
 @SubsonicResultType()
 export class SubsonicResponsePlaylist {
-	playlist!: SubsonicPlaylist
+	playlist!: SubsonicPlaylist;
 }
 
 @SubsonicResultType()
 export class SubsonicResponsePodcasts {
-	podcasts!: SubsonicPodcasts
+	podcasts!: SubsonicPodcasts;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseNewestPodcasts {
-	newestPodcasts!: SubsonicNewestPodcasts
+	newestPodcasts!: SubsonicNewestPodcasts;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSearchResult {
-	searchResult!: SubsonicSearchResult
+	searchResult!: SubsonicSearchResult;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSearchResult2 {
-	searchResult2!: SubsonicSearchResult2
+	searchResult2!: SubsonicSearchResult2;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseSearchResult3 {
-	searchResult3!: SubsonicSearchResult3
+	searchResult3!: SubsonicSearchResult3;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseShares {
-	shares!: SubsonicShares
+	shares!: SubsonicShares;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseLicense {
-	license!: SubsonicLicense
+	license!: SubsonicLicense;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseJukeboxStatus {
-	jukeboxStatus!: SubsonicJukeboxStatus
+	jukeboxStatus!: SubsonicJukeboxStatus;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseUsers {
-	users!: SubsonicUsers
+	users!: SubsonicUsers;
 }
 
 @SubsonicResultType()
 export class SubsonicResponseUser {
-	user!: SubsonicUser
+	user!: SubsonicUser;
 }
 
 export type SubsonicResponseStatus = 'ok' | 'failed';

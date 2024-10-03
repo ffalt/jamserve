@@ -1,6 +1,6 @@
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'User State Data' })
 export class State {

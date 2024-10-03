@@ -7,7 +7,7 @@ import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
 import { PlayQueueSetArgs } from './playqueue.args.js';
 import { PlayQueue } from './playqueue.js';
-import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlayQueueService {

@@ -1,10 +1,10 @@
-import {SubsonicResponseInternetRadioStations} from '../model/subsonic-rest-data.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate} from '../model/subsonic-rest-params.js';
+import { SubsonicResponseInternetRadioStations } from '../model/subsonic-rest-data.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-params.js';
 
 export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	/**
@@ -14,7 +14,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deleteInternetRadioStation.view')
-	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, {orm}: Context): Promise<void> {
+	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, { orm }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
@@ -30,14 +30,14 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('createInternetRadioStation.view')
-	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, {orm}: Context): Promise<void> {
+	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, { orm }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		streamUrl 	Yes 		The stream URL for the station.
 		name 	Yes 		The user-defined name for the station.
 		homepageUrl 	No 		The home page URL for the station.
 		 */
-		const radio = orm.Radio.create({name: query.name, url: query.streamUrl, homepage: query.homepageUrl});
+		const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl });
 		await orm.Radio.persistAndFlush(radio);
 	}
 
@@ -48,7 +48,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('updateInternetRadioStation.view')
-	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate, {orm}: Context): Promise<void> {
+	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate, { orm }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
@@ -57,9 +57,9 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		homepageUrl 	No 		The home page URL for the station.
 		 */
 		const radio = await orm.Radio.findOneOrFailByID(query.id);
-		radio.name = query.name === undefined ? radio.name : query.name
-		radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl
-		radio.homepage = query.homepageUrl === undefined ? radio.homepage : query.homepageUrl
+		radio.name = query.name === undefined ? radio.name : query.name;
+		radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl;
+		radio.homepage = query.homepageUrl === undefined ? radio.homepage : query.homepageUrl;
 		await orm.Radio.persistAndFlush(radio);
 	}
 
@@ -70,8 +70,8 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <internetRadioStations> element on success.
 	 */
 	@SubsonicRoute('getInternetRadioStations.view', () => SubsonicResponseInternetRadioStations)
-	async getInternetRadioStations(_query: unknown, {orm}: Context): Promise<SubsonicResponseInternetRadioStations> {
+	async getInternetRadioStations(_query: unknown, { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
 		const radios = await orm.Radio.all();
-		return {internetRadioStations: {internetRadioStation: radios.filter(radio => !radio.disabled).map(radio => FORMAT.packRadio(radio))}};
+		return { internetRadioStations: { internetRadioStation: radios.filter(radio => !radio.disabled).map(radio => FORMAT.packRadio(radio)) } };
 	}
 }

@@ -9,8 +9,8 @@ import { User } from '../user/user.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
-import {GenericError, InvalidParamError} from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class StreamService {

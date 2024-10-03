@@ -1,12 +1,11 @@
-import {SubsonicParameterID, SubsonicParameterShare} from '../model/subsonic-rest-params.js';
-import {SubsonicApiBase} from './api.base.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicResponseShares} from '../model/subsonic-rest-data.js';
+import { SubsonicParameterID, SubsonicParameterShare } from '../model/subsonic-rest-params.js';
+import { SubsonicApiBase } from './api.base.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicResponseShares } from '../model/subsonic-rest-data.js';
 
 export class SubsonicSharingApi extends SubsonicApiBase {
-
 	/**
 	 * Returns information about shared media this user is allowed to manage. Takes no extra parameters.
 	 * Since 1.6.0
@@ -15,7 +14,7 @@ export class SubsonicSharingApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('getShares.view', () => SubsonicResponseShares)
 	async getShares(_query: unknown, _ctx: Context): Promise<SubsonicResponseShares> {
-		return {shares: {}};
+		return { shares: {} };
 	}
 
 	/**

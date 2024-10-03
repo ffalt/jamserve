@@ -1,9 +1,8 @@
-
 import { PlayQueueEntryOrderFields } from '../../types/enums.js';
 import { OrderByArgs } from '../base/base.args.js';
 import { Field, InputType } from 'type-graphql';
-import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @InputType()
 @ObjParamsType()

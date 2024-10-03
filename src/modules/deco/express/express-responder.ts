@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import {ApiError} from './express-error.js';
+import { ApiError } from './express-error.js';
 
 export interface StreamData {
 	pipe(stream: express.Response): void;
@@ -27,7 +27,7 @@ export abstract class ApiBaseResponder {
 	}
 
 	sendJSONP(req: express.Request, res: express.Response, callback: string, data: any): void {
-		res.writeHead(200, {'Content-Type': 'application/javascript'});
+		res.writeHead(200, { 'Content-Type': 'application/javascript' });
 		res.end(`${callback}(${JSON.stringify(data)});`);
 	}
 
@@ -44,10 +44,10 @@ export abstract class ApiBaseResponder {
 		} else if (data.buffer) {
 			res.set('Content-Type', data.buffer.contentType);
 			res.set('Content-Length', data.buffer.buffer.length.toString());
-// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
+			// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
-			res.sendFile(data.file.filename, {filename: data.file.name || path.basename(data.file.filename)});
+			res.sendFile(data.file.filename, { filename: data.file.name || path.basename(data.file.filename) });
 		}
 	}
 

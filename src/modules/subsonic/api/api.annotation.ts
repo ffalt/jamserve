@@ -1,12 +1,11 @@
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterState} from '../model/subsonic-rest-params.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterState } from '../model/subsonic-rest-params.js';
 
 export class SubsonicAnnotationApi extends SubsonicApiBase {
-
 	/**
 	 * Attaches a star to a song, album or artist.
 	 * Since 1.8.0
@@ -14,7 +13,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('star.view')
-	async star(@SubsonicParams() query: SubsonicParameterState, {engine, orm, user}: Context): Promise<void> {
+	async star(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	No 		The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.
@@ -34,7 +33,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('unstar.view')
-	async unstar(@SubsonicParams() query: SubsonicParameterState, {engine, orm, user}: Context): Promise<void> {
+	async unstar(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	No 		The ID of the file (song) or folder (album/artist) to unstar. Multiple parameters allowed.
@@ -54,14 +53,14 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('setRating.view')
-	async setRating(@SubsonicParams() query: SubsonicParameterRate, {engine, orm, user}: Context): Promise<void> {
+	async setRating(@SubsonicParams() query: SubsonicParameterRate, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file (song) or folder (album/artist) to rate.
 		 rating 	Yes 		The rating between 1 and 5 (inclusive), or 0 to remove the rating.
 		 */
 		if ((query.rating < 0) || (query.rating > 5)) {
-			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
+			return Promise.reject({ fail: FORMAT.FAIL.PARAMETER });
 		}
 		await engine.state.rate(orm, query.id, query.rating, user);
 	}

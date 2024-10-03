@@ -1,5 +1,5 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {BaseResultType, ObjectTypeOptions} from '../../deco/decorators/ResultType.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { BaseResultType, ObjectTypeOptions } from '../../deco/decorators/ResultType.js';
 
 export function ResultType(): ClassDecorator;
 export function ResultType(options: ObjectTypeOptions): ClassDecorator;

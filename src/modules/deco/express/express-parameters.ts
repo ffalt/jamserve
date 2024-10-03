@@ -5,14 +5,13 @@ import { FieldMetadata } from '../definitions/field-metadata.js';
 import { EnumMetadata } from '../definitions/enum-metadata.js';
 import { getEnumReverseValuesMap } from '../helpers/enums.js';
 import { GenericError, InvalidParamError, MissingParamError } from './express-error.js';
-import {RestContext} from './context.js';
+import { RestContext } from './context.js';
 import { getDefaultValue } from '../helpers/default-value.js';
 import { UploadFile } from '../definitions/upload-file.js';
-import {MetadataStorage} from '../definitions/metadata-storage.js';
+import { MetadataStorage } from '../definitions/metadata-storage.js';
 import { iterateArguments } from '../helpers/iterate-super.js';
 
 export class ExpressParameters {
-
 	private static validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): boolean {
 		if (typeOptions.array) {
 			throw InvalidParamError(param.name);

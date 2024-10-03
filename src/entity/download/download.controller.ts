@@ -2,13 +2,13 @@ import { DownloadFormatType, UserRole } from '../../types/enums.js';
 import { ApiDownloadTypes } from '../../types/consts.js';
 import { DownloadArgs } from './download.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {PathParam} from '../../modules/rest/decorators/PathParam.js';
-import {PathParams} from '../../modules/rest/decorators/PathParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
-import {NotFoundError} from '../../modules/deco/express/express-error.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { PathParam } from '../../modules/rest/decorators/PathParam.js';
+import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 

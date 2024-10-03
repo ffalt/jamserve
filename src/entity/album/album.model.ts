@@ -5,8 +5,8 @@ import { ExtendedInfo } from '../metadata/metadata.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { ArtistBase } from '../artist/artist.model.js';
 import { GenreBase } from '../genre/genre.model.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
 
 @ResultType({ description: 'Album' })
 export class AlbumBase extends Base {

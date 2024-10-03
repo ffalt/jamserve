@@ -4,12 +4,12 @@ import { IncludesNowPlayingArgs } from './nowplaying.args.js';
 import { IncludesTrackArgs } from '../track/track.args.js';
 import { IncludesEpisodeArgs } from '../episode/episode.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
-import {Post} from '../../modules/rest/decorators/Post.js';
-import {BodyParam} from '../../modules/rest/decorators/BodyParam.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 @Controller('/nowPlaying', { tags: ['Now Playing'], roles: [UserRole.stream] })
 export class NowPlayingController {

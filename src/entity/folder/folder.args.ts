@@ -2,8 +2,8 @@ import { AlbumType, FolderOrderFields, FolderType, ListType } from '../../types/
 import { ArgsType, Field, Float, ID, InputType, Int } from 'type-graphql';
 import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ObjParamsType()
 export class IncludesFolderArgs {

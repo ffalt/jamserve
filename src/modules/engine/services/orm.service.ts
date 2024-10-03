@@ -53,7 +53,7 @@ import { ConfigService } from './config.service.js';
 import { Options } from 'sequelize';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
-import {NotFoundError} from '../../deco/express/express-error.js';
+import { NotFoundError } from '../../deco/express/express-error.js';
 
 registerORMEnums();
 

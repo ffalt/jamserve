@@ -25,7 +25,7 @@ import { RootService } from '../root/root.service.js';
 import { Artwork } from '../artwork/artwork.js';
 import { ArtworkService } from '../artwork/artwork.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class ImageService {

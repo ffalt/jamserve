@@ -1,22 +1,21 @@
-import {Album} from '../../../entity/album/album.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Episode} from '../../../entity/episode/episode.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {Playlist} from '../../../entity/playlist/playlist.js';
-import {State} from '../../../entity/state/state.js';
-import {Track} from '../../../entity/track/track.js';
-import {User} from '../../../entity/user/user.js';
-import {FORMAT} from '../format.js';
-import {DBObjectType, PodcastStatus} from '../../../types/enums.js';
-import {Base} from '../../../entity/base/base.js';
-import {Bookmark} from '../../../entity/bookmark/bookmark.js';
-import {Orm} from '../../engine/services/orm.service.js';
-import {EngineService} from '../../engine/services/engine.service.js';
-import {SubsonicParameterState} from '../model/subsonic-rest-params.js';
-import {SubsonicAlbumID3, SubsonicArtist, SubsonicArtistID3, SubsonicBookmark, SubsonicChild, SubsonicPlaylistWithSongs, SubsonicPodcastEpisode} from '../model/subsonic-rest-data.js';
+import { Album } from '../../../entity/album/album.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Episode } from '../../../entity/episode/episode.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { Playlist } from '../../../entity/playlist/playlist.js';
+import { State } from '../../../entity/state/state.js';
+import { Track } from '../../../entity/track/track.js';
+import { User } from '../../../entity/user/user.js';
+import { FORMAT } from '../format.js';
+import { DBObjectType, PodcastStatus } from '../../../types/enums.js';
+import { Base } from '../../../entity/base/base.js';
+import { Bookmark } from '../../../entity/bookmark/bookmark.js';
+import { Orm } from '../../engine/services/orm.service.js';
+import { EngineService } from '../../engine/services/engine.service.js';
+import { SubsonicParameterState } from '../model/subsonic-rest-params.js';
+import { SubsonicAlbumID3, SubsonicArtist, SubsonicArtistID3, SubsonicBookmark, SubsonicChild, SubsonicPlaylistWithSongs, SubsonicPodcastEpisode } from '../model/subsonic-rest-data.js';
 
 export class SubsonicApiBase {
-
 	/* helper functions */
 
 	protected async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
@@ -56,9 +55,7 @@ export class SubsonicApiBase {
 		return this.prepareList<Track, SubsonicChild>(orm, DBObjectType.track, tracks, FORMAT.packTrack, user);
 	}
 
-
 	protected async prepareBookmarks(orm: Orm, bookmarks: Array<Bookmark>, user: User): Promise<Array<SubsonicBookmark>> {
-
 		const bookmarkDestID = (bookmark: Bookmark) => (bookmark.track.id() || bookmark.episode.id() as string);
 
 		const removeDups = (list: Array<string>): Array<string> => {

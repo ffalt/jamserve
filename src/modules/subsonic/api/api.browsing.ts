@@ -1,15 +1,15 @@
-import {Album} from '../../../entity/album/album.js';
-import {Artist} from '../../../entity/artist/artist.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {Track} from '../../../entity/track/track.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {AlbumOrderFields, DBObjectType, LastFMLookupType, TrackOrderFields} from '../../../types/enums.js';
-import {PageResult} from '../../../entity/base/base.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs} from '../model/subsonic-rest-params.js';
+import { Album } from '../../../entity/album/album.js';
+import { Artist } from '../../../entity/artist/artist.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { Track } from '../../../entity/track/track.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { AlbumOrderFields, DBObjectType, LastFMLookupType, TrackOrderFields } from '../../../types/enums.js';
+import { PageResult } from '../../../entity/base/base.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-params.js';
 import {
 	SubsonicAlbumWithSongsID3,
 	SubsonicArtistWithAlbumsID3,
@@ -32,7 +32,6 @@ import {
 } from '../model/subsonic-rest-data.js';
 
 export class SubsonicBrowsingApi extends SubsonicApiBase {
-
 	/**
 	 * Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.
 	 * Since 1.8.0
@@ -40,18 +39,18 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <artist> element on success.
 	 */
 	@SubsonicRoute('getArtist.view', () => SubsonicResponseArtistWithAlbumsID3)
-	async getArtist(@SubsonicParams() query: SubsonicParameterID, {orm, user}: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
+	async getArtist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The artist ID.
 		 */
 		const artist = await orm.Artist.findOneOrFailByID(query.id);
-		const albumlist = await orm.Album.findFilter({artistIDs: [artist.id]}, [{orderBy: AlbumOrderFields.year, orderDesc: true}]);
+		const albumlist = await orm.Album.findFilter({ artistIDs: [artist.id] }, [{ orderBy: AlbumOrderFields.year, orderDesc: true }]);
 		const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
 		const states = await orm.State.findMany(albumlist.map(a => a.id), DBObjectType.album, user.id);
 		const artistid3 = await FORMAT.packArtist(artist, state) as SubsonicArtistWithAlbumsID3;
 		artistid3.album = await Promise.all(albumlist.map(a => FORMAT.packAlbum(a, states.find(s => s.id === a.id))));
-		return {artist: artistid3};
+		return { artist: artistid3 };
 	}
 
 	/**
@@ -61,7 +60,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <album> element on success.
 	 */
 	@SubsonicRoute('getAlbum.view', () => SubsonicResponseAlbumWithSongsID3)
-	async getAlbum(@SubsonicParams() query: SubsonicParameterID, {orm, user}: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
+	async getAlbum(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album ID.
@@ -69,11 +68,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		const album = await orm.Album.findOneOrFailByID(query.id);
 		const state = await orm.State.findOrCreate(album.id, DBObjectType.album, user.id);
 		const trackIDs = await album.tracks.getIDs();
-		const tracks = await orm.Track.findFilter({ids: trackIDs}, [{orderBy: TrackOrderFields.trackNr}])
+		const tracks = await orm.Track.findFilter({ ids: trackIDs }, [{ orderBy: TrackOrderFields.trackNr }]);
 		const childs = await this.prepareTracks(orm, tracks, user);
 		const albumid3 = await FORMAT.packAlbum(album, state) as SubsonicAlbumWithSongsID3;
 		albumid3.song = childs;
-		return {album: albumid3};
+		return { album: albumid3 };
 	}
 
 	/**
@@ -83,7 +82,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo> element on success.
 	 */
 	@SubsonicRoute('getArtistInfo.view', () => SubsonicResponseArtistInfo)
-	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, {engine, orm}: Context): Promise<SubsonicResponseArtistInfo> {
+	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
@@ -125,19 +124,19 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (folder.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
 				if (lastfm && lastfm.artist) {
-					return {artistInfo: FORMAT.packArtistInfo(lastfm.artist)};
+					return { artistInfo: FORMAT.packArtistInfo(lastfm.artist) };
 				}
 			} else if (folder.artist) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
 				if (al && al.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm && lastfm.artist) {
-						return {artistInfo: FORMAT.packArtistInfo(lastfm.artist)};
+						return { artistInfo: FORMAT.packArtistInfo(lastfm.artist) };
 					}
 				}
 			}
 		}
-		return {artistInfo: {}};
+		return { artistInfo: {} };
 	}
 
 	/**
@@ -147,7 +146,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo2> element on success.
 	 */
 	@SubsonicRoute('getArtistInfo2.view', () => SubsonicResponseArtistInfo2)
-	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, {engine, orm}: Context): Promise<SubsonicResponseArtistInfo2> {
+	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
@@ -178,19 +177,19 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
 				if (lastfm && lastfm.artist) {
-					return {artistInfo2: FORMAT.packArtistInfo2(lastfm.artist)};
+					return { artistInfo2: FORMAT.packArtistInfo2(lastfm.artist) };
 				}
 			} else if (artist.name) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
 				if (al && al.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm && lastfm.artist) {
-						return {artistInfo2: FORMAT.packArtistInfo2(lastfm.artist)};
+						return { artistInfo2: FORMAT.packArtistInfo2(lastfm.artist) };
 					}
 				}
 			}
 		}
-		return {artistInfo2: {}};
+		return { artistInfo2: {} };
 	}
 
 	/**
@@ -200,7 +199,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
 	@SubsonicRoute('getAlbumInfo.view', () => SubsonicResponseAlbumInfo)
-	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, {engine, orm}: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album or song ID.
@@ -210,19 +209,19 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (folder.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
 				if (lastfm && lastfm.album) {
-					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+					return { albumInfo: FORMAT.packAlbumInfo(lastfm.album) };
 				}
 			} else if (folder.album && folder.artist) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
 				if (al && al.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 					if (lastfm && lastfm.album) {
-						return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+						return { albumInfo: FORMAT.packAlbumInfo(lastfm.album) };
 					}
 				}
 			}
 		}
-		return {albumInfo: {}};
+		return { albumInfo: {} };
 	}
 
 	/**
@@ -232,7 +231,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
 	@SubsonicRoute('getAlbumInfo2.view', () => SubsonicResponseAlbumInfo)
-	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID, {engine, orm}: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The album ID.
@@ -242,19 +241,19 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (album.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
 				if (lastfm && lastfm.album) {
-					return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+					return { albumInfo: FORMAT.packAlbumInfo(lastfm.album) };
 				}
 			} else if (album.name && album.artist.id()) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, (await album.artist.getOrFail()).name);
 				if (al && al.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 					if (lastfm && lastfm.album) {
-						return {albumInfo: FORMAT.packAlbumInfo(lastfm.album)};
+						return { albumInfo: FORMAT.packAlbumInfo(lastfm.album) };
 					}
 				}
 			}
 		}
-		return {albumInfo: {}};
+		return { albumInfo: {} };
 	}
 
 	/**
@@ -264,10 +263,10 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <genres> element on success.
 	 */
 	@SubsonicRoute('getGenres.view', () => SubsonicResponseGenres)
-	async getGenres(_query: unknown, {orm}: Context): Promise<SubsonicResponseGenres> {
+	async getGenres(_query: unknown, { orm }: Context): Promise<SubsonicResponseGenres> {
 		const genres = await orm.Genre.all();
 		const list: Array<SubsonicGenre> = await Promise.all(
-			genres.map(async (genre) => {
+			genres.map(async genre => {
 				return FORMAT.packGenre(genre);
 			})
 		);
@@ -280,7 +279,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			};
 			list.push(dummy);
 		}
-		return {genres: {genre: list}};
+		return { genres: { genre: list } };
 	}
 
 	/**
@@ -290,7 +289,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return   Returns a <subsonic-response> element with a nested <indexes> element on success.
 	 */
 	@SubsonicRoute('getIndexes.view', () => SubsonicResponseIndexes)
-	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes, {engine, orm, user}: Context): Promise<SubsonicResponseIndexes> {
+	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes, { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -300,7 +299,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			rootIDs: query.musicFolderId ? [query.musicFolderId.toString()] : undefined,
 			level: 1
 		}, user, engine.settings.settings.index.ignoreArticles);
-		const folderIndex = await engine.transform.Folder.folderIndex(orm, folderIndexORM)
+		const folderIndex = await engine.transform.Folder.folderIndex(orm, folderIndexORM);
 		if (query.ifModifiedSince && query.ifModifiedSince > 0 && (folderIndex.lastModified <= query.ifModifiedSince)) {
 			const empty: any = {};
 			return empty;
@@ -328,7 +327,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <artists> element on success.
 	 */
 	@SubsonicRoute('getArtists.view', () => SubsonicResponseArtistsID3)
-	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID, {engine, orm, user}: Context): Promise<SubsonicResponseArtistsID3> {
+	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID, { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
 		/*
          Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -356,7 +355,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return   Returns a <subsonic-response> element with a nested <directory> element on success.
 	 */
 	@SubsonicRoute('getMusicDirectory.view', () => SubsonicResponseDirectory)
-	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID, {orm, user}: Context): Promise<SubsonicResponseDirectory> {
+	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseDirectory> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the music folder. Obtained by calls to getIndexes or getMusicDirectory.
@@ -372,7 +371,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		const state = await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
 		const directory = FORMAT.packDirectory(folder, state);
 		directory.child = childs;
-		return {directory};
+		return { directory };
 	}
 
 	/**
@@ -382,9 +381,9 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <musicFolders> element on success.
 	 */
 	@SubsonicRoute('getMusicFolders.view', () => SubsonicResponseMusicFolders)
-	async getMusicFolders(_query: unknown, {orm}: Context): Promise<SubsonicResponseMusicFolders> {
+	async getMusicFolders(_query: unknown, { orm }: Context): Promise<SubsonicResponseMusicFolders> {
 		const list = await orm.Root.all();
-		return {musicFolders: {musicFolder: list.map(FORMAT.packRoot)}};
+		return { musicFolders: { musicFolder: list.map(FORMAT.packRoot) } };
 	}
 
 	/**
@@ -394,7 +393,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs> element on success.
 	 */
 	@SubsonicRoute('getSimilarSongs.view', () => SubsonicResponseSimilarSongs)
-	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs, {engine, orm, user}: Context): Promise<SubsonicResponseSimilarSongs> {
+	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
@@ -402,10 +401,10 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 */
 		const result = await orm.findInRepos(query.id, [orm.Track, orm.Folder, orm.Artist, orm.Album]);
 		if (!result?.obj) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		let tracks: PageResult<Track> | undefined;
-		const page = {take: query.count || 50, skip: 0};
+		const page = { take: query.count || 50, skip: 0 };
 		switch (result.objType) {
 			case DBObjectType.track:
 				tracks = await engine.metadata.similarTracks.byTrack(orm, result.obj as Track, page);
@@ -422,7 +421,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			default:
 		}
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
-		return {similarSongs: FORMAT.packSimilarSongs(childs)};
+		return { similarSongs: FORMAT.packSimilarSongs(childs) };
 	}
 
 	/**
@@ -432,17 +431,17 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs2> element on success.
 	 */
 	@SubsonicRoute('getSimilarSongs2.view', () => SubsonicResponseSimilarSongs2)
-	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs, {engine, orm, user}: Context): Promise<SubsonicResponseSimilarSongs2> {
+	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
 		const artist = await orm.Artist.findOneOrFailByID(query.id);
-		const page = {take: query.count || 50, skip: 0};
+		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
-		return {similarSongs2: FORMAT.packSimilarSongs2(childs)};
+		return { similarSongs2: FORMAT.packSimilarSongs2(childs) };
 	}
 
 	/**
@@ -452,14 +451,14 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <song> element on success.
 	 */
 	@SubsonicRoute('getSong.view', () => SubsonicResponseSong)
-	async getSong(@SubsonicParams() query: SubsonicParameterID, {orm, user}: Context): Promise<SubsonicResponseSong> {
+	async getSong(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseSong> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The song ID.
 		 */
 		const track = await orm.Track.findOneOrFailByID(query.id);
 		const child = await this.prepareTrack(orm, track, user);
-		return {song: child};
+		return { song: child };
 	}
 
 	/**
@@ -469,16 +468,16 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <topSongs> element on success.
 	 */
 	@SubsonicRoute('getTopSongs.view', () => SubsonicResponseTopSongs)
-	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, {engine, orm, user}: Context): Promise<SubsonicResponseTopSongs> {
+	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		artist 	Yes 		The artist name.
 		count 	No 	50 	Max number of songs to return.
 		*/
-		const page = {take: query.count || 50, skip: 0};
+		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.topTracks.byArtistName(orm, query.artist, page);
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
-		return {topSongs: {song: childs}};
+		return { topSongs: { song: childs } };
 	}
 
 	/**
@@ -489,7 +488,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('getVideos.view', () => SubsonicResponseVideos)
 	async getVideos(_query: unknown, _ctx: Context): Promise<SubsonicResponseVideos> {
-		return {videos: {}};
+		return { videos: {} };
 	}
 
 	/**
@@ -500,10 +499,10 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('getVideoInfo.view', () => SubsonicResponseVideoInfo)
 	async getVideoInfo(@SubsonicParams() _query: SubsonicParameterID, _ctx: Context): Promise<SubsonicResponseVideoInfo> {
-		/*.
+		/* .
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The video ID.
 		 */
-		return {videoInfo: {id: ''}};
+		return { videoInfo: { id: '' } };
 	}
 }

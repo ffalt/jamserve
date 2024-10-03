@@ -1,14 +1,14 @@
-import {CustomPathParameters} from '../../deco/definitions/types.js';
-import {MethodMetadata} from '../../deco/definitions/method-metadata.js';
+import { CustomPathParameters } from '../../deco/definitions/types.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
-import {ApiBinaryResult} from '../../deco/express/express-responder.js';
+import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
 import path from 'path';
-import {RestParamMetadata, RestParamsMetadata} from '../../deco/definitions/param-metadata.js';
-import {MetadataStorage} from '../../deco/definitions/metadata-storage.js';
+import { RestParamMetadata, RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
+import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 
 export interface MustacheDataClientCallFunction {
 	name: string;

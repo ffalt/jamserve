@@ -1,18 +1,17 @@
-import {Podcast} from '../../../entity/podcast/podcast.js';
-import {SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest} from '../model/subsonic-rest-params.js';
-import {logger} from '../../../utils/logger.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {EpisodeOrderFields, PodcastStatus} from '../../../types/enums.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {SubsonicNewestPodcasts, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts} from '../model/subsonic-rest-data.js';
+import { Podcast } from '../../../entity/podcast/podcast.js';
+import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-params.js';
+import { logger } from '../../../utils/logger.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { EpisodeOrderFields, PodcastStatus } from '../../../types/enums.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicNewestPodcasts, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
 
 const log = logger('SubsonicApi');
 
 export class SubsonicPodcastApi extends SubsonicApiBase {
-
 	/**
 	 * Requests the server to check for new Podcast episodes. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
@@ -20,7 +19,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('refreshPodcasts.view')
-	async refreshPodcasts(_query: unknown, {orm, engine}: Context): Promise<void> {
+	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<void> {
 		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
 	}
 
@@ -31,7 +30,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('createPodcastChannel.view')
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, {orm, engine}: Context): Promise<void> {
+	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 url 	Yes 		The URL of the Podcast to add.
@@ -47,7 +46,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <podcasts> element on success.
 	 */
 	@SubsonicRoute('getPodcasts.view', () => SubsonicResponsePodcasts)
-	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels, {orm, engine, user}: Context): Promise<SubsonicResponsePodcasts> {
+	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels, { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 includeEpisodes 	No 	true 	(Since 1.9.0) Whether to include Podcast episodes in the returned result.
@@ -67,12 +66,12 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		const channel = await Promise.all(podcastList.map(async podcast => {
 			const pod = FORMAT.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
 			if (includeEpisodes) {
-				pod.episode = await this.prepareEpisodes(engine, orm, await podcast.episodes.getItems({order: ['date', 'DESC']}), user);
+				pod.episode = await this.prepareEpisodes(engine, orm, await podcast.episodes.getItems({ order: ['date', 'DESC'] }), user);
 			}
 			return pod;
 		}));
-		const podcasts: SubsonicPodcasts = {channel};
-		return {podcasts};
+		const podcasts: SubsonicPodcasts = { channel };
+		return { podcasts };
 	}
 
 	/**
@@ -82,17 +81,17 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <newestPodcasts> element on success.
 	 */
 	@SubsonicRoute('getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts)
-	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest, {orm, engine, user}: Context): Promise<SubsonicResponseNewestPodcasts> {
+	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest, { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		count 	No 	20 	The maximum number of episodes to return.
 		 */
 		const episodes = await orm.Episode.findFilter({},
-			[{orderBy: EpisodeOrderFields.date, orderDesc: true}], {take: query.count || 20, skip: query.offset || 0},
+			[{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count || 20, skip: query.offset || 0 },
 			user);
 		const newestPodcasts: SubsonicNewestPodcasts = {};
 		newestPodcasts.episode = await this.prepareEpisodes(engine, orm, episodes, user);
-		return {newestPodcasts};
+		return { newestPodcasts };
 	}
 
 	/**
@@ -102,7 +101,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deletePodcastChannel.view')
-	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, {orm, engine}: Context): Promise<void> {
+	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
@@ -118,7 +117,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('downloadPodcastEpisode.view')
-	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, {orm, engine}: Context): Promise<void> {
+	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
@@ -136,7 +135,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deletePodcastEpisode.view')
-	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, {orm, engine}: Context): Promise<void> {
+	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.

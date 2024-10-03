@@ -1,6 +1,6 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {FieldOptions, MethodAndPropDecorator, ReturnTypeFunc} from '../../deco/definitions/types.js';
-import {BaseObjField} from '../../deco/decorators/ObjField.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { FieldOptions, MethodAndPropDecorator, ReturnTypeFunc } from '../../deco/definitions/types.js';
+import { BaseObjField } from '../../deco/decorators/ObjField.js';
 
 export function SubsonicObjField(): MethodAndPropDecorator;
 export function SubsonicObjField(options: FieldOptions): MethodAndPropDecorator;

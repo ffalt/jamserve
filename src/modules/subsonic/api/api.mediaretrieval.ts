@@ -1,5 +1,5 @@
-import {Episode} from '../../../entity/episode/episode.js';
-import {Track} from '../../../entity/track/track.js';
+import { Episode } from '../../../entity/episode/episode.js';
+import { Track } from '../../../entity/track/track.js';
 import {
 	SubsonicParameterCaptions,
 	SubsonicParameterCoverArt,
@@ -9,20 +9,19 @@ import {
 	SubsonicParameterStream,
 	SubsonicParameterUsername
 } from '../model/subsonic-rest-params.js';
-import {logger} from '../../../utils/logger.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {DBObjectType} from '../../../types/enums.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {ApiBinaryResult} from '../../deco/express/express-responder.js';
-import {SubsonicResponseLyrics} from '../model/subsonic-rest-data.js';
+import { logger } from '../../../utils/logger.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { DBObjectType } from '../../../types/enums.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { ApiBinaryResult } from '../../deco/express/express-responder.js';
+import { SubsonicResponseLyrics } from '../model/subsonic-rest-data.js';
 
 const log = logger('SubsonicApi');
 
 export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
-
 	/**
 	 * Searches for and returns lyrics for a given song.
 	 * Since 1.2.0
@@ -30,20 +29,20 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <lyrics> element on success. The <lyrics> element is empty if no matching lyrics was found.
 	 */
 	@SubsonicRoute('getLyrics.view', () => SubsonicResponseLyrics)
-	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, {orm, engine}: Context): Promise<SubsonicResponseLyrics> {
+	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 artist 	No 		The artist name.
 		 title 	No 		The song title.
 		 */
 		if (!query.artist || !query.title) {
-			return {lyrics: {content: ''}};
+			return { lyrics: { content: '' } };
 		}
 		const lyrics = await engine.metadata.lyrics(orm, query.artist, query.title);
 		if (!lyrics || !lyrics.lyrics) {
-			return {lyrics: {content: ''}};
+			return { lyrics: { content: '' } };
 		}
-		return {lyrics: {artist: query.artist, title: query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n')}};
+		return { lyrics: { artist: query.artist, title: query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n') } };
 	}
 
 	/**
@@ -53,7 +52,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * @return  Returns the cover art image in binary form.
 	 */
 	@SubsonicRoute('getCoverArt.view')
-	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, {orm, engine}: Context): Promise<ApiBinaryResult> {
+	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of a song, album or artist.
@@ -61,7 +60,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 */
 		const o = await orm.findInImageTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		return engine.image.getObjImage(orm, o.obj, o.objType, query.size);
 	}
@@ -73,7 +72,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * @return Returns the avatar image in binary form.
 	 */
 	@SubsonicRoute('getAvata.viewr')
-	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, {orm, engine}: Context): Promise<ApiBinaryResult> {
+	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The user in question.
@@ -81,7 +80,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		const name = query.username;
 		const user = await engine.user.findByName(orm, name);
 		if (!user) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		return engine.image.getObjImage(orm, user, DBObjectType.user);
 	}
@@ -109,14 +108,14 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
 	@SubsonicRoute('download.view')
-	async download(@SubsonicParams() query: SubsonicParameterID, {orm, engine, user}: Context): Promise<ApiBinaryResult> {
+	async download(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
 		const o = await orm.findInDownloadTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
 	}
@@ -128,7 +127,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
 	@SubsonicRoute('stream.view')
-	async stream(@SubsonicParams() query: SubsonicParameterStream, {orm, engine, user}: Context): Promise<ApiBinaryResult> {
+	async stream(@SubsonicParams() query: SubsonicParameterStream, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to stream. Obtained by calls to getMusicDirectory.
@@ -141,7 +140,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 */
 		const o = await orm.findInStreamTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
 		const maxBitRate = query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined;
 		switch (o.objType) {

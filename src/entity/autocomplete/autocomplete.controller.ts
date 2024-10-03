@@ -2,10 +2,10 @@ import { AutoComplete } from './autocomplete.model.js';
 import { UserRole } from '../../types/enums.js';
 import { AutoCompleteFilterArgs } from './autocomplete.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 
 @Controller('/autocomplete', { tags: ['Various'], roles: [UserRole.stream] })
 export class AutocompleteController {

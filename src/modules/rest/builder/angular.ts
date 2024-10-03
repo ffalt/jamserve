@@ -1,7 +1,7 @@
-import {MethodMetadata} from '../../deco/definitions/method-metadata.js';
-import {RestParamMetadata} from '../../deco/definitions/param-metadata.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
+import { RestParamMetadata } from '../../deco/definitions/param-metadata.js';
 import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
-import {ApiBinaryResult} from '../../deco/express/express-responder.js';
+import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import { buildTSEnums, buildTSParameterTypes, buildTSResultTypes } from './typescript.js';
 import { buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part } from './clients.js';
 

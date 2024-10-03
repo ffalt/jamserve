@@ -12,8 +12,8 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import { UserMutateArgs } from './user.args.js';
 import { randomString } from '../../utils/random.js';
-import {InvalidParamError, UnauthError} from '../../modules/deco/express/express-error.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 @InRequestScope
 export class UserService {

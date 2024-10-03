@@ -1,13 +1,12 @@
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue} from '../model/subsonic-rest-params.js';
-import {SubsonicBookmarks, SubsonicResponseBookmarks, SubsonicResponsePlayQueue} from '../model/subsonic-rest-data.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-params.js';
+import { SubsonicBookmarks, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
 
 export class SubsonicBookmarkApi extends SubsonicApiBase {
-
 	/**
 	 * Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.
 	 * Since 1.9.0
@@ -15,7 +14,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('createBookmark.view')
-	async createBookmark(@SubsonicParams() query: SubsonicParameterBookmark, {engine, orm, user}: Context): Promise<void> {
+	async createBookmark(@SubsonicParams() query: SubsonicParameterBookmark, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file to bookmark. If a bookmark already exists for this file it will be overwritten.
@@ -33,11 +32,11 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <bookmarks> element on success.
 	 */
 	@SubsonicRoute('getBookmarks.view', () => SubsonicResponseBookmarks)
-	async getBookmarks(_query: unknown, {orm, user}: Context): Promise<SubsonicResponseBookmarks> {
-		const bookmarklist = await orm.Bookmark.findFilter({userIDs: [user.id]});
+	async getBookmarks(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseBookmarks> {
+		const bookmarklist = await orm.Bookmark.findFilter({ userIDs: [user.id] });
 		const bookmarks: SubsonicBookmarks = {};
 		bookmarks.bookmark = await this.prepareBookmarks(orm, bookmarklist, user);
-		return {bookmarks};
+		return { bookmarks };
 	}
 
 	/**
@@ -47,7 +46,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deleteBookmark.view')
-	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, {engine, orm, user}: Context): Promise<void> {
+	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
@@ -64,7 +63,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <playQueue> element on success, or an empty <subsonic-response> if no play queue has been saved.
 	 */
 	@SubsonicRoute('getPlayQueue.view', () => SubsonicResponsePlayQueue)
-	async getPlayQueue(_query: unknown, {engine, orm, user}: Context): Promise<SubsonicResponsePlayQueue> {
+	async getPlayQueue(_query: unknown, { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
 		const playqueue = await engine.playQueue.get(orm, user);
 		if (!playqueue) {
 			return {} as any;
@@ -72,7 +71,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		const entries = await playqueue.entries.getItems();
 		const tracks = await Promise.all(entries.map(entry => entry.track.get()));
 		const childs = await this.prepareTracks(orm, tracks.filter(t => !!t), user);
-		return {playQueue: FORMAT.packPlayQueue(playqueue, user, childs)};
+		return { playQueue: FORMAT.packPlayQueue(playqueue, user, childs) };
 	}
 
 	/**
@@ -84,7 +83,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('savePlayQueue.view')
-	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, {engine, orm, user, client}: Context): Promise<void> {
+	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, { engine, orm, user, client }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		ID of a song in the play queue. Use one id parameter for each song in the play queue.

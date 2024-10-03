@@ -14,8 +14,8 @@ import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { Artwork } from '../artwork/artwork.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
-import {InvalidParamError, UnauthError} from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class DownloadService {

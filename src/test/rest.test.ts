@@ -3,7 +3,7 @@ import nock from 'nock';
 import { Server } from '../modules/server/server.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import {OpenAPIObject} from '../modules/deco/builder/openapi-helpers.js';
+import { OpenAPIObject } from '../modules/deco/builder/openapi-helpers.js';
 import supertest from 'supertest';
 import { JAMAPI_URL_VERSION } from '../modules/engine/rest/version.js';
 import { bindMockConfig, DBConfigs } from './mock/mock.config.js';

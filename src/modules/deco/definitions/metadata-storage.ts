@@ -1,11 +1,11 @@
-import {MethodMetadata} from './method-metadata.js';
-import {ResultClassMetadata} from './object-class-metdata.js';
-import {ClassMetadata} from './class-metadata.js';
-import {EnumMetadata} from './enum-metadata.js';
-import {ControllerClassMetadata} from './controller-metadata.js';
-import {FieldMetadata} from './field-metadata.js';
-import {ParamMetadata} from './param-metadata.js';
-import {ensureReflectMetadataExists} from '../../../utils/reflect.js';
+import { MethodMetadata } from './method-metadata.js';
+import { ResultClassMetadata } from './object-class-metdata.js';
+import { ClassMetadata } from './class-metadata.js';
+import { EnumMetadata } from './enum-metadata.js';
+import { ControllerClassMetadata } from './controller-metadata.js';
+import { FieldMetadata } from './field-metadata.js';
+import { ParamMetadata } from './param-metadata.js';
+import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 
 export class MetadataStorage {
 	initialized = false;
@@ -42,7 +42,7 @@ export class MetadataStorage {
 				const fields = this.fields.filter(field => field.target === def.target);
 				fields.forEach(field => {
 					field.params = this.params.filter(
-						param => param.target === field.target && field.name === param.methodName,
+						param => param.target === field.target && field.name === param.methodName
 					);
 				});
 				def.fields = fields;

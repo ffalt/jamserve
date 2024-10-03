@@ -1,5 +1,5 @@
-import {ControllerOptions} from '../definitions/types.js';
-import {MetadataStorage} from '../definitions/metadata-storage.js';
+import { ControllerOptions } from '../definitions/types.js';
+import { MetadataStorage } from '../definitions/metadata-storage.js';
 
 function extractClassName(target: Function): string {
 	const s = target.toString().split(' ');
@@ -7,7 +7,7 @@ function extractClassName(target: Function): string {
 }
 
 export function BaseController(metadata: MetadataStorage,
-						   route: string, options?: ControllerOptions): ClassDecorator {
+	route: string, options?: ControllerOptions): ClassDecorator {
 	return (target): void => {
 		metadata.controllerClasses.push({
 			target,

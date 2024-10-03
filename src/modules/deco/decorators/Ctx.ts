@@ -1,5 +1,5 @@
-import {SymbolKeysNotSupportedError} from 'type-graphql';
-import {MetadataStorage} from '../definitions/metadata-storage.js';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
+import { MetadataStorage } from '../definitions/metadata-storage.js';
 
 export function BaseCtx(metadata: MetadataStorage, propertyName?: string): ParameterDecorator {
 	return (prototype, propertyKey, parameterIndex): void => {
@@ -11,7 +11,7 @@ export function BaseCtx(metadata: MetadataStorage, propertyName?: string): Param
 			target: prototype.constructor,
 			methodName: propertyKey,
 			index: parameterIndex,
-			propertyName,
+			propertyName
 		});
 	};
 }

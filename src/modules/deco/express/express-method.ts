@@ -1,5 +1,5 @@
 import { MethodMetadata } from '../definitions/method-metadata.js';
-import {RestContext} from './context.js';
+import { RestContext } from './context.js';
 import { GenericError, UnauthError } from './express-error.js';
 import { ApiBaseResponder } from './express-responder.js';
 import { logger } from '../../../utils/logger.js';
@@ -7,9 +7,9 @@ import { ExpressParameters } from './express-parameters.js';
 import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
 import express, { Router } from 'express';
 import { processCustomPathParameters } from './express-path-parameters.js';
-import {ResultClassMetadata} from '../definitions/object-class-metdata.js';
-import {EnumMetadata} from '../definitions/enum-metadata.js';
-import {MetadataStorage} from '../definitions/metadata-storage.js';
+import { ResultClassMetadata } from '../definitions/object-class-metdata.js';
+import { EnumMetadata } from '../definitions/enum-metadata.js';
+import { MetadataStorage } from '../definitions/metadata-storage.js';
 
 const log = logger('RestAPI');
 
@@ -23,8 +23,8 @@ export interface RouteInfo {
 export interface RestOptions {
 	validateRoles: (user: Express.User | undefined, roles: Array<string>) => boolean;
 	tmpPath: string;
-	resultTypes: ResultClassMetadata[],
-	enums: EnumMetadata[],
+	resultTypes: ResultClassMetadata[];
+	enums: EnumMetadata[];
 	responder: ApiBaseResponder;
 }
 
@@ -57,7 +57,7 @@ export class ExpressMethod {
 		return args;
 	}
 
-	private async callMethod(method: MethodMetadata, context: RestContext<any, any, any>, name: string, {responder, resultTypes}: RestOptions, metadata: MetadataStorage): Promise<void> {
+	private async callMethod(method: MethodMetadata, context: RestContext<any, any, any>, name: string, { responder, resultTypes }: RestOptions, metadata: MetadataStorage): Promise<void> {
 		try {
 			const Controller = method.controllerClassMetadata?.target as any;
 			if (!Controller) {
@@ -131,7 +131,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(post, {req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user}, 'Post', options, metadata);
+				await this.callMethod(post, { req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user }, 'Post', options, metadata);
 			} catch (e: any) {
 				options.responder.sendError(req, res, e);
 			}
@@ -166,7 +166,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get', options, metadata);
+				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get', options, metadata);
 			} catch (e: any) {
 				options.responder.sendError(req, res, e);
 			}
@@ -201,7 +201,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(get, {req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user}, 'Get', options, metadata);
+				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get', options, metadata);
 			} catch (e: any) {
 				options.responder.sendError(req, res, e);
 			}

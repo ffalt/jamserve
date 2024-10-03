@@ -1,13 +1,12 @@
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername} from '../model/subsonic-rest-params.js';
-import {SubsonicResponseUser, SubsonicResponseUsers} from '../model/subsonic-rest-data.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-params.js';
+import { SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
 
 export class SubsonicUserApi extends SubsonicApiBase {
-
 	/**
 	 * Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
 	 * Since 1.1.0
@@ -151,22 +150,22 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <user> element on success.
 	 */
 	@SubsonicRoute('getUser.view', () => SubsonicResponseUser)
-	async getUser(@SubsonicParams() query: SubsonicParameterUsername, {orm, user}: Context): Promise<SubsonicResponseUser> {
+	async getUser(@SubsonicParams() query: SubsonicParameterUsername, { orm, user }: Context): Promise<SubsonicResponseUser> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
 		  */
 		if ((!query.username) || (user.name === query.username)) {
-			return {user: FORMAT.packUser(user)};
+			return { user: FORMAT.packUser(user) };
 		}
 		if (!user.roleAdmin) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 		}
-		const u = await orm.User.findOne({where: {name: query.username}});
+		const u = await orm.User.findOne({ where: { name: query.username } });
 		if (!u) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
 		}
-		return {user: FORMAT.packUser(u)};
+		return { user: FORMAT.packUser(u) };
 	}
 
 	/**
@@ -176,12 +175,12 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <users> element on success.
 	 */
 	@SubsonicRoute('getUsers.view', () => SubsonicResponseUsers)
-	async getUsers(_query: unknown, {orm, user}: Context): Promise<SubsonicResponseUsers> {
+	async getUsers(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseUsers> {
 		if (!user.roleAdmin) {
-			return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
 		}
 		const users = await orm.User.all();
-		return {users: {user: users.map(FORMAT.packUser)}};
+		return { users: { user: users.map(FORMAT.packUser) } };
 	}
 
 	/**

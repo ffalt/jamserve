@@ -17,7 +17,7 @@ import { GpodderPodcast, GpodderTag } from '../../modules/audio/clients/gpodder-
 import { PageResult } from '../base/base.js';
 import { paginate } from '../base/base.utils.js';
 import { PageArgs } from '../base/base.args.js';
-import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('PodcastService');
 

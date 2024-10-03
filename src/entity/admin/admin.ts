@@ -1,8 +1,8 @@
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Min } from 'class-validator';
-import {ResultType} from '../../modules/rest/decorators/ResultType.js';
-import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
-import {ObjField} from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 const AdminSettingsChatMaxAgeDesc = {
 	_: 'Admin Chat Maximum Age Settings',

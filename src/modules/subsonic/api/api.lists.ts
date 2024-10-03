@@ -1,14 +1,14 @@
-import {Album} from '../../../entity/album/album.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {randomItems} from '../../../utils/random.js';
-import {SubsonicApiBase} from './api.base.js';
-import {FORMAT} from '../format.js';
-import {AlbumOrderFields, DBObjectType, FolderOrderFields, FolderType, FolderTypesAlbum, ListType} from '../../../types/enums.js';
-import {TrackFilterArgs} from '../../../entity/track/track.args.js';
-import {SubsonicRoute} from '../decorators/SubsonicRoute.js';
-import {Context} from '../../engine/rest/context.js';
-import {SubsonicParams} from '../decorators/SubsonicParams.js';
-import {SubsonicParameterAlbumList, SubsonicParameterSongsByGenre, SubsonicParameterAlbumList2, SubsonicParameterRandomSong, SubsonicParameterMusicFolderID} from '../model/subsonic-rest-params.js';
+import { Album } from '../../../entity/album/album.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { randomItems } from '../../../utils/random.js';
+import { SubsonicApiBase } from './api.base.js';
+import { FORMAT } from '../format.js';
+import { AlbumOrderFields, DBObjectType, FolderOrderFields, FolderType, FolderTypesAlbum, ListType } from '../../../types/enums.js';
+import { TrackFilterArgs } from '../../../entity/track/track.args.js';
+import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { Context } from '../../engine/rest/context.js';
+import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameterAlbumList, SubsonicParameterSongsByGenre, SubsonicParameterAlbumList2, SubsonicParameterRandomSong, SubsonicParameterMusicFolderID } from '../model/subsonic-rest-params.js';
 import {
 	SubsonicNowPlayingEntry, SubsonicResponseAlbumList,
 	SubsonicResponseAlbumList2,
@@ -20,7 +20,6 @@ import {
 } from '../model/subsonic-rest-data.js';
 
 export class SubsonicListsApi extends SubsonicApiBase {
-
 	/**
 	 * Returns what is currently being played by all users. Takes no extra parameters.
 	 * Since 1.0.0
@@ -28,7 +27,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <nowPlaying> element on success.
 	 */
 	@SubsonicRoute('getNowPlaying.view', () => SubsonicResponseNowPlaying)
-	async getNowPlaying(_query: unknown, {engine, orm, user}: Context): Promise<SubsonicResponseNowPlaying> {
+	async getNowPlaying(_query: unknown, { engine, orm, user }: Context): Promise<SubsonicResponseNowPlaying> {
 		const list = await engine.nowPlaying.getNowPlaying();
 		const result: Array<SubsonicNowPlayingEntry> = [];
 		for (const entry of list) {
@@ -36,7 +35,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
 			result.push(await FORMAT.packNowPlaying(entry, state));
 		}
-		return {nowPlaying: {entry: result}};
+		return { nowPlaying: { entry: result } };
 	}
 
 	/**
@@ -46,7 +45,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <randomSongs> element on success.
 	 */
 	@SubsonicRoute('getRandomSongs.view', () => SubsonicResponseRandomSongs)
-	async getRandomSongs(@SubsonicParams() query: SubsonicParameterRandomSong, {orm, user}: Context): Promise<SubsonicResponseRandomSongs> {
+	async getRandomSongs(@SubsonicParams() query: SubsonicParameterRandomSong, { orm, user }: Context): Promise<SubsonicResponseRandomSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 size 	No 	10 	The maximum number of songs to return. Max 500.
@@ -69,7 +68,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 			const tracks = await orm.Track.findByIDs(limit);
 			randomSongs.song = await this.prepareTracks(orm, tracks, user);
 		}
-		return {randomSongs};
+		return { randomSongs };
 	}
 
 	/**
@@ -79,7 +78,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return  Returns a <subsonic-response> element with a nested <albumList> element on success.
 	 */
 	@SubsonicRoute('getAlbumList.view', () => SubsonicResponseAlbumList)
-	async getAlbumList(@SubsonicParams() query: SubsonicParameterAlbumList, {orm, user}: Context): Promise<SubsonicResponseAlbumList> {
+	async getAlbumList(@SubsonicParams() query: SubsonicParameterAlbumList, { orm, user }: Context): Promise<SubsonicResponseAlbumList> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, highest, frequent, recent.
@@ -99,9 +98,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				folders = (await orm.Folder.findListFilter(
 					ListType.random,
 					undefined,
-					{folderTypes: FolderTypesAlbum},
+					{ folderTypes: FolderTypesAlbum },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -109,9 +108,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				folders = (await orm.Folder.findListFilter(
 					ListType.faved,
 					undefined,
-					{folderTypes: FolderTypesAlbum},
+					{ folderTypes: FolderTypesAlbum },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -119,9 +118,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				folders = (await orm.Folder.findListFilter(
 					ListType.frequent,
 					undefined,
-					{folderTypes: FolderTypesAlbum},
+					{ folderTypes: FolderTypesAlbum },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -129,9 +128,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				folders = (await orm.Folder.findListFilter(
 					ListType.recent,
 					undefined,
-					{folderTypes: FolderTypesAlbum},
+					{ folderTypes: FolderTypesAlbum },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -139,38 +138,38 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				folders = (await orm.Folder.findListFilter(
 					ListType.highest,
 					undefined,
-					{folderTypes: FolderTypesAlbum},
+					{ folderTypes: FolderTypesAlbum },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
 			case 'newest':
 				folders = await orm.Folder.findFilter(
-					{folderTypes: FolderTypesAlbum},
-					[{orderBy: FolderOrderFields.created, orderDesc: true}],
-					{skip, take}
+					{ folderTypes: FolderTypesAlbum },
+					[{ orderBy: FolderOrderFields.created, orderDesc: true }],
+					{ skip, take }
 				);
 				break;
 			case 'alphabeticalByArtist':
 				folders = await orm.Folder.findFilter(
-					{folderTypes: FolderTypesAlbum},
-					[{orderBy: FolderOrderFields.artist, orderDesc: false}],
-					{skip, take}
+					{ folderTypes: FolderTypesAlbum },
+					[{ orderBy: FolderOrderFields.artist, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			case 'alphabeticalByName':
 				folders = await orm.Folder.findFilter(
-					{folderTypes: FolderTypesAlbum},
-					[{orderBy: FolderOrderFields.album, orderDesc: false}],
-					{skip, take}
+					{ folderTypes: FolderTypesAlbum },
+					[{ orderBy: FolderOrderFields.album, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			case 'byGenre':
 				folders = await orm.Folder.findFilter(
-					{folderTypes: FolderTypesAlbum, genres: query.genre ? [query.genre] : undefined},
-					[{orderBy: FolderOrderFields.album, orderDesc: false}],
-					{skip, take}
+					{ folderTypes: FolderTypesAlbum, genres: query.genre ? [query.genre] : undefined },
+					[{ orderBy: FolderOrderFields.album, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			case 'byYear':
@@ -180,15 +179,15 @@ export class SubsonicListsApi extends SubsonicApiBase {
 						fromYear: query.fromYear,
 						toYear: query.toYear
 					},
-					[{orderBy: FolderOrderFields.album, orderDesc: false}],
-					{skip, take}
+					[{ orderBy: FolderOrderFields.album, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			default:
-				return Promise.reject({fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type'});
+				return Promise.reject({ fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type' });
 		}
 		const result = await this.prepareFolders(orm, folders, user);
-		return {albumList: {album: result}};
+		return { albumList: { album: result } };
 	}
 
 	/**
@@ -198,7 +197,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <albumList2> element on success.
 	 */
 	@SubsonicRoute('getAlbumList2.view', () => SubsonicResponseAlbumList2)
-	async getAlbumList2(@SubsonicParams() query: SubsonicParameterAlbumList2, {orm, user}: Context): Promise<SubsonicResponseAlbumList2> {
+	async getAlbumList2(@SubsonicParams() query: SubsonicParameterAlbumList2, { orm, user }: Context): Promise<SubsonicResponseAlbumList2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre.
@@ -218,9 +217,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				albums = (await orm.Album.findListFilter(
 					ListType.random,
 					undefined,
-					{rootIDs},
+					{ rootIDs },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -228,9 +227,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				albums = (await orm.Album.findListFilter(
 					ListType.faved,
 					undefined,
-					{rootIDs},
+					{ rootIDs },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -238,9 +237,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				albums = (await orm.Album.findListFilter(
 					ListType.frequent,
 					undefined,
-					{rootIDs},
+					{ rootIDs },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -248,9 +247,9 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				albums = (await orm.Album.findListFilter(
 					ListType.recent,
 					undefined,
-					{rootIDs},
+					{ rootIDs },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
@@ -258,52 +257,52 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				albums = (await orm.Album.findListFilter(
 					ListType.highest,
 					undefined,
-					{rootIDs},
+					{ rootIDs },
 					undefined,
-					{skip, take},
+					{ skip, take },
 					user
 				)).items;
 				break;
 			case 'byGenre':
 				albums = await orm.Album.findFilter(
-					{genres: query.genre ? [query.genre] : undefined, rootIDs},
-					[{orderBy: AlbumOrderFields.name, orderDesc: false}],
-					{skip, take}
+					{ genres: query.genre ? [query.genre] : undefined, rootIDs },
+					[{ orderBy: AlbumOrderFields.name, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			case 'byYear':
 				albums = await orm.Album.findFilter(
-					{fromYear: query.fromYear, toYear: query.toYear, rootIDs},
-					[{orderBy: AlbumOrderFields.name, orderDesc: false}],
-					{skip, take}
+					{ fromYear: query.fromYear, toYear: query.toYear, rootIDs },
+					[{ orderBy: AlbumOrderFields.name, orderDesc: false }],
+					{ skip, take }
 				);
 				break;
 			case 'newest':
 				albums = await orm.Album.findFilter(
-					{rootIDs},
-					[{orderBy: AlbumOrderFields.created, orderDesc: true}],
-					{skip, take}
+					{ rootIDs },
+					[{ orderBy: AlbumOrderFields.created, orderDesc: true }],
+					{ skip, take }
 				);
 				break;
 			case 'alphabeticalByArtist':
 				albums = await orm.Album.findFilter(
-					{rootIDs},
-					[{orderBy: AlbumOrderFields.artist, orderDesc: true}],
-					{skip, take}
+					{ rootIDs },
+					[{ orderBy: AlbumOrderFields.artist, orderDesc: true }],
+					{ skip, take }
 				);
 				break;
 			case 'alphabeticalByName':
 				albums = await orm.Album.findFilter(
-					{rootIDs},
-					[{orderBy: AlbumOrderFields.name, orderDesc: true}],
-					{skip, take}
+					{ rootIDs },
+					[{ orderBy: AlbumOrderFields.name, orderDesc: true }],
+					{ skip, take }
 				);
 				break;
 			default:
-				return Promise.reject({fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type'});
+				return Promise.reject({ fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type' });
 		}
 		const result = await this.prepareAlbums(orm, albums, user);
-		return {albumList2: {album: result}};
+		return { albumList2: { album: result } };
 	}
 
 	/**
@@ -313,7 +312,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <songsByGenre> element on success.
 	 */
 	@SubsonicRoute('getSongsByGenre.view', () => SubsonicResponseSongsByGenre)
-	async getSongsByGenre(@SubsonicParams() query: SubsonicParameterSongsByGenre, {orm, user}: Context): Promise<SubsonicResponseSongsByGenre> {
+	async getSongsByGenre(@SubsonicParams() query: SubsonicParameterSongsByGenre, { orm, user }: Context): Promise<SubsonicResponseSongsByGenre> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 genre 	Yes 		The genre, as returned by getGenres.
@@ -325,10 +324,10 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		const skip = query.offset || 0;
 		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
 		const genres = query.genre ? [query.genre] : undefined;
-		const tracks = await orm.Track.findFilter({rootIDs, genres}, undefined, {skip, take}, user);
+		const tracks = await orm.Track.findFilter({ rootIDs, genres }, undefined, { skip, take }, user);
 		const songsByGenre: SubsonicSongs = {};
 		songsByGenre.song = await this.prepareTracks(orm, tracks, user);
-		return {songsByGenre};
+		return { songsByGenre };
 	}
 
 	/**
@@ -338,26 +337,26 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <starred> element on success.
 	 */
 	@SubsonicRoute('getStarred.view', () => SubsonicResponseStarred)
-	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID, {orm, user}: Context): Promise<SubsonicResponseStarred> {
+	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID, { orm, user }: Context): Promise<SubsonicResponseStarred> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
 		 */
 		const starred: SubsonicStarred = {};
 		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
-		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, {rootIDs}, undefined, undefined, user);
+		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
 			starred.song = await this.prepareTracks(orm, tracks.items, user);
 		}
-		const artists = await orm.Folder.findListFilter(ListType.faved, undefined, {folderTypes: [FolderType.artist], rootIDs}, undefined, undefined, user);
+		const artists = await orm.Folder.findListFilter(ListType.faved, undefined, { folderTypes: [FolderType.artist], rootIDs }, undefined, undefined, user);
 		if (artists.items.length > 0) {
 			starred.artist = await this.prepareFolderArtists(orm, artists.items, user);
 		}
-		const albums = await orm.Folder.findListFilter(ListType.faved, undefined, {folderTypes: FolderTypesAlbum, rootIDs}, undefined, undefined, user);
+		const albums = await orm.Folder.findListFilter(ListType.faved, undefined, { folderTypes: FolderTypesAlbum, rootIDs }, undefined, undefined, user);
 		if (albums.items.length > 0) {
 			starred.album = await this.prepareFolders(orm, albums.items, user);
 		}
-		return {starred};
+		return { starred };
 	}
 
 	/**
@@ -367,25 +366,25 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <starred2> element on success.
 	 */
 	@SubsonicRoute('getStarred2.view', () => SubsonicResponseStarred2)
-	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID, {orm, user}: Context): Promise<SubsonicResponseStarred2> {
+	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID, { orm, user }: Context): Promise<SubsonicResponseStarred2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders
 		 */
 		const starred2: SubsonicStarred2 = {};
 		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
-		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, {rootIDs}, undefined, undefined, user);
+		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
 			starred2.song = await this.prepareTracks(orm, tracks.items, user);
 		}
-		const artists = await orm.Artist.findListFilter(ListType.faved, undefined, {rootIDs}, undefined, undefined, user);
+		const artists = await orm.Artist.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (artists.items.length > 0) {
 			starred2.artist = await this.prepareArtists(orm, artists.items, user);
 		}
-		const albums = await orm.Album.findListFilter(ListType.faved, undefined, {rootIDs}, undefined, undefined, user);
+		const albums = await orm.Album.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (albums.items.length > 0) {
 			starred2.album = await this.prepareAlbums(orm, albums.items, user);
 		}
-		return {starred2};
+		return { starred2 };
 	}
 }

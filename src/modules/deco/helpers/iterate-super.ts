@@ -1,5 +1,5 @@
-import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
-import {ClassMetadata} from '../definitions/class-metadata.js';
+import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
+import { ClassMetadata } from '../definitions/class-metadata.js';
 
 export function iterateControllers(controllerClasses: ControllerClassMetadata[], ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void): void {
 	onControl(ctrl);

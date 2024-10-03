@@ -2,12 +2,12 @@ import { UserRole } from '../../types/enums.js';
 import { AdminChangeQueueInfo, AdminSettings } from './admin.js';
 import { AdminSettingsArgs } from './admin.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
-import {QueryParam} from '../../modules/rest/decorators/QueryParam.js';
-import {Post} from '../../modules/rest/decorators/Post.js';
-import {BodyParams} from '../../modules/rest/decorators/BodyParams.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
 
 @Controller('/admin', { tags: ['Administration'], roles: [UserRole.admin] })
 export class AdminController {

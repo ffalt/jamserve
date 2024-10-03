@@ -1,11 +1,10 @@
 import express from 'express';
-import {FORMAT} from './format.js';
-import {SubsonicParameterRequest} from './parameters.js';
-import {xml} from './xml.js';
-import {ApiBaseResponder, ApiBinaryResult} from '../deco/express/express-responder.js';
+import { FORMAT } from './format.js';
+import { SubsonicParameterRequest } from './parameters.js';
+import { xml } from './xml.js';
+import { ApiBaseResponder, ApiBinaryResult } from '../deco/express/express-responder.js';
 
 export class ApiResponder extends ApiBaseResponder {
-
 	private send(req: express.Request, res: express.Response, data: any): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
 		const params = (req as SubsonicParameterRequest).parameters;
@@ -36,7 +35,7 @@ export class ApiResponder extends ApiBaseResponder {
 	}
 
 	public sendErrorMsg(req: express.Request, res: express.Response, code: number, msg: string): void {
-		this.sendError(req, res, {code, fail: msg});
+		this.sendError(req, res, { code, fail: msg });
 	}
 
 	public sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {

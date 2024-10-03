@@ -9,11 +9,11 @@ import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
 import { AlbumPage } from '../album/album.model.js';
 import { ArtistOrderArgs, IncludesArtistArgs } from '../artist/artist.args.js';
 import { ArtistPage } from '../artist/artist.model.js';
-import {Controller} from '../../modules/rest/decorators/Controller.js';
-import {Get} from '../../modules/rest/decorators/Get.js';
-import {QueryParam} from '../../modules/rest/decorators/QueryParam.js';
-import {QueryParams} from '../../modules/rest/decorators/QueryParams.js';
-import {Ctx} from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 
 @Controller('/genre', { tags: ['Genres'], roles: [UserRole.stream] })
 export class GenreController {
