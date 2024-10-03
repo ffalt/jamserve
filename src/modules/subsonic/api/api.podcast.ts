@@ -105,7 +105,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
-		const podcast = await this.findOneOrFailByID(query.id, orm.Podcast);
+		const podcast = await this.subsonicORM.findOneOrFailByID(query.id, orm.Podcast);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
 	}
 
@@ -121,7 +121,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
 		 */
-		const episode = await this.findOneOrFailByID(query.id, orm.Episode);
+		const episode = await this.subsonicORM.findOneOrFailByID(query.id, orm.Episode);
 		if (!episode.path) {
 			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
@@ -139,7 +139,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
-		const episode = await this.findOneOrFailByID(query.id, orm.Episode);
+		const episode = await this.subsonicORM.findOneOrFailByID(query.id, orm.Episode);
 		await engine.episode.deleteEpisode(orm, episode);
 	}
 }

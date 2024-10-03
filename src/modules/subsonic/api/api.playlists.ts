@@ -100,7 +100,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
 		 */
-		const playlist = await this.findOneOrFailByID(query.id, orm.Playlist);
+		const playlist = await this.subsonicORM.findOneOrFailByID(query.id, orm.Playlist);
 		if (user.id !== playlist.user.id()) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
@@ -150,7 +150,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.
 		 */
-		const playlist = await this.findOneOrFailByID(query.id, orm.Playlist);
+		const playlist = await this.subsonicORM.findOneOrFailByID(query.id, orm.Playlist);
 		if (playlist.user.id() !== user.id) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}

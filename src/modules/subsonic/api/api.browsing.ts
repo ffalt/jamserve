@@ -43,7 +43,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The artist ID.
 		 */
-		const artist = await this.findOneOrFailByID(query.id, orm.Artist);
+		const artist = await this.subsonicORM.findOneOrFailByID(query.id, orm.Artist);
 		const albumlist = await orm.Album.findFilter({ artistIDs: [artist.id] }, [{ orderBy: AlbumOrderFields.year, orderDesc: true }]);
 		const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
 		const states = await orm.State.findMany(albumlist.map(a => a.id), DBObjectType.album, user.id);
@@ -64,7 +64,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album ID.
 		 */
-		const album = await this.findOneOrFailByID(query.id, orm.Album);
+		const album = await this.subsonicORM.findOneOrFailByID(query.id, orm.Album);
 		const state = await orm.State.findOrCreate(album.id, DBObjectType.album, user.id);
 		const trackIDs = await album.tracks.getIDs();
 		const tracks = await orm.Track.findFilter({ ids: trackIDs }, [{ orderBy: TrackOrderFields.trackNr }]);
@@ -203,7 +203,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album or song ID.
 		 */
-		const folder = await this.findOneOrFailByID(query.id, orm.Folder);
+		const folder = await this.subsonicORM.findOneOrFailByID(query.id, orm.Folder);
 		if (folder) {
 			if (folder.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
@@ -235,7 +235,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The album ID.
 		 */
-		const album = await this.findOneOrFailByID(query.id, orm.Album);
+		const album = await this.subsonicORM.findOneOrFailByID(query.id, orm.Album);
 		if (album) {
 			if (album.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
@@ -359,7 +359,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the music folder. Obtained by calls to getIndexes or getMusicDirectory.
 		 */
-		const folder = await this.findOneOrFailByID(query.id, orm.Folder);
+		const folder = await this.subsonicORM.findOneOrFailByID(query.id, orm.Folder);
 		const tracks = await folder.tracks.getItems();
 		const folders = await folder.children.getItems();
 		let childs: Array<SubsonicChild> = [];
@@ -455,7 +455,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The song ID.
 		 */
-		const track = await this.findOneOrFailByID(query.id, orm.Track);
+		const track = await this.subsonicORM.findOneOrFailByID(query.id, orm.Track);
 		const child = await this.prepareTrack(orm, track, user);
 		return { song: child };
 	}

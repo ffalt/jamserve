@@ -9,6 +9,7 @@ import { SubsonicApi } from '../../subsonic/api/api.js';
 import { RestOptions } from '../../deco/express/express-method.js';
 import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
 import { ApiResponder } from '../../subsonic/response.js';
+import { SubsonicORM } from '../../subsonic/api/api.orm.js';
 
 const log = logger('SUBSONIC');
 

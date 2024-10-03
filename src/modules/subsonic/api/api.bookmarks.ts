@@ -50,7 +50,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
 		 */
-		const id = await this.resolveID(query.id);
+		const id = await this.subsonicORM.resolveID(query.id);
 		if (id) {
 			await engine.bookmark.remove(orm, id, user.id);
 		}

@@ -19,7 +19,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		id 	Yes 		The ID for the station.
 		 */
 
-		const radio = await this.findOneOrFailByID(query.id, orm.Radio);
+		const radio = await this.subsonicORM.findOneOrFailByID(query.id, orm.Radio);
 		await orm.Radio.removeAndFlush(radio);
 	}
 

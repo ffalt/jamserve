@@ -112,7 +112,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
-		const id = await this.resolveID(query.id);
+		const id = await this.subsonicORM.resolveID(query.id);
 		if (!id) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}

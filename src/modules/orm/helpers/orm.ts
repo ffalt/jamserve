@@ -3,7 +3,6 @@ import seq, { Sequelize } from 'sequelize';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { ORMConfig } from '../definitions/config.js';
 import { ModelBuilder } from '../builder/schema.js';
-
 export class ORM {
 	public cache = new EntityCache();
 
@@ -14,7 +13,7 @@ export class ORM {
 		return orm;
 	}
 
-	constructor(private sequelize: Sequelize, private config: ORMConfig) {
+	constructor(public sequelize: Sequelize, private config: ORMConfig) {
 	}
 
 	async init(): Promise<void> {

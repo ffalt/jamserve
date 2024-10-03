@@ -16,7 +16,7 @@ import { Settings } from '../../../entity/settings/settings.js';
 import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
 import { Tag } from '../../../entity/tag/tag.js';
-import { InRequestScope } from 'typescript-ioc';
+import { Inject, InRequestScope } from 'typescript-ioc';
 import { MetaData } from '../../../entity/metadata/metadata.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
@@ -50,10 +50,11 @@ import { ORMEntities } from '../orm/entities.js';
 import { ORMRepositories } from '../orm/repositories.js';
 import { registerORMEnums } from '../orm/enum-registration.js';
 import { ConfigService } from './config.service.js';
-import { Options } from 'sequelize';
+import { Options, Sequelize } from 'sequelize';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
 import { NotFoundError } from '../../deco/express/express-error.js';
+import { SubsonicORM } from '../../subsonic/api/api.orm.js';
 
 registerORMEnums();
 
@@ -219,21 +220,32 @@ export class Orm {
 @InRequestScope
 export class OrmService {
 	private orm!: ORM;
+	@Inject subsonicORM!: SubsonicORM;
+
+	private sqliteConfig(config: ConfigService): Partial<Options> {
+		return {
+			dialect: 'sqlite',
+			storage: path.resolve(config.env.paths.data, 'jam.sqlite')
+		};
+	}
+
+	private dialoectConfig(config: ConfigService): Partial<Options> {
+		return {
+			dialect: config.env.db.dialect,
+			username: config.env.db.user,
+			password: config.env.db.password,
+			database: config.env.db.name,
+			host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+			port: config.env.db.port ? Number(config.env.db.port) : undefined
+		};
+	}
 
 	async init(config: ConfigService): Promise<void> {
+		await this.subsonicORM.init(config);
+
 		const db: Partial<Options> = config.env.db.dialect === 'sqlite' ?
-				{
-					dialect: 'sqlite',
-					storage: path.resolve(config.env.paths.data, 'jam.sqlite')
-				} :
-				{
-					dialect: config.env.db.dialect,
-					username: config.env.db.user,
-					password: config.env.db.password,
-					database: config.env.db.name,
-					host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
-					port: config.env.db.port ? Number(config.env.db.port) : undefined
-				};
+			this.sqliteConfig(config) :
+			this.dialoectConfig(config);
 
 		this.orm = await ORM.init({
 			entities: ORMEntities,
@@ -268,5 +280,9 @@ export class OrmService {
 
 	async drop(): Promise<void> {
 		await this.orm.dropSchema();
+	}
+
+	sequilize(): Sequelize {
+		return this.orm.sequelize;
 	}
 }
