@@ -1,14 +1,13 @@
-import {InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {PlayQueue as ORMPlayQueue} from './playqueue.js';
-import {IncludesPlayQueueArgs} from './playqueue.args.js';
-import {User} from '../user/user.js';
-import {PlayQueueBase} from './playqueue.model.js';
+import { InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { PlayQueue as ORMPlayQueue } from './playqueue.js';
+import { IncludesPlayQueueArgs } from './playqueue.args.js';
+import { User } from '../user/user.js';
+import { PlayQueueBase } from './playqueue.model.js';
 
 @InRequestScope
 export class PlayQueueTransformService extends BaseTransformService {
-
 	async playQueueBase(orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, user: User): Promise<PlayQueueBase> {
 		const u = o.user.id() === user.id ? user : await o.user.getOrFail();
 		return {
@@ -23,5 +22,4 @@ export class PlayQueueTransformService extends BaseTransformService {
 			entriesIDs: playQueueArgs.playQueueEntriesIDs ? (await o.entries.getItems()).map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined
 		};
 	}
-
 }

@@ -1,12 +1,12 @@
-import {MethodMetadata} from '../definitions/method-metadata.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
 import {RestContext} from './context.js';
-import {GenericError, UnauthError} from './express-error.js';
-import {ApiBaseResponder} from './express-responder.js';
-import {logger} from '../../../utils/logger.js';
-import {ExpressParameters} from './express-parameters.js';
-import {ControllerClassMetadata} from '../definitions/controller-metadata.js';
-import express, {Router} from 'express';
-import {processCustomPathParameters} from './express-path-parameters.js';
+import { GenericError, UnauthError } from './express-error.js';
+import { ApiBaseResponder } from './express-responder.js';
+import { logger } from '../../../utils/logger.js';
+import { ExpressParameters } from './express-parameters.js';
+import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
+import express, { Router } from 'express';
+import { processCustomPathParameters } from './express-path-parameters.js';
 import {ResultClassMetadata} from '../definitions/object-class-metdata.js';
 import {EnumMetadata} from '../definitions/enum-metadata.js';
 import {MetadataStorage} from '../definitions/metadata-storage.js';
@@ -86,7 +86,7 @@ export class ExpressMethod {
 			if (!resultType) {
 				throw GenericError(
 					`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
-					`is not a class decorated with '@ResultType' decorator!`,
+					`is not a class decorated with '@ResultType' decorator!`
 				);
 			}
 			// eslint-disable-next-line prefer-spread

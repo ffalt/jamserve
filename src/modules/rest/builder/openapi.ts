@@ -22,9 +22,9 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 			parameters,
 			requestBody: isPost ? this.buildRequestBody(method, schemas) : undefined,
 			responses: this.buildResponses(method, parameters, roles, schemas),
-			security: roles.length === 0 ? [] : [{cookieAuth: roles}, {bearerAuth: roles}]
+			security: roles.length === 0 ? [] : [{ cookieAuth: roles }, { bearerAuth: roles }]
 		};
-		return {path, o};
+		return { path, o };
 	}
 
 	protected buildOpenApiMethods(methods: Array<MethodMetadata>, ctrl: ControllerClassMetadata, schemas: Schemas, paths: PathsObject, isPost: boolean): void {
@@ -90,9 +90,8 @@ export function buildOpenApi(extended: boolean = true): OpenAPIObject {
 	const builder = new OpenApiBuilder(extended, getMetadataStorage());
 	const openapi: OpenAPIObject = buildOpenApiBase(JAMAPI_VERSION);
 	const schemas: Schemas = {
-		'ID': {type: 'string', format: 'uuid'},
-		'JSON': {type: 'object'}
+			'ID': {type: 'string', format: 'uuid'},
+			'JSON': {type: 'object'}
 	};
 	return builder.build(openapi, schemas);
 }
-

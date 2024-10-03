@@ -1,7 +1,7 @@
-import {TranscoderStream} from './transcoder-stream.js';
-import {IDFolderCache} from '../../../utils/id-file-cache.js';
-import {logger} from '../../../utils/logger.js';
-import {AudioFormatType} from '../../../types/enums.js';
+import { TranscoderStream } from './transcoder-stream.js';
+import { IDFolderCache } from '../../../utils/id-file-cache.js';
+import { logger } from '../../../utils/logger.js';
+import { AudioFormatType } from '../../../types/enums.js';
 
 const log = logger('Audio:Transcoder');
 
@@ -27,7 +27,7 @@ export class TranscoderModule {
 		// if (live) {
 		// 	return {pipe: new LiveTranscoderStream(filename, destFormat, maxBitRate)};
 		// }
-		return this.transcodeCache.get(id, {format, maxBitRate}, async cacheFilename => {
+		return this.transcodeCache.get(id, { format, maxBitRate }, async cacheFilename => {
 			log.debug('Writing transcode cache file', cacheFilename);
 			await TranscoderStream.transcodeToFile(filename, cacheFilename, format, maxBitRate);
 		});
@@ -36,5 +36,4 @@ export class TranscoderModule {
 	async clearCacheByIDs(ids: Array<string>): Promise<void> {
 		await this.transcodeCache.removeByIDs(ids);
 	}
-
 }

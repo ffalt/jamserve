@@ -1,5 +1,5 @@
-import {FieldOptions, TypeOptions, TypeValueThunk} from './types.js';
-import {EntityMetadata} from './entity-metadata.js';
+import { FieldOptions, TypeOptions, TypeValueThunk } from './types.js';
+import { EntityMetadata } from './entity-metadata.js';
 
 export interface PropertyMetadata {
 	target: Function;

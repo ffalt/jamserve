@@ -1,11 +1,10 @@
-import {IDFolderCache} from '../../../utils/id-file-cache.js';
-import {WaveformGenerator} from './waveform.generator.js';
+import { IDFolderCache } from '../../../utils/id-file-cache.js';
+import { WaveformGenerator } from './waveform.generator.js';
 import fse from 'fs-extra';
-import {logger} from '../../../utils/logger.js';
-import {WaveformFormatType} from '../../../types/enums.js';
+import { logger } from '../../../utils/logger.js';
+import { WaveformFormatType } from '../../../types/enums.js';
 
 const log = logger('Audio:Waveform');
-
 
 export interface WaveformResult {
 	file?: { filename: string; name: string };
@@ -30,11 +29,11 @@ export class WaveformModule {
 		const wf = new WaveformGenerator();
 		switch (format) {
 			case WaveformFormatType.svg:
-				return {buffer: {buffer: Buffer.from(await wf.svg(filename, width), 'ascii'), contentType: 'image/svg+xml'}};
+				return { buffer: { buffer: Buffer.from(await wf.svg(filename, width), 'ascii'), contentType: 'image/svg+xml' } };
 			case WaveformFormatType.json:
-				return {json: await wf.json(filename)};
+				return { json: await wf.json(filename) };
 			case WaveformFormatType.dat:
-				return {buffer: {buffer: await wf.binary(filename), contentType: 'application/binary'}};
+				return { buffer: { buffer: await wf.binary(filename), contentType: 'application/binary' } };
 			default:
 		}
 		return Promise.reject(Error('Invalid Format for Waveform generation'));
@@ -44,7 +43,7 @@ export class WaveformModule {
 		if (!filename || !(await fse.pathExists(filename))) {
 			return Promise.reject(Error('Invalid filename for waveform generation'));
 		}
-		return this.waveformCache.get(id, {format, width}, async cacheFilename => {
+		return this.waveformCache.get(id, { format, width }, async cacheFilename => {
 			const result = await WaveformModule.generateWaveform(filename, format, width);
 			log.debug('Writing cache file', cacheFilename);
 			if (result.buffer) {
@@ -52,7 +51,7 @@ export class WaveformModule {
 			} else if (result.json) {
 				await fse.writeFile(cacheFilename, JSON.stringify(result.json));
 			} else {
-				throw  new Error('Invalid waveform generation result');
+				throw new Error('Invalid waveform generation result');
 			}
 		});
 	}

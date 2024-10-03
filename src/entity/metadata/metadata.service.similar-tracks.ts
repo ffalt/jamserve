@@ -1,13 +1,13 @@
-import {shuffle} from '../../utils/random.js';
-import {Album} from '../album/album.js';
-import {Artist} from '../artist/artist.js';
-import {Folder} from '../folder/folder.js';
-import {Track} from '../track/track.js';
-import {MetaDataService} from './metadata.service.js';
-import {LastFM} from '../../modules/audio/clients/lastfm-rest-data.js';
-import {PageResult} from '../base/base.js';
-import {PageArgs} from '../base/base.args.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { shuffle } from '../../utils/random.js';
+import { Album } from '../album/album.js';
+import { Artist } from '../artist/artist.js';
+import { Folder } from '../folder/folder.js';
+import { Track } from '../track/track.js';
+import { MetaDataService } from './metadata.service.js';
+import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
+import { PageResult } from '../base/base.js';
+import { PageArgs } from '../base/base.args.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export interface Song {
 	name: string;
@@ -32,7 +32,7 @@ export class MetadataServiceSimilarTracks {
 		});
 		const result = new Set<string>();
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
-		const list = await orm.Track.find({where: {tag: {mbTrackID: mbTrackIDs}}});
+		const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
 		for (const sim of ids) {
 			const t = await list.find(async tr => (await tr.tag.get())?.mbTrackID === sim.mbid);
 			if (!t) {
@@ -42,7 +42,7 @@ export class MetadataServiceSimilarTracks {
 			}
 		}
 		for (const sim of vals) {
-			const id = await orm.Track.findOneID({where: {name: sim.name, artist: {name: sim.artist}}});
+			const id = await orm.Track.findOneID({ where: { name: sim.name, artist: { name: sim.artist } } });
 			if (id) {
 				result.add(id);
 			}
@@ -75,11 +75,11 @@ export class MetadataServiceSimilarTracks {
 
 	private async getSimilarArtistTracks(orm: Orm, similars: Array<LastFM.SimilarArtist>, page?: PageArgs): Promise<PageResult<Track>> {
 		if (!similars || similars.length === 0) {
-			return {items: [], ...(page || {}), total: 0};
+			return { items: [], ...(page || {}), total: 0 };
 		}
 		const songs = await this.getSimilarSongs(orm, similars);
 		const ids = await this.findSongTrackIDs(orm, songs);
-		return orm.Track.search({where: {id: ids}, limit: page?.take, offset: page?.skip});
+		return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
 	}
 
 	async byArtist(orm: Orm, artist: Artist, page?: PageArgs): Promise<PageResult<Track>> {
@@ -118,7 +118,6 @@ export class MetadataServiceSimilarTracks {
 			});
 			ids = await this.findSongTrackIDs(orm, songs);
 		}
-		return orm.Track.search({where: {id: ids}, limit: page?.take, offset: page?.skip});
+		return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
 	}
-
 }

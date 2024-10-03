@@ -1,7 +1,7 @@
-import {Changes, ChangeSet} from '../../modules/engine/worker/changes.js';
-import {MockRoot, validateMock} from './mock.root';
-import {WorkerService} from '../../modules/engine/services/worker.service.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { Changes, ChangeSet } from '../../modules/engine/worker/changes.js';
+import { MockRoot, validateMock } from './mock.root';
+import { WorkerService } from '../../modules/engine/services/worker.service.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 function validateChangeSet(name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
 	expect(changeSet.added.size).toBe(added); // `New ${name} count doesnt match`
@@ -51,12 +51,12 @@ export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, wor
 	validateChangeSet('Genres', changes.genres, mockRoot.expected.genres, 0, 0);
 	expect(await orm.State.count()).toBe(mockRoot.expected.states);
 	for (const a of mockRoot.expected.artists) {
-		expect(await orm.Artist.findOne({where: {name: a}})).toBeDefined(); // `Missing Artist ${a}`
+		expect(await orm.Artist.findOne({ where: { name: a } })).toBeDefined(); // `Missing Artist ${a}`
 	}
 	if (mockRoot.albums) {
 		expect(changes.albums.added.size).toBe(mockRoot.albums.length); // 'Album count doesnt match'
 		for (const album of mockRoot.albums) {
-			const b = await orm.Album.findOneFilter({name: album.name, artist: album.artist});
+			const b = await orm.Album.findOneFilter({ name: album.name, artist: album.artist });
 			expect(b).toBeDefined(); // `Album not found ${album.name} - ${album.artist}`
 			if (b) {
 				expect(b.albumType).toBe(album.albumType); // `Album Type doesnt match ${album.name} - ${album.artist}`

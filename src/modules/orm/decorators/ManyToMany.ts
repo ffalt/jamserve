@@ -1,5 +1,5 @@
-import {ManyToManyFieldOptions, ManyToManyFieldRelation, MappedByFunc, MethodAndPropDecorator, ReturnTypeFunc} from '../definitions/types.js';
-import {registerRelation} from '../helpers/relation-register.js';
+import { ManyToManyFieldOptions, ManyToManyFieldRelation, MappedByFunc, MethodAndPropDecorator, ReturnTypeFunc } from '../definitions/types.js';
+import { registerRelation } from '../helpers/relation-register.js';
 
 export function ManyToMany<T>(
 	returnTypeFunction: ReturnTypeFunc,
@@ -9,7 +9,7 @@ export function ManyToMany<T>(
 export function ManyToMany<T>(
 	returnTypeFunc: ReturnTypeFunc,
 	mappedBy: MappedByFunc<T>,
-	options?: ManyToManyFieldOptions,
+	options?: ManyToManyFieldOptions
 ): MethodDecorator | PropertyDecorator {
 	return (prototype, propertyKey, _) => {
 		const opt = (options || {}) as ManyToManyFieldRelation<T>;

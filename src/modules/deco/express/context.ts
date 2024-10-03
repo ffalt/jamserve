@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 export interface RestContext<USER, ORM, ENGINE> {
 	req: Request;

@@ -1,15 +1,15 @@
-import {Session} from '../session/session.model.js';
+import { Session } from '../session/session.model.js';
 import passport from 'passport';
-import {generateJWT, jwtHash} from '../../utils/jwt.js';
-import {JAMAPI_VERSION} from '../../modules/engine/rest/version.js';
-import {CredentialsArgs} from './auth.args.js';
-import {UserRole} from '../../types/enums.js';
-import {logger} from '../../utils/logger.js';
-import {Context} from '../../modules/engine/rest/context.js';
-import {User} from '../user/user.js';
-import {EngineService} from '../../modules/engine/services/engine.service.js';
+import { generateJWT, jwtHash } from '../../utils/jwt.js';
+import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { CredentialsArgs } from './auth.args.js';
+import { UserRole } from '../../types/enums.js';
+import { logger } from '../../utils/logger.js';
+import { Context } from '../../modules/engine/rest/context.js';
+import { User } from '../user/user.js';
+import { EngineService } from '../../modules/engine/services/engine.service.js';
 import express from 'express';
-import {SessionData} from '../../types/express.js';
+import { SessionData } from '../../types/express.js';
 import {Controller} from '../../modules/rest/decorators/Controller.js';
 import {UnauthError} from '../../modules/deco/express/express-error.js';
 import {Post} from '../../modules/rest/decorators/Post.js';
@@ -18,20 +18,20 @@ import {Ctx} from '../../modules/rest/decorators/Ctx.js';
 
 const log = logger('AuthController');
 
-@Controller('/auth', {tags: ['Access']})
+@Controller('/auth', { tags: ['Access'] })
 export class AuthController {
-
 	private async loginUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
 			passport.authenticate('local', (err: Error, user: User) => {
 				if (err || !user) {
 					log.error(err);
+					log.error(`Login failed for [${req.ip}]`);
 					return reject(UnauthError('Invalid Auth'));
 				}
 				req.login(user, (err2: Error) => {
 					if (err2) {
 						log.error(err2);
-						console.error(err2);
+						log.error(`Login failed for [${req.ip}]`);
 						return reject(UnauthError('Invalid Auth'));
 					}
 					resolve(user);
@@ -46,11 +46,10 @@ export class AuthController {
 		return AuthController.buildSessionResult(req, credentials, user, engine);
 	}
 
-
-	@Post('/login', () => Session, {description: 'Start session or jwt access', summary: 'Login'})
+	@Post('/login', () => Session, { description: 'Start session or jwt access', summary: 'Login' })
 	async login(
 		@BodyParams() credentials: CredentialsArgs,
-		@Ctx() {engine, req, res, next}: Context
+		@Ctx() { engine, req, res, next }: Context
 	): Promise<Session> {
 		return new Promise<Session>((resolve, reject) => {
 			engine.rateLimit.loginSlowDown(req, res)
@@ -74,10 +73,12 @@ export class AuthController {
 	private static buildSessionResult(req: express.Request, credentials: CredentialsArgs, user: User, engine: EngineService): Session {
 		const client = req.body.client || 'Unknown Client';
 		// context.req.client = client;
-		const token = credentials.jwt ? generateJWT(user.id, client,
-			engine.config.env.jwt.secret,
-			engine.config.env.jwt.maxAge
-		) : undefined;
+		const token = credentials.jwt ?
+			generateJWT(user.id, client,
+				engine.config.env.jwt.secret,
+				engine.config.env.jwt.maxAge
+			) :
+			undefined;
 		if (req.session) { // express session data obj
 			const session: SessionData = req.session as any;
 			session.client = client;
@@ -103,8 +104,8 @@ export class AuthController {
 		};
 	}
 
-	@Post('/logout', {roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout'})
-	async logout(@Ctx() {req}: Context): Promise<void> {
+	@Post('/logout', { roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout' })
+	async logout(@Ctx() { req }: Context): Promise<void> {
 		return new Promise<void>(resolve => {
 			req.logout(resolve);
 		});

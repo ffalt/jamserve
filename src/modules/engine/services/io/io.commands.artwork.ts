@@ -1,7 +1,7 @@
-import {IoService} from '../io.service.js';
-import {AdminChangeQueueInfo, WorkerRequestMode} from './io.types.js';
-import {WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork} from '../worker/worker.types.js';
-import {ArtworkImageType} from '../../../../types/enums.js';
+import { IoService } from '../io.service.js';
+import { AdminChangeQueueInfo, WorkerRequestMode } from './io.types.js';
+import { WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequestRemoveArtwork, WorkerRequestRenameArtwork, WorkerRequestReplaceArtwork } from '../worker/worker.types.js';
+import { ArtworkImageType } from '../../../../types/enums.js';
 
 export class IoCommandsArtwork {
 	constructor(private owner: IoService) {
@@ -9,32 +9,31 @@ export class IoCommandsArtwork {
 
 	async rename(artworkID: string, newName: string, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestRenameArtwork>(
-			WorkerRequestMode.renameArtwork, p => this.owner.workerService.artwork.rename(p), {rootID, artworkID, newName}
+			WorkerRequestMode.renameArtwork, p => this.owner.workerService.artwork.rename(p), { rootID, artworkID, newName }
 		);
 	}
 
 	async replace(artworkID: string, artworkFilename: string, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestReplaceArtwork>(
-			WorkerRequestMode.replaceArtwork, p => this.owner.workerService.artwork.replace(p), {rootID, artworkID, artworkFilename}
+			WorkerRequestMode.replaceArtwork, p => this.owner.workerService.artwork.replace(p), { rootID, artworkID, artworkFilename }
 		);
 	}
 
 	async create(folderID: string, artworkFilename: string, types: Array<ArtworkImageType>, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestCreateArtwork>(
-			WorkerRequestMode.createArtwork, p => this.owner.workerService.artwork.create(p), {rootID, folderID, artworkFilename, types}
+			WorkerRequestMode.createArtwork, p => this.owner.workerService.artwork.create(p), { rootID, folderID, artworkFilename, types }
 		);
 	}
 
 	async download(folderID: string, artworkURL: string, types: Array<ArtworkImageType>, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestDownloadArtwork>(
-			WorkerRequestMode.downloadArtwork, p => this.owner.workerService.artwork.download(p), {rootID, folderID, artworkURL, types}
+			WorkerRequestMode.downloadArtwork, p => this.owner.workerService.artwork.download(p), { rootID, folderID, artworkURL, types }
 		);
 	}
 
 	async delete(artworkID: string, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestRemoveArtwork>(
-			WorkerRequestMode.deleteArtwork, p => this.owner.workerService.artwork.remove(p), {rootID, artworkID}
+			WorkerRequestMode.deleteArtwork, p => this.owner.workerService.artwork.remove(p), { rootID, artworkID }
 		);
 	}
-
 }

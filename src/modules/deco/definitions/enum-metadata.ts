@@ -1,5 +1,5 @@
 export interface EnumMetadata {
-  enumObj: object;
-  name: string;
-  description: string | undefined;
+	enumObj: object;
+	name: string;
+	description: string | undefined;
 }

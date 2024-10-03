@@ -1,8 +1,8 @@
-import {AlbumType, FolderType} from '../../types/enums.js';
+import { AlbumType, FolderType } from '../../types/enums.js';
 import path from 'path';
 import fse from 'fs-extra';
-import {writeImage} from './mock.image';
-import {extendSpecMockTrack, MockSpecTrack, MockTrack, writeMockTrack} from './mock.track';
+import { writeImage } from './mock.image';
+import { extendSpecMockTrack, MockSpecTrack, MockTrack, writeMockTrack } from './mock.track';
 
 export interface MockSpecFolder {
 	name: string;

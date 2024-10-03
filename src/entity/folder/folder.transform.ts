@@ -1,22 +1,23 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Folder as ORMFolder} from './folder.js';
-import {IncludesFolderArgs, IncludesFolderChildrenArgs} from './folder.args.js';
-import {User} from '../user/user.js';
-import {FolderIndex} from './folder.model.js';
-import {DBObjectType, FolderType} from '../../types/enums.js';
-import {MetaDataService} from '../metadata/metadata.service.js';
-import {IndexResult, IndexResultGroup} from '../base/base.js';
-import {GenreTransformService} from '../genre/genre.transform.js';
-import {ExtendedInfo} from '../metadata/metadata.model.js';
-import {GenreBase} from '../genre/genre.model.js';
-import {FolderBase, FolderParent, FolderTag} from './folder-base.model.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Folder as ORMFolder } from './folder.js';
+import { IncludesFolderArgs, IncludesFolderChildrenArgs } from './folder.args.js';
+import { User } from '../user/user.js';
+import { FolderIndex } from './folder.model.js';
+import { DBObjectType, FolderType } from '../../types/enums.js';
+import { MetaDataService } from '../metadata/metadata.service.js';
+import { IndexResult, IndexResultGroup } from '../base/base.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
+import { ExtendedInfo } from '../metadata/metadata.model.js';
+import { GenreBase } from '../genre/genre.model.js';
+import { FolderBase, FolderParent, FolderTag } from './folder-base.model.js';
 
 @InRequestScope
 export class FolderTransformService extends BaseTransformService {
 	@Inject
 	public metaData!: MetaDataService;
+
 	@Inject
 	public Genre!: GenreTransformService;
 
@@ -69,13 +70,13 @@ export class FolderTransformService extends BaseTransformService {
 			folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
 			folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
 			folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
-			folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs,
+			folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs
 		};
 		return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
 	}
 
 	async folderIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMFolder>>): Promise<FolderIndex> {
-		return this.index(result, async (item) => {
+		return this.index(result, async item => {
 			return {
 				id: item.id,
 				name: item.name,
@@ -104,10 +105,9 @@ export class FolderTransformService extends BaseTransformService {
 		while (parent) {
 			parent = await parent.parent.get();
 			if (parent) {
-				result.unshift({id: parent.id, name: parent.name});
+				result.unshift({ id: parent.id, name: parent.name });
 			}
 		}
 		return result;
 	}
-
 }

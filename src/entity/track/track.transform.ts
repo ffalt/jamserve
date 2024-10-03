@@ -1,18 +1,19 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {User} from '../user/user.js';
-import {DBObjectType, JamObjectType} from '../../types/enums.js';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Track as ORMTrack} from './track.js';
-import {IncludesTrackArgs} from './track.args.js';
-import {TrackBase} from './track.model.js';
-import {TrackService} from './track.service.js';
-import {GenreTransformService} from '../genre/genre.transform.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { User } from '../user/user.js';
+import { DBObjectType, JamObjectType } from '../../types/enums.js';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Track as ORMTrack } from './track.js';
+import { IncludesTrackArgs } from './track.args.js';
+import { TrackBase } from './track.model.js';
+import { TrackService } from './track.service.js';
+import { GenreTransformService } from '../genre/genre.transform.js';
 
 @InRequestScope
 export class TrackTransformService extends BaseTransformService {
 	@Inject
 	public trackService!: TrackService;
+
 	@Inject
 	public Genre!: GenreTransformService;
 
@@ -40,5 +41,4 @@ export class TrackTransformService extends BaseTransformService {
 			state: trackArgs.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
 		};
 	}
-
 }

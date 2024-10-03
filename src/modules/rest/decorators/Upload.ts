@@ -1,4 +1,4 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import {BaseUpload, UploadOptions} from '../../deco/decorators/Upload.js';
 import {ReturnTypeFunc} from '../../deco/definitions/types.js';
 

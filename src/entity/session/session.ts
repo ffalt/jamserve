@@ -1,8 +1,8 @@
-import {User} from '../user/user.js';
-import {SessionMode} from '../../types/enums.js';
-import {Field, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_DATETIME, Property, Reference} from '../../modules/orm/index.js';
-import {Base, PaginatedResponse} from '../base/base.js';
+import { User } from '../user/user.js';
+import { SessionMode } from '../../types/enums.js';
+import { Field, ObjectType } from 'type-graphql';
+import { Entity, ManyToOne, ORM_DATETIME, Property, Reference } from '../../modules/orm/index.js';
+import { Base, PaginatedResponse } from '../base/base.js';
 
 @ObjectType()
 @Entity()
@@ -18,8 +18,8 @@ export class Session extends Base {
 	@Property(() => String)
 	agent!: string;
 
-	@Field(() => Date, {nullable:true})
-	@Property(() => ORM_DATETIME, {nullable: true})
+	@Field(() => Date, { nullable: true })
+	@Property(() => ORM_DATETIME, { nullable: true })
 	expires?: Date;
 
 	@Field(() => SessionMode)
@@ -32,7 +32,7 @@ export class Session extends Base {
 	@Property(() => String)
 	cookie!: string;
 
-	@Property(() => String, {nullable: true})
+	@Property(() => String, { nullable: true })
 	jwth?: string; // hashed jwt
 }
 

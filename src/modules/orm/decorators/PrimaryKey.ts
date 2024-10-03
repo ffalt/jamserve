@@ -1,7 +1,7 @@
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
-import {MethodAndPropDecorator, PrimaryFieldOptions} from '../definitions/types.js';
-import {SymbolKeysNotSupportedError} from 'type-graphql';
-import {ORM_ID} from '../definitions/orm-types.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { MethodAndPropDecorator, PrimaryFieldOptions } from '../definitions/types.js';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
+import { ORM_ID } from '../definitions/orm-types.js';
 
 export function PrimaryKey(): MethodAndPropDecorator;
 export function PrimaryKey(): MethodDecorator | PropertyDecorator {
@@ -9,7 +9,7 @@ export function PrimaryKey(): MethodDecorator | PropertyDecorator {
 		if (typeof propertyKey === 'symbol') {
 			throw new SymbolKeysNotSupportedError();
 		}
-		const opt: PrimaryFieldOptions = {primaryKey: true};
+		const opt: PrimaryFieldOptions = { primaryKey: true };
 		getMetadataStorage().fields.push({
 			name: propertyKey,
 			getType: () => ORM_ID,

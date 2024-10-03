@@ -1,23 +1,23 @@
 import moment from 'moment';
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
 import * as MusicbrainzClientApi from '../../modules/audio/clients/musicbrainz-client.interface.js';
-import {logger} from '../../utils/logger.js';
-import {MetadataServiceExtendedInfo} from './metadata.service.extended-info.js';
-import {MetadataServiceSimilarArtists} from './metadata.service.similar-artists.js';
-import {MetadataServiceSimilarTracks} from './metadata.service.similar-tracks.js';
-import {MetadataServiceTopTracks} from './metadata.service.top-tracks.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {CoverArtArchiveLookupType, DBObjectType, MetaDataType} from '../../types/enums.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Track} from '../track/track.js';
-import {LastFM} from '../../modules/audio/clients/lastfm-rest-data.js';
-import {WikidataLookupResponse, WikipediaSummaryResponse} from './metadata.types.js';
-import {TrackLyrics} from '../track/track.model.js';
-import {AcousticBrainz} from '../../modules/audio/clients/acousticbrainz-rest-data.js';
-import {Acoustid} from '../../modules/audio/clients/acoustid-rest-data.js';
-import {CoverArtArchive} from '../../modules/audio/clients/coverartarchive-rest-data.js';
-import {MusicBrainz} from '../../modules/audio/clients/musicbrainz-rest-data.js';
+import { logger } from '../../utils/logger.js';
+import { MetadataServiceExtendedInfo } from './metadata.service.extended-info.js';
+import { MetadataServiceSimilarArtists } from './metadata.service.similar-artists.js';
+import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks.js';
+import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Track } from '../track/track.js';
+import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
+import { WikidataLookupResponse, WikipediaSummaryResponse } from './metadata.types.js';
+import { TrackLyrics } from '../track/track.model.js';
+import { AcousticBrainz } from '../../modules/audio/clients/acousticbrainz-rest-data.js';
+import { Acoustid } from '../../modules/audio/clients/acoustid-rest-data.js';
+import { CoverArtArchive } from '../../modules/audio/clients/coverartarchive-rest-data.js';
+import { MusicBrainz } from '../../modules/audio/clients/musicbrainz-rest-data.js';
 import seq from 'sequelize';
 import fetch from 'node-fetch';
 import {InvalidParamError} from '../../modules/deco/express/express-error.js';
@@ -36,17 +36,17 @@ export class MetaDataService {
 
 	private static async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: string): Promise<void> {
 		const item = await orm.MetaData.create({
-				name,
-				dataType,
-				data
-			}
+			name,
+			dataType,
+			data
+		}
 		);
 		await orm.MetaData.persistAndFlush(item);
 	}
 
 	async cleanUp(orm: Orm): Promise<void> {
 		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
-		const removed = await orm.MetaData.removeByQueryAndFlush({where: {createdAt: {[seq.Op.lt]: new Date(olderThan)}}});
+		const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [seq.Op.lt]: new Date(olderThan) } } });
 		if (removed > 0) {
 			log.info(`Removed meta data cache entries: ${removed} `);
 		}
@@ -57,7 +57,7 @@ export class MetaDataService {
 	}
 
 	async searchInStore<T>(orm: Orm, name: string, dataType: MetaDataType, generate: () => Promise<any>): Promise<T> {
-		const result = await orm.MetaData.findOne({where: {name, dataType}});
+		const result = await orm.MetaData.findOne({ where: { name, dataType } });
 		if (result) {
 			return JSON.parse(result.data);
 		}
@@ -71,7 +71,7 @@ export class MetaDataService {
 	async musicbrainzSearch(orm: Orm, type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response> {
 		return this.searchInStore<MusicBrainz.Response>(orm, `search-${type}${JSON.stringify(query)}`,
 			MetaDataType.musicbrainz, async () => {
-				return this.audioModule.musicbrainz.search({type, query});
+				return this.audioModule.musicbrainz.search({ type, query });
 			});
 	}
 
@@ -89,42 +89,42 @@ export class MetaDataService {
 	async lastFMAlbumSearch(orm: Orm, album: string, artist: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `search-album-${album}//${artist}`,
 			MetaDataType.lastfm, async () => {
-				return {album: await this.audioModule.lastFM.album(album, artist)};
+				return { album: await this.audioModule.lastFM.album(album, artist) };
 			});
 	}
 
 	async lastFMArtistSearch(orm: Orm, artist: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `search-artist-${artist}`,
 			MetaDataType.lastfm, async () => {
-				return {artist: await this.audioModule.lastFM.artist(artist)};
+				return { artist: await this.audioModule.lastFM.artist(artist) };
 			});
 	}
 
 	async lastFMTopTracksArtist(orm: Orm, artist: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `toptracks-artist-${artist}`,
 			MetaDataType.lastfm, async () => {
-				return {toptracks: await this.audioModule.lastFM.topArtistSongs(artist)};
+				return { toptracks: await this.audioModule.lastFM.topArtistSongs(artist) };
 			});
 	}
 
 	async lastFMTopTracksArtistID(orm: Orm, mbid: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `toptracks-artistid-${mbid}`,
 			MetaDataType.lastfm, async () => {
-				return {toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid)};
+				return { toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid) };
 			});
 	}
 
 	async lastFMSimilarTracks(orm: Orm, mbid: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `similar-trackid-${mbid}`,
 			MetaDataType.lastfm, async () => {
-				return {similartracks: await this.audioModule.lastFM.similarTrackID(mbid)};
+				return { similartracks: await this.audioModule.lastFM.similarTrackID(mbid) };
 			});
 	}
 
 	async lastFMSimilarTracksSearch(orm: Orm, name: string, artist: string): Promise<LastFM.Result> {
 		return this.searchInStore<LastFM.Result>(orm, `similar-search-track-${name}//${artist}`,
 			MetaDataType.lastfm, async () => {
-				return {album: await this.audioModule.lastFM.similarTrack(name, artist)};
+				return { album: await this.audioModule.lastFM.similarTrack(name, artist) };
 			});
 	}
 
@@ -151,7 +151,7 @@ export class MetaDataService {
 	async musicbrainzLookup(orm: Orm, type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response> {
 		return this.searchInStore<MusicBrainz.Response>(orm, `lookup-${type}${mbid}${inc ? inc : ''}`,
 			MetaDataType.musicbrainz, async () => {
-				return this.audioModule.musicbrainz.lookup({type, id: mbid, inc});
+				return this.audioModule.musicbrainz.lookup({ type, id: mbid, inc });
 			});
 	}
 
@@ -178,7 +178,7 @@ export class MetaDataService {
 		lang = lang || 'en';
 		return this.searchInStore<WikipediaSummaryResponse>(orm, `summary-${title}/${lang}`,
 			MetaDataType.wikipedia, async () => {
-				return {summary: await this.audioModule.wikipedia.summary(title, lang)};
+				return { summary: await this.audioModule.wikipedia.summary(title, lang) };
 			});
 	}
 
@@ -186,7 +186,7 @@ export class MetaDataService {
 		return this.searchInStore<WikidataLookupResponse>(orm, `wikidata-entity-${id}`,
 			MetaDataType.wikidata, async () => {
 				const entity = await this.audioModule.wikipedia.wikidata(id);
-				return {id, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now()};
+				return { id, type: DBObjectType.metadata, dataType: MetaDataType.wikidata, data: entity, date: Date.now() };
 			});
 	}
 
@@ -217,7 +217,7 @@ export class MetaDataService {
 	async lyricsByTrack(orm: Orm, track: Track): Promise<TrackLyrics> {
 		const tag = await track.tag.get();
 		if (tag?.lyrics) {
-			return {lyrics: tag.lyrics};
+			return { lyrics: tag.lyrics };
 		}
 		const song = tag?.title;
 		if (!song) {
@@ -249,7 +249,7 @@ export class MetaDataService {
 		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
 		const buffer = await response.buffer();
 		return {
-			buffer: {buffer, contentType: response.headers.get('content-type') || 'image'}
+			buffer: { buffer, contentType: response.headers.get('content-type') || 'image' }
 		};
 	}
 }

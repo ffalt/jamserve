@@ -1,6 +1,6 @@
-import {InRequestScope} from 'typescript-ioc';
+import { InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import {RateLimiterMemory} from 'rate-limiter-flexible';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits: number): number {
 	if (countConsecutiveOutOfLimits <= 1) {
@@ -16,20 +16,16 @@ export class RateLimitService {
 		duration: 15 * 60, // within 15 minutes
 		keyPrefix: 'login'
 	};
+
 	loginLimiter = new RateLimiterMemory(this.loginLimiterOption);
 	limiterConsecutiveOutOfLimits = new RateLimiterMemory({
 		keyPrefix: 'login_consecutive_outoflimits',
 		points: 99999, // doesn't matter much, this is just counter
-		duration: 0, // never expire
+		duration: 0 // never expire
 	});
 
-	private static getReqID(req: express.Request): string {
-		const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
-		return Array.isArray(ip) ? ip[0] : ip;
-	}
-
 	async loginSlowDown(req: express.Request, res: express.Response): Promise<boolean> {
-		const key = RateLimitService.getReqID(req);
+		const key = req.ip;
 		try {
 			const resConsume = await this.loginLimiter.consume(key);
 			if (resConsume.remainingPoints <= 0) {
@@ -53,9 +49,8 @@ export class RateLimitService {
 	}
 
 	async loginSlowDownReset(req: express.Request): Promise<void> {
-		const key = RateLimitService.getReqID(req);
+		const key = req.ip;
 		await this.limiterConsecutiveOutOfLimits.delete(key);
 		await this.loginLimiter.delete(key);
 	}
-
 }

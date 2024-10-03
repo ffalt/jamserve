@@ -47,7 +47,7 @@ export enum ArtworkImageType {
 }
 
 export enum PodcastStatus {
-	'new' = 'new',
+	new = 'new',
 	downloading = 'downloading',
 	completed = 'completed',
 	error = 'error',
@@ -282,14 +282,14 @@ export enum BookmarkOrderFields {
 	created = 'created',
 	updated = 'updated',
 	media = 'media',
-	position = 'position',
+	position = 'position'
 }
 
 export enum DefaultOrderFields {
 	default = 'default',
 	created = 'created',
 	updated = 'updated',
-	name = 'name',
+	name = 'name'
 }
 
 export enum SessionOrderFields {

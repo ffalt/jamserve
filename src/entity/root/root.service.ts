@@ -1,7 +1,7 @@
-import {Inject} from 'typescript-ioc';
-import {FolderService} from '../folder/folder.service.js';
-import {Root} from './root.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { Inject } from 'typescript-ioc';
+import { FolderService } from '../folder/folder.service.js';
+import { Root } from './root.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 export class RootService {

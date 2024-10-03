@@ -1,4 +1,4 @@
-import {MetadataStorage} from './metadata-storage.js';
+import { MetadataStorage } from './metadata-storage.js';
 
 let ORMMetadataStorage: MetadataStorage;
 

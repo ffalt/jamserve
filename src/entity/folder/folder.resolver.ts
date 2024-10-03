@@ -1,33 +1,33 @@
-import {DBObjectType} from '../../types/enums.js';
-import {Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot} from 'type-graphql';
-import {State, StateQL} from '../state/state.js';
-import {Folder, FolderIndexQL, FolderPageQL, FolderQL} from './folder.js';
-import {Context} from '../../modules/server/middlewares/apollo.context.js';
-import {Series, SeriesQL} from '../series/series.js';
-import {Artist, ArtistQL} from '../artist/artist.js';
-import {Album, AlbumQL} from '../album/album.js';
-import {Track, TrackQL} from '../track/track.js';
-import {Artwork, ArtworkQL} from '../artwork/artwork.js';
-import {FolderIndexArgs, FoldersArgsQL} from './folder.args.js';
-import {Genre, GenreQL} from '../genre/genre.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { State, StateQL } from '../state/state.js';
+import { Folder, FolderIndexQL, FolderPageQL, FolderQL } from './folder.js';
+import { Context } from '../../modules/server/middlewares/apollo.context.js';
+import { Series, SeriesQL } from '../series/series.js';
+import { Artist, ArtistQL } from '../artist/artist.js';
+import { Album, AlbumQL } from '../album/album.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Artwork, ArtworkQL } from '../artwork/artwork.js';
+import { FolderIndexArgs, FoldersArgsQL } from './folder.args.js';
+import { Genre, GenreQL } from '../genre/genre.js';
 
 @Resolver(FolderQL)
 export class FolderResolver {
-	@Query(() => FolderQL, {description: 'Get a Folder by Id'})
-	async folder(@Arg('id', () => ID!) id: string, @Ctx() {orm}: Context): Promise<Folder> {
+	@Query(() => FolderQL, { description: 'Get a Folder by Id' })
+	async folder(@Arg('id', () => ID!) id: string, @Ctx() { orm }: Context): Promise<Folder> {
 		return await orm.Folder.oneOrFailByID(id);
 	}
 
-	@Query(() => FolderPageQL, {description: 'Search Folders'})
-	async folders(@Args() {page, filter, order, list, seed}: FoldersArgsQL, @Ctx() {orm, user}: Context): Promise<FolderPageQL> {
+	@Query(() => FolderPageQL, { description: 'Search Folders' })
+	async folders(@Args() { page, filter, order, list, seed }: FoldersArgsQL, @Ctx() { orm, user }: Context): Promise<FolderPageQL> {
 		if (list) {
 			return await orm.Folder.findListFilter(list, seed, filter, order, page, user);
 		}
 		return await orm.Folder.searchFilter(filter, order, page, user);
 	}
 
-	@Query(() => FolderIndexQL, {description: 'Get the Navigation Index for Folders'})
-	async folderIndex(@Args() {filter}: FolderIndexArgs, @Ctx() {orm, user}: Context): Promise<FolderIndexQL> {
+	@Query(() => FolderIndexQL, { description: 'Get the Navigation Index for Folders' })
+	async folderIndex(@Args() { filter }: FolderIndexArgs, @Ctx() { orm, user }: Context): Promise<FolderIndexQL> {
 		return await orm.Folder.indexFilter(filter, user);
 	}
 
@@ -46,7 +46,7 @@ export class FolderResolver {
 		return folder.children.count();
 	}
 
-	@FieldResolver(() => [SeriesQL], {nullable: true})
+	@FieldResolver(() => [SeriesQL], { nullable: true })
 	async series(@GQLRoot() folder: Folder): Promise<Array<Series>> {
 		return folder.series.getItems();
 	}
@@ -56,7 +56,7 @@ export class FolderResolver {
 		return folder.series.count();
 	}
 
-	@FieldResolver(() => [ArtistQL], {nullable: true})
+	@FieldResolver(() => [ArtistQL], { nullable: true })
 	async artists(@GQLRoot() folder: Folder): Promise<Array<Artist>> {
 		return folder.artists.getItems();
 	}
@@ -66,7 +66,7 @@ export class FolderResolver {
 		return folder.artists.count();
 	}
 
-	@FieldResolver(() => [AlbumQL], {nullable: true})
+	@FieldResolver(() => [AlbumQL], { nullable: true })
 	async albums(@GQLRoot() folder: Folder): Promise<Array<Album>> {
 		return folder.albums.getItems();
 	}
@@ -81,7 +81,7 @@ export class FolderResolver {
 		return folder.genres.count();
 	}
 
-	@FieldResolver(() => [TrackQL], {nullable: true})
+	@FieldResolver(() => [TrackQL], { nullable: true })
 	async tracks(@GQLRoot() folder: Folder): Promise<Array<Track>> {
 		return folder.tracks.getItems();
 	}
@@ -91,7 +91,7 @@ export class FolderResolver {
 		return folder.tracks.count();
 	}
 
-	@FieldResolver(() => [ArtworkQL], {nullable: true})
+	@FieldResolver(() => [ArtworkQL], { nullable: true })
 	async artworks(@GQLRoot() folder: Folder): Promise<Array<Artwork>> {
 		return folder.artworks.getItems();
 	}
@@ -102,7 +102,7 @@ export class FolderResolver {
 	}
 
 	@FieldResolver(() => StateQL)
-	async state(@GQLRoot() folder: Folder, @Ctx() {orm, user}: Context): Promise<State> {
+	async state(@GQLRoot() folder: Folder, @Ctx() { orm, user }: Context): Promise<State> {
 		return await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
 	}
 
@@ -120,5 +120,4 @@ export class FolderResolver {
 	title(@GQLRoot() folder: Folder): string {
 		return folder.title || folder.name;
 	}
-
 }

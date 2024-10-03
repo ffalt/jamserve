@@ -5,8 +5,8 @@
 
  */
 
-import {Stream} from 'stream';
-import {WaveformStream} from './waveform.stream.js';
+import { Stream } from 'stream';
+import { WaveformStream } from './waveform.stream.js';
 
 export interface WaveformOptions {
 	samplesPerPixel: number;
@@ -32,11 +32,11 @@ export interface WaveDataResponse {
 }
 
 export class Waveform {
-	opts: WaveformOptions = {samplesPerPixel: 256, sampleRate: 44100};
+	opts: WaveformOptions = { samplesPerPixel: 256, sampleRate: 44100 };
 	samples: Array<number> = [];
 
 	constructor(private stream: Stream, opts: WaveformOptions) {
-		this.opts = {...this.opts, ...(opts || {})};
+		this.opts = { ...this.opts, ...(opts || {}) };
 	}
 
 	run(cb: (err?: Error) => void): void {
@@ -100,5 +100,4 @@ export class Waveform {
 			data: this.samples
 		};
 	}
-
 }

@@ -1,18 +1,19 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {AdminChangeQueueInfo} from '../admin/admin.js';
-import {ArtworkImageType} from '../../types/enums.js';
-import {Folder} from '../folder/folder.js';
-import {IoService} from '../../modules/engine/services/io.service.js';
-import {Artwork} from './artwork.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { AdminChangeQueueInfo } from '../admin/admin.js';
+import { ArtworkImageType } from '../../types/enums.js';
+import { Folder } from '../folder/folder.js';
+import { IoService } from '../../modules/engine/services/io.service.js';
+import { Artwork } from './artwork.js';
 import path from 'path';
-import {ImageModule} from '../../modules/image/image.module.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {ImageResult} from '../../modules/image/image.format.js';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { ImageResult } from '../../modules/image/image.format.js';
 
 @InRequestScope
 export class ArtworkService {
 	@Inject
 	private ioService!: IoService;
+
 	@Inject
 	private imageModule!: ImageModule;
 

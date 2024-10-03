@@ -1,5 +1,5 @@
-import {Reference} from './helpers/reference.js';
-import {Collection} from './helpers/collection.js';
+import { Reference } from './helpers/reference.js';
+import { Collection } from './helpers/collection.js';
 
 export declare type Constructor<T> = new (...args: any[]) => T;
 
@@ -12,12 +12,12 @@ export declare const PrimaryKeyType: unique symbol;
 export declare type Primary<T> = T extends {
 	[PrimaryKeyType]: infer PK;
 } ? PK : T extends {
-	_id: infer PK;
-} ? PK | string : T extends {
-	uuid: infer PK;
-} ? PK : T extends {
-	id: infer PK;
-} ? PK : never;
+		_id: infer PK;
+	} ? PK | string : T extends {
+		uuid: infer PK;
+	} ? PK : T extends {
+			id: infer PK;
+		} ? PK : never;
 
 export declare type DeepPartialEntity<T> = {
 	[P in keyof T]?: null | (T[P] extends (infer U)[] ? DeepPartialEntity<U>[] : T[P] extends readonly (infer U)[] ? readonly DeepPartialEntity<U>[] : T extends Date | RegExp ? T : DeepPartialEntity<T[P]> | PartialEntity<T[P]> | Primary<T[P]>);

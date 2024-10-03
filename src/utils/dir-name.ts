@@ -1,8 +1,8 @@
 import path from 'path';
-import {containsFolderSystemChars, replaceFolderSystemChars} from './fs-utils.js';
+import { containsFolderSystemChars, replaceFolderSystemChars } from './fs-utils.js';
 
 export function splitDirectoryName(name: string): { title: string; year?: number } {
-	const result: { title: string; year?: number } = {title: path.basename(name).trim()};
+	const result: { title: string; year?: number } = { title: path.basename(name).trim() };
 	// year title | year - title | (year) title | [year] title
 	const parts = result.title.split(' ');
 	const s = parts[0].replace(/[^\w\s]/gi, '');
@@ -19,7 +19,6 @@ export function splitDirectoryName(name: string): { title: string; year?: number
 	}
 	return result;
 }
-
 
 export async function validateFolderName(newName: string): Promise<string> {
 	if (containsFolderSystemChars(newName)) {

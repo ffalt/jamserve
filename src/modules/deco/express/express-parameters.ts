@@ -1,15 +1,15 @@
-import {ClassMetadata} from '../definitions/class-metadata.js';
-import {FieldOptions, TypeOptions, TypeValue} from '../definitions/types.js';
-import {ParamMetadata, RestParamMetadata, RestParamsMetadata} from '../definitions/param-metadata.js';
-import {FieldMetadata} from '../definitions/field-metadata.js';
-import {EnumMetadata} from '../definitions/enum-metadata.js';
-import {getEnumReverseValuesMap} from '../helpers/enums.js';
-import {GenericError, InvalidParamError, MissingParamError} from './express-error.js';
+import { ClassMetadata } from '../definitions/class-metadata.js';
+import { FieldOptions, TypeOptions, TypeValue } from '../definitions/types.js';
+import { ParamMetadata, RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
+import { FieldMetadata } from '../definitions/field-metadata.js';
+import { EnumMetadata } from '../definitions/enum-metadata.js';
+import { getEnumReverseValuesMap } from '../helpers/enums.js';
+import { GenericError, InvalidParamError, MissingParamError } from './express-error.js';
 import {RestContext} from './context.js';
-import {getDefaultValue} from '../helpers/default-value.js';
-import {UploadFile} from '../definitions/upload-file.js';
+import { getDefaultValue } from '../helpers/default-value.js';
+import { UploadFile } from '../definitions/upload-file.js';
 import {MetadataStorage} from '../definitions/metadata-storage.js';
-import {iterateArguments} from '../helpers/iterate-super.js';
+import { iterateArguments } from '../helpers/iterate-super.js';
 
 export class ExpressParameters {
 
@@ -31,7 +31,7 @@ export class ExpressParameters {
 
 	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
 		if (typeOptions.array) {
-			//TODO: support number arrays
+			// TODO: support number arrays
 			throw InvalidParamError(param.name);
 		}
 		if (typeof value === 'string' && value.length === 0) {
@@ -208,7 +208,7 @@ export class ExpressParameters {
 		if (!argumentType) {
 			throw GenericError(
 				`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
-				`is not a class decorated with '@ObjParamsType' decorator!`,
+				`is not a class decorated with '@ObjParamsType' decorator!`
 			);
 		}
 		const args: any = {};
@@ -231,5 +231,4 @@ export class ExpressParameters {
 		}
 		throw GenericError(`Internal: not implemented ${param.methodName} ${param.kind}`);
 	}
-
 }

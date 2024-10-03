@@ -1,12 +1,12 @@
-import {Episode} from '../episode/episode.js';
-import {Track} from '../track/track.js';
-import {User} from '../user/user.js';
-import {NowPlaying} from './nowplaying.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {DBObjectType} from '../../types/enums.js';
-import {logger} from '../../utils/logger.js';
-import {StateService} from '../state/state.service.js';
+import { Episode } from '../episode/episode.js';
+import { Track } from '../track/track.js';
+import { User } from '../user/user.js';
+import { NowPlaying } from './nowplaying.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { DBObjectType } from '../../types/enums.js';
+import { logger } from '../../utils/logger.js';
+import { StateService } from '../state/state.service.js';
 import {NotFoundError} from '../../modules/deco/express/express-error.js';
 
 const log = logger('NowPlayingService');
@@ -31,26 +31,26 @@ export class NowPlayingService {
 
 	async reportEpisode(orm: Orm, episode: Episode, user: User): Promise<NowPlaying> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
-		const result = {time: Date.now(), episode, user};
+		const result = { time: Date.now(), episode, user };
 		this.playing.push(result);
 		this.report(orm, [
-			{id: episode.id, type: DBObjectType.episode},
-			{id: episode.podcast.idOrFail(), type: DBObjectType.podcast},
+			{ id: episode.id, type: DBObjectType.episode },
+			{ id: episode.podcast.idOrFail(), type: DBObjectType.podcast }
 		], user).catch(e => log.error(e)); // do not wait
 		return result;
 	}
 
 	async reportTrack(orm: Orm, track: Track, user: User): Promise<NowPlaying> {
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
-		const result = {time: Date.now(), track, user};
+		const result = { time: Date.now(), track, user };
 		this.playing.push(result);
 		this.report(orm, [
-			{id: track.id, type: DBObjectType.track},
-			{id: track.album.id(), type: DBObjectType.album},
-			{id: track.artist.id(), type: DBObjectType.artist},
-			{id: track.folder.id(), type: DBObjectType.folder},
-			{id: track.series.id(), type: DBObjectType.series},
-			{id: track.root.id(), type: DBObjectType.root},
+			{ id: track.id, type: DBObjectType.track },
+			{ id: track.album.id(), type: DBObjectType.album },
+			{ id: track.artist.id(), type: DBObjectType.artist },
+			{ id: track.folder.id(), type: DBObjectType.folder },
+			{ id: track.series.id(), type: DBObjectType.series },
+			{ id: track.root.id(), type: DBObjectType.root }
 		], user).catch(e => log.error(e)); // do not wait
 		return result;
 	}

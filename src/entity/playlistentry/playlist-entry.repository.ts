@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository.js';
-import {DBObjectType, PlaylistEntryOrderFields} from '../../types/enums.js';
-import {PlaylistEntry} from './playlist-entry.js';
-import {PlaylistEntryFilterArgs, PlaylistEntryOrderArgs} from './playlist-entry.args.js';
-import {User} from '../user/user.js';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
-import {OrderHelper} from '../base/base.js';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, PlaylistEntryOrderFields } from '../../types/enums.js';
+import { PlaylistEntry } from './playlist-entry.js';
+import { PlaylistEntryFilterArgs, PlaylistEntryOrderArgs } from './playlist-entry.args.js';
+import { User } from '../user/user.js';
+import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { OrderHelper } from '../base/base.js';
 
 export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, PlaylistEntryFilterArgs, PlaylistEntryOrderArgs> {
 	objType = DBObjectType.playlistentry;
@@ -28,8 +28,7 @@ export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, Playl
 			return {};
 		}
 		return QHelper.buildQuery<PlaylistEntry>([
-			{playlist: QHelper.inOrEqual(filter.playlistIDs)},
+			{ playlist: QHelper.inOrEqual(filter.playlistIDs) }
 		]);
 	}
-
 }

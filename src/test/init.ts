@@ -1,5 +1,5 @@
 import nock from 'nock';
-import {configureLogger} from '../utils/logger.js';
+import { configureLogger } from '../utils/logger.js';
 
 export function initTest(): void {
 	nock.disableNetConnect();

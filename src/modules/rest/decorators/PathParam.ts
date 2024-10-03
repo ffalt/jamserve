@@ -7,4 +7,3 @@ export function PathParam(name: string, returnTypeFunc: ReturnTypeFunc, options?
 export function PathParam(name: string, returnTypeFuncOrOptions?: ReturnTypeFunc | PathParamOptions, maybeOptions?: PathParamOptions): ParameterDecorator {
 	return BasePathParam(getMetadataStorage(), name, returnTypeFuncOrOptions, maybeOptions)
 }
-

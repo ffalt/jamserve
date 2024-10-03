@@ -1,6 +1,6 @@
-import {CustomPathParameterGroup, CustomPathParameters} from '../definitions/types.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {InvalidParamError, MissingParamError} from './express-error.js';
+import { CustomPathParameterGroup, CustomPathParameters } from '../definitions/types.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { InvalidParamError, MissingParamError } from './express-error.js';
 import {RestOptions} from './express-method.js';
 
 function validateCustomPathParameterValue(rElement: string | undefined, group: CustomPathParameterGroup, options: RestOptions): any {

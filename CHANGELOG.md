@@ -2,17 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.22](https://github.com/ffalt/jamserve/compare/v0.5.21...v0.5.22) (2024-10-01)
+
 ## [0.5.21](https://github.com/ffalt/jamserve/compare/v0.5.20...v0.5.21) (2024-09-13)
 
 ## [0.5.20](https://github.com/ffalt/jamserve/compare/v0.5.19...v0.5.20) (2024-03-23)
-
 
 ### Bug Fixes
 
 * **test:** adjust to deps bump ([5c8ccd7](https://github.com/ffalt/jamserve/commit/5c8ccd7f9eb145e879c9ec5b52b09b2e09f1fb86))
 
 ## [0.5.19](https://github.com/ffalt/jamserve/compare/v0.5.18...v0.5.19) (2023-11-17)
-
 
 ### Bug Fixes
 
@@ -21,18 +21,15 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.5.18](https://github.com/ffalt/jamserve/compare/v0.5.17...v0.5.18) (2023-05-20)
 
-
 ### Bug Fixes
 
 * **healthcheck:** repair testing mp3 ([a94406b](https://github.com/ffalt/jamserve/commit/a94406bfc2146c8167e4151ee5e8f7318a1faf83))
 
 ## [0.5.17](https://github.com/ffalt/jamserve/compare/v0.5.16...v0.5.17) (2023-05-19)
 
-
 ### Features
 
 * **images:** darken missing image placeholder ([b7f71a2](https://github.com/ffalt/jamserve/commit/b7f71a2e8835e99fc237d99c9aa9cd72ca6ee9a9))
-
 
 ### Bug Fixes
 
@@ -41,13 +38,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.5.16](https://github.com/ffalt/jamserve/compare/v0.5.15...v0.5.16) (2023-04-24)
 
-
 ### Bug Fixes
 
 * **soundtracks:** don't register soundtracks with various artists as AlbumType.compilation ([4945f4f](https://github.com/ffalt/jamserve/commit/4945f4fc8b2b91d439fc771318af351f704d2745))
 
 ## [0.5.15](https://github.com/ffalt/jamserve/compare/v0.5.14...v0.5.15) (2023-01-24)
-
 
 ### Bug Fixes
 
@@ -55,11 +50,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.14](https://github.com/ffalt/jamserve/compare/v0.5.13...v0.5.14) (2023-01-14)
 
-
 ### Features
 
 * **github action:** use ref_name as release name [skip ci] ([a619137](https://github.com/ffalt/jamserve/commit/a619137c3ce159c736283d82a4b0af8a655ae1ff))
-
 
 ### Bug Fixes
 
@@ -67,13 +60,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.13](https://github.com/ffalt/jamserve/compare/v0.5.12...v0.5.13) (2023-01-14)
 
-
 ### Bug Fixes
 
 * **nodejs:** different requirements for json in different nodejs version, just read it instead of importing/require ([5037d49](https://github.com/ffalt/jamserve/commit/5037d49f3c3e89a1f73eb9c2f496a96ec9d4578b))
 
 ### [0.5.12](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.12) (2023-01-13)
-
 
 ### Bug Fixes
 
@@ -90,7 +81,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.10](https://github.com/ffalt/jamserve/compare/v0.5.9...v0.5.10) (2022-12-13)
 
-
 ### Bug Fixes
 
 * **logout:** flush session if .passport does not exist ([61ad6ec](https://github.com/ffalt/jamserve/commit/61ad6ec2fb771b81384633748e042bdc0535a36f))
@@ -101,18 +91,15 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.8](https://github.com/ffalt/jamserve/compare/v0.5.7...v0.5.8) (2022-03-27)
 
-
 ### Features
 
 * **deps:** fix import ([ffa14fd](https://github.com/ffalt/jamserve/commit/ffa14fde98f2822f6b775025017330b81beeb244))
-
 
 ### Bug Fixes
 
 * **deps:** fix broken import ([5f2c00b](https://github.com/ffalt/jamserve/commit/5f2c00bf1d8c8618f9b600d7926a5e75b77882ff))
 
 ### [0.5.7](https://github.com/ffalt/jamserve/compare/v0.5.6...v0.5.7) (2022-03-26)
-
 
 ### Features
 
@@ -125,11 +112,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.6](https://github.com/ffalt/jamserve/compare/v0.5.5...v0.5.6) (2022-01-12)
 
-
 ### Features
 
 * **deps:** bump dependencies ([da379ec](https://github.com/ffalt/jamserve/commit/da379ecb36cf39013cfde21a3cd072cb55e889c0))
-
 
 ### Bug Fixes
 
@@ -142,7 +127,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.4](https://github.com/ffalt/jamserve/compare/v0.5.3...v0.5.4) (2021-10-13)
 
-
 ### Features
 
 * **genres:** add missing genre<=>series relation ([93711ae](https://github.com/ffalt/jamserve/commit/93711aef84623f1988d57b3a9cf23640eba5e39f))
@@ -150,7 +134,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **graphql:** get album/artist/folder extended info ([635042f](https://github.com/ffalt/jamserve/commit/635042fcff56ce2b91b4bb6df71c12e4d434ad8a))
 
 ### [0.5.3](https://github.com/ffalt/jamserve/compare/v0.5.2...v0.5.3) (2021-08-06)
-
 
 ### Bug Fixes
 
@@ -162,7 +145,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.2](https://github.com/ffalt/jamserve/compare/v0.5.1...v0.5.2) (2021-08-04)
 
-
 ### Bug Fixes
 
 * **api:** image file upload special handling in express ([4af50e8](https://github.com/ffalt/jamserve/commit/4af50e834414a8db0ba9366c67e8ead63dc1115f))
@@ -170,13 +152,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.5.1](https://github.com/ffalt/jamserve/compare/v0.5.0...v0.5.1) (2021-07-31)
 
-
 ### Bug Fixes
 
 * **image:** placeholder image webp support ([0945bd5](https://github.com/ffalt/jamserve/commit/0945bd5e77a5c0b89a47546e6371c1716bfe1d85))
 
 ## [0.5.0](https://github.com/ffalt/jamserve/compare/v0.4.13...v0.5.0) (2021-07-31)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -187,13 +167,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 * **images:** enable webp format ([065d035](https://github.com/ffalt/jamserve/commit/065d03524ddaf203cf394d156557714b2c45a525))
 
-
 ### Bug Fixes
 
 * **graphql:** add missing resolvers ([cb82cd3](https://github.com/ffalt/jamserve/commit/cb82cd3af1f864606321208e18097869a94e131d))
 * **index:** don't fail album index if missing artist bug strikes ([391c43f](https://github.com/ffalt/jamserve/commit/391c43f21c1099725050613f5bab8fe35d4de343))
 * **lastfm:** lfm started to answer 404 if data not found instead of empty result ([c4f83c5](https://github.com/ffalt/jamserve/commit/c4f83c5ec528dbf1f1035e556b46fb3bec4476d1))
-
 
 ### build
 
@@ -205,7 +183,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.11](https://github.com/ffalt/jamserve/compare/v0.4.10...v0.4.11) (2020-12-22)
 
-
 ### Bug Fixes
 
 * **health:** do not report hints for child multialbum folders ([1b1cadc](https://github.com/ffalt/jamserve/commit/1b1cadcfb4a80a6871dd51fd2710c22d7ca08605))
@@ -216,11 +193,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.9](https://github.com/ffalt/jamserve/compare/v0.4.8...v0.4.9) (2020-12-18)
 
-
 ### Features
 
 * **meta:** proxy coverartarchive to avoid csp violations because of redirects ([574a8b0](https://github.com/ffalt/jamserve/commit/574a8b05f044ca5fbbe92da95b0b082f3245434a))
-
 
 ### Bug Fixes
 
@@ -228,13 +203,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.8](https://github.com/ffalt/jamserve/compare/v0.4.7...v0.4.8) (2020-12-14)
 
-
 ### Bug Fixes
 
 * **express:** don't send single hardcoded files with express-static ([9a7f54e](https://github.com/ffalt/jamserve/commit/9a7f54edfea019bae4bcfddc06dfdf4f4f08a6db))
 
 ### [0.4.7](https://github.com/ffalt/jamserve/compare/v0.4.6...v0.4.7) (2020-12-10)
-
 
 ### Features
 
@@ -243,13 +216,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.6](https://github.com/ffalt/jamserve/compare/v0.4.5...v0.4.6) (2020-09-25)
 
-
 ### Features
 
 * **csp:** add worker-src ([86ae322](https://github.com/ffalt/jamserve/commit/86ae32217d179c610a85016375d883b6f59a855a))
 * **password hashing:** use bcyrpt ([ac313e7](https://github.com/ffalt/jamserve/commit/ac313e756bc9e51091d8507dab8055f5b6a951d9))
 * **password hashing:** use bcyrpt ([3dc0367](https://github.com/ffalt/jamserve/commit/3dc03674f27b70f8d356bcdac735bda0bd99105b))
-
 
 ### Bug Fixes
 
@@ -258,7 +229,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **scan:** updating must flush changes in smaller transactions ([1a43108](https://github.com/ffalt/jamserve/commit/1a431083beb290d88cd4d64f14779d119aa1c17f))
 
 ### [0.4.5](https://github.com/ffalt/jamserve/compare/v0.4.4...v0.4.5) (2020-09-24)
-
 
 ### Bug Fixes
 
@@ -269,11 +239,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.4](https://github.com/ffalt/jamserve/compare/v0.4.3...v0.4.4) (2020-09-24)
 
-
 ### Features
 
 * **podcast:** add podcast discover api via gpodder.net ([6e48521](https://github.com/ffalt/jamserve/commit/6e48521762f9b126bd9ff0228652b13d4aee67e0))
-
 
 ### Bug Fixes
 
@@ -285,13 +253,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### [0.4.3](https://github.com/ffalt/jamserve/compare/v0.4.2...v0.4.3) (2020-09-23)
 
-
 ### Bug Fixes
 
 * **Content Security Policy:** allow frontend to connect to wikipedia/wikimedia/coverartarchive/gpodder ([977fc46](https://github.com/ffalt/jamserve/commit/977fc4665c67c55182e5cf820b1161964e0ab957))
 
 ### [0.4.2](https://github.com/ffalt/jamserve/compare/v0.4.1...v0.4.2) (2020-09-22)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -301,13 +267,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 * **genre:** collect genres and assign ids, with full JamObject features (fav/played/etc) & image ([a4ac3b0](https://github.com/ffalt/jamserve/commit/a4ac3b06d1e19b8f9b589f4ac90fa9dcdbfd740d))
 
-
 ### Bug Fixes
 
 * **list:** apply sorting to result obj list ([b05cd99](https://github.com/ffalt/jamserve/commit/b05cd99d11538cc1c1be8725fee7a7386047f523))
 
 ### [0.4.1](https://github.com/ffalt/jamserve/compare/v0.4.0...v0.4.1) (2020-09-19)
-
 
 ### Bug Fixes
 

@@ -1,25 +1,24 @@
-import {InRequestScope} from 'typescript-ioc';
-import {IndexResult, IndexResultGroup} from './base.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {State as ORMState} from '../state/state.js';
-import {State} from '../state/state.model.js';
-import {DBObjectType} from '../../types/enums.js';
-import {Tag as ORMTag} from '../tag/tag.js';
-import {MediaInfo, MediaTag} from '../tag/tag.model.js';
+import { InRequestScope } from 'typescript-ioc';
+import { IndexResult, IndexResultGroup } from './base.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { State as ORMState } from '../state/state.js';
+import { State } from '../state/state.model.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Tag as ORMTag } from '../tag/tag.js';
+import { MediaInfo, MediaTag } from '../tag/tag.model.js';
 
 @InRequestScope
 export class BaseTransformService {
-
 	protected async index<T, Y>(result: IndexResult<IndexResultGroup<T>>, mapItem: (item: T) => Promise<Y>): Promise<{
 		lastModified: number;
 		groups: Array<{ name: string; items: Array<Y> }>;
 	}> {
 		return {
 			lastModified: new Date().valueOf(),
-			groups: await Promise.all(result.groups.map(async (group) => {
+			groups: await Promise.all(result.groups.map(async group => {
 				return {
 					name: group.name,
-					items: await Promise.all(group.items.map(async (item) => {
+					items: await Promise.all(group.items.map(async item => {
 						return await mapItem(item);
 					}))
 				};
@@ -73,5 +72,4 @@ export class BaseTransformService {
 			mbAlbumArtistID: o.mbAlbumArtistID
 		};
 	}
-
 }

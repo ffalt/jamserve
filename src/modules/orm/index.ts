@@ -9,4 +9,4 @@ export * from './helpers/manager.js';
 export * from './helpers/reference.js';
 export * from './helpers/orm.js';
 export * from './helpers/query.js';
-export {FindOptions, OrderItem, Order, WhereOptions} from 'sequelize';
+export { FindOptions, OrderItem, Order, WhereOptions } from 'sequelize';

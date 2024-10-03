@@ -1,17 +1,16 @@
-import {WebserviceJSONClient} from '../../../utils/webservice-json-client.js';
+import { WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
 import * as MusicbrainzClientApi from './musicbrainz-client.interface.js';
-import {LookupBrowseTypes, LookupIncludes} from './musicbrainz-client.types.js';
-import {MusicBrainz} from './musicbrainz-rest-data.js';
+import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types.js';
+import { MusicBrainz } from './musicbrainz-rest-data.js';
 
 export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi.Request, MusicBrainz.Response> {
-
 	constructor(options: MusicbrainzClientApi.Options) {
 		const defaultOptions = {
 			host: 'https://musicbrainz.org',
 			basePath: '/ws/2/'
 		};
 		// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
-		super(1, 1000, options.userAgent, {...defaultOptions, ...options});
+		super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
 	}
 
 	private beautify(obj: any): any {
@@ -74,7 +73,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {
 		const data = await this.get({
 			path: `${this.options.basePath}${params.type}/`,
-			query: {query: this.concatSearchQuery(params.query || {})},
+			query: { query: this.concatSearchQuery(params.query || {}) },
 			retry: 0,
 			limit: params.limit,
 			offset: params.offset
@@ -111,7 +110,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 		if (invalidKey) {
 			return Promise.reject(Error(`Invalid browse lookup key for type ${params.type}: ${invalidKey}`));
 		}
-		const query = {inc: params.inc, ...params.lookupIds};
+		const query = { inc: params.inc, ...params.lookupIds };
 		const data = await this.get({
 			path: `${this.options.basePath}${params.type}/`,
 			query,
@@ -142,5 +141,4 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 		result[params.type] = data || {};
 		return this.beautify(result);
 	}
-
 }

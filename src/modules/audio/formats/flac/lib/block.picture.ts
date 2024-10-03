@@ -1,4 +1,4 @@
-import {MetaWriteableDataBlock} from './block.writeable.js';
+import { MetaWriteableDataBlock } from './block.writeable.js';
 
 export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	pictureType = 0;
@@ -30,7 +30,6 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 
 	parse(buffer: Buffer): void {
 		try {
-
 			let pos = 0;
 
 			this.pictureType = buffer.readUInt32BE(pos);
@@ -55,7 +54,6 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			buffer.copy(this.pictureData, 0, pos + 4, pictureDataLength);
 
 			this.hasData = true;
-
 		} catch (e: any) {
 			this.error = e;
 			this.hasData = false;
@@ -103,7 +101,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	getSize(): number {
 		return Buffer.byteLength(this.mimeType) + 4 +
 			Buffer.byteLength(this.description) + 4 +
-			+16
-			+ (this.pictureData ? this.pictureData.length : 0) + 4;
+			+16 +
+			(this.pictureData ? this.pictureData.length : 0) + 4;
 	}
 }

@@ -1,9 +1,9 @@
-import {Track} from '../track/track.js';
-import {MetaDataService} from './metadata.service.js';
-import {Song} from './metadata.service.similar-tracks.js';
-import {PageResult} from '../base/base.js';
-import {PageArgs} from '../base/base.args.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { Track } from '../track/track.js';
+import { MetaDataService } from './metadata.service.js';
+import { Song } from './metadata.service.similar-tracks.js';
+import { PageResult } from '../base/base.js';
+import { PageArgs } from '../base/base.args.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export class MetadataServiceTopTracks {
 	constructor(private service: MetaDataService) {
@@ -22,9 +22,8 @@ export class MetadataServiceTopTracks {
 				};
 			});
 			const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
-			return orm.Track.search({where: {id: ids}, limit: page?.take, offset: page?.skip});
+			return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
 		}
-		return {items: [], ...(page || {}), total: 0};
+		return { items: [], ...(page || {}), total: 0 };
 	}
-
 }

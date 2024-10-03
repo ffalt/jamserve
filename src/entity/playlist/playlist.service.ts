@@ -1,17 +1,16 @@
-import {Track} from '../track/track.js';
-import {Playlist} from './playlist.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {PlaylistMutateArgs} from './playlist.args.js';
-import {User} from '../user/user.js';
-import {DBObjectType} from '../../types/enums.js';
-import {Episode} from '../episode/episode.js';
-import {Base} from '../base/base.js';
+import { Track } from '../track/track.js';
+import { Playlist } from './playlist.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { PlaylistMutateArgs } from './playlist.args.js';
+import { User } from '../user/user.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Episode } from '../episode/episode.js';
+import { Base } from '../base/base.js';
 import {NotFoundError} from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlaylistService {
-
 	private static async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
 		switch (media.objType) {
 			case DBObjectType.episode: {
@@ -44,7 +43,7 @@ export class PlaylistService {
 				return Promise.reject(NotFoundError());
 			}
 			duration += await PlaylistService.getDuration(media);
-			const entry = orm.PlaylistEntry.create({position});
+			const entry = orm.PlaylistEntry.create({ position });
 			await entry.playlist.set(playlist);
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
 			await entry.episode.set(media.objType === DBObjectType.episode ? media.obj as Episode : undefined);
@@ -64,7 +63,7 @@ export class PlaylistService {
 		for (const media of mediaList) {
 			let entry = oldEntries.pop();
 			if (!entry) {
-				entry = orm.PlaylistEntry.create({position});
+				entry = orm.PlaylistEntry.create({ position });
 			}
 			entry.position = position;
 			await entry.playlist.set(playlist);

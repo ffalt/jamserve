@@ -16,7 +16,7 @@ export async function bcryptPassword(password: string): Promise<string> {
 
 export async function bcryptComparePassword(password: string, hashAndSalt: string): Promise<boolean> {
 	return new Promise<boolean>((resolve, reject) => {
-		bcrypt.compare(password, hashAndSalt, function(err, res) {
+		bcrypt.compare(password, hashAndSalt, (err, res) => {
 			if (err) {
 				reject(err);
 			} else {

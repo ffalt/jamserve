@@ -1,4 +1,4 @@
-import session, {Cookie} from 'express-session';
+import session, { Cookie } from 'express-session';
 import { User as OwnUser } from '../entity/user/user.js';
 
 export interface SessionData extends Partial<session.SessionData> {
@@ -11,7 +11,7 @@ export interface SessionData extends Partial<session.SessionData> {
 }
 
 declare module 'express-session' {
-	interface SessionData{
+	interface SessionData {
 		passport: { user: string };
 		jwth?: string;
 		sessionID: string;
@@ -29,5 +29,3 @@ declare global {
 		}
 	}
 }
-
-

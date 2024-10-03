@@ -1,9 +1,8 @@
-import {JSONOptions, JSONRequest, WebserviceJSONClient} from '../../../utils/webservice-json-client.js';
-import {CoverArtArchive} from './coverartarchive-rest-data.js';
-import {Response} from 'node-fetch';
+import { JSONOptions, JSONRequest, WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
+import { CoverArtArchive } from './coverartarchive-rest-data.js';
+import { Response } from 'node-fetch';
 
 export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, CoverArtArchive.Response> {
-
 	constructor(options: JSONOptions) {
 		const defaultOptions = {
 			host: 'https://coverartarchive.org',
@@ -12,12 +11,12 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 		// https://musicbrainz.org/doc/Cover_Art_Archive/API#Rate_limiting_rules
 		// there are currently no rate limiting rules in place at http://coverartarchive.org.
 		// nevertheless, we limit this to 10 per second
-		super(10, 1000, options.userAgent, {...defaultOptions, ...options});
+		super(10, 1000, options.userAgent, { ...defaultOptions, ...options });
 	}
 
 	protected async parseResult<T>(response: Response): Promise<T | undefined> {
 		if (response.status === 404) {
-			return Promise.resolve({images: []} as any);
+			return Promise.resolve({ images: [] } as any);
 		}
 		return super.parseResult<T>(response);
 	}
@@ -30,7 +29,7 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			// <h1>Not Found</h1>
 			// <p>No cover art found for release {{mbid}}</p>
 			// */
-			return {images: []};
+			return { images: [] };
 		}
 		return super.processError(e, req);
 	}
@@ -50,5 +49,4 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			retry: 0
 		});
 	}
-
 }

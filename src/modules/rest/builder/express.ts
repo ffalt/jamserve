@@ -1,7 +1,7 @@
 import express from 'express';
-import {getMetadataStorage} from '../metadata/getMetadataStorage.js';
+import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
-import {ensureTrailingPathSeparator, fileDeleteIfExists} from '../../../utils/fs-utils.js';
+import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
 import {ExpressMethod, RestOptions, RouteInfo} from '../../deco/express/express-method.js';
 import {MethodMetadata} from '../../deco/definitions/method-metadata.js';
@@ -9,7 +9,7 @@ import {iterateControllers} from '../../deco/helpers/iterate-super.js';
 
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
-	const upload = multer({dest: ensureTrailingPathSeparator(options.tmpPath)});
+	const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });
 	const metadata = getMetadataStorage();
 	const method = new ExpressMethod();
 
@@ -43,7 +43,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 		iterateControllers(metadata.controllerClasses, ctrl, (ctrlClass => {
 			gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
 			posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
-		}));
+		});
 		for (const get of gets) {
 			routeInfos.push(method.GET(get, ctrl, router, options, metadata));
 		}

@@ -7,4 +7,3 @@ export function BodyParam(name: string, returnTypeFunc: ReturnTypeFunc, options?
 export function BodyParam(name: string, returnTypeFuncOrOptions?: ReturnTypeFunc | BodyParamOptions, maybeOptions?: BodyParamOptions): ParameterDecorator {
 	return BaseBodyParam(getMetadataStorage(), name, returnTypeFuncOrOptions, maybeOptions);
 }
-

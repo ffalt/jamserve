@@ -1,4 +1,3 @@
-
 export const examples = {
 	timestamp: new Date(2001, 0, 1),
 	year: 2001,
@@ -11,4 +10,3 @@ export const examples = {
 	mbRecordingID: 'f30de354-76dd-49d5-b3cc-fed22d43e0e6',
 	mbRecordingTrackID: 'f30de354-76dd-49d5-b3cc-fed22d43e0e6'
 };
-

@@ -1,6 +1,6 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
+import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
-import {ApolloMiddleware} from './apollo.middleware.js';
+import { ApolloMiddleware } from './apollo.middleware.js';
 import path from 'path';
 import {buildOpenApi} from '../../rest/builder/openapi.js';
 import {buildAngularClientZip} from '../../rest/builder/angular.js';
@@ -10,8 +10,7 @@ import {buildSubsonicOpenApi} from '../../subsonic/builder/openapi.js';
 
 @InRequestScope
 export class DocsMiddleware {
-	@Inject
-	private apollo!: ApolloMiddleware;
+	@Inject private apollo!: ApolloMiddleware;
 
 	getOpenApiSchema(extended: boolean = true): string {
 		const openapi = buildOpenApi(extended);

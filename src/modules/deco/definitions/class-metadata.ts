@@ -1,4 +1,4 @@
-import {FieldMetadata} from './field-metadata.js';
+import { FieldMetadata } from './field-metadata.js';
 
 export interface ClassMetadata {
 	name: string;

@@ -1,15 +1,9 @@
-import {findType} from './findType.js';
-import {MethodOptions, ReturnTypeFunc} from '../definitions/types.js';
-import {MethodMetadata} from '../definitions/method-metadata.js';
-import {SymbolKeysNotSupportedError} from 'type-graphql';
+import { findType } from './findType.js';
+import { MethodOptions, ReturnTypeFunc } from '../definitions/types.js';
+import { MethodMetadata } from '../definitions/method-metadata.js';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
 
-export function getMethodMetadata(
-	prototype: object,
-	propertyKey: string | symbol,
-	route?: string,
-	returnTypeFunc?: ReturnTypeFunc,
-	options: MethodOptions = {},
-): MethodMetadata {
+export function getMethodMetadata(prototype: object, propertyKey: string | symbol, route?: string, returnTypeFunc?: ReturnTypeFunc, options: MethodOptions = {}): MethodMetadata {
 	if (typeof propertyKey === 'symbol') {
 		throw new SymbolKeysNotSupportedError();
 	}
@@ -17,12 +11,12 @@ export function getMethodMetadata(
 	let getReturnType = undefined;
 	let returnTypeOptions = undefined;
 	if (returnTypeFunc) {
-		const {getType, typeOptions} = findType({
+		const { getType, typeOptions } = findType({
 			metadataKey: 'design:returntype',
 			prototype,
 			propertyKey,
 			returnTypeFunc,
-			typeOptions: options,
+			typeOptions: options
 		});
 		getReturnType = getType;
 		returnTypeOptions = typeOptions;

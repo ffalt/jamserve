@@ -1,6 +1,6 @@
-import {EngineService} from '../../engine/services/engine.service.js';
+import { EngineService } from '../../engine/services/engine.service.js';
 import express from 'express';
-import {Orm} from '../../engine/services/orm.service.js';
+import { Orm } from '../../engine/services/orm.service.js';
 
 export interface EngineRequest extends express.Request {
 	engine: EngineService;

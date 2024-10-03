@@ -1,9 +1,9 @@
-import {IMP3Analyzer, MP3Analyzer} from 'jamp3';
-import {parentPort} from 'worker_threads';
+import { IMP3Analyzer, MP3Analyzer } from 'jamp3';
+import { parentPort } from 'worker_threads';
 
 export async function analyzeMP3(filename: string): Promise<IMP3Analyzer.Report> {
 	const mp3ana = new MP3Analyzer();
-	return mp3ana.read(filename, {id3v1: true, id3v2: true, mpeg: true, xing: true, ignoreXingOffOne: true});
+	return mp3ana.read(filename, { id3v1: true, id3v2: true, mpeg: true, xing: true, ignoreXingOffOne: true });
 }
 
 if (parentPort && process.env.JAM_USE_TASKS) {

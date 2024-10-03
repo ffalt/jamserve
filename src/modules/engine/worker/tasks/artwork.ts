@@ -1,15 +1,15 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix} from '../../../../utils/fs-utils.js';
-import {Changes} from '../changes.js';
-import {Artwork} from '../../../../entity/artwork/artwork.js';
-import {artWorkImageNameToType} from '../../../../utils/artwork-type.js';
-import {ArtworkImageType} from '../../../../types/enums.js';
-import {BaseWorker} from './base.js';
-import {Root} from '../../../../entity/root/root.js';
-import {Folder} from '../../../../entity/folder/folder.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service.js';
+import { basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
+import { Changes } from '../changes.js';
+import { Artwork } from '../../../../entity/artwork/artwork.js';
+import { artWorkImageNameToType } from '../../../../utils/artwork-type.js';
+import { ArtworkImageType } from '../../../../types/enums.js';
+import { BaseWorker } from './base.js';
+import { Root } from '../../../../entity/root/root.js';
+import { Folder } from '../../../../entity/folder/folder.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../services/orm.service.js';
 
 export const FolderTypeImageName: { [foldertype: string]: string } = {
 	unknown: 'folder',
@@ -22,7 +22,6 @@ export const FolderTypeImageName: { [foldertype: string]: string } = {
 
 @InRequestScope
 export class ArtworkWorker extends BaseWorker {
-
 	private async updateArtworkImageFile(artwork: Artwork): Promise<void> {
 		const destFile = path.join(artwork.path, artwork.name);
 		const stat = await fse.stat(destFile);
@@ -133,7 +132,7 @@ export class ArtworkWorker extends BaseWorker {
 		const folder = await orm.Folder.findOneOrFailByID(folderID);
 		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
-		const artwork = orm.Artwork.create({name: filename, path: folder.path});
+		const artwork = orm.Artwork.create({ name: filename, path: folder.path });
 		await artwork.folder.set(folder);
 		changes.folders.updated.add(folder);
 		changes.artworks.added.add(artwork);

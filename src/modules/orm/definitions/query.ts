@@ -1,4 +1,4 @@
-import {Dictionary, IPrimaryKey} from '../typings.js';
+import { Dictionary, IPrimaryKey } from '../typings.js';
 
 export enum QueryOrder {
 	ASC = 'ASC',

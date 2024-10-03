@@ -1,9 +1,9 @@
-import {ClassType, Field, ID, Int, ObjectType} from 'type-graphql';
-import {Entity, PrimaryKey} from '../../modules/orm/index.js';
-import {OrderByArgs} from './base.args.js';
+import { ClassType, Field, ID, Int, ObjectType } from 'type-graphql';
+import { Entity, PrimaryKey } from '../../modules/orm/index.js';
+import { OrderByArgs } from './base.args.js';
 
 @ObjectType()
-@Entity({isAbstract: true})
+@Entity({ isAbstract: true })
 export abstract class Base {
 	@Field(() => ID)
 	@PrimaryKey()
@@ -33,6 +33,7 @@ export function IndexGroup<Entity extends object, EntityQL extends object>(Entit
 	abstract class IndexResultResponseClass implements IndexResultGroup<Entity> {
 		@Field(() => [EntityQLClass])
 		items!: Entity[];
+
 		@Field(() => String)
 		name!: string;
 	}
@@ -55,16 +56,16 @@ export function PaginatedResponse<Entity extends object, EntityQL extends object
 	abstract class PaginatedResponseClass {
 		// here we use the runtime argument
 		@Field(() => [EntityQLClass])
-			// and here the generic type
+		// and here the generic type
 		items!: Entity[];
 
 		@Field(() => Int)
 		total!: number;
 
-		@Field(() => Int, {nullable: true})
+		@Field(() => Int, { nullable: true })
 		take?: number;
 
-		@Field(() => Int, {nullable: true})
+		@Field(() => Int, { nullable: true })
 		skip?: number;
 	}
 
@@ -79,7 +80,6 @@ export interface PageResult<T> {
 }
 
 export class OrderHelper {
-
 	static direction(args?: OrderByArgs): string {
 		return args?.orderDesc ? 'DESC' : 'ASC';
 	}

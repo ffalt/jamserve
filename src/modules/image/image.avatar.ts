@@ -1,4 +1,4 @@
-import {AvatarGenerator} from './avatar-generator.js';
+import { AvatarGenerator } from './avatar-generator.js';
 
 export class AvatarGen {
 	avatar: AvatarGenerator;

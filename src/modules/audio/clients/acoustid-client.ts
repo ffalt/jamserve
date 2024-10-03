@@ -1,7 +1,7 @@
-import {logger} from '../../../utils/logger.js';
-import {WebserviceClient} from '../../../utils/webservice-client.js';
-import {fpcalc, FPCalcOptions, FPCalcResult} from '../tools/fpcalc.js';
-import {Acoustid} from './acoustid-rest-data.js';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
+import { fpcalc, FPCalcOptions, FPCalcResult } from '../tools/fpcalc.js';
+import { Acoustid } from './acoustid-rest-data.js';
 
 const log = logger('Acoustid');
 
@@ -29,11 +29,11 @@ export class AcoustidClient extends WebserviceClient {
 		includes = includes || this.options.meta || META_DEFAULT;
 		log.info('requesting by fingerprint', includes);
 		const data = await this.getJson<Acoustid.Results, {
-			format: string,
-			meta: string,
-			client: string,
-			duration: string,
-			fingerprint: string,
+			format: string;
+			meta: string;
+			client: string;
+			duration: string;
+			fingerprint: string;
 		}>('https://api.acoustid.org/v2/lookup', {
 			format: 'json',
 			meta: includes,

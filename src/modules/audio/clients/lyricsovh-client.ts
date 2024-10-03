@@ -1,6 +1,6 @@
-import {logger} from '../../../utils/logger.js';
-import {WebserviceClient} from '../../../utils/webservice-client.js';
-import {Response} from 'node-fetch';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
+import { Response } from 'node-fetch';
 
 const log = logger('LyricsOVHClient');
 
@@ -15,7 +15,6 @@ export interface LyricsOVHResult {
 }
 
 export class LyricsOVHClient extends WebserviceClient {
-
 	constructor(userAgent: string) {
 		super(1, 1000, userAgent);
 	}
@@ -34,7 +33,7 @@ export class LyricsOVHClient extends WebserviceClient {
 		if (!data || !data.lyrics) {
 			return;
 		}
-		return {lyrics: data.lyrics, source: url};
+		return { lyrics: data.lyrics, source: url };
 	}
 
 	private static cleanString(s: string): string {

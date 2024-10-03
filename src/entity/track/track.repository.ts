@@ -1,12 +1,12 @@
-import {BaseRepository} from '../base/base.repository.js';
-import {DBObjectType, TrackOrderFields} from '../../types/enums.js';
-import {Track} from './track.js';
-import {OrderHelper} from '../base/base.js';
-import {Folder} from '../folder/folder.js';
-import {FolderRepository} from '../folder/folder.repository.js';
-import {TrackFilterArgs, TrackOrderArgs} from './track.args.js';
-import {User} from '../user/user.js';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, TrackOrderFields } from '../../types/enums.js';
+import { Track } from './track.js';
+import { OrderHelper } from '../base/base.js';
+import { Folder } from '../folder/folder.js';
+import { FolderRepository } from '../folder/folder.repository.js';
+import { TrackFilterArgs, TrackOrderArgs } from './track.args.js';
+import { User } from '../user/user.js';
+import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
 
 export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, TrackOrderArgs> {
 	objType = DBObjectType.track;
@@ -59,32 +59,31 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 		}
 		const result = QHelper.buildQuery<Track>(
 			[
-				{id: filter.ids},
-				{createdAt: QHelper.gte(filter.since)},
-				{series: QHelper.inOrEqual(filter.seriesIDs)},
-				{album: QHelper.inOrEqual(filter.albumIDs)},
-				{artist: QHelper.inOrEqual(filter.artistIDs)},
-				{albumArtist: QHelper.inOrEqual(filter.albumArtistIDs)},
-				{root: QHelper.inOrEqual(filter.rootIDs)},
-				{folder: QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined)}
+				{ id: filter.ids },
+				{ createdAt: QHelper.gte(filter.since) },
+				{ series: QHelper.inOrEqual(filter.seriesIDs) },
+				{ album: QHelper.inOrEqual(filter.albumIDs) },
+				{ artist: QHelper.inOrEqual(filter.artistIDs) },
+				{ albumArtist: QHelper.inOrEqual(filter.albumArtistIDs) },
+				{ root: QHelper.inOrEqual(filter.rootIDs) },
+				{ folder: QHelper.inOrEqual(folderIDs.length > 0 ? folderIDs : undefined) }
 			]
 		);
 		result.include = QHelper.includeQueries([
-			{bookmarks: [{id: QHelper.inOrEqual(filter.bookmarkIDs)}]},
-			{genres: [{id: QHelper.inOrEqual(filter.genreIDs)}]},
-			{artist: [{name: QHelper.eq(filter.artist)}]},
-			{album: [{name: QHelper.eq(filter.album)}]},
+			{ bookmarks: [{ id: QHelper.inOrEqual(filter.bookmarkIDs) }] },
+			{ genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },
+			{ artist: [{ name: QHelper.eq(filter.artist) }] },
+			{ album: [{ name: QHelper.eq(filter.album) }] },
 			{
 				tag: [
 					...QHelper.inStringArray('genres', filter.genres),
-					{title: QHelper.like(filter.query, this.em.dialect)},
-					{title: QHelper.eq(filter.name)},
-					{year: QHelper.lte(filter.toYear)},
-					{year: QHelper.gte(filter.fromYear)}
+					{ title: QHelper.like(filter.query, this.em.dialect) },
+					{ title: QHelper.eq(filter.name) },
+					{ year: QHelper.lte(filter.toYear) },
+					{ year: QHelper.gte(filter.fromYear) }
 				]
 			}
 		]);
 		return result;
 	}
-
 }

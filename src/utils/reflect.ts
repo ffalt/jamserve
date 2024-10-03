@@ -1,4 +1,4 @@
-import {ReflectMetadataMissingError} from 'type-graphql';
+import { ReflectMetadataMissingError } from 'type-graphql';
 
 export function ensureReflectMetadataExists(): void {
 	if (typeof Reflect !== 'object' ||

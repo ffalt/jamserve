@@ -1,18 +1,17 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {Folder} from '../../../../entity/folder/folder.js';
-import {ensureTrailingPathSeparator} from '../../../../utils/fs-utils.js';
-import {FolderType} from '../../../../types/enums.js';
-import {Root} from '../../../../entity/root/root.js';
-import {Changes} from '../changes.js';
-import {splitDirectoryName, validateFolderName} from '../../../../utils/dir-name.js';
-import {BaseWorker} from './base.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service.js';
+import { Folder } from '../../../../entity/folder/folder.js';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { FolderType } from '../../../../types/enums.js';
+import { Root } from '../../../../entity/root/root.js';
+import { Changes } from '../changes.js';
+import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name.js';
+import { BaseWorker } from './base.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../services/orm.service.js';
 
 @InRequestScope
 export class FolderWorker extends BaseWorker {
-
 	private static async validateFolderTask(destPath: string, destName: string): Promise<void> {
 		const newPath = path.join(destPath, destName);
 		const exists = await fse.pathExists(newPath);
@@ -79,7 +78,7 @@ export class FolderWorker extends BaseWorker {
 		const destination = ensureTrailingPathSeparator(path.join(parentPath, name));
 		await FolderWorker.validateFolderTask(parent.path, name);
 		await fse.mkdir(destination);
-		const {title, year} = splitDirectoryName(name);
+		const { title, year } = splitDirectoryName(name);
 		const stat = await fse.stat(destination);
 		const folder = orm.Folder.create({
 			name,
@@ -112,9 +111,9 @@ export class FolderWorker extends BaseWorker {
 			}
 			const folders = await orm.Folder.findAllDescendants(folder);
 			changes.folders.removed.append(folders);
-			const tracks = await orm.Track.findFilter({childOfID: folder.id});
+			const tracks = await orm.Track.findFilter({ childOfID: folder.id });
 			changes.tracks.removed.append(tracks);
-			const artworks = await orm.Artwork.findFilter({childOfID: folder.id});
+			const artworks = await orm.Artwork.findFilter({ childOfID: folder.id });
 			changes.artworks.removed.append(artworks);
 			const parent = await folder.parent.get();
 			if (parent) {

@@ -1,9 +1,8 @@
-import {logger} from '../../../utils/logger.js';
-import {WebserviceClient} from '../../../utils/webservice-client.js';
-import {WikiData} from './wikidata-rest-data.js';
+import { logger } from '../../../utils/logger.js';
+import { WebserviceClient } from '../../../utils/webservice-client.js';
+import { WikiData } from './wikidata-rest-data.js';
 
 const log = logger('Wikipedia');
-
 
 export interface WikipediaSummary {
 	type: string;
@@ -87,9 +86,7 @@ export interface WikiPHPApiSummary {
 	};
 }
 
-
 export class WikipediaClient extends WebserviceClient {
-
 	constructor(userAgent: string) {
 		// "no more than 200 requests/s to this API" https://en.wikipedia.org/api/rest_v1/#!/Page_content/get_page_summary_title
 		super(200, 1000, userAgent);
@@ -100,12 +97,12 @@ export class WikipediaClient extends WebserviceClient {
 		const url = `https://${(lang || 'en')}.wikipedia.org/w/api.php`;
 		const data: WikiPHPApiSummary = await this.getJson<WikiPHPApiSummary,
 			{
-				action: string,
-				prop: string,
-				format: string,
-				exintro: number,
-				redirects: number,
-				titles: string
+				action: string;
+				prop: string;
+				format: string;
+				exintro: number;
+				redirects: number;
+				titles: string;
 			}
 		>(url, {
 			action: 'query',
@@ -123,13 +120,13 @@ export class WikipediaClient extends WebserviceClient {
 		if (!page) {
 			return;
 		}
-		return {title: page.title, summary: page.extract, url: `https://${(lang || 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}`};
+		return { title: page.title, summary: page.extract, url: `https://${(lang || 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
 	}
 
 	async summary_rest(title: string, lang: string | undefined): Promise<string | undefined> {
 		log.info('requesting summary', title);
 		const url = `https://${(lang || 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-		const data: WikipediaSummary = await this.getJson<WikipediaSummary, { redirect: string }>(url, {redirect: 'true'});
+		const data: WikipediaSummary = await this.getJson<WikipediaSummary, { redirect: string }>(url, { redirect: 'true' });
 		if (!data) {
 			return;
 		}

@@ -1,13 +1,13 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Podcast as ORMPodcast} from './podcast.js';
-import {IncludesPodcastArgs} from './podcast.args.js';
-import {User} from '../user/user.js';
-import {PodcastBase, PodcastIndex, PodcastUpdateStatus} from './podcast.model.js';
-import {DBObjectType, PodcastStatus} from '../../types/enums.js';
-import {IndexResult, IndexResultGroup} from '../base/base.js';
-import {PodcastService} from './podcast.service.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Podcast as ORMPodcast } from './podcast.js';
+import { IncludesPodcastArgs } from './podcast.args.js';
+import { User } from '../user/user.js';
+import { PodcastBase, PodcastIndex, PodcastUpdateStatus } from './podcast.model.js';
+import { DBObjectType, PodcastStatus } from '../../types/enums.js';
+import { IndexResult, IndexResultGroup } from '../base/base.js';
+import { PodcastService } from './podcast.service.js';
 
 @InRequestScope
 export class PodcastTransformService extends BaseTransformService {
@@ -31,7 +31,7 @@ export class PodcastTransformService extends BaseTransformService {
 	}
 
 	async podcastIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMPodcast>>): Promise<PodcastIndex> {
-		return this.index(result, async (item) => {
+		return this.index(result, async item => {
 			return {
 				id: item.id,
 				name: item.name,
@@ -41,7 +41,6 @@ export class PodcastTransformService extends BaseTransformService {
 	}
 
 	podcastStatus(o: ORMPodcast): PodcastUpdateStatus {
-		return this.podcastService.isDownloading(o.id) ? {status: PodcastStatus.downloading} : {status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined};
+		return this.podcastService.isDownloading(o.id) ? { status: PodcastStatus.downloading } : { status: o.status, error: o.errorMessage, lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined };
 	}
-
 }

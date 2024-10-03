@@ -5,19 +5,19 @@ export default {
 	testTimeout: 1000000,
 	extensionsToTreatAsEsm: ['.ts'],
 	maxWorkers: 1,
-	"roots": [
-		"<rootDir>/src"
+	roots: [
+		'<rootDir>/src'
 	],
 	moduleNameMapper: {
-		"^(\\.\\.?\\/.+)\\.jsx?$": "$1"
+		'^(\\.\\.?\\/.+)\\.jsx?$': '$1'
 	},
 	transform: {
-		"^.+\\.tsx?$": [`ts-jest`,
+		'^.+\\.tsx?$': [`ts-jest`,
 			{
 				useESM: true,
-				tsconfig: "tsconfig.jest.json",
+				tsconfig: 'tsconfig.jest.json',
 				diagnostics: true,
-				testEnvironment: "node"
+				testEnvironment: 'node'
 			}]
 	}
 };

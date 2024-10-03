@@ -1,18 +1,19 @@
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {BaseTransformService} from '../base/base.transform.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure} from './episode.js';
-import {IncludesEpisodeArgs} from './episode.args.js';
-import {User} from '../user/user.js';
-import {EpisodeBase, EpisodeUpdateStatus} from './episode.model.js';
-import {DBObjectType, JamObjectType, PodcastStatus} from '../../types/enums.js';
-import {EpisodeService} from './episode.service.js';
-import {AudioModule} from '../../modules/audio/audio.module.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { BaseTransformService } from '../base/base.transform.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure } from './episode.js';
+import { IncludesEpisodeArgs } from './episode.args.js';
+import { User } from '../user/user.js';
+import { EpisodeBase, EpisodeUpdateStatus } from './episode.model.js';
+import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums.js';
+import { EpisodeService } from './episode.service.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
 
 @InRequestScope
 export class EpisodeTransformService extends BaseTransformService {
 	@Inject
 	public episodeService!: EpisodeService;
+
 	@Inject
 	public audioModule!: AudioModule;
 
@@ -46,7 +47,6 @@ export class EpisodeTransformService extends BaseTransformService {
 	}
 
 	episodeStatus(o: ORMEpisode): EpisodeUpdateStatus {
-		return this.episodeService.isDownloading(o.id) ? {status: PodcastStatus.downloading} : {status: o.status, error: o.error};
+		return this.episodeService.isDownloading(o.id) ? { status: PodcastStatus.downloading } : { status: o.status, error: o.error };
 	}
-
 }

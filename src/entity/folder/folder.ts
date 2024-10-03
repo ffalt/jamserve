@@ -1,16 +1,16 @@
-import {Artwork, ArtworkQL} from '../artwork/artwork.js';
-import {Root, RootQL} from '../root/root.js';
-import {Track, TrackQL} from '../track/track.js';
-import {Album, AlbumQL} from '../album/album.js';
-import {Artist, ArtistQL} from '../artist/artist.js';
-import {Series, SeriesQL} from '../series/series.js';
-import {AlbumOrderFields, AlbumType, ArtistOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields} from '../../types/enums.js';
-import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
-import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base.js';
-import {State, StateQL} from '../state/state.js';
-import {FolderHealthHint} from '../health/health.model.js';
-import {Genre, GenreQL} from '../genre/genre.js';
+import { Artwork, ArtworkQL } from '../artwork/artwork.js';
+import { Root, RootQL } from '../root/root.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Album, AlbumQL } from '../album/album.js';
+import { Artist, ArtistQL } from '../artist/artist.js';
+import { Series, SeriesQL } from '../series/series.js';
+import { AlbumOrderFields, AlbumType, ArtistOrderFields, DefaultOrderFields, FolderOrderFields, FolderType, TrackOrderFields } from '../../types/enums.js';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
+import { FolderHealthHint } from '../health/health.model.js';
+import { Genre, GenreQL } from '../genre/genre.js';
 
 @ObjectType()
 @Entity()
@@ -19,8 +19,8 @@ export class Folder extends Base {
 	@Property(() => String)
 	name!: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	title?: string;
 
 	@Field(() => String)
@@ -39,44 +39,44 @@ export class Folder extends Base {
 	@Property(() => ORM_INT)
 	level!: number;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	album?: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	artist?: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	artistSort?: string;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	albumTrackCount?: number;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	year?: number;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	mbReleaseID?: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	mbReleaseGroupID?: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	mbAlbumType?: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	mbArtistID?: string;
 
-	@Field(() => AlbumType, {nullable: true})
-	@Property(() => AlbumType, {nullable: true})
+	@Field(() => AlbumType, { nullable: true })
+	@Property(() => AlbumType, { nullable: true })
 	albumType?: AlbumType;
 
 	@Field(() => FolderType)
@@ -87,12 +87,12 @@ export class Folder extends Base {
 	@ManyToMany<Genre>(() => Genre, genre => genre.folders)
 	genres: Collection<Genre> = new Collection<Genre>(this);
 
-	@Field(() => FolderQL, {nullable: true})
-	@ManyToOne<Folder>(() => Folder, folder => folder.children, {nullable: true})
+	@Field(() => FolderQL, { nullable: true })
+	@ManyToOne<Folder>(() => Folder, folder => folder.children, { nullable: true })
 	parent: Reference<Folder> = new Reference<Folder>(this);
 
 	@Field(() => [FolderQL])
-	@OneToMany<Folder>(() => Folder, folder => folder.parent, {order: [{orderBy: FolderOrderFields.name}]})
+	@OneToMany<Folder>(() => Folder, folder => folder.parent, { order: [{ orderBy: FolderOrderFields.name }] })
 	children: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => RootQL)
@@ -100,23 +100,23 @@ export class Folder extends Base {
 	root: Reference<Root> = new Reference<Root>(this);
 
 	@Field(() => [ArtworkQL])
-	@OneToMany<Artwork>(() => Artwork, artwork => artwork.folder, {order: [{orderBy: DefaultOrderFields.default}]})
+	@OneToMany<Artwork>(() => Artwork, artwork => artwork.folder, { order: [{ orderBy: DefaultOrderFields.default }] })
 	artworks: Collection<Artwork> = new Collection<Artwork>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany<Track>(() => Track, track => track.folder, {order: [{orderBy: TrackOrderFields.default}]})
+	@OneToMany<Track>(() => Track, track => track.folder, { order: [{ orderBy: TrackOrderFields.default }] })
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@ManyToMany<Album>(() => Album, album => album.folders, {order: [{orderBy: AlbumOrderFields.default}]})
+	@ManyToMany<Album>(() => Album, album => album.folders, { order: [{ orderBy: AlbumOrderFields.default }] })
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [ArtistQL])
-	@ManyToMany<Artist>(() => Artist, artist => artist.folders, {order: [{orderBy: ArtistOrderFields.default}]})
+	@ManyToMany<Artist>(() => Artist, artist => artist.folders, { order: [{ orderBy: ArtistOrderFields.default }] })
 	artists: Collection<Artist> = new Collection<Artist>(this);
 
 	@Field(() => [SeriesQL])
-	@ManyToMany<Series>(() => Series, series => series.folders, {order: [{orderBy: DefaultOrderFields.default}]})
+	@ManyToMany<Series>(() => Series, series => series.folders, { order: [{ orderBy: DefaultOrderFields.default }] })
 	series: Collection<Series> = new Collection<Series>(this);
 }
 
@@ -166,6 +166,7 @@ export class FolderIndexQL extends Index(FolderIndexGroupQL) {
 export class FolderHealth {
 	@Field(() => Folder)
 	folder!: Folder;
+
 	@Field(() => [FolderHealthHint])
 	health!: Array<FolderHealthHint>;
 }

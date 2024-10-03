@@ -1,17 +1,17 @@
 import path from 'path';
-import {AudioModule} from '../../modules/audio/audio.module.js';
-import {ImageModule} from '../../modules/image/image.module.js';
-import {Track, TrackHealth} from './track.js';
-import {logger} from '../../utils/logger.js';
-import {trackTagToRawTag} from '../../modules/audio/metadata.js';
-import {processQueue} from '../../utils/queue.js';
-import {TrackRulesChecker} from '../health/track.rule.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {RawTag} from '../../modules/audio/rawTag.js';
-import {FolderService} from '../folder/folder.service.js';
-import {TrackHealthHint} from '../health/health.model.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {basenameStripExt} from '../../utils/fs-utils.js';
+import { AudioModule } from '../../modules/audio/audio.module.js';
+import { ImageModule } from '../../modules/image/image.module.js';
+import { Track, TrackHealth } from './track.js';
+import { logger } from '../../utils/logger.js';
+import { trackTagToRawTag } from '../../modules/audio/metadata.js';
+import { processQueue } from '../../utils/queue.js';
+import { TrackRulesChecker } from '../health/track.rule.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { RawTag } from '../../modules/audio/rawTag.js';
+import { FolderService } from '../folder/folder.service.js';
+import { TrackHealthHint } from '../health/health.model.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { basenameStripExt } from '../../utils/fs-utils.js';
 import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
 const log = logger('TrackService');
@@ -21,8 +21,10 @@ export class TrackService {
 	readonly checker: TrackRulesChecker;
 	@Inject
 	private audioModule!: AudioModule;
+
 	@Inject
 	private imageModule!: ImageModule;
+
 	@Inject
 	private folderService!: FolderService;
 
@@ -80,7 +82,7 @@ export class TrackService {
 		await processQueue<Track>(3, tracks, async track => {
 			const health = await this.checker.run(track, !!media);
 			if (health && health.length > 0) {
-				result.push({track, health});
+				result.push({ track, health });
 			}
 		});
 		return result;

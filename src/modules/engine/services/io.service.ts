@@ -1,14 +1,14 @@
-import {Changes} from '../worker/changes.js';
-import {WorkerService} from './worker.service.js';
-import {OrmService} from './orm.service.js';
-import {AdminChangeQueueInfo, IoRequest, RootStatus, WorkerRequestMode} from './io/io.types.js';
-import {WorkerRequestParameters} from './worker/worker.types.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
-import {logger} from '../../../utils/logger.js';
-import {IoCommandsArtwork} from './io/io.commands.artwork.js';
-import {IoCommandsFolder} from './io/io.commands.folder.js';
-import {IoCommandsRoot} from './io/io.commands.root.js';
-import {IoCommandsTrack} from './io/io.commands.track.js';
+import { Changes } from '../worker/changes.js';
+import { WorkerService } from './worker.service.js';
+import { OrmService } from './orm.service.js';
+import { AdminChangeQueueInfo, IoRequest, RootStatus, WorkerRequestMode } from './io/io.types.js';
+import { WorkerRequestParameters } from './worker/worker.types.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger.js';
+import { IoCommandsArtwork } from './io/io.commands.artwork.js';
+import { IoCommandsFolder } from './io/io.commands.folder.js';
+import { IoCommandsRoot } from './io/io.commands.root.js';
+import { IoCommandsTrack } from './io/io.commands.track.js';
 
 const log = logger('IO');
 /*
@@ -18,6 +18,7 @@ const log = logger('IO');
 export class IoService {
 	@Inject
 	public orm!: OrmService;
+
 	@Inject
 	public workerService!: WorkerService;
 
@@ -37,12 +38,12 @@ export class IoService {
 
 	private async runRequest(cmd: IoRequest<WorkerRequestParameters>): Promise<void> {
 		this.clearAfterRefresh();
-		this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now(), scanning: true});
+		this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), scanning: true });
 		try {
 			this.current = cmd;
 			await cmd.run();
-			this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now()});
-			this.history.push({id: cmd.id, date: Date.now()});
+			this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
+			this.history.push({ id: cmd.id, date: Date.now() });
 			this.current = undefined;
 		} catch (e: any) {
 			console.error(e);
@@ -51,8 +52,8 @@ export class IoService {
 			if (msg.startsWith('Error:')) {
 				msg = msg.slice(6).trim();
 			}
-			this.rootStatus.set(cmd.parameters.rootID, {lastScan: Date.now(), error: msg});
-			this.history.push({id: cmd.id, error: msg, date: Date.now()});
+			this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: msg });
+			this.history.push({ id: cmd.id, error: msg, date: Date.now() });
 		}
 		if (this.queue.length === 0) {
 			this.runAfterRefresh();
@@ -102,7 +103,6 @@ export class IoService {
 				this.scanning = false;
 				log.error(e);
 			});
-
 	}
 
 	generateRequestID(): string {
@@ -126,7 +126,7 @@ export class IoService {
 
 	getRequestInfo(req: IoRequest<any>): AdminChangeQueueInfo {
 		const pos = this.queue.indexOf(req);
-		return {id: req.id, pos: pos >= 0 ? pos : undefined};
+		return { id: req.id, pos: pos >= 0 ? pos : undefined };
 	}
 
 	newRequest<T extends WorkerRequestParameters>(mode: WorkerRequestMode, execute: (parameters: T) => Promise<Changes>, parameters: T): AdminChangeQueueInfo {
@@ -135,30 +135,30 @@ export class IoService {
 
 	getAdminChangeQueueInfoStatus(id: string): AdminChangeQueueInfo {
 		if (this.current && this.current.id === id) {
-			return {id};
+			return { id };
 		}
 		const cmd = this.queue.find(c => c.id === id);
 		if (cmd) {
 			const pos = this.queue.indexOf(cmd);
-			return {id, pos: pos >= 0 ? pos : undefined};
+			return { id, pos: pos >= 0 ? pos : undefined };
 		}
 		const done = this.history.find(c => c.id === id);
 		if (done) {
-			return {id, error: done.error, done: done.date};
+			return { id, error: done.error, done: done.date };
 		}
 		if (this.track.delayedTrackTagWrite.findbyID(id)) {
-			return {id};
+			return { id };
 		}
 		if (this.track.delayedTrackFix.findbyID(id)) {
-			return {id};
+			return { id };
 		}
-		return {id, error: 'ID not found', done: Date.now()};
+		return { id, error: 'ID not found', done: Date.now() };
 	}
 
 	getRootStatus(id: string): RootStatus {
 		let status = this.rootStatus.get(id);
 		if (!status) {
-			status = {lastScan: Date.now()};
+			status = { lastScan: Date.now() };
 		}
 		if (!status.scanning) {
 			const cmd = this.queue.find(c => c.parameters.rootID === id);
@@ -174,5 +174,4 @@ export class IoService {
 	removeAfterRefresh(listener: () => Promise<void>): void {
 		this.afterRefreshListeners = this.afterRefreshListeners.filter(l => l !== listener);
 	}
-
 }

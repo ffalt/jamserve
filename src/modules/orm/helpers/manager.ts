@@ -1,12 +1,12 @@
-import {AnyEntity, Dictionary, EntityData, EntityName, IDEntity} from '../typings.js';
-import {EntityRepository} from './repository.js';
-import {MetadataStorage} from '../metadata/metadata-storage.js';
-import {ORMConfig} from '../definitions/config.js';
-import {FindOptions, Model, ModelStatic, Sequelize} from 'sequelize';
-import {ManagedEntity} from '../definitions/managed-entity.js';
-import {cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations} from './entity.js';
-import {v4} from 'uuid';
-import {ORM} from './orm.js';
+import { AnyEntity, Dictionary, EntityData, EntityName, IDEntity } from '../typings.js';
+import { EntityRepository } from './repository.js';
+import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { ORMConfig } from '../definitions/config.js';
+import { FindOptions, Model, ModelStatic, Sequelize } from 'sequelize';
+import { ManagedEntity } from '../definitions/managed-entity.js';
+import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity.js';
+import { v4 } from 'uuid';
+import { ORM } from './orm.js';
 
 export class EntityCache {
 	private cache = new Map<string, IDEntity>();
@@ -76,7 +76,7 @@ export class EntityManager {
 	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]): void {
 		let entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
 		entities = entities.filter(e => !this.changeSet.find(c => c.persist === e));
-		this.changeSet.push(...(entities.map(e => ({entityName: entityName as string, persist: e as ManagedEntity}))));
+		this.changeSet.push(...(entities.map(e => ({ entityName: entityName as string, persist: e as ManagedEntity }))));
 	}
 
 	async flush(): Promise<void> {
@@ -88,13 +88,13 @@ export class EntityManager {
 			for (const change of this.changeSet) {
 				if (change.persist) {
 					mapManagedToSource(change.persist);
-					await change.persist._source.save({transaction: t});
+					await change.persist._source.save({ transaction: t });
 				} else if (change.remove && change.remove.entity) {
-					await change.remove.entity._source.destroy({transaction: t});
+					await change.remove.entity._source.destroy({ transaction: t });
 					this.parent.cache.remove(change.entityName, change.remove.entity);
 				} else if (change.remove && change.remove.query) {
 					const model = this.model(change.entityName);
-					change.remove.resultCount = await model.destroy({where: change.remove.query.where, transaction: t});
+					change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction: t });
 					this.parent.cache.removePrefixed(change.entityName);
 				}
 			}
@@ -142,7 +142,7 @@ export class EntityManager {
 			return fromCache;
 		}
 		const model = this.model(entityName);
-		const loadedSources = await model.findAll({where: {id: toLoadIDs}});
+		const loadedSources = await model.findAll({ where: { id: toLoadIDs } });
 		const loaded = loadedSources.map(source => this.mapEntity(entityName, source));
 		for (const item of loaded) {
 			this.parent.cache.set(entityName, item);
@@ -184,7 +184,7 @@ export class EntityManager {
 			}
 		}
 		const model = this.model(entityName);
-		const source = await model.findOne({where: {id}});
+		const source = await model.findOne({ where: { id } });
 		if (!source) {
 			return;
 		}
@@ -207,13 +207,13 @@ export class EntityManager {
 
 	async findAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: T[] }> {
 		if (this.useCache) {
-			const {count, ids} = await this.findIDsAndCount(entityName, options);
+			const { count, ids } = await this.findIDsAndCount(entityName, options);
 			const entities = await this.fromCacheOrLoad(entityName, ids);
-			return {count, entities};
+			return { count, entities };
 		}
 		const model = this.model(entityName);
-		const {count, rows} = await model.findAndCountAll(options);
-		return {count, entities: rows.map(source => this.mapEntity(entityName, source))};
+		const { count, rows } = await model.findAndCountAll(options);
+		return { count, entities: rows.map(source => this.mapEntity(entityName, source)) };
 	}
 
 	// *
@@ -239,28 +239,28 @@ export class EntityManager {
 	}
 
 	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
-		return this.find(entityName, {where: {id: ids} as any});
+		return this.find(entityName, { where: { id: ids } as any });
 	}
 
 	async findOneID<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string | undefined> {
 		const model = this.model(entityName);
-		const opts = {...options, raw: true, attributes: ['id']};
+		const opts = { ...options, raw: true, attributes: ['id'] };
 		const result = await model.findOne<any>(opts);
 		return result?.id;
 	}
 
 	async findIDs<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string[]> {
 		const model = this.model(entityName);
-		const opts = {...options, raw: true, attributes: ['id']};
+		const opts = { ...options, raw: true, attributes: ['id'] };
 		const result = await model.findAll<any>(opts);
 		return result.map(o => o.id);
 	}
 
 	async findIDsAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; ids: string[] }> {
 		const model = this.model(entityName);
-		const opts = {...options, raw: true, attributes: ['id']};
-		const {count, rows} = await model.findAndCountAll<any>(opts);
-		return {count, ids: rows.map(o => o.id)};
+		const opts = { ...options, raw: true, attributes: ['id'] };
+		const { count, rows } = await model.findAndCountAll<any>(opts);
+		return { count, ids: rows.map(o => o.id) };
 	}
 
 	async count<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T> = {}): Promise<number> {
@@ -280,7 +280,7 @@ export class EntityManager {
 	}
 
 	create<T extends IDEntity<T>>(entityName: EntityName<T>, data: EntityData<T>): T {
-		const idData = {id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data};
+		const idData = { id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
 		const _source = this.model<T>(entityName).build(idData);
 		const entity = this.mapEntity(entityName, _source);
 		Object.keys(idData).forEach(key => (entity as any)[key] = (idData as any)[key]);
@@ -302,11 +302,11 @@ export class EntityManager {
 
 	removeLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
 		const entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
-		this.changeSet.push(...(entities.map(e => ({entityName: entityName as string, remove: {entity: e as ManagedEntity}}))));
+		this.changeSet.push(...(entities.map(e => ({ entityName: entityName as string, remove: { entity: e as ManagedEntity } }))));
 	}
 
 	async removeByQueryAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<number> {
-		const change = {entityName: entityName as string, remove: {query: options, resultCount: 0}};
+		const change = { entityName: entityName as string, remove: { query: options, resultCount: 0 } };
 		this.changeSet.push(change);
 		await this.flush();
 		return change.remove.resultCount;

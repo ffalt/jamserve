@@ -7,4 +7,3 @@ export function QueryParam(name: string, returnTypeFunc: ReturnTypeFunc, options
 export function QueryParam(name: string, returnTypeFuncOrOptions?: ReturnTypeFunc | QueryParamOptions, maybeOptions?: QueryParamOptions): ParameterDecorator {
 	return BaseQueryParam(getMetadataStorage(), name, returnTypeFuncOrOptions, maybeOptions);
 }
-

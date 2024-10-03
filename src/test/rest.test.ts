@@ -1,21 +1,21 @@
 import jestOpenAPI from 'jest-openapi';
 import nock from 'nock';
-import {Server} from '../modules/server/server.js';
+import { Server } from '../modules/server/server.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
 import {OpenAPIObject} from '../modules/deco/builder/openapi-helpers.js';
 import supertest from 'supertest';
-import {JAMAPI_URL_VERSION} from '../modules/engine/rest/version.js';
-import {bindMockConfig, DBConfigs} from './mock/mock.config.js';
-import {FolderType, RootScanStrategy, UserRole} from '../types/enums.js';
-import {waitEngineStart} from './mock/mock.engine.js';
-import {MockRequests, RequestMock} from './mock/mock.request.js';
-import {ensureTrailingPathSeparator} from '../utils/fs-utils.js';
+import { JAMAPI_URL_VERSION } from '../modules/engine/rest/version.js';
+import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { FolderType, RootScanStrategy, UserRole } from '../types/enums.js';
+import { waitEngineStart } from './mock/mock.engine.js';
+import { MockRequests, RequestMock } from './mock/mock.request.js';
+import { ensureTrailingPathSeparator } from '../utils/fs-utils.js';
 import path from 'path';
-import {buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock} from './mock/mock.root.js';
-import {initTest} from './init.js';
-import {Container, Snapshot} from 'typescript-ioc';
-import {OpenAPISpecObject} from 'openapi-validator';
+import { buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock } from './mock/mock.root.js';
+import { initTest } from './init.js';
+import { Container, Snapshot } from 'typescript-ioc';
+import { OpenAPISpecObject } from 'openapi-validator';
 import TestAgent from 'supertest/lib/agent.js';
 
 initTest();
@@ -60,7 +60,7 @@ describe('REST', () => {
 
 				await server.engine.user.createUser(orm, 'all', 'all@localhost', 'all', true, true, true, true);
 				const res = await request.post(apiPrefix + 'auth/login')
-					.send({username: 'all', password: 'all', client: 'supertest-tests', jwt: true});
+					.send({ username: 'all', password: 'all', client: 'supertest-tests', jwt: true });
 				if (res.status !== 200) {
 					throw new Error('Invalid Test Setup, Login failed ' + res.text);
 				}
@@ -74,7 +74,7 @@ describe('REST', () => {
 						role === UserRole.podcast
 					);
 					const res2 = await request.post(apiPrefix + 'auth/login')
-						.send({username: role, password: role, client: 'supertest-tests', jwt: true});
+						.send({ username: role, password: role, client: 'supertest-tests', jwt: true });
 					if (res2.status !== 200) {
 						throw new Error('Invalid Test Setup, Login failed ' + res2.text);
 					}
@@ -102,11 +102,11 @@ describe('REST', () => {
 						split[split.length - 1] = api;
 						url = apiPrefix + split.join('/');
 					}
-					const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
+					const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, null, '\t');
 					return request.get(url)
 						.query(mock.data)
 						.set('Authorization', token ? `Bearer ${token}` : '')
-						.expect(function(res) {
+						.expect(res => {
 							if (res.status !== expected) {
 								console.error(message + JSON.stringify(res.text));
 							}
@@ -128,12 +128,12 @@ describe('REST', () => {
 						split[split.length - 1] = api;
 						url = apiPrefix + split.join('/');
 					}
-					const message = JSON.stringify({url, message: token ? undefined : 'should fail of missing auth', mock}, null, '\t');
+					const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, null, '\t');
 					return request.post(url)
 						.query({})
 						.send(mock.data)
 						.set('Authorization', token ? `Bearer ${token}` : '')
-						.expect(function(res) {
+						.expect(res => {
 							if (res.status !== expected) {
 								console.error(message + JSON.stringify(res.text));
 							}
@@ -188,8 +188,8 @@ describe('REST', () => {
 					});
 				}
 			});
-			describe('must succeed', () => {
 
+			describe('must succeed', () => {
 				beforeAll(async () => {
 					const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 					await fse.mkdir(mediaPath);
@@ -203,21 +203,21 @@ describe('REST', () => {
 
 				it('should do something', async () => {
 					const orm = server.engine.orm.fork();
-					const album = await orm.Album.oneOrFailFilter({since: 1});
-					const artist = await orm.Artist.oneOrFailFilter({since: 1});
-					const series = await orm.Series.oneOrFailFilter({since: 1});
-					const artwork = await orm.Artwork.oneOrFailFilter({since: 1});
-					const folder = await orm.Folder.oneOrFailFilter({since: 1});
-					const artistFolder = await orm.Folder.oneOrFailFilter({folderTypes: [FolderType.artist]});
-					const albumFolder = await orm.Folder.oneOrFailFilter({folderTypes: [FolderType.album]});
-					const bookmark = await orm.Bookmark.oneOrFailFilter({since: 1});
-					const playlist = await orm.Playlist.oneOrFailFilter({since: 1});
-					const track = await orm.Track.oneOrFailFilter({since: 1});
-					const radio = await orm.Radio.oneOrFailFilter({since: 1});
-					const podcast = await orm.Podcast.oneOrFailFilter({since: 1});
-					const episode = await orm.Episode.oneOrFailFilter({since: 1});
-					const genre = await orm.Genre.oneOrFailFilter({since: 1});
-					const user = await orm.User.oneOrFailFilter({name: 'admin'});
+					const album = await orm.Album.oneOrFailFilter({ since: 1 });
+					const artist = await orm.Artist.oneOrFailFilter({ since: 1 });
+					const series = await orm.Series.oneOrFailFilter({ since: 1 });
+					const artwork = await orm.Artwork.oneOrFailFilter({ since: 1 });
+					const folder = await orm.Folder.oneOrFailFilter({ since: 1 });
+					const artistFolder = await orm.Folder.oneOrFailFilter({ folderTypes: [FolderType.artist] });
+					const albumFolder = await orm.Folder.oneOrFailFilter({ folderTypes: [FolderType.album] });
+					const bookmark = await orm.Bookmark.oneOrFailFilter({ since: 1 });
+					const playlist = await orm.Playlist.oneOrFailFilter({ since: 1 });
+					const track = await orm.Track.oneOrFailFilter({ since: 1 });
+					const radio = await orm.Radio.oneOrFailFilter({ since: 1 });
+					const podcast = await orm.Podcast.oneOrFailFilter({ since: 1 });
+					const episode = await orm.Episode.oneOrFailFilter({ since: 1 });
+					const genre = await orm.Genre.oneOrFailFilter({ since: 1 });
+					const user = await orm.User.oneOrFailFilter({ name: 'admin' });
 					for (const call of mocks) {
 						if (call.valid && call.method === 'get') {
 							let expected = 200;

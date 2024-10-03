@@ -1,10 +1,10 @@
-import {BaseRepository} from '../base/base.repository.js';
-import {DBObjectType, GenreOrderFields} from '../../types/enums.js';
-import {OrderHelper} from '../base/base.js';
-import {User} from '../user/user.js';
-import {FindOptions, OrderItem, QHelper} from '../../modules/orm/index.js';
-import {Genre} from './genre.js';
-import {GenreFilterArgs, GenreOrderArgs} from './genre.args.js';
+import { BaseRepository } from '../base/base.repository.js';
+import { DBObjectType, GenreOrderFields } from '../../types/enums.js';
+import { OrderHelper } from '../base/base.js';
+import { User } from '../user/user.js';
+import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { Genre } from './genre.js';
+import { GenreFilterArgs, GenreOrderArgs } from './genre.args.js';
 
 export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, GenreOrderArgs> {
 	objType = DBObjectType.genre;
@@ -30,13 +30,13 @@ export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, Genr
 		}
 		const result = QHelper.buildQuery<Genre>(
 			[
-				{id: filter.ids},
-				{name: QHelper.like(filter.query, this.em.dialect)},
-				{name: QHelper.eq(filter.name)}
+				{ id: filter.ids },
+				{ name: QHelper.like(filter.query, this.em.dialect) },
+				{ name: QHelper.eq(filter.name) }
 			]
 		);
 		result.include = QHelper.includeQueries([
-			{tracks: [{id: QHelper.inOrEqual(filter.trackIDs)}]},
+			{ tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] }
 		// 	{albumTracks: [{id: QHelper.inOrEqual(filter.albumTrackIDs)}]},
 		// 	{series: [{id: QHelper.inOrEqual(filter.seriesIDs)}]},
 		// 	{albums: [{id: QHelper.inOrEqual(filter.albumIDs)}]},
@@ -45,5 +45,4 @@ export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, Genr
 		]);
 		return result;
 	}
-
 }

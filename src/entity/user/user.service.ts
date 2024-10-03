@@ -1,17 +1,17 @@
-import {User} from './user.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {bcryptComparePassword, bcryptPassword} from '../../utils/bcrypt.js';
-import {UserRole} from '../../types/enums.js';
-import {JWTPayload} from '../../utils/jwt.js';
-import {Inject, InRequestScope} from 'typescript-ioc';
+import { User } from './user.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
+import { UserRole } from '../../types/enums.js';
+import { JWTPayload } from '../../utils/jwt.js';
+import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import {ConfigService} from '../../modules/engine/services/config.service.js';
-import {fileDeleteIfExists} from '../../utils/fs-utils.js';
-import {ImageModule} from '../../modules/image/image.module.js';
+import { ConfigService } from '../../modules/engine/services/config.service.js';
+import { fileDeleteIfExists } from '../../utils/fs-utils.js';
+import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
-import {UserMutateArgs} from './user.args.js';
-import {randomString} from '../../utils/random.js';
+import { UserMutateArgs } from './user.args.js';
+import { randomString } from '../../utils/random.js';
 import {InvalidParamError, UnauthError} from '../../modules/deco/express/express-error.js';
 import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 
@@ -19,8 +19,10 @@ import {ApiBinaryResult} from '../../modules/deco/express/express-responder.js';
 export class UserService {
 	@Inject
 	private configService!: ConfigService;
+
 	@Inject
 	private imageModule!: ImageModule;
+
 	private readonly userAvatarPath: string;
 
 	constructor() {
@@ -31,7 +33,7 @@ export class UserService {
 		if (!name || name.trim().length === 0) {
 			return Promise.reject(UnauthError('Invalid Username'));
 		}
-		return await orm.User.findOne({where: {name}});
+		return await orm.User.findOne({ where: { name } });
 	}
 
 	async findByID(orm: Orm, id: string): Promise<User | undefined> {
@@ -149,16 +151,16 @@ export class UserService {
 	}
 
 	public async createUser(orm: Orm,
-							name: string,
-							email: string,
-							pass: string,
-							roleAdmin: boolean,
-							roleStream: boolean,
-							roleUpload: boolean,
-							rolePodcast: boolean
+		name: string,
+		email: string,
+		pass: string,
+		roleAdmin: boolean,
+		roleStream: boolean,
+		roleUpload: boolean,
+		rolePodcast: boolean
 	): Promise<User> {
 		const hashAndSalt = await bcryptPassword(pass);
-		const user: User = orm.User.create({name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast});
+		const user: User = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
 		await orm.User.persistAndFlush(user);
 		return user;
 	}
@@ -167,7 +169,7 @@ export class UserService {
 		if (!args.name || args.name.trim().length === 0) {
 			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
-		const existingUser = await orm.User.findOne({where: {name: args.name}});
+		const existingUser = await orm.User.findOne({ where: { name: args.name } });
 		if (existingUser) {
 			return Promise.reject(InvalidParamError('name', 'Username already exists'));
 		}
@@ -180,7 +182,7 @@ export class UserService {
 		if (!args.name || args.name.trim().length === 0) {
 			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
-		const existingUser = await orm.User.findOne({where: {name: args.name}});
+		const existingUser = await orm.User.findOne({ where: { name: args.name } });
 		if (existingUser && existingUser.id !== user.id) {
 			return Promise.reject(InvalidParamError('name', 'Username already exists'));
 		}

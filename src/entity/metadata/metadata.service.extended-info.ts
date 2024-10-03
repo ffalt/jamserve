@@ -1,13 +1,13 @@
-import {logger} from '../../utils/logger.js';
-import {Album} from '../album/album.js';
-import {Artist} from '../artist/artist.js';
-import {Folder} from '../folder/folder.js';
-import {Series} from '../series/series.js';
-import {MetaDataService} from './metadata.service.js';
-import {MetaDataFormat} from './metadata.format.js';
-import {ExtendedInfo} from './metadata.model.js';
-import {LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType} from '../../types/enums.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
+import { logger } from '../../utils/logger.js';
+import { Album } from '../album/album.js';
+import { Artist } from '../artist/artist.js';
+import { Folder } from '../folder/folder.js';
+import { Series } from '../series/series.js';
+import { MetaDataService } from './metadata.service.js';
+import { MetaDataFormat } from './metadata.format.js';
+import { ExtendedInfo } from './metadata.model.js';
+import { LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
 
 const log = logger('Metadata');
 
@@ -96,7 +96,7 @@ export class MetadataServiceExtendedInfo {
 	}
 
 	private async getArtistInfoByName(orm: Orm, artistName: string): Promise<ExtendedInfo | undefined> {
-		const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.artist, {artist: artistName});
+		const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.artist, { artist: artistName });
 		let result: ExtendedInfo | undefined;
 		if (res && res.artists && res.artists.length === 1) {
 			result = await this.getArtistInfoByMusicBrainzID(orm, res.artists[0].id);
@@ -111,7 +111,7 @@ export class MetadataServiceExtendedInfo {
 	}
 
 	private async getAlbumInfoByName(orm: Orm, albumName: string, artistName: string): Promise<ExtendedInfo | undefined> {
-		const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, {release: albumName, artist: artistName});
+		const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, { release: albumName, artist: artistName });
 		let info: ExtendedInfo | undefined;
 		if (res && res.releases && res.releases.length > 1) {
 			info = await this.getAlbumInfoByMusicBrainzID(orm, res.releases[0].id);
@@ -199,5 +199,4 @@ export class MetadataServiceExtendedInfo {
 		}
 		return info;
 	}
-
 }

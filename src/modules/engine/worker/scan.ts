@@ -1,20 +1,20 @@
-import {logger} from '../../../utils/logger.js';
-import {ScanDir, ScanFile} from '../../../utils/scan-dir.js';
-import {Folder} from '../../../entity/folder/folder.js';
-import {Root} from '../../../entity/root/root.js';
-import {Changes} from './changes.js';
-import {FileTyp, FolderType} from '../../../types/enums.js';
-import {splitDirectoryName} from '../../../utils/dir-name.js';
-import {Track} from '../../../entity/track/track.js';
+import { logger } from '../../../utils/logger.js';
+import { ScanDir, ScanFile } from '../../../utils/scan-dir.js';
+import { Folder } from '../../../entity/folder/folder.js';
+import { Root } from '../../../entity/root/root.js';
+import { Changes } from './changes.js';
+import { FileTyp, FolderType } from '../../../types/enums.js';
+import { splitDirectoryName } from '../../../utils/dir-name.js';
+import { Track } from '../../../entity/track/track.js';
 import path from 'path';
-import {basenameStripExt, ensureTrailingPathSeparator} from '../../../utils/fs-utils.js';
-import {AudioModule} from '../../audio/audio.module.js';
-import {Orm} from '../services/orm.service.js';
-import {Artwork} from '../../../entity/artwork/artwork.js';
-import {artWorkImageNameToType} from '../../../utils/artwork-type.js';
-import {ImageModule} from '../../image/image.module.js';
+import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
+import { AudioModule } from '../../audio/audio.module.js';
+import { Orm } from '../services/orm.service.js';
+import { Artwork } from '../../../entity/artwork/artwork.js';
+import { artWorkImageNameToType } from '../../../utils/artwork-type.js';
+import { ImageModule } from '../../image/image.module.js';
 import moment from 'moment';
-import {TrackUpdater} from './tasks/track.js';
+import { TrackUpdater } from './tasks/track.js';
 
 const log = logger('IO.Scan');
 
@@ -90,7 +90,7 @@ export class WorkerScan {
 	private async buildArtwork(file: ScanFile, folder: Folder): Promise<Artwork> {
 		log.info('New Artwork', file.path);
 		const name = path.basename(file.path);
-		const artwork = this.orm.Artwork.create({name, path: folder.path});
+		const artwork = this.orm.Artwork.create({ name, path: folder.path });
 		await artwork.folder.set(folder);
 		await this.setArtworkValues(file, artwork);
 		this.changes.artworks.added.add(artwork);
@@ -118,7 +118,7 @@ export class WorkerScan {
 			track: tag?.trackNr,
 			mbArtistID: tag?.mbArtistID,
 			mbReleaseID: tag?.mbReleaseID,
-			mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`,
+			mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`
 		};
 	}
 
@@ -157,7 +157,7 @@ export class WorkerScan {
 
 	private async buildFolder(dir: ScanDir, parent?: Folder): Promise<Folder> {
 		log.info('New Folder', dir.path);
-		const {title, year} = splitDirectoryName(dir.path);
+		const { title, year } = splitDirectoryName(dir.path);
 		const name = path.basename(dir.path);
 		const folder = this.orm.Folder.create({
 			level: dir.level,
@@ -216,9 +216,9 @@ export class WorkerScan {
 	}
 
 	private async removeFolder(folder: Folder): Promise<void> {
-		const removedTracks = await this.orm.Track.findFilter({childOfID: folder.id});
-		const removedFolders = await this.orm.Folder.findFilter({childOfID: folder.id});
-		const removedArtworks = await this.orm.Artwork.findFilter({childOfID: folder.id});
+		const removedTracks = await this.orm.Track.findFilter({ childOfID: folder.id });
+		const removedFolders = await this.orm.Folder.findFilter({ childOfID: folder.id });
+		const removedArtworks = await this.orm.Artwork.findFilter({ childOfID: folder.id });
 		removedFolders.push(folder);
 		this.changes.folders.removed.append(removedFolders);
 		this.changes.artworks.removed.append(removedArtworks);
@@ -329,9 +329,9 @@ export class WorkerScan {
 
 	async match(dir: ScanDir): Promise<MatchNode> {
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
-		const parent = await this.orm.Folder.findOne({where: {path: dir.path}});
+		const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
 		if (!parent) {
-			const oldParent = await this.orm.Folder.findOneFilter({rootIDs: [this.root.id], level: 0});
+			const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });
 			if (oldParent) {
 				await this.removeFolder(oldParent);
 			}

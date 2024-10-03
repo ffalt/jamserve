@@ -1,7 +1,7 @@
-import {findType} from './findType.js';
-import {ReturnTypeFunc, TypeOptions, ValidateOptions} from '../definitions/types.js';
-import {CommonArgMetadata} from '../definitions/param-metadata.js';
-import {SymbolKeysNotSupportedError} from 'type-graphql';
+import { findType } from './findType.js';
+import { ReturnTypeFunc, TypeOptions, ValidateOptions } from '../definitions/types.js';
+import { CommonArgMetadata } from '../definitions/param-metadata.js';
+import { SymbolKeysNotSupportedError } from 'type-graphql';
 
 export interface ParamInfo {
 	prototype: object;
@@ -12,24 +12,18 @@ export interface ParamInfo {
 	options?: TypeOptions & ValidateOptions;
 }
 
-export function getParamInfo({
-								 prototype,
-								 propertyKey,
-								 parameterIndex,
-								 returnTypeFunc,
-								 options = {},
-							 }: ParamInfo): CommonArgMetadata {
+export function getParamInfo({ prototype, propertyKey, parameterIndex, returnTypeFunc, options = {} }: ParamInfo): CommonArgMetadata {
 	if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
 		throw new SymbolKeysNotSupportedError();
 	}
 
-	const {getType, typeOptions} = findType({
+	const { getType, typeOptions } = findType({
 		metadataKey: 'design:paramtypes',
 		prototype,
 		propertyKey: propertyKey as string,
 		parameterIndex,
 		returnTypeFunc,
-		typeOptions: options,
+		typeOptions: options
 	});
 
 	return {
@@ -38,6 +32,6 @@ export function getParamInfo({
 		index: parameterIndex,
 		getType,
 		typeOptions,
-		validate: options.validate,
+		validate: options.validate
 	};
 }

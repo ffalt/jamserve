@@ -1,4 +1,3 @@
-
 export interface ImageResult {
 	file?: { filename: string; name: string };
 	json?: any;

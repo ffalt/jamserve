@@ -1,4 +1,4 @@
-import {RootScanStrategy} from '../types/enums.js';
+import { RootScanStrategy } from '../types/enums.js';
 
 export interface FirstStartConfig {
 	adminUser?: {

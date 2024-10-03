@@ -1,11 +1,10 @@
-import {EntityManager} from './manager.js';
-import {EntityData, EntityName, IDEntity} from '../typings.js';
-import {FindOptions} from 'sequelize';
+import { EntityManager } from './manager.js';
+import { EntityData, EntityName, IDEntity } from '../typings.js';
+import { FindOptions } from 'sequelize';
 
 export class EntityRepository<Entity extends IDEntity<Entity>> {
-
 	constructor(protected readonly em: EntityManager,
-				protected readonly entityName: EntityName<Entity>) {
+		protected readonly entityName: EntityName<Entity>) {
 	}
 
 	buildOrderByFindOptions(_order?: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<Entity> | undefined {
@@ -96,5 +95,4 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 	async count(options: FindOptions<Entity> = {}): Promise<number> {
 		return this.em.count<Entity>(this.entityName, options);
 	}
-
 }

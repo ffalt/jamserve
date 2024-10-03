@@ -1,4 +1,4 @@
-import {ClassType} from 'type-graphql';
+import { ClassType } from 'type-graphql';
 
 export const bannedTypes: Function[] = [Promise, Array, Object, Function];
 
@@ -59,11 +59,9 @@ export interface RelationOptions {
 	relation: 'one2many' | 'many2many' | 'many2one' | 'one2one';
 }
 
-
 export interface CascadeOptions {
 	onDelete?: 'cascade';
 }
-
 
 export declare type MethodAndPropDecorator = PropertyDecorator & MethodDecorator;
 export declare type BasicOptions = DecoratorTypeOptions;

@@ -1,17 +1,16 @@
-import {Root} from '../../../../entity/root/root.js';
-import {RootScanStrategy} from '../../../../types/enums.js';
-import {DirScanner} from '../../../../utils/scan-dir.js';
-import {ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan} from '../scan.js';
-import {Changes} from '../changes.js';
-import {BaseWorker} from './base.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service.js';
-import {MergeNode, WorkerMergeScan} from '../merge-scan.js';
-import {Folder} from '../../../../entity/folder/folder.js';
+import { Root } from '../../../../entity/root/root.js';
+import { RootScanStrategy } from '../../../../types/enums.js';
+import { DirScanner } from '../../../../utils/scan-dir.js';
+import { ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan } from '../scan.js';
+import { Changes } from '../changes.js';
+import { BaseWorker } from './base.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../services/orm.service.js';
+import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
+import { Folder } from '../../../../entity/folder/folder.js';
 
 @InRequestScope
 export class RootWorker extends BaseWorker {
-
 	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
 		const d = dir.trim();
 		if (d[0] === '.') {
@@ -29,10 +28,10 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async remove(orm: Orm, root: Root, changes: Changes): Promise<void> {
-		const removedTracks = await orm.Track.find({where: {root: root.id}});
-		const removedFolders = await orm.Folder.find({where: {root: root.id}});
+		const removedTracks = await orm.Track.find({ where: { root: root.id } });
+		const removedFolders = await orm.Folder.find({ where: { root: root.id } });
 		if (removedFolders.length > 0) {
-			const removedArtworks = await orm.Artwork.findFilter({folderIDs: removedFolders.map(r => r.id)});
+			const removedArtworks = await orm.Artwork.findFilter({ folderIDs: removedFolders.map(r => r.id) });
 			changes.artworks.removed.append(removedArtworks);
 		}
 		changes.folders.removed.append(removedFolders);
@@ -50,7 +49,7 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async refreshMeta(orm: Orm, root: Root, changes: Changes): Promise<void> {
-		const trackIDs = await orm.Track.findIDsFilter({rootIDs: [root.id]});
+		const trackIDs = await orm.Track.findIDsFilter({ rootIDs: [root.id] });
 		changes.tracks.updated.appendIDs(trackIDs);
 		await this.scan(orm, root, changes);
 	}
@@ -66,7 +65,7 @@ export class RootWorker extends BaseWorker {
 			if (parents[0]) {
 				if (!rootMatch) {
 					const tracks = await RootWorker.buildMergeTracks(parents[0]);
-					rootMatch = {changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length};
+					rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
 				}
 				const pathToChild = parents.slice(1).concat([folder]);
 				await this.buildMergeNode(pathToChild, rootMatch);
@@ -103,7 +102,7 @@ export class RootWorker extends BaseWorker {
 
 	async create(orm: Orm, name: string, path: string, strategy: RootScanStrategy): Promise<Root> {
 		await RootWorker.validateRootPath(orm, path);
-		const root = orm.Root.create({name, path, strategy});
+		const root = orm.Root.create({ name, path, strategy });
 		await orm.Root.persistAndFlush(root);
 		return root;
 	}

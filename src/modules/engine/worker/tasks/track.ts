@@ -1,18 +1,18 @@
 import fse from 'fs-extra';
 import path from 'path';
-import {ensureTrailingPathSeparator} from '../../../../utils/fs-utils.js';
-import {RawTag} from '../../../audio/rawTag.js';
-import {TrackHealthID} from '../../../../types/enums.js';
-import {processQueue} from '../../../../utils/queue.js';
-import {Root} from '../../../../entity/root/root.js';
-import {Changes} from '../changes.js';
-import {BaseWorker} from './base.js';
-import {Track} from '../../../../entity/track/track.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../services/orm.service.js';
-import {AudioModule} from '../../../audio/audio.module.js';
-import {TrackTag} from '../../../audio/audio.format.js';
-import {Genre} from '../../../../entity/genre/genre.js';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { RawTag } from '../../../audio/rawTag.js';
+import { TrackHealthID } from '../../../../types/enums.js';
+import { processQueue } from '../../../../utils/queue.js';
+import { Root } from '../../../../entity/root/root.js';
+import { Changes } from '../changes.js';
+import { BaseWorker } from './base.js';
+import { Track } from '../../../../entity/track/track.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../services/orm.service.js';
+import { AudioModule } from '../../../audio/audio.module.js';
+import { TrackTag } from '../../../audio/audio.format.js';
+import { Genre } from '../../../../entity/genre/genre.js';
 
 export class TrackUpdater {
 	private genresCache: Array<Genre> = [];
@@ -47,26 +47,23 @@ export class TrackUpdater {
 	private async findOrCreateGenre(name: string): Promise<Genre> {
 		let genre = this.genresCache.find(g => g.name === name);
 		if (!genre) {
-			genre = await this.orm.Genre.findOne({where: {name}});
+			genre = await this.orm.Genre.findOne({ where: { name } });
 			if (genre) {
 				this.genresCache.push(genre);
 			}
 		}
 		if (!genre) {
-			genre = this.orm.Genre.create({name});
+			genre = this.orm.Genre.create({ name });
 			this.orm.Genre.persistLater(genre);
 			this.genresCache.push(genre);
 			this.changes.genres.added.add(genre);
 		}
 		return genre;
 	}
-
 }
-
 
 @InRequestScope
 export class TrackWorker extends BaseWorker {
-
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: RawTag }>, changes: Changes): Promise<void> {
 		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
 		for (const writeTag of tags) {

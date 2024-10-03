@@ -1,4 +1,4 @@
-import {slugify} from './slug.js';
+import { slugify } from './slug.js';
 
 export interface MetaStatValue<T> {
 	count: number;
@@ -15,19 +15,15 @@ export class MetaStatBuilder {
 	} = {};
 
 	private static convert2Numlist(o: { [key: string]: { count: number; val: string } }): Array<MetaStatNumber> {
-		return Object.keys(o).map(key => {
-			return {count: o[key].count, val: Number(o[key].val)};
-		}).sort((a, b) => {
-			return a.count - b.count;
-		});
+		return Object.keys(o)
+			.map(key => ({ count: o[key].count, val: Number(o[key].val) }))
+			.sort((a, b) => a.count - b.count);
 	}
 
 	private static convert2list(o: { [key: string]: { count: number; val: string } }): Array<MetaStatString> {
-		return Object.keys(o).map(key => {
-			return o[key];
-		}).sort((a, b) => {
-			return a.count - b.count;
-		});
+		return Object.keys(o)
+			.map(key => o[key])
+			.sort((a, b) => a.count - b.count);
 	}
 
 	private static getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | undefined {
@@ -44,9 +40,7 @@ export class MetaStatBuilder {
 		if (list.length > 3 && multi !== undefined) {
 			return multi;
 		}
-		const cleaned = list.filter(o => {
-			return o.count > 1;
-		});
+		const cleaned = list.filter(o => o.count > 1);
 		if (cleaned.length > 1 && multi !== undefined) {
 			return multi;
 		}
@@ -63,7 +57,7 @@ export class MetaStatBuilder {
 		if (val && val.trim().length > 0) {
 			const slug = val.split(' ')[0].trim();
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][val] || {count: 0, val: slug};
+			this.stats[name][slug] = this.stats[name][val] || { count: 0, val: slug };
 			this.stats[name][slug].count += 1;
 		}
 	}
@@ -72,7 +66,7 @@ export class MetaStatBuilder {
 		if (val !== undefined && val !== null) {
 			const slug = val.toString();
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val};
+			this.stats[name][slug] = this.stats[name][slug] || { count: 0, val };
 			this.stats[name][slug].count += 1;
 		}
 	}
@@ -81,7 +75,7 @@ export class MetaStatBuilder {
 		if (val && val.trim().length > 0) {
 			const slug = slugify(val);
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: val.trim()};
+			this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: val.trim() };
 			this.stats[name][slug].count += 1;
 		}
 	}
@@ -90,7 +84,7 @@ export class MetaStatBuilder {
 		if (trackTotal !== undefined) {
 			const slug = `${(disc !== undefined ? disc : 1)}-${trackTotal}`;
 			this.stats[name] = this.stats[name] || {};
-			this.stats[name][slug] = this.stats[name][slug] || {count: 0, val: trackTotal};
+			this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: trackTotal };
 			this.stats[name][slug].count += 1;
 		}
 	}
@@ -118,5 +112,4 @@ export class MetaStatBuilder {
 		const list = this.asNumberList(name);
 		return MetaStatBuilder.getMostUsedTagValue<number>(list);
 	}
-
 }

@@ -1,5 +1,5 @@
-import {Changes} from '../../worker/changes.js';
-import {WorkerRequestParameters} from '../worker/worker.types.js';
+import { Changes } from '../../worker/changes.js';
+import { WorkerRequestParameters } from '../worker/worker.types.js';
 
 export interface RootStatus {
 	lastScan: number;
@@ -40,7 +40,6 @@ export enum WorkerRequestMode {
 }
 
 export class IoRequest<T extends WorkerRequestParameters> {
-
 	constructor(
 		public id: string, public mode: WorkerRequestMode,
 		public execute: (parameters: T) => Promise<Changes>, public parameters: T

@@ -1,8 +1,8 @@
-import {Folder, FolderQL} from '../folder/folder.js';
-import {ArtworkImageType} from '../../types/enums.js';
-import {Field, Int, ObjectType} from 'type-graphql';
-import {Entity, ManyToOne, ORM_DATETIME, ORM_INT, Property, Reference} from '../../modules/orm/index.js';
-import {Base, PaginatedResponse} from '../base/base.js';
+import { Folder, FolderQL } from '../folder/folder.js';
+import { ArtworkImageType } from '../../types/enums.js';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Entity, ManyToOne, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
+import { Base, PaginatedResponse } from '../base/base.js';
 
 @ObjectType()
 @Entity()
@@ -31,16 +31,16 @@ export class Artwork extends Base {
 	@Property(() => ORM_INT)
 	fileSize!: number;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	width?: number;
 
-	@Field(() => Int, {nullable: true})
-	@Property(() => ORM_INT, {nullable: true})
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
 	height?: number;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	format?: string;
 
 	@Field(() => FolderQL)

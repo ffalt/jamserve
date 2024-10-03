@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import dotenv from 'dotenv';
-import {configureLogger, logger} from '../utils/logger.js';
-import {OrmService} from '../modules/engine/services/orm.service.js';
-import {Container} from 'typescript-ioc';
+import { configureLogger, logger } from '../utils/logger.js';
+import { OrmService } from '../modules/engine/services/orm.service.js';
+import { Container } from 'typescript-ioc';
 import passport from 'passport';
-import {ConfigService} from '../modules/engine/services/config.service.js';
-import {Validator} from '../modules/engine/orm/validator.js';
+import { ConfigService } from '../modules/engine/services/config.service.js';
+import { Validator } from '../modules/engine/orm/validator.js';
 
 if (!passport) {
 	console.log('Include dummy passport import, so ts-node finds its express types');

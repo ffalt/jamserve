@@ -1,4 +1,4 @@
-import {AdminSettings} from './admin.js';
+import { AdminSettings } from './admin.js';
 import {ObjParamsType} from '../../modules/rest/decorators/ObjParamsType.js';
 
 @ObjParamsType()

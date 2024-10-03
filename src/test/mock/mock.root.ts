@@ -1,13 +1,13 @@
 import path from 'path';
 import fse from 'fs-extra';
-import {AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy} from '../../types/enums.js';
-import {WorkerService} from '../../modules/engine/services/worker.service.js';
-import {ensureTrailingPathSeparator} from '../../utils/fs-utils.js';
-import {extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder} from './mock.folder';
-import {extendSpecMockTrack, MockTrack} from './mock.track';
-import {Changes} from '../../modules/engine/worker/changes.js';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {StateHelper} from '../../entity/state/state.helper.js';
+import { AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy } from '../../types/enums.js';
+import { WorkerService } from '../../modules/engine/services/worker.service.js';
+import { ensureTrailingPathSeparator } from '../../utils/fs-utils.js';
+import { extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder } from './mock.folder';
+import { extendSpecMockTrack, MockTrack } from './mock.track';
+import { Changes } from '../../modules/engine/worker/changes.js';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { StateHelper } from '../../entity/state/state.helper.js';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;
@@ -697,16 +697,16 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 		images: ['folder.png'],
 		tracks: [],
 		albums: [
-			{artist: 'audiobook series 1', name: 'album 1', albumType: AlbumType.series},
-			{artist: 'audiobook series 1', name: 'album 2', albumType: AlbumType.series},
-			{artist: 'audiobook series 1', name: 'album 3', albumType: AlbumType.series},
-			{artist: 'audiobook series 2', name: 'album 1', albumType: AlbumType.series},
-			{artist: 'audiobook series 2', name: 'album 2', albumType: AlbumType.series},
-			{artist: 'audiobook series 2', name: 'album 3', albumType: AlbumType.series},
-			{artist: 'audiobook series 3', name: 'album 1', albumType: AlbumType.series},
-			{artist: 'audiobook series 3', name: 'album 2', albumType: AlbumType.series},
-			{artist: 'audiobook series 3', name: 'album 3', albumType: AlbumType.series},
-			{artist: 'audiobook series 3', name: 'album 4', albumType: AlbumType.series}
+			{ artist: 'audiobook series 1', name: 'album 1', albumType: AlbumType.series },
+			{ artist: 'audiobook series 1', name: 'album 2', albumType: AlbumType.series },
+			{ artist: 'audiobook series 1', name: 'album 3', albumType: AlbumType.series },
+			{ artist: 'audiobook series 2', name: 'album 1', albumType: AlbumType.series },
+			{ artist: 'audiobook series 2', name: 'album 2', albumType: AlbumType.series },
+			{ artist: 'audiobook series 2', name: 'album 3', albumType: AlbumType.series },
+			{ artist: 'audiobook series 3', name: 'album 1', albumType: AlbumType.series },
+			{ artist: 'audiobook series 3', name: 'album 2', albumType: AlbumType.series },
+			{ artist: 'audiobook series 3', name: 'album 3', albumType: AlbumType.series },
+			{ artist: 'audiobook series 3', name: 'album 4', albumType: AlbumType.series }
 		],
 		expected: {
 			folders: 12,
@@ -734,14 +734,15 @@ export function buildSoundtrackMockRoot(dir: string, nr: number, strategy: RootS
 				genre: 'Soundtrack',
 				images: ['front.png'],
 				folders: [],
-				tracks: [{
-					name: '1 - title 1 - soundtrack 1.mp3',
-					artist: 'soundtrack artist 1',
-					album: 'soundtrack 1',
-					number: 1,
-					total: 3,
-					genre: 'soundtrack'
-				},
+				tracks: [
+					{
+						name: '1 - title 1 - soundtrack 1.mp3',
+						artist: 'soundtrack artist 1',
+						album: 'soundtrack 1',
+						number: 1,
+						total: 3,
+						genre: 'soundtrack'
+					},
 					{
 						name: '2 - title 2 - soundtrack 2.mp3',
 						artist: 'soundtrack artist 2',
@@ -757,7 +758,8 @@ export function buildSoundtrackMockRoot(dir: string, nr: number, strategy: RootS
 						number: 3,
 						total: 3,
 						genre: 'soundtrack'
-					}],
+					}
+				],
 				expected: {
 					folderType: FolderType.album
 				}
@@ -766,7 +768,7 @@ export function buildSoundtrackMockRoot(dir: string, nr: number, strategy: RootS
 		images: ['folder.png'],
 		tracks: [],
 		albums: [
-			{artist: 'Various Artists', name: 'soundtrack 1', albumType: AlbumType.soundtrack}
+			{ artist: 'Various Artists', name: 'soundtrack 1', albumType: AlbumType.soundtrack }
 		],
 		expected: {
 			folders: 2,
@@ -791,7 +793,7 @@ export async function writeMockRoot(root: MockRoot): Promise<void> {
 }
 
 export async function validateMock(mockFolder: MockFolder, workerService: WorkerService, orm: Orm): Promise<void> {
-	const folder = await orm.Folder.findOne({where: {path: ensureTrailingPathSeparator(mockFolder.path)}});
+	const folder = await orm.Folder.findOne({ where: { path: ensureTrailingPathSeparator(mockFolder.path) } });
 	expect(folder).toBeDefined();
 	if (!folder) {
 		return;
@@ -808,7 +810,7 @@ export async function validateMock(mockFolder: MockFolder, workerService: Worker
 }
 
 export async function writeAndStoreExternalMedia(workerService: WorkerService, orm: Orm): Promise<void> {
-	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
+	const admin = await orm.User.oneOrFail({ where: { name: 'admin' } });
 	const helper = new StateHelper(orm.em);
 	const radio = orm.Radio.create({
 		name: 'radio',
@@ -845,8 +847,8 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 	});
 	await orm.Root.persistAndFlush(root);
 	mockRoot.id = root.id;
-	const changes = await workerService.root.refresh({rootID: mockRoot.id});
-	const admin = await orm.User.oneOrFail({where: {name: 'admin'}});
+	const changes = await workerService.root.refresh({ rootID: mockRoot.id });
+	const admin = await orm.User.oneOrFail({ where: { name: 'admin' } });
 	if (changes.tracks.added.size > 0) {
 		const helper = new StateHelper(orm.em);
 		const track = await orm.Track.oneOrFailByID(changes.tracks.added.ids()[0]);
@@ -871,7 +873,7 @@ export async function writeAndStoreMock(mockRoot: MockRoot, workerService: Worke
 		await playlist.user.set(admin);
 		await orm.Playlist.persistAndFlush(playlist);
 
-		const entry = orm.PlaylistEntry.create({position: 1});
+		const entry = orm.PlaylistEntry.create({ position: 1 });
 		await entry.playlist.set(playlist);
 		await entry.track.set(track);
 		await orm.PlaylistEntry.persistAndFlush(entry);

@@ -1,4 +1,4 @@
-import {PropertyMetadata} from './property-metadata.js';
+import { PropertyMetadata } from './property-metadata.js';
 
 export interface EntityMetadata {
 	name: string;

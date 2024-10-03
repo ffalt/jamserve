@@ -1,17 +1,16 @@
-import {Track} from '../track/track.js';
-import {InRequestScope} from 'typescript-ioc';
-import {Orm} from '../../modules/engine/services/orm.service.js';
-import {User} from '../user/user.js';
-import {DBObjectType} from '../../types/enums.js';
-import {Episode} from '../episode/episode.js';
-import {Base} from '../base/base.js';
-import {PlayQueueSetArgs} from './playqueue.args.js';
-import {PlayQueue} from './playqueue.js';
+import { Track } from '../track/track.js';
+import { InRequestScope } from 'typescript-ioc';
+import { Orm } from '../../modules/engine/services/orm.service.js';
+import { User } from '../user/user.js';
+import { DBObjectType } from '../../types/enums.js';
+import { Episode } from '../episode/episode.js';
+import { Base } from '../base/base.js';
+import { PlayQueueSetArgs } from './playqueue.args.js';
+import { PlayQueue } from './playqueue.js';
 import {NotFoundError} from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlayQueueService {
-
 	private static async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
 		switch (media.objType) {
 			case DBObjectType.episode: {
@@ -27,7 +26,7 @@ export class PlayQueueService {
 	}
 
 	async get(orm: Orm, user: User): Promise<PlayQueue> {
-		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
+		let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
 		if (!queue) {
 			queue = orm.PlayQueue.create({});
 			await queue.user.set(user);
@@ -36,7 +35,7 @@ export class PlayQueueService {
 	}
 
 	async set(orm: Orm, args: PlayQueueSetArgs, user: User, client: string): Promise<void> {
-		let queue = await orm.PlayQueue.findOne({where: {user: user.id}});
+		let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
 		if (!queue) {
 			queue = orm.PlayQueue.create({});
 			await queue.user.set(user);
@@ -57,7 +56,7 @@ export class PlayQueueService {
 		for (const media of mediaList) {
 			let entry = oldEntries.pop();
 			if (!entry) {
-				entry = orm.PlayQueueEntry.create({playlist: queue, position});
+				entry = orm.PlayQueueEntry.create({ playlist: queue, position });
 			}
 			entry.position = position;
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
@@ -75,6 +74,6 @@ export class PlayQueueService {
 	}
 
 	async clear(orm: Orm, user: User): Promise<void> {
-		await orm.PlayQueue.removeByQueryAndFlush({where: {user: user.id}});
+		await orm.PlayQueue.removeByQueryAndFlush({ where: { user: user.id } });
 	}
 }

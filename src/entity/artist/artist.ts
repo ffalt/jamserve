@@ -1,14 +1,14 @@
-import {Track, TrackQL} from '../track/track.js';
-import {Album, AlbumQL} from '../album/album.js';
-import {Root, RootQL} from '../root/root.js';
-import {Folder, FolderQL} from '../folder/folder.js';
-import {Series, SeriesQL} from '../series/series.js';
-import {AlbumOrderFields, AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields} from '../../types/enums.js';
-import {Field, Int, ObjectType} from 'type-graphql';
-import {Collection, Entity, ManyToMany, OneToMany, Property} from '../../modules/orm/index.js';
-import {Base, Index, IndexGroup, PaginatedResponse} from '../base/base.js';
-import {State, StateQL} from '../state/state.js';
-import {Genre, GenreQL} from '../genre/genre.js';
+import { Track, TrackQL } from '../track/track.js';
+import { Album, AlbumQL } from '../album/album.js';
+import { Root, RootQL } from '../root/root.js';
+import { Folder, FolderQL } from '../folder/folder.js';
+import { Series, SeriesQL } from '../series/series.js';
+import { AlbumOrderFields, AlbumType, DefaultOrderFields, FolderOrderFields, TrackOrderFields } from '../../types/enums.js';
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Collection, Entity, ManyToMany, OneToMany, Property } from '../../modules/orm/index.js';
+import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
+import { State, StateQL } from '../state/state.js';
+import { Genre, GenreQL } from '../genre/genre.js';
 
 @ObjectType()
 @Entity()
@@ -25,8 +25,8 @@ export class Artist extends Base {
 	@Property(() => String)
 	nameSort!: string;
 
-	@Field(() => String, {nullable: true})
-	@Property(() => String, {nullable: true})
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
 	mbArtistID?: string;
 
 	@Field(() => [AlbumType])
@@ -38,27 +38,27 @@ export class Artist extends Base {
 	genres: Collection<Genre> = new Collection<Genre>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany<Track>(() => Track, track => track.artist, {order: [{orderBy: TrackOrderFields.album}, {orderBy: TrackOrderFields.default}]})
+	@OneToMany<Track>(() => Track, track => track.artist, { order: [{ orderBy: TrackOrderFields.album }, { orderBy: TrackOrderFields.default }] })
 	tracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [TrackQL])
-	@OneToMany<Track>(() => Track, track => track.albumArtist, {order: [{orderBy: TrackOrderFields.album}, {orderBy: TrackOrderFields.default}]})
+	@OneToMany<Track>(() => Track, track => track.albumArtist, { order: [{ orderBy: TrackOrderFields.album }, { orderBy: TrackOrderFields.default }] })
 	albumTracks: Collection<Track> = new Collection<Track>(this);
 
 	@Field(() => [AlbumQL])
-	@OneToMany<Album>(() => Album, album => album.artist, {order: [{orderBy: AlbumOrderFields.default}]})
+	@OneToMany<Album>(() => Album, album => album.artist, { order: [{ orderBy: AlbumOrderFields.default }] })
 	albums: Collection<Album> = new Collection<Album>(this);
 
 	@Field(() => [RootQL])
-	@ManyToMany<Root>(() => Root, root => root.artists, {owner: true, order: [{orderBy: DefaultOrderFields.default}]})
+	@ManyToMany<Root>(() => Root, root => root.artists, { owner: true, order: [{ orderBy: DefaultOrderFields.default }] })
 	roots: Collection<Root> = new Collection<Root>(this);
 
 	@Field(() => [FolderQL])
-	@ManyToMany<Folder>(() => Folder, folder => folder.artists, {owner: true, order: [{orderBy: FolderOrderFields.default}]})
+	@ManyToMany<Folder>(() => Folder, folder => folder.artists, { owner: true, order: [{ orderBy: FolderOrderFields.default }] })
 	folders: Collection<Folder> = new Collection<Folder>(this);
 
 	@Field(() => [SeriesQL])
-	@OneToMany<Series>(() => Series, series => series.artist, {order: [{orderBy: DefaultOrderFields.default}]})
+	@OneToMany<Series>(() => Series, series => series.artist, { order: [{ orderBy: DefaultOrderFields.default }] })
 	series: Collection<Series> = new Collection<Series>(this);
 }
 

@@ -6,8 +6,8 @@
  */
 
 import Ffmpeg from 'fluent-ffmpeg';
-import {PassThrough, Readable, Transform, TransformCallback} from 'stream';
-import {logger} from '../../../utils/logger.js';
+import { PassThrough, Readable, Transform, TransformCallback } from 'stream';
+import { logger } from '../../../utils/logger.js';
 
 const log = logger('waveform.stream');
 
@@ -24,7 +24,7 @@ export class WaveformStream extends Transform {
 	_total = 0;
 
 	constructor(atSamplesPerPixel?: number, atSampleRate?: number) {
-		super({writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024});
+		super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
 		this._samplesPerPixel = atSamplesPerPixel != null ? atSamplesPerPixel : 256;
 		this._sampleRate = atSampleRate != null ? atSampleRate : 44100;
 		const options: Ffmpeg.FfmpegCommandOptions = {
@@ -119,5 +119,4 @@ export class WaveformStream extends Transform {
 			cb();
 		});
 	}
-
 }
