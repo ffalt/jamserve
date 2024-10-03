@@ -1,4 +1,3 @@
-import {ArtworkImageType, ListType} from '../../types/enums.js';
 import { ArtworkImageType, ListType } from '../../types/enums.js';
 import { ArgsType, Field, Float, ID, InputType, Int } from 'type-graphql';
 import { DefaultOrderArgs, PaginatedFilterArgs } from '../base/base.args.js';

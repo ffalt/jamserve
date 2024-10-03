@@ -40,7 +40,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 		const router = express.Router();
 		let gets: Array<MethodMetadata> = [];
 		let posts: Array<MethodMetadata> = [];
-		iterateControllers(metadata.controllerClasses, ctrl, (ctrlClass => {
+		iterateControllers(metadata.controllerClasses, ctrl, ctrlClass => {
 			gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
 			posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
 		});
