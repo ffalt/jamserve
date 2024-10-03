@@ -120,7 +120,7 @@ export class SubsonicApiBase {
 			const entry = childs.find(child => child.id === bookmarkID);
 			const bookmarkuser = users.find(u => u.id === bookmark.user.id());
 			if (entry && bookmarkuser) {
-				result.push(SubsonicFormatter.packBookmark(bookmark, bookmarkuser ? bookmarkuser.name : '', entry));
+				result.push(this.format.packBookmark(bookmark, bookmarkuser ? bookmarkuser.name : '', entry));
 			}
 		}
 		return result;
@@ -244,11 +244,11 @@ export class SubsonicFormatter {
 		return moment(date).utc().format(); // .format('YYYY-MM-DDThh:mm:ss.000Z');
 	}
 
-	static packRoot(root: Root): SubsonicMusicFolder {
+	packRoot(root: Root): SubsonicMusicFolder {
 		return { id: parseInt(root.id, 10), name: root.name };
 	}
 
-	static packUser(user: User): SubsonicUser {
+	packUser(user: User): SubsonicUser {
 		return {
 			username: user.name,
 			email: user.email,
@@ -384,13 +384,13 @@ export class SubsonicFormatter {
 			songCount: await album.tracks.count(),
 			duration: Math.trunc(album.duration),
 			year: album.year,
-			genre: await SubsonicFormatter.packGenres(album.genres),
+			genre: await this.packGenres(album.genres),
 			created: SubsonicFormatter.formatSubSonicDate(album.createdAt) as string,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
-	static async packGenres(genres: Collection<Genre>): Promise<string | undefined> {
+	async packGenres(genres: Collection<Genre>): Promise<string | undefined> {
 		return genres && (await genres.count()) > 0 ? (await genres.getItems()).map(g => g.name).join(' / ') : undefined;
 	}
 
@@ -414,7 +414,7 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static packImageInfo(info: LastFM.Album | LastFM.Artist, result: SubsonicAlbumInfo | SubsonicArtistInfo): void {
+	packImageInfo(info: LastFM.Album | LastFM.Artist, result: SubsonicAlbumInfo | SubsonicArtistInfo): void {
 		(info.image || []).forEach(i => {
 			if (i.size === 'small') {
 				result.smallImageUrl = i.url;
@@ -426,35 +426,35 @@ export class SubsonicFormatter {
 		});
 	}
 
-	static packAlbumInfo(info: LastFM.Album): SubsonicAlbumInfo {
+	packAlbumInfo(info: LastFM.Album): SubsonicAlbumInfo {
 		const result: SubsonicAlbumInfo = {
 			notes: info.wiki ? info.wiki.content : undefined,
 			musicBrainzId: info.mbid,
 			lastFmUrl: info.url
 		};
-		SubsonicFormatter.packImageInfo(info, result);
+		this.packImageInfo(info, result);
 		return result;
 	}
 
-	static packArtistInfo(info: LastFM.Artist, similar?: Array<SubsonicArtist>): SubsonicArtistInfo {
+	packArtistInfo(info: LastFM.Artist, similar?: Array<SubsonicArtist>): SubsonicArtistInfo {
 		const result: SubsonicArtistInfo = {
 			biography: info.bio ? info.bio.content : undefined,
 			musicBrainzId: info.mbid,
 			lastFmUrl: info.url,
 			similarArtist: similar
 		};
-		SubsonicFormatter.packImageInfo(info, result);
+		this.packImageInfo(info, result);
 		return result;
 	}
 
-	static packArtistInfo2(info: LastFM.Artist, similar?: Array<SubsonicArtistID3>): SubsonicArtistInfo2 {
+	packArtistInfo2(info: LastFM.Artist, similar?: Array<SubsonicArtistID3>): SubsonicArtistInfo2 {
 		const result: SubsonicArtistInfo2 = {
 			biography: info.bio ? info.bio.content : undefined,
 			musicBrainzId: info.mbid,
 			lastFmUrl: info.url,
 			similarArtist: similar || []
 		};
-		SubsonicFormatter.packImageInfo(info, result);
+		this.packImageInfo(info, result);
 		return result;
 	}
 
@@ -563,7 +563,7 @@ export class SubsonicFormatter {
 			created: SubsonicFormatter.formatSubSonicDate(folder.createdAt),
 			title: folder.title || '',
 			album: folder.album,
-			genre: await SubsonicFormatter.packGenres(folder.genres),
+			genre: await this.packGenres(folder.genres),
 			artist: folder.artist,
 			year: folder.year,
 			coverArt: id,
@@ -663,7 +663,7 @@ export class SubsonicFormatter {
 		return result;
 	}
 
-	static packBookmark(bookmark: Bookmark, username: string, child: SubsonicChild): SubsonicBookmark {
+	packBookmark(bookmark: Bookmark, username: string, child: SubsonicChild): SubsonicBookmark {
 		return {
 			entry: child,
 			username,
@@ -674,19 +674,19 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static packSimilarSongs(childs: Array<SubsonicChild>): SubsonicSimilarSongs {
+	packSimilarSongs(childs: Array<SubsonicChild>): SubsonicSimilarSongs {
 		return {
 			song: childs
 		};
 	}
 
-	static packSimilarSongs2(childs: Array<SubsonicChild>): SubsonicSimilarSongs2 {
+	packSimilarSongs2(childs: Array<SubsonicChild>): SubsonicSimilarSongs2 {
 		return {
 			song: childs
 		};
 	}
 
-	static packPlayQueue(playqueue: PlayQueue, user: User, childs: Array<SubsonicChild>): SubsonicPlayQueue {
+	packPlayQueue(playqueue: PlayQueue, user: User, childs: Array<SubsonicChild>): SubsonicPlayQueue {
 		return {
 			entry: childs,
 			current: playqueue.current,
@@ -706,7 +706,7 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static async packGenre(genre: Genre): Promise<SubsonicGenre> {
+	async packGenre(genre: Genre): Promise<SubsonicGenre> {
 		return {
 			content: genre.name,
 			songCount: await genre.tracks.count(),

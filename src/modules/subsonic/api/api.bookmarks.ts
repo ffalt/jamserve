@@ -73,7 +73,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		const entries = await playqueue.entries.getItems();
 		const tracks = await Promise.all(entries.map(entry => entry.track.get()));
 		const childs = await this.prepareTracks(orm, tracks.filter(t => !!t), user);
-		return { playQueue: SubsonicFormatter.packPlayQueue(playqueue, user, childs) };
+		return { playQueue: this.format.packPlayQueue(playqueue, user, childs) };
 	}
 
 	/**

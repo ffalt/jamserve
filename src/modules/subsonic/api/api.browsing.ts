@@ -122,15 +122,15 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		if (folder) {
 			if (folder.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
-				if (lastfm && lastfm.artist) {
-					return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+				if (lastfm?.artist) {
+					return { artistInfo: this.format.packArtistInfo(lastfm.artist) };
 				}
 			} else if (folder.artist) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
-				if (al && al.artist) {
+				if (al?.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-					if (lastfm && lastfm.artist) {
-						return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+					if (lastfm?.artist) {
+						return { artistInfo: this.format.packArtistInfo(lastfm.artist) };
 					}
 				}
 			}
@@ -176,14 +176,14 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
 				if (lastfm && lastfm.artist) {
-					return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+					return { artistInfo2: this.format.packArtistInfo2(lastfm.artist) };
 				}
 			} else if (artist.name) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
 				if (al && al.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm && lastfm.artist) {
-						return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+						return { artistInfo2: this.format.packArtistInfo2(lastfm.artist) };
 					}
 				}
 			}
@@ -208,14 +208,14 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (folder.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
 				if (lastfm && lastfm.album) {
-					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+					return { albumInfo: this.format.packAlbumInfo(lastfm.album) };
 				}
 			} else if (folder.album && folder.artist) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
 				if (al && al.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 					if (lastfm && lastfm.album) {
-						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+						return { albumInfo: this.format.packAlbumInfo(lastfm.album) };
 					}
 				}
 			}
@@ -240,14 +240,14 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			if (album.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
 				if (lastfm && lastfm.album) {
-					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+					return { albumInfo: this.format.packAlbumInfo(lastfm.album) };
 				}
 			} else if (album.name && album.artist.id()) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, (await album.artist.getOrFail()).name);
 				if (al && al.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 					if (lastfm && lastfm.album) {
-						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+						return { albumInfo: this.format.packAlbumInfo(lastfm.album) };
 					}
 				}
 			}
@@ -266,7 +266,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		const genres = await orm.Genre.all();
 		const list: Array<SubsonicGenre> = await Promise.all(
 			genres.map(async genre => {
-				return SubsonicFormatter.packGenre(genre);
+				return this.format.packGenre(genre);
 			})
 		);
 		if (list.length === 0) {
@@ -382,7 +382,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	@SubsonicRoute('getMusicFolders.view', () => SubsonicResponseMusicFolders)
 	async getMusicFolders(_query: unknown, { orm }: Context): Promise<SubsonicResponseMusicFolders> {
 		const list = await orm.Root.all();
-		return { musicFolders: { musicFolder: list.map(SubsonicFormatter.packRoot) } };
+		return { musicFolders: { musicFolder: list.map(this.format.packRoot) } };
 	}
 
 	/**
@@ -420,7 +420,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 			default:
 		}
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
-		return { similarSongs: SubsonicFormatter.packSimilarSongs(childs) };
+		return { similarSongs: this.format.packSimilarSongs(childs) };
 	}
 
 	/**
@@ -440,7 +440,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
-		return { similarSongs2: SubsonicFormatter.packSimilarSongs2(childs) };
+		return { similarSongs2: this.format.packSimilarSongs2(childs) };
 	}
 
 	/**

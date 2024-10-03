@@ -155,7 +155,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
 		  */
 		if ((!query.username) || (user.name === query.username)) {
-			return { user: SubsonicFormatter.packUser(user) };
+			return { user: this.format.packUser(user) };
 		}
 		if (!user.roleAdmin) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
@@ -164,7 +164,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		if (!u) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
-		return { user: SubsonicFormatter.packUser(u) };
+		return { user: this.format.packUser(u) };
 	}
 
 	/**
@@ -179,7 +179,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		const users = await orm.User.all();
-		return { users: { user: users.map(SubsonicFormatter.packUser) } };
+		return { users: { user: users.map(this.format.packUser) } };
 	}
 
 	/**
