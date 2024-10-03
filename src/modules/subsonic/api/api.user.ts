@@ -1,5 +1,4 @@
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -156,16 +155,16 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
 		  */
 		if ((!query.username) || (user.name === query.username)) {
-			return { user: FORMAT.packUser(user) };
+			return { user: SubsonicFormatter.packUser(user) };
 		}
 		if (!user.roleAdmin) {
-			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		const u = await orm.User.findOne({ where: { name: query.username } });
 		if (!u) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
-		return { user: FORMAT.packUser(u) };
+		return { user: SubsonicFormatter.packUser(u) };
 	}
 
 	/**
@@ -177,10 +176,10 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	@SubsonicRoute('getUsers.view', () => SubsonicResponseUsers)
 	async getUsers(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseUsers> {
 		if (!user.roleAdmin) {
-			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		const users = await orm.User.all();
-		return { users: { user: users.map(FORMAT.packUser) } };
+		return { users: { user: users.map(SubsonicFormatter.packUser) } };
 	}
 
 	/**

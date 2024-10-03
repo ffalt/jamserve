@@ -1,8 +1,8 @@
 import express from 'express';
-import { FORMAT } from './format.js';
 import { SubsonicParameterRequest } from './parameters.js';
 import { xml } from './xml.js';
 import { ApiBaseResponder, ApiBinaryResult } from '../deco/express/express-responder.js';
+import { SubsonicFormatter } from './api/api.base.js';
 
 export class ApiResponder extends ApiBaseResponder {
 	private send(req: express.Request, res: express.Response, data: any): void {
@@ -19,18 +19,18 @@ export class ApiResponder extends ApiBaseResponder {
 	}
 
 	public sendData(req: express.Request, res: express.Response, data: any): void {
-		this.send(req, res, FORMAT.packResponse(data));
+		this.send(req, res, SubsonicFormatter.packResponse(data));
 	}
 
 	public sendOK(req: express.Request, res: express.Response): void {
-		this.send(req, res, FORMAT.packOK());
+		this.send(req, res, SubsonicFormatter.packOK());
 	}
 
 	public sendError(req: express.Request, res: express.Response, err: any): void {
 		if (err?.fail) {
-			this.send(req, res, FORMAT.packFail(err.fail, err.text));
+			this.send(req, res, SubsonicFormatter.packFail(err.fail, err.text));
 		} else {
-			this.send(req, res, FORMAT.packFail(FORMAT.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
+			this.send(req, res, SubsonicFormatter.packFail(SubsonicFormatter.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
 		}
 	}
 

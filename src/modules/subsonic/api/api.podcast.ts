@@ -2,7 +2,6 @@ import { Podcast } from '../../../entity/podcast/podcast.js';
 import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-params.js';
 import { logger } from '../../../utils/logger.js';
 import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
 import { EpisodeOrderFields, PodcastStatus } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
@@ -64,7 +63,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 			podcastList = await orm.Podcast.all();
 		}
 		const channel = await Promise.all(podcastList.map(async podcast => {
-			const pod = FORMAT.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
+			const pod = await this.format.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
 			if (includeEpisodes) {
 				pod.episode = await this.prepareEpisodes(engine, orm, await podcast.episodes.getItems({ order: ['date', 'DESC'] }), user);
 			}
@@ -106,7 +105,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
-		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
+		const podcast = await this.findOneOrFailByID(query.id, orm.Podcast);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
 	}
 
@@ -122,7 +121,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
 		 */
-		const episode = await orm.Episode.findOneOrFailByID(query.id);
+		const episode = await this.findOneOrFailByID(query.id, orm.Episode);
 		if (!episode.path) {
 			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
@@ -140,7 +139,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
-		const episode = await orm.Episode.findOneOrFailByID(query.id);
+		const episode = await this.findOneOrFailByID(query.id, orm.Episode);
 		await engine.episode.deleteEpisode(orm, episode);
 	}
 }

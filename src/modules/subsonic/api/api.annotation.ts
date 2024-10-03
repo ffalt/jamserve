@@ -1,5 +1,4 @@
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
@@ -60,7 +59,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 		 rating 	Yes 		The rating between 1 and 5 (inclusive), or 0 to remove the rating.
 		 */
 		if ((query.rating < 0) || (query.rating > 5)) {
-			return Promise.reject({ fail: FORMAT.FAIL.PARAMETER });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER });
 		}
 		await engine.state.rate(orm, query.id, query.rating, user);
 	}

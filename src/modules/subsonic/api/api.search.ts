@@ -1,5 +1,4 @@
 import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
 import { paginate } from '../../../entity/base/base.utils.js';
 import { DBObjectType, FolderType } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
@@ -77,10 +76,10 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		searchResult2.artist = [];
 		searchResult2.album = [];
 		for (const folder of artistFolderList) {
-			searchResult2.artist.push(await FORMAT.packFolderArtist(folder, states.find(s => s.destID === folder.id)));
+			searchResult2.artist.push(await this.format.packFolderArtist(folder, states.find(s => s.destID === folder.id)));
 		}
 		for (const folder of albumFolderList) {
-			searchResult2.album.push(await FORMAT.packFolder(folder, states.find(s => s.destID === folder.id)));
+			searchResult2.album.push(await this.format.packFolder(folder, states.find(s => s.destID === folder.id)));
 		}
 		return { searchResult2 };
 	}

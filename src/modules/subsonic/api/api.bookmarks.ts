@@ -1,5 +1,4 @@
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -51,7 +50,10 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
 		 */
-		await engine.bookmark.remove(orm, query.id, user.id);
+		const id = await this.resolveID(query.id);
+		if (id) {
+			await engine.bookmark.remove(orm, id, user.id);
+		}
 	}
 
 	/**
@@ -71,7 +73,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		const entries = await playqueue.entries.getItems();
 		const tracks = await Promise.all(entries.map(entry => entry.track.get()));
 		const childs = await this.prepareTracks(orm, tracks.filter(t => !!t), user);
-		return { playQueue: FORMAT.packPlayQueue(playqueue, user, childs) };
+		return { playQueue: SubsonicFormatter.packPlayQueue(playqueue, user, childs) };
 	}
 
 	/**

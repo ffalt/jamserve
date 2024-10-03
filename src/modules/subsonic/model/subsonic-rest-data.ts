@@ -291,7 +291,7 @@ export class SubsonicIndex {
 
 @SubsonicResultType()
 export class SubsonicArtist {
-	id!: string;
+	id!: SubsonicID;
 	name!: string;
 	starred?: SubsonicDateTime; //  Added in 1.10.1
 	userRating?: SubsonicUserRating; //  Added in 1.13.0
@@ -325,10 +325,10 @@ export class SubsonicIndexID3 {
 
 @SubsonicResultType()
 export class SubsonicArtistID3 {
-	id!: string;
+	id!: SubsonicID;
 	name!: string;
 	albumCount!: number;
-	coverArt?: string;
+	coverArt?: number;
 	starred?: SubsonicDateTime;
 }
 
@@ -339,11 +339,11 @@ export class SubsonicArtistWithAlbumsID3 extends SubsonicArtistID3 {
 
 @SubsonicResultType()
 export class SubsonicAlbumID3 {
-	id!: string;
+	id!: SubsonicID;
 	name!: string;
 	artist?: string;
-	artistId?: string;
-	coverArt?: string;
+	artistId?: number;
+	coverArt?: number;
 	songCount!: number;
 	duration!: number;
 	playCount?: number; //  Added in 1.14.0
@@ -368,25 +368,25 @@ export class SubsonicVideoInfo {
 	captions?: Array<SubsonicCaptions>;
 	audioTrack?: Array<SubsonicAudioTrack>;
 	conversion?: Array<SubsonicVideoConversion>;
-	id!: string;
+	id!: SubsonicID;
 }
 
 @SubsonicResultType()
 export class SubsonicCaptions {
-	id!: string;
+	id!: SubsonicID;
 	name?: string;
 }
 
 @SubsonicResultType()
 export class SubsonicAudioTrack {
-	id!: string;
+	id!: SubsonicID;
 	name?: string;
 	languageCode?: string;
 }
 
 @SubsonicResultType()
 export class SubsonicVideoConversion {
-	id!: string;
+	id!: SubsonicID;
 	bitRate?: number; //  In Kbps
 	audioTrackId?: number;
 }
@@ -394,8 +394,8 @@ export class SubsonicVideoConversion {
 @SubsonicResultType()
 export class SubsonicDirectory {
 	child?: Array<SubsonicChild>;
-	id!: string;
-	parent?: string;
+	id!: SubsonicID;
+	parent?: SubsonicID;
 	name!: string;
 	starred?: SubsonicDateTime; //  Added in 1.10.1
 	userRating?: SubsonicUserRating; //  Added in 1.13.0
@@ -405,8 +405,8 @@ export class SubsonicDirectory {
 
 @SubsonicResultType()
 export class SubsonicChild {
-	id!: string;
-	parent?: string;
+	id!: SubsonicID;
+	parent?: SubsonicID;
 	isDir!: boolean;
 	title!: string;
 	album?: string;
@@ -414,7 +414,7 @@ export class SubsonicChild {
 	track?: number;
 	year?: number;
 	genre?: string;
-	coverArt?: string;
+	coverArt?: number;
 	size?: number;
 	contentType?: string;
 	suffix?: string;
@@ -430,8 +430,8 @@ export class SubsonicChild {
 	discNumber?: number; //  Added in 1.8.0
 	created?: SubsonicDateTime; //  Added in 1.8.0
 	starred?: SubsonicDateTime; //  Added in 1.8.0
-	albumId?: string; //  Added in 1.8.0
-	artistId?: string; //  Added in 1.8.0
+	albumId?: SubsonicID; //  Added in 1.8.0
+	artistId?: SubsonicID; //  Added in 1.8.0
 	type?: SubsonicMediaType; //  Added in 1.8.0
 	bookmarkPosition?: number; //  In millis. Added in 1.10.1
 	originalWidth?: number; //  Added in 1.13.0
@@ -486,10 +486,10 @@ export class SubsonicPlaylists {
 @SubsonicResultType()
 export class SubsonicPlaylist {
 	allowedUser?: Array<string>; // Added in 1.8.0
-	id!: string;
+	id!: SubsonicID;
 	name!: string;
 	comment?: string; // Added in 1.8.0
-	owner?: string; // Added in 1.8.0
+	owner?: number; // Added in 1.8.0
 	public?: boolean; // Added in 1.8.0
 	songCount!: number; // Added in 1.8.0
 	duration!: number; // Added in 1.8.0
@@ -558,7 +558,7 @@ export class SubsonicPodcasts {
 @SubsonicResultType()
 export class SubsonicPodcastChannel {
 	episode?: Array<SubsonicPodcastEpisode>;
-	id!: string;
+	id!: SubsonicID;
 	url!: string;
 	title?: string;
 	description?: string;
@@ -575,8 +575,8 @@ export class SubsonicNewestPodcasts {
 
 @SubsonicResultType()
 export class SubsonicPodcastEpisode extends SubsonicChild {
-	streamId?: string; //  Use this ID for streaming the podcast.
-	channelId!: string; //  Added in 1.13.0
+	streamId?: SubsonicID; //  Use this ID for streaming the podcast.
+	channelId!: SubsonicID; //  Added in 1.13.0
 	description?: string;
 	status!: SubsonicPodcastStatus;
 	publishDate?: SubsonicDateTime;
@@ -591,7 +591,7 @@ export class SubsonicInternetRadioStations {
 
 @SubsonicResultType()
 export class SubsonicInternetRadioStation {
-	id!: string;
+	id!: SubsonicID;
 	name!: string;
 	streamUrl!: string;
 	homePageUrl?: string;
@@ -630,7 +630,7 @@ export class SubsonicShares {
 @SubsonicResultType()
 export class SubsonicShare {
 	entry?: Array<SubsonicChild>;
-	id!: string;
+	id!: SubsonicID;
 	url!: string;
 	description?: string;
 	username!: string;
@@ -746,4 +746,5 @@ export class SubsonicError {
 	message?: string;
 }
 
+export type SubsonicID = number;
 export type SubsonicDateTime = string; // -?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?

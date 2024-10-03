@@ -1,6 +1,5 @@
 import { Playlist } from '../../../entity/playlist/playlist.js';
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { DBObjectType } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
@@ -25,7 +24,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 */
 		let playlist: Playlist | undefined;
 		if (!query.playlistId && !query.name) {
-			return Promise.reject({ fail: FORMAT.FAIL.PARAMETER });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER });
 		}
 		if (query.playlistId) {
 			const updateQuery: SubsonicParameterPlaylistUpdate = {
@@ -43,12 +42,12 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 			}, ctx.user);
 		}
 		if (!playlist) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
 		const entries = await playlist.entries.getItems();
 		const tracks = (await Promise.all(entries.map(e => e.track.get()))).filter(t => !!t);
 		const states = await ctx.orm.State.findMany(tracks.map(t => t.id), DBObjectType.track, ctx.user.id);
-		return { playlist: await FORMAT.packPlaylistWithSongs(playlist, tracks, states) };
+		return { playlist: await this.format.packPlaylistWithSongs(playlist, tracks, states) };
 	}
 
 	/**
@@ -70,7 +69,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.playlistId);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(e => e.track.id());
@@ -101,9 +100,9 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
 		 */
-		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
+		const playlist = await this.findOneOrFailByID(query.id, orm.Playlist);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		await engine.playlist.remove(orm, playlist);
 	}
@@ -123,11 +122,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		let userID = user.id;
 		if ((query.username) && (query.username !== user.name)) {
 			if (!user.roleAdmin) {
-				return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+				return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 			}
 			const u = await engine.user.findByName(orm, query.username);
 			if (!u) {
-				return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+				return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 			}
 			userID = u.id;
 		}
@@ -151,9 +150,9 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.
 		 */
-		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
+		const playlist = await this.findOneOrFailByID(query.id, orm.Playlist);
 		if (playlist.user.id() !== user.id) {
-			return Promise.reject({ fail: FORMAT.FAIL.UNAUTH });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		const result = await this.preparePlaylist(orm, playlist, user);
 		return { playlist: result };

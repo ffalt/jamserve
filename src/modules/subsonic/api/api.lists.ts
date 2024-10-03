@@ -1,8 +1,7 @@
 import { Album } from '../../../entity/album/album.js';
 import { Folder } from '../../../entity/folder/folder.js';
 import { randomItems } from '../../../utils/random.js';
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { AlbumOrderFields, DBObjectType, FolderOrderFields, FolderType, FolderTypesAlbum, ListType } from '../../../types/enums.js';
 import { TrackFilterArgs } from '../../../entity/track/track.args.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
@@ -33,7 +32,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		for (const entry of list) {
 			const state = await orm.State.findOrCreate(entry.episode?.id || entry.track?.id || '',
 				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
-			result.push(await FORMAT.packNowPlaying(entry, state));
+			result.push(await this.format.packNowPlaying(entry, state));
 		}
 		return { nowPlaying: { entry: result } };
 	}
@@ -184,7 +183,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				);
 				break;
 			default:
-				return Promise.reject({ fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type' });
+				return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER, text: 'Unknown Album List Type' });
 		}
 		const result = await this.prepareFolders(orm, folders, user);
 		return { albumList: { album: result } };
@@ -299,7 +298,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				);
 				break;
 			default:
-				return Promise.reject({ fail: FORMAT.FAIL.PARAMETER, text: 'Unknown Album List Type' });
+				return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER, text: 'Unknown Album List Type' });
 		}
 		const result = await this.prepareAlbums(orm, albums, user);
 		return { albumList2: { album: result } };

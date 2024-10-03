@@ -4,7 +4,7 @@ import { SubsonicObjField } from '../decorators/SubsonicObjField.js';
 @SubsonicObjParamsType()
 export class SubsonicParameterID {
 	@SubsonicObjField({ description: 'The item ID', isID: true })
-	id!: string;
+	id!: number;
 }
 
 @SubsonicObjParamsType()

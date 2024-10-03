@@ -10,8 +10,7 @@ import {
 	SubsonicParameterUsername
 } from '../model/subsonic-rest-params.js';
 import { logger } from '../../../utils/logger.js';
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { DBObjectType } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
@@ -60,7 +59,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 */
 		const o = await orm.findInImageTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
 		return engine.image.getObjImage(orm, o.obj, o.objType, query.size);
 	}
@@ -80,7 +79,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		const name = query.username;
 		const user = await engine.user.findByName(orm, name);
 		if (!user) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
 		return engine.image.getObjImage(orm, user, DBObjectType.user);
 	}
@@ -113,9 +112,13 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
-		const o = await orm.findInDownloadTypes(query.id);
+		const id = await this.resolveID(query.id);
+		if (!id) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
+		}
+		const o = await orm.findInDownloadTypes(id);
 		if (!o?.obj) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
 		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
 	}
@@ -140,7 +143,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 */
 		const o = await orm.findInStreamTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject({ fail: FORMAT.FAIL.NOTFOUND });
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
 		const maxBitRate = query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined;
 		switch (o.objType) {

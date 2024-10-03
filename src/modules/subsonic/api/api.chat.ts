@@ -1,5 +1,4 @@
-import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
+import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -35,6 +34,6 @@ export class SubsonicChatApi extends SubsonicApiBase {
 		 since 	No 		Only return messages newer than this time (in millis since Jan 1 1970).
 		 */
 		const messages = await engine.chat.get(query.since);
-		return { chatMessages: { chatMessage: messages.map(msg => FORMAT.packChatMessage(msg)) } };
+		return { chatMessages: { chatMessage: messages.map(msg => SubsonicFormatter.packChatMessage(msg)) } };
 	}
 }

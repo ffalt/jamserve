@@ -1,6 +1,5 @@
 import { SubsonicResponseInternetRadioStations } from '../model/subsonic-rest-data.js';
 import { SubsonicApiBase } from './api.base.js';
-import { FORMAT } from '../format.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
@@ -19,7 +18,8 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
 		 */
-		const radio = await orm.Radio.findOneOrFailByID(query.id);
+
+		const radio = await this.findOneOrFailByID(query.id, orm.Radio);
 		await orm.Radio.removeAndFlush(radio);
 	}
 
@@ -72,6 +72,10 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	@SubsonicRoute('getInternetRadioStations.view', () => SubsonicResponseInternetRadioStations)
 	async getInternetRadioStations(_query: unknown, { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
 		const radios = await orm.Radio.all();
-		return { internetRadioStations: { internetRadioStation: radios.filter(radio => !radio.disabled).map(radio => FORMAT.packRadio(radio)) } };
+		return {
+			internetRadioStations: {
+				internetRadioStation: await Promise.all(radios.filter(radio => !radio.disabled).map(radio => this.format.packRadio(radio)))
+			}
+		};
 	}
 }
