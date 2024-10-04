@@ -21,107 +21,6 @@ import { SubsonicResponseLyrics } from '../model/subsonic-rest-data.js';
 const log = logger('SubsonicApi');
 
 export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
-	/**
-	 * Searches for and returns lyrics for a given song.
-	 * Since 1.2.0
-	 * http://your-server/rest/getLyrics.view
-	 * @return Returns a <subsonic-response> element with a nested <lyrics> element on success. The <lyrics> element is empty if no matching lyrics was found.
-	 */
-	@SubsonicRoute('getLyrics.view', () => SubsonicResponseLyrics)
-	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 artist 	No 		The artist name.
-		 title 	No 		The song title.
-		 */
-		if (!query.artist || !query.title) {
-			return { lyrics: { content: '' } };
-		}
-		const lyrics = await engine.metadata.lyrics(orm, query.artist, query.title);
-		if (!lyrics || !lyrics.lyrics) {
-			return { lyrics: { content: '' } };
-		}
-		return { lyrics: { artist: query.artist, title: query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n') } };
-	}
-
-	/**
-	 * Returns a cover art image.
-	 * Since 1.0.0
-	 * http://your-server/rest/getCoverArt.view
-	 * @return  Returns the cover art image in binary form.
-	 */
-	@SubsonicRoute('getCoverArt.view')
-	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, { orm, engine }: Context): Promise<ApiBinaryResult> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 id 	Yes 		The ID of a song, album or artist.
-		 size 	No 		If specified, scale image to this size.
-		 */
-		const o = await orm.findInImageTypes(query.id);
-		if (!o?.obj) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
-		}
-		return engine.image.getObjImage(orm, o.obj, o.objType, query.size);
-	}
-
-	/**
-	 * Returns the avatar (personal image) for a user.
-	 * Since 1.8.0
-	 * http://your-server/rest/getAvatar.view
-	 * @return Returns the avatar image in binary form.
-	 */
-	@SubsonicRoute('getAvata.viewr')
-	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, { orm, engine }: Context): Promise<ApiBinaryResult> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The user in question.
-		 */
-		const name = query.username;
-		const user = await engine.user.findByName(orm, name);
-		if (!user) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
-		}
-		return engine.image.getObjImage(orm, user, DBObjectType.user);
-	}
-
-	/**
-	 * Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.
-	 * Since 1.14.0
-	 * http://your-server/rest/getCaptions.view
-	 * @return 	Returns the raw video captions.
-	 */
-	@SubsonicRoute('getCaptions.view')
-	async getCaptions(@SubsonicParams() _query: SubsonicParameterCaptions, _ctx: Context): Promise<ApiBinaryResult> {
-		/*
-		Parameter 	Required 	Default 	Comment
-		id 	Yes 		The ID of the video.
-		format 	No 		Preferred captions format ("srt" or "vtt").
-		 */
-		return {};
-	}
-
-	/**
-	 * Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
-	 * Since 1.0.0
-	 * http://your-server/rest/download.view
-	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
-	 */
-	@SubsonicRoute('download.view')
-	async download(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
-		 */
-		const id = await this.subsonicORM.resolveID(query.id);
-		if (!id) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
-		}
-		const o = await orm.findInDownloadTypes(id);
-		if (!o?.obj) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
-		}
-		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
-	}
 
 	/**
 	 * Streams a given media file.
@@ -129,7 +28,11 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/stream.view
 	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
-	@SubsonicRoute('stream.view')
+	@SubsonicRoute('stream.view', {
+		summary: 'Stream',
+		description: 'Streams a given media file.',
+		tags: ['Media Retrieval']
+	})
 	async stream(@SubsonicParams() query: SubsonicParameterStream, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -163,13 +66,139 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	}
 
 	/**
+	 * Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
+	 * Since 1.0.0
+	 * http://your-server/rest/download.view
+	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
+	 */
+	@SubsonicRoute('download.view', {
+		summary: 'Download',
+		description: 'Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.',
+		tags: ['Media Retrieval']
+	})
+	async download(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
+		/*
+		 Parameter 	Required 	Default 	Comment
+		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
+		 */
+		const id = await this.subsonicORM.resolveID(query.id);
+		if (!id) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
+		}
+		const o = await orm.findInDownloadTypes(id);
+		if (!o?.obj) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
+		}
+		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
+	}
+
+	/**
+	 * Searches for and returns lyrics for a given song.
+	 * Since 1.2.0
+	 * http://your-server/rest/getLyrics.view
+	 * @return Returns a <subsonic-response> element with a nested <lyrics> element on success. The <lyrics> element is empty if no matching lyrics was found.
+	 */
+	@SubsonicRoute('getLyrics.view', () => SubsonicResponseLyrics, {
+		summary: 'Lyrics',
+		description: 'Searches for and returns lyrics for a given song.',
+		tags: ['Media Retrieval']
+	})
+	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
+		/*
+		 Parameter 	Required 	Default 	Comment
+		 artist 	No 		The artist name.
+		 title 	No 		The song title.
+		 */
+		if (!query.artist || !query.title) {
+			return { lyrics: { content: '' } };
+		}
+		const lyrics = await engine.metadata.lyrics(orm, query.artist, query.title);
+		if (!lyrics || !lyrics.lyrics) {
+			return { lyrics: { content: '' } };
+		}
+		return { lyrics: { artist: query.artist, title: query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n') } };
+	}
+
+	/**
+	 * Returns a cover art image.
+	 * Since 1.0.0
+	 * http://your-server/rest/getCoverArt.view
+	 * @return  Returns the cover art image in binary form.
+	 */
+	@SubsonicRoute('getCoverArt.view', {
+		summary: 'Cover Art',
+		description: 'Returns a cover art image.',
+		tags: ['Media Retrieval']
+	})
+	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, { orm, engine }: Context): Promise<ApiBinaryResult> {
+		/*
+		 Parameter 	Required 	Default 	Comment
+		 id 	Yes 		The ID of a song, album or artist.
+		 size 	No 		If specified, scale image to this size.
+		 */
+		const o = await orm.findInImageTypes(query.id);
+		if (!o?.obj) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
+		}
+		return engine.image.getObjImage(orm, o.obj, o.objType, query.size);
+	}
+
+	/**
+	 * Returns the avatar (personal image) for a user.
+	 * Since 1.8.0
+	 * http://your-server/rest/getAvatar.view
+	 * @return Returns the avatar image in binary form.
+	 */
+	@SubsonicRoute('getAvatar.view', {
+		summary: 'Avatar',
+		description: 'Returns the avatar (personal image) for a user.',
+		tags: ['Media Retrieval']
+	})
+	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, { orm, engine }: Context): Promise<ApiBinaryResult> {
+		/*
+		 Parameter 	Required 	Default 	Comment
+		 username 	Yes 		The user in question.
+		 */
+		const name = query.username;
+		const user = await engine.user.findByName(orm, name);
+		if (!user) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
+		}
+		return engine.image.getObjImage(orm, user, DBObjectType.user);
+	}
+
+	/**
+	 * Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.
+	 * Since 1.14.0
+	 * http://your-server/rest/getCaptions.view
+	 * @return 	Returns the raw video captions.
+	 */
+	@SubsonicRoute('getCaptions.view', {
+		summary: 'Captions',
+		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
+		tags: ['Media Retrieval']
+	})
+	async getCaptions(@SubsonicParams() _query: SubsonicParameterCaptions, _ctx: Context): Promise<ApiBinaryResult> {
+		/*
+		Parameter 	Required 	Default 	Comment
+		id 	Yes 		The ID of the video.
+		format 	No 		Preferred captions format ("srt" or "vtt").
+		 */
+		return {};
+	}
+
+	/**
 	 * Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio. HLS is a streaming protocol implemented by Apple and works by breaking the overall stream
 	 * into a sequence of small HTTP-based file downloads. It's supported by iOS and newer versions of Android. This method also supports adaptive bitrate streaming, see the bitRate parameter.
 	 * Since 1.8.0
 	 * http://your-server/rest/hls.m3u8
 	 * @return Returns an M3U8 playlist on success (content type "application/vnd.apple.mpegurl"), or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
-	@SubsonicRoute('hls.m3u8')
+	@SubsonicRoute('hls.m3u8', {
+		summary: 'HLS',
+		description: 'Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio.',
+		tags: ['Media Retrieval']
+	})
 	async hls(@SubsonicParams() _query: SubsonicParameterHLS, _ctx: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment

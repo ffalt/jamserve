@@ -13,7 +13,11 @@ export class SubsonicLibraryApi extends SubsonicApiBase {
 	 * http://your-server/rest/getScanStatus.view
 	 * @return Returns a <subsonic-response> element with a nested <scanStatus> element on success.
 	 */
-	@SubsonicRoute('getScanStatus.view', () => SubsonicResponseScanStatus)
+	@SubsonicRoute('getScanStatus.view', () => SubsonicResponseScanStatus, {
+		summary: 'Scan Status',
+		description: 'Returns the current status for media library scanning.',
+		tags: ['Admin']
+	})
 	async getScanStatus(_query: unknown, { engine }: Context): Promise<SubsonicResponseScanStatus> {
 		return { scanStatus: { scanning: engine.io.scanning, count: undefined } };
 	}
@@ -24,7 +28,11 @@ export class SubsonicLibraryApi extends SubsonicApiBase {
 	 * http://your-server/rest/startScan.view
 	 * @return Returns a <subsonic-response> element with a nested <scanStatus> element on success.
 	 */
-	@SubsonicRoute('startScan.view')
+	@SubsonicRoute('startScan.view', {
+		summary: 'Start Status',
+		description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',
+		tags: ['Admin']
+	})
 	async startScan(_query: unknown, { engine, orm }: Context): Promise<void> {
 		engine.io.root.startUpRefresh(orm, true).catch(e => log.error(e)); // do not wait;
 	}

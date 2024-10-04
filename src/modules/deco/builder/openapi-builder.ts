@@ -11,8 +11,8 @@ import { ClassType } from 'type-graphql';
 export abstract class BaseOpenApiBuilder {
 	refsBuilder: OpenApiRefBuilder;
 
-	constructor(public extended: boolean = true, public metadata: MetadataStorage) {
-		this.refsBuilder = new OpenApiRefBuilder(extended, this.metadata);
+	constructor(public metadata: MetadataStorage) {
+		this.refsBuilder = new OpenApiRefBuilder(this.metadata);
 	}
 
 	protected fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
@@ -125,43 +125,11 @@ export abstract class BaseOpenApiBuilder {
 		return undefined;
 	}
 
-	protected static buildExtensions(openapi: OpenAPIObject, schemas: Schemas) {
-		const apiTags = new Set();
-		const tags = [];
-		const tagNames = [];
-		for (const key of Object.keys(openapi.paths)) {
-			const p = openapi.paths[key];
-			const list = BaseOpenApiBuilder.getTags(p) || [];
-			for (const s of list) {
-				apiTags.add(s);
-			}
-		}
-		for (const key of Object.keys(schemas)) {
-			const modelName = `${key.toLowerCase()}_model`;
-			tagNames.push(modelName);
-			const tag = {
-				'name': modelName,
-				'x-displayName': key,
-				'description': `<SchemaDefinition schemaRef="#/components/schemas/${key}" />\n`
-			};
-			tags.push(tag);
-		}
-		tagNames.sort();
-		openapi.tags = tags;
-		openapi['x-tagGroups'] = [
-			{ name: 'API', tags: [...apiTags] },
-			{ name: 'Models', tags: tagNames }
-		];
-	}
-
 	protected abstract buildPaths(schemas: Schemas, openapi: OpenAPIObject): void;
 
 	build(openapi: OpenAPIObject, schemas: Schemas): OpenAPIObject {
 		this.buildPaths(schemas, openapi);
 		openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
-		if (this.extended) {
-			BaseOpenApiBuilder.buildExtensions(openapi, schemas);
-		}
 		return openapi;
 	}
 }

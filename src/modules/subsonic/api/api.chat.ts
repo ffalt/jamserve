@@ -12,7 +12,11 @@ export class SubsonicChatApi extends SubsonicApiBase {
 	 * http://your-server/rest/addChatMessage.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('addChatMessage.view')
+	@SubsonicRoute('addChatMessage.view', {
+		summary: 'Add Chat Messages',
+		description: 'Adds a message to the chat log.',
+		tags: ['Chat']
+	})
 	async addChatMessage(@SubsonicParams() query: SubsonicParameterChatMessage, { engine, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -27,7 +31,11 @@ export class SubsonicChatApi extends SubsonicApiBase {
 	 * http://your-server/rest/getChatMessages.view
 	 * @return  Returns a <subsonic-response> element with a nested <chatMessages> element on success.
 	 */
-	@SubsonicRoute('getChatMessages.view', () => SubsonicResponseChatMessages)
+	@SubsonicRoute('getChatMessages.view', () => SubsonicResponseChatMessages, {
+		summary: 'Get Chat Messages',
+		description: 'Returns the current visible (non-expired) chat messages.',
+		tags: ['Chat']
+	})
 	async getChatMessages(@SubsonicParams() query: SubsonicParameterChatMessages, { engine }: Context): Promise<SubsonicResponseChatMessages> {
 		/*
 		 Parameter 	Required 	Default 	Comment

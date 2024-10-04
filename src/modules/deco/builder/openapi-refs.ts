@@ -13,7 +13,7 @@ import { getDefaultValue } from '../helpers/default-value.js';
 import { iterateArguments } from '../helpers/iterate-super.js';
 
 export class OpenApiRefBuilder {
-	constructor(public extended: boolean = true, private readonly metadata: MetadataStorage) {
+	constructor(private readonly metadata: MetadataStorage) {
 	}
 
 	private static getEnumRef(enumInfo: EnumMetadata, schemas: Schemas): string {
@@ -235,7 +235,7 @@ export class OpenApiRefBuilder {
 		if (typeOptions.array) {
 			result = { type: 'array', items: result };
 		}
-		if (this.extended || !(result as ReferenceObject).$ref) {
+		if (!(result as ReferenceObject).$ref) {
 			(result as SchemaObject).description = param.description;
 			(result as SchemaObject).deprecated = param.deprecationReason ? true : undefined;
 		}

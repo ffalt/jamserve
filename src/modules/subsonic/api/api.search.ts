@@ -14,7 +14,11 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult> element on success.
 	 */
-	@SubsonicRoute('search.view', () => SubsonicResponseSearchResult)
+	@SubsonicRoute('search.view', () => SubsonicResponseSearchResult, {
+		summary: 'Search',
+		description: 'Returns a listing of files matching the given search criteria.',
+		tags: ['Search']
+	})
 	async search(@SubsonicParams() query: SubsonicParameterSearch, { orm, user }: Context): Promise<SubsonicResponseSearchResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -50,7 +54,11 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search2.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult2> element on success.
 	 */
-	@SubsonicRoute('search2.view', () => SubsonicResponseSearchResult2)
+	@SubsonicRoute('search2.view', () => SubsonicResponseSearchResult2, {
+		summary: 'Search 2',
+		description: 'Returns albums, artists and songs matching the given search criteria.',
+		tags: ['Search']
+	})
 	async search2(@SubsonicParams() query: SubsonicParameterSearch2, { orm, user }: Context): Promise<SubsonicResponseSearchResult2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -90,7 +98,11 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search3.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult3> element on success.
 	 */
-	@SubsonicRoute('search3.view', () => SubsonicResponseSearchResult3)
+	@SubsonicRoute('search3.view', () => SubsonicResponseSearchResult3, {
+		summary: 'Search 3',
+		description: 'Similar to search2, but organizes music according to ID3 tags.',
+		tags: ['Search']
+	})
 	async search3(@SubsonicParams() query: SubsonicParameterSearch2, { orm, user }: Context): Promise<SubsonicResponseSearchResult3> {
 		/*
 		 Parameter 	Required 	Default 	Comment

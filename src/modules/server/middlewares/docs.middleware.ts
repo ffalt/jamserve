@@ -12,13 +12,13 @@ import { buildSubsonicOpenApi } from '../../subsonic/builder/openapi.js';
 export class DocsMiddleware {
 	@Inject private apollo!: ApolloMiddleware;
 
-	getOpenApiSchema(extended: boolean = true): string {
-		const openapi = buildOpenApi(extended);
+	getOpenApiSchema(): string {
+		const openapi = buildOpenApi();
 		return JSON.stringify(openapi, null, '\t');
 	}
 
-	getSubsonicOpenApiSchema(extended: boolean = true): string {
-		const openapi = buildSubsonicOpenApi(extended);
+	getSubsonicOpenApiSchema(): string {
+		const openapi = buildSubsonicOpenApi();
 		return JSON.stringify(openapi, null, '\t');
 	}
 
@@ -28,15 +28,9 @@ export class DocsMiddleware {
 			res.type('application/graphql').send(this.apollo.printSchema());
 		});
 		api.get('/openapi.json', (req, res) => {
-			res.type('application/json').send(this.getOpenApiSchema(false));
-		});
-		api.get('/openapi.ext.json', (req, res) => {
 			res.type('application/json').send(this.getOpenApiSchema());
 		});
 		api.get('/subsonic-openapi.json', (req, res) => {
-			res.type('application/json').send(this.getSubsonicOpenApiSchema(false));
-		});
-		api.get('/subsonic-openapi.ext.json', (req, res) => {
 			res.type('application/json').send(this.getSubsonicOpenApiSchema());
 		});
 		api.get('/angular-client.zip', async (req, res) => {

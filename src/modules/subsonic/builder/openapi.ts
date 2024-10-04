@@ -51,8 +51,7 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 	return {
 		openapi: '3.0.0',
 		info: {
-			title: 'SubsonicApi', description: 'Subsonic Api for JamServe', version,
-			license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
+			title: 'SubsonicApi', description: 'Subsonic Api for JamServe', version
 		},
 		servers: [{
 			url: 'http://localhost:4040/rest/',
@@ -66,8 +65,8 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 	};
 }
 
-export function buildSubsonicOpenApi(extended: boolean = true): OpenAPIObject {
-	const builder = new OpenApiBuilder(extended, getMetadataStorage());
+export function buildSubsonicOpenApi(): OpenAPIObject {
+	const builder = new OpenApiBuilder(getMetadataStorage());
 	const openapi: OpenAPIObject = buildOpenApiBase(SUBSONIC_VERSION);
 	const schemas: Schemas = {
 		ID: { type: 'integer' },

@@ -6,43 +6,53 @@ import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicP
 import { SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
 
 export class SubsonicUserApi extends SubsonicApiBase {
+
 	/**
-	 * Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
-	 * Since 1.1.0
-	 * http://your-server/rest/changePassword.view
-	 * @return Returns an empty <subsonic-response> element on success.
+	 * Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
+	 * Since 1.3.0
+	 * http://your-server/rest/getUser.view
+	 * @return Returns a <subsonic-response> element with a nested <user> element on success.
 	 */
-	@SubsonicRoute('changePassword.view')
-	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, _ctx: Context): Promise<void> {
-		return Promise.reject('disabled');
+	@SubsonicRoute('getUser.view', () => SubsonicResponseUser, {
+		summary: 'Get User',
+		description: 'Get details about a given user, including which authorization roles it has.',
+		tags: ['Users']
+	})
+	async getUser(@SubsonicParams() query: SubsonicParameterUsername, { orm, user }: Context): Promise<SubsonicResponseUser> {
 		/*
 		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The name of the user which should change its password.
-		 password 	Yes 		The new password of the new user, either in clear text of hex-encoded (see above).
-		 */
-		/*
-		if (
-			(!query.username) ||
-			(!query.password) ||
-			(query.password.length === 0)
-		) {
-			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
+		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
+		  */
+		if ((!query.username) || (user.name === query.username)) {
+			return { user: this.format.packUser(user) };
 		}
-		if (query.username !== user.name) {
-			if (!user.roles.admin) {
-				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
-			}
+		if (!user.roleAdmin) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
-		const u = await this.engine.userService.getByName(query.username);
+		const u = await orm.User.findOne({ where: { name: query.username } });
 		if (!u) {
-			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
-		u.subsonic_pass = query.password;
-		if (u.subsonic_pass.startsWith('enc:')) {
-			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
+		return { user: this.format.packUser(u) };
+	}
+
+	/**
+	 * Get details about all users, including which authorization roles they have. Only users with admin privileges are allowed to req this method.
+	 * Since 1.8.0
+	 * http://your-server/rest/getUsers.view
+	 * @return Returns a <subsonic-response> element with a nested <users> element on success.
+	 */
+	@SubsonicRoute('getUsers.view', () => SubsonicResponseUsers, {
+		summary: 'Get Users',
+		description: 'Get details about all users, including which authorization roles they have.',
+		tags: ['Users']
+	})
+	async getUsers(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseUsers> {
+		if (!user.roleAdmin) {
+			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
-		await this.engine.userService.update(u);
-		 */
+		const users = await orm.User.all();
+		return { users: { user: users.map(this.format.packUser) } };
 	}
 
 	/**
@@ -51,7 +61,11 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/createUser.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('createUser.view')
+	@SubsonicRoute('createUser.view', {
+		summary: 'Create User',
+		description: 'Creates a new Subsonic user',
+		tags: ['Users']
+	})
 	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<void> {
 		return Promise.reject('disabled');
 		/*
@@ -121,65 +135,46 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	}
 
 	/**
-	 * Deletes an existing Subsonic user
-	 * Since 1.3.0
-	 * http://your-server/rest/deleteUser.view
-	 * @return  Returns an empty <subsonic-response> element on success.
+	 * Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
+	 * Since 1.1.0
+	 * http://your-server/rest/changePassword.view
+	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deleteUser.view')
-	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, _ctx: Context): Promise<void> {
+	@SubsonicRoute('changePassword.view', {
+		summary: 'Change Password',
+		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
+		tags: ['Users']
+	})
+	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, _ctx: Context): Promise<void> {
 		return Promise.reject('disabled');
 		/*
-			 Parameter 	Required 	Default 	Comment
-			 username 	Yes 		The name of the user to delete.
-			 */
+		 Parameter 	Required 	Default 	Comment
+		 username 	Yes 		The name of the user which should change its password.
+		 password 	Yes 		The new password of the new user, either in clear text of hex-encoded (see above).
+		 */
 		/*
+		if (
+			(!query.username) ||
+			(!query.password) ||
+			(query.password.length === 0)
+		) {
+			return Promise.reject({fail: FORMAT.FAIL.PARAMETER});
+		}
+		if (query.username !== user.name) {
+			if (!user.roles.admin) {
+				return Promise.reject({fail: FORMAT.FAIL.UNAUTH});
+			}
+		}
 		const u = await this.engine.userService.getByName(query.username);
 		if (!u) {
 			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
 		}
-		await this.engine.userService.remove(u);
+		u.subsonic_pass = query.password;
+		if (u.subsonic_pass.startsWith('enc:')) {
+			u.subsonic_pass = hexDecode(u.subsonic_pass.slice(4)).trim();
+		}
+		await this.engine.userService.update(u);
 		 */
-	}
-
-	/**
-	 * Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
-	 * Since 1.3.0
-	 * http://your-server/rest/getUser.view
-	 * @return Returns a <subsonic-response> element with a nested <user> element on success.
-	 */
-	@SubsonicRoute('getUser.view', () => SubsonicResponseUser)
-	async getUser(@SubsonicParams() query: SubsonicParameterUsername, { orm, user }: Context): Promise<SubsonicResponseUser> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
-		  */
-		if ((!query.username) || (user.name === query.username)) {
-			return { user: this.format.packUser(user) };
-		}
-		if (!user.roleAdmin) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
-		}
-		const u = await orm.User.findOne({ where: { name: query.username } });
-		if (!u) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
-		}
-		return { user: this.format.packUser(u) };
-	}
-
-	/**
-	 * Get details about all users, including which authorization roles they have. Only users with admin privileges are allowed to req this method.
-	 * Since 1.8.0
-	 * http://your-server/rest/getUsers.view
-	 * @return Returns a <subsonic-response> element with a nested <users> element on success.
-	 */
-	@SubsonicRoute('getUsers.view', () => SubsonicResponseUsers)
-	async getUsers(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseUsers> {
-		if (!user.roleAdmin) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
-		}
-		const users = await orm.User.all();
-		return { users: { user: users.map(this.format.packUser) } };
 	}
 
 	/**
@@ -188,7 +183,11 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/updateUser.view
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('updateUser.view')
+	@SubsonicRoute('updateUser.view', {
+		summary: 'Update User',
+		description: 'Modifies an existing Subsonic user',
+		tags: ['Users']
+	})
 	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<void> {
 		return Promise.reject('disabled');
 		/*
@@ -250,6 +249,32 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		// u.roles.shareRole = getBool(query.shareRole, u.roles.shareRole);
 		// u.roles.videoConversionRole = getBool(query.videoConversionRole, u.roles.videoConversionRole);
 		await this.engine.userService.update(u);
+		 */
+	}
+
+	/**
+	 * Deletes an existing Subsonic user
+	 * Since 1.3.0
+	 * http://your-server/rest/deleteUser.view
+	 * @return  Returns an empty <subsonic-response> element on success.
+	 */
+	@SubsonicRoute('deleteUser.view', {
+		summary: 'Delete User',
+		description: 'Deletes an existing Subsonic user',
+		tags: ['Users']
+	})
+	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, _ctx: Context): Promise<void> {
+		return Promise.reject('disabled');
+		/*
+			 Parameter 	Required 	Default 	Comment
+			 username 	Yes 		The name of the user to delete.
+			 */
+		/*
+		const u = await this.engine.userService.getByName(query.username);
+		if (!u) {
+			return Promise.reject({fail: FORMAT.FAIL.NOTFOUND});
+		}
+		await this.engine.userService.remove(u);
 		 */
 	}
 }

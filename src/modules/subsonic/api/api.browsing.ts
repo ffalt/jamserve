@@ -37,7 +37,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtist.view
 	 * @return  Returns a <subsonic-response> element with a nested <artist> element on success.
 	 */
-	@SubsonicRoute('getArtist.view', () => SubsonicResponseArtistWithAlbumsID3)
+	@SubsonicRoute('getArtist.view', () => SubsonicResponseArtistWithAlbumsID3, {
+		summary: 'Artists',
+		description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getArtist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -58,7 +62,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbum.view
 	 * @return Returns a <subsonic-response> element with a nested <album> element on success.
 	 */
-	@SubsonicRoute('getAlbum.view', () => SubsonicResponseAlbumWithSongsID3)
+	@SubsonicRoute('getAlbum.view', () => SubsonicResponseAlbumWithSongsID3, {
+		summary: 'Albums',
+		description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getAlbum(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -75,12 +83,16 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	}
 
 	/**
-	 * Returns artist info with biography, image URLs and similar artists, using data from last.fm.
+	 *
 	 * Since 1.11.0
 	 * http://your-server/rest/getArtistInfo.view
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo> element on success.
 	 */
-	@SubsonicRoute('getArtistInfo.view', () => SubsonicResponseArtistInfo)
+	@SubsonicRoute('getArtistInfo.view', () => SubsonicResponseArtistInfo, {
+		summary: 'Artist Infos',
+		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
+		tags: ['Browsing']
+	})
 	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -144,7 +156,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtistInfo2.view
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo2> element on success.
 	 */
-	@SubsonicRoute('getArtistInfo2.view', () => SubsonicResponseArtistInfo2)
+	@SubsonicRoute('getArtistInfo2.view', () => SubsonicResponseArtistInfo2, {
+		summary: 'Artist Infos 2',
+		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo2> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -192,12 +208,16 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	}
 
 	/**
-	 * Returns album notes, image URLs etc, using data from last.fm.
+	 *
 	 * Since 1.14.0
 	 * http://your-server/rest/getAlbumInfo.view
 	 * @return  Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
-	@SubsonicRoute('getAlbumInfo.view', () => SubsonicResponseAlbumInfo)
+	@SubsonicRoute('getAlbumInfo.view', () => SubsonicResponseAlbumInfo, {
+		summary: 'Album Infos',
+		description: 'Returns album notes, image URLs etc, using data from last.fm.',
+		tags: ['Browsing']
+	})
 	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -229,7 +249,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbumInfo2.view
 	 * @return Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
-	@SubsonicRoute('getAlbumInfo2.view', () => SubsonicResponseAlbumInfo)
+	@SubsonicRoute('getAlbumInfo2.view', () => SubsonicResponseAlbumInfo, {
+		summary: 'Album Infos 2',
+		description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -256,38 +280,16 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	}
 
 	/**
-	 * Returns all genres.
-	 * Since 1.9.0
-	 * http://your-server/rest/getGenres.view
-	 * @return  Returns a <subsonic-response> element with a nested <genres> element on success.
-	 */
-	@SubsonicRoute('getGenres.view', () => SubsonicResponseGenres)
-	async getGenres(_query: unknown, { orm }: Context): Promise<SubsonicResponseGenres> {
-		const genres = await orm.Genre.all();
-		const list: Array<SubsonicGenre> = await Promise.all(
-			genres.map(async genre => {
-				return this.format.packGenre(genre);
-			})
-		);
-		if (list.length === 0) {
-			const dummy: SubsonicGenre = {
-				content: '-',
-				songCount: 0,
-				artistCount: 0,
-				albumCount: 0
-			};
-			list.push(dummy);
-		}
-		return { genres: { genre: list } };
-	}
-
-	/**
 	 * Returns an indexed structure of all artists.
 	 * Since 1.0.0
 	 * http://your-server/rest/getIndexes.view
 	 * @return   Returns a <subsonic-response> element with a nested <indexes> element on success.
 	 */
-	@SubsonicRoute('getIndexes.view', () => SubsonicResponseIndexes)
+	@SubsonicRoute('getIndexes.view', () => SubsonicResponseIndexes, {
+		summary: 'Artist Indexes',
+		description: 'Returns an indexed structure of all artists.',
+		tags: ['Browsing']
+	})
 	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes, { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -325,7 +327,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtists.view
 	 * @return Returns a <subsonic-response> element with a nested <artists> element on success.
 	 */
-	@SubsonicRoute('getArtists.view', () => SubsonicResponseArtistsID3)
+	@SubsonicRoute('getArtists.view', () => SubsonicResponseArtistsID3, {
+		summary: 'Artist Indexes 2',
+		description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID, { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
 		/*
          Parameter 	Required 	Default 	Comment
@@ -353,7 +359,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getMusicDirectory.view
 	 * @return   Returns a <subsonic-response> element with a nested <directory> element on success.
 	 */
-	@SubsonicRoute('getMusicDirectory.view', () => SubsonicResponseDirectory)
+	@SubsonicRoute('getMusicDirectory.view', () => SubsonicResponseDirectory, {
+		summary: 'Music Directory',
+		description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
+		tags: ['Browsing']
+	})
 	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseDirectory> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -379,10 +389,44 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getMusicFolders.view
 	 * @return Returns a <subsonic-response> element with a nested <musicFolders> element on success.
 	 */
-	@SubsonicRoute('getMusicFolders.view', () => SubsonicResponseMusicFolders)
+	@SubsonicRoute('getMusicFolders.view', () => SubsonicResponseMusicFolders, {
+		summary: 'Music Folders',
+		description: 'Returns all configured top-level music folders.',
+		tags: ['Browsing']
+	})
 	async getMusicFolders(_query: unknown, { orm }: Context): Promise<SubsonicResponseMusicFolders> {
 		const list = await orm.Root.all();
 		return { musicFolders: { musicFolder: list.map(this.format.packRoot) } };
+	}
+
+	/**
+	 * Returns all genres.
+	 * Since 1.9.0
+	 * http://your-server/rest/getGenres.view
+	 * @return  Returns a <subsonic-response> element with a nested <genres> element on success.
+	 */
+	@SubsonicRoute('getGenres.view', () => SubsonicResponseGenres, {
+		summary: 'Genres',
+		description: 'Returns all genres.',
+		tags: ['Browsing']
+	})
+	async getGenres(_query: unknown, { orm }: Context): Promise<SubsonicResponseGenres> {
+		const genres = await orm.Genre.all();
+		const list: Array<SubsonicGenre> = await Promise.all(
+			genres.map(async genre => {
+				return this.format.packGenre(genre);
+			})
+		);
+		if (list.length === 0) {
+			const dummy: SubsonicGenre = {
+				content: '-',
+				songCount: 0,
+				artistCount: 0,
+				albumCount: 0
+			};
+			list.push(dummy);
+		}
+		return { genres: { genre: list } };
 	}
 
 	/**
@@ -391,7 +435,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSimilarSongs.view
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs> element on success.
 	 */
-	@SubsonicRoute('getSimilarSongs.view', () => SubsonicResponseSimilarSongs)
+	@SubsonicRoute('getSimilarSongs.view', () => SubsonicResponseSimilarSongs, {
+		summary: 'Similar Songs',
+		description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
+		tags: ['Browsing']
+	})
 	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -429,7 +477,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSimilarSongs2.view
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs2> element on success.
 	 */
-	@SubsonicRoute('getSimilarSongs2.view', () => SubsonicResponseSimilarSongs2)
+	@SubsonicRoute('getSimilarSongs2.view', () => SubsonicResponseSimilarSongs2, {
+		summary: 'Similar Songs 2',
+		description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
+		tags: ['Browsing']
+	})
 	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -449,7 +501,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSong.view
 	 * @return Returns a <subsonic-response> element with a nested <song> element on success.
 	 */
-	@SubsonicRoute('getSong.view', () => SubsonicResponseSong)
+	@SubsonicRoute('getSong.view', () => SubsonicResponseSong, {
+		summary: 'Songs',
+		description: 'Returns details for a song.',
+		tags: ['Browsing']
+	})
 	async getSong(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseSong> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -466,7 +522,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getTopSongs.view
 	 * @return Returns a <subsonic-response> element with a nested <topSongs> element on success.
 	 */
-	@SubsonicRoute('getTopSongs.view', () => SubsonicResponseTopSongs)
+	@SubsonicRoute('getTopSongs.view', () => SubsonicResponseTopSongs, {
+		summary: 'Top Songs',
+		description: 'Returns top songs for the given artist, using data from last.fm.',
+		tags: ['Browsing']
+	})
 	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -485,7 +545,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getVideos.view
 	 * @return  Returns a <subsonic-response> element with a nested <videos> element on success.
 	 */
-	@SubsonicRoute('getVideos.view', () => SubsonicResponseVideos)
+	@SubsonicRoute('getVideos.view', () => SubsonicResponseVideos, {
+		summary: 'Videos',
+		description: 'Returns all video files.',
+		tags: ['Browsing']
+	})
 	async getVideos(_query: unknown, _ctx: Context): Promise<SubsonicResponseVideos> {
 		return { videos: {} };
 	}
@@ -496,7 +560,11 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getVideoInfo.view
 	 * @return Returns a <subsonic-response> element with a nested <videoInfo> element on success.
 	 */
-	@SubsonicRoute('getVideoInfo.view', () => SubsonicResponseVideoInfo)
+	@SubsonicRoute('getVideoInfo.view', () => SubsonicResponseVideoInfo, {
+		summary: 'Video Infos',
+		description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',
+		tags: ['Browsing']
+	})
 	async getVideoInfo(@SubsonicParams() _query: SubsonicParameterID, _ctx: Context): Promise<SubsonicResponseVideoInfo> {
 		/* .
 		Parameter 	Required 	Default 	Comment

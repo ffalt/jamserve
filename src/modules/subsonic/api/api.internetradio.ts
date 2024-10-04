@@ -7,20 +7,23 @@ import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicPara
 
 export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	/**
-	 * Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.
-	 * Since 1.16.0
-	 * http://your-server/rest/deleteInternetRadioStation.view
-	 * @return Returns an empty <subsonic-response> element on success.
+	 * Returns all internet radio stations. Takes no extra parameters.
+	 * Since 1.9.0
+	 * http://your-server/rest/getInternetRadioStations.view
+	 * @return Returns a <subsonic-response> element with a nested <internetRadioStations> element on success.
 	 */
-	@SubsonicRoute('deleteInternetRadioStation.view')
-	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, { orm }: Context): Promise<void> {
-		/*
-		Parameter 	Required 	Default 	Comment
-		id 	Yes 		The ID for the station.
-		 */
-
-		const radio = await this.subsonicORM.findOneOrFailByID(query.id, orm.Radio);
-		await orm.Radio.removeAndFlush(radio);
+	@SubsonicRoute('getInternetRadioStations.view', () => SubsonicResponseInternetRadioStations, {
+		summary: 'Get Radios',
+		description: 'Returns all internet radio stations.',
+		tags: ['Radio']
+	})
+	async getInternetRadioStations(_query: unknown, { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
+		const radios = await orm.Radio.all();
+		return {
+			internetRadioStations: {
+				internetRadioStation: await Promise.all(radios.filter(radio => !radio.disabled).map(radio => this.format.packRadio(radio)))
+			}
+		};
 	}
 
 	/**
@@ -29,7 +32,11 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * http://your-server/rest/createInternetRadioStation.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('createInternetRadioStation.view')
+	@SubsonicRoute('createInternetRadioStation.view', {
+		summary: 'Create Radios',
+		description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
+		tags: ['Radio']
+	})
 	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, { orm }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -47,7 +54,11 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	 * http://your-server/rest/updateInternetRadioStation.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('updateInternetRadioStation.view')
+	@SubsonicRoute('updateInternetRadioStation.view', {
+		summary: 'Update Radios',
+		description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
+		tags: ['Radio']
+	})
 	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate, { orm }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -64,18 +75,23 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 	}
 
 	/**
-	 * Returns all internet radio stations. Takes no extra parameters.
-	 * Since 1.9.0
-	 * http://your-server/rest/getInternetRadioStations.view
-	 * @return Returns a <subsonic-response> element with a nested <internetRadioStations> element on success.
+	 * Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.
+	 * Since 1.16.0
+	 * http://your-server/rest/deleteInternetRadioStation.view
+	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('getInternetRadioStations.view', () => SubsonicResponseInternetRadioStations)
-	async getInternetRadioStations(_query: unknown, { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
-		const radios = await orm.Radio.all();
-		return {
-			internetRadioStations: {
-				internetRadioStation: await Promise.all(radios.filter(radio => !radio.disabled).map(radio => this.format.packRadio(radio)))
-			}
-		};
+	@SubsonicRoute('deleteInternetRadioStation.view', {
+		summary: 'Delete Radios',
+		description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',
+		tags: ['Radio']
+	})
+	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, { orm }: Context): Promise<void> {
+		/*
+		Parameter 	Required 	Default 	Comment
+		id 	Yes 		The ID for the station.
+		 */
+
+		const radio = await this.subsonicORM.findOneOrFailByID(query.id, orm.Radio);
+		await orm.Radio.removeAndFlush(radio);
 	}
 }

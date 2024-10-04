@@ -12,7 +12,11 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * http://your-server/rest/getLicense.view
 	 * @return  Returns a <subsonic-response> element with a nested <license> element on success.
 	 */
-	@SubsonicRoute('getLicense.view', () => SubsonicResponseLicense)
+	@SubsonicRoute('getLicense.view', () => SubsonicResponseLicense, {
+		summary: 'Get License',
+		description: 'Get details about the software license.',
+		tags: ['System']
+	})
 	async getLicense(_query: unknown, _ctx: Context): Promise<SubsonicResponseLicense> {
 		return { license: { valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0' } };
 	}
@@ -22,7 +26,11 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * Since 1.0.0
 	 * http://your-server/rest/ping.view
 	 */
-	@SubsonicRoute('ping.view')
+	@SubsonicRoute('ping.view', {
+		summary: 'Ping',
+		description: 'Used to test connectivity with the server.',
+		tags: ['System']
+	})
 	async ping(_query: unknown, _ctx: Context): Promise<void> {
 		return;
 	}
@@ -33,7 +41,11 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * http://your-server/rest/jukeboxControl.view
 	 * @return Returns a <jukeboxStatus> element on success, unless the get action is used, in which case a nested <jukeboxPlaylist> element is returned.
 	 */
-	@SubsonicRoute('jukeboxControl.view', () => SubsonicResponseJukeboxStatus)
+	@SubsonicRoute('jukeboxControl.view', () => SubsonicResponseJukeboxStatus, {
+		summary: 'Jukebox Control',
+		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
+		tags: ['System']
+	})
 	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, _ctx: Context): Promise<SubsonicResponseJukeboxStatus> {
 		/*
 		 Parameter 	Required 	Default 	Comment

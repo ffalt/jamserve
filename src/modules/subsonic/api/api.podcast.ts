@@ -11,31 +11,6 @@ import { SubsonicNewestPodcasts, SubsonicPodcasts, SubsonicResponseNewestPodcast
 const log = logger('SubsonicApi');
 
 export class SubsonicPodcastApi extends SubsonicApiBase {
-	/**
-	 * Requests the server to check for new Podcast episodes. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
-	 * Since 1.9.0
-	 * http://your-server/rest/refreshPodcasts.view
-	 * @return Returns an empty <subsonic-response> element on success.
-	 */
-	@SubsonicRoute('refreshPodcasts.view')
-	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<void> {
-		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
-	}
-
-	/**
-	 * Adds a new Podcast channel. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
-	 * Since 1.9.0
-	 * http://your-server/rest/createPodcastChannel.view
-	 * @return Returns an empty <subsonic-response> element on success.
-	 */
-	@SubsonicRoute('createPodcastChannel.view')
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<void> {
-		/*
-		 Parameter 	Required 	Default 	Comment
-		 url 	Yes 		The URL of the Podcast to add.
-		 */
-		await engine.podcast.create(orm, query.url);
-	}
 
 	/**
 	 * Returns all Podcast channels the server subscribes to, and (optionally) their episodes. This method can also be used to return details for only one channel - refer to the id parameter.
@@ -44,7 +19,11 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPodcasts.view
 	 * @return Returns a <subsonic-response> element with a nested <podcasts> element on success.
 	 */
-	@SubsonicRoute('getPodcasts.view', () => SubsonicResponsePodcasts)
+	@SubsonicRoute('getPodcasts.view', () => SubsonicResponsePodcasts, {
+		summary: 'Get Podcasts',
+		description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
+		tags: ['Podcasts']
+	})
 	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels, { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -79,7 +58,11 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/getNewestPodcasts.view
 	 * @return Returns a <subsonic-response> element with a nested <newestPodcasts> element on success.
 	 */
-	@SubsonicRoute('getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts)
+	@SubsonicRoute('getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts, {
+		summary: 'Get Newest Podcast Episodes',
+		description: 'Returns the most recently published Podcast episodes.',
+		tags: ['Podcasts']
+	})
 	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest, { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
 		/*
 		Parameter 	Required 	Default 	Comment
@@ -94,12 +77,35 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	}
 
 	/**
+	 * Adds a new Podcast channel. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
+	 * Since 1.9.0
+	 * http://your-server/rest/createPodcastChannel.view
+	 * @return Returns an empty <subsonic-response> element on success.
+	 */
+	@SubsonicRoute('createPodcastChannel.view', {
+		summary: 'Create Podcasts',
+		description: 'Adds a new Podcast channel.',
+		tags: ['Podcasts']
+	})
+	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<void> {
+		/*
+		 Parameter 	Required 	Default 	Comment
+		 url 	Yes 		The URL of the Podcast to add.
+		 */
+		await engine.podcast.create(orm, query.url);
+	}
+
+	/**
 	 * Deletes a Podcast channel. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 * http://your-server/rest/deletePodcastChannel.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePodcastChannel.view')
+	@SubsonicRoute('deletePodcastChannel.view', {
+		summary: 'Delete Podcasts',
+		description: 'Deletes a Podcast channel.',
+		tags: ['Podcasts']
+	})
 	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -110,12 +116,31 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	}
 
 	/**
+	 * Requests the server to check for new Podcast episodes. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
+	 * Since 1.9.0
+	 * http://your-server/rest/refreshPodcasts.view
+	 * @return Returns an empty <subsonic-response> element on success.
+	 */
+	@SubsonicRoute('refreshPodcasts.view', {
+		summary: 'Refresh Podcasts',
+		description: 'Requests the server to check for new Podcast episodes.',
+		tags: ['Podcasts']
+	})
+	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<void> {
+		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
+	}
+
+	/**
 	 * Request the server to start downloading a given Podcast episode. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 * http://your-server/rest/downloadPodcastEpisode.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('downloadPodcastEpisode.view')
+	@SubsonicRoute('downloadPodcastEpisode.view', {
+		summary: 'Download Podcast Episode',
+		description: 'Request the server to start downloading a given Podcast episode.',
+		tags: ['Podcasts']
+	})
 	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -133,7 +158,11 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/deletePodcastEpisode.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePodcastEpisode.view')
+	@SubsonicRoute('deletePodcastEpisode.view', {
+		summary: 'Delete Podcast Episode',
+		description: 'Deletes a Podcast episode.',
+		tags: ['Podcasts']
+	})
 	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -142,4 +171,5 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		const episode = await this.subsonicORM.findOneOrFailByID(query.id, orm.Episode);
 		await engine.episode.deleteEpisode(orm, episode);
 	}
+
 }

@@ -14,7 +14,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/createPlaylist.view
 	 * @return Since 1.14.0 the newly created/updated playlist is returned. In earlier versions an empty <subsonic-response> element is returned.
 	 */
-	@SubsonicRoute('createPlaylist.view', () => SubsonicResponsePlaylistWithSongs)
+	@SubsonicRoute('createPlaylist.view', () => SubsonicResponsePlaylistWithSongs, {
+		summary: 'Create Playlists',
+		description: 'Creates (or updates) a playlist.',
+		tags: ['Playlists']
+	})
 	async createPlaylist(@SubsonicParams() query: SubsonicParameterPlaylistCreate, ctx: Context): Promise<SubsonicResponsePlaylistWithSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -56,7 +60,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/updatePlaylist.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('updatePlaylist.view')
+	@SubsonicRoute('updatePlaylist.view', {
+		summary: 'Update Playlists',
+		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
+		tags: ['Playlists']
+	})
 	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, { orm, engine, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -94,7 +102,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/deletePlaylist.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePlaylist.view')
+	@SubsonicRoute('deletePlaylist.view', {
+		summary: 'Delete Playlists',
+		description: 'Deletes a saved playlist.',
+		tags: ['Playlists']
+	})
 	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -113,7 +125,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPlaylists.view
 	 * @return Returns a <subsonic-response> element with a nested <playlists> element on success.
 	 */
-	@SubsonicRoute('getPlaylists.view', () => SubsonicResponsePlaylists)
+	@SubsonicRoute('getPlaylists.view', () => SubsonicResponsePlaylists, {
+		summary: 'Get Playlists',
+		description: 'Returns all playlists a user is allowed to play.',
+		tags: ['Playlists']
+	})
 	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -144,7 +160,11 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPlaylist.view
 	 * @return Returns a <subsonic-response> element with a nested <playlist> element on success.
 	 */
-	@SubsonicRoute('getPlaylist.view', () => SubsonicResponsePlaylist)
+	@SubsonicRoute('getPlaylist.view', () => SubsonicResponsePlaylist, {
+		summary: 'Get Playlist',
+		description: 'Returns a listing of files in a saved playlist.',
+		tags: ['Playlists']
+	})
 	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
 		/*
 		 Parameter 	Required 	Default 	Comment

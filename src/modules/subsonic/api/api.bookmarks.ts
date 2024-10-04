@@ -14,7 +14,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('createBookmark.view',
 		{
-			summary: 'Create bookmarks',
+			summary: 'Create Bookmarks',
 			description: 'Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.',
 			tags: ['Bookmarks']
 		})
@@ -37,7 +37,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 */
 	@SubsonicRoute('getBookmarks.view', () => SubsonicResponseBookmarks,
 		{
-			summary: 'Get bookmarks',
+			summary: 'Get Bookmarks',
 			description: 'Returns all bookmarks for this user. A bookmark is a position within a certain media file.',
 			tags: ['Bookmarks']
 		})
@@ -55,7 +55,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('deleteBookmark.view', () => SubsonicResponseBookmarks,
-		{ summary: 'Delete bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
+		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
 	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -76,7 +76,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns a <subsonic-response> element with a nested <playQueue> element on success, or an empty <subsonic-response> if no play queue has been saved.
 	 */
 	@SubsonicRoute('getPlayQueue.view', () => SubsonicResponsePlayQueue,
-		{ summary: 'Get play queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
+		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async getPlayQueue(_query: unknown, { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
 		const playqueue = await engine.playQueue.get(orm, user);
 		if (!playqueue) {
@@ -97,7 +97,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('savePlayQueue.view',
-		{ summary: 'Save play queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
+		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, { engine, orm, user, client }: Context): Promise<void> {
 		/*
 		Parameter 	Required 	Default 	Comment

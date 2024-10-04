@@ -90,8 +90,8 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 	};
 }
 
-export function buildOpenApi(extended: boolean = true): OpenAPIObject {
-	const builder = new OpenApiBuilder(extended, getMetadataStorage());
+export function buildOpenApi(): OpenAPIObject {
+	const builder = new OpenApiBuilder(getMetadataStorage());
 	const openapi: OpenAPIObject = buildOpenApiBase(JAMAPI_VERSION);
 	const schemas: Schemas = {
 		ID: { type: 'string', format: 'uuid' },
