@@ -7,6 +7,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-params.js';
 import { SubsonicOKResponse, SubsonicPlaylists, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicPlaylistsApi extends SubsonicApiBase {
@@ -21,7 +22,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		description: 'Creates (or updates) a playlist.',
 		tags: ['Playlists']
 	})
-	async createPlaylist(@SubsonicParams() query: SubsonicParameterPlaylistCreate, ctx: Context): Promise<SubsonicResponsePlaylistWithSongs> {
+	async createPlaylist(@SubsonicParams() query: SubsonicParameterPlaylistCreate, @SubsonicCtx() ctx: Context): Promise<SubsonicResponsePlaylistWithSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes (if updating) 		The playlist ID.
@@ -68,7 +69,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
 		tags: ['Playlists']
 	})
-	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes 		The playlist ID.
@@ -111,7 +112,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		description: 'Deletes a saved playlist.',
 		tags: ['Playlists']
 	})
-	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
@@ -135,7 +136,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		description: 'Returns all playlists a user is allowed to play.',
 		tags: ['Playlists']
 	})
-	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
+	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	no 		(Since 1.8.0) If specified, return playlists for this user rather than for the authenticated user. The authenticated user must have admin role if this parameter is used.
@@ -170,7 +171,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		description: 'Returns a listing of files in a saved playlist.',
 		tags: ['Playlists']
 	})
-	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
+	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.

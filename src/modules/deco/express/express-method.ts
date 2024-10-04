@@ -91,7 +91,7 @@ export class ExpressMethod {
 			}
 			// eslint-disable-next-line prefer-spread
 			const result = await instance[method.methodName].apply(instance, args);
-			responder.sendJSON(context.req, context.res, result);
+			responder.sendData(context.req, context.res, result);
 		} catch (e: any) {
 			// console.error(e);
 			log.error(e);

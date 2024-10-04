@@ -5,6 +5,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-params.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicInternetRadioApi extends SubsonicApiBase {
@@ -19,7 +20,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		description: 'Returns all internet radio stations.',
 		tags: ['Radio']
 	})
-	async getInternetRadioStations(_query: unknown, { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
+	async getInternetRadioStations(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
 		const radios = await orm.Radio.all();
 		return {
 			internetRadioStations: {
@@ -39,7 +40,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, { orm }: Context): Promise<SubsonicOKResponse> {
+	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, @SubsonicCtx() { orm }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		streamUrl 	Yes 		The stream URL for the station.
@@ -62,7 +63,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate, { orm }: Context): Promise<SubsonicOKResponse> {
+	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate,@SubsonicCtx()  { orm }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
@@ -89,7 +90,7 @@ export class SubsonicInternetRadioApi extends SubsonicApiBase {
 		description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, { orm }: Context): Promise<SubsonicOKResponse> {
+	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.

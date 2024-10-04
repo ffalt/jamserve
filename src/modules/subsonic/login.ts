@@ -29,6 +29,8 @@ import { EngineService } from '../engine/services/engine.service.js';
 import { Orm } from '../engine/services/orm.service.js';
 import { SubsonicFormatter } from './api/api.base.js';
 import { hashMD5 } from '../../utils/md5.js';
+import semver from 'semver';
+import { SUBSONIC_VERSION } from './version.js';
 
 export function hexEncode(n: string): string {
 	const i: Array<string> = [];
@@ -127,8 +129,25 @@ export function SubsonicLoginMiddleWare(req: express.Request, res: express.Respo
 		return next();
 	}
 	const sreq = req as SubsonicRequest;
-	if (!sreq.parameters) {
+	if (!sreq.parameters || !sreq.parameters.client) {
 		sendError(sreq, res, 10, 'Required parameter is missing.');
+		return;
+	}
+	const version = semver.coerce(sreq.parameters.version);
+	if (!version) {
+		sendError(sreq, res, 10, 'Required parameter is missing.');
+		return;
+	}
+	if (!semver.valid(version)) {
+		sendError(sreq, res, 10, 'Required parameter version is invalid.');
+		return;
+	}
+	if (semver.gt(version, SUBSONIC_VERSION)) {
+		sendError(sreq, res, 30, 'Incompatible Subsonic REST protocol version. Server must upgrade.');
+		return;
+	}
+	if (semver.lt(version, '1.0.0')) {
+		sendError(sreq, res, 20, 'Incompatible Subsonic REST protocol version. Client must upgrade.');
 		return;
 	}
 	sreq.client = sreq.parameters.client;

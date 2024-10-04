@@ -19,6 +19,7 @@ import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import { SubsonicResponseLyrics } from '../model/subsonic-rest-data.js';
 import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 const log = logger('SubsonicApi');
 
@@ -36,7 +37,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		tags: ['Media Retrieval'],
 		binary: ApiStreamTypes
 	})
-	async stream(@SubsonicParams() query: SubsonicParameterStream, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
+	async stream(@SubsonicParams() query: SubsonicParameterStream, @SubsonicCtx() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to stream. Obtained by calls to getMusicDirectory.
@@ -80,7 +81,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		tags: ['Media Retrieval'],
 		binary: ApiStreamTypes
 	})
-	async download(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
+	async download(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
@@ -107,7 +108,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
 	})
-	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
+	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 artist 	No 		The artist name.
@@ -135,7 +136,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		tags: ['Media Retrieval'],
 		binary: ApiImageTypes
 	})
-	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, { orm, engine }: Context): Promise<ApiBinaryResult> {
+	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, @SubsonicCtx() { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of a song, album or artist.
@@ -160,7 +161,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		tags: ['Media Retrieval'],
 		binary: ApiImageTypes
 	})
-	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, { orm, engine }: Context): Promise<ApiBinaryResult> {
+	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, @SubsonicCtx() { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The user in question.
@@ -184,7 +185,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
 		tags: ['Media Retrieval']
 	})
-	async getCaptions(@SubsonicParams() _query: SubsonicParameterCaptions, _ctx: Context): Promise<ApiBinaryResult> {
+	async getCaptions(@SubsonicParams() _query: SubsonicParameterCaptions, @SubsonicCtx() _ctx: Context): Promise<ApiBinaryResult> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID of the video.
@@ -206,7 +207,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		tags: ['Media Retrieval'],
 		binary: ['application/vnd.apple.mpegurl']
 	})
-	async hls(@SubsonicParams() _query: SubsonicParameterHLS, _ctx: Context): Promise<ApiBinaryResult> {
+	async hls(@SubsonicParams() _query: SubsonicParameterHLS, @SubsonicCtx() _ctx: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the media file to stream.

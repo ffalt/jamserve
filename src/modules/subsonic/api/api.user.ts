@@ -3,8 +3,9 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-params.js';
-import { SubsonicOKResponse, SubsonicResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicUserApi extends SubsonicApiBase {
@@ -19,7 +20,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Get details about a given user, including which authorization roles it has.',
 		tags: ['Users']
 	})
-	async getUser(@SubsonicParams() query: SubsonicParameterUsername, { orm, user }: Context): Promise<SubsonicResponseUser> {
+	async getUser(@SubsonicParams() query: SubsonicParameterUsername, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseUser> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
@@ -48,7 +49,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Get details about all users, including which authorization roles they have.',
 		tags: ['Users']
 	})
-	async getUsers(_query: unknown, { orm, user }: Context): Promise<SubsonicResponseUsers> {
+	async getUsers(@SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseUsers> {
 		if (!user.roleAdmin) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
@@ -67,7 +68,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Creates a new Subsonic user',
 		tags: ['Users']
 	})
-	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<SubsonicOKResponse> {
+	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
 		/*
 				 Parameter 	Required 	Default 	Comment
@@ -146,7 +147,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
 		tags: ['Users']
 	})
-	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, _ctx: Context): Promise<SubsonicOKResponse> {
+	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
 		/*
 			 Parameter 	Required 	Default 	Comment
@@ -189,7 +190,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Modifies an existing Subsonic user',
 		tags: ['Users']
 	})
-	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<SubsonicOKResponse> {
+	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -264,7 +265,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 		description: 'Deletes an existing Subsonic user',
 		tags: ['Users']
 	})
-	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, _ctx: Context): Promise<SubsonicOKResponse> {
+	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
 		/*
 			 Parameter 	Required 	Default 	Comment

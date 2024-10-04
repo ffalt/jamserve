@@ -30,6 +30,7 @@ import {
 	SubsonicResponseTopSongs, SubsonicResponseVideoInfo, SubsonicResponseVideos
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicBrowsingApi extends SubsonicApiBase {
@@ -44,7 +45,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtist(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
+	async getArtist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The artist ID.
@@ -69,7 +70,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getAlbum(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
+	async getAlbum(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album ID.
@@ -95,7 +96,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo> {
+	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo,@SubsonicCtx()  { engine, orm }: Context): Promise<SubsonicResponseArtistInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
@@ -163,7 +164,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, { engine, orm }: Context): Promise<SubsonicResponseArtistInfo2> {
+	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseArtistInfo2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
@@ -220,7 +221,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns album notes, image URLs etc, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album or song ID.
@@ -256,7 +257,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID, { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID,@SubsonicCtx()  { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The album ID.
@@ -292,7 +293,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns an indexed structure of all artists.',
 		tags: ['Browsing']
 	})
-	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes, { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
+	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes,@SubsonicCtx()  { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -334,7 +335,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID, { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
+	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID,@SubsonicCtx()  { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
 		/*
          Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -366,7 +367,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
 		tags: ['Browsing']
 	})
-	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseDirectory> {
+	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseDirectory> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the music folder. Obtained by calls to getIndexes or getMusicDirectory.
@@ -396,7 +397,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns all configured top-level music folders.',
 		tags: ['Browsing']
 	})
-	async getMusicFolders(_query: unknown, { orm }: Context): Promise<SubsonicResponseMusicFolders> {
+	async getMusicFolders(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseMusicFolders> {
 		const list = await orm.Root.all();
 		return { musicFolders: { musicFolder: list.map(this.format.packRoot) } };
 	}
@@ -412,7 +413,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns all genres.',
 		tags: ['Browsing']
 	})
-	async getGenres(_query: unknown, { orm }: Context): Promise<SubsonicResponseGenres> {
+	async getGenres(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseGenres> {
 		const genres = await orm.Genre.all();
 		const list: Array<SubsonicGenre> = await Promise.all(
 			genres.map(async genre => {
@@ -442,7 +443,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
 		tags: ['Browsing']
 	})
-	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
+	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs,@SubsonicCtx()  { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
@@ -484,7 +485,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs, { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
+	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs,@SubsonicCtx()  { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
@@ -508,7 +509,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns details for a song.',
 		tags: ['Browsing']
 	})
-	async getSong(@SubsonicParams() query: SubsonicParameterID, { orm, user }: Context): Promise<SubsonicResponseSong> {
+	async getSong(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSong> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The song ID.
@@ -529,7 +530,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns top songs for the given artist, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
+	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		artist 	Yes 		The artist name.
@@ -552,7 +553,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns all video files.',
 		tags: ['Browsing']
 	})
-	async getVideos(_query: unknown, _ctx: Context): Promise<SubsonicResponseVideos> {
+	async getVideos(@SubsonicCtx() _ctx: Context): Promise<SubsonicResponseVideos> {
 		return { videos: {} };
 	}
 
@@ -567,7 +568,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',
 		tags: ['Browsing']
 	})
-	async getVideoInfo(@SubsonicParams() _query: SubsonicParameterID, _ctx: Context): Promise<SubsonicResponseVideoInfo> {
+	async getVideoInfo(@SubsonicParams() _query: SubsonicParameterID, @SubsonicCtx() _ctx: Context): Promise<SubsonicResponseVideoInfo> {
 		/* .
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The video ID.

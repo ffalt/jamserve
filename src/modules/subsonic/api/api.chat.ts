@@ -5,6 +5,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterChatMessage, SubsonicParameterChatMessages } from '../model/subsonic-rest-params.js';
 import { SubsonicOKResponse, SubsonicResponseChatMessages } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicChatApi extends SubsonicApiBase {
@@ -19,7 +20,7 @@ export class SubsonicChatApi extends SubsonicApiBase {
 		description: 'Adds a message to the chat log.',
 		tags: ['Chat']
 	})
-	async addChatMessage(@SubsonicParams() query: SubsonicParameterChatMessage, { engine, user }: Context): Promise<SubsonicOKResponse> {
+	async addChatMessage(@SubsonicParams() query: SubsonicParameterChatMessage, @SubsonicCtx() { engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 message 	Yes 		The chat message.
@@ -39,7 +40,7 @@ export class SubsonicChatApi extends SubsonicApiBase {
 		description: 'Returns the current visible (non-expired) chat messages.',
 		tags: ['Chat']
 	})
-	async getChatMessages(@SubsonicParams() query: SubsonicParameterChatMessages, { engine }: Context): Promise<SubsonicResponseChatMessages> {
+	async getChatMessages(@SubsonicParams() query: SubsonicParameterChatMessages,@SubsonicCtx()  { engine }: Context): Promise<SubsonicResponseChatMessages> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 since 	No 		Only return messages newer than this time (in millis since Jan 1 1970).

@@ -7,6 +7,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterSearch, SubsonicParameterSearch2 } from '../model/subsonic-rest-params.js';
 import { SubsonicResponseSearchResult, SubsonicResponseSearchResult2, SubsonicResponseSearchResult3, SubsonicSearchResult, SubsonicSearchResult2, SubsonicSearchResult3 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicSearchApi extends SubsonicApiBase {
@@ -21,7 +22,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		description: 'Returns a listing of files matching the given search criteria.',
 		tags: ['Search']
 	})
-	async search(@SubsonicParams() query: SubsonicParameterSearch, { orm, user }: Context): Promise<SubsonicResponseSearchResult> {
+	async search(@SubsonicParams() query: SubsonicParameterSearch, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSearchResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 artist 	No 		Artist to search for.
@@ -61,7 +62,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		description: 'Returns albums, artists and songs matching the given search criteria.',
 		tags: ['Search']
 	})
-	async search2(@SubsonicParams() query: SubsonicParameterSearch2, { orm, user }: Context): Promise<SubsonicResponseSearchResult2> {
+	async search2(@SubsonicParams() query: SubsonicParameterSearch2, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSearchResult2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 query 	Yes 		Search query.
@@ -105,7 +106,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		description: 'Similar to search2, but organizes music according to ID3 tags.',
 		tags: ['Search']
 	})
-	async search3(@SubsonicParams() query: SubsonicParameterSearch2, { orm, user }: Context): Promise<SubsonicResponseSearchResult3> {
+	async search3(@SubsonicParams() query: SubsonicParameterSearch2,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseSearchResult3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 query 	Yes 		Search query.

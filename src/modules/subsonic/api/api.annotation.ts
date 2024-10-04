@@ -5,6 +5,7 @@ import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterState } from '../model/subsonic-rest-params.js';
 import { SubsonicOKResponse } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicAnnotationApi extends SubsonicApiBase {
@@ -19,7 +20,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 		description: 'Attaches a star to a song, album or artist.',
 		tags: ['Annotation']
 	})
-	async star(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+	async star(@SubsonicParams() query: SubsonicParameterState, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	No 		The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.
@@ -40,7 +41,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/unstar.view', () => SubsonicOKResponse, { summary: 'Unstar', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] })
-	async unstar(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+	async unstar(@SubsonicParams() query: SubsonicParameterState, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	No 		The ID of the file (song) or folder (album/artist) to unstar. Multiple parameters allowed.
@@ -61,7 +62,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/setRating.view', () => SubsonicOKResponse, { summary: 'Rate', description: 'Sets the rating for a music file.', tags: ['Annotation'] })
-	async setRating(@SubsonicParams() query: SubsonicParameterRate, { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+	async setRating(@SubsonicParams() query: SubsonicParameterRate, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file (song) or folder (album/artist) to rate.
@@ -85,7 +86,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/scrobble.view', () => SubsonicOKResponse, { summary: 'Scrobble', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] })
-	async scrobble(@SubsonicParams() _query: SubsonicParameterScrobble, _ctx: Context): Promise<SubsonicOKResponse> {
+	async scrobble(@SubsonicParams() _query: SubsonicParameterScrobble, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to scrobble.

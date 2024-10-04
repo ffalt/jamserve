@@ -8,6 +8,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicNewestPodcasts, SubsonicOKResponse, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 const log = logger('SubsonicApi');
 
@@ -26,7 +27,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
 		tags: ['Podcasts']
 	})
-	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels, { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
+	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels,@SubsonicCtx()  { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 includeEpisodes 	No 	true 	(Since 1.9.0) Whether to include Podcast episodes in the returned result.
@@ -65,7 +66,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Returns the most recently published Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest, { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
+	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest,@SubsonicCtx()  { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		count 	No 	20 	The maximum number of episodes to return.
@@ -89,7 +90,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Adds a new Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 url 	Yes 		The URL of the Podcast to add.
@@ -130,7 +131,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Requests the server to check for new Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async refreshPodcasts(@SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
 		return {};
 	}
@@ -146,7 +147,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Request the server to start downloading a given Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID,@SubsonicCtx()  { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
@@ -169,7 +170,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		description: 'Deletes a Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.

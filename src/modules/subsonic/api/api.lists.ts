@@ -18,6 +18,7 @@ import {
 	SubsonicStarred2
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicListsApi extends SubsonicApiBase {
@@ -32,7 +33,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Returns what is currently being played by all users.',
 		tags: ['Lists']
 	})
-	async getNowPlaying(_query: unknown, { engine, orm, user }: Context): Promise<SubsonicResponseNowPlaying> {
+	async getNowPlaying(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseNowPlaying> {
 		const list = await engine.nowPlaying.getNowPlaying();
 		const result: Array<SubsonicNowPlayingEntry> = [];
 		for (const entry of list) {
@@ -54,7 +55,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Returns random songs matching the given criteria.',
 		tags: ['Lists']
 	})
-	async getRandomSongs(@SubsonicParams() query: SubsonicParameterRandomSong, { orm, user }: Context): Promise<SubsonicResponseRandomSongs> {
+	async getRandomSongs(@SubsonicParams() query: SubsonicParameterRandomSong, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseRandomSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 size 	No 	10 	The maximum number of songs to return. Max 500.
@@ -91,7 +92,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.',
 		tags: ['Lists']
 	})
-	async getAlbumList(@SubsonicParams() query: SubsonicParameterAlbumList, { orm, user }: Context): Promise<SubsonicResponseAlbumList> {
+	async getAlbumList(@SubsonicParams() query: SubsonicParameterAlbumList, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumList> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, highest, frequent, recent.
@@ -214,7 +215,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Similar to getAlbumList, but organizes music according to ID3 tags.',
 		tags: ['Lists']
 	})
-	async getAlbumList2(@SubsonicParams() query: SubsonicParameterAlbumList2, { orm, user }: Context): Promise<SubsonicResponseAlbumList2> {
+	async getAlbumList2(@SubsonicParams() query: SubsonicParameterAlbumList2, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumList2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre.
@@ -333,7 +334,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Returns songs in a given genre.',
 		tags: ['Lists']
 	})
-	async getSongsByGenre(@SubsonicParams() query: SubsonicParameterSongsByGenre, { orm, user }: Context): Promise<SubsonicResponseSongsByGenre> {
+	async getSongsByGenre(@SubsonicParams() query: SubsonicParameterSongsByGenre, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSongsByGenre> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 genre 	Yes 		The genre, as returned by getGenres.
@@ -362,7 +363,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Returns starred songs, albums and artists.',
 		tags: ['Lists']
 	})
-	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID, { orm, user }: Context): Promise<SubsonicResponseStarred> {
+	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseStarred> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
@@ -395,7 +396,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		description: 'Similar to getStarred, but organizes music according to ID3 tags.',
 		tags: ['Lists']
 	})
-	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID, { orm, user }: Context): Promise<SubsonicResponseStarred2> {
+	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseStarred2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders

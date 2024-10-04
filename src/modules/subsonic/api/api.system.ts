@@ -5,6 +5,7 @@ import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicOKResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
+import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
 export class SubsonicSystemApi extends SubsonicApiBase {
@@ -19,7 +20,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 		description: 'Get details about the software license.',
 		tags: ['System']
 	})
-	async getLicense(_query: unknown, _ctx: Context): Promise<SubsonicResponseLicense> {
+	async getLicense(@SubsonicCtx() _ctx: Context): Promise<SubsonicResponseLicense> {
 		return { license: { valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0' } };
 	}
 
@@ -33,7 +34,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 		description: 'Used to test connectivity with the server.',
 		tags: ['System']
 	})
-	async ping(_query: unknown, _ctx: Context): Promise<SubsonicOKResponse> {
+	async ping(@SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
 	}
 
@@ -48,7 +49,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
 		tags: ['System']
 	})
-	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, _ctx: Context): Promise<SubsonicResponseJukeboxStatus> {
+	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox,@SubsonicCtx()  _ctx: Context): Promise<SubsonicResponseJukeboxStatus> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 action 	Yes 		The operation to perform. Must be one of: get, status (since 1.7.0), set (since 1.7.0), start, stop, skip, add, clear, remove, shuffle, setGain
