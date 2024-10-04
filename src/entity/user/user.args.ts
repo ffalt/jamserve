@@ -43,6 +43,12 @@ export class UserPasswordUpdateArgs {
 }
 
 @ObjParamsType()
+export class UserGenerateSusonicTokenArgs {
+	@ObjField({ description: 'Password of calling user (or admin) is required to generate/update the Subsonic token' })
+	password!: string;
+}
+
+@ObjParamsType()
 export class UserEmailUpdateArgs {
 	@ObjField({ description: 'Password of calling user (or admin) is required to change the email' })
 	password!: string;

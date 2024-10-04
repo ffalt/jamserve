@@ -29,7 +29,6 @@ import { EngineService } from '../engine/services/engine.service.js';
 import { Orm } from '../engine/services/orm.service.js';
 import { SubsonicFormatter } from './api/api.base.js';
 import { hashMD5 } from '../../utils/md5.js';
-import { SessionMode } from '../../types/enums.js';
 
 export function hexEncode(n: string): string {
 	const i: Array<string> = [];
@@ -66,40 +65,40 @@ function sendError(req: SubsonicParameterRequest, res: express.Response, code: n
 	(new ApiResponder()).sendErrorMsg(req, res, code, msg);
 }
 
-async function authSubsonicPassword(orm: Orm, name: string, pass: string): Promise<User> {
+async function authSubsonicPassword(req: SubsonicParameterRequest, name: string, pass: string): Promise<User> {
 	if ((!pass) || (!pass.length)) {
 		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
 	}
-	const user = await orm.User.findOne({ where: { name } });
+	const user = await req.orm.User.findOne({ where: { name } });
 	if (!user) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
-	const session = await orm.Session.findOneFilter({ userIDs: [user.id], mode: SessionMode.subsonic });
+	const session = await req.engine.session.subsonicByUser(user.id);
 	if (!session) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
-	if (pass !== session.cookie) {
+	if (pass !== session.jwth) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
 	return user;
 }
 
-async function authSubsonicToken(orm: Orm, name: string, token: string, salt: string): Promise<User> {
+async function authSubsonicToken(req: SubsonicParameterRequest, name: string, token: string, salt: string): Promise<User> {
 	if (!name || name.trim().length === 0) {
 		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
 	}
 	if ((!token) || (!token.length)) {
 		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
 	}
-	const user = await orm.User.findOne({ where: { name } });
+	const user = await req.orm.User.findOne({ where: { name } });
 	if (!user) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
-	const session = await orm.Session.findOneFilter({ userIDs: [user.id], mode: SessionMode.subsonic });
+	const session = await req.engine.session.subsonicByUser(user.id);
 	if (!session) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
-	const t = hashMD5(session.cookie + salt);
+	const t = hashMD5(session.jwth + salt);
 	if (token !== t) {
 		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
 	}
@@ -115,10 +114,10 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
-		return authSubsonicPassword(req.orm, req.parameters.username, pass);
+		return authSubsonicPassword(req, req.parameters.username, pass);
 	}
 	if (req.parameters.token && req.parameters.salt) {
-		return authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
+		return authSubsonicToken(req, req.parameters.username, req.parameters.token, req.parameters.salt);
 	}
 	return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
 }

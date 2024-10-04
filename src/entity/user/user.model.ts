@@ -26,6 +26,12 @@ export class User extends Base {
 	roles!: UserRoles;
 }
 
+@ResultType()
+export class SubsonicToken {
+	@ObjField({ description: 'Generated Subsonic Token', example: 'kshfis6few68fwefh' })
+	token?: string;
+}
+
 @ResultType({ description: 'Users Page' })
 export class UserPage extends Page {
 	@ObjField(() => User, { description: 'List of Users' })
