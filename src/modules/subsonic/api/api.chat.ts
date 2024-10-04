@@ -3,8 +3,10 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterChatMessage, SubsonicParameterChatMessages } from '../model/subsonic-rest-params.js';
-import { SubsonicResponseChatMessages } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicResponseChatMessages } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicChatApi extends SubsonicApiBase {
 	/**
 	 * Adds a message to the chat log.
@@ -12,17 +14,18 @@ export class SubsonicChatApi extends SubsonicApiBase {
 	 * http://your-server/rest/addChatMessage.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('addChatMessage.view', {
+	@SubsonicRoute('/addChatMessage.view', () => SubsonicOKResponse, {
 		summary: 'Add Chat Messages',
 		description: 'Adds a message to the chat log.',
 		tags: ['Chat']
 	})
-	async addChatMessage(@SubsonicParams() query: SubsonicParameterChatMessage, { engine, user }: Context): Promise<void> {
+	async addChatMessage(@SubsonicParams() query: SubsonicParameterChatMessage, { engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 message 	Yes 		The chat message.
 		 */
 		await engine.chat.add(query.message, user);
+		return {};
 	}
 
 	/**
@@ -31,7 +34,7 @@ export class SubsonicChatApi extends SubsonicApiBase {
 	 * http://your-server/rest/getChatMessages.view
 	 * @return  Returns a <subsonic-response> element with a nested <chatMessages> element on success.
 	 */
-	@SubsonicRoute('getChatMessages.view', () => SubsonicResponseChatMessages, {
+	@SubsonicRoute('/getChatMessages.view', () => SubsonicResponseChatMessages, {
 		summary: 'Get Chat Messages',
 		description: 'Returns the current visible (non-expired) chat messages.',
 		tags: ['Chat']

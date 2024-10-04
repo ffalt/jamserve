@@ -3,8 +3,10 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-params.js';
-import { SubsonicBookmarks, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
+import { SubsonicBookmarks, SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicBookmarkApi extends SubsonicApiBase {
 	/**
 	 *
@@ -12,7 +14,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * http://your-server/rest/createBookmark.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('createBookmark.view',
+	@SubsonicRoute('/createBookmark.view', () => SubsonicOKResponse,
 		{
 			summary: 'Create Bookmarks',
 			description: 'Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.',
@@ -25,7 +27,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 position 	Yes 		The position (in milliseconds) within the media file.
 		 comment 	No 		A user-defined comment.
 		 */
-		const track = await orm.Track.findOneOrFailByID(query.id);
+		const track = await this.subsonicORM.findOneOrFailByID(query.id, orm.Track);
 		await engine.bookmark.create(orm, track.id, user, query.position, query.comment);
 	}
 
@@ -35,7 +37,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * http://your-server/rest/getBookmarks.view
 	 * @return Returns a <subsonic-response> element with a nested <bookmarks> element on success.
 	 */
-	@SubsonicRoute('getBookmarks.view', () => SubsonicResponseBookmarks,
+	@SubsonicRoute('/getBookmarks.view', () => SubsonicResponseBookmarks,
 		{
 			summary: 'Get Bookmarks',
 			description: 'Returns all bookmarks for this user. A bookmark is a position within a certain media file.',
@@ -54,17 +56,18 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * http://your-server/rest/deleteBookmark.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deleteBookmark.view', () => SubsonicResponseBookmarks,
+	@SubsonicRoute('/deleteBookmark.view', () => SubsonicOKResponse,
 		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
-	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, { engine, orm, user }: Context): Promise<void> {
+	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
 		 */
-		const id = await this.subsonicORM.resolveID(query.id);
+		const id = await this.subsonicORM.jamID(query.id);
 		if (id) {
 			await engine.bookmark.remove(orm, id, user.id);
 		}
+		return {};
 	}
 
 	/**
@@ -75,7 +78,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPlayQueue.view
 	 * @return Returns a <subsonic-response> element with a nested <playQueue> element on success, or an empty <subsonic-response> if no play queue has been saved.
 	 */
-	@SubsonicRoute('getPlayQueue.view', () => SubsonicResponsePlayQueue,
+	@SubsonicRoute('/getPlayQueue.view', () => SubsonicResponsePlayQueue,
 		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async getPlayQueue(_query: unknown, { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
 		const playqueue = await engine.playQueue.get(orm, user);
@@ -96,20 +99,21 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * http://your-server/rest/savePlayQueue.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('savePlayQueue.view',
+	@SubsonicRoute('/savePlayQueue.view', () => SubsonicOKResponse,
 		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
-	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, { engine, orm, user, client }: Context): Promise<void> {
+	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, { engine, orm, user, client }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		ID of a song in the play queue. Use one id parameter for each song in the play queue.
 		current 	No 		The ID of the current playing song.
 		position 	No 		The position in milliseconds within the currently playing song.
 		 */
-		const mediaIDs: Array<string> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
+		const mediaIDs: Array<number> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
 		await engine.playQueue.set(orm, {
-			mediaIDs,
-			currentID: query.current,
+			mediaIDs: await this.subsonicORM.jamIDs(mediaIDs),
+			currentID: await this.subsonicORM.mayBeJamID(query.current),
 			position: query.position
 		}, user, client || 'unknown');
+		return {};
 	}
 }

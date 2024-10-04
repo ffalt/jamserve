@@ -5,8 +5,10 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-params.js';
-import { SubsonicPlaylists, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicPlaylists, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	/**
 	 * Creates (or updates) a playlist.
@@ -14,7 +16,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/createPlaylist.view
 	 * @return Since 1.14.0 the newly created/updated playlist is returned. In earlier versions an empty <subsonic-response> element is returned.
 	 */
-	@SubsonicRoute('createPlaylist.view', () => SubsonicResponsePlaylistWithSongs, {
+	@SubsonicRoute('/createPlaylist.view', () => SubsonicResponsePlaylistWithSongs, {
 		summary: 'Create Playlists',
 		description: 'Creates (or updates) a playlist.',
 		tags: ['Playlists']
@@ -31,18 +33,19 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER });
 		}
 		if (query.playlistId) {
+			const playlistId = await this.subsonicORM.jamIDOrFail(query.playlistId);
 			const updateQuery: SubsonicParameterPlaylistUpdate = {
-				playlistId: query.playlistId,
+				playlistId,
 				name: query.name,
 				songIdToAdd: query.songId
 			};
 			await this.updatePlaylist(updateQuery, ctx);
-			playlist = await ctx.orm.Playlist.findOneOrFailByID(query.playlistId);
+			playlist = await ctx.orm.Playlist.findOneOrFailByID(playlistId);
 		} else if (query.name) {
 			playlist = await ctx.engine.playlist.create(ctx.orm, {
 				name: query.name,
 				isPublic: false,
-				mediaIDs: query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : []
+				mediaIDs: await this.subsonicORM.jamIDs(query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : [])
 			}, ctx.user);
 		}
 		if (!playlist) {
@@ -60,12 +63,12 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/updatePlaylist.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('updatePlaylist.view', {
+	@SubsonicRoute('/updatePlaylist.view', () => SubsonicOKResponse, {
 		summary: 'Update Playlists',
 		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
 		tags: ['Playlists']
 	})
-	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, { orm, engine, user }: Context): Promise<void> {
+	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes 		The playlist ID.
@@ -85,7 +88,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 		trackIDs = trackIDs.filter((id, index) => !removeTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
-			trackIDs = trackIDs.concat(songAdd);
+			trackIDs = trackIDs.concat(await this.subsonicORM.jamIDs(songAdd));
 		}
 		const mediaIDs = trackIDs.filter(t => t !== undefined);
 		await engine.playlist.update(orm, {
@@ -94,6 +97,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 			isPublic: query.public !== undefined ? query.public : playlist.isPublic,
 			mediaIDs
 		}, playlist);
+		return {};
 	}
 
 	/**
@@ -102,12 +106,12 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/deletePlaylist.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePlaylist.view', {
+	@SubsonicRoute('/deletePlaylist.view', () => SubsonicOKResponse, {
 		summary: 'Delete Playlists',
 		description: 'Deletes a saved playlist.',
 		tags: ['Playlists']
 	})
-	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<void> {
+	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
@@ -117,6 +121,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.UNAUTH });
 		}
 		await engine.playlist.remove(orm, playlist);
+		return {};
 	}
 
 	/**
@@ -125,7 +130,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPlaylists.view
 	 * @return Returns a <subsonic-response> element with a nested <playlists> element on success.
 	 */
-	@SubsonicRoute('getPlaylists.view', () => SubsonicResponsePlaylists, {
+	@SubsonicRoute('/getPlaylists.view', () => SubsonicResponsePlaylists, {
 		summary: 'Get Playlists',
 		description: 'Returns all playlists a user is allowed to play.',
 		tags: ['Playlists']
@@ -160,7 +165,7 @@ export class SubsonicPlaylistsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPlaylist.view
 	 * @return Returns a <subsonic-response> element with a nested <playlist> element on success.
 	 */
-	@SubsonicRoute('getPlaylist.view', () => SubsonicResponsePlaylist, {
+	@SubsonicRoute('/getPlaylist.view', () => SubsonicResponsePlaylist, {
 		summary: 'Get Playlist',
 		description: 'Returns a listing of files in a saved playlist.',
 		tags: ['Playlists']

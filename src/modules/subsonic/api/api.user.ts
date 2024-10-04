@@ -3,17 +3,18 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-params.js';
-import { SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicUserApi extends SubsonicApiBase {
-
 	/**
 	 * Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
 	 * Since 1.3.0
 	 * http://your-server/rest/getUser.view
 	 * @return Returns a <subsonic-response> element with a nested <user> element on success.
 	 */
-	@SubsonicRoute('getUser.view', () => SubsonicResponseUser, {
+	@SubsonicRoute('/getUser.view', () => SubsonicResponseUser, {
 		summary: 'Get User',
 		description: 'Get details about a given user, including which authorization roles it has.',
 		tags: ['Users']
@@ -42,7 +43,7 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/getUsers.view
 	 * @return Returns a <subsonic-response> element with a nested <users> element on success.
 	 */
-	@SubsonicRoute('getUsers.view', () => SubsonicResponseUsers, {
+	@SubsonicRoute('/getUsers.view', () => SubsonicResponseUsers, {
 		summary: 'Get Users',
 		description: 'Get details about all users, including which authorization roles they have.',
 		tags: ['Users']
@@ -61,33 +62,33 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/createUser.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('createUser.view', {
+	@SubsonicRoute('/createUser.view', () => SubsonicOKResponse, {
 		summary: 'Create User',
 		description: 'Creates a new Subsonic user',
 		tags: ['Users']
 	})
-	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<void> {
-		return Promise.reject('disabled');
+	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<SubsonicOKResponse> {
+		return {};
 		/*
-			 Parameter 	Required 	Default 	Comment
-			 username 	Yes 		The name of the new user.
-			 password 	Yes 		The password of the new user, either in clear text of hex-encoded (see above).
-			 email 	Yes 		The email address of the new user.
-			 ldapAuthenticated 	No 	false 	Whether the user is authenicated in LDAP.
-			 adminRole 	No 	false 	Whether the user is administrator.
-			 settingsRole 	No 	true 	Whether the user is allowed to change settings and password.
-			 streamRole 	No 	true 	Whether the user is allowed to play files.
-			 jukeboxRole 	No 	false 	Whether the user is allowed to play files in jukebox mode.
-			 downloadRole 	No 	false 	Whether the user is allowed to download files.
-			 uploadRole 	No 	false 	Whether the user is allowed to upload files.
-			 playlistRole 	No 	false 	Whether the user is allowed to create and delete playlists. Since 1.8.0, changing this role has no effect.
-			 coverArtRole 	No 	false 	Whether the user is allowed to change cover art and tags.
-			 commentRole 	No 	false 	Whether the user is allowed to create and edit comments and ratings.
-			 podcastRole 	No 	false 	Whether the user is allowed to administrate Podcasts.
-			 shareRole 	No 	false 	(Since 1.8.0)Whether the user is allowed to share files with anyone.
-			 videoConversionRole 	No 	false 	(Since 1.15.0) Whether the user is allowed to start video conversions.
-			 musicFolderId 	No 	All folders 	(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
-			 */
+				 Parameter 	Required 	Default 	Comment
+				 username 	Yes 		The name of the new user.
+				 password 	Yes 		The password of the new user, either in clear text of hex-encoded (see above).
+				 email 	Yes 		The email address of the new user.
+				 ldapAuthenticated 	No 	false 	Whether the user is authenicated in LDAP.
+				 adminRole 	No 	false 	Whether the user is administrator.
+				 settingsRole 	No 	true 	Whether the user is allowed to change settings and password.
+				 streamRole 	No 	true 	Whether the user is allowed to play files.
+				 jukeboxRole 	No 	false 	Whether the user is allowed to play files in jukebox mode.
+				 downloadRole 	No 	false 	Whether the user is allowed to download files.
+				 uploadRole 	No 	false 	Whether the user is allowed to upload files.
+				 playlistRole 	No 	false 	Whether the user is allowed to create and delete playlists. Since 1.8.0, changing this role has no effect.
+				 coverArtRole 	No 	false 	Whether the user is allowed to change cover art and tags.
+				 commentRole 	No 	false 	Whether the user is allowed to create and edit comments and ratings.
+				 podcastRole 	No 	false 	Whether the user is allowed to administrate Podcasts.
+				 shareRole 	No 	false 	(Since 1.8.0)Whether the user is allowed to share files with anyone.
+				 videoConversionRole 	No 	false 	(Since 1.15.0) Whether the user is allowed to start video conversions.
+				 musicFolderId 	No 	All folders 	(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
+				 */
 		/*
 
 		if (
@@ -140,18 +141,18 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/changePassword.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('changePassword.view', {
+	@SubsonicRoute('/changePassword.view', () => SubsonicOKResponse, {
 		summary: 'Change Password',
 		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
 		tags: ['Users']
 	})
-	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, _ctx: Context): Promise<void> {
-		return Promise.reject('disabled');
+	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, _ctx: Context): Promise<SubsonicOKResponse> {
+		return {};
 		/*
-		 Parameter 	Required 	Default 	Comment
-		 username 	Yes 		The name of the user which should change its password.
-		 password 	Yes 		The new password of the new user, either in clear text of hex-encoded (see above).
-		 */
+			 Parameter 	Required 	Default 	Comment
+			 username 	Yes 		The name of the user which should change its password.
+			 password 	Yes 		The new password of the new user, either in clear text of hex-encoded (see above).
+			 */
 		/*
 		if (
 			(!query.username) ||
@@ -183,13 +184,13 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/updateUser.view
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('updateUser.view', {
+	@SubsonicRoute('/updateUser.view', () => SubsonicOKResponse, {
 		summary: 'Update User',
 		description: 'Modifies an existing Subsonic user',
 		tags: ['Users']
 	})
-	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<void> {
-		return Promise.reject('disabled');
+	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, _ctx: Context): Promise<SubsonicOKResponse> {
+		return {};
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user.
@@ -258,13 +259,13 @@ export class SubsonicUserApi extends SubsonicApiBase {
 	 * http://your-server/rest/deleteUser.view
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deleteUser.view', {
+	@SubsonicRoute('/deleteUser.view', () => SubsonicOKResponse, {
 		summary: 'Delete User',
 		description: 'Deletes an existing Subsonic user',
 		tags: ['Users']
 	})
-	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, _ctx: Context): Promise<void> {
-		return Promise.reject('disabled');
+	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, _ctx: Context): Promise<SubsonicOKResponse> {
+		return {};
 		/*
 			 Parameter 	Required 	Default 	Comment
 			 username 	Yes 		The name of the user to delete.

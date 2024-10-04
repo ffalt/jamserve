@@ -28,7 +28,7 @@ export class ApiResponder extends ApiBaseResponder {
 
 	public sendError(req: express.Request, res: express.Response, err: any): void {
 		if (err?.fail) {
-			this.send(req, res, SubsonicFormatter.packFail(err.fail, err.text));
+			this.send(req, res, SubsonicFormatter.packFail(err.code, err.fail));
 		} else {
 			this.send(req, res, SubsonicFormatter.packFail(SubsonicFormatter.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
 		}

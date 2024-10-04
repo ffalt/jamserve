@@ -1016,3 +1016,7 @@ export class SubsonicResponseUser {
 	@SubsonicObjField(() => SubsonicUser)
 	user!: SubsonicUser;
 }
+
+@SubsonicResultType()
+export class SubsonicOKResponse {
+}

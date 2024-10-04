@@ -6,7 +6,9 @@ import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterSearch, SubsonicParameterSearch2 } from '../model/subsonic-rest-params.js';
 import { SubsonicResponseSearchResult, SubsonicResponseSearchResult2, SubsonicResponseSearchResult3, SubsonicSearchResult, SubsonicSearchResult2, SubsonicSearchResult3 } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicSearchApi extends SubsonicApiBase {
 	/**
 	 * Returns a listing of files matching the given search criteria. Supports paging through the result. Deprecated since 1.4.0, use search2 instead.
@@ -14,7 +16,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult> element on success.
 	 */
-	@SubsonicRoute('search.view', () => SubsonicResponseSearchResult, {
+	@SubsonicRoute('/search.view', () => SubsonicResponseSearchResult, {
 		summary: 'Search',
 		description: 'Returns a listing of files matching the given search criteria.',
 		tags: ['Search']
@@ -54,7 +56,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search2.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult2> element on success.
 	 */
-	@SubsonicRoute('search2.view', () => SubsonicResponseSearchResult2, {
+	@SubsonicRoute('/search2.view', () => SubsonicResponseSearchResult2, {
 		summary: 'Search 2',
 		description: 'Returns albums, artists and songs matching the given search criteria.',
 		tags: ['Search']
@@ -98,7 +100,7 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	 * http://your-server/rest/search3.view
 	 * @return Returns a <subsonic-response> element with a nested <searchResult3> element on success.
 	 */
-	@SubsonicRoute('search3.view', () => SubsonicResponseSearchResult3, {
+	@SubsonicRoute('/search3.view', () => SubsonicResponseSearchResult3, {
 		summary: 'Search 3',
 		description: 'Similar to search2, but organizes music according to ID3 tags.',
 		tags: ['Search']

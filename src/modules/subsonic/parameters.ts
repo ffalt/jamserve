@@ -37,7 +37,7 @@ function processParams(req: express.Request<any, any, any,
 	const params: SubsonicBaseParams = {
 		username: req.query.u || '',
 		password: req.query.p,
-		format: req.query.f || '',
+		format: req.query.f || 'xml',
 		version: req.query.v || '',
 		token: req.query.t,
 		salt: req.query.s,
@@ -60,7 +60,7 @@ export interface SubsonicParameterRequest extends EngineRequest {
 	parameters: SubsonicBaseParams;
 }
 
-export function SubsonicParameterMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export function SubsonicParameterMiddleWare(req: express.Request, _res: express.Response, next: express.NextFunction): void {
 	(req as SubsonicParameterRequest).parameters = processParams(req);
 	next();
 }

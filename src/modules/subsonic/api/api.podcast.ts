@@ -6,10 +6,12 @@ import { EpisodeOrderFields, PodcastStatus } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicNewestPodcasts, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
+import { SubsonicNewestPodcasts, SubsonicOKResponse, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
 const log = logger('SubsonicApi');
 
+@SubsonicController()
 export class SubsonicPodcastApi extends SubsonicApiBase {
 
 	/**
@@ -19,7 +21,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/getPodcasts.view
 	 * @return Returns a <subsonic-response> element with a nested <podcasts> element on success.
 	 */
-	@SubsonicRoute('getPodcasts.view', () => SubsonicResponsePodcasts, {
+	@SubsonicRoute('/getPodcasts.view', () => SubsonicResponsePodcasts, {
 		summary: 'Get Podcasts',
 		description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
 		tags: ['Podcasts']
@@ -58,7 +60,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/getNewestPodcasts.view
 	 * @return Returns a <subsonic-response> element with a nested <newestPodcasts> element on success.
 	 */
-	@SubsonicRoute('getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts, {
+	@SubsonicRoute('/getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts, {
 		summary: 'Get Newest Podcast Episodes',
 		description: 'Returns the most recently published Podcast episodes.',
 		tags: ['Podcasts']
@@ -82,17 +84,18 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/createPodcastChannel.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('createPodcastChannel.view', {
+	@SubsonicRoute('/createPodcastChannel.view', () => SubsonicOKResponse, {
 		summary: 'Create Podcasts',
 		description: 'Adds a new Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<void> {
+	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 url 	Yes 		The URL of the Podcast to add.
 		 */
 		await engine.podcast.create(orm, query.url);
+		return {};
 	}
 
 	/**
@@ -101,18 +104,19 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/deletePodcastChannel.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePodcastChannel.view', {
+	@SubsonicRoute('/deletePodcastChannel.view', () => SubsonicOKResponse, {
 		summary: 'Delete Podcasts',
 		description: 'Deletes a Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
+	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
 		const podcast = await this.subsonicORM.findOneOrFailByID(query.id, orm.Podcast);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
+		return {};
 	}
 
 	/**
@@ -121,13 +125,14 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/refreshPodcasts.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('refreshPodcasts.view', {
+	@SubsonicRoute('/refreshPodcasts.view', () => SubsonicOKResponse, {
 		summary: 'Refresh Podcasts',
 		description: 'Requests the server to check for new Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<void> {
+	async refreshPodcasts(_query: unknown, { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
+		return {};
 	}
 
 	/**
@@ -136,12 +141,12 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/downloadPodcastEpisode.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('downloadPodcastEpisode.view', {
+	@SubsonicRoute('/downloadPodcastEpisode.view', () => SubsonicOKResponse, {
 		summary: 'Download Podcast Episode',
 		description: 'Request the server to start downloading a given Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
+	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
@@ -150,6 +155,7 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 		if (!episode.path) {
 			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
+		return {};
 	}
 
 	/**
@@ -158,18 +164,18 @@ export class SubsonicPodcastApi extends SubsonicApiBase {
 	 * http://your-server/rest/deletePodcastEpisode.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('deletePodcastEpisode.view', {
+	@SubsonicRoute('/deletePodcastEpisode.view', () => SubsonicOKResponse, {
 		summary: 'Delete Podcast Episode',
 		description: 'Deletes a Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<void> {
+	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
 		const episode = await this.subsonicORM.findOneOrFailByID(query.id, orm.Episode);
 		await engine.episode.deleteEpisode(orm, episode);
+		return {};
 	}
-
 }

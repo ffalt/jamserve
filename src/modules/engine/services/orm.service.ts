@@ -54,7 +54,7 @@ import { Options, Sequelize } from 'sequelize';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
 import { NotFoundError } from '../../deco/express/express-error.js';
-import { SubsonicORM } from '../../subsonic/api/api.orm.js';
+import { SubsonicORM } from '../../subsonic/orm.js';
 
 registerORMEnums();
 

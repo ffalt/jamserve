@@ -3,8 +3,10 @@ import { SubsonicApiBase } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicSystemApi extends SubsonicApiBase {
 	/**
 	 * Get details about the software license. Takes no extra parameters.
@@ -12,7 +14,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * http://your-server/rest/getLicense.view
 	 * @return  Returns a <subsonic-response> element with a nested <license> element on success.
 	 */
-	@SubsonicRoute('getLicense.view', () => SubsonicResponseLicense, {
+	@SubsonicRoute('/getLicense.view', () => SubsonicResponseLicense, {
 		summary: 'Get License',
 		description: 'Get details about the software license.',
 		tags: ['System']
@@ -26,13 +28,13 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * Since 1.0.0
 	 * http://your-server/rest/ping.view
 	 */
-	@SubsonicRoute('ping.view', {
+	@SubsonicRoute('/ping.view', () => SubsonicOKResponse, {
 		summary: 'Ping',
 		description: 'Used to test connectivity with the server.',
 		tags: ['System']
 	})
-	async ping(_query: unknown, _ctx: Context): Promise<void> {
-		return;
+	async ping(_query: unknown, _ctx: Context): Promise<SubsonicOKResponse> {
+		return {};
 	}
 
 	/**
@@ -41,7 +43,7 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	 * http://your-server/rest/jukeboxControl.view
 	 * @return Returns a <jukeboxStatus> element on success, unless the get action is used, in which case a nested <jukeboxPlaylist> element is returned.
 	 */
-	@SubsonicRoute('jukeboxControl.view', () => SubsonicResponseJukeboxStatus, {
+	@SubsonicRoute('/jukeboxControl.view', () => SubsonicResponseJukeboxStatus, {
 		summary: 'Jukebox Control',
 		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
 		tags: ['System']

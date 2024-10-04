@@ -14,7 +14,7 @@ export function BasePost(
 		if (!route) {
 			throw new Error(`Must specify REST route for POST function ${String(methodName)}`);
 		}
-		const mmd = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
+		const mmd = getMethodMetadata(prototype, methodName, 'json', route, returnTypeFunc, options);
 		metadata.posts.push(mmd);
 	};
 }

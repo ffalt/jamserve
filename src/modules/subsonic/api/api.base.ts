@@ -39,9 +39,11 @@ import { Podcast } from '../../../entity/podcast/podcast.js';
 import { PlayQueue } from '../../../entity/playqueue/playqueue.js';
 import { Radio } from '../../../entity/radio/radio.js';
 import { Chat } from '../../../entity/chat/chat.js';
-import { SubsonicORM } from './api.orm.js';
+import { SubsonicORM } from '../orm.js';
 import { Inject } from 'typescript-ioc';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicApiBase {
 	@Inject subsonicORM!: SubsonicORM;
 	protected format: SubsonicFormatter;
@@ -128,8 +130,8 @@ export class SubsonicApiBase {
 		}));
 	}
 
-	protected collectStateChangeIds(query: SubsonicParameterState): Array<string> {
-		let result: Array<string> = [];
+	protected async collectStateChangeIds(query: SubsonicParameterState): Promise<Array<string>> {
+		let result: Array<number> = [];
 		if (query.id) {
 			const ids = Array.isArray(query.id) ? query.id : [query.id];
 			result = result.concat(ids);
@@ -142,7 +144,7 @@ export class SubsonicApiBase {
 			const ids = Array.isArray(query.artistId) ? query.artistId : [query.artistId];
 			result = result.concat(ids);
 		}
-		return result;
+		return await this.subsonicORM.jamIDs(result);
 	}
 }
 

@@ -1,8 +1,8 @@
-import { IDEntity } from '../../orm/index.js';
-import { BaseRepository } from '../../../entity/base/base.repository.js';
+import { IDEntity } from '../orm/index.js';
+import { BaseRepository } from '../../entity/base/base.repository.js';
 import { InRequestScope } from 'typescript-ioc';
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { ConfigService } from '../../engine/services/config.service.js';
+import { ConfigService } from '../engine/services/config.service.js';
 import path from 'path';
 
 class Subsonic extends Model {
@@ -36,9 +36,28 @@ export class SubsonicORM {
 		await this.sequelize.sync();
 	}
 
-	public async resolveID(subsonicID: number): Promise<string | undefined> {
+	public async jamID(subsonicID: number): Promise<string | undefined> {
 		const entry = await Subsonic.findByPk(subsonicID);
 		return entry?.jamID;
+	}
+
+	public async jamIDOrFail(subsonicID: number): Promise<string> {
+		const id = await this.jamID(subsonicID);
+		if (!id) {
+			throw new Error(`Object not found`);
+		}
+		return id;
+	}
+
+	public async mayBeJamID(subsonicID?: number): Promise<string | undefined> {
+		if (!subsonicID) {
+			return undefined;
+		}
+		return this.jamID(subsonicID);
+	}
+
+	public async jamIDs(subsonicIDs: Array<number>): Promise<Array<string>> {
+		return Promise.all(subsonicIDs.map(async id => this.jamIDOrFail(id)));
 	}
 
 	public async mayBeSubsonicID(id?: string): Promise<number | undefined> {
@@ -56,11 +75,8 @@ export class SubsonicORM {
 		return entry.id;
 	}
 
-	public async findOneOrFailByID<T extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }>(subsonicId: number, repo: BaseRepository<T, Filter, OrderBy>): Promise<T> {
-		const id = await this.resolveID(subsonicId);
-		if (!id) {
-			throw new Error(`Object not found`);
-		}
+	public async findOneOrFailByID<T extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }>(subsonicID: number, repo: BaseRepository<T, Filter, OrderBy>): Promise<T> {
+		const id = await this.jamIDOrFail(subsonicID);
 		return repo.findOneOrFailByID(id);
 	}
 }

@@ -7,11 +7,12 @@ import { UserRole } from '../../../types/enums.js';
 import { buildSubsonicMeta } from '../../subsonic/metadata/builder.js';
 import { SubsonicApi } from '../../subsonic/api/api.js';
 import { RestOptions } from '../../deco/express/express-method.js';
-import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
+import { getMetadataStorage } from '../../subsonic/metadata/getMetadataStorage.js';
 import { ApiResponder } from '../../subsonic/response.js';
-import { SubsonicORM } from '../../subsonic/api/api.orm.js';
+import { SubsonicParameterMiddleWare } from '../../subsonic/parameters.js';
+import { SubsonicLoginMiddleWare } from '../../subsonic/login.js';
 
-const log = logger('SUBSONIC');
+const log = logger('Subsonic');
 
 @InRequestScope
 export class SubsonicMiddleware {
@@ -22,6 +23,8 @@ export class SubsonicMiddleware {
 
 	middleware(): express.Router {
 		const router = express.Router();
+		router.use(SubsonicParameterMiddleWare);
+		router.use(SubsonicLoginMiddleWare);
 		buildSubsonicMeta();
 		const metadata = getMetadataStorage();
 		const options: RestOptions = {
@@ -51,7 +54,7 @@ export class SubsonicMiddleware {
 			}
 		};
 
-		const routeInfos = subsonicRouter(router, options);
+		const routeInfos = subsonicRouter(router, metadata, options);
 		if (process.env.NODE_ENV !== 'production') {
 			log.table(routeInfos, [
 				{ name: 'method', alignment: 'right' },
@@ -63,6 +66,7 @@ export class SubsonicMiddleware {
 		router.use((req, res) => {
 			res.status(404).send('Subsonic Api Path not found');
 		});
+
 		return router;
 	}
 }

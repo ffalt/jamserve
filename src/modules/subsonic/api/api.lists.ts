@@ -17,7 +17,9 @@ import {
 	SubsonicStarred,
 	SubsonicStarred2
 } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicListsApi extends SubsonicApiBase {
 	/**
 	 * Returns what is currently being played by all users. Takes no extra parameters.
@@ -25,7 +27,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getNowPlaying.view
 	 * @return  Returns a <subsonic-response> element with a nested <nowPlaying> element on success.
 	 */
-	@SubsonicRoute('getNowPlaying.view', () => SubsonicResponseNowPlaying, {
+	@SubsonicRoute('/getNowPlaying.view', () => SubsonicResponseNowPlaying, {
 		summary: 'Now Playing',
 		description: 'Returns what is currently being played by all users.',
 		tags: ['Lists']
@@ -47,7 +49,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getRandomSongs.view
 	 * @return Returns a <subsonic-response> element with a nested <randomSongs> element on success.
 	 */
-	@SubsonicRoute('getRandomSongs.view', () => SubsonicResponseRandomSongs, {
+	@SubsonicRoute('/getRandomSongs.view', () => SubsonicResponseRandomSongs, {
 		summary: 'Random Songs',
 		description: 'Returns random songs matching the given criteria.',
 		tags: ['Lists']
@@ -84,7 +86,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbumList.view
 	 * @return  Returns a <subsonic-response> element with a nested <albumList> element on success.
 	 */
-	@SubsonicRoute('getAlbumList.view', () => SubsonicResponseAlbumList, {
+	@SubsonicRoute('/getAlbumList.view', () => SubsonicResponseAlbumList, {
 		summary: 'Album List',
 		description: 'Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.',
 		tags: ['Lists']
@@ -207,7 +209,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbumList2.view
 	 * @return Returns a <subsonic-response> element with a nested <albumList2> element on success.
 	 */
-	@SubsonicRoute('getAlbumList2.view', () => SubsonicResponseAlbumList2, {
+	@SubsonicRoute('/getAlbumList2.view', () => SubsonicResponseAlbumList2, {
 		summary: 'Album List 2',
 		description: 'Similar to getAlbumList, but organizes music according to ID3 tags.',
 		tags: ['Lists']
@@ -326,7 +328,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSongsByGenre.view
 	 * @return Returns a <subsonic-response> element with a nested <songsByGenre> element on success.
 	 */
-	@SubsonicRoute('getSongsByGenre.view', () => SubsonicResponseSongsByGenre, {
+	@SubsonicRoute('/getSongsByGenre.view', () => SubsonicResponseSongsByGenre, {
 		summary: 'Songs By Genre',
 		description: 'Returns songs in a given genre.',
 		tags: ['Lists']
@@ -355,7 +357,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getStarred.view
 	 * @return Returns a <subsonic-response> element with a nested <starred> element on success.
 	 */
-	@SubsonicRoute('getStarred.view', () => SubsonicResponseStarred, {
+	@SubsonicRoute('/getStarred.view', () => SubsonicResponseStarred, {
 		summary: 'Starred',
 		description: 'Returns starred songs, albums and artists.',
 		tags: ['Lists']
@@ -388,7 +390,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	 * http://your-server/rest/getStarred2.view
 	 * @return Returns a <subsonic-response> element with a nested <starred2> element on success.
 	 */
-	@SubsonicRoute('getStarred2.view', () => SubsonicResponseStarred2, {
+	@SubsonicRoute('/getStarred2.view', () => SubsonicResponseStarred2, {
 		summary: 'Starred 2',
 		description: 'Similar to getStarred, but organizes music according to ID3 tags.',
 		tags: ['Lists']

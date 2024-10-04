@@ -78,7 +78,8 @@ export enum MetaDataType {
 
 export enum SessionMode {
 	browser = 'browser',
-	jwt = 'jwt'
+	jwt = 'jwt',
+	subsonic = 'subsonic'
 }
 
 export enum DBObjectType {

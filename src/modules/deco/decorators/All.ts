@@ -5,6 +5,7 @@ import { MetadataStorage } from '../definitions/metadata-storage.js';
 
 export function BaseAll(
 	metadata: MetadataStorage,
+	defaultFormat: string,
 	routeOrReturnTypeFuncOrOptions?: string | ReturnTypeFunc | MethodOptions,
 	returnTypeFuncOrOptions?: ReturnTypeFunc | MethodOptions,
 	maybeOptions?: MethodOptions
@@ -19,7 +20,7 @@ export function BaseAll(
 	}
 	const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
 	return (prototype, methodName) => {
-		const mmd = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
+		const mmd = getMethodMetadata(prototype, methodName, defaultFormat, route, returnTypeFunc, options);
 		metadata.all.push(mmd);
 	};
 }

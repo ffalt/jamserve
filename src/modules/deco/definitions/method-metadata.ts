@@ -15,6 +15,7 @@ export interface MethodMetadata extends CustomPathParameterOptions, BinaryOption
 	description?: string;
 	summary?: string;
 	deprecationReason?: string;
+	defaultReturnTypeFormat?: string;
 	example: any;
 	tags?: string[];
 }

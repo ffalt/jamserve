@@ -19,7 +19,7 @@ export function BaseGet(
 	}
 	const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
 	return (prototype, methodName) => {
-		const mmd = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
+		const mmd = getMethodMetadata(prototype, methodName, 'json', route, returnTypeFunc, options);
 		metadata.gets.push(mmd);
 	};
 }

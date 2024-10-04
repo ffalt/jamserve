@@ -17,21 +17,24 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import { SubsonicResponseLyrics } from '../model/subsonic-rest-data.js';
+import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
 const log = logger('SubsonicApi');
 
+@SubsonicController()
 export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
-
 	/**
 	 * Streams a given media file.
 	 * Since 1.0.0
 	 * http://your-server/rest/stream.view
 	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
-	@SubsonicRoute('stream.view', {
+	@SubsonicRoute('/stream.view', {
 		summary: 'Stream',
 		description: 'Streams a given media file.',
-		tags: ['Media Retrieval']
+		tags: ['Media Retrieval'],
+		binary: ApiStreamTypes
 	})
 	async stream(@SubsonicParams() query: SubsonicParameterStream, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
@@ -44,7 +47,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 estimateContentLength 	No 	false 	(Since 1.8.0). If set to "true", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.
 		 converted 	No 	false 	(Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to "true" will cause the converted video to be returned instead of the original.
 		 */
-		const o = await orm.findInStreamTypes(query.id);
+		const o = await orm.findInStreamTypes(await this.subsonicORM.jamIDOrFail(query.id));
 		if (!o?.obj) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
@@ -71,17 +74,18 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/download.view
 	 * @return Returns binary data on success, or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
-	@SubsonicRoute('download.view', {
+	@SubsonicRoute('/download.view', {
 		summary: 'Download',
 		description: 'Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.',
-		tags: ['Media Retrieval']
+		tags: ['Media Retrieval'],
+		binary: ApiStreamTypes
 	})
 	async download(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
-		const id = await this.subsonicORM.resolveID(query.id);
+		const id = await this.subsonicORM.jamID(query.id);
 		if (!id) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
@@ -98,7 +102,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/getLyrics.view
 	 * @return Returns a <subsonic-response> element with a nested <lyrics> element on success. The <lyrics> element is empty if no matching lyrics was found.
 	 */
-	@SubsonicRoute('getLyrics.view', () => SubsonicResponseLyrics, {
+	@SubsonicRoute('/getLyrics.view', () => SubsonicResponseLyrics, {
 		summary: 'Lyrics',
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
@@ -125,10 +129,11 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/getCoverArt.view
 	 * @return  Returns the cover art image in binary form.
 	 */
-	@SubsonicRoute('getCoverArt.view', {
+	@SubsonicRoute('/getCoverArt.view', {
 		summary: 'Cover Art',
 		description: 'Returns a cover art image.',
-		tags: ['Media Retrieval']
+		tags: ['Media Retrieval'],
+		binary: ApiImageTypes
 	})
 	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
@@ -136,7 +141,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 		 id 	Yes 		The ID of a song, album or artist.
 		 size 	No 		If specified, scale image to this size.
 		 */
-		const o = await orm.findInImageTypes(query.id);
+		const o = await orm.findInImageTypes(await this.subsonicORM.jamIDOrFail(query.id));
 		if (!o?.obj) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
@@ -149,10 +154,11 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAvatar.view
 	 * @return Returns the avatar image in binary form.
 	 */
-	@SubsonicRoute('getAvatar.view', {
+	@SubsonicRoute('/getAvatar.view', {
 		summary: 'Avatar',
 		description: 'Returns the avatar (personal image) for a user.',
-		tags: ['Media Retrieval']
+		tags: ['Media Retrieval'],
+		binary: ApiImageTypes
 	})
 	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
@@ -173,7 +179,7 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/getCaptions.view
 	 * @return 	Returns the raw video captions.
 	 */
-	@SubsonicRoute('getCaptions.view', {
+	@SubsonicRoute('/getCaptions.view', {
 		summary: 'Captions',
 		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
 		tags: ['Media Retrieval']
@@ -194,10 +200,11 @@ export class SubsonicMediaRetrievalApi extends SubsonicApiBase {
 	 * http://your-server/rest/hls.m3u8
 	 * @return Returns an M3U8 playlist on success (content type "application/vnd.apple.mpegurl"), or an XML document on error (in which case the HTTP content type will start with "text/xml").
 	 */
-	@SubsonicRoute('hls.m3u8', {
+	@SubsonicRoute('/hls.m3u8', {
 		summary: 'HLS',
 		description: 'Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio.',
-		tags: ['Media Retrieval']
+		tags: ['Media Retrieval'],
+		binary: ['application/vnd.apple.mpegurl']
 	})
 	async hls(@SubsonicParams() _query: SubsonicParameterHLS, _ctx: Context): Promise<ApiBinaryResult> {
 		/*

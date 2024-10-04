@@ -42,7 +42,7 @@ export class ExpressMethod {
 		if (target === String) {
 			return 'string';
 		}
-		return 'json';
+		return method.defaultReturnTypeFormat || 'json';
 	}
 
 	private buildArguments(method: MethodMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage) {
@@ -100,7 +100,7 @@ export class ExpressMethod {
 	}
 
 	public POST(
-		post: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions,
+		post: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions,
 		uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler, metadata: MetadataStorage
 	): RouteInfo {
 		let route = (post.route || '/');
@@ -144,7 +144,7 @@ export class ExpressMethod {
 		};
 	}
 
-	public GET(get: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
+	public GET(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
 		let route = (get.route || '/');
 		if (get.customPathParameters) {
 			route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
@@ -179,7 +179,7 @@ export class ExpressMethod {
 		};
 	}
 
-	public ALL(get: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
+	public ALL(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
 		let route = (get.route || '/');
 		if (get.customPathParameters) {
 			route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
@@ -201,7 +201,7 @@ export class ExpressMethod {
 						), pathParameters: undefined
 					} as any;
 				}
-				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get', options, metadata);
+				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'All', options, metadata);
 			} catch (e: any) {
 				options.responder.sendError(req, res, e);
 			}

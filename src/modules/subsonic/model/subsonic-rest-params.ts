@@ -1,5 +1,12 @@
 import { SubsonicObjParamsType } from '../decorators/SubsonicObjParamsType.js';
 import { SubsonicObjField } from '../decorators/SubsonicObjField.js';
+import { SubsonicID } from './subsonic-rest-data.js';
+
+export type AlbumListType = 'random' | 'newest' | 'starred' | 'frequent' | 'recent' | 'highest' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'byYear' | 'byGenre';
+export type StreamFormat = 'mp3' | 'flv' | 'raw';
+export type MaxBitrates = 0 | 32 | 40 | 48 | 56 | 64 | 80 | 96 | 112 | 128 | 160 | 192 | 224 | 256 | 320;
+export type CaptionsFormat = 'srt' | 'vtt';
+export type JukeboxAction = 'get' | 'status' | 'set' | 'start' | 'stop' | 'skip' | 'add' | 'clear' | 'remove' | 'shuffle' | 'setGain';
 
 @SubsonicObjParamsType()
 export class SubsonicParameterID {
@@ -37,7 +44,7 @@ export class SubsonicParameterInternetRadioCreate {
 @SubsonicObjParamsType()
 export class SubsonicParameterInternetRadioUpdate {
 	@SubsonicObjField({ description: 'The ID for the station.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ description: 'The stream URL for the station.', example: 'https://stream.example.com/stream.m3u' })
 	streamUrl!: string;
@@ -48,8 +55,6 @@ export class SubsonicParameterInternetRadioUpdate {
 	@SubsonicObjField({ nullable: true, description: 'The home page URL for the station.', example: 'https://stream.example.com/index.html' })
 	homepageUrl?: string;
 }
-
-export type AlbumListType = 'random' | 'newest' | 'starred' | 'frequent' | 'recent' | 'highest' | 'alphabeticalByName' | 'alphabeticalByArtist' | 'byYear' | 'byGenre';
 
 @SubsonicObjParamsType()
 export class SubsonicParameterAlbumList {
@@ -99,7 +104,7 @@ export class SubsonicParameterAlbumList2 {
 @SubsonicObjParamsType()
 export class SubsonicParameterCoverArt {
 	@SubsonicObjField({ description: 'The ID of a song, album or artist.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'If specified, scale image to this size.', min: 10, example: 300 })
 	size?: number;
@@ -114,7 +119,7 @@ export class SubsonicParameterUsername {
 @SubsonicObjParamsType()
 export class SubsonicParameterArtistInfo {
 	@SubsonicObjField({ description: 'The ID of a song, album or artist.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'Max number of similar artists to return.', min: 1, example: 10, defaultValue: 20 })
 	count?: number;
@@ -135,7 +140,7 @@ export class SubsonicParameterTopSongs {
 @SubsonicObjParamsType()
 export class SubsonicParameterSimilarSongs {
 	@SubsonicObjField({ description: 'The ID of a song, album or artist.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'Max number of songs to return.', min: 1, example: 10, defaultValue: 50 })
 	count?: number;
@@ -144,15 +149,13 @@ export class SubsonicParameterSimilarSongs {
 @SubsonicObjParamsType()
 export class SubsonicParameterDownload {
 	@SubsonicObjField({ description: 'A string which uniquely identifies the file to download', isID: true })
-	id!: string;
+	id!: SubsonicID;
 }
-
-export type StreamFormat = 'mp3' | 'flv' | 'raw';
 
 @SubsonicObjParamsType()
 export class SubsonicParameterStream {
 	@SubsonicObjField({ description: 'A string which uniquely identifies the file to stream', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'If specified, the server will attempt to limit the bitrate to this value, in kilobits per second. If set to zero, no limit is imposed.', min: 0 })
 	maxBitRate?: number;
@@ -183,7 +186,7 @@ export class SubsonicParameterStream {
 @SubsonicObjParamsType()
 export class SubsonicParameterRate {
 	@SubsonicObjField({ description: 'A string which uniquely identifies the file (song) or folder (album/artist) to rate', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'The rating between 1 and 5 (inclusive), or 0 to remove the rating.', min: 0, max: 5 })
 	rating!: number;
@@ -212,24 +215,24 @@ export class SubsonicParameterChatMessage {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterState {
-	@SubsonicObjField(() => String || [String], {
+	@SubsonicObjField(() => Number || [Number], {
 		nullable: true, description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.', isID: true
 	})
-	id?: string | Array<string>;
+	id?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => String || [String], {
+	@SubsonicObjField(() => Number || [Number], {
 		nullable: true,
 		description: 'The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.',
 		isID: true
 	})
-	albumId?: string | Array<string>;
+	albumId?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => String || [String], {
+	@SubsonicObjField(() => Number || [Number], {
 		nullable: true,
 		description: 'The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.',
 		isID: true
 	})
-	artistId?: string | Array<string>;
+	artistId?: SubsonicID | Array<SubsonicID>;
 }
 
 @SubsonicObjParamsType()
@@ -241,13 +244,13 @@ export class SubsonicParameterPlaylists {
 @SubsonicObjParamsType()
 export class SubsonicParameterPlaylistCreate {
 	@SubsonicObjField({ nullable: true, description: 'The playlist ID. (if updating)', isID: true })
-	playlistId?: string;
+	playlistId?: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'The human-readable name of the playlist.' })
 	name?: string;
 
-	@SubsonicObjField(() => String || [String], { nullable: true, description: 'ID of a song in the playlist. Use one songId parameter for each song in the playlist.', isID: true })
-	songId?: string | Array<string>;
+	@SubsonicObjField(() => Number || [Number], { nullable: true, description: 'ID of a song in the playlist. Use one songId parameter for each song in the playlist.', isID: true })
+	songId?: SubsonicID | Array<SubsonicID>;
 }
 
 @SubsonicObjParamsType()
@@ -264,8 +267,8 @@ export class SubsonicParameterPlaylistUpdate {
 	@SubsonicObjField({ nullable: true, description: 'true if the playlist should be visible to all users, false otherwise.', defaultValue: false })
 	public?: boolean;
 
-	@SubsonicObjField(() => String || [String], { description: 'Add this song with this ID to the playlist. Multiple parameters allowed.', isID: true })
-	songIdToAdd?: string | Array<string>;
+	@SubsonicObjField(() => Number || [Number], { description: 'Add this song with this ID to the playlist. Multiple parameters allowed.', isID: true })
+	songIdToAdd?: SubsonicID | Array<SubsonicID>;
 
 	@SubsonicObjField(() => Number || [Number], { description: 'Remove the song at this position in the playlist. Multiple parameters allowed.' })
 	songIndexToRemove?: number | Array<number>;
@@ -352,10 +355,8 @@ export class SubsonicParameterCreateUser {
 	videoConversionRole?: boolean;
 
 	@SubsonicObjField(() => Number || [Number], { nullable: true, isID: true, description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.' })
-	musicFolderId?: Array<number> | number;
+	musicFolderId?: Array<SubsonicID> | SubsonicID;
 }
-
-export type MaxBitrates = 0 | 32 | 40 | 48 | 56 | 64 | 80 | 96 | 112 | 128 | 160 | 192 | 224 | 256 | 320;
 
 @SubsonicObjParamsType()
 export class SubsonicParameterUpdateUser {
@@ -408,7 +409,7 @@ export class SubsonicParameterUpdateUser {
 	videoConversionRole?: boolean;
 
 	@SubsonicObjField(() => Number || [Number], { nullable: true, isID: true, description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.' })
-	musicFolderId?: Array<number> | number;
+	musicFolderId?: Array<SubsonicID> | SubsonicID;
 
 	@SubsonicObjField({
 		nullable: true,
@@ -420,7 +421,7 @@ export class SubsonicParameterUpdateUser {
 @SubsonicObjParamsType()
 export class SubsonicParameterBookmark {
 	@SubsonicObjField({ description: 'ID of the media file to bookmark. If a bookmark already exists for this file it will be overwritten.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ description: 'The position (in milliseconds) within the media file.', min: 0 })
 	position!: number;
@@ -435,7 +436,7 @@ export class SubsonicParameterRandomSong {
 	size?: number;
 
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return songs in the music folder with the given ID.' })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'Only returns songs belonging to this genre. e.g., "Rock"' })
 	genre?: string;
@@ -449,22 +450,18 @@ export class SubsonicParameterRandomSong {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterSearch {
-	/**
-	 * Searches all fields.
-	 */
+	@SubsonicObjField({ nullable: true, description: 'Searches all fields.' })
 	any?: string;
-	/**
-	 * Artist to search for.
-	 */
+
+	@SubsonicObjField({ nullable: true, description: 'Artist to search for.' })
 	artist?: string;
-	/**
-	 * Album to search for.
-	 */
+
+	@SubsonicObjField({ nullable: true, description: 'Album to search for.' })
 	album?: string;
-	/**
-	 * Song title to search for.
-	 */
+
+	@SubsonicObjField({ nullable: true, description: 'Song title to search for.' })
 	title?: string;
+
 	@SubsonicObjField({ nullable: true, description: 'Maximum number of results to return.', min: 1, example: 10, defaultValue: 20 })
 	count?: number;
 
@@ -518,11 +515,11 @@ export class SubsonicParameterLyrics {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterPlayQueue {
-	@SubsonicObjField(() => String || [String], { description: 'ID of a song in the play queue. Use one id parameter for each song in the play queue.', isID: true })
-	id!: string | Array<string>;
+	@SubsonicObjField(() => Number || [Number], { description: 'ID of a song in the play queue. Use one id parameter for each song in the play queue.', isID: true })
+	id!: SubsonicID | Array<SubsonicID>;
 
 	@SubsonicObjField({ nullable: true, description: 'The ID of the current playing song.', isID: true })
-	current?: string;
+	current?: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'The position in milliseconds within the currently playing song.', min: 0 })
 	position?: number;
@@ -540,13 +537,13 @@ export class SubsonicParameterSongsByGenre {
 	offset?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Only return albums in the music folder with the given ID.', isID: true })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 }
 
 @SubsonicObjParamsType()
 export class SubsonicParameterScrobble {
 	@SubsonicObjField({ description: 'A string which uniquely identifies the file to scrobble.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'The time (in milliseconds since 1 Jan 1970) at which the song was listened to.', min: 0 })
 	time?: number;
@@ -555,12 +552,10 @@ export class SubsonicParameterScrobble {
 	submission?: boolean;
 }
 
-export type CaptionsFormat = 'srt' | 'vtt';
-
 @SubsonicObjParamsType()
 export class SubsonicParameterCaptions {
 	@SubsonicObjField({ description: 'The ID of the video.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'Preferred captions format ("srt" or "vtt").' })
 	format?: CaptionsFormat;
@@ -569,7 +564,7 @@ export class SubsonicParameterCaptions {
 @SubsonicObjParamsType()
 export class SubsonicParameterShare {
 	@SubsonicObjField({ description: 'ID of a song, album or video to share. Use one id parameter for each entry to share.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'A user-defined description that will be displayed to people visiting the shared media..' })
 	description?: string;
@@ -581,7 +576,7 @@ export class SubsonicParameterShare {
 @SubsonicObjParamsType()
 export class SubsonicParameterHLS {
 	@SubsonicObjField({ description: 'A string which uniquely identifies the media file to stream.', isID: true })
-	id!: string;
+	id!: SubsonicID;
 
 	@SubsonicObjField({
 		nullable: true,
@@ -595,8 +590,6 @@ export class SubsonicParameterHLS {
 	@SubsonicObjField({ nullable: true, description: 'The ID of the audio track to use. See getVideoInfo for how to get the list of available audio tracks for a video.', isID: true })
 	audioTrack?: string;
 }
-
-export type JukeboxAction = 'get' | 'status' | 'set' | 'start' | 'stop' | 'skip' | 'add' | 'clear' | 'remove' | 'shuffle' | 'setGain';
 
 @SubsonicObjParamsType()
 export class SubsonicParameterJukebox {
@@ -614,7 +607,7 @@ export class SubsonicParameterJukebox {
 		description: 'Used by add and set. ID of song to add to the jukebox playlist. Use multiple id parameters to add many songs in the same request. ' +
 			'(set is similar to a clear followed by a add, but will not change the currently playing track.)'
 	})
-	id?: string;
+	id?: SubsonicID;
 
 	@SubsonicObjField(() => Number, { nullable: true, description: ' Used by setGain to control the playback volume. A float value between 0.0 and 1.0.', min: 0.0, max: 1.0 })
 	gain?: number;

@@ -29,7 +29,9 @@ import {
 	SubsonicResponseSong,
 	SubsonicResponseTopSongs, SubsonicResponseVideoInfo, SubsonicResponseVideos
 } from '../model/subsonic-rest-data.js';
+import { SubsonicController } from '../decorators/SubsonicController.js';
 
+@SubsonicController()
 export class SubsonicBrowsingApi extends SubsonicApiBase {
 	/**
 	 * Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.
@@ -37,7 +39,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtist.view
 	 * @return  Returns a <subsonic-response> element with a nested <artist> element on success.
 	 */
-	@SubsonicRoute('getArtist.view', () => SubsonicResponseArtistWithAlbumsID3, {
+	@SubsonicRoute('/getArtist.view', () => SubsonicResponseArtistWithAlbumsID3, {
 		summary: 'Artists',
 		description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -62,7 +64,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbum.view
 	 * @return Returns a <subsonic-response> element with a nested <album> element on success.
 	 */
-	@SubsonicRoute('getAlbum.view', () => SubsonicResponseAlbumWithSongsID3, {
+	@SubsonicRoute('/getAlbum.view', () => SubsonicResponseAlbumWithSongsID3, {
 		summary: 'Albums',
 		description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -88,7 +90,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtistInfo.view
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo> element on success.
 	 */
-	@SubsonicRoute('getArtistInfo.view', () => SubsonicResponseArtistInfo, {
+	@SubsonicRoute('/getArtistInfo.view', () => SubsonicResponseArtistInfo, {
 		summary: 'Artist Infos',
 		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
 		tags: ['Browsing']
@@ -130,7 +132,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		// 		name: s.name
 		// 	};
 		// });
-		const folder = await orm.Folder.findOneOrFailByID(query.id);
+		const folder = await this.subsonicORM.findOneOrFailByID(query.id, orm.Folder);
 		if (folder) {
 			if (folder.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
@@ -156,7 +158,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtistInfo2.view
 	 * @return Returns a <subsonic-response> element with a nested <artistInfo2> element on success.
 	 */
-	@SubsonicRoute('getArtistInfo2.view', () => SubsonicResponseArtistInfo2, {
+	@SubsonicRoute('/getArtistInfo2.view', () => SubsonicResponseArtistInfo2, {
 		summary: 'Artist Infos 2',
 		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -187,7 +189,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		// 		});
 		// 	}
 		// });
-		const artist = await orm.Artist.findOneOrFailByID(query.id);
+		const artist = await this.subsonicORM.findOneOrFailByID(query.id, orm.Artist);
 		if (artist) {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
@@ -213,7 +215,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbumInfo.view
 	 * @return  Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
-	@SubsonicRoute('getAlbumInfo.view', () => SubsonicResponseAlbumInfo, {
+	@SubsonicRoute('/getAlbumInfo.view', () => SubsonicResponseAlbumInfo, {
 		summary: 'Album Infos',
 		description: 'Returns album notes, image URLs etc, using data from last.fm.',
 		tags: ['Browsing']
@@ -249,7 +251,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getAlbumInfo2.view
 	 * @return Returns a <subsonic-response> element with a nested <albumInfo> element on success.
 	 */
-	@SubsonicRoute('getAlbumInfo2.view', () => SubsonicResponseAlbumInfo, {
+	@SubsonicRoute('/getAlbumInfo2.view', () => SubsonicResponseAlbumInfo, {
 		summary: 'Album Infos 2',
 		description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -285,7 +287,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getIndexes.view
 	 * @return   Returns a <subsonic-response> element with a nested <indexes> element on success.
 	 */
-	@SubsonicRoute('getIndexes.view', () => SubsonicResponseIndexes, {
+	@SubsonicRoute('/getIndexes.view', () => SubsonicResponseIndexes, {
 		summary: 'Artist Indexes',
 		description: 'Returns an indexed structure of all artists.',
 		tags: ['Browsing']
@@ -327,7 +329,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getArtists.view
 	 * @return Returns a <subsonic-response> element with a nested <artists> element on success.
 	 */
-	@SubsonicRoute('getArtists.view', () => SubsonicResponseArtistsID3, {
+	@SubsonicRoute('/getArtists.view', () => SubsonicResponseArtistsID3, {
 		summary: 'Artist Indexes 2',
 		description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -359,7 +361,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getMusicDirectory.view
 	 * @return   Returns a <subsonic-response> element with a nested <directory> element on success.
 	 */
-	@SubsonicRoute('getMusicDirectory.view', () => SubsonicResponseDirectory, {
+	@SubsonicRoute('/getMusicDirectory.view', () => SubsonicResponseDirectory, {
 		summary: 'Music Directory',
 		description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
 		tags: ['Browsing']
@@ -389,7 +391,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getMusicFolders.view
 	 * @return Returns a <subsonic-response> element with a nested <musicFolders> element on success.
 	 */
-	@SubsonicRoute('getMusicFolders.view', () => SubsonicResponseMusicFolders, {
+	@SubsonicRoute('/getMusicFolders.view', () => SubsonicResponseMusicFolders, {
 		summary: 'Music Folders',
 		description: 'Returns all configured top-level music folders.',
 		tags: ['Browsing']
@@ -405,7 +407,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getGenres.view
 	 * @return  Returns a <subsonic-response> element with a nested <genres> element on success.
 	 */
-	@SubsonicRoute('getGenres.view', () => SubsonicResponseGenres, {
+	@SubsonicRoute('/getGenres.view', () => SubsonicResponseGenres, {
 		summary: 'Genres',
 		description: 'Returns all genres.',
 		tags: ['Browsing']
@@ -435,7 +437,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSimilarSongs.view
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs> element on success.
 	 */
-	@SubsonicRoute('getSimilarSongs.view', () => SubsonicResponseSimilarSongs, {
+	@SubsonicRoute('/getSimilarSongs.view', () => SubsonicResponseSimilarSongs, {
 		summary: 'Similar Songs',
 		description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
 		tags: ['Browsing']
@@ -446,7 +448,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		id 	Yes 		The artist, album or song ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
-		const result = await orm.findInRepos(query.id, [orm.Track, orm.Folder, orm.Artist, orm.Album]);
+		const result = await orm.findInRepos(await this.subsonicORM.jamIDOrFail(query.id), [orm.Track, orm.Folder, orm.Artist, orm.Album]);
 		if (!result?.obj) {
 			return Promise.reject({ fail: SubsonicFormatter.FAIL.NOTFOUND });
 		}
@@ -477,7 +479,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSimilarSongs2.view
 	 * @return Returns a <subsonic-response> element with a nested <similarSongs2> element on success.
 	 */
-	@SubsonicRoute('getSimilarSongs2.view', () => SubsonicResponseSimilarSongs2, {
+	@SubsonicRoute('/getSimilarSongs2.view', () => SubsonicResponseSimilarSongs2, {
 		summary: 'Similar Songs 2',
 		description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
@@ -488,7 +490,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 		id 	Yes 		The artist ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
-		const artist = await orm.Artist.findOneOrFailByID(query.id);
+		const artist = await this.subsonicORM.findOneOrFailByID(query.id, orm.Artist);
 		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
 		const childs = tracks ? await this.prepareTracks(orm, tracks.items, user) : [];
@@ -501,7 +503,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getSong.view
 	 * @return Returns a <subsonic-response> element with a nested <song> element on success.
 	 */
-	@SubsonicRoute('getSong.view', () => SubsonicResponseSong, {
+	@SubsonicRoute('/getSong.view', () => SubsonicResponseSong, {
 		summary: 'Songs',
 		description: 'Returns details for a song.',
 		tags: ['Browsing']
@@ -522,7 +524,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getTopSongs.view
 	 * @return Returns a <subsonic-response> element with a nested <topSongs> element on success.
 	 */
-	@SubsonicRoute('getTopSongs.view', () => SubsonicResponseTopSongs, {
+	@SubsonicRoute('/getTopSongs.view', () => SubsonicResponseTopSongs, {
 		summary: 'Top Songs',
 		description: 'Returns top songs for the given artist, using data from last.fm.',
 		tags: ['Browsing']
@@ -545,7 +547,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getVideos.view
 	 * @return  Returns a <subsonic-response> element with a nested <videos> element on success.
 	 */
-	@SubsonicRoute('getVideos.view', () => SubsonicResponseVideos, {
+	@SubsonicRoute('/getVideos.view', () => SubsonicResponseVideos, {
 		summary: 'Videos',
 		description: 'Returns all video files.',
 		tags: ['Browsing']
@@ -560,7 +562,7 @@ export class SubsonicBrowsingApi extends SubsonicApiBase {
 	 * http://your-server/rest/getVideoInfo.view
 	 * @return Returns a <subsonic-response> element with a nested <videoInfo> element on success.
 	 */
-	@SubsonicRoute('getVideoInfo.view', () => SubsonicResponseVideoInfo, {
+	@SubsonicRoute('/getVideoInfo.view', () => SubsonicResponseVideoInfo, {
 		summary: 'Video Infos',
 		description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',
 		tags: ['Browsing']

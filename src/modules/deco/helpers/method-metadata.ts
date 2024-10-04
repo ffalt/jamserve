@@ -3,7 +3,7 @@ import { MethodOptions, ReturnTypeFunc } from '../definitions/types.js';
 import { MethodMetadata } from '../definitions/method-metadata.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 
-export function getMethodMetadata(prototype: object, propertyKey: string | symbol, route?: string, returnTypeFunc?: ReturnTypeFunc, options: MethodOptions = {}): MethodMetadata {
+export function getMethodMetadata(prototype: object, propertyKey: string | symbol, defaultReturnTypeFormat: string, route?: string, returnTypeFunc?: ReturnTypeFunc, options: MethodOptions = {}): MethodMetadata {
 	if (typeof propertyKey === 'symbol') {
 		throw new SymbolKeysNotSupportedError();
 	}
@@ -27,6 +27,7 @@ export function getMethodMetadata(prototype: object, propertyKey: string | symbo
 		getReturnType,
 		returnTypeOptions,
 		params: [],
+		defaultReturnTypeFormat,
 		schemaName: options.name || methodName,
 		target: prototype.constructor,
 		description: options.description,

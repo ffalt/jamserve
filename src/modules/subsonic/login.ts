@@ -25,9 +25,11 @@ import express from 'express';
 import { User } from '../../entity/user/user.js';
 import { SubsonicParameterRequest } from './parameters.js';
 import { ApiResponder } from './response.js';
-import { EngineService } from '../../modules/engine/services/engine.service.js';
+import { EngineService } from '../engine/services/engine.service.js';
 import { Orm } from '../engine/services/orm.service.js';
 import { SubsonicFormatter } from './api/api.base.js';
+import { hashMD5 } from '../../utils/md5.js';
+import { SessionMode } from '../../types/enums.js';
 
 export function hexEncode(n: string): string {
 	const i: Array<string> = [];
@@ -60,6 +62,50 @@ export interface SubsonicRequest extends SubsonicParameterRequest {
 	orm: Orm;
 }
 
+function sendError(req: SubsonicParameterRequest, res: express.Response, code: number, msg: string) {
+	(new ApiResponder()).sendErrorMsg(req, res, code, msg);
+}
+
+async function authSubsonicPassword(orm: Orm, name: string, pass: string): Promise<User> {
+	if ((!pass) || (!pass.length)) {
+		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
+	}
+	const user = await orm.User.findOne({ where: { name } });
+	if (!user) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	const session = await orm.Session.findOneFilter({ userIDs: [user.id], mode: SessionMode.subsonic });
+	if (!session) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	if (pass !== session.cookie) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	return user;
+}
+
+async function authSubsonicToken(orm: Orm, name: string, token: string, salt: string): Promise<User> {
+	if (!name || name.trim().length === 0) {
+		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
+	}
+	if ((!token) || (!token.length)) {
+		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
+	}
+	const user = await orm.User.findOne({ where: { name } });
+	if (!user) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	const session = await orm.Session.findOneFilter({ userIDs: [user.id], mode: SessionMode.subsonic });
+	if (!session) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	const t = hashMD5(session.cookie + salt);
+	if (token !== t) {
+		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
+	}
+	return user;
+}
+
 async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
 	if (req.user) {
 		return req.user;
@@ -69,29 +115,33 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
-		// return req.engine.user.authSubsonicPassword(req.parameters.username, pass);
+		return authSubsonicPassword(req.orm, req.parameters.username, pass);
 	}
 	if (req.parameters.token && req.parameters.salt) {
-		// return req.engine.user.authSubsonicToken(req.parameters.username, req.parameters.token, req.parameters.salt);
+		return authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
 	}
-	return Promise.reject('Invalid Login Type');
+	return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
 }
 
-export function SubsonicLoginMiddleWare(req: SubsonicRequest, res: express.Response, next: express.NextFunction): void {
+export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
 	if (req.user) {
 		return next();
 	}
-	if (!req.parameters) {
-		return next();
+	const sreq = req as SubsonicRequest;
+	if (!sreq.parameters) {
+		sendError(sreq, res, 10, 'Required parameter is missing.');
+		return;
 	}
-	req.client = req.parameters.client;
-	validateCredentials(req)
+	sreq.client = sreq.parameters.client;
+	validateCredentials(sreq)
 		.then(user => {
-			req.user = user;
-			next();
+			if (user) {
+				req.user = user;
+				next();
+			}
 		})
-		.catch(_e => {
-			next();
+		.catch(e => {
+			return (new ApiResponder()).sendError(req, res, e);
 		});
 }
 

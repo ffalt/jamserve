@@ -73,15 +73,15 @@ export class Server {
 		});
 
 		app.use(useEngineMiddleware(this.engine));
+		log.debug(`registering subsonic middleware`);
+		app.use(`/rest`, this.subsonic.middleware());
+
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
 		app.use(usePassPortMiddleWare(app, this.engine));
 		app.use(useAuthenticatedCors(this.configService));
 
 		log.debug(`registering jam api middleware`);
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
-
-		log.debug(`registering subsonic middleware`);
-		app.use(`/rest`, this.subsonic.middleware());
 
 		log.debug(`registering graphql playground`);
 		app.use('/graphql/playground', await this.apollo.playground());
@@ -106,6 +106,7 @@ export class Server {
 		app.get('/', (_req, res) => res.sendFile(indexHTML));
 		app.get('/index.html', (_req, res) => res.sendFile(indexHTML));
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
+		app.get('*', (_req, res) => res.sendFile(indexHTML));
 
 		this.app = app;
 	}
@@ -131,7 +132,7 @@ export class Server {
 			{ Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
 			{ Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
 			{ Content: 'REST Documentation', URL: `${domain}/docs` },
-			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping` },
+			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping.view` },
 			{ Content: 'Subsonic REST Documentation', URL: `${domain}/docs/subsonic` },
 			{ Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
 			{ Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },
