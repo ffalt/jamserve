@@ -11,7 +11,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * http://your-server/rest/star.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('star.view')
+	@SubsonicRoute('star.view', { summary: 'Star a song, album or artist', description: 'Attaches a star to a song, album or artist.', tags: ['Annotation'] })
 	async star(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -31,7 +31,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * http://your-server/rest/unstar.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('unstar.view')
+	@SubsonicRoute('unstar.view', { summary: 'Unstar a song, album or artist', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] })
 	async unstar(@SubsonicParams() query: SubsonicParameterState, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -51,7 +51,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * http://your-server/rest/setRating.view
 	 * @return Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('setRating.view')
+	@SubsonicRoute('setRating.view', { summary: 'Rate a song', description: 'Sets the rating for a music file.', tags: ['Annotation'] })
 	async setRating(@SubsonicParams() query: SubsonicParameterRate, { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -74,7 +74,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * http://your-server/rest/scrobble.view
 	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
-	@SubsonicRoute('scrobble.view')
+	@SubsonicRoute('scrobble.view', { summary: 'Scrobble a song', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] })
 	async scrobble(@SubsonicParams() _query: SubsonicParameterScrobble, _ctx: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment

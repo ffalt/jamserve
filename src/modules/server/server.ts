@@ -101,10 +101,11 @@ export class Server {
 		});
 		// frontend (any)
 		const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
+		const favicon = path.resolve('./static/api-docs/favicon.ico');
+		app.get('/favicon.ico', (_req, res) => res.sendFile(favicon));
+		app.get('/', (_req, res) => res.sendFile(indexHTML));
+		app.get('/index.html', (_req, res) => res.sendFile(indexHTML));
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-		app.get('*', (req, res) => {
-			res.sendFile(indexHTML);
-		});
 
 		this.app = app;
 	}
@@ -130,6 +131,8 @@ export class Server {
 			{ Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
 			{ Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
 			{ Content: 'REST Documentation', URL: `${domain}/docs` },
+			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping` },
+			{ Content: 'Subsonic REST Documentation', URL: `${domain}/docs/subsonic` },
 			{ Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
 			{ Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },
 			{ Content: 'Angular Client', URL: `${domain}/docs/angular-client.zip` },

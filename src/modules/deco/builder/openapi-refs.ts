@@ -3,7 +3,7 @@ import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
 import { CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue } from '../definitions/types.js';
 import {
 	exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas,
-	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject
+	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject, exampleIDInt
 } from './openapi-helpers.js';
 import { RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
 import { MetadataStorage } from '../definitions/metadata-storage.js';
@@ -45,6 +45,10 @@ export class OpenApiRefBuilder {
 		return;
 	}
 
+	private mapExample(typeOptions: FieldOptions & TypeOptions, schemas: Schemas): string | undefined {
+		return typeOptions.isID ? ((schemas['ID'] as SchemaObject).type === 'integer' ? exampleIDInt : exampleID) : typeOptions.example;
+	}
+
 	private mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
 		const argumentInstance = new (argumentType.target as any)();
 		argumentType.fields!.forEach(field => {
@@ -63,7 +67,7 @@ export class OpenApiRefBuilder {
 				description: field.description,
 				deprecated: field.deprecationReason ? true : undefined,
 				required: !typeOptions.nullable || mode === 'path',
-				example: typeOptions.isID ? exampleID : typeOptions.example
+				example: this.mapExample(typeOptions, schemas)
 			};
 			const type = field.getType();
 			o.schema = this.buildFieldSchema(type, typeOptions, schemas);
@@ -91,7 +95,7 @@ export class OpenApiRefBuilder {
 			description: typeOptions.description,
 			deprecated: typeOptions.deprecationReason || ctrl?.deprecationReason ? true : undefined,
 			required: !param.typeOptions.nullable || param.mode === 'path',
-			example: typeOptions.isID ? exampleID : typeOptions.example,
+			example: this.mapExample(typeOptions, schemas),
 			schema: this.buildParameterSchema(param, schemas)
 		};
 		parameters.push(o);

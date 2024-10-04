@@ -1,27 +1,32 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
-import { Schemas, OpenAPIObject, OperationObject, ParameterObject, PathsObject } from '../../deco/builder/openapi-helpers.js';
+import { Schemas, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ResponsesObject } from '../../deco/builder/openapi-helpers.js';
 import { SUBSONIC_VERSION } from '../version.js';
 import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 import { CustomPathParameterAliasRouteOptions } from '../../deco/definitions/types.js';
+import { ClassType } from 'type-graphql';
 
 class OpenApiBuilder extends BaseOpenApiBuilder {
 	protected buildOpenApiMethod(method: MethodMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
 		const parameters: Array<ParameterObject> = this.refsBuilder.buildParameters(method, undefined, schemas, alias);
-		const path = (alias?.route || method.route || '');
+		const path = `/${alias?.route || method.route || ''}`;
 		const roles = method.roles || [];
 		const o: OperationObject = {
 			operationId: `${method.methodName}${alias?.route || ''}`,
 			summary: `${method.summary || method.description} ${alias?.name || ''}`.trim(),
 			description: method.description,
 			deprecated: method.deprecationReason ? true : undefined,
-			tags: method.tags,
+			tags: method.tags || ['Unsorted'],
 			parameters,
 			requestBody: isPost ? this.buildRequestBody(method, schemas) : undefined,
 			responses: this.buildResponses(method, parameters, roles, schemas),
 			security: roles.length === 0 ? [] : [{ cookieAuth: roles }, { bearerAuth: roles }]
 		};
 		return { path, o };
+	}
+
+	fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+		this.fillXMLResponses(type, method, schemas, responses);
 	}
 
 	protected buildPaths(schemas: Schemas, openapi: OpenAPIObject): void {
@@ -46,7 +51,7 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 	return {
 		openapi: '3.0.0',
 		info: {
-			title: 'JamApi', description: 'Subsonic Api for JamServe', version,
+			title: 'SubsonicApi', description: 'Subsonic Api for JamServe', version,
 			license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
 		},
 		servers: [{
@@ -55,10 +60,6 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 		}],
 		tags: [], paths: {},
 		components: {
-			securitySchemes: {
-				cookieAuth: { type: 'apiKey', in: 'cookie', name: 'jam.sid' },
-				bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
-			},
 			schemas: {}
 		},
 		security: []
@@ -68,5 +69,9 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 export function buildSubsonicOpenApi(extended: boolean = true): OpenAPIObject {
 	const builder = new OpenApiBuilder(extended, getMetadataStorage());
 	const openapi: OpenAPIObject = buildOpenApiBase(SUBSONIC_VERSION);
-	return builder.build(openapi, {});
+	const schemas: Schemas = {
+		ID: { type: 'integer' },
+		JSON: { type: 'object' }
+	};
+	return builder.build(openapi, schemas);
 }

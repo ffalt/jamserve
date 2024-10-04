@@ -1,11 +1,12 @@
 import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { iterateControllers } from '../../deco/helpers/iterate-super.js';
-import { Schemas, OpenAPIObject, PathsObject, OperationObject, ParameterObject } from '../../deco/builder/openapi-helpers.js';
+import { Schemas, OpenAPIObject, PathsObject, OperationObject, ParameterObject, ResponsesObject } from '../../deco/builder/openapi-helpers.js';
 import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { ControllerClassMetadata } from '../../deco/definitions/controller-metadata.js';
 import { CustomPathParameterAliasRouteOptions } from '../../deco/definitions/types.js';
+import { ClassType } from 'type-graphql';
 
 class OpenApiBuilder extends BaseOpenApiBuilder {
 	protected buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
@@ -24,6 +25,10 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 			security: roles.length === 0 ? [] : [{ cookieAuth: roles }, { bearerAuth: roles }]
 		};
 		return { path, o };
+	}
+
+	fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+		this.fillJSONResponses(type, method, schemas, responses);
 	}
 
 	protected buildOpenApiMethods(methods: Array<MethodMetadata>, ctrl: ControllerClassMetadata, schemas: Schemas, paths: PathsObject, isPost: boolean): void {

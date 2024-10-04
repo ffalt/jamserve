@@ -45,14 +45,14 @@ export class DocsMiddleware {
 		api.get('/axios-client.zip', async (req, res) => {
 			(new ApiResponder()).sendBinary(req, res, await buildAxiosClientZip());
 		});
-		api.get('/', (_req, res) => {
-			res.sendFile(path.resolve('./static/redoc/index.html'));
-		});
 		api.get('/subsonic/', (_req, res) => {
-			res.sendFile(path.resolve('./static/redoc/subsonic.html'));
+			res.sendFile(path.resolve('./static/api-docs/subsonic.html'));
 		});
-		api.get('/redoc.standalone.min.js', (_req, res) => {
-			res.sendFile(path.resolve('./static/redoc/redoc.standalone.min.js'));
+		api.get('/', (_req, res) => {
+			res.sendFile(path.resolve('./static/api-docs/jam.html'));
+		});
+		api.get('/openapi-explorer.min.js', (_req, res) => {
+			res.sendFile(path.resolve('./static/api-docs/openapi-explorer.min.js'));
 		});
 		return api;
 	}

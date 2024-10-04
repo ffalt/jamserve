@@ -32,6 +32,8 @@ export abstract class BaseOpenApiBuilder {
 		}
 	}
 
+	abstract fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject): void;
+
 	protected buildResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, schemas: Schemas): ResponsesObject {
 		const responses: ResponsesObject = {};
 		if (method.binary) {
@@ -41,13 +43,23 @@ export abstract class BaseOpenApiBuilder {
 			if (type === String) {
 				this.fillStringResponse(method, responses);
 			} else {
-				this.fillJSONResponses(type, method, schemas, responses);
+				this.fillFormatResponses(type, method, schemas, responses);
 			}
 		} else {
 			responses['200'] = { description: 'ok' };
 		}
 		this.fillErrorResponses(method, parameters, roles, responses);
 		return responses;
+	}
+
+	protected fillXMLResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+		const content: ContentObject = {};
+		let schema: SchemaObject | ReferenceObject = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
+		if (method.returnTypeOptions?.array) {
+			schema = { type: 'array', items: schema };
+		}
+		content['application/xml'] = { schema };
+		responses['200'] = { description: 'xml data', content };
 	}
 
 	protected fillJSONResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
