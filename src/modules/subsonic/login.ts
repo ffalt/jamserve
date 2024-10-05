@@ -73,6 +73,9 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	}
 	if (req.parameters.password) {
 		let pass = req.parameters.password;
+		if (typeof pass !== 'string') {
+			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+		}
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
