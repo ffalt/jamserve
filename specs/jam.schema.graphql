@@ -957,6 +957,8 @@ enum FolderOrderFields {
   name
   title
   year
+  artist
+  album
 }
 
 type PlaylistPageQL {
@@ -1111,6 +1113,7 @@ type SessionQL {
 enum SessionMode {
   browser
   jwt
+  subsonic
 }
 
 input SessionFilterArgsQL {
@@ -1309,7 +1312,7 @@ type RadioQL {
   name: String!
   url: String!
   homepage: String
-  disabled: Boolean!
+  disabled: Boolean
   state: StateQL!
 }
 
