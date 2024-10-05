@@ -336,8 +336,8 @@ export class SubsonicFormatter {
 		return Math.trunc(duration / 1000);
 	}
 
-	static packBitrate(bitrate?: number): number {
-		return bitrate !== undefined ? Math.round(bitrate / 1000) : -1;
+	static packBitrate(bitrate?: number): number | undefined {
+		return bitrate !== undefined ? Math.round(bitrate / 1000) : undefined;
 	}
 
 	static async packGenreCollection(genres: Collection<Genre>): Promise<string | undefined> {
@@ -489,7 +489,7 @@ export class SubsonicFormatter {
 			suffix,
 			contentType: mimeTypes.lookup(suffix) || 'audio/mpeg',
 			isVideo: false,
-			// path: path.join(track.path, track.fileName),
+			path: path.join(track.path, track.fileName),
 			discNumber: tag?.disc,
 			albumId: track.album.id(),
 			artistId: track.artist.id(),
@@ -497,8 +497,6 @@ export class SubsonicFormatter {
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
-			// transcodedSuffix: undefined,
-			// transcodedContentType: undefined,
 			// "rank": 0,
 			// "averageRating": track.state.avgrated,
 			// "bookmarkPosition": track.state.bookmark,
@@ -511,7 +509,7 @@ export class SubsonicFormatter {
 			// comment: tag?.comment; //  OpenSubsonic
 			sortName: tag?.titleSort,
 			musicBrainzId: tag?.mbTrackID,
-			genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined,
+			genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined
 			// artists?: Array<SubsonicArtistsID3>; //  OpenSubsonic
 			// albumArtists? : Array<SubsonicArtistsID3>; //  OpenSubsonic
 			// contributors? : Array<SubsonicContributor>; //  OpenSubsonic

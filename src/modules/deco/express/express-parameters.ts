@@ -29,6 +29,9 @@ export class ExpressParameters {
 	}
 
 	private static validateNumberPart(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
+		if (value === '') {
+			throw InvalidParamError(param.name, `Parameter value is not a number`);
+		}
 		const val = Number(value);
 		if (isNaN(val)) {
 			throw InvalidParamError(param.name, `Parameter value is not a number`);

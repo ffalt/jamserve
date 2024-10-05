@@ -6,6 +6,7 @@ import {
 	SubsonicParameterHLS,
 	SubsonicParameterID,
 	SubsonicParameterLyrics,
+	SubsonicParameterLyricsByID,
 	SubsonicParameterStream,
 	SubsonicParameterUsername
 } from '../model/subsonic-rest-params.js';
@@ -16,7 +17,7 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
-import { SubsonicResponseLyrics } from '../model/subsonic-rest-data.js';
+import { SubsonicResponseLyrics, SubsonicResponseLyricsList } from '../model/subsonic-rest-data.js';
 import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
@@ -91,6 +92,20 @@ export class SubsonicMediaRetrievalApi {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
 		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
+	}
+
+	/**
+	 * Add support for synchronized lyrics, multiple languages, and retrieval by song ID
+	 * https://opensubsonic.netlify.app/docs/endpoints/getlyricsbysongid/
+	 */
+	@SubsonicRoute('/getLyricsBySongId', () => SubsonicResponseLyricsList, {
+		summary: 'Synchronized Lyrics',
+		description: 'Searches for and returns lyrics for a given song.',
+		tags: ['Media Retrieval']
+	})
+	async getLyricsBySongId(@SubsonicParams() _query: SubsonicParameterLyricsByID, @SubsonicCtx() _ctx: Context): Promise<SubsonicResponseLyricsList> {
+		// TODO: get sync lyrics from tag
+		return { lyricsList: { structuredLyrics: [] } };
 	}
 
 	/**

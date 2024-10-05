@@ -3,7 +3,7 @@ import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicOKResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
@@ -33,6 +33,22 @@ export class SubsonicSystemApi {
 	})
 	async ping(@SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		return {};
+	}
+
+	/**
+	 * https://opensubsonic.netlify.app/docs/endpoints/getopensubsonicextensions/
+	 */
+	@SubsonicRoute('/getOpenSubsonicExtensions', () => SubsonicOpenSubsonicResponse, {
+		summary: 'OpenSubsonic Extensions',
+		description: 'List the OpenSubsonic extensions supported by this server.',
+		tags: ['System']
+	})
+	async getOpenSubsonicExtensions(@SubsonicCtx() _ctx: Context): Promise<SubsonicOpenSubsonicResponse> {
+		return {
+			openSubsonicExtensions: [
+				{ name: 'songLyrics', versions: [1] }
+			]
+		};
 	}
 
 	/**

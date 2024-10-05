@@ -32,7 +32,7 @@ export class SubsonicPodcastApi {
 		 includeEpisodes 	No 	true 	(Since 1.9.0) Whether to include Podcast episodes in the returned result.
 		 id 	No 		(Since 1.9.0) If specified, only return the Podcast channel with this ID.
 		 */
-		let includeEpisodes = false;
+		let includeEpisodes = true;
 		if (query.includeEpisodes !== undefined) {
 			includeEpisodes = query.includeEpisodes;
 		}
@@ -47,7 +47,9 @@ export class SubsonicPodcastApi {
 		for (const podcast of podcastList) {
 			const pod = await SubsonicFormatter.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
 			if (includeEpisodes) {
-				pod.episode = await SubsonicHelper.prepareEpisodes(engine, orm, await podcast.episodes.getItems({ order: ['date', 'DESC'] }), user);
+				pod.episode = await SubsonicHelper.prepareEpisodes(engine, orm,
+					await orm.Episode.findFilter({ podcastIDs: [podcast.id] }, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }]),
+					user);
 			}
 			channel.push(pod);
 		}

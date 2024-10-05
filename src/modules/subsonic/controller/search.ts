@@ -76,6 +76,7 @@ export class SubsonicSearchApi {
 		const q = (query.query || '').replace(/\*/g, '');
 		const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount || 20, skip: query.songOffset || 0 });
 		searchResult2.song = await SubsonicHelper.prepareTracks(orm, trackList, user);
+
 		const artistFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.artist] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 		const albumFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.album] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 		const ids = (albumFolderList.map(f => f.id)).concat(artistFolderList.map(f => f.id));

@@ -286,22 +286,16 @@ export class SubsonicParameterPlaylistUpdate {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterPodcastChannel {
-	/**
-	 * The URL of the Podcast to add.
-	 */
+	@SubsonicObjField({ description: 'The URL of the Podcast to add.' })
 	url!: string;
 }
 
 @SubsonicObjParamsType()
 export class SubsonicParameterPodcastChannels {
-	/**
-	 * If specified, only return the Podcast channel with this ID.
-	 */
+	@SubsonicObjField({ nullable: true, description: 'If specified, only return the Podcast channel with this ID', isID: true })
 	id?: string;
-	/**
-	 * Whether to include Podcast episodes in the returned result.
-	 * @default true
-	 */
+
+	@SubsonicObjField({ nullable: true, description: 'Whether to include Podcast episodes in the returned result.', defaultValue: true })
 	includeEpisodes?: boolean;
 }
 
@@ -485,9 +479,7 @@ export class SubsonicParameterSearch {
 	@SubsonicObjField({ nullable: true, description: 'Search result offset. Used for paging.', min: 0, example: 10, defaultValue: 0 })
 	offset?: number;
 
-	/**
-	 * Only return matches that are newer than this. Given as milliseconds since 1970.
-	 */
+	@SubsonicObjField({ nullable: true, description: 'Only return matches that are newer than this. Given as milliseconds since 1970.', min: 0 })
 	newerThan?: number;
 }
 
@@ -520,14 +512,16 @@ export class SubsonicParameterSearch2 {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterLyrics {
-	/**
-	 * The artist name.
-	 */
+	@SubsonicObjField({ nullable: true, description: 'Search lyrics by artist.' })
 	artist?: string;
-	/**
-	 * The song title.
-	 */
+	@SubsonicObjField({ nullable: true, description: 'Search lyrics by song title.' })
 	title?: string;
+}
+
+@SubsonicObjParamsType()
+export class SubsonicParameterLyricsByID {
+	@SubsonicObjField({ description: 'The ID of the current playing song.', isID: true })
+	id!: string;
 }
 
 @SubsonicObjParamsType()

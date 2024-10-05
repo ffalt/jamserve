@@ -762,6 +762,36 @@ export class SubsonicLyrics {
 }
 
 @SubsonicResultType()
+export class SubsonicLyricsLine {
+	@SubsonicObjField()
+	value!: string;
+
+	@SubsonicObjField()
+	start?: number;
+}
+
+@SubsonicResultType()
+export class SubsonicStructuredLyrics {
+	@SubsonicObjField()
+	lang!: string;
+
+	@SubsonicObjField()
+	synced?: boolean;
+
+	@SubsonicObjField(() => [SubsonicLyricsLine])
+	line?: Array<SubsonicLyricsLine>;
+
+	@SubsonicObjField()
+	displayArtist!: string;
+
+	@SubsonicObjField()
+	displayTitle!: string;
+
+	@SubsonicObjField()
+	offset?: number;
+}
+
+@SubsonicResultType()
 export class SubsonicPodcasts {
 	@SubsonicObjField(() => [SubsonicPodcastChannel])
 	channel?: Array<SubsonicPodcastChannel>;
@@ -1293,6 +1323,18 @@ export class SubsonicResponseLyrics {
 }
 
 @SubsonicResultType()
+export class SubsonicStructuredLyricsList {
+	@SubsonicObjField(() => SubsonicStructuredLyrics)
+	structuredLyrics!: Array<SubsonicStructuredLyrics>;
+}
+
+@SubsonicResultType()
+export class SubsonicResponseLyricsList {
+	@SubsonicObjField(() => SubsonicStructuredLyricsList)
+	lyricsList!: SubsonicStructuredLyricsList;
+}
+
+@SubsonicResultType()
 export class SubsonicResponsePlaylistWithSongs {
 	@SubsonicObjField(() => SubsonicPlaylistWithSongs)
 	playlist!: SubsonicPlaylistWithSongs;
@@ -1372,4 +1414,19 @@ export class SubsonicResponseUser {
 
 @SubsonicResultType()
 export class SubsonicOKResponse {
+}
+
+@SubsonicResultType()
+export class SubsonicOpenSubsonicExt {
+	@SubsonicObjField()
+	name!: string;
+
+	@SubsonicObjField(() => [Number])
+	versions!: Array<number>;
+}
+
+@SubsonicResultType()
+export class SubsonicOpenSubsonicResponse {
+	@SubsonicObjField(() => [SubsonicOpenSubsonicExt])
+	openSubsonicExtensions!: Array<SubsonicOpenSubsonicExt>;
 }
