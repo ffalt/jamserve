@@ -132,7 +132,7 @@ export class Server {
 			{ Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
 			{ Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
 			{ Content: 'REST Documentation', URL: `${domain}/docs` },
-			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping.view` },
+			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping` },
 			{ Content: 'Subsonic REST Documentation', URL: `${domain}/docs/subsonic` },
 			{ Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
 			{ Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },

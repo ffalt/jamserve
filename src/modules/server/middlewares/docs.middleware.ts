@@ -48,12 +48,12 @@ export class DocsMiddleware {
 		api.get('/openapi-explorer.min.js', (_req, res) => {
 			res.sendFile(path.resolve('./static/api-docs/openapi-explorer.min.js'));
 		});
-		api.get('/subsonic.js', (_req, res) => {
-			const subsonic_config = `document.addEventListener('DOMContentLoaded', async (event) => {
-const explorer = await document.getElementsByTagName('openapi-explorer')[0];  
+		api.get('/subsonic.js', (req, res) => {
+			const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
+const explorer = document.getElementsByTagName('openapi-explorer')[0];  
 setTimeout(() => {
-	explorer.setAuthenticationConfiguration('UserAuth', {token: 'admin'});
-	explorer.setAuthenticationConfiguration('PasswordAuth', {token: '7eff10d58304ad29'});
+	explorer.setAuthenticationConfiguration('UserAuth', {token: '${req.user?.name || ''}'});
+	// explorer.setAuthenticationConfiguration('PasswordAuth', {token: 'dev'}); 
 	explorer.setAuthenticationConfiguration('VersionAuth', {token: '1.16.0'});
 	explorer.setAuthenticationConfiguration('ClientAuth', {token: 'Api Docs Test Client'});
 }, 1000);

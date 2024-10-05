@@ -84,11 +84,11 @@ export class Logger {
 	}
 
 	table(items: Array<any>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
-		// if (winston.level === 'info') {
-		const p = new Table({ columns });
-		p.addRows(items);
-		p.printTable();
-		// }
+		if (winston.level === 'info') {
+			const p = new Table({ columns });
+			p.addRows(items);
+			p.printTable();
+		}
 	}
 
 	access(format: string, ...params: Array<any>): void {
