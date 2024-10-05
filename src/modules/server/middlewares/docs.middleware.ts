@@ -48,6 +48,9 @@ export class DocsMiddleware {
 		api.get('/openapi-explorer.min.js', (_req, res) => {
 			res.sendFile(path.resolve('./static/api-docs/openapi-explorer.min.js'));
 		});
+		api.get('/subsonic.js', (_req, res) => {
+			res.sendFile(path.resolve('./static/api-docs/subsonic.js'));
+		});
 		return api;
 	}
 }

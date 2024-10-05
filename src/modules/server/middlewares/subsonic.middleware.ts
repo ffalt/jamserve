@@ -5,26 +5,26 @@ import { ConfigService } from '../../engine/services/config.service.js';
 import { subsonicRouter } from '../../subsonic/builder/express.js';
 import { UserRole } from '../../../types/enums.js';
 import { buildSubsonicMeta } from '../../subsonic/metadata/builder.js';
-import { SubsonicApi } from '../../subsonic/api/api.js';
 import { RestOptions } from '../../deco/express/express-method.js';
 import { getMetadataStorage } from '../../subsonic/metadata/getMetadataStorage.js';
 import { ApiResponder } from '../../subsonic/response.js';
 import { SubsonicParameterMiddleWare } from '../../subsonic/parameters.js';
-import { SubsonicLoginMiddleWare } from '../../subsonic/login.js';
+import { SubsonicCheckAuthMiddleWare, SubsonicLoginMiddleWare } from '../../subsonic/login.js';
+import { SubsonicControllers } from '../../subsonic/controllers.js';
 
 const log = logger('Subsonic');
 
 @InRequestScope
 export class SubsonicMiddleware {
-	@Inject
-	configService!: ConfigService;
-
-	api = new SubsonicApi();
+	@Inject configService!: ConfigService;
+	controllers = SubsonicControllers;
 
 	middleware(): express.Router {
+		void this.controllers.length; // include, so meta storage finds the controllers
 		const router = express.Router();
 		router.use(SubsonicParameterMiddleWare);
 		router.use(SubsonicLoginMiddleWare);
+		router.use(SubsonicCheckAuthMiddleWare);
 		buildSubsonicMeta();
 		const metadata = getMetadataStorage();
 		const options: RestOptions = {

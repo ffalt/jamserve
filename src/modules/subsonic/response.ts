@@ -2,7 +2,8 @@ import express from 'express';
 import { SubsonicParameterRequest } from './parameters.js';
 import { xml } from './xml.js';
 import { ApiBaseResponder, ApiBinaryResult } from '../deco/express/express-responder.js';
-import { SubsonicFormatter } from './api/api.base.js';
+
+import { SubsonicFormatter } from './formatter.js';
 
 export class ApiResponder extends ApiBaseResponder {
 	private send(req: express.Request, res: express.Response, data: any): void {
@@ -32,10 +33,6 @@ export class ApiResponder extends ApiBaseResponder {
 		} else {
 			this.send(req, res, SubsonicFormatter.packFail(SubsonicFormatter.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
 		}
-	}
-
-	public sendErrorMsg(req: express.Request, res: express.Response, code: number, msg: string): void {
-		this.sendError(req, res, { code, fail: msg });
 	}
 
 	public sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {

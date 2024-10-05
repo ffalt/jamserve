@@ -16,7 +16,7 @@ export class SubsonicParameterID {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterMusicFolderID {
-	@SubsonicObjField({ description: 'Only return results from the music folder with the given ID', isID: true })
+	@SubsonicObjField({ description: 'Only return results from the music folder with the given ID', isID: true, nullable: true })
 	musicFolderId?: number;
 }
 

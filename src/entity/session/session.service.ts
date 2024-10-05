@@ -158,11 +158,6 @@ export class SessionService {
 		};
 	}
 
-	async subsonicByUser(userID: string): Promise<Session | undefined> {
-		const orm = this.ormService.fork();
-		return await orm.Session.findOneFilter({ userIDs: [userID], mode: SessionMode.subsonic });
-	}
-
 	async createSubsonic(userID: string): Promise<Session> {
 		const orm = this.ormService.fork();
 		let session = (await orm.Session.findOne({ where: { user: userID, mode: SessionMode.subsonic } }));

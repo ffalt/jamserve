@@ -21,6 +21,7 @@ import { Tag } from '../../../entity/tag/tag.js';
 import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
 import { Genre } from '../../../entity/genre/genre.js';
+import { Subsonic } from '../../../entity/subsonic/subsonic.js';
 
 export const ORMEntities = [
 	Base,
@@ -43,6 +44,7 @@ export const ORMEntities = [
 	Session,
 	Settings,
 	State,
+	Subsonic,
 	Tag,
 	Track,
 	User

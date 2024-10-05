@@ -1,4 +1,3 @@
-import { SubsonicApiBase } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -6,14 +5,15 @@ import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQu
 import { SubsonicBookmarks, SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicHelper } from '../helper.js';
+import { Track } from '../../../entity/track/track.js';
 
 @SubsonicController()
-export class SubsonicBookmarkApi extends SubsonicApiBase {
+export class SubsonicBookmarkApi {
 	/**
 	 *
 	 * Since 1.9.0
-	 * http://your-server/rest/createBookmark.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/createBookmark.view', () => SubsonicOKResponse,
 		{
@@ -28,15 +28,13 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 position 	Yes 		The position (in milliseconds) within the media file.
 		 comment 	No 		A user-defined comment.
 		 */
-		const track = await this.subsonicORM.findOneOrFailByID(query.id, orm.Track);
+		const track = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Track);
 		await engine.bookmark.create(orm, track.id, user, query.position, query.comment);
 	}
 
 	/**
 	 * Returns all bookmarks for this user. A bookmark is a position within a certain media file.
 	 * Since 1.9.0
-	 * http://your-server/rest/getBookmarks.view
-	 * @return Returns a <subsonic-response> element with a nested <bookmarks> element on success.
 	 */
 	@SubsonicRoute('/getBookmarks.view', () => SubsonicResponseBookmarks,
 		{
@@ -47,15 +45,13 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	async getBookmarks(@SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseBookmarks> {
 		const bookmarklist = await orm.Bookmark.findFilter({ userIDs: [user.id] });
 		const bookmarks: SubsonicBookmarks = {};
-		bookmarks.bookmark = await this.prepareBookmarks(orm, bookmarklist, user);
+		bookmarks.bookmark = await SubsonicHelper.prepareBookmarks(orm, bookmarklist, user);
 		return { bookmarks };
 	}
 
 	/**
 	 * Deletes the bookmark for a given file.
 	 * Since 1.9.0
-	 * http://your-server/rest/deleteBookmark.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/deleteBookmark.view', () => SubsonicOKResponse,
 		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
@@ -64,7 +60,7 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
 		 */
-		const id = await this.subsonicORM.jamID(query.id);
+		const id = await orm.Subsonic.jamID(query.id);
 		if (id) {
 			await engine.bookmark.remove(orm, id, user.id);
 		}
@@ -76,8 +72,6 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * This includes the tracks in the play queue, the currently playing track, and the position within this track.
 	 * Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).
 	 * Since 1.12.0
-	 * http://your-server/rest/getPlayQueue.view
-	 * @return Returns a <subsonic-response> element with a nested <playQueue> element on success, or an empty <subsonic-response> if no play queue has been saved.
 	 */
 	@SubsonicRoute('/getPlayQueue.view', () => SubsonicResponsePlayQueue,
 		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
@@ -87,9 +81,15 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 			return {} as any;
 		}
 		const entries = await playqueue.entries.getItems();
-		const tracks = await Promise.all(entries.map(entry => entry.track.get()));
-		const childs = await this.prepareTracks(orm, tracks.filter(t => !!t), user);
-		return { playQueue: this.format.packPlayQueue(playqueue, user, childs) };
+		const tracks: Array<Track> = [];
+		for (const entry of entries) {
+			const track = await entry.track.get();
+			if (track) {
+				tracks.push(track);
+			}
+		}
+		const childs = await SubsonicHelper.prepareTracks(orm, tracks, user);
+		return { playQueue: SubsonicFormatter.packPlayQueue(playqueue, user, childs) };
 	}
 
 	/**
@@ -97,8 +97,6 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 	 * the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps
 	 * while retaining the same play queue (for instance when listening to an audio book).
 	 * Since 1.12.0
-	 * http://your-server/rest/savePlayQueue.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/savePlayQueue.view', () => SubsonicOKResponse,
 		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
@@ -111,8 +109,8 @@ export class SubsonicBookmarkApi extends SubsonicApiBase {
 		 */
 		const mediaIDs: Array<number> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
 		await engine.playQueue.set(orm, {
-			mediaIDs: await this.subsonicORM.jamIDs(mediaIDs),
-			currentID: await this.subsonicORM.mayBeJamID(query.current),
+			mediaIDs: await orm.Subsonic.jamIDs(mediaIDs),
+			currentID: await orm.Subsonic.mayBeJamID(query.current),
 			position: query.position
 		}, user, client || 'unknown');
 		return {};

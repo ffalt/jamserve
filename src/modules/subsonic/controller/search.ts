@@ -1,4 +1,3 @@
-import { SubsonicApiBase } from './api.base.js';
 import { paginate } from '../../../entity/base/base.utils.js';
 import { DBObjectType, FolderType } from '../../../types/enums.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
@@ -8,14 +7,14 @@ import { SubsonicParameterSearch, SubsonicParameterSearch2 } from '../model/subs
 import { SubsonicResponseSearchResult, SubsonicResponseSearchResult2, SubsonicResponseSearchResult3, SubsonicSearchResult, SubsonicSearchResult2, SubsonicSearchResult3 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicHelper } from '../helper.js';
 
 @SubsonicController()
-export class SubsonicSearchApi extends SubsonicApiBase {
+export class SubsonicSearchApi {
 	/**
 	 * Returns a listing of files matching the given search criteria. Supports paging through the result. Deprecated since 1.4.0, use search2 instead.
 	 * Since 1.0.0
-	 * http://your-server/rest/search.view
-	 * @return Returns a <subsonic-response> element with a nested <searchResult> element on success.
 	 */
 	@SubsonicRoute('/search.view', () => SubsonicResponseSearchResult, {
 		summary: 'Search',
@@ -47,15 +46,13 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		const searchResult: SubsonicSearchResult = { offset: query.offset || 0, totalHits: list.length };
 		list = paginate(list, { take: query.count || 20, skip: query.offset || 0 }).items;
 		const tracks = await orm.Track.findByIDs(list);
-		searchResult.match = await this.prepareTracks(orm, tracks, user);
+		searchResult.match = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		return { searchResult };
 	}
 
 	/**
 	 * Returns albums, artists and songs matching the given search criteria. Supports paging through the result.
 	 * Since 1.4.0
-	 * http://your-server/rest/search2.view
-	 * @return Returns a <subsonic-response> element with a nested <searchResult2> element on success.
 	 */
 	@SubsonicRoute('/search2.view', () => SubsonicResponseSearchResult2, {
 		summary: 'Search 2',
@@ -75,22 +72,22 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders
 		 */
 		const searchResult2: SubsonicSearchResult2 = {};
-		const rootID = query.musicFolderId ? query.musicFolderId.toString() : undefined;
-		const rootIDs = rootID ? [rootID] : undefined;
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
+		const rootIDs = rootId ? [rootId] : undefined;
 		const q = (query.query || '').replace(/\*/g, '');
 		const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount || 20, skip: query.songOffset || 0 });
-		searchResult2.song = await this.prepareTracks(orm, trackList, user);
+		searchResult2.song = await SubsonicHelper.prepareTracks(orm, trackList, user);
 		const artistFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.artist] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 		const albumFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.album] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 		const ids = (albumFolderList.map(f => f.id)).concat(artistFolderList.map(f => f.id));
-		const states = await orm.State.findMany(ids, DBObjectType.folder, user.id);
+		const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.folder, user.id);
 		searchResult2.artist = [];
 		searchResult2.album = [];
 		for (const folder of artistFolderList) {
-			searchResult2.artist.push(await this.format.packFolderArtist(folder, states.find(s => s.destID === folder.id)));
+			searchResult2.artist.push(await SubsonicFormatter.packFolderArtist(orm, folder, states[folder.id]));
 		}
 		for (const folder of albumFolderList) {
-			searchResult2.album.push(await this.format.packFolder(folder, states.find(s => s.destID === folder.id)));
+			searchResult2.album.push(await SubsonicFormatter.packFolder(orm, folder, states[folder.id]));
 		}
 		return { searchResult2 };
 	}
@@ -98,15 +95,13 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 	/**
 	 * Similar to search2, but organizes music according to ID3 tags.
 	 * Since 1.8.0
-	 * http://your-server/rest/search3.view
-	 * @return Returns a <subsonic-response> element with a nested <searchResult3> element on success.
 	 */
 	@SubsonicRoute('/search3.view', () => SubsonicResponseSearchResult3, {
 		summary: 'Search 3',
 		description: 'Similar to search2, but organizes music according to ID3 tags.',
 		tags: ['Search']
 	})
-	async search3(@SubsonicParams() query: SubsonicParameterSearch2,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseSearchResult3> {
+	async search3(@SubsonicParams() query: SubsonicParameterSearch2, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSearchResult3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 query 	Yes 		Search query.
@@ -122,19 +117,19 @@ export class SubsonicSearchApi extends SubsonicApiBase {
 		if (tracklist.length > 0) {
 			const limit = paginate(tracklist, { take: query.songCount || 20, skip: query.songOffset || 0 });
 			const tracks = await orm.Track.findByIDs(limit.items);
-			searchResult3.song = await this.prepareTracks(orm, tracks, user);
+			searchResult3.song = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		}
 		const albumlist = await orm.Album.findIDsFilter({ query: query.query });
 		if (albumlist.length > 0) {
 			const limit = paginate(albumlist, { take: query.albumCount || 20, skip: query.albumOffset || 0 });
 			const albums = await orm.Album.findByIDs(limit.items);
-			searchResult3.album = await this.prepareAlbums(orm, albums, user);
+			searchResult3.album = await SubsonicHelper.prepareAlbums(orm, albums, user);
 		}
 		const artistlist = await orm.Artist.findIDsFilter({ query: query.query });
 		if (artistlist.length > 0) {
 			const limit = paginate(artistlist, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 			const artists = await orm.Artist.findByIDs(limit.items);
-			searchResult3.artist = await this.prepareArtists(orm, artists, user);
+			searchResult3.artist = await SubsonicHelper.prepareArtists(orm, artists, user);
 		}
 		return { searchResult3 };
 	}

@@ -11,8 +11,28 @@ import { Orm } from '../modules/engine/services/orm.service.js';
 import { Container, Snapshot } from 'typescript-ioc';
 import { PodcastStatus } from '../types/enums.js';
 import nock from 'nock';
+import { hashMD5 } from '../utils/md5.js';
+import { User } from '../entity/user/user.js';
 
 initTest();
+
+function salt(length: number): string {
+	let s = '';
+	const randomchar = (): string => {
+		const n = Math.floor(Math.random() * 62);
+		if (n < 10) {
+			return n.toString(); // 1-10
+		}
+		if (n < 36) {
+			return String.fromCharCode(n + 55); // A-Z
+		}
+		return String.fromCharCode(n + 61); // a-z
+	};
+	while (s.length < length) {
+		s += randomchar();
+	}
+	return s;
+}
 
 describe('Services', () => {
 	for (const db of DBConfigs) {
@@ -21,6 +41,7 @@ describe('Services', () => {
 			let orm: Orm;
 			let dir: tmp.DirResult;
 			let snapshot: Snapshot;
+			let user: User;
 
 			beforeEach(async () => {
 				nock.cleanAll();
@@ -35,6 +56,7 @@ describe('Services', () => {
 				await engine.start();
 				await waitEngineStart(engine);
 				orm = engine.orm.fork();
+				user = await orm.User.oneOrFail({ where: { name: 'admin' } });
 			});
 
 			afterEach(async () => {
@@ -42,6 +64,24 @@ describe('Services', () => {
 				await fse.remove(dir.name);
 				// dir.removeCallback();
 				snapshot.restore();
+			});
+
+			describe('userService', () => {
+				it('should auth the user by token', async () => {
+					const session = await engine.session.createSubsonic(user.id);
+					const s = salt(6);
+					const token = hashMD5(session.jwth + s);
+					const result = await engine.user.authSubsonicToken(orm, user.name, token, s);
+					expect(result).toBeDefined();
+					expect(result.id).toEqual(user.id);
+				});
+				it('should not auth the user with the wrong token', async () => {
+					await expect(engine.user.authSubsonicToken(orm, user.name, 'wrong', 'wrong')).rejects.toMatchObject({ code: 40 });
+					await expect(engine.user.authSubsonicToken(orm, ' ', 'wrong', 'wrong')).rejects.toMatchObject({ code: 10 });
+					await expect(engine.user.authSubsonicToken(orm, user.name, '', 'wrong')).rejects.toMatchObject({ code: 10 });
+					await expect(engine.user.authSubsonicToken(orm, user.name, 'wrong', '')).rejects.toMatchObject({ code: 40 });
+					await expect(engine.user.authSubsonicToken(orm, 'non-existing', 'wrong', 'wrong')).rejects.toMatchObject({ code: 40 });
+				});
 			});
 
 			describe('podcastService', () => {

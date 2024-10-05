@@ -1,5 +1,5 @@
 import { EntityMetadata } from '../definitions/entity-metadata.js';
-import seq, { Sequelize, DataType, ModelAttributeColumnOptions, ModelOptions } from 'sequelize';
+import seq, { Sequelize, DataType, ModelAttributeColumnOptions, ModelOptions, DataTypes } from 'sequelize';
 import { PropertyMetadata } from '../definitions/property-metadata.js';
 import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '../definitions/orm-types.js';
 import { ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions } from '../definitions/types.js';
@@ -197,16 +197,15 @@ export class ModelBuilder {
 
 	private async buildEntityModel(entity: EntityMetadata): Promise<void> {
 		const attributes: any = {};
-		const options: ModelOptions<any> = {
-			freezeTableName: true
-		};
 		for (const field of entity.fields) {
 			const attribute = await this.buildColumnAttributeModel(field, entity);
 			if (attribute) {
 				attributes[field.name] = attribute;
 			}
 		}
-		const model = this.sequelize.define<any>(entity.name, attributes, options as any);
+		const model = this.sequelize.define<any>(entity.name, attributes, {
+			freezeTableName: true
+		});
 		this.modelMap.set(entity.name, model);
 	}
 

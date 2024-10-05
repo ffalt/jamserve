@@ -56,6 +56,4 @@ export abstract class ApiBaseResponder {
 	abstract sendOK(req: express.Request, res: express.Response): void;
 
 	abstract sendError(req: express.Request, res: express.Response, err: string | Error | ApiError): void;
-
-	abstract sendErrorMsg(req: express.Request, res: express.Response, code: number, msg: string): void;
 }

@@ -21,6 +21,7 @@ import { SettingsRepository } from '../../../entity/settings/settings.repository
 import { MetaDataRepository } from '../../../entity/metadata/metadata.repository.js';
 import { ORMConfigRepositories } from '../../orm/definitions/config.js';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
+import { SubsonicRepository } from '../../../entity/subsonic/subsonic.repository.js';
 
 export const ORMRepositories: ORMConfigRepositories = {
 	Album: AlbumRepository,
@@ -44,5 +45,6 @@ export const ORMRepositories: ORMConfigRepositories = {
 	PlayQueueEntry: PlayQueueEntryRepository,
 	Settings: SettingsRepository,
 	MetaData: MetaDataRepository,
-	Genre: GenreRepository
+	Genre: GenreRepository,
+	Subsonic: SubsonicRepository
 };

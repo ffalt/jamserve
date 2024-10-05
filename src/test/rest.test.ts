@@ -81,7 +81,7 @@ describe('REST', () => {
 					tokens[role] = res2.body.jwt;
 				}
 
-				openapi = JSON.parse(server.docs.getOpenApiSchema(false));
+				openapi = JSON.parse(server.docs.getOpenApiSchema());
 				if ((jestOpenAPI as any).default) {
 					(jestOpenAPI as any).default(openapi);
 				} else {

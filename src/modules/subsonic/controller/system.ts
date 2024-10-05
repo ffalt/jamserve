@@ -1,5 +1,5 @@
 import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
-import { SubsonicApiBase } from './api.base.js';
+
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -8,12 +8,10 @@ import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 
 @SubsonicController()
-export class SubsonicSystemApi extends SubsonicApiBase {
+export class SubsonicSystemApi {
 	/**
 	 * Get details about the software license. Takes no extra parameters.
 	 * Since 1.0.0
-	 * http://your-server/rest/getLicense.view
-	 * @return  Returns a <subsonic-response> element with a nested <license> element on success.
 	 */
 	@SubsonicRoute('/getLicense.view', () => SubsonicResponseLicense, {
 		summary: 'Get License',
@@ -27,7 +25,6 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	/**
 	 * Used to test connectivity with the server. Takes no extra parameters.
 	 * Since 1.0.0
-	 * http://your-server/rest/ping.view
 	 */
 	@SubsonicRoute('/ping.view', () => SubsonicOKResponse, {
 		summary: 'Ping',
@@ -41,8 +38,6 @@ export class SubsonicSystemApi extends SubsonicApiBase {
 	/**
 	 * Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox (see Settings > Users > user is allowed to play files in jukebox mode).
 	 * Since 1.2.0
-	 * http://your-server/rest/jukeboxControl.view
-	 * @return Returns a <jukeboxStatus> element on success, unless the get action is used, in which case a nested <jukeboxPlaylist> element is returned.
 	 */
 	@SubsonicRoute('/jukeboxControl.view', () => SubsonicResponseJukeboxStatus, {
 		summary: 'Jukebox Control',

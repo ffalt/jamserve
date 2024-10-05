@@ -27,10 +27,10 @@ import { SubsonicParameterRequest } from './parameters.js';
 import { ApiResponder } from './response.js';
 import { EngineService } from '../engine/services/engine.service.js';
 import { Orm } from '../engine/services/orm.service.js';
-import { SubsonicFormatter } from './api/api.base.js';
-import { hashMD5 } from '../../utils/md5.js';
 import semver from 'semver';
 import { SUBSONIC_VERSION } from './version.js';
+import { SubsonicFormatter } from './formatter.js';
+import { SubsonicError } from './model/subsonic-rest-data.js';
 
 export function hexEncode(n: string): string {
 	const i: Array<string> = [];
@@ -63,48 +63,8 @@ export interface SubsonicRequest extends SubsonicParameterRequest {
 	orm: Orm;
 }
 
-function sendError(req: SubsonicParameterRequest, res: express.Response, code: number, msg: string) {
-	(new ApiResponder()).sendErrorMsg(req, res, code, msg);
-}
-
-async function authSubsonicPassword(req: SubsonicParameterRequest, name: string, pass: string): Promise<User> {
-	if ((!pass) || (!pass.length)) {
-		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
-	}
-	const user = await req.orm.User.findOne({ where: { name } });
-	if (!user) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	const session = await req.engine.session.subsonicByUser(user.id);
-	if (!session) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	if (pass !== session.jwth) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	return user;
-}
-
-async function authSubsonicToken(req: SubsonicParameterRequest, name: string, token: string, salt: string): Promise<User> {
-	if (!name || name.trim().length === 0) {
-		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
-	}
-	if ((!token) || (!token.length)) {
-		return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
-	}
-	const user = await req.orm.User.findOne({ where: { name } });
-	if (!user) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	const session = await req.engine.session.subsonicByUser(user.id);
-	if (!session) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	const t = hashMD5(session.jwth + salt);
-	if (token !== t) {
-		return Promise.reject({ code: 40, fail: 'Wrong username or password.' });
-	}
-	return user;
+function sendError(req: SubsonicParameterRequest, res: express.Response, error: SubsonicError) {
+	(new ApiResponder()).sendError(req, res, error);
 }
 
 async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
@@ -116,12 +76,12 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
-		return authSubsonicPassword(req, req.parameters.username, pass);
+		return req.engine.user.authSubsonicPassword(req.orm, req.parameters.username, pass);
 	}
 	if (req.parameters.token && req.parameters.salt) {
-		return authSubsonicToken(req, req.parameters.username, req.parameters.token, req.parameters.salt);
+		return req.engine.user.authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
 	}
-	return Promise.reject({ code: 10, fail: 'Required parameter is missing.' });
+	return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
 }
 
 export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
@@ -130,24 +90,24 @@ export function SubsonicLoginMiddleWare(req: express.Request, res: express.Respo
 	}
 	const sreq = req as SubsonicRequest;
 	if (!sreq.parameters || !sreq.parameters.client) {
-		sendError(sreq, res, 10, 'Required parameter is missing.');
+		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
 		return;
 	}
 	const version = semver.coerce(sreq.parameters.version);
 	if (!version) {
-		sendError(sreq, res, 10, 'Required parameter is missing.');
+		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
 		return;
 	}
 	if (!semver.valid(version)) {
-		sendError(sreq, res, 10, 'Required parameter version is invalid.');
+		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_INVALID);
 		return;
 	}
 	if (semver.gt(version, SUBSONIC_VERSION)) {
-		sendError(sreq, res, 30, 'Incompatible Subsonic REST protocol version. Server must upgrade.');
+		sendError(sreq, res, SubsonicFormatter.ERRORS.SERVER_OLD);
 		return;
 	}
 	if (semver.lt(version, '1.0.0')) {
-		sendError(sreq, res, 20, 'Incompatible Subsonic REST protocol version. Client must upgrade.');
+		sendError(sreq, res, SubsonicFormatter.ERRORS.CLIENT_OLD);
 		return;
 	}
 	sreq.client = sreq.parameters.client;
@@ -163,9 +123,9 @@ export function SubsonicLoginMiddleWare(req: express.Request, res: express.Respo
 		});
 }
 
-export function CheckAuthMiddleWare(req: SubsonicRequest, res: express.Response, next: express.NextFunction): void {
+export function SubsonicCheckAuthMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
 	if (req.user) {
 		return next();
 	}
-	return (new ApiResponder()).sendError(req, res, { fail: SubsonicFormatter.FAIL.UNAUTH });
+	return (new ApiResponder()).sendError(req, res, SubsonicFormatter.ERRORS.UNAUTH);
 }

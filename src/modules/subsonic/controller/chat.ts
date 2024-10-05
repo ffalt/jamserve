@@ -1,4 +1,4 @@
-import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
+
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -6,14 +6,13 @@ import { SubsonicParameterChatMessage, SubsonicParameterChatMessages } from '../
 import { SubsonicOKResponse, SubsonicResponseChatMessages } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
-export class SubsonicChatApi extends SubsonicApiBase {
+export class SubsonicChatApi {
 	/**
 	 * Adds a message to the chat log.
 	 * Since 1.2.0
-	 * http://your-server/rest/addChatMessage.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/addChatMessage.view', () => SubsonicOKResponse, {
 		summary: 'Add Chat Messages',
@@ -32,8 +31,6 @@ export class SubsonicChatApi extends SubsonicApiBase {
 	/**
 	 * Returns the current visible (non-expired) chat messages.
 	 * Since 1.2.0
-	 * http://your-server/rest/getChatMessages.view
-	 * @return  Returns a <subsonic-response> element with a nested <chatMessages> element on success.
 	 */
 	@SubsonicRoute('/getChatMessages.view', () => SubsonicResponseChatMessages, {
 		summary: 'Get Chat Messages',

@@ -94,7 +94,7 @@ export class ExpressMethod {
 			responder.sendData(context.req, context.res, result);
 		} catch (e: any) {
 			// console.error(e);
-			log.error(e);
+			log.error(e.fail || e.message);
 			responder.sendError(context.req, context.res, e);
 		}
 	}

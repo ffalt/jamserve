@@ -104,7 +104,8 @@ export enum DBObjectType {
 	session = 'session',
 	tag = 'tag',
 	series = 'series',
-	genre = 'genre'
+	genre = 'genre',
+	subsonic = 'subsonic'
 }
 
 export enum AudioFormatType {

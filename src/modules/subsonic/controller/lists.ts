@@ -1,7 +1,7 @@
 import { Album } from '../../../entity/album/album.js';
 import { Folder } from '../../../entity/folder/folder.js';
 import { randomItems } from '../../../utils/random.js';
-import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
+
 import { AlbumOrderFields, DBObjectType, FolderOrderFields, FolderType, FolderTypesAlbum, ListType } from '../../../types/enums.js';
 import { TrackFilterArgs } from '../../../entity/track/track.args.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
@@ -19,14 +19,14 @@ import {
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicHelper } from '../helper.js';
 
 @SubsonicController()
-export class SubsonicListsApi extends SubsonicApiBase {
+export class SubsonicListsApi {
 	/**
 	 * Returns what is currently being played by all users. Takes no extra parameters.
 	 * Since 1.0.0
-	 * http://your-server/rest/getNowPlaying.view
-	 * @return  Returns a <subsonic-response> element with a nested <nowPlaying> element on success.
 	 */
 	@SubsonicRoute('/getNowPlaying.view', () => SubsonicResponseNowPlaying, {
 		summary: 'Now Playing',
@@ -39,7 +39,7 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		for (const entry of list) {
 			const state = await orm.State.findOrCreate(entry.episode?.id || entry.track?.id || '',
 				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
-			result.push(await this.format.packNowPlaying(entry, state));
+			result.push(await SubsonicFormatter.packNowPlaying(orm, entry, state));
 		}
 		return { nowPlaying: { entry: result } };
 	}
@@ -47,8 +47,6 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	/**
 	 * Returns random songs matching the given criteria.
 	 * Since 1.2.0
-	 * http://your-server/rest/getRandomSongs.view
-	 * @return Returns a <subsonic-response> element with a nested <randomSongs> element on success.
 	 */
 	@SubsonicRoute('/getRandomSongs.view', () => SubsonicResponseRandomSongs, {
 		summary: 'Random Songs',
@@ -65,18 +63,19 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		 musicFolderId 	No 		Only return songs in the music folder with the given ID. See getMusicFolders.
 		 */
 		const amount = Math.min(query.size || 10, 500);
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
 		const filter: TrackFilterArgs = {
 			genres: query.genre ? [query.genre] : undefined,
 			fromYear: query.fromYear,
 			toYear: query.toYear,
-			rootIDs: query.musicFolderId ? [query.musicFolderId.toString()] : undefined
+			rootIDs: rootId ? [rootId] : undefined
 		};
 		const randomSongs: SubsonicSongs = {};
 		const trackids = await orm.Track.findIDsFilter(filter);
 		if (trackids.length > 0) {
 			const limit: Array<string> = randomItems(trackids, amount);
 			const tracks = await orm.Track.findByIDs(limit);
-			randomSongs.song = await this.prepareTracks(orm, tracks, user);
+			randomSongs.song = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		}
 		return { randomSongs };
 	}
@@ -84,8 +83,6 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	/**
 	 * Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.
 	 * Since 1.2.0
-	 * http://your-server/rest/getAlbumList.view
-	 * @return  Returns a <subsonic-response> element with a nested <albumList> element on success.
 	 */
 	@SubsonicRoute('/getAlbumList.view', () => SubsonicResponseAlbumList, {
 		summary: 'Album List',
@@ -198,17 +195,15 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				);
 				break;
 			default:
-				return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER, text: 'Unknown Album List Type' });
+				return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
 		}
-		const result = await this.prepareFolders(orm, folders, user);
+		const result = await SubsonicHelper.prepareFolders(orm, folders, user);
 		return { albumList: { album: result } };
 	}
 
 	/**
 	 * Similar to getAlbumList, but organizes music according to ID3 tags.
 	 * Since 1.8.0
-	 * http://your-server/rest/getAlbumList2.view
-	 * @return Returns a <subsonic-response> element with a nested <albumList2> element on success.
 	 */
 	@SubsonicRoute('/getAlbumList2.view', () => SubsonicResponseAlbumList2, {
 		summary: 'Album List 2',
@@ -228,7 +223,8 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		 */
 		const take = Math.min(query.size || 20, 500);
 		const skip = query.offset || 0;
-		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
+		const rootIDs = rootId ? [rootId] : undefined;
 		let albums: Array<Album> = [];
 		switch (query.type) {
 			case 'random':
@@ -317,17 +313,15 @@ export class SubsonicListsApi extends SubsonicApiBase {
 				);
 				break;
 			default:
-				return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER, text: 'Unknown Album List Type' });
+				return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
 		}
-		const result = await this.prepareAlbums(orm, albums, user);
+		const result = await SubsonicHelper.prepareAlbums(orm, albums, user);
 		return { albumList2: { album: result } };
 	}
 
 	/**
 	 * Returns songs in a given genre.
 	 * Since 1.9.0
-	 * http://your-server/rest/getSongsByGenre.view
-	 * @return Returns a <subsonic-response> element with a nested <songsByGenre> element on success.
 	 */
 	@SubsonicRoute('/getSongsByGenre.view', () => SubsonicResponseSongsByGenre, {
 		summary: 'Songs By Genre',
@@ -344,43 +338,43 @@ export class SubsonicListsApi extends SubsonicApiBase {
 		 */
 		const take = query.count || 10;
 		const skip = query.offset || 0;
-		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
+		const rootIDs = rootId ? [rootId] : undefined;
 		const genres = query.genre ? [query.genre] : undefined;
 		const tracks = await orm.Track.findFilter({ rootIDs, genres }, undefined, { skip, take }, user);
 		const songsByGenre: SubsonicSongs = {};
-		songsByGenre.song = await this.prepareTracks(orm, tracks, user);
+		songsByGenre.song = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		return { songsByGenre };
 	}
 
 	/**
 	 * Returns starred songs, albums and artists.
 	 * Since 1.8.0
-	 * http://your-server/rest/getStarred.view
-	 * @return Returns a <subsonic-response> element with a nested <starred> element on success.
 	 */
 	@SubsonicRoute('/getStarred.view', () => SubsonicResponseStarred, {
 		summary: 'Starred',
 		description: 'Returns starred songs, albums and artists.',
 		tags: ['Lists']
 	})
-	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseStarred> {
+	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseStarred> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
 		 */
 		const starred: SubsonicStarred = {};
-		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
+		const rootIDs = rootId ? [rootId] : undefined;
 		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
-			starred.song = await this.prepareTracks(orm, tracks.items, user);
+			starred.song = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
 		}
 		const artists = await orm.Folder.findListFilter(ListType.faved, undefined, { folderTypes: [FolderType.artist], rootIDs }, undefined, undefined, user);
 		if (artists.items.length > 0) {
-			starred.artist = await this.prepareFolderArtists(orm, artists.items, user);
+			starred.artist = await SubsonicHelper.prepareFolderArtists(orm, artists.items, user);
 		}
 		const albums = await orm.Folder.findListFilter(ListType.faved, undefined, { folderTypes: FolderTypesAlbum, rootIDs }, undefined, undefined, user);
 		if (albums.items.length > 0) {
-			starred.album = await this.prepareFolders(orm, albums.items, user);
+			starred.album = await SubsonicHelper.prepareFolders(orm, albums.items, user);
 		}
 		return { starred };
 	}
@@ -388,32 +382,31 @@ export class SubsonicListsApi extends SubsonicApiBase {
 	/**
 	 * Similar to getStarred, but organizes music according to ID3 tags.
 	 * Since 1.8.0
-	 * http://your-server/rest/getStarred2.view
-	 * @return Returns a <subsonic-response> element with a nested <starred2> element on success.
 	 */
 	@SubsonicRoute('/getStarred2.view', () => SubsonicResponseStarred2, {
 		summary: 'Starred 2',
 		description: 'Similar to getStarred, but organizes music according to ID3 tags.',
 		tags: ['Lists']
 	})
-	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID,@SubsonicCtx()  { orm, user }: Context): Promise<SubsonicResponseStarred2> {
+	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseStarred2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders
 		 */
 		const starred2: SubsonicStarred2 = {};
-		const rootIDs = query.musicFolderId ? [query.musicFolderId.toString()] : undefined;
+		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
+		const rootIDs = rootId ? [rootId] : undefined;
 		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
-			starred2.song = await this.prepareTracks(orm, tracks.items, user);
+			starred2.song = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
 		}
 		const artists = await orm.Artist.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (artists.items.length > 0) {
-			starred2.artist = await this.prepareArtists(orm, artists.items, user);
+			starred2.artist = await SubsonicHelper.prepareArtists(orm, artists.items, user);
 		}
 		const albums = await orm.Album.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (albums.items.length > 0) {
-			starred2.album = await this.prepareAlbums(orm, albums.items, user);
+			starred2.album = await SubsonicHelper.prepareAlbums(orm, albums.items, user);
 		}
 		return { starred2 };
 	}

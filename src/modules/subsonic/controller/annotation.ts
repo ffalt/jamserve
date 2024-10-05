@@ -1,4 +1,3 @@
-import { SubsonicApiBase, SubsonicFormatter } from './api.base.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
@@ -6,14 +5,14 @@ import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterStat
 import { SubsonicOKResponse } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicHelper } from '../helper.js';
 
 @SubsonicController()
-export class SubsonicAnnotationApi extends SubsonicApiBase {
+export class SubsonicAnnotationApi {
 	/**
 	 * Attaches a star to a song, album or artist.
 	 * Since 1.8.0
-	 * http://your-server/rest/star.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/star.view', () => SubsonicOKResponse, {
 		summary: 'Star',
@@ -27,7 +26,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 		 albumId 	No 		The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 artistId 	No 		The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 */
-		const ids = await this.collectStateChangeIds(query);
+		const ids = await SubsonicHelper.collectStateChangeIds(orm, query);
 		for (const id of ids) {
 			await engine.state.fav(orm, id, false, user);
 		}
@@ -37,8 +36,6 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	/**
 	 * Removes the star from a song, album or artist.
 	 * Since 1.8.0
-	 * http://your-server/rest/unstar.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/unstar.view', () => SubsonicOKResponse, { summary: 'Unstar', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] })
 	async unstar(@SubsonicParams() query: SubsonicParameterState, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
@@ -48,7 +45,7 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 		 albumId 	No 		The ID of an album to unstar. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 artistId 	No 		The ID of an artist to unstar. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 */
-		const ids = await this.collectStateChangeIds(query);
+		const ids = await SubsonicHelper.collectStateChangeIds(orm, query);
 		for (const id of ids) {
 			await engine.state.fav(orm, id, true, user);
 		}
@@ -58,8 +55,6 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	/**
 	 * Sets the rating for a music file.
 	 * Since 1.6.0
-	 * http://your-server/rest/setRating.view
-	 * @return Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/setRating.view', () => SubsonicOKResponse, { summary: 'Rate', description: 'Sets the rating for a music file.', tags: ['Annotation'] })
 	async setRating(@SubsonicParams() query: SubsonicParameterRate, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
@@ -69,9 +64,9 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 		 rating 	Yes 		The rating between 1 and 5 (inclusive), or 0 to remove the rating.
 		 */
 		if ((query.rating < 0) || (query.rating > 5)) {
-			return Promise.reject({ fail: SubsonicFormatter.FAIL.PARAMETER });
+			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
 		}
-		await engine.state.rate(orm, await this.subsonicORM.jamIDOrFail(query.id), query.rating, user);
+		await engine.state.rate(orm, await orm.Subsonic.jamIDOrFail(query.id), query.rating, user);
 		return {};
 	}
 
@@ -82,8 +77,6 @@ export class SubsonicAnnotationApi extends SubsonicApiBase {
 	 * Makes the media files appear in the "Now playing" page in the web app, and appear in the list of songs returned by getNowPlaying (Since 1.11.0)
 	 * Since 1.8.0 you may specify multiple id (and optionally time) parameters to scrobble multiple files.
 	 * Since 1.5.0
-	 * http://your-server/rest/scrobble.view
-	 * @return  Returns an empty <subsonic-response> element on success.
 	 */
 	@SubsonicRoute('/scrobble.view', () => SubsonicOKResponse, { summary: 'Scrobble', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] })
 	async scrobble(@SubsonicParams() _query: SubsonicParameterScrobble, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
