@@ -30,7 +30,7 @@ export class SubsonicMediaRetrievalApi {
 	 * Streams a given media file.
 	 * Since 1.0.0
 	 */
-	@SubsonicRoute('/stream.view', {
+	@SubsonicRoute('/stream', {
 		summary: 'Stream',
 		description: 'Streams a given media file.',
 		tags: ['Media Retrieval'],
@@ -72,7 +72,7 @@ export class SubsonicMediaRetrievalApi {
 	 * Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
 	 * Since 1.0.0
 	 */
-	@SubsonicRoute('/download.view', {
+	@SubsonicRoute('/download', {
 		summary: 'Download',
 		description: 'Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.',
 		tags: ['Media Retrieval'],
@@ -98,7 +98,7 @@ export class SubsonicMediaRetrievalApi {
 	 * Searches for and returns lyrics for a given song.
 	 * Since 1.2.0
 	 */
-	@SubsonicRoute('/getLyrics.view', () => SubsonicResponseLyrics, {
+	@SubsonicRoute('/getLyrics', () => SubsonicResponseLyrics, {
 		summary: 'Lyrics',
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
@@ -110,20 +110,20 @@ export class SubsonicMediaRetrievalApi {
 		 title 	No 		The song title.
 		 */
 		if (!query.artist || !query.title) {
-			return { lyrics: { content: '' } };
+			return { lyrics: { value: '' } };
 		}
 		const lyrics = await engine.metadata.lyrics(orm, query.artist, query.title);
 		if (!lyrics || !lyrics.lyrics) {
-			return { lyrics: { content: '' } };
+			return { lyrics: { value: '' } };
 		}
-		return { lyrics: { artist: query.artist, title: query.title, content: lyrics.lyrics.replace(/\r\n/g, '\n') } };
+		return { lyrics: { artist: query.artist, title: query.title, value: lyrics.lyrics.replace(/\r\n/g, '\n') } };
 	}
 
 	/**
 	 * Returns a cover art image.
 	 * Since 1.0.0
 	 */
-	@SubsonicRoute('/getCoverArt.view', {
+	@SubsonicRoute('/getCoverArt', {
 		summary: 'Cover Art',
 		description: 'Returns a cover art image.',
 		tags: ['Media Retrieval'],
@@ -146,7 +146,7 @@ export class SubsonicMediaRetrievalApi {
 	 * Returns the avatar (personal image) for a user.
 	 * Since 1.8.0
 	 */
-	@SubsonicRoute('/getAvatar.view', {
+	@SubsonicRoute('/getAvatar', {
 		summary: 'Avatar',
 		description: 'Returns the avatar (personal image) for a user.',
 		tags: ['Media Retrieval'],
@@ -169,7 +169,7 @@ export class SubsonicMediaRetrievalApi {
 	 * Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.
 	 * Since 1.14.0
 	 */
-	@SubsonicRoute('/getCaptions.view', {
+	@SubsonicRoute('/getCaptions', {
 		summary: 'Captions',
 		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
 		tags: ['Media Retrieval']

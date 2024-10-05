@@ -14,7 +14,7 @@ export class SubsonicInternetRadioApi {
 	 * Returns all internet radio stations. Takes no extra parameters.
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/getInternetRadioStations.view', () => SubsonicResponseInternetRadioStations, {
+	@SubsonicRoute('/getInternetRadioStations', () => SubsonicResponseInternetRadioStations, {
 		summary: 'Get Radios',
 		description: 'Returns all internet radio stations.',
 		tags: ['Radio']
@@ -32,7 +32,7 @@ export class SubsonicInternetRadioApi {
 	 * Adds a new internet radio station. Only users with admin privileges are allowed to call this method.
 	 * Since 1.16.0
 	 */
-	@SubsonicRoute('/createInternetRadioStation.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/createInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Create Radios',
 		description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
@@ -53,7 +53,7 @@ export class SubsonicInternetRadioApi {
 	 * Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.
 	 * Since 1.16.0
 	 */
-	@SubsonicRoute('/updateInternetRadioStation.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/updateInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Update Radios',
 		description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
@@ -78,7 +78,7 @@ export class SubsonicInternetRadioApi {
 	 * Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.
 	 * Since 1.16.0
 	 */
-	@SubsonicRoute('/deleteInternetRadioStation.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deleteInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Delete Radios',
 		description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']

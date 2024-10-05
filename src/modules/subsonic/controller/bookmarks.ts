@@ -15,7 +15,7 @@ export class SubsonicBookmarkApi {
 	 *
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/createBookmark.view', () => SubsonicOKResponse,
+	@SubsonicRoute('/createBookmark', () => SubsonicOKResponse,
 		{
 			summary: 'Create Bookmarks',
 			description: 'Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.',
@@ -36,7 +36,7 @@ export class SubsonicBookmarkApi {
 	 * Returns all bookmarks for this user. A bookmark is a position within a certain media file.
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/getBookmarks.view', () => SubsonicResponseBookmarks,
+	@SubsonicRoute('/getBookmarks', () => SubsonicResponseBookmarks,
 		{
 			summary: 'Get Bookmarks',
 			description: 'Returns all bookmarks for this user. A bookmark is a position within a certain media file.',
@@ -53,7 +53,7 @@ export class SubsonicBookmarkApi {
 	 * Deletes the bookmark for a given file.
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/deleteBookmark.view', () => SubsonicOKResponse,
+	@SubsonicRoute('/deleteBookmark', () => SubsonicOKResponse,
 		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
 	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
@@ -73,7 +73,7 @@ export class SubsonicBookmarkApi {
 	 * Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).
 	 * Since 1.12.0
 	 */
-	@SubsonicRoute('/getPlayQueue.view', () => SubsonicResponsePlayQueue,
+	@SubsonicRoute('/getPlayQueue', () => SubsonicResponsePlayQueue,
 		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async getPlayQueue(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
 		const playqueue = await engine.playQueue.get(orm, user);
@@ -98,7 +98,7 @@ export class SubsonicBookmarkApi {
 	 * while retaining the same play queue (for instance when listening to an audio book).
 	 * Since 1.12.0
 	 */
-	@SubsonicRoute('/savePlayQueue.view', () => SubsonicOKResponse,
+	@SubsonicRoute('/savePlayQueue', () => SubsonicOKResponse,
 		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, @SubsonicCtx() { engine, orm, user, client }: Context): Promise<SubsonicOKResponse> {
 		/*

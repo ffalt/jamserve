@@ -16,7 +16,7 @@ export function subsonicRouter(router: express.Router, metadata: MetadataStorage
 		});
 		const method = new ExpressMethod();
 		for (const request of all) {
-			routeInfos.push(method.ALL(request, ctrl, router, options, metadata));
+			routeInfos.push(method.SUBSONIC(request, ctrl, router, options, metadata));
 		}
 	}
 	return routeInfos.sort((a, b) => a.endpoint.localeCompare(b.endpoint));

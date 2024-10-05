@@ -95,8 +95,8 @@ export interface CustomPathParameters {
 
 export interface CustomPathParameterAliasRouteOptions {
 	route: string;
-	name: string;
-	hideParameters: string[];
+	name?: string;
+	hideParameters?: string[];
 }
 
 export interface CustomPathParameterOptions {

@@ -14,7 +14,7 @@ export class SubsonicLibraryApi {
 	 * Returns the current status for media library scanning. Takes no extra parameters.
 	 * Since 1.15.0
 	 */
-	@SubsonicRoute('/getScanStatus.view', () => SubsonicResponseScanStatus, {
+	@SubsonicRoute('/getScanStatus', () => SubsonicResponseScanStatus, {
 		summary: 'Scan Status',
 		description: 'Returns the current status for media library scanning.',
 		tags: ['Admin']
@@ -27,7 +27,7 @@ export class SubsonicLibraryApi {
 	 * Initiates a rescan of the media libraries. Takes no extra parameters.
 	 * Since 1.15.0
 	 */
-	@SubsonicRoute('/startScan.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/startScan', () => SubsonicOKResponse, {
 		summary: 'Start Status',
 		description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',
 		tags: ['Admin']

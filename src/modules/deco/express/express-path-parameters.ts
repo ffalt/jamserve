@@ -46,7 +46,7 @@ export function processCustomPathParameters(customPathParameters: CustomPathPara
 	const route = '/' + customPathParameters.groups.filter((g, index) => r[index + 1]).map(g => `${g.prefix || ''}{${g.name}}`).join('');
 	const alias = (method.aliasRoutes || []).find(a => a.route === route);
 	for (const group of customPathParameters.groups) {
-		if (!alias || !alias.hideParameters.includes(group.name)) {
+		if (!alias || !(alias.hideParameters || []).includes(group.name)) {
 			result[group.name] = validateCustomPathParameterValue(r[index], group, options);
 		}
 		index++;

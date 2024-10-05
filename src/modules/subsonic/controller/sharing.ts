@@ -14,7 +14,7 @@ export class SubsonicSharingApi {
 	 * Returns information about shared media this user is allowed to manage. Takes no extra parameters.
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/getShares.view', () => SubsonicResponseShares, {
+	@SubsonicRoute('/getShares', () => SubsonicResponseShares, {
 		summary: 'Get Shares',
 		description: 'Returns information about shared media this user is allowed to manage.',
 		tags: ['Sharing']
@@ -28,7 +28,7 @@ export class SubsonicSharingApi {
 	 * The URL is short and suitable for posting on Facebook, Twitter etc. Note: The user must be authorized to share (see Settings > Users > user is allowed to share files with anyone).
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/createShare.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/createShare', () => SubsonicOKResponse, {
 		summary: 'Create Share',
 		description: 'Creates a public URL that can be used by anyone to stream music or video from the Subsonic server.',
 		tags: ['Sharing']
@@ -47,7 +47,7 @@ export class SubsonicSharingApi {
 	 * Updates the description and/or expiration date for an existing share.
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/updateShare.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/updateShare', () => SubsonicOKResponse, {
 		summary: 'Update Share',
 		description: 'Updates the description and/or expiration date for an existing share.',
 		tags: ['Sharing']
@@ -66,7 +66,7 @@ export class SubsonicSharingApi {
 	 * Deletes an existing share.
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/deleteShare.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deleteShare', () => SubsonicOKResponse, {
 		summary: 'Delete Share',
 		description: 'Deletes an existing share.',
 		tags: ['Sharing']

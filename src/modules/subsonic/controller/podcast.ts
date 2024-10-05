@@ -22,7 +22,7 @@ export class SubsonicPodcastApi {
 	 * A typical use case for this method would be to first retrieve all channels without episodes, and then retrieve all episodes for the single channel the user selects.
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/getPodcasts.view', () => SubsonicResponsePodcasts, {
+	@SubsonicRoute('/getPodcasts', () => SubsonicResponsePodcasts, {
 		summary: 'Get Podcasts',
 		description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
 		tags: ['Podcasts']
@@ -60,7 +60,7 @@ export class SubsonicPodcastApi {
 	 * Returns the most recently published Podcast episodes.
 	 * Since 1.13.0
 	 */
-	@SubsonicRoute('/getNewestPodcasts.view', () => SubsonicResponseNewestPodcasts, {
+	@SubsonicRoute('/getNewestPodcasts', () => SubsonicResponseNewestPodcasts, {
 		summary: 'Get Newest Podcast Episodes',
 		description: 'Returns the most recently published Podcast episodes.',
 		tags: ['Podcasts']
@@ -82,7 +82,7 @@ export class SubsonicPodcastApi {
 	 * Adds a new Podcast channel. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/createPodcastChannel.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/createPodcastChannel', () => SubsonicOKResponse, {
 		summary: 'Create Podcasts',
 		description: 'Adds a new Podcast channel.',
 		tags: ['Podcasts']
@@ -100,7 +100,7 @@ export class SubsonicPodcastApi {
 	 * Deletes a Podcast channel. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/deletePodcastChannel.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deletePodcastChannel', () => SubsonicOKResponse, {
 		summary: 'Delete Podcasts',
 		description: 'Deletes a Podcast channel.',
 		tags: ['Podcasts']
@@ -119,7 +119,7 @@ export class SubsonicPodcastApi {
 	 * Requests the server to check for new Podcast episodes. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/refreshPodcasts.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/refreshPodcasts', () => SubsonicOKResponse, {
 		summary: 'Refresh Podcasts',
 		description: 'Requests the server to check for new Podcast episodes.',
 		tags: ['Podcasts']
@@ -133,7 +133,7 @@ export class SubsonicPodcastApi {
 	 * Request the server to start downloading a given Podcast episode. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/downloadPodcastEpisode.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/downloadPodcastEpisode', () => SubsonicOKResponse, {
 		summary: 'Download Podcast Episode',
 		description: 'Request the server to start downloading a given Podcast episode.',
 		tags: ['Podcasts']
@@ -154,7 +154,7 @@ export class SubsonicPodcastApi {
 	 * Deletes a Podcast episode. Note: The user must be authorized for Podcast administration (see Settings > Users > user is allowed to administrate Podcasts).
 	 * Since 1.9.0
 	 */
-	@SubsonicRoute('/deletePodcastEpisode.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deletePodcastEpisode', () => SubsonicOKResponse, {
 		summary: 'Delete Podcast Episode',
 		description: 'Deletes a Podcast episode.',
 		tags: ['Podcasts']

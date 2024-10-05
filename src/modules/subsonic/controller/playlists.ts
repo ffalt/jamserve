@@ -18,7 +18,7 @@ export class SubsonicPlaylistsApi {
 	 * Creates (or updates) a playlist.
 	 * Since 1.2.0
 	 */
-	@SubsonicRoute('/createPlaylist.view', () => SubsonicResponsePlaylistWithSongs, {
+	@SubsonicRoute('/createPlaylist', () => SubsonicResponsePlaylistWithSongs, {
 		summary: 'Create Playlists',
 		description: 'Creates (or updates) a playlist.',
 		tags: ['Playlists']
@@ -69,7 +69,7 @@ export class SubsonicPlaylistsApi {
 	 * Updates a playlist. Only the owner of a playlist is allowed to update it.
 	 * Since 1.8.0
 	 */
-	@SubsonicRoute('/updatePlaylist.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/updatePlaylist', () => SubsonicOKResponse, {
 		summary: 'Update Playlists',
 		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
 		tags: ['Playlists']
@@ -110,7 +110,7 @@ export class SubsonicPlaylistsApi {
 	 * Deletes a saved playlist.
 	 * Since 1.2.0
 	 */
-	@SubsonicRoute('/deletePlaylist.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deletePlaylist', () => SubsonicOKResponse, {
 		summary: 'Delete Playlists',
 		description: 'Deletes a saved playlist.',
 		tags: ['Playlists']
@@ -132,7 +132,7 @@ export class SubsonicPlaylistsApi {
 	 * Returns all playlists a user is allowed to play.
 	 * Since 1.0.0
 	 */
-	@SubsonicRoute('/getPlaylists.view', () => SubsonicResponsePlaylists, {
+	@SubsonicRoute('/getPlaylists', () => SubsonicResponsePlaylists, {
 		summary: 'Get Playlists',
 		description: 'Returns all playlists a user is allowed to play.',
 		tags: ['Playlists']
@@ -165,7 +165,7 @@ export class SubsonicPlaylistsApi {
 	 * Returns a listing of files in a saved playlist.
 	 * Since 1.0.0
 	 */
-	@SubsonicRoute('/getPlaylist.view', () => SubsonicResponsePlaylist, {
+	@SubsonicRoute('/getPlaylist', () => SubsonicResponsePlaylist, {
 		summary: 'Get Playlist',
 		description: 'Returns a listing of files in a saved playlist.',
 		tags: ['Playlists']

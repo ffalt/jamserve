@@ -14,7 +14,7 @@ export class SubsonicUserApi {
 	 * Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
 	 * Since 1.3.0
 	 */
-	@SubsonicRoute('/getUser.view', () => SubsonicResponseUser, {
+	@SubsonicRoute('/getUser', () => SubsonicResponseUser, {
 		summary: 'Get User',
 		description: 'Get details about a given user, including which authorization roles it has.',
 		tags: ['Users']
@@ -41,7 +41,7 @@ export class SubsonicUserApi {
 	 * Get details about all users, including which authorization roles they have. Only users with admin privileges are allowed to req this method.
 	 * Since 1.8.0
 	 */
-	@SubsonicRoute('/getUsers.view', () => SubsonicResponseUsers, {
+	@SubsonicRoute('/getUsers', () => SubsonicResponseUsers, {
 		summary: 'Get Users',
 		description: 'Get details about all users, including which authorization roles they have.',
 		tags: ['Users']
@@ -58,7 +58,7 @@ export class SubsonicUserApi {
 	 * Creates a new Subsonic user
 	 * Since 1.1.0
 	 */
-	@SubsonicRoute('/createUser.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/createUser', () => SubsonicOKResponse, {
 		summary: 'Create User',
 		description: 'Creates a new Subsonic user',
 		tags: ['Users']
@@ -91,7 +91,7 @@ export class SubsonicUserApi {
 	 * Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
 	 * Since 1.1.0
 	 */
-	@SubsonicRoute('/changePassword.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/changePassword', () => SubsonicOKResponse, {
 		summary: 'Change Password',
 		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
 		tags: ['Users']
@@ -109,7 +109,7 @@ export class SubsonicUserApi {
 	 * Modifies an existing Subsonic user
 	 * Since 1.10.1
 	 */
-	@SubsonicRoute('/updateUser.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/updateUser', () => SubsonicOKResponse, {
 		summary: 'Update User',
 		description: 'Modifies an existing Subsonic user',
 		tags: ['Users']
@@ -142,7 +142,7 @@ export class SubsonicUserApi {
 	 * Deletes an existing Subsonic user
 	 * Since 1.3.0
 	 */
-	@SubsonicRoute('/deleteUser.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/deleteUser', () => SubsonicOKResponse, {
 		summary: 'Delete User',
 		description: 'Deletes an existing Subsonic user',
 		tags: ['Users']

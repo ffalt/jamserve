@@ -631,7 +631,7 @@ export class SubsonicFormatter {
 
 	static async packGenre(genre: Genre): Promise<SubsonicGenre> {
 		return {
-			content: genre.name,
+			value: genre.name,
 			songCount: await genre.tracks.count(),
 			albumCount: await genre.albums.count(),
 			artistCount: await genre.artists.count()

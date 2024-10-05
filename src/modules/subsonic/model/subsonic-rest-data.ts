@@ -118,7 +118,7 @@ export class SubsonicGenres {
 @SubsonicResultType()
 export class SubsonicGenre {
 	@SubsonicObjField()
-	content!: string;
+	value!: string;
 	@SubsonicObjField()
 	songCount!: number; //  Added in 1.10.2
 	@SubsonicObjField()
@@ -470,7 +470,7 @@ export class SubsonicSongs {
 @SubsonicResultType()
 export class SubsonicLyrics {
 	@SubsonicObjField()
-	content!: string;
+	value!: string;
 	@SubsonicObjField()
 	artist?: string;
 	@SubsonicObjField()

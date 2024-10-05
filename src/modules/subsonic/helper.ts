@@ -16,7 +16,6 @@ import { SubsonicAlbumID3, SubsonicArtist, SubsonicArtistID3, SubsonicBookmark, 
 import { StateMap, SubsonicFormatter } from './formatter.js';
 
 export class SubsonicHelper {
-
 	static async loadStates(orm: Orm, ids: Array<string>, type: DBObjectType, userID: string): Promise<StateMap> {
 		const states = await orm.State.findMany(ids, type, userID);
 		const result: StateMap = {};
@@ -25,7 +24,6 @@ export class SubsonicHelper {
 		}
 		return result;
 	}
-
 
 	static async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (orm: Orm, o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
 		const states = await SubsonicHelper.loadStates(orm, objs.map(o => o.id), type, user.id);

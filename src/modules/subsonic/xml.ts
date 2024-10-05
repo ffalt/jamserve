@@ -7,8 +7,8 @@ function xmlString(s: any): string {
 }
 
 function xmlContent(o: any): string {
-	for (const key in Object.keys(o)) {
-		if (key === 'content') {
+	for (const key of Object.keys(o)) {
+		if (key === 'value') {
 			return o[key];
 		}
 	}
@@ -22,7 +22,7 @@ function xmlTag(key: string, val: string, parameter: string): string {
 function xmlParameters(o: any): string {
 	const sl: Array<string> = [];
 	Object.keys(o).forEach(key => {
-		if ((key !== 'content')) {
+		if ((key !== 'value')) {
 			const sub = o[key];
 			if (!Array.isArray(sub) && (typeof sub !== 'object')) {
 				const val = JSON.stringify(sub);

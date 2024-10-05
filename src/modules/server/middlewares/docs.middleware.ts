@@ -49,7 +49,17 @@ export class DocsMiddleware {
 			res.sendFile(path.resolve('./static/api-docs/openapi-explorer.min.js'));
 		});
 		api.get('/subsonic.js', (_req, res) => {
-			res.sendFile(path.resolve('./static/api-docs/subsonic.js'));
+			const subsonic_config = `document.addEventListener('DOMContentLoaded', async (event) => {
+const explorer = await document.getElementsByTagName('openapi-explorer')[0];  
+setTimeout(() => {
+	explorer.setAuthenticationConfiguration('UserAuth', {token: 'admin'});
+	explorer.setAuthenticationConfiguration('PasswordAuth', {token: '7eff10d58304ad29'});
+	explorer.setAuthenticationConfiguration('VersionAuth', {token: '1.16.0'});
+	explorer.setAuthenticationConfiguration('ClientAuth', {token: 'Api Docs Test Client'});
+}, 1000);
+});`;
+			res.type('text/javascript');
+			res.send(subsonic_config);
 		});
 		return api;
 	}

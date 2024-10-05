@@ -14,7 +14,7 @@ export class SubsonicAnnotationApi {
 	 * Attaches a star to a song, album or artist.
 	 * Since 1.8.0
 	 */
-	@SubsonicRoute('/star.view', () => SubsonicOKResponse, {
+	@SubsonicRoute('/star', () => SubsonicOKResponse, {
 		summary: 'Star',
 		description: 'Attaches a star to a song, album or artist.',
 		tags: ['Annotation']
@@ -37,7 +37,7 @@ export class SubsonicAnnotationApi {
 	 * Removes the star from a song, album or artist.
 	 * Since 1.8.0
 	 */
-	@SubsonicRoute('/unstar.view', () => SubsonicOKResponse, { summary: 'Unstar', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] })
+	@SubsonicRoute('/unstar', () => SubsonicOKResponse, { summary: 'Unstar', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] })
 	async unstar(@SubsonicParams() query: SubsonicParameterState, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -56,7 +56,7 @@ export class SubsonicAnnotationApi {
 	 * Sets the rating for a music file.
 	 * Since 1.6.0
 	 */
-	@SubsonicRoute('/setRating.view', () => SubsonicOKResponse, { summary: 'Rate', description: 'Sets the rating for a music file.', tags: ['Annotation'] })
+	@SubsonicRoute('/setRating', () => SubsonicOKResponse, { summary: 'Rate', description: 'Sets the rating for a music file.', tags: ['Annotation'] })
 	async setRating(@SubsonicParams() query: SubsonicParameterRate, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -78,7 +78,7 @@ export class SubsonicAnnotationApi {
 	 * Since 1.8.0 you may specify multiple id (and optionally time) parameters to scrobble multiple files.
 	 * Since 1.5.0
 	 */
-	@SubsonicRoute('/scrobble.view', () => SubsonicOKResponse, { summary: 'Scrobble', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] })
+	@SubsonicRoute('/scrobble', () => SubsonicOKResponse, { summary: 'Scrobble', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] })
 	async scrobble(@SubsonicParams() _query: SubsonicParameterScrobble, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment

@@ -179,13 +179,13 @@ export class ExpressMethod {
 		};
 	}
 
-	public ALL(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
+	public SUBSONIC(get: MethodMetadata, ctrl: ControllerClassMetadata, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
 		let route = (get.route || '/');
 		if (get.customPathParameters) {
 			route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
 		}
 		const roles = get.roles || ctrl?.roles || [];
-		router.all(route, async (req, res, next) => {
+		router.all(`${route}(.view)?`, async (req, res, next) => {
 			try {
 				if (!options.validateRoles(req.user, roles)) {
 					throw UnauthError();
