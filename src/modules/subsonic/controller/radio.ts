@@ -44,7 +44,7 @@ export class SubsonicInternetRadioApi {
 		name 	Yes 		The user-defined name for the station.
 		homepageUrl 	No 		The home page URL for the station.
 		 */
-		const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl });
+		const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl, disabled: false });
 		await orm.Radio.persistAndFlush(radio);
 		return {};
 	}

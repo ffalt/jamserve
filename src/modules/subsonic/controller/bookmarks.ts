@@ -62,7 +62,7 @@ export class SubsonicBookmarkApi {
 		 */
 		const id = await orm.Subsonic.jamID(query.id);
 		if (id) {
-			await engine.bookmark.remove(orm, id, user.id);
+			await engine.bookmark.removeByDest(orm, id, user.id);
 		}
 		return {};
 	}

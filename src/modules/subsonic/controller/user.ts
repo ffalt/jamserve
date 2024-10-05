@@ -6,7 +6,6 @@ import { SubsonicOKResponse, SubsonicResponseUser, SubsonicResponseUsers } from 
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
-import { Subsonic } from '../../../entity/subsonic/subsonic.js';
 
 @SubsonicController()
 export class SubsonicUserApi {

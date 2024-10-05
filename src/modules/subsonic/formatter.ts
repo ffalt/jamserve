@@ -51,7 +51,6 @@ import { Bookmark } from '../../entity/bookmark/bookmark.js';
 import { PlayQueue } from '../../entity/playqueue/playqueue.js';
 import { Radio } from '../../entity/radio/radio.js';
 import { Chat } from '../../entity/chat/chat.js';
-import { Subsonic } from '../../entity/subsonic/subsonic.js';
 
 export interface SubsonicAPIResponse {
 	'subsonic-response': SubsonicResponse;

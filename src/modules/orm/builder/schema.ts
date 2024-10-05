@@ -1,5 +1,5 @@
 import { EntityMetadata } from '../definitions/entity-metadata.js';
-import seq, { Sequelize, DataType, ModelAttributeColumnOptions, ModelOptions, DataTypes } from 'sequelize';
+import seq, { Sequelize, DataType, ModelAttributeColumnOptions } from 'sequelize';
 import { PropertyMetadata } from '../definitions/property-metadata.js';
 import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '../definitions/orm-types.js';
 import { ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions } from '../definitions/types.js';

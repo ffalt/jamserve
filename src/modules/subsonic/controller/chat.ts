@@ -1,4 +1,3 @@
-
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
@@ -37,7 +36,7 @@ export class SubsonicChatApi {
 		description: 'Returns the current visible (non-expired) chat messages.',
 		tags: ['Chat']
 	})
-	async getChatMessages(@SubsonicParams() query: SubsonicParameterChatMessages,@SubsonicCtx()  { engine }: Context): Promise<SubsonicResponseChatMessages> {
+	async getChatMessages(@SubsonicParams() query: SubsonicParameterChatMessages, @SubsonicCtx() { engine }: Context): Promise<SubsonicResponseChatMessages> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 since 	No 		Only return messages newer than this time (in millis since Jan 1 1970).

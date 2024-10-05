@@ -15,7 +15,6 @@ import { randomString } from '../../utils/random.js';
 import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { hashMD5 } from '../../utils/md5.js';
-import { SubsonicHelper } from '../../modules/subsonic/helper.js';
 import { SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 
 @InRequestScope

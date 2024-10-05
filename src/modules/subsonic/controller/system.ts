@@ -6,7 +6,6 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicOKResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { AudioFormatType } from '../../../types/enums.js';
 
 @SubsonicController()
 export class SubsonicSystemApi {

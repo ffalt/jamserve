@@ -16,7 +16,6 @@ const log = logger('SubsonicApi');
 
 @SubsonicController()
 export class SubsonicPodcastApi {
-
 	/**
 	 * Returns all Podcast channels the server subscribes to, and (optionally) their episodes. This method can also be used to return details for only one channel - refer to the id parameter.
 	 * A typical use case for this method would be to first retrieve all channels without episodes, and then retrieve all episodes for the single channel the user selects.

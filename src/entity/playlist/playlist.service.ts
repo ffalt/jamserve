@@ -34,7 +34,11 @@ export class PlaylistService {
 			duration: 0
 		});
 		await playlist.user.set(user);
+		await orm.Playlist.persistAndFlush(playlist);
 		const ids = args.mediaIDs || [];
+		if (ids.length === 0) {
+			return playlist;
+		}
 		let position = 1;
 		let duration = 0;
 		for (const id of ids) {
@@ -50,6 +54,7 @@ export class PlaylistService {
 			orm.PlaylistEntry.persistLater(entry);
 			position++;
 		}
+		await orm.PlaylistEntry.flush();
 		playlist.duration = duration;
 		await orm.Playlist.persistAndFlush(playlist);
 		return playlist;

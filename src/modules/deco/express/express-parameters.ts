@@ -28,14 +28,7 @@ export class ExpressParameters {
 		return value;
 	}
 
-	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
-		if (typeOptions.array) {
-			// TODO: support number arrays
-			throw InvalidParamError(param.name);
-		}
-		if (typeof value === 'string' && value.length === 0) {
-			throw InvalidParamError(param.name);
-		}
+	private static validateNumberPart(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
 		const val = Number(value);
 		if (isNaN(val)) {
 			throw InvalidParamError(param.name, `Parameter value is not a number`);
@@ -50,6 +43,14 @@ export class ExpressParameters {
 			throw InvalidParamError(param.name, `Parameter value too high`);
 		}
 		return val;
+	}
+
+	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number | Array<number> {
+		if (typeOptions.array) {
+			const array: Array<unknown> = Array.isArray(value) ? value : [value];
+			return array.map(v => ExpressParameters.validateNumberPart(v, typeOptions, param));
+		}
+		return ExpressParameters.validateNumberPart(value, typeOptions, param);
 	}
 
 	private validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): string | Array<string> | undefined {

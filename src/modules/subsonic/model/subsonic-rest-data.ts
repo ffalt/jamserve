@@ -69,6 +69,7 @@ export class SubsonicMusicFolders {
 export class SubsonicMusicFolder {
 	@SubsonicObjField()
 	id!: number;
+
 	@SubsonicObjField()
 	name?: string;
 }
@@ -77,12 +78,16 @@ export class SubsonicMusicFolder {
 export class SubsonicIndexes {
 	@SubsonicObjField(() => [SubsonicArtist])
 	shortcut?: Array<SubsonicArtist>;
+
 	@SubsonicObjField(() => [SubsonicIndex])
 	index?: Array<SubsonicIndex>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	child?: Array<SubsonicChild>; //  Added in 1.7.0
+
 	@SubsonicObjField()
 	lastModified!: number;
+
 	@SubsonicObjField()
 	ignoredArticles!: string; //  Added in 1.10.0
 }
@@ -91,6 +96,7 @@ export class SubsonicIndexes {
 export class SubsonicIndex {
 	@SubsonicObjField(() => [SubsonicArtist])
 	artist?: Array<SubsonicArtist>;
+
 	@SubsonicObjField()
 	name!: string;
 }
@@ -99,12 +105,16 @@ export class SubsonicIndex {
 export class SubsonicArtist {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	starred?: SubsonicDateTime; //  Added in 1.10.1
+
 	@SubsonicObjField()
 	userRating?: SubsonicUserRating; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	averageRating?: SubsonicAverageRating; //  Added in 1.13.0
 }
@@ -119,10 +129,13 @@ export class SubsonicGenres {
 export class SubsonicGenre {
 	@SubsonicObjField()
 	value!: string;
+
 	@SubsonicObjField()
 	songCount!: number; //  Added in 1.10.2
+
 	@SubsonicObjField()
 	albumCount!: number; //  Added in 1.10.2
+
 	@SubsonicObjField()
 	artistCount!: number; //  undocumented?
 }
@@ -131,6 +144,7 @@ export class SubsonicGenre {
 export class SubsonicArtistsID3 {
 	@SubsonicObjField(() => [SubsonicIndexID3])
 	index?: Array<SubsonicIndexID3>;
+
 	@SubsonicObjField()
 	ignoredArticles!: string; //  Added in 1.10.0
 }
@@ -139,6 +153,7 @@ export class SubsonicArtistsID3 {
 export class SubsonicIndexID3 {
 	@SubsonicObjField(() => [SubsonicArtistID3])
 	artist?: Array<SubsonicArtistID3>;
+
 	@SubsonicObjField()
 	name!: string;
 }
@@ -147,12 +162,16 @@ export class SubsonicIndexID3 {
 export class SubsonicArtistID3 {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	albumCount!: number;
+
 	@SubsonicObjField()
 	coverArt?: number;
+
 	@SubsonicObjField()
 	starred?: SubsonicDateTime;
 }
@@ -167,26 +186,37 @@ export class SubsonicArtistWithAlbumsID3 extends SubsonicArtistID3 {
 export class SubsonicAlbumID3 {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	artist?: string;
+
 	@SubsonicObjField()
 	artistId?: number;
+
 	@SubsonicObjField()
 	coverArt?: number;
+
 	@SubsonicObjField()
 	songCount!: number;
+
 	@SubsonicObjField()
 	duration!: number;
+
 	@SubsonicObjField()
 	playCount?: number; //  Added in 1.14.0
+
 	@SubsonicObjField()
 	created!: SubsonicDateTime;
+
 	@SubsonicObjField()
 	starred?: SubsonicDateTime;
+
 	@SubsonicObjField()
 	year?: number; //  Added in 1.10.1
+
 	@SubsonicObjField()
 	genre?: string; //  Added in 1.10.1
 }
@@ -207,10 +237,13 @@ export class SubsonicVideos {
 export class SubsonicVideoInfo {
 	@SubsonicObjField(() => [SubsonicCaptions])
 	captions?: Array<SubsonicCaptions>;
+
 	@SubsonicObjField(() => [SubsonicAudioTrack])
 	audioTrack?: Array<SubsonicAudioTrack>;
+
 	@SubsonicObjField(() => [SubsonicVideoConversion])
 	conversion?: Array<SubsonicVideoConversion>;
+
 	@SubsonicObjField()
 	id!: SubsonicID;
 }
@@ -219,6 +252,7 @@ export class SubsonicVideoInfo {
 export class SubsonicCaptions {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name?: string;
 }
@@ -227,8 +261,10 @@ export class SubsonicCaptions {
 export class SubsonicAudioTrack {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name?: string;
+
 	@SubsonicObjField()
 	languageCode?: string;
 }
@@ -237,8 +273,10 @@ export class SubsonicAudioTrack {
 export class SubsonicVideoConversion {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	bitRate?: number; //  In Kbps
+
 	@SubsonicObjField()
 	audioTrackId?: number;
 }
@@ -247,18 +285,25 @@ export class SubsonicVideoConversion {
 export class SubsonicDirectory {
 	@SubsonicObjField(() => [SubsonicChild])
 	child?: Array<SubsonicChild>;
+
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	parent?: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	starred?: SubsonicDateTime; //  Added in 1.10.1
+
 	@SubsonicObjField()
 	userRating?: SubsonicUserRating; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	averageRating?: SubsonicAverageRating; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	playCount?: number; //  Added in 1.14.0
 }
@@ -267,64 +312,94 @@ export class SubsonicDirectory {
 export class SubsonicChild {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	parent?: SubsonicID;
+
 	@SubsonicObjField()
 	isDir!: boolean;
+
 	@SubsonicObjField()
 	title!: string;
+
 	@SubsonicObjField()
 	album?: string;
+
 	@SubsonicObjField()
 	artist?: string;
+
 	@SubsonicObjField()
 	track?: number;
+
 	@SubsonicObjField()
 	year?: number;
+
 	@SubsonicObjField()
 	genre?: string;
+
 	@SubsonicObjField()
 	coverArt?: number;
+
 	@SubsonicObjField()
 	size?: number;
+
 	@SubsonicObjField()
 	contentType?: string;
+
 	@SubsonicObjField()
 	suffix?: string;
+
 	@SubsonicObjField()
 	transcodedContentType?: string;
+
 	@SubsonicObjField()
 	transcodedSuffix?: string;
+
 	@SubsonicObjField()
 	duration?: number;
+
 	@SubsonicObjField()
 	bitRate?: number;
+
 	@SubsonicObjField()
 	path?: string;
+
 	@SubsonicObjField()
 	isVideo?: boolean; //  Added in 1.4.1
+
 	@SubsonicObjField()
 	userRating?: SubsonicUserRating; //  Added in 1.6.0
+
 	@SubsonicObjField()
 	averageRating?: SubsonicAverageRating; //  Added in 1.6.0
+
 	@SubsonicObjField()
 	playCount?: number; //  Added in 1.14.0
+
 	@SubsonicObjField()
 	discNumber?: number; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	created?: SubsonicDateTime; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	starred?: SubsonicDateTime; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	albumId?: SubsonicID; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	artistId?: SubsonicID; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	type?: SubsonicMediaType; //  Added in 1.8.0
+
 	@SubsonicObjField()
 	bookmarkPosition?: number; //  In millis. Added in 1.10.1
+
 	@SubsonicObjField()
 	originalWidth?: number; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	originalHeight?: number; //  Added in 1.13.0
 }
@@ -339,10 +414,13 @@ export class SubsonicNowPlaying {
 export class SubsonicNowPlayingEntry extends SubsonicChild {
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	minutesAgo!: number;
+
 	@SubsonicObjField()
 	playerId!: number;
+
 	@SubsonicObjField()
 	playerName?: string;
 }
@@ -351,8 +429,10 @@ export class SubsonicNowPlayingEntry extends SubsonicChild {
 export class SubsonicSearchResult {
 	@SubsonicObjField(() => [SubsonicChild])
 	match?: Array<SubsonicChild>;
+
 	@SubsonicObjField()
 	offset!: number;
+
 	@SubsonicObjField()
 	totalHits!: number;
 }
@@ -361,8 +441,10 @@ export class SubsonicSearchResult {
 export class SubsonicSearchResult2 {
 	@SubsonicObjField(() => [SubsonicArtist])
 	artist?: Array<SubsonicArtist>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	album?: Array<SubsonicChild>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	song?: Array<SubsonicChild>;
 }
@@ -371,8 +453,10 @@ export class SubsonicSearchResult2 {
 export class SubsonicSearchResult3 {
 	@SubsonicObjField(() => [SubsonicArtistID3])
 	artist?: Array<SubsonicArtistID3>;
+
 	@SubsonicObjField(() => [SubsonicAlbumID3])
 	album?: Array<SubsonicAlbumID3>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	song?: Array<SubsonicChild>;
 }
@@ -387,24 +471,34 @@ export class SubsonicPlaylists {
 export class SubsonicPlaylist {
 	@SubsonicObjField(() => [String])
 	allowedUser?: Array<string>; // Added in 1.8.0
+
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	comment?: string; // Added in 1.8.0
+
 	@SubsonicObjField()
 	owner?: number; // Added in 1.8.0
+
 	@SubsonicObjField()
 	public?: boolean; // Added in 1.8.0
+
 	@SubsonicObjField()
 	songCount!: number; // Added in 1.8.0
+
 	@SubsonicObjField()
 	duration!: number; // Added in 1.8.0
+
 	@SubsonicObjField()
 	created!: SubsonicDateTime; // Added in 1.8.0
+
 	@SubsonicObjField()
 	changed!: SubsonicDateTime; // Added in 1.13.0
+
 	@SubsonicObjField()
 	coverArt?: string; // Added in 1.11.0
 }
@@ -419,10 +513,13 @@ export class SubsonicPlaylistWithSongs extends SubsonicPlaylist {
 export class SubsonicJukeboxStatus {
 	@SubsonicObjField()
 	currentIndex!: number;
+
 	@SubsonicObjField()
 	playing!: boolean;
+
 	@SubsonicObjField()
 	gain!: number;
+
 	@SubsonicObjField()
 	position?: number; // Added in 1.7.0
 }
@@ -443,8 +540,10 @@ export class SubsonicChatMessages {
 export class SubsonicChatMessage {
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	time!: number;
+
 	@SubsonicObjField()
 	message!: string;
 }
@@ -471,8 +570,10 @@ export class SubsonicSongs {
 export class SubsonicLyrics {
 	@SubsonicObjField()
 	value!: string;
+
 	@SubsonicObjField()
 	artist?: string;
+
 	@SubsonicObjField()
 	title?: string;
 }
@@ -487,20 +588,28 @@ export class SubsonicPodcasts {
 export class SubsonicPodcastChannel {
 	@SubsonicObjField(() => [SubsonicPodcastEpisode])
 	episode?: Array<SubsonicPodcastEpisode>;
+
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	url!: string;
+
 	@SubsonicObjField()
 	title?: string;
+
 	@SubsonicObjField()
 	description?: string;
+
 	@SubsonicObjField()
 	coverArt?: string; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	originalImageUrl?: string; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	status!: SubsonicPodcastStatus;
+
 	@SubsonicObjField()
 	errorMessage?: string;
 }
@@ -515,12 +624,16 @@ export class SubsonicNewestPodcasts {
 export class SubsonicPodcastEpisode extends SubsonicChild {
 	@SubsonicObjField()
 	streamId?: SubsonicID; //  Use this ID for streaming the podcast.
+
 	@SubsonicObjField()
 	channelId!: SubsonicID; //  Added in 1.13.0
+
 	@SubsonicObjField()
 	description?: string;
+
 	@SubsonicObjField()
 	status!: SubsonicPodcastStatus;
+
 	@SubsonicObjField()
 	publishDate?: SubsonicDateTime;
 }
@@ -535,10 +648,13 @@ export class SubsonicInternetRadioStations {
 export class SubsonicInternetRadioStation {
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	name!: string;
+
 	@SubsonicObjField()
 	streamUrl!: string;
+
 	@SubsonicObjField()
 	homePageUrl?: string;
 }
@@ -553,14 +669,19 @@ export class SubsonicBookmarks {
 export class SubsonicBookmark {
 	@SubsonicObjField(() => SubsonicChild)
 	entry!: SubsonicChild;
+
 	@SubsonicObjField()
 	position!: number; //  In milliseconds
+
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	comment?: string;
+
 	@SubsonicObjField()
 	created!: SubsonicDateTime;
+
 	@SubsonicObjField()
 	changed!: SubsonicDateTime;
 }
@@ -569,14 +690,19 @@ export class SubsonicBookmark {
 export class SubsonicPlayQueue {
 	@SubsonicObjField(() => SubsonicChild)
 	entry?: Array<SubsonicChild>;
+
 	@SubsonicObjField()
 	current?: number; //  ID of currently playing track
+
 	@SubsonicObjField()
 	position?: number; //  Position in milliseconds of currently playing track
+
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	changed!: SubsonicDateTime;
+
 	@SubsonicObjField()
 	changedBy!: string; //  Name of client app
 }
@@ -591,20 +717,28 @@ export class SubsonicShares {
 export class SubsonicShare {
 	@SubsonicObjField(() => [SubsonicChild])
 	entry?: Array<SubsonicChild>;
+
 	@SubsonicObjField()
 	id!: SubsonicID;
+
 	@SubsonicObjField()
 	url!: string;
+
 	@SubsonicObjField()
 	description?: string;
+
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	created!: SubsonicDateTime;
+
 	@SubsonicObjField()
 	expires?: SubsonicDateTime;
+
 	@SubsonicObjField()
 	lastVisited?: SubsonicDateTime;
+
 	@SubsonicObjField()
 	visitCount!: number;
 }
@@ -613,8 +747,10 @@ export class SubsonicShare {
 export class SubsonicStarred {
 	@SubsonicObjField(() => [SubsonicArtist])
 	artist?: Array<SubsonicArtist>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	album?: Array<SubsonicChild>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	song?: Array<SubsonicChild>;
 }
@@ -623,14 +759,19 @@ export class SubsonicStarred {
 export class SubsonicAlbumInfo {
 	@SubsonicObjField()
 	notes?: string;
+
 	@SubsonicObjField()
 	musicBrainzId?: string;
+
 	@SubsonicObjField()
 	lastFmUrl?: string;
+
 	@SubsonicObjField()
 	smallImageUrl?: string;
+
 	@SubsonicObjField()
 	mediumImageUrl?: string;
+
 	@SubsonicObjField()
 	largeImageUrl?: string;
 }
@@ -639,14 +780,19 @@ export class SubsonicAlbumInfo {
 export class SubsonicArtistInfoBase {
 	@SubsonicObjField()
 	biography?: string;
+
 	@SubsonicObjField()
 	musicBrainzId?: string;
+
 	@SubsonicObjField()
 	lastFmUrl?: string;
+
 	@SubsonicObjField()
 	smallImageUrl?: string;
+
 	@SubsonicObjField()
 	mediumImageUrl?: string;
+
 	@SubsonicObjField()
 	largeImageUrl?: string;
 }
@@ -685,8 +831,10 @@ export class SubsonicTopSongs {
 export class SubsonicStarred2 {
 	@SubsonicObjField(() => [SubsonicArtistID3])
 	artist?: Array<SubsonicArtistID3>;
+
 	@SubsonicObjField(() => [SubsonicAlbumID3])
 	album?: Array<SubsonicAlbumID3>;
+
 	@SubsonicObjField(() => [SubsonicChild])
 	song?: Array<SubsonicChild>;
 }
@@ -695,10 +843,13 @@ export class SubsonicStarred2 {
 export class SubsonicLicense {
 	@SubsonicObjField()
 	valid!: boolean;
+
 	@SubsonicObjField()
 	email?: string;
+
 	@SubsonicObjField()
 	licenseExpires?: SubsonicDateTime;
+
 	@SubsonicObjField()
 	trialExpires?: SubsonicDateTime;
 }
@@ -707,6 +858,7 @@ export class SubsonicLicense {
 export class SubsonicScanStatus {
 	@SubsonicObjField()
 	scanning!: boolean;
+
 	@SubsonicObjField()
 	count?: number;
 }
@@ -721,38 +873,55 @@ export class SubsonicUsers {
 export class SubsonicUser {
 	@SubsonicObjField(() => [Number])
 	folder?: Array<SubsonicID>; //  Added in 1.12.0
+
 	@SubsonicObjField()
 	username!: string;
+
 	@SubsonicObjField()
 	email?: string; //  Added in 1.6.0
+
 	@SubsonicObjField()
 	scrobblingEnabled!: boolean; //  Added in 1.7.0
+
 	@SubsonicObjField()
 	maxBitRate?: number; //  In Kbps, added in 1.13.0
+
 	@SubsonicObjField()
 	adminRole!: boolean;
+
 	@SubsonicObjField()
 	settingsRole!: boolean;
+
 	@SubsonicObjField()
 	downloadRole!: boolean;
+
 	@SubsonicObjField()
 	uploadRole!: boolean;
+
 	@SubsonicObjField()
 	playlistRole!: boolean;
+
 	@SubsonicObjField()
 	coverArtRole!: boolean;
+
 	@SubsonicObjField()
 	commentRole!: boolean;
+
 	@SubsonicObjField()
 	podcastRole!: boolean;
+
 	@SubsonicObjField()
 	streamRole!: boolean;
+
 	@SubsonicObjField()
 	jukeboxRole!: boolean;
+
 	@SubsonicObjField()
 	shareRole!: boolean; //  Added in 1.7.0
+
 	@SubsonicObjField()
 	videoConversionRole!: boolean; //  Added in 1.14.0
+
 	@SubsonicObjField()
 	avatarLastChanged?: SubsonicDateTime; //  Added in 1.14.0
 }
@@ -761,6 +930,7 @@ export class SubsonicUser {
 export class SubsonicError {
 	@SubsonicObjField()
 	code!: number;
+
 	@SubsonicObjField()
 	message?: string;
 }

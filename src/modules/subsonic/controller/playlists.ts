@@ -5,7 +5,7 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-params.js';
-import { SubsonicOKResponse, SubsonicPlaylists, SubsonicPlaylistWithSongs, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicPlaylistWithSongs, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
@@ -44,11 +44,8 @@ export class SubsonicPlaylistsApi {
 			await this.updatePlaylist(updateQuery, ctx);
 			playlist = await ctx.orm.Playlist.findOneOrFailByID(playlistId);
 		} else if (query.name) {
-			playlist = await ctx.engine.playlist.create(ctx.orm, {
-				name: query.name,
-				isPublic: false,
-				mediaIDs: await ctx.orm.Subsonic.jamIDs(query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : [])
-			}, ctx.user);
+			const mediaIDs = await ctx.orm.Subsonic.jamIDs(query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : []);
+			playlist = await ctx.engine.playlist.create(ctx.orm, { name: query.name, isPublic: false, mediaIDs }, ctx.user);
 		}
 		if (!playlist) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
