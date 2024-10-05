@@ -47,7 +47,7 @@ export class SubsonicMediaRetrievalApi {
 		 estimateContentLength 	No 	false 	(Since 1.8.0). If set to "true", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.
 		 converted 	No 	false 	(Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to "true" will cause the converted video to be returned instead of the original.
 		 */
-		const o = await orm.findInStreamTypes(await orm.Subsonic.jamIDOrFail(query.id));
+		const o = await orm.findInStreamTypes(query.id);
 		if (!o?.obj) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
@@ -83,11 +83,10 @@ export class SubsonicMediaRetrievalApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
-		const id = await orm.Subsonic.jamID(query.id);
-		if (!id) {
+		if (!query.id) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
-		const o = await orm.findInDownloadTypes(id);
+		const o = await orm.findInDownloadTypes(query.id);
 		if (!o?.obj) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
@@ -135,7 +134,7 @@ export class SubsonicMediaRetrievalApi {
 		 id 	Yes 		The ID of a song, album or artist.
 		 size 	No 		If specified, scale image to this size.
 		 */
-		const o = await orm.findInImageTypes(await orm.Subsonic.jamIDOrFail(query.id));
+		const o = await orm.findInImageTypes(query.id);
 		if (!o?.obj) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}

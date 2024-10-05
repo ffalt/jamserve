@@ -23,7 +23,7 @@ export class SubsonicInternetRadioApi {
 		const radios = (await orm.Radio.all()).filter(radio => !radio.disabled);
 		const internetRadioStation = [];
 		for (const radio of radios) {
-			internetRadioStation.push(await SubsonicFormatter.packRadio(orm, radio));
+			internetRadioStation.push(await SubsonicFormatter.packRadio(radio));
 		}
 		return { internetRadioStations: { internetRadioStation } };
 	}
@@ -66,7 +66,7 @@ export class SubsonicInternetRadioApi {
 		name 	Yes 		The user-defined name for the station.
 		homepageUrl 	No 		The home page URL for the station.
 		 */
-		const radio = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Radio);
+		const radio = await orm.Radio.findOneOrFailByID(query.id);
 		radio.name = query.name === undefined ? radio.name : query.name;
 		radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl;
 		radio.homepage = query.homepageUrl === undefined ? radio.homepage : query.homepageUrl;
@@ -88,8 +88,7 @@ export class SubsonicInternetRadioApi {
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
 		 */
-
-		const radio = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Radio);
+		const radio = await orm.Radio.findOneOrFailByID(query.id);
 		await orm.Radio.removeAndFlush(radio);
 		return {};
 	}

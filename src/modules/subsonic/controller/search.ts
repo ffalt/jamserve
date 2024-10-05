@@ -72,8 +72,7 @@ export class SubsonicSearchApi {
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders
 		 */
 		const searchResult2: SubsonicSearchResult2 = {};
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const rootIDs = rootId ? [rootId] : undefined;
+		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		const q = (query.query || '').replace(/\*/g, '');
 		const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount || 20, skip: query.songOffset || 0 });
 		searchResult2.song = await SubsonicHelper.prepareTracks(orm, trackList, user);
@@ -84,10 +83,10 @@ export class SubsonicSearchApi {
 		searchResult2.artist = [];
 		searchResult2.album = [];
 		for (const folder of artistFolderList) {
-			searchResult2.artist.push(await SubsonicFormatter.packFolderArtist(orm, folder, states[folder.id]));
+			searchResult2.artist.push(await SubsonicFormatter.packFolderArtist(folder, states[folder.id]));
 		}
 		for (const folder of albumFolderList) {
-			searchResult2.album.push(await SubsonicFormatter.packFolder(orm, folder, states[folder.id]));
+			searchResult2.album.push(await SubsonicFormatter.packFolder(folder, states[folder.id]));
 		}
 		return { searchResult2 };
 	}

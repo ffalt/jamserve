@@ -45,7 +45,7 @@ export class SubsonicPodcastApi {
 		}
 		const channel: Array<SubsonicPodcastChannel> = [];
 		for (const podcast of podcastList) {
-			const pod = await SubsonicFormatter.packPodcast(orm, podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
+			const pod = await SubsonicFormatter.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
 			if (includeEpisodes) {
 				pod.episode = await SubsonicHelper.prepareEpisodes(engine, orm, await podcast.episodes.getItems({ order: ['date', 'DESC'] }), user);
 			}
@@ -109,7 +109,7 @@ export class SubsonicPodcastApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
-		const podcast = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Podcast);
+		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
 		return {};
 	}
@@ -142,7 +142,7 @@ export class SubsonicPodcastApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
 		 */
-		const episode = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Episode);
+		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		if (!episode.path) {
 			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
 		}
@@ -163,7 +163,7 @@ export class SubsonicPodcastApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
-		const episode = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Episode);
+		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		await engine.episode.deleteEpisode(orm, episode);
 		return {};
 	}

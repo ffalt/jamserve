@@ -11,19 +11,19 @@ export type JukeboxAction = 'get' | 'status' | 'set' | 'start' | 'stop' | 'skip'
 @SubsonicObjParamsType()
 export class SubsonicParameterID {
 	@SubsonicObjField({ description: 'The item ID', isID: true })
-	id!: number;
+	id!: SubsonicID;
 }
 
 @SubsonicObjParamsType()
 export class SubsonicParameterMusicFolderID {
 	@SubsonicObjField({ description: 'Only return results from the music folder with the given ID', isID: true, nullable: true })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 }
 
 @SubsonicObjParamsType()
 export class SubsonicParameterIndexes {
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return results from the music folder with the given ID' })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 
 	@SubsonicObjField({ nullable: true, description: 'If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).', min: 0, example: 1727432363956 })
 	ifModifiedSince?: number;
@@ -98,7 +98,7 @@ export class SubsonicParameterAlbumList2 {
 	toYear?: number;
 
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return results from the music folder with the given ID' })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 }
 
 @SubsonicObjParamsType()
@@ -515,7 +515,7 @@ export class SubsonicParameterSearch2 {
 	songOffset?: number;
 
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return songs in the music folder with the given ID.' })
-	musicFolderId?: number;
+	musicFolderId?: SubsonicID;
 }
 
 @SubsonicObjParamsType()

@@ -50,7 +50,7 @@ export class SubsonicResponse {
 	version?: SubsonicVersion;
 }
 
-export type SubsonicID = number;
+export type SubsonicID = string;
 export type SubsonicDateTime = string; // -?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?
 export type SubsonicResponseStatus = 'ok' | 'failed';
 export type SubsonicVersion = string; // \d+\.\d+\.\d+
@@ -68,7 +68,7 @@ export class SubsonicMusicFolders {
 @SubsonicResultType()
 export class SubsonicMusicFolder {
 	@SubsonicObjField()
-	id!: number;
+	id!: SubsonicID;
 
 	@SubsonicObjField()
 	name?: string;
@@ -170,7 +170,7 @@ export class SubsonicArtistID3 {
 	albumCount!: number;
 
 	@SubsonicObjField()
-	coverArt?: number;
+	coverArt?: SubsonicID;
 
 	@SubsonicObjField()
 	starred?: SubsonicDateTime;
@@ -194,10 +194,10 @@ export class SubsonicAlbumID3 {
 	artist?: string;
 
 	@SubsonicObjField()
-	artistId?: number;
+	artistId?: SubsonicID;
 
 	@SubsonicObjField()
-	coverArt?: number;
+	coverArt?: SubsonicID;
 
 	@SubsonicObjField()
 	songCount!: number;
@@ -338,7 +338,7 @@ export class SubsonicChild {
 	genre?: string;
 
 	@SubsonicObjField()
-	coverArt?: number;
+	coverArt?: SubsonicID;
 
 	@SubsonicObjField()
 	size?: number;
@@ -482,7 +482,7 @@ export class SubsonicPlaylist {
 	comment?: string; // Added in 1.8.0
 
 	@SubsonicObjField()
-	owner?: number; // Added in 1.8.0
+	owner?: SubsonicID; // Added in 1.8.0
 
 	@SubsonicObjField()
 	public?: boolean; // Added in 1.8.0

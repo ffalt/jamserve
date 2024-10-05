@@ -26,7 +26,7 @@ export class SubsonicAnnotationApi {
 		 albumId 	No 		The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 artistId 	No 		The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 */
-		const ids = await SubsonicHelper.collectStateChangeIds(orm, query);
+		const ids = await SubsonicHelper.collectStateChangeIds(query);
 		for (const id of ids) {
 			await engine.state.fav(orm, id, false, user);
 		}
@@ -45,7 +45,7 @@ export class SubsonicAnnotationApi {
 		 albumId 	No 		The ID of an album to unstar. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 artistId 	No 		The ID of an artist to unstar. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.
 		 */
-		const ids = await SubsonicHelper.collectStateChangeIds(orm, query);
+		const ids = await SubsonicHelper.collectStateChangeIds(query);
 		for (const id of ids) {
 			await engine.state.fav(orm, id, true, user);
 		}
@@ -66,7 +66,7 @@ export class SubsonicAnnotationApi {
 		if ((query.rating < 0) || (query.rating > 5)) {
 			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
 		}
-		await engine.state.rate(orm, await orm.Subsonic.jamIDOrFail(query.id), query.rating, user);
+		await engine.state.rate(orm, query.id, query.rating, user);
 		return {};
 	}
 

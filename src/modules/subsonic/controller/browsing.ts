@@ -50,14 +50,14 @@ export class SubsonicBrowsingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The artist ID.
 		 */
-		const artist = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Artist);
+		const artist = await orm.Artist.findOneOrFailByID(query.id);
 		const albumlist = await orm.Album.findFilter({ artistIDs: [artist.id] }, [{ orderBy: AlbumOrderFields.year, orderDesc: true }]);
 		const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
 		const states = await SubsonicHelper.loadStates(orm, albumlist.map(o => o.id), DBObjectType.album, user.id);
-		const artistid3 = await SubsonicFormatter.packArtist(orm, artist, state) as SubsonicArtistWithAlbumsID3;
+		const artistid3 = await SubsonicFormatter.packArtist(artist, state) as SubsonicArtistWithAlbumsID3;
 		const album = [];
 		for (const a of albumlist) {
-			album.push(await SubsonicFormatter.packAlbum(orm, a, states[a.id]));
+			album.push(await SubsonicFormatter.packAlbum(a, states[a.id]));
 		}
 		artistid3.album = album;
 		return { artist: artistid3 };
@@ -77,12 +77,12 @@ export class SubsonicBrowsingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album ID.
 		 */
-		const album = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Album);
+		const album = await orm.Album.findOneOrFailByID(query.id);
 		const state = await orm.State.findOrCreate(album.id, DBObjectType.album, user.id);
 		const trackIDs = await album.tracks.getIDs();
 		const tracks = await orm.Track.findFilter({ ids: trackIDs }, [{ orderBy: TrackOrderFields.trackNr }]);
 		const childs = await SubsonicHelper.prepareTracks(orm, tracks, user);
-		const albumid3 = await SubsonicFormatter.packAlbum(orm, album, state) as SubsonicAlbumWithSongsID3;
+		const albumid3 = await SubsonicFormatter.packAlbum(album, state) as SubsonicAlbumWithSongsID3;
 		albumid3.song = childs;
 		return { album: albumid3 };
 	}
@@ -133,7 +133,7 @@ export class SubsonicBrowsingApi {
 		// 		name: s.name
 		// 	};
 		// });
-		const folder = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Folder);
+		const folder = await orm.Folder.findOneOrFailByID(query.id);
 		if (folder) {
 			if (folder.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
@@ -188,7 +188,7 @@ export class SubsonicBrowsingApi {
 		// 		});
 		// 	}
 		// });
-		const artist = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Artist);
+		const artist = await orm.Artist.findOneOrFailByID(query.id);
 		if (artist) {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
@@ -222,7 +222,7 @@ export class SubsonicBrowsingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album or song ID.
 		 */
-		const folder = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Folder);
+		const folder = await orm.Folder.findOneOrFailByID(query.id);
 		if (folder) {
 			if (folder.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
@@ -256,7 +256,7 @@ export class SubsonicBrowsingApi {
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The album ID.
 		 */
-		const album = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Album);
+		const album = await orm.Album.findOneOrFailByID(query.id);
 		if (album) {
 			if (album.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
@@ -291,9 +291,8 @@ export class SubsonicBrowsingApi {
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
 		 ifModifiedSince 	No 		If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).
 		 */
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
 		const folderIndexORM = await orm.Folder.indexFilter({
-			rootIDs: rootId ? [rootId] : undefined,
+			rootIDs: query.musicFolderId ? [query.musicFolderId] : undefined,
 			level: 1
 		}, user, engine.settings.settings.index.ignoreArticles);
 		const folderIndex = await engine.transform.Folder.folderIndex(orm, folderIndexORM);
@@ -310,7 +309,7 @@ export class SubsonicBrowsingApi {
 			indexes: {
 				lastModified: folderIndex.lastModified,
 				ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
-				index: await SubsonicFormatter.packFolderIndex(orm, folderIndex, states)
+				index: await SubsonicFormatter.packFolderIndex(folderIndex, states)
 				// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 				// child?: Child[]; use unknown
 			}
@@ -331,9 +330,10 @@ export class SubsonicBrowsingApi {
          Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
 		 */
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const artistIndex = await orm.Artist.indexFilter({ rootIDs: rootId ? [rootId] : undefined },
-			user, engine.settings.settings.index.ignoreArticles);
+		const artistIndex = await orm.Artist.indexFilter(
+			{ rootIDs: query.musicFolderId ? [query.musicFolderId] : undefined },
+			user, engine.settings.settings.index.ignoreArticles
+		);
 		let ids: Array<string> = [];
 		artistIndex.groups.forEach(group => {
 			ids = ids.concat(group.items.map(artist => artist.id));
@@ -342,7 +342,7 @@ export class SubsonicBrowsingApi {
 		return {
 			artists: {
 				ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
-				index: await SubsonicFormatter.packArtistIndex(orm, artistIndex, states)
+				index: await SubsonicFormatter.packArtistIndex(artistIndex, states)
 			}
 		};
 	}
@@ -361,7 +361,7 @@ export class SubsonicBrowsingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the music folder. Obtained by calls to getIndexes or getMusicDirectory.
 		 */
-		const folder = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Folder);
+		const folder = await orm.Folder.findOneOrFailByID(query.id);
 		const tracks = await folder.tracks.getItems();
 		const folders = await folder.children.getItems();
 		let childs: Array<SubsonicChild> = [];
@@ -370,7 +370,7 @@ export class SubsonicBrowsingApi {
 		list = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		childs = childs.concat(list);
 		const state = await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
-		const directory = await SubsonicFormatter.packDirectory(orm, folder, state);
+		const directory = await SubsonicFormatter.packDirectory(folder, state);
 		directory.child = childs;
 		return { directory };
 	}
@@ -388,7 +388,7 @@ export class SubsonicBrowsingApi {
 		const list = await orm.Root.all();
 		const musicFolder: Array<SubsonicMusicFolder> = [];
 		for (const r of list) {
-			musicFolder.push(await SubsonicFormatter.packRoot(orm, r));
+			musicFolder.push(await SubsonicFormatter.packRoot(r));
 		}
 		return { musicFolders: { musicFolder } };
 	}
@@ -435,7 +435,7 @@ export class SubsonicBrowsingApi {
 		id 	Yes 		The artist, album or song ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
-		const result = await orm.findInRepos(await orm.Subsonic.jamIDOrFail(query.id), [orm.Track, orm.Folder, orm.Artist, orm.Album]);
+		const result = await orm.findInRepos(query.id, [orm.Track, orm.Folder, orm.Artist, orm.Album]);
 		if (!result?.obj) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
@@ -475,7 +475,7 @@ export class SubsonicBrowsingApi {
 		id 	Yes 		The artist ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
-		const artist = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Artist);
+		const artist = await orm.Artist.findOneOrFailByID(query.id);
 		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
 		const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
@@ -496,7 +496,7 @@ export class SubsonicBrowsingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The song ID.
 		 */
-		const track = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Track);
+		const track = await orm.Track.findOneOrFailByID(query.id);
 		const child = await SubsonicHelper.prepareTrack(orm, track, user);
 		return { song: child };
 	}
@@ -549,6 +549,6 @@ export class SubsonicBrowsingApi {
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The video ID.
 		 */
-		return { videoInfo: { id: 0 } };
+		return { videoInfo: { id: '0' } };
 	}
 }

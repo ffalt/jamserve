@@ -2,7 +2,7 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-params.js';
-import { SubsonicBookmarks, SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
+import { SubsonicBookmarks, SubsonicID, SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
@@ -28,7 +28,7 @@ export class SubsonicBookmarkApi {
 		 position 	Yes 		The position (in milliseconds) within the media file.
 		 comment 	No 		A user-defined comment.
 		 */
-		const track = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Track);
+		const track = await orm.Track.findOneOrFailByID(query.id);
 		await engine.bookmark.create(orm, track.id, user, query.position, query.comment);
 	}
 
@@ -60,9 +60,8 @@ export class SubsonicBookmarkApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
 		 */
-		const id = await orm.Subsonic.jamID(query.id);
-		if (id) {
-			await engine.bookmark.removeByDest(orm, id, user.id);
+		if (query.id) {
+			await engine.bookmark.removeByDest(orm, query.id, user.id);
 		}
 		return {};
 	}
@@ -107,10 +106,10 @@ export class SubsonicBookmarkApi {
 		current 	No 		The ID of the current playing song.
 		position 	No 		The position in milliseconds within the currently playing song.
 		 */
-		const mediaIDs: Array<number> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
+		const mediaIDs: Array<SubsonicID> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
 		await engine.playQueue.set(orm, {
-			mediaIDs: await orm.Subsonic.jamIDs(mediaIDs),
-			currentID: await orm.Subsonic.mayBeJamID(query.current),
+			mediaIDs,
+			currentID: query.current,
 			position: query.position
 		}, user, client || 'unknown');
 		return {};

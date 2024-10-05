@@ -12,7 +12,6 @@ import { Podcast } from '../../../entity/podcast/podcast.js';
 import { Series } from '../../../entity/series/series.js';
 import { Radio } from '../../../entity/radio/radio.js';
 import { Session } from '../../../entity/session/session.js';
-import { Subsonic } from '../../../entity/subsonic/subsonic.js';
 import { Settings } from '../../../entity/settings/settings.js';
 import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
@@ -55,7 +54,6 @@ import { Options } from 'sequelize';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
 import { NotFoundError } from '../../deco/express/express-error.js';
-import { SubsonicRepository } from '../../../entity/subsonic/subsonic.repository.js';
 
 registerORMEnums();
 
@@ -82,7 +80,6 @@ export class Orm {
 	public PlayQueueEntry!: PlayQueueEntryRepository;
 	public Settings!: SettingsRepository;
 	public MetaData!: MetaDataRepository;
-	public Subsonic!: SubsonicRepository;
 
 	constructor(public em: EntityManager) {
 		this.State = em.getRepository<State, StateRepository>(State);
@@ -107,7 +104,6 @@ export class Orm {
 		this.Track = em.getRepository<Track, TrackRepository>(Track);
 		this.User = em.getRepository<User, UserRepository>(User);
 		this.Genre = em.getRepository<Genre, GenreRepository>(Genre);
-		this.Subsonic = em.getRepository<Subsonic, SubsonicRepository>(Subsonic);
 	}
 
 	private static async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {

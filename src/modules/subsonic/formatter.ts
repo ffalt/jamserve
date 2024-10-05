@@ -149,8 +149,8 @@ export class SubsonicFormatter {
 		return moment(date).utc().format(); // .format('YYYY-MM-DDThh:mm:ss.000Z');
 	}
 
-	static async packRoot(orm: Orm, root: Root): Promise<SubsonicMusicFolder> {
-		return { id: await orm.Subsonic.subsonicID(root.id), name: root.name };
+	static async packRoot(root: Root): Promise<SubsonicMusicFolder> {
+		return { id: root.id, name: root.name };
 	}
 
 	static packUser(user: User): SubsonicUser {
@@ -176,7 +176,7 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static async packFolderIndexArtist(orm: Orm, entry: FolderIndexEntry, state?: State): Promise<SubsonicArtist> {
+	static async packFolderIndexArtist(entry: FolderIndexEntry, state?: State): Promise<SubsonicArtist> {
 		/*
 <xs:complexType name="Artist">
 	<xs:attribute name="id" type="xs:string" use="required"/>
@@ -187,7 +187,7 @@ export class SubsonicFormatter {
 </xs:complexType>
 	 */
 		return {
-			id: await orm.Subsonic.subsonicID(entry.id),
+			id: entry.id,
 			name: entry.name,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
@@ -195,7 +195,7 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static async packFolderIndex(orm: Orm, index: FolderIndex, states: StateMap): Promise<Array<SubsonicIndex>> {
+	static async packFolderIndex(index: FolderIndex, states: StateMap): Promise<Array<SubsonicIndex>> {
 		if (!index) {
 			return [];
 		}
@@ -203,14 +203,14 @@ export class SubsonicFormatter {
 		for (const i of index.groups) {
 			const artist: Array<SubsonicArtist> = [];
 			for (const e of i.items) {
-				artist.push(await SubsonicFormatter.packFolderIndexArtist(orm, e, states[e.id]));
+				artist.push(await SubsonicFormatter.packFolderIndexArtist(e, states[e.id]));
 			}
 			indexes.push({ name: i.name, artist });
 		}
 		return indexes;
 	}
 
-	static async packArtistIndex(orm: Orm, index: IndexResult<IndexResultGroup<Artist>>, states: StateMap): Promise<Array<SubsonicIndexID3>> {
+	static async packArtistIndex(index: IndexResult<IndexResultGroup<Artist>>, states: StateMap): Promise<Array<SubsonicIndexID3>> {
 		if (!index) {
 			return [];
 		}
@@ -218,14 +218,14 @@ export class SubsonicFormatter {
 		for (const i of index.groups) {
 			const artist: Array<SubsonicArtistID3> = [];
 			for (const e of i.items) {
-				artist.push(await SubsonicFormatter.packArtist(orm, e, states[e.id]));
+				artist.push(await SubsonicFormatter.packArtist(e, states[e.id]));
 			}
 			indexes.push({ name: i.name, artist });
 		}
 		return indexes;
 	}
 
-	static async packDirectory(orm: Orm, folder: Folder, state: State): Promise<SubsonicDirectory> {
+	static async packDirectory(folder: Folder, state: State): Promise<SubsonicDirectory> {
 		/*
 		 <xs:complexType name="Directory">
 		 <xs:sequence>
@@ -238,14 +238,14 @@ export class SubsonicFormatter {
 		 </xs:complexType>
 		 */
 		return {
-			id: await orm.Subsonic.subsonicID(folder.id),
-			parent: await orm.Subsonic.mayBeSubsonicID(folder.parent.id()),
+			id: folder.id,
+			parent: folder.parent.id(),
 			name: path.basename(folder.path),
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
-	static async packFolderArtist(orm: Orm, folder: Folder, state?: State): Promise<SubsonicArtist> {
+	static async packFolderArtist(folder: Folder, state?: State): Promise<SubsonicArtist> {
 		/*
     <xs:complexType name="Artist">
         <xs:attribute name="id" type="xs:string" use="required"/>
@@ -256,14 +256,14 @@ export class SubsonicFormatter {
     </xs:complexType>
 		 */
 		return {
-			id: await orm.Subsonic.subsonicID(folder.id),
+			id: folder.id,
 			name: folder.title || folder.artist || '',
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
 		};
 	}
 
-	static async packAlbum(orm: Orm, album: Album, state?: State): Promise<SubsonicAlbumID3> {
+	static async packAlbum(album: Album, state?: State): Promise<SubsonicAlbumID3> {
 		/*
 		 <xs:complexType name="AlbumID3">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -280,13 +280,12 @@ export class SubsonicFormatter {
 
 		 */
 		const artist = await album.artist.get();
-		const id = await orm.Subsonic.subsonicID(album.id);
 		return {
-			id,
+			id: album.id,
 			name: album.name,
 			artist: artist?.name,
-			artistId: await orm.Subsonic.mayBeSubsonicID(artist?.id),
-			coverArt: id,
+			artistId: artist?.id,
+			coverArt: album.id,
 			songCount: await album.tracks.count(),
 			duration: SubsonicFormatter.packDuration(album.duration),
 			year: album.year,
@@ -311,7 +310,7 @@ export class SubsonicFormatter {
 		return genres && (await genres.count()) > 0 ? (await genres.getItems()).map(g => g.name).join(' / ') : undefined;
 	}
 
-	static async packArtist(orm: Orm, artist: Artist, state?: State): Promise<SubsonicArtistID3> {
+	static async packArtist(artist: Artist, state?: State): Promise<SubsonicArtistID3> {
 		/*
 		 <xs:complexType name="ArtistID3">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -321,11 +320,10 @@ export class SubsonicFormatter {
 		 <xs:attribute name="starred" type="xs:dateTime" use="optional"/>
 		 </xs:complexType>
 		 */
-		const id = await orm.Subsonic.subsonicID(artist.id);
 		return {
-			id,
+			id: artist.id,
 			name: artist.name,
-			coverArt: id,
+			coverArt: artist.id,
 			albumCount: await artist.albums.count(),
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
@@ -375,7 +373,7 @@ export class SubsonicFormatter {
 		return result;
 	}
 
-	static async packTrack(orm: Orm, track: Track, state?: State): Promise<SubsonicChild> {
+	static async packTrack(track: Track, state?: State): Promise<SubsonicChild> {
 		/*
 		 <xs:complexType name="Child">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
@@ -411,15 +409,14 @@ export class SubsonicFormatter {
 
 		const suffix = fileSuffix(track.name);
 		const tag = await track.tag.get();
-		const id = await orm.Subsonic.subsonicID(track.id);
 		const result: SubsonicChild = {
-			id,
-			parent: await orm.Subsonic.mayBeSubsonicID(track.folder.id()),
+			id: track.id,
+			parent: track.folder.id(),
 			title: tag?.title || track.name,
 			album: tag?.album,
 			artist: tag?.artist,
 			isDir: false,
-			coverArt: id,
+			coverArt: track.id,
 			genre: (tag?.genres || []).join(' / '),
 			year: tag?.year,
 			created: SubsonicFormatter.formatSubSonicDate(track.statCreated),
@@ -432,8 +429,8 @@ export class SubsonicFormatter {
 			isVideo: false,
 			// path: path.join(track.path, track.fileName),
 			discNumber: tag?.disc,
-			albumId: await orm.Subsonic.mayBeSubsonicID(track.album.id()),
-			artistId: await orm.Subsonic.mayBeSubsonicID(track.artist.id()),
+			albumId: track.album.id(),
+			artistId: track.artist.id(),
 			type: 'music',
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
@@ -451,15 +448,15 @@ export class SubsonicFormatter {
 		return result;
 	}
 
-	static async packNowPlaying(orm: Orm, nowPlaying: NowPlaying, state: State): Promise<SubsonicNowPlayingEntry> {
+	static async packNowPlaying(nowPlaying: NowPlaying, state: State): Promise<SubsonicNowPlayingEntry> {
 		let entry: SubsonicChild;
 		if (nowPlaying.track) {
-			entry = await SubsonicFormatter.packTrack(orm, nowPlaying.track, state);
+			entry = await SubsonicFormatter.packTrack(nowPlaying.track, state);
 		} else if (nowPlaying.episode) {
-			entry = await SubsonicFormatter.packPodcastEpisode(orm, nowPlaying.episode, state);
+			entry = await SubsonicFormatter.packPodcastEpisode(nowPlaying.episode, state);
 		} else {
 			entry = {
-				id: 0,
+				id: '0',
 				isDir: false,
 				title: 'Unknown'
 			};
@@ -471,11 +468,10 @@ export class SubsonicFormatter {
 		return nowPlay;
 	}
 
-	static async packFolder(orm: Orm, folder: Folder, state?: State): Promise<SubsonicChild> {
-		const id = await orm.Subsonic.subsonicID(folder.id);
+	static async packFolder(folder: Folder, state?: State): Promise<SubsonicChild> {
 		return {
-			id,
-			parent: await orm.Subsonic.mayBeSubsonicID(folder.parent.id()),
+			id: folder.id,
+			parent: folder.parent.id(),
 			isDir: true,
 			// path: folder.path,
 			title: folder.title || path.basename(folder.path),
@@ -483,19 +479,19 @@ export class SubsonicFormatter {
 			artist: folder.artist,
 			year: folder.year,
 			genre: await SubsonicFormatter.packGenres(folder.genres),
-			coverArt: id,
+			coverArt: folder.id,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
-			albumId: await orm.Subsonic.mayBeSubsonicID(((await folder.albums.getIDs()) || [])[0]),
-			artistId: await orm.Subsonic.mayBeSubsonicID(((await folder.artists.getIDs()) || [])[0]),
+			albumId: ((await folder.albums.getIDs()) || [])[0],
+			artistId: ((await folder.artists.getIDs()) || [])[0],
 			created: SubsonicFormatter.formatSubSonicDate(folder.createdAt),
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
-	static async packPodcast(orm: Orm, podcast: Podcast, status?: PodcastStatus): Promise<SubsonicPodcastChannel> {
+	static async packPodcast(podcast: Podcast, status?: PodcastStatus): Promise<SubsonicPodcastChannel> {
 		return {
-			id: await orm.Subsonic.subsonicID(podcast.id),
+			id: podcast.id,
 			url: podcast.url,
 			errorMessage: podcast.errorMessage,
 			title: podcast.title,
@@ -506,23 +502,22 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static async packPodcastEpisode(orm: Orm, episode: Episode, state?: State, status?: PodcastStatus): Promise<SubsonicPodcastEpisode> {
+	static async packPodcastEpisode(episode: Episode, state?: State, status?: PodcastStatus): Promise<SubsonicPodcastEpisode> {
 		const tag = await episode.tag.get();
-		const id = await orm.Subsonic.subsonicID(episode.id);
 		const result: SubsonicPodcastEpisode = {
 			// albumId:episode.albumId,
 			// artistId:episode.artistId,
 			// averageRating:episode.averageRating, // TODO: podcast episode state.averageRating
 			// bookmarkPosition:episode.bookmarkPosition, // TODO: podcast episode state.bookmarkPosition
-			streamId: id,
-			coverArt: id,
-			channelId: await orm.Subsonic.subsonicID(episode.podcast.idOrFail()),
+			streamId: episode.id,
+			coverArt: episode.id,
+			channelId: episode.podcast.idOrFail(),
 			description: episode.summary,
 			publishDate: episode.date !== undefined ? SubsonicFormatter.formatSubSonicDate(episode.date) : undefined,
 			title: episode.name,
 			status: status ? status : episode.status,
-			id: await orm.Subsonic.subsonicID(episode.id),
-			parent: await orm.Subsonic.mayBeSubsonicID(episode.podcast.id()),
+			id: episode.id,
+			parent: episode.podcast.id(),
 			artist: tag ? tag.artist : episode.author,
 			album: tag?.album,
 			track: tag?.trackNr,
@@ -561,7 +556,7 @@ export class SubsonicFormatter {
 
 	static async packPlaylist(orm: Orm, playlist: Playlist): Promise<SubsonicPlaylist> {
 		return {
-			id: await orm.Subsonic.subsonicID(playlist.id),
+			id: playlist.id,
 			name: playlist.name,
 			comment: playlist.comment || '',
 			public: playlist.isPublic,
@@ -571,7 +566,7 @@ export class SubsonicFormatter {
 			coverArt: playlist.coverArt,
 			allowedUser: [], // playlist.allowedUser,
 			songCount: await playlist.entries.count(),
-			owner: await orm.Subsonic.mayBeSubsonicID(playlist.user.id())
+			owner: playlist.user.id()
 		};
 	}
 
@@ -579,7 +574,7 @@ export class SubsonicFormatter {
 		const result = await SubsonicFormatter.packPlaylist(orm, playlist) as SubsonicPlaylistWithSongs;
 		const entry: Array<SubsonicChild> = [];
 		for (const track of tracks) {
-			entry.push(await SubsonicFormatter.packTrack(orm, track, states[track.id]));
+			entry.push(await SubsonicFormatter.packTrack(track, states[track.id]));
 		}
 		result.entry = entry;
 		return result;
@@ -619,9 +614,9 @@ export class SubsonicFormatter {
 		};
 	}
 
-	static async packRadio(orm: Orm, radio: Radio): Promise<SubsonicInternetRadioStation> {
+	static async packRadio(radio: Radio): Promise<SubsonicInternetRadioStation> {
 		return {
-			id: await orm.Subsonic.subsonicID(radio.id),
+			id: radio.id,
 			name: radio.name,
 			streamUrl: radio.url,
 			homePageUrl: radio.homepage

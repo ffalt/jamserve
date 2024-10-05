@@ -39,7 +39,7 @@ export class SubsonicListsApi {
 		for (const entry of list) {
 			const state = await orm.State.findOrCreate(entry.episode?.id || entry.track?.id || '',
 				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
-			result.push(await SubsonicFormatter.packNowPlaying(orm, entry, state));
+			result.push(await SubsonicFormatter.packNowPlaying(entry, state));
 		}
 		return { nowPlaying: { entry: result } };
 	}
@@ -63,12 +63,11 @@ export class SubsonicListsApi {
 		 musicFolderId 	No 		Only return songs in the music folder with the given ID. See getMusicFolders.
 		 */
 		const amount = Math.min(query.size || 10, 500);
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
 		const filter: TrackFilterArgs = {
 			genres: query.genre ? [query.genre] : undefined,
 			fromYear: query.fromYear,
 			toYear: query.toYear,
-			rootIDs: rootId ? [rootId] : undefined
+			rootIDs: query.musicFolderId ? [query.musicFolderId] : undefined
 		};
 		const randomSongs: SubsonicSongs = {};
 		const trackids = await orm.Track.findIDsFilter(filter);
@@ -223,8 +222,7 @@ export class SubsonicListsApi {
 		 */
 		const take = Math.min(query.size || 20, 500);
 		const skip = query.offset || 0;
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const rootIDs = rootId ? [rootId] : undefined;
+		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		let albums: Array<Album> = [];
 		switch (query.type) {
 			case 'random':
@@ -338,8 +336,7 @@ export class SubsonicListsApi {
 		 */
 		const take = query.count || 10;
 		const skip = query.offset || 0;
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const rootIDs = rootId ? [rootId] : undefined;
+		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		const genres = query.genre ? [query.genre] : undefined;
 		const tracks = await orm.Track.findFilter({ rootIDs, genres }, undefined, { skip, take }, user);
 		const songsByGenre: SubsonicSongs = {};
@@ -362,8 +359,7 @@ export class SubsonicListsApi {
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
 		 */
 		const starred: SubsonicStarred = {};
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const rootIDs = rootId ? [rootId] : undefined;
+		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
 			starred.song = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
@@ -394,8 +390,7 @@ export class SubsonicListsApi {
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders
 		 */
 		const starred2: SubsonicStarred2 = {};
-		const rootId = await orm.Subsonic.mayBeJamID(query.musicFolderId);
-		const rootIDs = rootId ? [rootId] : undefined;
+		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		const tracks = await orm.Track.findListFilter(ListType.faved, undefined, { rootIDs }, undefined, undefined, user);
 		if (tracks.items.length > 0) {
 			starred2.song = await SubsonicHelper.prepareTracks(orm, tracks.items, user);

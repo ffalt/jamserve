@@ -25,18 +25,18 @@ export class SubsonicHelper {
 		return result;
 	}
 
-	static async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (orm: Orm, o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
+	static async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
 		const states = await SubsonicHelper.loadStates(orm, objs.map(o => o.id), type, user.id);
 		const result: Array<R> = [];
 		for (const o of objs) {
-			result.push(await pack(orm, o, states[o.id]));
+			result.push(await pack(o, states[o.id]));
 		}
 		return result;
 	}
 
-	static async prepareObj<T extends Base, R>(orm: Orm, type: DBObjectType, obj: T, pack: (orm: Orm, o: T, state: State) => Promise<R>, user: User): Promise<R> {
+	static async prepareObj<T extends Base, R>(orm: Orm, type: DBObjectType, obj: T, pack: (o: T, state: State) => Promise<R>, user: User): Promise<R> {
 		const state = await orm.State.findOrCreate(obj.id, type, user.id);
-		return pack(orm, obj, state);
+		return pack(obj, state);
 	}
 
 	static async prepareAlbums(orm: Orm, albums: Array<Album>, user: User): Promise<Array<SubsonicAlbumID3>> {
@@ -77,7 +77,7 @@ export class SubsonicHelper {
 		const users = await orm.User.findByIDs(userIds);
 		const result: Array<SubsonicBookmark> = [];
 		for (const bookmark of bookmarks) {
-			const bookmarkID = await orm.Subsonic.subsonicID(bookmarkDestID(bookmark));
+			const bookmarkID = bookmarkDestID(bookmark);
 			const entry = childs.find(child => child.id === bookmarkID);
 			const bookmarkuser = users.find(u => u.id === bookmark.user.id());
 			if (entry && bookmarkuser) {
@@ -99,14 +99,14 @@ export class SubsonicHelper {
 		const states = await SubsonicHelper.loadStates(orm, episodes.map(o => o.id), DBObjectType.episode, user.id);
 		const result: Array<SubsonicPodcastEpisode> = [];
 		for (const episode of episodes) {
-			result.push(await SubsonicFormatter.packPodcastEpisode(orm, episode, states[episode.id],
+			result.push(await SubsonicFormatter.packPodcastEpisode(episode, states[episode.id],
 				(engine.episode.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status)));
 		}
 		return result;
 	}
 
-	static async collectStateChangeIds(orm: Orm, query: SubsonicParameterState): Promise<Array<string>> {
-		let result: Array<number> = [];
+	static async collectStateChangeIds(query: SubsonicParameterState): Promise<Array<string>> {
+		let result: Array<string> = [];
 		if (query.id) {
 			const ids = Array.isArray(query.id) ? query.id : [query.id];
 			result = result.concat(ids);
@@ -119,6 +119,6 @@ export class SubsonicHelper {
 			const ids = Array.isArray(query.artistId) ? query.artistId : [query.artistId];
 			result = result.concat(ids);
 		}
-		return await orm.Subsonic.jamIDs(result);
+		return result;
 	}
 }

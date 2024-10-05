@@ -35,7 +35,7 @@ export class SubsonicPlaylistsApi {
 			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
 		}
 		if (query.playlistId) {
-			const playlistId = await ctx.orm.Subsonic.jamIDOrFail(query.playlistId);
+			const playlistId = query.playlistId;
 			const updateQuery: SubsonicParameterPlaylistUpdate = {
 				playlistId,
 				name: query.name,
@@ -44,7 +44,7 @@ export class SubsonicPlaylistsApi {
 			await this.updatePlaylist(updateQuery, ctx);
 			playlist = await ctx.orm.Playlist.findOneOrFailByID(playlistId);
 		} else if (query.name) {
-			const mediaIDs = await ctx.orm.Subsonic.jamIDs(query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : []);
+			const mediaIDs = query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : [];
 			playlist = await ctx.engine.playlist.create(ctx.orm, { name: query.name, isPublic: false, mediaIDs }, ctx.user);
 		}
 		if (!playlist) {
@@ -91,7 +91,7 @@ export class SubsonicPlaylistsApi {
 		trackIDs = trackIDs.filter((id, index) => !removeTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
-			trackIDs = trackIDs.concat(await orm.Subsonic.jamIDs(songAdd));
+			trackIDs = trackIDs.concat(songAdd);
 		}
 		const mediaIDs = trackIDs.filter(t => t !== undefined);
 		await engine.playlist.update(orm, {
@@ -117,7 +117,7 @@ export class SubsonicPlaylistsApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
 		 */
-		const playlist = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Playlist);
+		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (user.id !== playlist.user.id()) {
 			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
 		}
@@ -172,7 +172,7 @@ export class SubsonicPlaylistsApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.
 		 */
-		const playlist = await orm.Subsonic.findOneSubsonicOrFailByID(query.id, orm.Playlist);
+		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (playlist.user.id() !== user.id) {
 			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
 		}
