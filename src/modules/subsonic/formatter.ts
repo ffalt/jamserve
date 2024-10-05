@@ -42,7 +42,7 @@ import { LastFM } from '../audio/clients/lastfm-rest-data.js';
 import { Track } from '../../entity/track/track.js';
 import { fileSuffix } from '../../utils/fs-utils.js';
 import mimeTypes from 'mime-types';
-import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
+import { AlbumType, AudioFormatType, PodcastStatus } from '../../types/enums.js';
 import { NowPlaying } from '../../entity/nowplaying/nowplaying.js';
 import { Podcast } from '../../entity/podcast/podcast.js';
 import { Episode } from '../../entity/episode/episode.js';
@@ -89,7 +89,8 @@ export class SubsonicFormatter {
 			status: 'ok',
 			version: '1.16.0',
 			type: 'jam',
-			serverVersion: JAMSERVE_VERSION
+			serverVersion: JAMSERVE_VERSION,
+			openSubsonic: true
 		};
 	}
 
@@ -218,12 +219,14 @@ export class SubsonicFormatter {
 			return [];
 		}
 		const indexes: Array<SubsonicIndexID3> = [];
-		for (const i of index.groups) {
-			const artist: Array<SubsonicArtistID3> = [];
-			for (const e of i.items) {
-				artist.push(await SubsonicFormatter.packArtist(e, states[e.id]));
+		for (const group of index.groups) {
+			const artists: Array<SubsonicArtistID3> = [];
+			for (const artist of group.items) {
+				if ((await artist.albums.count()) > 0) {
+					artists.push(await SubsonicFormatter.packArtist(artist, states[artist.id]));
+				}
 			}
-			indexes.push({ name: i.name, artist });
+			indexes.push({ name: group.name, artist: artists });
 		}
 		return indexes;
 	}
@@ -274,15 +277,29 @@ export class SubsonicFormatter {
 		 <xs:attribute name="artist" type="xs:string" use="optional"/>
 		 <xs:attribute name="artistId" type="xs:string" use="optional"/>
 		 <xs:attribute name="coverArt" type="xs:string" use="optional"/>
-		 <xs:attribute name="songCount" type="xs:int" use="required"/>
-		 <xs:attribute name="duration" type="xs:int" use="required"/>
-		 <xs:attribute name="created" type="xs:dateTime" use="required"/>
-		 <xs:attribute name="starred" type="xs:dateTime" use="optional"/>
-		 <xs:attribute name="year" type="xs:int" use="optional"/> <!-- Added in 1.10.1 -->
-		 <xs:attribute name="genre" type="xs:string" use="optional"/> <!-- Added in 1.10.1 -->
-
+		<xs:attribute name="songCount" type="xs:int" use="required"/>
+		<xs:attribute name="duration" type="xs:int" use="required"/>
+		<xs:attribute name="created" type="xs:dateTime" use="required"/>
+		<xs:attribute name="starred" type="xs:dateTime" use="optional"/>
+		<xs:attribute name="year" type="xs:int" use="optional"/> <!-- Added in 1.10.1 -->
+		<xs:attribute name="genre" type="xs:string" use="optional"/> <!-- Added in 1.10.1 -->
+		played?: string; // OpenSubsonic
+		userRating?: number; // OpenSubsonic
+		recordLabels?: Array<SubsonicListRecordLabel>; // OpenSubsonic
+		musicBrainzId?: string; // OpenSubsonic
+		genres?: Array<SubsonicListGenre>; // OpenSubsonic
+		artists?: Array<SubsonicListArtist>; // OpenSubsonic
+		displayArtist?: string; // OpenSubsonic
+		releaseTypes?: Array<string>; // OpenSubsonic
+		moods?: Array<string>; // OpenSubsonic
+		sortName?: string; // OpenSubsonic
+		originalReleaseDate?: SubsonicListDate; // OpenSubsonic
+		releaseDate?: SubsonicListDate; // OpenSubsonic
+		isCompilation?: boolean; // OpenSubsonic
+		discTitles?: Array<SubsonicListDiscTitle>; // OpenSubsonic
 		 */
 		const artist = await album.artist.get();
+		const genres = await album.genres.getItems();
 		return {
 			id: album.id,
 			name: album.name,
@@ -292,9 +309,23 @@ export class SubsonicFormatter {
 			songCount: await album.tracks.count(),
 			duration: SubsonicFormatter.packDuration(album.duration),
 			year: album.year,
-			genre: await SubsonicFormatter.packGenres(album.genres),
+			genre: await SubsonicFormatter.packGenres(genres),
 			created: SubsonicFormatter.formatSubSonicDate(album.createdAt) as string,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
+			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
+			// recordLabels: [{name:'demo'}],
+			musicBrainzId: album.mbReleaseID,
+			genres: genres.length ? genres.map(g => ({ name: g.name })) : undefined,
+			// artists: [{id:'demo', name:'demo'}],
+			// displayArtist: 'Artist 1 feat. Artist 2',
+			// releaseTypes: ['Album', 'Remixes'],
+			// moods: ["slow", "cool"],
+			// sortName: "lagerfeuer (8-bit)",
+			// "originalReleaseDate": { "year": 2001, "month": 3, "day": 10 },
+			// "releaseDate": { "year": 2001, "month": 3, "day": 10}
+			isCompilation: album.albumType === AlbumType.compilation
+			// "discTitles": [{ "disc": 0, "title": "Disc 0 title" }, { "disc": 2, "title": "Disc 1 title" }]
 		};
 	}
 
@@ -309,8 +340,12 @@ export class SubsonicFormatter {
 		return bitrate !== undefined ? Math.round(bitrate / 1000) : -1;
 	}
 
-	static async packGenres(genres: Collection<Genre>): Promise<string | undefined> {
-		return genres && (await genres.count()) > 0 ? (await genres.getItems()).map(g => g.name).join(' / ') : undefined;
+	static async packGenreCollection(genres: Collection<Genre>): Promise<string | undefined> {
+		return genres && (await genres.count()) > 0 ? await SubsonicFormatter.packGenres(await genres.getItems()) : undefined;
+	}
+
+	static async packGenres(genres?: Array<Genre>): Promise<string | undefined> {
+		return genres && genres?.length > 0 ? genres.map(g => g.name).join(' / ') : undefined;
 	}
 
 	static async packArtist(artist: Artist, state?: State): Promise<SubsonicArtistID3> {
@@ -322,13 +357,19 @@ export class SubsonicFormatter {
 		 <xs:attribute name="albumCount" type="xs:int" use="required"/>
 		 <xs:attribute name="starred" type="xs:dateTime" use="optional"/>
 		 </xs:complexType>
+			musicBrainzId?: string; // OpenSubsonic
+			sortName?: string; // OpenSubsonic
+			roles?: Array<string>; // OpenSubsonic
 		 */
 		return {
 			id: artist.id,
 			name: artist.name,
 			coverArt: artist.id,
 			albumCount: await artist.albums.count(),
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			musicBrainzId: artist.mbArtistID,
+			sortName: artist.nameSort
+			// roles: artist.roles
 		};
 	}
 
@@ -408,6 +449,24 @@ export class SubsonicFormatter {
 		 <xs:attribute name="type" type="sub:MediaType" use="optional"/> <!-- Added in 1.8.0 -->
 		 <xs:attribute name="bookmarkPosition" type="xs:long" use="optional"/> <!-- In millis. Added in 1.10.1 -->
 		 </xs:complexType>
+		bitDepth?: number; //  OpenSubsonic
+		samplingRate?: number; //  OpenSubsonic
+		channelCount?: number; //  OpenSubsonic
+		mediaType?: string; //  OpenSubsonic
+		played?: string; //  OpenSubsonic
+		bpm?: number; //  OpenSubsonic
+		comment?: string; //  OpenSubsonic
+		sortName?: string; //  OpenSubsonic
+		musicBrainzId?: string; //  OpenSubsonic
+		genres?: Array<SubsonicListGenre>; //  OpenSubsonic
+		artists?: Array<SubsonicArtistsID3>; //  OpenSubsonic
+		albumArtists?: Array<SubsonicArtistsID3>; //  OpenSubsonic
+		contributors?: Array<SubsonicContributor>; //  OpenSubsonic
+		displayArtist?: string; //  OpenSubsonic
+		displayAlbumArtist?: string; //  OpenSubsonic
+		displayComposer?: string; //  OpenSubsonic
+		moods?: Array<string>; // OpenSubsonic
+		replayGain?: SubSonicReplayGain; // OpenSubsonic
 		 */
 
 		const suffix = fileSuffix(track.name);
@@ -438,11 +497,29 @@ export class SubsonicFormatter {
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
-			transcodedSuffix: undefined,
-			transcodedContentType: undefined
+			// transcodedSuffix: undefined,
+			// transcodedContentType: undefined,
 			// "rank": 0,
 			// "averageRating": track.state.avgrated,
 			// "bookmarkPosition": track.state.bookmark,
+			// bitDepth: tag?.mediaBitDepth, //  OpenSubsonic
+			samplingRate: tag?.mediaSampleRate,
+			channelCount: tag?.mediaChannels,
+			mediaType: 'song',
+			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
+			// bpm: tag?.bpm; //  OpenSubsonic
+			// comment: tag?.comment; //  OpenSubsonic
+			sortName: tag?.titleSort,
+			musicBrainzId: tag?.mbTrackID,
+			genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined,
+			// artists?: Array<SubsonicArtistsID3>; //  OpenSubsonic
+			// albumArtists? : Array<SubsonicArtistsID3>; //  OpenSubsonic
+			// contributors? : Array<SubsonicContributor>; //  OpenSubsonic
+			// displayArtist? : string; //  OpenSubsonic
+			// displayAlbumArtist? : string; //  OpenSubsonic
+			// displayComposer? : string; //  OpenSubsonic
+			// moods? : Array<string>; // OpenSubsonic
+			// replayGain? : SubSonicReplayGain; // OpenSubsonic
 		};
 		if (suffix !== AudioFormatType.mp3) {
 			result.transcodedSuffix = AudioFormatType.mp3;
@@ -481,7 +558,7 @@ export class SubsonicFormatter {
 			album: folder.album,
 			artist: folder.artist,
 			year: folder.year,
-			genre: await SubsonicFormatter.packGenres(folder.genres),
+			genre: await SubsonicFormatter.packGenreCollection(folder.genres),
 			coverArt: folder.id,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,

@@ -215,20 +215,20 @@ export class SubsonicParameterChatMessage {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterState {
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		nullable: true, description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.',
 		isID: true
 	})
 	id?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		nullable: true,
 		description: 'The ID of an album to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.',
 		isID: true
 	})
 	albumId?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		nullable: true,
 		description: 'The ID of an artist to star. Use this rather than id if the client accesses the media collection according to ID3 tags rather than file structure. Multiple parameters allowed.',
 		isID: true
@@ -250,7 +250,7 @@ export class SubsonicParameterPlaylistCreate {
 	@SubsonicObjField({ nullable: true, description: 'The human-readable name of the playlist.' })
 	name?: string;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		description: 'ID of a song in the playlist. Use one songId parameter for each song in the playlist.',
 		nullable: true,
 		isID: true
@@ -272,13 +272,13 @@ export class SubsonicParameterPlaylistUpdate {
 	@SubsonicObjField({ nullable: true, description: 'true if the playlist should be visible to all users, false otherwise.', defaultValue: false })
 	public?: boolean;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		description: 'Add this song with this ID to the playlist. Multiple parameters allowed.',
 		isID: true
 	})
 	songIdToAdd?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		description: 'Remove the song at this position in the playlist. Multiple parameters allowed.'
 	})
 	songIndexToRemove?: number | Array<number>;
@@ -364,7 +364,7 @@ export class SubsonicParameterCreateUser {
 	@SubsonicObjField({ nullable: true, description: 'Whether the user is allowed to start video conversions.', defaultValue: false })
 	videoConversionRole?: boolean;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		nullable: true,
 		isID: true,
 		description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.'
@@ -422,7 +422,7 @@ export class SubsonicParameterUpdateUser {
 	@SubsonicObjField({ nullable: true, description: 'Whether the user is allowed to start video conversions.', defaultValue: false })
 	videoConversionRole?: boolean;
 
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		nullable: true, isID: true,
 		description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.'
 	})
@@ -532,7 +532,7 @@ export class SubsonicParameterLyrics {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterPlayQueue {
-	@SubsonicObjField(() => [Number], {
+	@SubsonicObjField(() => [String], {
 		description: 'ID of a song in the play queue. Use one id parameter for each song in the play queue.',
 		isID: true
 	})
