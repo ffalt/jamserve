@@ -12,6 +12,7 @@ import { ApolloMiddleware } from './middlewares/apollo.middleware.js';
 import { useSessionMiddleware } from './middlewares/session.middleware.js';
 import { useLogMiddleware } from './middlewares/log.middleware.js';
 import { RestMiddleware } from './middlewares/rest.middleware.js';
+import { SubsonicMiddleware } from './middlewares/subsonic.middleware.js';
 import { usePassPortMiddleWare } from './middlewares/passport.middleware.js';
 import { JAMAPI_URL_VERSION } from '../engine/rest/version.js';
 import { DocsMiddleware } from './middlewares/docs.middleware.js';
@@ -23,12 +24,27 @@ const log = logger('Server');
 
 @InRequestScope
 export class Server {
-	@Inject engine!: EngineService;
-	@Inject apollo!: ApolloMiddleware;
-	@Inject rest!: RestMiddleware;
-	@Inject configService!: ConfigService;
-	@Inject sessionService!: SessionService;
-	@Inject docs!: DocsMiddleware;
+	@Inject
+	engine!: EngineService;
+
+	@Inject
+	apollo!: ApolloMiddleware;
+
+	@Inject
+	rest!: RestMiddleware;
+
+	@Inject
+	subsonic!: SubsonicMiddleware;
+
+	@Inject
+	configService!: ConfigService;
+
+	@Inject
+	sessionService!: SessionService;
+
+	@Inject
+	docs!: DocsMiddleware;
+
 	app!: express.Application;
 	server: http.Server | undefined;
 
@@ -57,6 +73,9 @@ export class Server {
 		});
 
 		app.use(useEngineMiddleware(this.engine));
+		log.debug(`registering subsonic middleware`);
+		app.use(`/rest`, this.subsonic.middleware());
+
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
 		app.use(usePassPortMiddleWare(app, this.engine));
 		app.use(useAuthenticatedCors(this.configService));
@@ -82,10 +101,12 @@ export class Server {
 		});
 		// frontend (any)
 		const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
+		const favicon = path.resolve('./static/api-docs/favicon.ico');
+		app.get('/favicon.ico', (_req, res) => res.sendFile(favicon));
+		app.get('/', (_req, res) => res.sendFile(indexHTML));
+		app.get('/index.html', (_req, res) => res.sendFile(indexHTML));
 		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-		app.get('*', (req, res) => {
-			res.sendFile(indexHTML);
-		});
+		app.get('*', (_req, res) => res.sendFile(indexHTML));
 
 		this.app = app;
 	}
@@ -111,6 +132,8 @@ export class Server {
 			{ Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
 			{ Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
 			{ Content: 'REST Documentation', URL: `${domain}/docs` },
+			{ Content: 'Subsonic REST Api', URL: `${domain}/rest/ping` },
+			{ Content: 'Subsonic REST Documentation', URL: `${domain}/docs/subsonic` },
 			{ Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
 			{ Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },
 			{ Content: 'Angular Client', URL: `${domain}/docs/angular-client.zip` },

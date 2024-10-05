@@ -1,5 +1,6 @@
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { Base, Page } from '../base/base.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType()
 export class UserRoles {
@@ -23,6 +24,12 @@ export class User extends Base {
 
 	@ObjField(() => UserRoles, { description: 'User Roles' })
 	roles!: UserRoles;
+}
+
+@ResultType()
+export class SubsonicToken {
+	@ObjField({ description: 'Generated Subsonic Token', example: 'kshfis6few68fwefh' })
+	token?: string;
 }
 
 @ResultType({ description: 'Users Page' })

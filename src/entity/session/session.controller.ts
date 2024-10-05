@@ -1,10 +1,15 @@
 import { Session } from './session.model.js';
-import { BodyParam, Controller, Ctx, Get, Post } from '../../modules/rest/index.js';
 import { SessionUser } from './session-user.model.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 import { UserSession } from './user-session.model.js';
 import { UserRole } from '../../types/enums.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+
 @Controller('/session', { tags: ['Access'] })
 export class SessionController {
 	@Get(() => Session, { description: 'Check the Login State', summary: 'Check Session' })

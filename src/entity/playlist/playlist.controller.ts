@@ -1,5 +1,4 @@
 import { Playlist, PlaylistIndex, PlaylistPage } from './playlist.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, NotFoundError, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { PlaylistEntryPage } from '../playlistentry/playlist-entry.model.js';
 import { IncludesTrackArgs } from '../track/track.args.js';
@@ -8,6 +7,15 @@ import { IncludesEpisodeArgs } from '../episode/episode.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { PlaylistEntryOrderArgs } from '../playlistentry/playlist-entry.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 @Controller('/playlist', { tags: ['Playlist'], roles: [UserRole.stream] })
 export class PlaylistController {

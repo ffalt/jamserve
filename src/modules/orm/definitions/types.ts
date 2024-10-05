@@ -66,7 +66,7 @@ export interface CascadeOptions {
 export declare type MethodAndPropDecorator = PropertyDecorator & MethodDecorator;
 export declare type BasicOptions = DecoratorTypeOptions;
 export declare type AdvancedOptions = BasicOptions & SchemaNameOptions;
-export declare type FieldOptions = AdvancedOptions;
+export declare type FieldOptions = AdvancedOptions & { autoIncrement?: boolean };
 export declare type PrimaryFieldOptions = FieldOptions & PrimaryOptions;
 
 export declare type OneToManyFieldOptions = FieldOptions & OrderByOptions & CascadeOptions;

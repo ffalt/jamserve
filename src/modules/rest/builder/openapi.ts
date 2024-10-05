@@ -1,110 +1,15 @@
 import { JAMAPI_URL_VERSION, JAMAPI_VERSION } from '../../engine/rest/version.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
+import { iterateControllers } from '../../deco/helpers/iterate-super.js';
+import { Schemas, OpenAPIObject, PathsObject, OperationObject, ParameterObject, ResponsesObject } from '../../deco/builder/openapi-helpers.js';
+import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import { CustomPathParameterAliasRouteOptions } from '../definitions/types.js';
-import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
-import { MethodMetadata } from '../definitions/method-metadata.js';
-import { Errors } from './express-error.js';
-import { iterateControllers } from '../helpers/iterate-super.js';
-import { MetadataStorage } from '../metadata/metadata-storage.js';
-import {
-	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, OperationObject, ParameterObject, PathsObject, ReferenceObject,
-	ResponsesObject, RequestBodyObject, SchemaObject, PathItemObject
-} from './openapi-helpers.js';
-import { OpenApiRefBuilder } from './openapi-refs.js';
+import { ControllerClassMetadata } from '../../deco/definitions/controller-metadata.js';
+import { CustomPathParameterAliasRouteOptions } from '../../deco/definitions/types.js';
 import { ClassType } from 'type-graphql';
 
-class OpenApiBuilder {
-	metadata: MetadataStorage;
-	refsBuilder: OpenApiRefBuilder;
-
-	constructor(public extended: boolean = true) {
-		this.metadata = getMetadataStorage();
-		this.refsBuilder = new OpenApiRefBuilder(extended);
-	}
-
-	private fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
-		if (parameters.length > 0) {
-			responses['422'] = { description: Errors.invalidParameter };
-			if (parameters.find(p => p.required)) {
-				responses['400'] = { description: Errors.missingParameter };
-			}
-		}
-		if (parameters.find(p => {
-			return (p.schema as ReferenceObject)?.$ref === SCHEMA_ID || (((p.schema as SchemaObject)?.items || {}) as ReferenceObject).$ref === SCHEMA_ID;
-		})) {
-			responses['404'] = { description: Errors.itemNotFound };
-		}
-		if (roles.length > 0) {
-			responses['401'] = { description: Errors.unauthorized };
-		}
-	}
-
-	private buildResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, schemas: Schemas): ResponsesObject {
-		const responses: ResponsesObject = {};
-		if (method.binary) {
-			this.fillBinaryResponses(method.binary, responses);
-		} else if (method.getReturnType && method.getReturnType()) {
-			const type = method.getReturnType();
-			if (type === String) {
-				this.fillStringResponse(method, responses);
-			} else {
-				this.fillJSONResponses(type, method, schemas, responses);
-			}
-		} else {
-			responses['200'] = { description: 'ok' };
-		}
-		this.fillErrorResponses(method, parameters, roles, responses);
-		return responses;
-	}
-
-	private fillJSONResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
-		const content: ContentObject = {};
-		let schema: SchemaObject | ReferenceObject = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
-		if (method.returnTypeOptions?.array) {
-			schema = { type: 'array', items: schema };
-		}
-		content['application/json'] = { schema };
-		responses['200'] = { description: 'json data', content };
-	}
-
-	private fillStringResponse(method: MethodMetadata, responses: ResponsesObject): void {
-		const content: ContentObject = {};
-		const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
-		mimeTypes.forEach(mime => content[mime] = { schema: { type: 'string' } });
-		responses['200'] = { description: 'string data', content };
-	}
-
-	private fillBinaryResponses(binary: Array<string>, responses: ResponsesObject): void {
-		const content: ContentObject = {};
-		binary.forEach(mime => content[mime] = { schema: { type: 'string', format: 'binary' } });
-		responses['200'] = { description: 'binary data', content };
-	}
-
-	private buildRequestBody(method: MethodMetadata, schemas: Schemas): RequestBodyObject | undefined {
-		const params = method.params;
-		const refs: Array<SchemaObject | ReferenceObject> = [];
-		let isJson = true;
-		for (const param of params) {
-			if (param.kind === 'args' && param.mode === 'body') {
-				refs.push({ $ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas) });
-			} else if (param.kind === 'arg' && param.mode === 'body') {
-				const schema = this.refsBuilder.buildParameterSchema(param, schemas);
-				refs.push({ properties: { [param.name]: schema }, description: param.description, required: [param.name] });
-			} else if (param.kind === 'arg' && param.mode === 'file') {
-				isJson = false;
-				refs.push(this.refsBuilder.buildUploadSchema(param, schemas));
-			}
-		}
-		if (refs.length > 0) {
-			return {
-				required: true,
-				content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: refs.length === 1 ? refs[0] : { allOf: refs } } }
-			};
-		}
-		return;
-	}
-
-	private buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
+class OpenApiBuilder extends BaseOpenApiBuilder {
+	protected buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
 		const parameters: Array<ParameterObject> = this.refsBuilder.buildParameters(method, ctrl, schemas, alias);
 		const path = (ctrl.route || '') + (alias?.route || method.route || '');
 		const roles = method.roles || ctrl.roles || [];
@@ -122,31 +27,11 @@ class OpenApiBuilder {
 		return { path, o };
 	}
 
-	private static buildOpenApiBase(version: string): OpenAPIObject {
-		return {
-			openapi: '3.0.0',
-			info: {
-				title: 'JamApi', description: 'Api for JamServe', version,
-				license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
-			},
-			servers: [{
-				url: 'http://localhost:4040/jam/{version}',
-				description: 'A local JamServe API',
-				variables: { version: { enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION } }
-			}],
-			tags: [], paths: {},
-			components: {
-				securitySchemes: {
-					cookieAuth: { type: 'apiKey', in: 'cookie', name: 'jam.sid' },
-					bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
-				},
-				schemas: {}
-			},
-			security: []
-		};
+	fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+		this.fillJSONResponses(type, method, schemas, responses);
 	}
 
-	private buildOpenApiMethods(methods: Array<MethodMetadata>, ctrl: ControllerClassMetadata, schemas: Schemas, paths: PathsObject, isPost: boolean): void {
+	protected buildOpenApiMethods(methods: Array<MethodMetadata>, ctrl: ControllerClassMetadata, schemas: Schemas, paths: PathsObject, isPost: boolean): void {
 		for (const method of methods) {
 			const { path, o } = this.buildOpenApiMethod(method, ctrl, schemas, isPost);
 			const mode = isPost ? 'post' : 'get';
@@ -160,59 +45,14 @@ class OpenApiBuilder {
 		}
 	}
 
-	private static getTags(p: PathItemObject): Array<string> | undefined {
-		if (p.get) {
-			return p.get.tags;
-		}
-		if (p.post) {
-			return p.post.tags;
-		}
-		if (p.put) {
-			return p.put.tags;
-		}
-		if (p.patch) {
-			return p.patch.tags;
-		}
-		return undefined;
-	}
-
-	private static buildExtensions(openapi: OpenAPIObject, schemas: Schemas) {
-		const apiTags = new Set();
-		const tags = [];
-		const tagNames = [];
-		for (const key of Object.keys(openapi.paths)) {
-			const p = openapi.paths[key];
-			const list = OpenApiBuilder.getTags(p) || [];
-			for (const s of list) {
-				apiTags.add(s);
-			}
-		}
-		for (const key of Object.keys(schemas)) {
-			const modelName = `${key.toLowerCase()}_model`;
-			tagNames.push(modelName);
-			const tag = {
-				'name': modelName,
-				'x-displayName': key,
-				'description': `<SchemaDefinition schemaRef="#/components/schemas/${key}" />\n`
-			};
-			tags.push(tag);
-		}
-		tagNames.sort();
-		openapi.tags = tags;
-		openapi['x-tagGroups'] = [
-			{ name: 'API', tags: [...apiTags] },
-			{ name: 'Models', tags: tagNames }
-		];
-	}
-
-	private buildControllers(schemas: Schemas, openapi: OpenAPIObject) {
+	protected buildControllers(schemas: Schemas, openapi: OpenAPIObject) {
 		const controllers = this.metadata.controllerClasses.filter(c => !c.abstract).sort((a, b) => {
 			return a.name.localeCompare(b.name);
 		});
 		for (const ctrl of controllers) {
 			let gets: Array<MethodMetadata> = [];
 			let posts: Array<MethodMetadata> = [];
-			iterateControllers(this.metadata, ctrl, ctrlClass => {
+			iterateControllers(this.metadata.controllerClasses, ctrl, ctrlClass => {
 				gets = gets.concat(this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
 				posts = posts.concat(this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
 			});
@@ -221,22 +61,41 @@ class OpenApiBuilder {
 		}
 	}
 
-	build(): OpenAPIObject {
-		const openapi: OpenAPIObject = OpenApiBuilder.buildOpenApiBase(JAMAPI_VERSION);
-		const schemas: Schemas = {
-			ID: { type: 'string', format: 'uuid' },
-			JSON: { type: 'object' }
-		};
+	protected buildPaths(schemas: Schemas, openapi: OpenAPIObject): void {
 		this.buildControllers(schemas, openapi);
-		openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
-		if (this.extended) {
-			OpenApiBuilder.buildExtensions(openapi, schemas);
-		}
-		return openapi;
 	}
 }
 
-export function buildOpenApi(extended: boolean = true): OpenAPIObject {
-	const builder = new OpenApiBuilder(extended);
-	return builder.build();
+function buildOpenApiBase(version: string): OpenAPIObject {
+	return {
+		openapi: '3.0.0',
+		info: {
+			title: 'JamApi', description: 'Api for JamServe', version,
+			license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
+		},
+		servers: [{
+			url: 'http://localhost:4040/jam/{version}',
+			description: 'A local JamServe API',
+			variables: { version: { enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION } }
+		}],
+		tags: [], paths: {},
+		components: {
+			securitySchemes: {
+				cookieAuth: { type: 'apiKey', in: 'cookie', name: 'jam.sid' },
+				bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
+			},
+			schemas: {}
+		},
+		security: []
+	};
+}
+
+export function buildOpenApi(): OpenAPIObject {
+	const builder = new OpenApiBuilder(getMetadataStorage());
+	const openapi: OpenAPIObject = buildOpenApiBase(JAMAPI_VERSION);
+	const schemas: Schemas = {
+		ID: { type: 'string', format: 'uuid' },
+		JSON: { type: 'object' }
+	};
+	return builder.build(openapi, schemas);
 }

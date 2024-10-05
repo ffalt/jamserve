@@ -32,6 +32,9 @@ export class Session extends Base {
 	@Property(() => String)
 	cookie!: string;
 
+	// @Property(() => String, { nullable: true })
+	// value!: string;
+
 	@Property(() => String, { nullable: true })
 	jwth?: string; // hashed jwt
 }

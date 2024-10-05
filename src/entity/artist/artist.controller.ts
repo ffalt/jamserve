@@ -1,5 +1,4 @@
 import { Artist, ArtistIndex, ArtistPage } from './artist.model.js';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { TrackPage } from '../track/track.model.js';
@@ -11,6 +10,11 @@ import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
 import { ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs } from './artist.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 
 @Controller('/artist', { tags: ['Artist'], roles: [UserRole.stream] })
 export class ArtistController {

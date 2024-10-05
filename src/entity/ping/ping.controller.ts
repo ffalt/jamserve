@@ -1,6 +1,7 @@
-import { Controller, Get } from '../../modules/rest/index.js';
 import { Ping } from './ping.model.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
 
 @Controller('/ping', { tags: ['Access'] })
 export class PingController {

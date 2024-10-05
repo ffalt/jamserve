@@ -7,9 +7,10 @@ import { Episode } from '../episode/episode.js';
 import { Track } from '../track/track.js';
 import { User } from '../user/user.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { ApiBinaryResult, GenericError, InvalidParamError } from '../../modules/rest/index.js';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class StreamService {

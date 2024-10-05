@@ -1,7 +1,6 @@
 import path from 'path';
 import { InRequestScope } from 'typescript-ioc';
 import { Episode } from '../episode/episode.js';
-import { ApiBinaryResult, InvalidParamError, UnauthError } from '../../modules/rest/index.js';
 import { Track } from '../track/track.js';
 import { Folder } from '../folder/folder.js';
 import { Artist } from '../artist/artist.js';
@@ -15,6 +14,8 @@ import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { Artwork } from '../artwork/artwork.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class DownloadService {

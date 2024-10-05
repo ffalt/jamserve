@@ -1,5 +1,6 @@
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { FolderHealthID, TrackHealthID } from '../../types/enums.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Health Hint Detail' })
 export class HealthHintDetail {

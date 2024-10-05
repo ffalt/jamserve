@@ -5,7 +5,7 @@ import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlis
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
 import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(PlaylistQL)
 export class PlaylistResolver {

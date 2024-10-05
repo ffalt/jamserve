@@ -20,7 +20,7 @@ export function registerRelation(
 		returnTypeFunc,
 		typeOptions: opt
 	});
-	getMetadataStorage().collectPropertyMetadata({
+	getMetadataStorage().fields.push({
 		name: propertyKey,
 		getType,
 		typeOptions,

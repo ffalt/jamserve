@@ -1,9 +1,10 @@
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { Base } from '../base/base.model.js';
 import { AlbumType, FolderType } from '../../types/enums.js';
 import { GenreBase } from '../genre/genre.model.js';
 import { ExtendedInfo } from '../metadata/metadata.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Folder Meta Information' })
 export class FolderTag {

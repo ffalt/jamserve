@@ -1,6 +1,6 @@
 import { EntityMetadata } from '../definitions/entity-metadata.js';
 import { PropertyMetadata } from '../definitions/property-metadata.js';
-import { EnumMetadata } from '../../rest/definitions/enum-metadata.js';
+import { EnumMetadata } from '../../deco/definitions/enum-metadata.js';
 import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 
 export class MetadataStorage {
@@ -11,18 +11,6 @@ export class MetadataStorage {
 
 	constructor() {
 		ensureReflectMetadataExists();
-	}
-
-	collectEnumMetadata(definition: EnumMetadata): void {
-		this.enums.push(definition);
-	}
-
-	collectEntityMetadata(definition: EntityMetadata): void {
-		this.entities.push(definition);
-	}
-
-	collectPropertyMetadata(definition: PropertyMetadata): void {
-		this.fields.push(definition);
 	}
 
 	build(): void {

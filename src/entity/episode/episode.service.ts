@@ -11,8 +11,8 @@ import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Episode, EpisodeEnclosure } from './episode.js';
 import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
-import { ApiBinaryResult } from '../../modules/rest/index.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('EpisodeService');
 

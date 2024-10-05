@@ -23049,6 +23049,69 @@
 				]
 			}
 		},
+		"/user/subsonic/generate": {
+			"post": {
+				"operationId": "UserController.generateSubsonicToken",
+				"summary": "Subsonic Token",
+				"description": "Generate a subsonic client token",
+				"tags": [
+					"User"
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/UserGenerateSusonicTokenArgs"
+									},
+									{
+										"properties": {
+											"id": {
+												"$ref": "#/components/schemas/ID"
+											}
+										},
+										"description": "User Id",
+										"required": [
+											"id"
+										]
+									}
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SubsonicToken"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/waveform/json": {
 			"get": {
 				"operationId": "WaveformController.json",
@@ -25328,7 +25391,9 @@
 					"level",
 					"name",
 					"title",
-					"year"
+					"year",
+					"artist",
+					"album"
 				]
 			},
 			"FolderPage": {
@@ -26636,7 +26701,8 @@
 				"type": "string",
 				"enum": [
 					"browser",
-					"jwt"
+					"jwt",
+					"subsonic"
 				]
 			},
 			"UserSession": {
@@ -27244,6 +27310,30 @@
 						"description": "Random Seed String"
 					}
 				}
+			},
+			"UserGenerateSusonicTokenArgs": {
+				"type": "object",
+				"properties": {
+					"password": {
+						"type": "string",
+						"description": "Password of calling user (or admin) is required to generate/update the Subsonic token"
+					}
+				},
+				"required": [
+					"password"
+				]
+			},
+			"SubsonicToken": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"type": "string",
+						"description": "Generated Subsonic Token"
+					}
+				},
+				"required": [
+					"token"
+				]
 			},
 			"WaveFormData": {
 				"type": "object",

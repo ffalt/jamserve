@@ -1,4 +1,4 @@
-import { MetadataStorage } from './metadata-storage.js';
+import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 
 let RESTMetadataStorage: MetadataStorage;
 

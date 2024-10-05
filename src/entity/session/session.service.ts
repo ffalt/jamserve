@@ -4,6 +4,7 @@ import { SessionMode } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import seq from 'sequelize';
 import { SessionData } from '../../types/express.js';
+import { randomString } from '../../utils/random.js';
 
 export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
@@ -155,5 +156,24 @@ export class SessionService {
 			sessionID: session.sessionID,
 			passport: { user: session.user.idOrFail() }
 		};
+	}
+
+	async createSubsonic(userID: string): Promise<Session> {
+		const orm = this.ormService.fork();
+		let session = (await orm.Session.findOne({ where: { user: userID, mode: SessionMode.subsonic } }));
+		if (!session) {
+			session = orm.Session.create({
+				client: 'Subsonic Client',
+				mode: SessionMode.subsonic,
+				sessionID: `${userID}_subsonic`,
+				agent: 'Subsonic Client',
+				cookie: '{}'
+			});
+		}
+		const user = await orm.User.findOneOrFailByID(userID);
+		await session.user.set(user);
+		session.jwth = randomString(16);
+		await orm.Session.persist(session, true);
+		return session;
 	}
 }

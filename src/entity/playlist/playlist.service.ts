@@ -5,9 +5,9 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import { PlaylistMutateArgs } from './playlist.args.js';
 import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
-import { NotFoundError } from '../../modules/rest/index.js';
 import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlaylistService {
@@ -34,7 +34,11 @@ export class PlaylistService {
 			duration: 0
 		});
 		await playlist.user.set(user);
+		await orm.Playlist.persistAndFlush(playlist);
 		const ids = args.mediaIDs || [];
+		if (ids.length === 0) {
+			return playlist;
+		}
 		let position = 1;
 		let duration = 0;
 		for (const id of ids) {
@@ -50,6 +54,7 @@ export class PlaylistService {
 			orm.PlaylistEntry.persistLater(entry);
 			position++;
 		}
+		await orm.PlaylistEntry.flush();
 		playlist.duration = duration;
 		await orm.Playlist.persistAndFlush(playlist);
 		return playlist;

@@ -1,8 +1,9 @@
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
 import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { UserRole } from '../../types/enums.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ObjParamsType()
 export class IncludesUserArgs {
@@ -39,6 +40,12 @@ export class UserPasswordUpdateArgs {
 
 	@ObjField({ description: 'New Password' })
 	newPassword!: string;
+}
+
+@ObjParamsType()
+export class UserGenerateSusonicTokenArgs {
+	@ObjField({ description: 'Password of calling user (or admin) is required to generate/update the Subsonic token' })
+	password!: string;
 }
 
 @ObjParamsType()

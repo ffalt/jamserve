@@ -18,9 +18,9 @@ export class Radio extends Base {
 	@Property(() => String, { nullable: true })
 	homepage?: string;
 
-	@Field(() => Boolean)
-	@Property(() => Boolean)
-	disabled: boolean = false;
+	@Field(() => Boolean, { nullable: true })
+	@Property(() => Boolean, { nullable: true })
+	disabled?: boolean;
 }
 
 @ObjectType()

@@ -1,11 +1,20 @@
 import { Artwork, ArtworkPage } from './artwork.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams, Upload, UploadFile } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs } from './artwork.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
 import { IncludesFolderArgs } from '../folder/folder.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { Upload } from '../../modules/rest/decorators/Upload.js';
+import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 @Controller('/artwork', { tags: ['Artwork'], roles: [UserRole.stream] })
 export class ArtworkController {

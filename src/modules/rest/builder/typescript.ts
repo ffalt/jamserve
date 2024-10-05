@@ -1,9 +1,9 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import { MethodMetadata } from '../definitions/method-metadata.js';
-import { RestParamsMetadata } from '../definitions/param-metadata.js';
-import { MetadataStorage } from '../metadata/metadata-storage.js';
-import { FieldMetadata } from '../definitions/field-metadata.js';
-import { ClassMetadata } from '../definitions/class-metadata.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
+import { RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
+import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
+import { FieldMetadata } from '../../deco/definitions/field-metadata.js';
+import { ClassMetadata } from '../../deco/definitions/class-metadata.js';
 
 const tab = '\t';
 const tabtab = '\t\t';
@@ -52,7 +52,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		if (enumInfo) {
 			fieldType = 'JamEnums.' + enumInfo.name;
 		} else {
-			const fObjectType = metadata.resultType(fType);
+			const fObjectType = metadata.resultTypes.find(t => t.target === fType);
 			fieldType = fObjectType?.name || 'any';
 		}
 	}

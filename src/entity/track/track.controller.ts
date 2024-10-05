@@ -1,11 +1,18 @@
 import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs } from './track.args.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 @Controller('/track', { tags: ['Track'], roles: [UserRole.stream] })
 export class TrackController {

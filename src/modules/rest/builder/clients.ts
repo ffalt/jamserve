@@ -1,14 +1,14 @@
-import { CustomPathParameters } from '../definitions/types.js';
-import { MethodMetadata } from '../definitions/method-metadata.js';
+import { CustomPathParameters } from '../../deco/definitions/types.js';
+import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
-import { ApiBinaryResult } from './express-responder.js';
+import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
 import path from 'path';
-import { RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
-import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { RestParamMetadata, RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
+import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 
 export interface MustacheDataClientCallFunction {
 	name: string;
@@ -138,7 +138,7 @@ export function getResultType(call: MethodMetadata): string | undefined {
 			if (enumInfo) {
 				resultType = enumInfo.name;
 			} else {
-				const fObjectType = metadata.resultType(type);
+				const fObjectType = metadata.resultTypes.find(it => it.target === type);
 				resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
 			}
 		}
@@ -213,7 +213,7 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 	const routeParts: Array<string> = [];
 	const validateNames: Array<string> = [];
 	customPathParameters.groups.forEach(g => {
-		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => alias.hideParameters.includes(g.name));
+		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => (alias.hideParameters || []).includes(g.name));
 		if (hasOptionalAlias) {
 			routeParts.push('${params.' + g.name + ' ? ' + '`' + (g.prefix || '') + '${params.' + g.name + '}` : \'\'}');
 		} else {

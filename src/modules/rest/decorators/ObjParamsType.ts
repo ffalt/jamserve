@@ -1,11 +1,6 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { BaseObjParamsType } from '../../deco/decorators/ObjParamsType.js';
 
 export function ObjParamsType(): ClassDecorator {
-	return target => {
-		getMetadataStorage().collectArgsMetadata({
-			name: target.name,
-			target,
-			fields: []
-		});
-	};
+	return BaseObjParamsType(getMetadataStorage());
 }

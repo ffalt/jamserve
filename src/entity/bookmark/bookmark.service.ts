@@ -1,17 +1,17 @@
 import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Bookmark } from './bookmark.js';
-import { NotFoundError } from '../../modules/rest/index.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Track } from '../track/track.js';
 import { Episode } from '../episode/episode.js';
 import { User } from '../user/user.js';
 import seq from 'sequelize';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class BookmarkService {
 	async create(orm: Orm, destID: string, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
-		let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: { id: destID } }, { track: { id: destID } }] } });
+		let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: destID }, { track: destID }] } });
 		if (!bookmark) {
 			const result = await orm.findInStreamTypes(destID);
 			if (!result) {
@@ -28,8 +28,8 @@ export class BookmarkService {
 		return bookmark;
 	}
 
-	async remove(orm: Orm, id: string, userID: string): Promise<void> {
-		await orm.Bookmark.removeByQueryAndFlush({ where: { id, user: userID } });
+	async remove(orm: Orm, bookmarkID: string, userID: string): Promise<void> {
+		await orm.Bookmark.removeByQueryAndFlush({ where: { id: bookmarkID, user: userID } });
 	}
 
 	async removeByDest(orm: Orm, destID: string, userID: string): Promise<void> {

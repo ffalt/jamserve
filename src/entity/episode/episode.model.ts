@@ -1,9 +1,10 @@
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { PodcastStatus } from '../../types/enums.js';
 import { MediaBase } from '../tag/tag.model.js';
 import { PodcastBase } from '../podcast/podcast.model.js';
 import { Page } from '../base/base.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Episode Chapter' })
 export class EpisodeChapter {

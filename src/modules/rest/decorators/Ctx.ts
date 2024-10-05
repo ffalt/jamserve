@@ -1,17 +1,6 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import { SymbolKeysNotSupportedError } from 'type-graphql';
+import { BaseCtx } from '../../deco/decorators/Ctx.js';
 
 export function Ctx(propertyName?: string): ParameterDecorator {
-	return (prototype, propertyKey, parameterIndex): void => {
-		if (typeof propertyKey === 'symbol' || propertyKey === undefined) {
-			throw new SymbolKeysNotSupportedError();
-		}
-		getMetadataStorage().collectHandlerParamMetadata({
-			kind: 'context',
-			target: prototype.constructor,
-			methodName: propertyKey,
-			index: parameterIndex,
-			propertyName
-		});
-	};
+	return BaseCtx(getMetadataStorage(), propertyName);
 }

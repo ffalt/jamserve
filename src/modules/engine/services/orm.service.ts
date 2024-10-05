@@ -51,9 +51,9 @@ import { ORMRepositories } from '../orm/repositories.js';
 import { registerORMEnums } from '../orm/enum-registration.js';
 import { ConfigService } from './config.service.js';
 import { Options } from 'sequelize';
-import { NotFoundError } from '../../rest/index.js';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
+import { NotFoundError } from '../../deco/express/express-error.js';
 
 registerORMEnums();
 
@@ -158,6 +158,10 @@ export class Orm {
 		].find(repo => repo.objType === destType);
 	}
 
+	public async findInRepos(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
+		return Orm.findInReposTypes(id, repos);
+	}
+
 	public async findInImageTypes(id: string): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		return Orm.findInReposTypes(id, [
 			this.Album,
@@ -216,20 +220,28 @@ export class Orm {
 export class OrmService {
 	private orm!: ORM;
 
+	private sqliteConfig(config: ConfigService): Partial<Options> {
+		return {
+			dialect: 'sqlite',
+			storage: path.resolve(config.env.paths.data, 'jam.sqlite')
+		};
+	}
+
+	private dialoectConfig(config: ConfigService): Partial<Options> {
+		return {
+			dialect: config.env.db.dialect,
+			username: config.env.db.user,
+			password: config.env.db.password,
+			database: config.env.db.name,
+			host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+			port: config.env.db.port ? Number(config.env.db.port) : undefined
+		};
+	}
+
 	async init(config: ConfigService): Promise<void> {
 		const db: Partial<Options> = config.env.db.dialect === 'sqlite' ?
-				{
-					dialect: 'sqlite',
-					storage: path.resolve(config.env.paths.data, 'jam.sqlite')
-				} :
-				{
-					dialect: config.env.db.dialect,
-					username: config.env.db.user,
-					password: config.env.db.password,
-					database: config.env.db.name,
-					host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
-					port: config.env.db.port ? Number(config.env.db.port) : undefined
-				};
+			this.sqliteConfig(config) :
+			this.dialoectConfig(config);
 
 		this.orm = await ORM.init({
 			entities: ORMEntities,

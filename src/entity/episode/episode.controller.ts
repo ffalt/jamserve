@@ -1,11 +1,17 @@
 import { Episode, EpisodePage, EpisodeUpdateStatus } from './episode.model.js';
-import { BodyParam, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { IncludesPodcastArgs } from '../podcast/podcast.args.js';
 import { EpisodeFilterArgs, EpisodeOrderArgs, IncludesEpisodeArgs, IncludesEpisodeParentArgs } from './episode.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { logger } from '../../utils/logger.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 const log = logger('EpisodeController');
 

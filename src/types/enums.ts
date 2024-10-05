@@ -78,7 +78,8 @@ export enum MetaDataType {
 
 export enum SessionMode {
 	browser = 'browser',
-	jwt = 'jwt'
+	jwt = 'jwt',
+	subsonic = 'subsonic'
 }
 
 export enum DBObjectType {
@@ -103,7 +104,8 @@ export enum DBObjectType {
 	session = 'session',
 	tag = 'tag',
 	series = 'series',
-	genre = 'genre'
+	genre = 'genre',
+	subsonic = 'subsonic'
 }
 
 export enum AudioFormatType {
@@ -304,7 +306,9 @@ export enum FolderOrderFields {
 	level = 'level',
 	name = 'name',
 	title = 'title',
-	year = 'year'
+	year = 'year',
+	artist = 'artist',
+	album = 'album'
 }
 
 export enum PlaylistEntryOrderFields {

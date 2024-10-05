@@ -6,14 +6,8 @@ import { SymbolKeysNotSupportedError } from 'type-graphql';
 
 export function Property(): MethodAndPropDecorator;
 export function Property(options: FieldOptions): MethodAndPropDecorator;
-export function Property(
-	returnTypeFunction?: ReturnTypeFunc,
-	options?: FieldOptions,
-): MethodAndPropDecorator;
-export function Property(
-	returnTypeFuncOrOptions?: ReturnTypeFunc | FieldOptions,
-	maybeOptions?: FieldOptions
-): MethodDecorator | PropertyDecorator {
+export function Property(returnTypeFunction?: ReturnTypeFunc, options?: FieldOptions): MethodAndPropDecorator;
+export function Property(returnTypeFuncOrOptions?: ReturnTypeFunc | FieldOptions, maybeOptions?: FieldOptions): MethodDecorator | PropertyDecorator {
 	return (prototype, propertyKey, _) => {
 		if (typeof propertyKey === 'symbol') {
 			throw new SymbolKeysNotSupportedError();
@@ -30,7 +24,7 @@ export function Property(
 			returnTypeFunc,
 			typeOptions: opt
 		});
-		getMetadataStorage().collectPropertyMetadata({
+		getMetadataStorage().fields.push({
 			name: propertyKey,
 			getType,
 			typeOptions,

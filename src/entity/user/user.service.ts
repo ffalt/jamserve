@@ -1,18 +1,21 @@
 import { User } from './user.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
-import { UserRole } from '../../types/enums.js';
+import { SessionMode, UserRole } from '../../types/enums.js';
 import { JWTPayload } from '../../utils/jwt.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import { ApiBinaryResult, InvalidParamError, UnauthError } from '../../modules/rest/index.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import { UserMutateArgs } from './user.args.js';
 import { randomString } from '../../utils/random.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { hashMD5 } from '../../utils/md5.js';
+import { SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 
 @InRequestScope
 export class UserService {
@@ -149,15 +152,9 @@ export class UserService {
 		await fileDeleteIfExists(this.avatarImageFilename(user));
 	}
 
-	public async createUser(orm: Orm,
-		name: string,
-		email: string,
-		pass: string,
-		roleAdmin: boolean,
-		roleStream: boolean,
-		roleUpload: boolean,
-		rolePodcast: boolean
-	): Promise<User> {
+	public async createUser(
+		orm: Orm, name: string, email: string, pass: string,
+		roleAdmin: boolean, roleStream: boolean, roleUpload: boolean, rolePodcast: boolean): Promise<User> {
 		const hashAndSalt = await bcryptPassword(pass);
 		const user: User = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
 		await orm.User.persistAndFlush(user);
@@ -192,6 +189,46 @@ export class UserService {
 		user.roleStream = !!args.roleStream;
 		user.roleUpload = !!args.roleUpload;
 		await orm.User.persistAndFlush(user);
+		return user;
+	}
+
+	public async authSubsonicPassword(orm: Orm, name: string, pass: string): Promise<User> {
+		if ((!pass) || (!pass.length)) {
+			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+		}
+		const user = await orm.User.findOne({ where: { name } });
+		if (!user) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
+		const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
+		if (!session) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
+		if (pass !== session.jwth) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
+		return user;
+	}
+
+	public async authSubsonicToken(orm: Orm, name: string, token: string, salt: string): Promise<User> {
+		if (!name || name.trim().length === 0) {
+			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+		}
+		if ((!token) || (!token.length)) {
+			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+		}
+		const user = await orm.User.findOne({ where: { name } });
+		if (!user) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
+		const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
+		if (!session) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
+		const t = hashMD5(session.jwth + salt);
+		if (token !== t) {
+			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+		}
 		return user;
 	}
 }

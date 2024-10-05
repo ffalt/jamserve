@@ -1,13 +1,23 @@
-import { User, UserPage } from './user.model.js';
+import { SubsonicToken, User, UserPage } from './user.model.js';
 import { User as ORMUser } from './user.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
+import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserGenerateSusonicTokenArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
 import { randomString } from '../../utils/random.js';
 import { PageArgs } from '../base/base.args.js';
 import { Context } from '../../modules/engine/rest/context.js';
 import { EngineService } from '../../modules/engine/services/engine.service.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { InvalidParamError, NotFoundError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
+import { Upload } from '../../modules/rest/decorators/Upload.js';
 
 @Controller('/user', { tags: ['User'] })
 export class UserController {
@@ -142,6 +152,24 @@ export class UserController {
 	): Promise<void> {
 		const u = await UserController.validateUserOrAdmin(orm, id, user);
 		return engine.user.setUserImage(u, file.name);
+	}
+
+	@Post(
+		'/subsonic/generate',
+		() => SubsonicToken,
+		{ description: 'Generate a subsonic client token', roles: [UserRole.stream], summary: 'Subsonic Token' }
+	)
+	async generateSubsonicToken(
+		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParams() args: UserGenerateSusonicTokenArgs,
+		@Ctx() { orm, engine, user }: Context
+	): Promise<SubsonicToken> {
+		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+		const session = await engine.session.createSubsonic(u.id);
+		if (!session) {
+			return Promise.reject(NotFoundError());
+		}
+		return { token: session.jwth };
 	}
 
 	private static async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {

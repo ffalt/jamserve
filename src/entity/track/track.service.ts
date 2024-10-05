@@ -8,11 +8,11 @@ import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { RawTag } from '../../modules/audio/rawTag.js';
-import { ApiBinaryResult } from '../../modules/rest/index.js';
 import { FolderService } from '../folder/folder.service.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { basenameStripExt } from '../../utils/fs-utils.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('TrackService');
 

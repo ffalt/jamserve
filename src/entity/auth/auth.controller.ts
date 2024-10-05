@@ -1,5 +1,4 @@
 import { Session } from '../session/session.model.js';
-import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest/index.js';
 import passport from 'passport';
 import { generateJWT, jwtHash } from '../../utils/jwt.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
@@ -11,6 +10,11 @@ import { User } from '../user/user.js';
 import { EngineService } from '../../modules/engine/services/engine.service.js';
 import express from 'express';
 import { SessionData } from '../../types/express.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { UnauthError } from '../../modules/deco/express/express-error.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 
 const log = logger('AuthController');
 

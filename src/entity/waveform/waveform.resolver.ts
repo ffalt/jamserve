@@ -1,7 +1,7 @@
 import { Arg, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { Waveform, WaveformQL } from './waveform.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(WaveformQL)
 export class WaveformResolver {

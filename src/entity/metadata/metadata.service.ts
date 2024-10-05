@@ -19,8 +19,9 @@ import { Acoustid } from '../../modules/audio/clients/acoustid-rest-data.js';
 import { CoverArtArchive } from '../../modules/audio/clients/coverartarchive-rest-data.js';
 import { MusicBrainz } from '../../modules/audio/clients/musicbrainz-rest-data.js';
 import seq from 'sequelize';
-import { ApiBinaryResult, InvalidParamError } from '../../modules/rest/index.js';
 import fetch from 'node-fetch';
+import { InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('Metadata');
 

@@ -6,7 +6,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import { ApiBinaryResult } from '../../modules/rest/index.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise<Artwork | undefined> {
 	const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;

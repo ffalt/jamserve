@@ -1,12 +1,18 @@
-import { Controller, Ctx, GenericError, Get, QueryParam } from '../../modules/rest/index.js';
 import { UserRole, WaveformFormatType } from '../../types/enums.js';
-import { ApiBinaryResult, NotFoundError } from '../../modules/rest/index.js';
-import { PathParam, PathParams, QueryParams } from '../../modules/rest/index.js';
 import fse from 'fs-extra';
 import { WaveformArgs, WaveformSVGArgs } from './waveform.args.js';
 import { WaveFormData } from './waveform.model.js';
 import { ApiWaveformTypes } from '../../types/consts.js';
 import { Context } from '../../modules/engine/rest/context.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { GenericError, NotFoundError } from '../../modules/deco/express/express-error.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { PathParam } from '../../modules/rest/decorators/PathParam.js';
+import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 @Controller('/waveform', { tags: ['Waveform'], roles: [UserRole.stream] })
 export class WaveformController {
