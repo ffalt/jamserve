@@ -48,6 +48,8 @@ export class SubsonicResponse {
 	error?: SubsonicError;
 	status?: SubsonicResponseStatus;
 	version?: SubsonicVersion;
+	type!: string;
+	serverVersion!: string;
 }
 
 export type SubsonicID = string;

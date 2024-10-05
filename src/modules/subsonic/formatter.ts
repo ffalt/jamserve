@@ -51,6 +51,7 @@ import { Bookmark } from '../../entity/bookmark/bookmark.js';
 import { PlayQueue } from '../../entity/playqueue/playqueue.js';
 import { Radio } from '../../entity/radio/radio.js';
 import { Chat } from '../../entity/chat/chat.js';
+import { JAMSERVE_VERSION } from '../../version.js';
 
 export interface SubsonicAPIResponse {
 	'subsonic-response': SubsonicResponse;
@@ -86,7 +87,9 @@ export class SubsonicFormatter {
 	static defaultProperties(): SubsonicResponse {
 		return {
 			status: 'ok',
-			version: '1.16.0'
+			version: '1.16.0',
+			type: 'jam',
+			serverVersion: JAMSERVE_VERSION
 		};
 	}
 

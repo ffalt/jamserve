@@ -19,7 +19,7 @@ export class SubsonicSystemApi {
 		tags: ['System']
 	})
 	async getLicense(@SubsonicCtx() _ctx: Context): Promise<SubsonicResponseLicense> {
-		return { license: { valid: true, email: 'dummy@email.nonexistingtld', licenseExpires: '0', trialExpires: '0' } };
+		return { license: { valid: true, email: 'example@@example.com' } };
 	}
 
 	/**

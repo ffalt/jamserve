@@ -20,7 +20,7 @@ export class SubsonicLibraryApi {
 		tags: ['Admin']
 	})
 	async getScanStatus(@SubsonicCtx() { engine }: Context): Promise<SubsonicResponseScanStatus> {
-		return { scanStatus: { scanning: engine.io.scanning, count: undefined } };
+		return { scanStatus: { scanning: engine.io.scanning } };
 	}
 
 	/**
