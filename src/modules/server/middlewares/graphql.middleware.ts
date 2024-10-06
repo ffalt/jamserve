@@ -2,14 +2,11 @@ import express from 'express';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
-import { registerRestEnums } from '../../engine/rest/enum-registration.js';
 import { ApolloMiddleware } from './apollo.middleware.js';
 import path from 'path';
 import RateLimit from 'express-rate-limit';
 
-const log = logger('REST');
-
-registerRestEnums();
+const log = logger('Graphql');
 
 @InRequestScope
 export class GraphqlMiddleware {
