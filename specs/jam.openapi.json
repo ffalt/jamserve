@@ -20512,10 +20512,10 @@
 						}
 					},
 					{
-						"in": "path",
+						"in": "query",
 						"name": "timeOffset",
 						"description": "start offset for transcoding/streaming",
-						"required": true,
+						"required": false,
 						"example": 128,
 						"schema": {
 							"type": "integer",
@@ -20617,10 +20617,10 @@
 						}
 					},
 					{
-						"in": "path",
+						"in": "query",
 						"name": "timeOffset",
 						"description": "start offset for transcoding/streaming",
-						"required": true,
+						"required": false,
 						"example": 128,
 						"schema": {
 							"type": "integer",
@@ -20725,10 +20725,10 @@
 						}
 					},
 					{
-						"in": "path",
+						"in": "query",
 						"name": "timeOffset",
 						"description": "start offset for transcoding/streaming",
-						"required": true,
+						"required": false,
 						"example": 128,
 						"schema": {
 							"type": "integer",
@@ -20820,10 +20820,10 @@
 						}
 					},
 					{
-						"in": "path",
+						"in": "query",
 						"name": "timeOffset",
 						"description": "start offset for transcoding/streaming",
-						"required": true,
+						"required": false,
 						"example": 128,
 						"schema": {
 							"type": "integer",
