@@ -1,5 +1,5 @@
 import { Changes, ChangeSet } from '../../modules/engine/worker/changes.js';
-import { MockRoot, validateMock } from './mock.root';
+import { MockRoot, validateMock } from './mock.root.js';
 import { WorkerService } from '../../modules/engine/services/worker.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 

@@ -3,15 +3,17 @@ import fse from 'fs-extra';
 import { AlbumType, DBObjectType, FolderType, PodcastStatus, RootScanStrategy } from '../../types/enums.js';
 import { WorkerService } from '../../modules/engine/services/worker.service.js';
 import { ensureTrailingPathSeparator } from '../../utils/fs-utils.js';
-import { extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder } from './mock.folder';
-import { extendSpecMockTrack, MockTrack } from './mock.track';
+import { extendSpecMockFolder, MockFolder, MockSpecFolder, writeMockFolder } from './mock.folder.js';
+import { extendSpecMockTrack, MockTrack } from './mock.track.js';
 import { Changes } from '../../modules/engine/worker/changes.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { StateHelper } from '../../entity/state/state.helper.js';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;
+	name: string;
 	albums?: Array<MockSpecAlbum>;
+	folders?: Array<MockSpecFolder>;
 	expected: {
 		folders: number;
 		tracks: number;
@@ -43,7 +45,7 @@ export function extendSpecMockRoot(dir: string, root: MockSpecRoot, strategy: Ro
 		...root,
 		strategy,
 		path: dir,
-		folders: root.folders.map(f => extendSpecMockFolder(dir, f)),
+		folders: (root.folders || []).map(f => extendSpecMockFolder(dir, f)),
 		tracks: root.tracks.map(t => extendSpecMockTrack(dir, t))
 	};
 }

@@ -25,6 +25,7 @@ const roles = [UserRole.admin, UserRole.podcast, UserRole.upload, UserRole.strea
 
 describe('REST', () => {
 	for (const db of DBConfigs) {
+		// eslint-disable-next-line jest/valid-title
 		describe(db.dialect, () => {
 			let server: Server;
 			let dir: tmp.DirResult;
@@ -82,11 +83,9 @@ describe('REST', () => {
 				}
 
 				openapi = JSON.parse(server.docs.getOpenApiSchema());
-				if ((jestOpenAPI as any).default) {
-					(jestOpenAPI as any).default(openapi);
-				} else {
-					jestOpenAPI(openapi as OpenAPISpecObject);
-				}
+				const joi = (jestOpenAPI as any).default ? (jestOpenAPI as any).default : (jestOpenAPI as any);
+				joi(openapi as OpenAPISpecObject);
+
 				const get = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
 					let url = apiPrefix + mock.apiName;
 					if (mock.params) {

@@ -1,13 +1,13 @@
 import { AlbumType, FolderType } from '../../types/enums.js';
 import path from 'path';
 import fse from 'fs-extra';
-import { writeImage } from './mock.image';
-import { extendSpecMockTrack, MockSpecTrack, MockTrack, writeMockTrack } from './mock.track';
+import { writeImage } from './mock.image.js';
+import { extendSpecMockTrack, MockSpecTrack, MockTrack, writeMockTrack } from './mock.track.js';
 
 export interface MockSpecFolder {
 	name: string;
 	genre?: string;
-	folders: Array<MockSpecFolder>;
+	folders?: Array<MockSpecFolder>;
 	tracks: Array<MockSpecTrack>;
 	images: Array<string>;
 	expected: {
@@ -27,7 +27,7 @@ export function extendSpecMockFolder(dir: string, folder: MockSpecFolder): MockF
 	return {
 		...folder,
 		path: folderPath,
-		folders: folder.folders.map(f => extendSpecMockFolder(folderPath, f)),
+		folders: (folder.folders || []).map(f => extendSpecMockFolder(folderPath, f)),
 		tracks: folder.tracks.map(t => extendSpecMockTrack(folderPath, t))
 	};
 }

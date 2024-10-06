@@ -36,6 +36,7 @@ function salt(length: number): string {
 
 describe('Services', () => {
 	for (const db of DBConfigs) {
+		// eslint-disable-next-line jest/valid-title
 		describe(db.dialect, () => {
 			let engine: EngineService;
 			let orm: Orm;

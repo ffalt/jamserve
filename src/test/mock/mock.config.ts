@@ -1,6 +1,6 @@
 import { ConfigService, ENVConfig, ENVConfigDB } from '../../modules/engine/services/config.service.js';
 import path from 'path';
-import { ThirdPartyConfig } from '../../config/thirdparty.config';
+import { ThirdPartyConfig } from '../../config/thirdparty.config.js';
 import { Container, Scope } from 'typescript-ioc';
 import { OrmService } from '../../modules/engine/services/orm.service.js';
 
@@ -22,6 +22,21 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 			session: { proxy: false, maxAge: 800000, secret: 'secret', secure: false, allowedCookieDomains: [] },
 			db,
 			paths: { data: dataPath, frontend: './static/jamberry' }
+		};
+
+		rateLimits = {
+			frontend: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60000 // max 60000 requests per windowMs
+			},
+			docs: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60000 // max 60000 requests per windowMs
+			},
+			graphlql: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60000 // max 60000 requests per windowMs
+			}
 		};
 
 		firstStart = {

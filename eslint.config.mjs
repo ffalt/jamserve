@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
+import jest from 'eslint-plugin-jest';
 
 export default tseslint.config(
 	eslint.configs.recommended,
@@ -21,10 +22,12 @@ export default tseslint.config(
 		}
 	},
 	{
-		files: ['**/*.test.ts', '**/mock.*.ts'],
+		files: ['src/test/**'],
+		...jest.configs['flat/recommended'],
 		rules: {
-			'@typescript-eslint/no-explicit-any': 'off',
-			'@typescript-eslint/no-unused-vars': 'off'
+			...jest.configs['flat/recommended'].rules,
+			'jest/expect-expect': 'off',
+			'jest/no-done-callback': 'off'
 		}
 	},
 	{
@@ -47,7 +50,8 @@ export default tseslint.config(
 					// "ignoreRestSiblings": true
 				}
 			]
-		}
+		},
+		ignores: ['src/test/']
 	},
 	{
 		ignores: [

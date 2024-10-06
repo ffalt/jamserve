@@ -30,11 +30,11 @@ import {
 	WorkerRequestWriteTrackTags
 } from '../modules/engine/services/worker/worker.types.js';
 import { Track } from '../entity/track/track.js';
-import { mockImage, writeMockImage } from './mock/mock.image';
-import { buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot } from './mock/mock.root';
-import { writeMockFolder } from './mock/mock.folder';
-import { initTest } from './init';
-import { expectChanges, validateMockRoot } from './mock/mock.changes';
+import { mockImage, writeMockImage } from './mock/mock.image.js';
+import { buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot } from './mock/mock.root.js';
+import { writeMockFolder } from './mock/mock.folder.js';
+import { initTest } from './init.js';
+import { expectChanges, validateMockRoot } from './mock/mock.changes.js';
 import { Orm } from '../modules/engine/services/orm.service.js';
 import { v4 } from 'uuid';
 import nock from 'nock';
@@ -46,6 +46,7 @@ initTest();
 
 describe('WorkerService', () => {
 	for (const db of DBConfigs) {
+		// eslint-disable-next-line jest/valid-title
 		describe(db.dialect, () => {
 			let engine: EngineService;
 			let workerService: WorkerService;
@@ -449,7 +450,7 @@ describe('WorkerService', () => {
 							await fse.remove(path.join(track.path, track.fileName));
 							const changes = await workerService.root.refresh({ rootID: mockRoot.id });
 							// const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
-							expect(changes.tracks.removed.size).toBe(1); // 'Removed Tracks count doesnt match'
+							expect(changes.tracks.removed.size).toBe(1); // 'Removed Tracks count doesn't match'
 							await checkRemoveStates(changes.artists.removed.ids());
 							await checkRemoveStates(changes.albums.removed.ids());
 							await checkRemoveStates(changes.series.removed.ids());
@@ -472,7 +473,7 @@ describe('WorkerService', () => {
 
 						await writeMockRoot(mockRoot);
 						const restoreChanges = await workerService.root.refresh({ rootID: mockRoot.id });
-						expect(restoreChanges.tracks.added.size).toBe(tracks.length); // 'Restored Tracks count doesnt match'
+						expect(restoreChanges.tracks.added.size).toBe(tracks.length); // 'Restored Tracks count doesn't match'
 					});
 				});
 
@@ -615,7 +616,7 @@ describe('WorkerService', () => {
 								const tracks = await orm.Track.findFilter({ childOfID: updatedFolder.id });
 								expect(trackCount).toBe(tracks.length); // `Track count does not match: ${updatedFolder.path}`
 								for (const track of tracks) {
-									expect(await fse.pathExists(path.join(track.path, track.fileName))).toBe(true); // `Track does not exists: ${path.join(track.path, track.fileName)}`
+									expect(await fse.pathExists(path.join(track.path, track.fileName))).toBe(true); // `Track does not exist: ${path.join(track.path, track.fileName)}`
 								}
 								return updatedFolder;
 							}
