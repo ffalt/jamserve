@@ -103,10 +103,10 @@ export class PodcastDiscoverQL implements GpodderPodcast {
 	@Field(() => String)
 	description!: string;
 
-	@Field(() => Number)
+	@Field(() => Int)
 	subscribers!: number;
 
-	@Field(() => Number)
+	@Field(() => Int)
 	subscribers_last_week!: number;
 
 	@Field(() => String)
@@ -134,7 +134,7 @@ export class PodcastDiscoverTagQL implements GpodderTag {
 	@Field(() => String)
 	tag!: string;
 
-	@Field(() => Number)
+	@Field(() => Int)
 	usage!: number;
 }
 

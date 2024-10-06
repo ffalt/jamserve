@@ -86,34 +86,34 @@ export class PodcastIndex {
 
 @ResultType({ description: 'Podcast Discover Result' })
 export class PodcastDiscover implements GpodderPodcast {
-	@ObjField(() => String)
+	@ObjField()
 	url!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	title!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	author!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	description!: string;
 
-	@ObjField(() => Number)
+	@ObjField()
 	subscribers!: number;
 
-	@ObjField(() => Number)
+	@ObjField()
 	subscribers_last_week!: number;
 
-	@ObjField(() => String)
+	@ObjField()
 	logo_url!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	scaled_logo_url!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	website!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	mygpo_link!: string;
 }
 
@@ -125,13 +125,13 @@ export class PodcastDiscoverPage extends Page {
 
 @ResultType({ description: 'Podcast Discover Tag' })
 export class PodcastDiscoverTag implements GpodderTag {
-	@ObjField(() => String)
+	@ObjField()
 	title!: string;
 
-	@ObjField(() => String)
+	@ObjField()
 	tag!: string;
 
-	@ObjField(() => Number)
+	@ObjField()
 	usage!: number;
 }
 

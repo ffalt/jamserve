@@ -1,4 +1,4 @@
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { GenreOrderFields, ListType } from '../../types/enums.js';
 import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
@@ -67,10 +67,10 @@ export class GenreFilterArgs {
 	// mbArtistIDs?: Array<string>;
 	//
 	// @Field(() => String, {nullable: true})
-	// @ObjField(() => String, {nullable: true, description: 'exclude by MusicBrainz Artist Id', example: examples.mbArtistID})
+	// @ObjField({nullable: true, description: 'exclude by MusicBrainz Artist Id', example: examples.mbArtistID})
 	// notMbArtistID?: string;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 }

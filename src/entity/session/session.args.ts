@@ -1,4 +1,4 @@
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { SessionMode, SessionOrderFields } from '../../types/enums.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
@@ -11,8 +11,8 @@ export class SessionFilterArgs {
 	@Field(() => [ID], { nullable: true })
 	ids?: Array<string>;
 
-	@ObjField(() => Number, { nullable: true, description: 'filter by session timestamp', min: 0, example: examples.timestamp })
-	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by session timestamp', min: 0, example: examples.timestamp })
+	@Field(() => Int, { nullable: true })
 	since?: number;
 
 	@ObjField(() => String, { nullable: true, description: 'filter by client name', example: 'Jamberry' })
@@ -23,12 +23,12 @@ export class SessionFilterArgs {
 	@Field(() => String, { nullable: true })
 	agent?: string;
 
-	@ObjField(() => Number, { nullable: true, description: 'filter by since expiry date', min: 0, example: examples.timestamp })
-	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by since expiry date', min: 0, example: examples.timestamp })
+	@Field(() => Int, { nullable: true })
 	expiresFrom?: number;
 
-	@ObjField(() => Number, { nullable: true, description: 'filter by to expiry date', min: 0, example: examples.timestamp })
-	@Field(() => Float, { nullable: true })
+	@ObjField({ nullable: true, description: 'filter by to expiry date', min: 0, example: examples.timestamp })
+	@Field(() => Int, { nullable: true })
 	expiresTo?: number;
 
 	@ObjField(() => SessionMode, { nullable: true, description: 'filter by session mode', example: SessionMode.browser })

@@ -1,4 +1,4 @@
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { ListType } from '../../types/enums.js';
 import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
@@ -51,7 +51,7 @@ export class PlaylistFilterArgs {
 	@ObjField(() => [String], { nullable: true, description: 'filter by Playlist Ids', isID: true })
 	ids?: Array<string>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 
@@ -63,11 +63,11 @@ export class PlaylistFilterArgs {
 	@ObjField({ nullable: true, description: 'filter by isPublic Flag', example: true })
 	isPublic?: boolean;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by since Playlist duration', min: 0, example: examples.timestamp })
 	durationFrom?: number;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by until Playlist duration', min: 0, example: examples.timestamp })
 	durationTo?: number;
 }

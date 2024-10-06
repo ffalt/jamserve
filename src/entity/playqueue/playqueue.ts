@@ -1,6 +1,6 @@
 import { User } from '../user/user.js';
 import { PlayQueueEntry, PlayQueueEntryQL } from '../playqueueentry/playqueue-entry.js';
-import { Field, Float, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base } from '../base/base.js';
 import { PlayQueueEntryOrderFields } from '../../types/enums.js';
@@ -12,11 +12,11 @@ export class PlayQueue extends Base {
 	@Property(() => ORM_INT, { nullable: true })
 	current?: number; // current playQueue entry
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	position?: number; // position in entry
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	duration!: number;
 

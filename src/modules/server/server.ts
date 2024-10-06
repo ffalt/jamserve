@@ -19,6 +19,7 @@ import { useAuthenticatedCors } from './middlewares/cors.middleware.js';
 import { SessionService } from '../../entity/session/session.service.js';
 import { useCSPMiddleware } from './middlewares/csp.middleware.js';
 import { useStaticMiddleware } from './middlewares/static.middleware.js';
+import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 
 const log = logger('Server');
 
@@ -28,7 +29,7 @@ export class Server {
 	engine!: EngineService;
 
 	@Inject
-	apollo!: ApolloMiddleware;
+	graphql!: GraphqlMiddleware;
 
 	@Inject
 	rest!: RestMiddleware;
@@ -93,10 +94,7 @@ export class Server {
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
 
 		log.debug(`registering graphql middleware`);
-		app.use('/graphql', await this.apollo.middleware());
-
-		log.debug(`registering graphql playground`);
-		app.use('/graphql/playground', await this.apollo.playground());
+		app.use('/graphql', await this.graphql.middleware());
 
 		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());

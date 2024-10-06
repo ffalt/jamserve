@@ -1,14 +1,14 @@
 import { Track, TrackQL } from '../track/track.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
 import { Playlist, PlaylistQL } from '../playlist/playlist.js';
-import { Field, Float, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Base } from '../base/base.js';
 import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 
 @ObjectType()
 @Entity()
 export class PlaylistEntry extends Base {
-	@Field(() => Float)
+	@Field(() => Int)
 	@Property(() => ORM_INT)
 	position!: number;
 

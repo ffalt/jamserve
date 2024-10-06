@@ -1,5 +1,5 @@
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { ListType, PodcastOrderFields, PodcastStatus } from '../../types/enums.js';
 import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
@@ -54,7 +54,7 @@ export class PodcastFilterArgs {
 	@ObjField(() => [String], { nullable: true, description: 'filter by Episode Ids', isID: true })
 	episodeIDs?: Array<string>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 
@@ -66,11 +66,11 @@ export class PodcastFilterArgs {
 	@ObjField(() => [PodcastStatus], { nullable: true, description: 'filter by Podcast Status', example: [PodcastStatus.downloading] })
 	statuses?: Array<PodcastStatus>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by since Last Check timestamp', min: 0, example: examples.timestamp })
 	lastCheckFrom?: number;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by until Last Check timestamp', min: 0, example: examples.timestamp })
 	lastCheckTo?: number;
 
@@ -109,7 +109,7 @@ export class PodcastFilterArgsQL {
 	@Field(() => [ID], { nullable: true })
 	episodeIDs?: Array<string>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	since?: number;
 
 	@Field(() => String, { nullable: true })
@@ -118,10 +118,10 @@ export class PodcastFilterArgsQL {
 	@Field(() => [PodcastStatus], { nullable: true })
 	statuses?: Array<PodcastStatus>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	lastCheckFrom?: number;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	lastCheckTo?: number;
 
 	@Field(() => String, { nullable: true })

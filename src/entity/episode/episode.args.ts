@@ -1,5 +1,5 @@
 import { EpisodeOrderFields, ListType, PodcastStatus } from '../../types/enums.js';
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
@@ -45,7 +45,7 @@ export class EpisodeFilterArgs {
 	@ObjField(() => [String], { nullable: true, description: 'filter by Podcast Ids', isID: true })
 	podcastIDs?: Array<string>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 

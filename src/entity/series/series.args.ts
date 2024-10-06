@@ -1,4 +1,4 @@
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { AlbumType, ListType } from '../../types/enums.js';
 import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
@@ -54,7 +54,7 @@ export class SeriesFilterArgs {
 	@ObjField(() => [AlbumType], { nullable: true, description: 'filter by Album Types', example: [AlbumType.audiobook] })
 	albumTypes?: Array<AlbumType>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp })
 	since?: number;
 

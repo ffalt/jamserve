@@ -5,7 +5,7 @@ import { Album, AlbumQL } from '../album/album.js';
 import { Artist, ArtistQL } from '../artist/artist.js';
 import { MediaTagRawQL, Tag, TagQL } from '../tag/tag.js';
 import { Bookmark, BookmarkQL } from '../bookmark/bookmark.js';
-import { Field, Float, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base, PaginatedResponse } from '../base/base.js';
 import { State, StateQL } from '../state/state.js';
@@ -39,7 +39,7 @@ export class Track extends Base {
 	@Property(() => ORM_DATETIME)
 	statModified!: Date;
 
-	@Field(() => Float)
+	@Field(() => Int)
 	@Property(() => ORM_INT)
 	fileSize!: number;
 

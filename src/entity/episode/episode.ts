@@ -79,7 +79,7 @@ export class Episode extends Base {
 	@Property(() => ORM_DATETIME)
 	date!: Date;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	duration?: number;
 
