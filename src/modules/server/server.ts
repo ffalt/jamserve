@@ -7,7 +7,6 @@ import helmet from 'helmet';
 import { useEngineMiddleware } from './middlewares/engine.middleware.js';
 import { ConfigService } from '../engine/services/config.service.js';
 import { logger } from '../../utils/logger.js';
-import { ApolloMiddleware } from './middlewares/apollo.middleware.js';
 import { useSessionMiddleware } from './middlewares/session.middleware.js';
 import { useLogMiddleware } from './middlewares/log.middleware.js';
 import { RestMiddleware } from './middlewares/rest.middleware.js';
@@ -18,7 +17,7 @@ import { DocsMiddleware } from './middlewares/docs.middleware.js';
 import { useAuthenticatedCors } from './middlewares/cors.middleware.js';
 import { SessionService } from '../../entity/session/session.service.js';
 import { useCSPMiddleware } from './middlewares/csp.middleware.js';
-import { useStaticMiddleware } from './middlewares/static.middleware.js';
+import { staticMiddleware } from './middlewares/static.middleware.js';
 import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 
 const log = logger('Server');
@@ -64,8 +63,6 @@ export class Server {
 			app.enable('trust proxy'); // trust first proxy
 		}
 
-		// TODO: rateLimit limits normal use, rateLimit for jwt
-
 		app.use(useLogMiddleware());
 
 		app.post('/csp/report-violation', async (req, res) => {
@@ -73,17 +70,11 @@ export class Server {
 			res.status(204).end();
 		});
 
-		// TODO: ratelimit normal use
-		// const rateLimiter = rateLimit({
-		// 	windowMs: 1000,
-		// 	limit: 100,
-		// 	standardHeaders: true
-		// });
-		// app.use(rateLimiter);
+		// TODO: ratelimit for jam api and subsonic api
 
 		app.use(useEngineMiddleware(this.engine));
 
-		log.debug(`registering subsonic middleware`);
+		log.debug(`registering subsonic api middleware`);
 		app.use(`/rest`, this.subsonic.middleware());
 
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
@@ -94,13 +85,13 @@ export class Server {
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
 
 		log.debug(`registering graphql middleware`);
-		app.use('/graphql', await this.graphql.middleware());
+		app.use('/graphql', await this.graphql.middleware(this.configService));
 
 		log.debug(`registering docs middleware`);
-		app.use('/docs', await this.docs.middleware());
+		app.use('/docs', this.docs.middleware(this.configService));
 
-		log.debug(`registering static middleware`);
-		useStaticMiddleware(app, this.configService);
+		log.debug(`registering frontend middleware`);
+		app.use(staticMiddleware(this.configService));
 
 		this.app = app;
 	}

@@ -73,6 +73,20 @@ export class ConfigService {
 	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts);
 	tools: ThirdpartyToolsConfig = ThirdPartyConfig;
 	firstStart?: FirstStartConfig;
+	rateLimits = {
+		frontend: {
+			windowMs: 10 * 60 * 1000, // 10 minutes
+			limit: 1000 // max 1000 requests per windowMs
+		},
+		docs: {
+			windowMs: 10 * 60 * 1000, // 10 minutes
+			limit: 100 // max 100 requests per windowMs
+		},
+		graphlql: {
+			windowMs: 10 * 60 * 1000, // 10 minutes
+			limit: 1000 // max 1000 requests per windowMs
+		}
+	};
 
 	constructor() {
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');

@@ -52,7 +52,6 @@ import { StatsResolver } from '../../../entity/stats/stats.resolver.js';
 import { StateResolver } from '../../../entity/state/state.resolver.js';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver.js';
 import { AdminResolver } from '../../../entity/admin/admin.resolver.js';
-import path from 'path';
 import { MetadataResolver } from '../../../entity/metadata/metadata.resolver.js';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
@@ -185,12 +184,6 @@ export class ApolloMiddleware {
 	@Inject private orm!: OrmService;
 	@Inject private engine!: EngineService;
 	private schema!: GraphQLSchema;
-
-	async playground(): Promise<express.Router> {
-		const api = express.Router();
-		api.get('*', express.static(path.resolve('./static/graphql/')));
-		return api;
-	}
 
 	async middleware(): Promise<express.RequestHandler> {
 		this.schema = await buildGraphQlSchema();

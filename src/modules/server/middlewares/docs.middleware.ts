@@ -7,6 +7,8 @@ import { buildAngularClientZip } from '../../rest/builder/angular.js';
 import { buildAxiosClientZip } from '../../rest/builder/axios.js';
 import { ApiResponder } from '../../rest/response.js';
 import { buildSubsonicOpenApi } from '../../subsonic/builder/openapi.js';
+import RateLimit from 'express-rate-limit';
+import { ConfigService } from '../../engine/services/config.service.js';
 
 @InRequestScope
 export class DocsMiddleware {
@@ -22,8 +24,14 @@ export class DocsMiddleware {
 		return JSON.stringify(openapi, null, '\t');
 	}
 
-	async middleware(): Promise<express.Router> {
+	middleware(configService: ConfigService): express.Router {
 		const api = express.Router();
+
+		api.use(RateLimit(configService.rateLimits.docs));
+
+		const subsonicEntry = path.resolve('./static/api-docs/subsonic.html');
+		const jamEntry = path.resolve('./static/api-docs/jam.html');
+		const explorerJS = path.resolve('./static/api-docs/openapi-explorer.min.js');
 		api.get('/schema.graphql', (req, res) => {
 			res.type('application/graphql').send(this.apollo.printSchema());
 		});
@@ -39,15 +47,9 @@ export class DocsMiddleware {
 		api.get('/axios-client.zip', async (req, res) => {
 			(new ApiResponder()).sendBinary(req, res, await buildAxiosClientZip());
 		});
-		api.get('/subsonic/', (_req, res) => {
-			res.sendFile(path.resolve('./static/api-docs/subsonic.html'));
-		});
-		api.get('/', (_req, res) => {
-			res.sendFile(path.resolve('./static/api-docs/jam.html'));
-		});
-		api.get('/openapi-explorer.min.js', (_req, res) => {
-			res.sendFile(path.resolve('./static/api-docs/openapi-explorer.min.js'));
-		});
+		api.get('/subsonic/', (_req, res) => res.sendFile(subsonicEntry));
+		api.get('/', (_req, res) => res.sendFile(jamEntry));
+		api.get('/openapi-explorer.min.js', (_req, res) => res.sendFile(explorerJS));
 		api.get('/subsonic.js', (req, res) => {
 			const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
 const explorer = document.getElementsByTagName('openapi-explorer')[0];  
