@@ -43,6 +43,7 @@ export interface TrackMedia {
 	mediaBitRate?: number;
 	mediaFormat?: AudioFormatType;
 	mediaSampleRate?: number;
+	mediaBitDepth?: number;
 	mediaChannels?: number;
 	mediaEncoded?: string; // VBR || CBR || ''
 	mediaMode?: string; // 'joint', 'dual', 'single'
@@ -59,6 +60,7 @@ export class FORMAT {
 			mediaDuration: Math.floor(data.durationEstimate * 1000),
 			mediaBitRate: data.bitRate,
 			mediaSampleRate: data.sampleRate,
+			mediaBitDepth: data.sampleCount,
 			mediaChannels: data.channels,
 			mediaEncoded: data.encoded,
 			mediaMode: data.mode,
@@ -79,6 +81,7 @@ export class FORMAT {
 			mediaDuration: Math.floor(Number(data.format.duration) * 1000),
 			mediaBitRate: Number(data.format.bit_rate),
 			mediaSampleRate: Number(stream.sample_rate),
+			mediaBitDepth: Number(stream.bits_per_sample),
 			mediaChannels: stream.channels,
 			mediaMode: stream.channel_layout,
 			mediaVersion: stream.codec_long_name
@@ -93,6 +96,7 @@ export class FORMAT {
 			mediaFormat: AudioFormatType.flac,
 			mediaDuration: Math.floor(media.duration * 1000),
 			mediaSampleRate: media.sampleRate,
+			mediaBitDepth: media.sampleCount,
 			mediaEncoded: 'VBR',
 			mediaChannels: media.channels
 		};

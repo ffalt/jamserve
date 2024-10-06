@@ -34,6 +34,9 @@ export class MediaInfo {
 	@ObjField({ nullable: true, description: 'Sample Rate (Hz)', example: 44100 })
 	sampleRate?: number;
 
+	@ObjField({ nullable: true, description: 'Bit Depth', example: 16 })
+	bitDepth?: number;
+
 	@ObjField({ nullable: true, description: 'File Size', example: 31321516 })
 	size?: number;
 }

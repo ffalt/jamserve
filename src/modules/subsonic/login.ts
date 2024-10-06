@@ -87,40 +87,53 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
 }
 
-export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export function validateSubsonicParams(req: SubsonicRequest, res: express.Response): boolean {
+	if (!req.parameters || !req.parameters.client) {
+		sendError(req, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
+		return false;
+	}
+	const version = semver.coerce(req.parameters.version);
+	if (!version) {
+		sendError(req, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
+		return false;
+	}
+	if (!semver.valid(version)) {
+		sendError(req, res, SubsonicFormatter.ERRORS.PARAM_INVALID);
+		return false;
+	}
+	if (semver.gt(version, SUBSONIC_VERSION)) {
+		sendError(req, res, SubsonicFormatter.ERRORS.SERVER_OLD);
+		return false;
+	}
+	if (semver.lt(version, '1.0.0')) {
+		sendError(req, res, SubsonicFormatter.ERRORS.CLIENT_OLD);
+		return false;
+	}
+	return true;
+}
+
+export async function subsonicLoginRateLimited(req: SubsonicRequest, res: express.Response, next: express.NextFunction): Promise<void> {
+	req.client = req.parameters?.client;
 	if (req.user) {
 		return next();
 	}
-	const sreq = req as SubsonicRequest;
-	if (!sreq.parameters || !sreq.parameters.client) {
-		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
+	const handled = await req.engine.rateLimit.loginSlowDown(req, res);
+	if (handled) {
 		return;
 	}
-	const version = semver.coerce(sreq.parameters.version);
-	if (!version) {
-		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
+	if (!validateSubsonicParams(req, res)) {
 		return;
 	}
-	if (!semver.valid(version)) {
-		sendError(sreq, res, SubsonicFormatter.ERRORS.PARAM_INVALID);
-		return;
+	const user = await validateCredentials(req);
+	if (user) {
+		req.user = user;
+		next();
+		await req.engine.rateLimit.loginSlowDownReset(req);
 	}
-	if (semver.gt(version, SUBSONIC_VERSION)) {
-		sendError(sreq, res, SubsonicFormatter.ERRORS.SERVER_OLD);
-		return;
-	}
-	if (semver.lt(version, '1.0.0')) {
-		sendError(sreq, res, SubsonicFormatter.ERRORS.CLIENT_OLD);
-		return;
-	}
-	sreq.client = sreq.parameters.client;
-	validateCredentials(sreq)
-		.then(user => {
-			if (user) {
-				req.user = user;
-				next();
-			}
-		})
+}
+
+export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
+	subsonicLoginRateLimited(req as SubsonicRequest, res, next)
 		.catch(e => {
 			return (new ApiResponder()).sendError(req, res, e);
 		});

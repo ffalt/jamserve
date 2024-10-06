@@ -501,7 +501,7 @@ export class SubsonicFormatter {
 			// "rank": 0,
 			// "averageRating": track.state.avgrated,
 			// "bookmarkPosition": track.state.bookmark,
-			// bitDepth: tag?.mediaBitDepth, //  OpenSubsonic
+			bitDepth: tag?.mediaBitDepth,
 			samplingRate: tag?.mediaSampleRate,
 			channelCount: tag?.mediaChannels,
 			mediaType: 'song',

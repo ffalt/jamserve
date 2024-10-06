@@ -129,11 +129,11 @@ export class Tag extends Base {
 	@Property(() => String, { nullable: true })
 	chapters?: string;// Array<TagChapter>;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	mediaDuration?: number;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	mediaBitRate?: number;
 
@@ -141,9 +141,13 @@ export class Tag extends Base {
 	@Property(() => AudioFormatType, { nullable: true })
 	mediaFormat?: AudioFormatType;
 
-	@Field(() => Float, { nullable: true })
+	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })
 	mediaSampleRate?: number;
+
+	@Field(() => Int, { nullable: true })
+	@Property(() => ORM_INT, { nullable: true })
+	mediaBitDepth?: number;
 
 	@Field(() => Int, { nullable: true })
 	@Property(() => ORM_INT, { nullable: true })

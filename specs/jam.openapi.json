@@ -20510,6 +20510,18 @@
 							"maximum": 480,
 							"description": "maximal bitrate if transcoding (in Kbps)"
 						}
+					},
+					{
+						"in": "path",
+						"name": "timeOffset",
+						"description": "start offset for transcoding/streaming",
+						"required": true,
+						"example": 128,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "start offset for transcoding/streaming"
+						}
 					}
 				],
 				"responses": {
@@ -20602,6 +20614,18 @@
 						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
+						}
+					},
+					{
+						"in": "path",
+						"name": "timeOffset",
+						"description": "start offset for transcoding/streaming",
+						"required": true,
+						"example": 128,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "start offset for transcoding/streaming"
 						}
 					}
 				],
@@ -20699,6 +20723,18 @@
 							"maximum": 480,
 							"description": "maximal bitrate if transcoding (in Kbps)"
 						}
+					},
+					{
+						"in": "path",
+						"name": "timeOffset",
+						"description": "start offset for transcoding/streaming",
+						"required": true,
+						"example": 128,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "start offset for transcoding/streaming"
+						}
 					}
 				],
 				"responses": {
@@ -20781,6 +20817,18 @@
 						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
 						"schema": {
 							"$ref": "#/components/schemas/ID"
+						}
+					},
+					{
+						"in": "path",
+						"name": "timeOffset",
+						"description": "start offset for transcoding/streaming",
+						"required": true,
+						"example": 128,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "start offset for transcoding/streaming"
 						}
 					}
 				],
@@ -23757,6 +23805,10 @@
 					"sampleRate": {
 						"type": "integer",
 						"description": "Sample Rate (Hz)"
+					},
+					"bitDepth": {
+						"type": "integer",
+						"description": "Bit Depth"
 					},
 					"size": {
 						"type": "integer",

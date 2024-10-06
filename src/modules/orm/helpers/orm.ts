@@ -51,6 +51,10 @@ export class ORM {
 		if (table?.salt) {
 			await queryInterface.removeColumn('User', 'salt');
 		}
+		table = await queryInterface.describeTable('Tag');
+		if (!table?.mediaBitDepth) {
+			await queryInterface.addColumn('Tag', 'mediaBitDepth', { type: seq.DataTypes.INTEGER, allowNull: true });
+		}
 	}
 
 	async ensureSchema(): Promise<void> {
