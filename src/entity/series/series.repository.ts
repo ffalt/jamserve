@@ -5,7 +5,6 @@ import { User } from '../user/user.js';
 import { SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
 import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
 
-// @Repository(Series)
 export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, SeriesOrderArgs> {
 	objType = DBObjectType.series;
 	indexProperty = 'name';

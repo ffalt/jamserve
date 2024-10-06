@@ -61,7 +61,7 @@ export class SubsonicParameterAlbumList {
 	@SubsonicObjField({ description: 'The list type.' })
 	type!: AlbumListType;
 
-	@SubsonicObjField({ nullable: true, description: 'The number of albums to return.', min: 1, max: 500, example: 10, defaultValue: 10 })
+	@SubsonicObjField({ nullable: true, description: 'The number of albums to return.', min: 0, max: 500, example: 10, defaultValue: 10 })
 	size?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'The list offset. Useful if you for example want to page through the list of newest albums.', min: 0, example: 10, defaultValue: 0 })
@@ -82,7 +82,7 @@ export class SubsonicParameterAlbumList2 {
 	@SubsonicObjField({ description: 'The list type.' })
 	type!: AlbumListType;
 
-	@SubsonicObjField({ nullable: true, description: 'The number of albums to return.', min: 1, max: 500, example: 10, defaultValue: 10 })
+	@SubsonicObjField({ nullable: true, description: 'The number of albums to return.', min: 0, max: 500, example: 10, defaultValue: 10 })
 	size?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'The list offset. Useful if you for example want to page through the list of newest albums.', min: 0, example: 10, defaultValue: 0 })
@@ -121,7 +121,7 @@ export class SubsonicParameterArtistInfo {
 	@SubsonicObjField({ description: 'The ID of a song, album or artist.', isID: true })
 	id!: SubsonicID;
 
-	@SubsonicObjField({ nullable: true, description: 'Max number of similar artists to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'Max number of similar artists to return.', min: 0, example: 10, defaultValue: 20 })
 	count?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Whether to return artists that are not present in the media library.', defaultValue: false })
@@ -133,7 +133,7 @@ export class SubsonicParameterTopSongs {
 	@SubsonicObjField({ description: 'The artist name' })
 	artist!: string;
 
-	@SubsonicObjField({ nullable: true, description: 'Max number of songs to return.', min: 1, example: 10, defaultValue: 50 })
+	@SubsonicObjField({ nullable: true, description: 'Max number of songs to return.', min: 0, example: 10, defaultValue: 50 })
 	count?: number;
 }
 
@@ -142,7 +142,7 @@ export class SubsonicParameterSimilarSongs {
 	@SubsonicObjField({ description: 'The ID of a song, album or artist.', isID: true })
 	id!: SubsonicID;
 
-	@SubsonicObjField({ nullable: true, description: 'Max number of songs to return.', min: 1, example: 10, defaultValue: 50 })
+	@SubsonicObjField({ nullable: true, description: 'Max number of songs to return.', min: 0, example: 10, defaultValue: 50 })
 	count?: number;
 }
 
@@ -273,12 +273,14 @@ export class SubsonicParameterPlaylistUpdate {
 	public?: boolean;
 
 	@SubsonicObjField(() => [String], {
+		nullable: true,
 		description: 'Add this song with this ID to the playlist. Multiple parameters allowed.',
 		isID: true
 	})
 	songIdToAdd?: SubsonicID | Array<SubsonicID>;
 
-	@SubsonicObjField(() => [String], {
+	@SubsonicObjField(() => [Number], {
+		nullable: true,
 		description: 'Remove the song at this position in the playlist. Multiple parameters allowed.'
 	})
 	songIndexToRemove?: number | Array<number>;
@@ -301,7 +303,7 @@ export class SubsonicParameterPodcastChannels {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterPodcastEpisodesNewest {
-	@SubsonicObjField({ nullable: true, description: 'The maximum number of episodes to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'The maximum number of episodes to return.', min: 0, example: 10, defaultValue: 20 })
 	count?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Search result offset. Used for paging.', min: 0, example: 10, defaultValue: 0 })
@@ -443,7 +445,7 @@ export class SubsonicParameterBookmark {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterRandomSong {
-	@SubsonicObjField({ nullable: true, description: 'The number of songs to return.', min: 1, max: 500, example: 10, defaultValue: 10 })
+	@SubsonicObjField({ nullable: true, description: 'The number of songs to return.', min: 0, max: 500, example: 10, defaultValue: 10 })
 	size?: number;
 
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return songs in the music folder with the given ID.' })
@@ -473,7 +475,7 @@ export class SubsonicParameterSearch {
 	@SubsonicObjField({ nullable: true, description: 'Song title to search for.' })
 	title?: string;
 
-	@SubsonicObjField({ nullable: true, description: 'Maximum number of results to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'Maximum number of results to return.', min: 0, example: 10, defaultValue: 20 })
 	count?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Search result offset. Used for paging.', min: 0, example: 10, defaultValue: 0 })
@@ -488,19 +490,19 @@ export class SubsonicParameterSearch2 {
 	@SubsonicObjField({ nullable: true, description: 'Search query.' })
 	query?: string;
 
-	@SubsonicObjField({ nullable: true, description: 'Maximum number of artists to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'Maximum number of artists to return.', min: 0, example: 10, defaultValue: 20 })
 	artistCount?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Search result offset for artists. Used for paging.', min: 0, example: 10, defaultValue: 0 })
 	artistOffset?: number;
 
-	@SubsonicObjField({ nullable: true, description: 'Maximum number of albums to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'Maximum number of albums to return.', min: 0, example: 10, defaultValue: 20 })
 	albumCount?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Search result offset for albums. Used for paging.', min: 0, example: 10, defaultValue: 0 })
 	albumOffset?: number;
 
-	@SubsonicObjField({ nullable: true, description: 'Maximum number of songs to return.', min: 1, example: 10, defaultValue: 20 })
+	@SubsonicObjField({ nullable: true, description: 'Maximum number of songs to return.', min: 0, example: 10, defaultValue: 20 })
 	songCount?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'Search result offset for songs. Used for paging.', min: 0, example: 10, defaultValue: 0 })
@@ -514,6 +516,7 @@ export class SubsonicParameterSearch2 {
 export class SubsonicParameterLyrics {
 	@SubsonicObjField({ nullable: true, description: 'Search lyrics by artist.' })
 	artist?: string;
+
 	@SubsonicObjField({ nullable: true, description: 'Search lyrics by song title.' })
 	title?: string;
 }
@@ -544,7 +547,7 @@ export class SubsonicParameterSongsByGenre {
 	@SubsonicObjField({ description: 'The genre.' })
 	genre!: string;
 
-	@SubsonicObjField({ nullable: true, description: 'The maximum number of songs to return.', min: 1, max: 500, example: 10, defaultValue: 10 })
+	@SubsonicObjField({ nullable: true, description: 'The maximum number of songs to return.', min: 0, max: 500, example: 10, defaultValue: 10 })
 	count?: number;
 
 	@SubsonicObjField({ nullable: true, description: 'The offset. Useful if you want to page through the songs in a genre.', min: 0, example: 10, defaultValue: 0 })

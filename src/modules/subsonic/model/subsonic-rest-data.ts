@@ -173,10 +173,16 @@ export class SubsonicArtistID3 {
 	albumCount!: number;
 
 	@SubsonicObjField()
+	userRating?: number;
+
+	@SubsonicObjField()
 	coverArt?: SubsonicID;
 
 	@SubsonicObjField()
 	starred?: SubsonicDateTime;
+
+	@SubsonicObjField()
+	artistImageUrl?: string;
 
 	@SubsonicObjField()
 	musicBrainzId?: string; // OpenSubsonic
@@ -684,6 +690,12 @@ export class SubsonicPlaylist {
 
 	@SubsonicObjField()
 	coverArt?: string; // Added in 1.11.0
+
+	@SubsonicObjField()
+	starred?: SubsonicDateTime;
+
+	@SubsonicObjField()
+	userRating?: number;
 }
 
 @SubsonicResultType()

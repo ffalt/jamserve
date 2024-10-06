@@ -92,7 +92,8 @@ export class SubsonicHelper {
 		const trackIDs = entries.map(entry => entry.track.id()).filter(t => t !== undefined);
 		const tracks = await orm.Track.findByIDs(trackIDs);
 		const states = await SubsonicHelper.loadStates(orm, tracks.map(o => o.id), DBObjectType.track, user.id);
-		return SubsonicFormatter.packPlaylistWithSongs(orm, playlist, tracks, states);
+		states[playlist.id] = await orm.State.findOrCreate(playlist.id, DBObjectType.playlist, user.id);
+		return SubsonicFormatter.packPlaylistWithSongs(playlist, tracks, states);
 	}
 
 	static async prepareEpisodes(engine: EngineService, orm: Orm, episodes: Array<Episode>, user: User): Promise<Array<SubsonicPodcastEpisode>> {

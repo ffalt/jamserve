@@ -5,7 +5,6 @@ import { User } from '../user/user.js';
 import { PlaylistFilterArgs, PlaylistOrderArgs } from './playlist.args.js';
 import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
 
-// @Repository(Playlist)
 export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterArgs, PlaylistOrderArgs> {
 	objType = DBObjectType.playlist;
 	indexProperty = 'name';

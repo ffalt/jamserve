@@ -1,6 +1,5 @@
 import { Inject, InRequestScope } from 'typescript-ioc';
 import http from 'http';
-import path from 'path';
 import express from 'express';
 import { EngineService } from '../engine/services/engine.service.js';
 import bodyParser from 'body-parser';
@@ -19,6 +18,7 @@ import { DocsMiddleware } from './middlewares/docs.middleware.js';
 import { useAuthenticatedCors } from './middlewares/cors.middleware.js';
 import { SessionService } from '../../entity/session/session.service.js';
 import { useCSPMiddleware } from './middlewares/csp.middleware.js';
+import { useStaticMiddleware } from './middlewares/static.middleware.js';
 
 const log = logger('Server');
 
@@ -72,7 +72,16 @@ export class Server {
 			res.status(204).end();
 		});
 
+		// TODO: ratelimit normal use
+		// const rateLimiter = rateLimit({
+		// 	windowMs: 1000,
+		// 	limit: 100,
+		// 	standardHeaders: true
+		// });
+		// app.use(rateLimiter);
+
 		app.use(useEngineMiddleware(this.engine));
+
 		log.debug(`registering subsonic middleware`);
 		app.use(`/rest`, this.subsonic.middleware());
 
@@ -83,30 +92,17 @@ export class Server {
 		log.debug(`registering jam api middleware`);
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
 
-		log.debug(`registering graphql playground`);
-		app.use('/graphql/playground', await this.apollo.playground());
-
 		log.debug(`registering graphql middleware`);
 		app.use('/graphql', await this.apollo.middleware());
+
+		log.debug(`registering graphql playground`);
+		app.use('/graphql/playground', await this.apollo.playground());
 
 		log.debug(`registering docs middleware`);
 		app.use('/docs', await this.docs.middleware());
 
 		log.debug(`registering static middleware`);
-		// frontend (jamberry domain config file)
-		const jamberry_config = `document.jamberry_config = ${JSON.stringify({ name: 'Jam', fixed: { server: this.configService.env.domain } })}`;
-		app.get('/assets/config/config.js', (req, res) => {
-			res.type('text/javascript');
-			res.send(jamberry_config);
-		});
-		// frontend (any)
-		const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
-		const favicon = path.resolve('./static/api-docs/favicon.ico');
-		app.get('/favicon.ico', (_req, res) => res.sendFile(favicon));
-		app.get('/', (_req, res) => res.sendFile(indexHTML));
-		app.get('/index.html', (_req, res) => res.sendFile(indexHTML));
-		app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-		app.get('*', (_req, res) => res.sendFile(indexHTML));
+		useStaticMiddleware(app, this.configService);
 
 		this.app = app;
 	}

@@ -36,12 +36,16 @@ export class StreamController {
 	async stream(
 		@PathParam('id', { description: 'Media Id', isID: true }) id: string,
 		@PathParams() streamArgs: StreamArgs,
-		@Ctx() { orm, engine, user }: Context
+		@Ctx() { orm, engine }: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInStreamTypes(id);
 		if (!result) {
 			return Promise.reject(NotFoundError());
 		}
-		return engine.stream.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
+		return engine.stream.streamDBObject(result.obj, result.objType, {
+			format: streamArgs.format,
+			maxBitRate: streamArgs.maxBitRate,
+			timeOffset: streamArgs.timeOffset
+		});
 	}
 }

@@ -22,6 +22,7 @@ import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
+import { StreamOptions } from '../../../entity/stream/stream.service.js';
 
 const log = logger('SubsonicApi');
 
@@ -52,15 +53,19 @@ export class SubsonicMediaRetrievalApi {
 		if (!o?.obj) {
 			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
 		}
-		const maxBitRate = query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined;
+		const opts: StreamOptions = {
+			maxBitRate: query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined,
+			format: query.format,
+			timeOffset: query.timeOffset !== undefined && query.timeOffset > 0 ? query.timeOffset : undefined
+		};
 		switch (o.objType) {
 			case DBObjectType.track: {
-				const res = await engine.stream.streamTrack(o.obj as Track, query.format, maxBitRate);
+				const res = await engine.stream.streamTrack(o.obj as Track, opts);
 				engine.nowPlaying.reportTrack(orm, o.obj as Track, user).catch(e => log.error(e)); // do not wait
 				return res;
 			}
 			case DBObjectType.episode: {
-				const result = await engine.stream.streamEpisode(o.obj as Episode, query.format, maxBitRate);
+				const result = await engine.stream.streamEpisode(o.obj as Episode, opts);
 				engine.nowPlaying.reportEpisode(orm, o.obj as Episode, user).catch(e => log.error(e)); // do not wait
 				return result;
 			}

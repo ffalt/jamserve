@@ -6,7 +6,6 @@ import { User } from '../user/user.js';
 import { RootFilterArgs, RootOrderArgs } from './root.args.js';
 import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
 
-// @Repository(Root)
 export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrderArgs> {
 	objType = DBObjectType.root;
 	indexProperty = 'name';

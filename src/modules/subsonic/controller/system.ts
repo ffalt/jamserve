@@ -46,7 +46,9 @@ export class SubsonicSystemApi {
 	async getOpenSubsonicExtensions(@SubsonicCtx() _ctx: Context): Promise<SubsonicOpenSubsonicResponse> {
 		return {
 			openSubsonicExtensions: [
-				{ name: 'songLyrics', versions: [1] }
+				{ name: 'songLyrics', versions: [1] }, // https://opensubsonic.netlify.app/docs/extensions/songlyrics/
+				{ name: 'formPost', versions: [1] } // https://opensubsonic.netlify.app/docs/extensions/formpost/
+				// TODO: support timeOffset in stream https://opensubsonic.netlify.app/docs/extensions/transcodeoffset/, { name: 'transcodeOffset', versions: [1] }
 			]
 		};
 	}

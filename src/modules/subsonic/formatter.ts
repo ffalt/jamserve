@@ -26,7 +26,6 @@ import {
 	SubsonicUser
 } from './model/subsonic-rest-data.js';
 import moment from 'moment';
-import { Orm } from '../engine/services/orm.service.js';
 import { Root } from '../../entity/root/root.js';
 import { User } from '../../entity/user/user.js';
 import { FolderIndex, FolderIndexEntry } from '../../entity/folder/folder.model.js';
@@ -353,9 +352,10 @@ export class SubsonicFormatter {
 		 <xs:complexType name="ArtistID3">
 		 <xs:attribute name="id" type="xs:string" use="required"/>
 		 <xs:attribute name="name" type="xs:string" use="required"/>
+		 <xs:attribute name="artistImageUrl" type="xs:string" use="optional"/>
 		 <xs:attribute name="coverArt" type="xs:string" use="optional"/>
 		 <xs:attribute name="albumCount" type="xs:int" use="required"/>
-		 <xs:attribute name="starred" type="xs:dateTime" use="optional"/>
+		 <xs:attribute name="starred" ty^^pe="xs:dateTime" use="optional"/>
 		 </xs:complexType>
 			musicBrainzId?: string; // OpenSubsonic
 			sortName?: string; // OpenSubsonic
@@ -366,6 +366,7 @@ export class SubsonicFormatter {
 			name: artist.name,
 			coverArt: artist.id,
 			albumCount: await artist.albums.count(),
+			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			musicBrainzId: artist.mbArtistID,
 			sortName: artist.nameSort
@@ -628,7 +629,7 @@ export class SubsonicFormatter {
 		return result;
 	}
 
-	static async packPlaylist(orm: Orm, playlist: Playlist): Promise<SubsonicPlaylist> {
+	static async packPlaylist(playlist: Playlist, state?: State): Promise<SubsonicPlaylist> {
 		return {
 			id: playlist.id,
 			name: playlist.name,
@@ -638,14 +639,16 @@ export class SubsonicFormatter {
 			created: SubsonicFormatter.formatSubSonicDate(playlist.createdAt) as string,
 			changed: SubsonicFormatter.formatSubSonicDate(playlist.updatedAt) as string,
 			coverArt: playlist.coverArt,
+			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			allowedUser: [], // playlist.allowedUser,
 			songCount: await playlist.entries.count(),
 			owner: playlist.user.id()
 		};
 	}
 
-	static async packPlaylistWithSongs(orm: Orm, playlist: Playlist, tracks: Array<Track>, states: StateMap): Promise<SubsonicPlaylistWithSongs> {
-		const result = await SubsonicFormatter.packPlaylist(orm, playlist) as SubsonicPlaylistWithSongs;
+	static async packPlaylistWithSongs(playlist: Playlist, tracks: Array<Track>, states: StateMap): Promise<SubsonicPlaylistWithSongs> {
+		const result = await SubsonicFormatter.packPlaylist(playlist) as SubsonicPlaylistWithSongs;
 		const entry: Array<SubsonicChild> = [];
 		for (const track of tracks) {
 			entry.push(await SubsonicFormatter.packTrack(track, states[track.id]));

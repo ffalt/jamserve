@@ -58,8 +58,10 @@ export class SubsonicPlaylistsApi {
 				tracks.push(track);
 			}
 		}
-		const states = await SubsonicHelper.loadStates(ctx.orm, tracks.map(t => t.id), DBObjectType.track, ctx.user.id);
-		return { playlist: await SubsonicFormatter.packPlaylistWithSongs(ctx.orm, playlist, tracks, states) };
+		const states = (await SubsonicHelper.loadStates(ctx.orm, tracks.map(t => t.id), DBObjectType.track, ctx.user.id));
+		states[playlist.id] = await ctx.orm.State.findOrCreate(playlist.id, DBObjectType.playlist, ctx.user.id);
+
+		return { playlist: await SubsonicFormatter.packPlaylistWithSongs(playlist, tracks, states) };
 	}
 
 	/**
@@ -88,7 +90,7 @@ export class SubsonicPlaylistsApi {
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(e => e.track.id());
 		const removeTracks = query.songIndexToRemove !== undefined ? (Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove]) : [];
-		trackIDs = trackIDs.filter((id, index) => !removeTracks.includes(index));
+		trackIDs = trackIDs.filter((_id, index) => !removeTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
 			trackIDs = trackIDs.concat(songAdd);
