@@ -1,27 +1,27 @@
-import { getMilliseconds, wait } from "./clock.js";
+import { getMilliseconds, wait } from './clock.js';
 export class TokenBucket {
     constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
         this.bucketSize = bucketSize;
         this.tokensPerInterval = tokensPerInterval;
-        if (typeof interval === "string") {
+        if (typeof interval === 'string') {
             switch (interval) {
-                case "sec":
-                case "second":
+                case 'sec':
+                case 'second':
                     this.interval = 1000;
                     break;
-                case "min":
-                case "minute":
+                case 'min':
+                case 'minute':
                     this.interval = 1000 * 60;
                     break;
-                case "hr":
-                case "hour":
+                case 'hr':
+                case 'hour':
                     this.interval = 1000 * 60 * 60;
                     break;
-                case "day":
+                case 'day':
                     this.interval = 1000 * 60 * 60 * 24;
                     break;
                 default:
-                    throw new Error("Invalid interval " + interval);
+                    throw new Error('Invalid interval ' + interval);
             }
         }
         else {

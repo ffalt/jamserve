@@ -1,15 +1,16 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 import { ORM_ID } from '../definitions/orm-types.js';
-export function PrimaryKey() {
+export function PrimaryKey(type) {
     return (prototype, propertyKey, _) => {
         if (typeof propertyKey === 'symbol') {
             throw new SymbolKeysNotSupportedError();
         }
         const opt = { primaryKey: true };
-        getMetadataStorage().collectPropertyMetadata({
+        const deaultType = () => ORM_ID;
+        getMetadataStorage().fields.push({
             name: propertyKey,
-            getType: () => ORM_ID,
+            getType: type || deaultType,
             isRelation: false,
             typeOptions: opt,
             target: prototype.constructor

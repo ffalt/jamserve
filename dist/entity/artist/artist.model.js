@@ -13,9 +13,10 @@ import { TrackBase } from '../track/track.model.js';
 import { SeriesBase } from '../series/series.model.js';
 import { AlbumBase } from '../album/album.model.js';
 import { ExtendedInfo } from '../metadata/metadata.model.js';
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { GenreBase } from '../genre/genre.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let ArtistBase = class ArtistBase extends Base {
 };
 __decorate([

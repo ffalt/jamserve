@@ -7,8 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { Base, Page } from '../base/base.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let UserRoles = class UserRoles {
 };
 __decorate([
@@ -45,6 +46,16 @@ User = __decorate([
     ResultType()
 ], User);
 export { User };
+let SubsonicToken = class SubsonicToken {
+};
+__decorate([
+    ObjField({ description: 'Generated Subsonic Token', example: 'kshfis6few68fwefh' }),
+    __metadata("design:type", String)
+], SubsonicToken.prototype, "token", void 0);
+SubsonicToken = __decorate([
+    ResultType()
+], SubsonicToken);
+export { SubsonicToken };
 let UserPage = class UserPage extends Page {
 };
 __decorate([

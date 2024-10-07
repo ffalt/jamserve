@@ -11,7 +11,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Series, SeriesIndex, SeriesPage } from './series.model.js';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { TrackPage } from '../track/track.model.js';
@@ -20,6 +19,11 @@ import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
 import { IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
 import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 let SeriesController = class SeriesController {
     async id(id, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, { orm, engine, user }) {
         return engine.transform.series(orm, await orm.Series.oneOrFailByID(id), seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user);

@@ -28,7 +28,7 @@ export function useCSPMiddleware() {
             workerSrc: [self],
             fontSrc: [self, 'data:'],
             reportUri: '/csp/report-violation'
-        },
+        }
     });
 }
 //# sourceMappingURL=csp.middleware.js.map

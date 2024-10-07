@@ -3,8 +3,8 @@ import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import multer from 'multer';
 import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
-import { ExpressMethod } from './express-method.js';
-import { iterateControllers } from '../helpers/iterate-super.js';
+import { ExpressMethod } from '../../deco/express/express-method.js';
+import { iterateControllers } from '../../deco/helpers/iterate-super.js';
 export function restRouter(api, options) {
     const routeInfos = [];
     const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });
@@ -35,15 +35,15 @@ export function restRouter(api, options) {
         const router = express.Router();
         let gets = [];
         let posts = [];
-        iterateControllers(metadata, ctrl, (ctrlClass => {
+        iterateControllers(metadata.controllerClasses, ctrl, ctrlClass => {
             gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
             posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
-        }));
+        });
         for (const get of gets) {
-            routeInfos.push(method.GET(get, ctrl, router, options));
+            routeInfos.push(method.GET(get, ctrl, router, options, metadata));
         }
         for (const post of posts) {
-            routeInfos.push(method.POST(post, ctrl, router, options, uploadHandler));
+            routeInfos.push(method.POST(post, ctrl, router, options, uploadHandler, metadata));
         }
         api.use(ctrl.route, router);
     }

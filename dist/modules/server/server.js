@@ -8,7 +8,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import path from 'path';
 import express from 'express';
 import { EngineService } from '../engine/services/engine.service.js';
 import bodyParser from 'body-parser';
@@ -16,16 +15,18 @@ import helmet from 'helmet';
 import { useEngineMiddleware } from './middlewares/engine.middleware.js';
 import { ConfigService } from '../engine/services/config.service.js';
 import { logger } from '../../utils/logger.js';
-import { ApolloMiddleware } from './middlewares/apollo.middleware.js';
 import { useSessionMiddleware } from './middlewares/session.middleware.js';
 import { useLogMiddleware } from './middlewares/log.middleware.js';
 import { RestMiddleware } from './middlewares/rest.middleware.js';
+import { SubsonicMiddleware } from './middlewares/subsonic.middleware.js';
 import { usePassPortMiddleWare } from './middlewares/passport.middleware.js';
 import { JAMAPI_URL_VERSION } from '../engine/rest/version.js';
 import { DocsMiddleware } from './middlewares/docs.middleware.js';
 import { useAuthenticatedCors } from './middlewares/cors.middleware.js';
 import { SessionService } from '../../entity/session/session.service.js';
 import { useCSPMiddleware } from './middlewares/csp.middleware.js';
+import { staticMiddleware } from './middlewares/static.middleware.js';
+import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 const log = logger('Server');
 let Server = class Server {
     async init() {
@@ -47,33 +48,23 @@ let Server = class Server {
             res.status(204).end();
         });
         app.use(useEngineMiddleware(this.engine));
+        log.debug(`registering subsonic api middleware`);
+        app.use(`/rest`, this.subsonic.middleware());
         app.use(useSessionMiddleware(this.configService, this.sessionService));
         app.use(usePassPortMiddleWare(app, this.engine));
         app.use(useAuthenticatedCors(this.configService));
         log.debug(`registering jam api middleware`);
         app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
-        log.debug(`registering graphql playground`);
-        app.use('/graphql/playground', await this.apollo.playground());
         log.debug(`registering graphql middleware`);
-        app.use('/graphql', await this.apollo.middleware());
+        app.use('/graphql', await this.graphql.middleware(this.configService));
         log.debug(`registering docs middleware`);
-        app.use('/docs', await this.docs.middleware());
-        log.debug(`registering static middleware`);
-        const jamberry_config = `document.jamberry_config = ${JSON.stringify({ name: 'Jam', fixed: { server: this.configService.env.domain } })}`;
-        app.get('/assets/config/config.js', (req, res) => {
-            res.type('text/javascript');
-            res.send(jamberry_config);
-        });
-        const indexHTML = path.resolve(this.configService.env.paths.frontend, 'index.html');
-        app.get('/*', express.static(path.resolve(this.configService.env.paths.frontend)));
-        app.get('*', (req, res) => {
-            res.sendFile(indexHTML);
-        });
+        app.use('/docs', this.docs.middleware(this.configService));
+        log.debug(`registering frontend middleware`);
+        app.use(staticMiddleware(this.configService));
         this.app = app;
     }
     getURL() {
-        return `http://${this.configService.env.host === '127.0.0.1' ? 'localhost' :
-            this.configService.env.host}:${this.configService.env.port}`;
+        return `http://${this.configService.env.host === '127.0.0.1' ? 'localhost' : this.configService.env.host}:${this.configService.env.port}`;
     }
     getDomain() {
         return this.configService.env.domain || this.getDomain();
@@ -89,6 +80,8 @@ let Server = class Server {
             { Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
             { Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
             { Content: 'REST Documentation', URL: `${domain}/docs` },
+            { Content: 'Subsonic REST Api', URL: `${domain}/rest/ping` },
+            { Content: 'Subsonic REST Documentation', URL: `${domain}/docs/subsonic` },
             { Content: 'OpenApi Spec', URL: `${domain}/docs/openapi.json` },
             { Content: 'GraphQL Spec', URL: `${domain}/docs/schema.graphql` },
             { Content: 'Angular Client', URL: `${domain}/docs/angular-client.zip` },
@@ -123,12 +116,16 @@ __decorate([
 ], Server.prototype, "engine", void 0);
 __decorate([
     Inject,
-    __metadata("design:type", ApolloMiddleware)
-], Server.prototype, "apollo", void 0);
+    __metadata("design:type", GraphqlMiddleware)
+], Server.prototype, "graphql", void 0);
 __decorate([
     Inject,
     __metadata("design:type", RestMiddleware)
 ], Server.prototype, "rest", void 0);
+__decorate([
+    Inject,
+    __metadata("design:type", SubsonicMiddleware)
+], Server.prototype, "subsonic", void 0);
 __decorate([
     Inject,
     __metadata("design:type", ConfigService)

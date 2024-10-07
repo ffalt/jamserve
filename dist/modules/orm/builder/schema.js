@@ -161,22 +161,21 @@ export class ModelBuilder {
             as: destField.name + 'ORM',
             foreignKey: {
                 name: destField.name,
-                allowNull: o2m.nullable,
+                allowNull: o2m.nullable
             }
         });
     }
     async buildEntityModel(entity) {
         const attributes = {};
-        const options = {
-            freezeTableName: true
-        };
         for (const field of entity.fields) {
             const attribute = await this.buildColumnAttributeModel(field, entity);
             if (attribute) {
                 attributes[field.name] = attribute;
             }
         }
-        const model = this.sequelize.define(entity.name, attributes, options);
+        const model = this.sequelize.define(entity.name, attributes, {
+            freezeTableName: true
+        });
         this.modelMap.set(entity.name, model);
     }
     async build() {

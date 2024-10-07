@@ -58,7 +58,7 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
             folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
             folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
             folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
-            folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs,
+            folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs
         };
         return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
     }

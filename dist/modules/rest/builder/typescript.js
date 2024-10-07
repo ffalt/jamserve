@@ -5,7 +5,7 @@ export function buildTSEnums() {
     const metadata = getMetadataStorage();
     const sl = [
         '// @generated',
-        '// This file was automatically generated and should not be edited.\n',
+        '// This file was automatically generated and should not be edited.\n'
     ];
     for (const enumInfo of metadata.enums) {
         const enumObj = enumInfo.enumObj;
@@ -48,7 +48,7 @@ function buildTSField(field, metadata, sl, withDefault = false) {
             fieldType = 'JamEnums.' + enumInfo.name;
         }
         else {
-            const fObjectType = metadata.resultType(fType);
+            const fObjectType = metadata.resultTypes.find(t => t.target === fType);
             fieldType = fObjectType?.name || 'any';
         }
     }

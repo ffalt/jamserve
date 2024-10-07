@@ -12,10 +12,6 @@ import { Entity, Property } from '../../modules/orm/index.js';
 import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
 import { State, StateQL } from '../state/state.js';
 let Radio = class Radio extends Base {
-    constructor() {
-        super(...arguments);
-        this.disabled = false;
-    }
 };
 __decorate([
     Field(() => String),
@@ -33,8 +29,8 @@ __decorate([
     __metadata("design:type", String)
 ], Radio.prototype, "homepage", void 0);
 __decorate([
-    Field(() => Boolean),
-    Property(() => Boolean),
+    Field(() => Boolean, { nullable: true }),
+    Property(() => Boolean, { nullable: true }),
     __metadata("design:type", Boolean)
 ], Radio.prototype, "disabled", void 0);
 Radio = __decorate([

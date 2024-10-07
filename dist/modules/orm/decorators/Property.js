@@ -14,9 +14,9 @@ export function Property(returnTypeFuncOrOptions, maybeOptions) {
             prototype,
             propertyKey,
             returnTypeFunc,
-            typeOptions: opt,
+            typeOptions: opt
         });
-        getMetadataStorage().collectPropertyMetadata({
+        getMetadataStorage().fields.push({
             name: propertyKey,
             getType,
             typeOptions,

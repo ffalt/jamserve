@@ -5,12 +5,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { InRequestScope } from 'typescript-ioc';
-import { NotFoundError } from '../../modules/rest/index.js';
 import { DBObjectType } from '../../types/enums.js';
 import seq from 'sequelize';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 let BookmarkService = class BookmarkService {
     async create(orm, destID, user, position, comment) {
-        let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: { id: destID } }, { track: { id: destID } }] } });
+        let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: destID }, { track: destID }] } });
         if (!bookmark) {
             const result = await orm.findInStreamTypes(destID);
             if (!result) {
@@ -27,8 +27,8 @@ let BookmarkService = class BookmarkService {
         await orm.Bookmark.persistAndFlush(bookmark);
         return bookmark;
     }
-    async remove(orm, id, userID) {
-        await orm.Bookmark.removeByQueryAndFlush({ where: { id, user: userID } });
+    async remove(orm, bookmarkID, userID) {
+        await orm.Bookmark.removeByQueryAndFlush({ where: { id: bookmarkID, user: userID } });
     }
     async removeByDest(orm, destID, userID) {
         await orm.Bookmark.removeByQueryAndFlush({

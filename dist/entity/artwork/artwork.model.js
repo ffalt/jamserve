@@ -9,8 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Base, Page } from '../base/base.model.js';
 import { ArtworkImageType } from '../../types/enums.js';
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { FolderBase } from '../folder/folder-base.model.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
 let ArtworkBase = class ArtworkBase extends Base {
 };
 __decorate([

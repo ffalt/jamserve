@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Arg, Ctx, ID, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { StateQL } from './state.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 let StateResolver = class StateResolver {
     async state(id, { orm, user }) {
         const result = await orm.findInStateTypes(id);

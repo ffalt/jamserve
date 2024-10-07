@@ -13,7 +13,7 @@ import { AudioModule } from '../../modules/audio/audio.module.js';
 import { DBObjectType, WaveformFormatType } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../utils/logger.js';
-import { GenericError, InvalidParamError } from '../../modules/rest/index.js';
+import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
 const log = logger('Waveform');
 export const WaveformDefaultFormat = WaveformFormatType.svg;
 let WaveformService = class WaveformService {

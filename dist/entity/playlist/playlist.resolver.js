@@ -16,7 +16,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist.js';
 import { PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
 import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
         const list = await orm.Playlist.oneOrFail({ where: { id } });

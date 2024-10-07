@@ -5,14 +5,14 @@ import { configureLogger, logger } from './utils/logger.js';
 import { Server } from './modules/server/server.js';
 import { Container } from 'typescript-ioc';
 dotenv.config();
-configureLogger(process.env.JAM_LOG_LEVEL || 'info');
+configureLogger(process.env.JAM_LOG_LEVEL || 'info', process.env.JAM_LOG_FILE);
 const log = logger('Server');
 const server = Container.get(Server);
 async function run() {
     log.info(`Jamserve ${JAMSERVE_VERSION} starting`);
-    await server.init();
     await server.engine.init();
     await server.engine.start();
+    await server.init();
     await server.start();
 }
 async function stop() {

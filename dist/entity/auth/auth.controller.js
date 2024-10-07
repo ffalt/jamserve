@@ -12,13 +12,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var AuthController_1;
 import { Session } from '../session/session.model.js';
-import { BodyParams, Controller, Ctx, Post, UnauthError } from '../../modules/rest/index.js';
 import passport from 'passport';
 import { generateJWT, jwtHash } from '../../utils/jwt.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 import { CredentialsArgs } from './auth.args.js';
 import { UserRole } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { UnauthError } from '../../modules/deco/express/express-error.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 const log = logger('AuthController');
 let AuthController = AuthController_1 = class AuthController {
     async loginUser(req, res, next) {
@@ -66,7 +70,9 @@ let AuthController = AuthController_1 = class AuthController {
     }
     static buildSessionResult(req, credentials, user, engine) {
         const client = req.body.client || 'Unknown Client';
-        const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
+        const token = credentials.jwt ?
+            generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) :
+            undefined;
         if (req.session) {
             const session = req.session;
             session.client = client;

@@ -4,18 +4,14 @@ export class MetaStatBuilder {
         this.stats = {};
     }
     static convert2Numlist(o) {
-        return Object.keys(o).map(key => {
-            return { count: o[key].count, val: Number(o[key].val) };
-        }).sort((a, b) => {
-            return a.count - b.count;
-        });
+        return Object.keys(o)
+            .map(key => ({ count: o[key].count, val: Number(o[key].val) }))
+            .sort((a, b) => a.count - b.count);
     }
     static convert2list(o) {
-        return Object.keys(o).map(key => {
-            return o[key];
-        }).sort((a, b) => {
-            return a.count - b.count;
-        });
+        return Object.keys(o)
+            .map(key => o[key])
+            .sort((a, b) => a.count - b.count);
     }
     static getMostUsedTagValue(list, multi) {
         if (list.length === 0) {
@@ -31,9 +27,7 @@ export class MetaStatBuilder {
         if (list.length > 3 && multi !== undefined) {
             return multi;
         }
-        const cleaned = list.filter(o => {
-            return o.count > 1;
-        });
+        const cleaned = list.filter(o => o.count > 1);
         if (cleaned.length > 1 && multi !== undefined) {
             return multi;
         }

@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { Base } from '../base/base.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { JamObjectType } from '../../types/enums.js';
 import { GenreBase } from '../genre/genre.model.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
 let MediaTagRaw = class MediaTagRaw {
 };
 __decorate([
@@ -54,6 +55,10 @@ __decorate([
     ObjField({ nullable: true, description: 'Sample Rate (Hz)', example: 44100 }),
     __metadata("design:type", Number)
 ], MediaInfo.prototype, "sampleRate", void 0);
+__decorate([
+    ObjField({ nullable: true, description: 'Bit Depth', example: 16 }),
+    __metadata("design:type", Number)
+], MediaInfo.prototype, "bitDepth", void 0);
 __decorate([
     ObjField({ nullable: true, description: 'File Size', example: 31321516 }),
     __metadata("design:type", Number)

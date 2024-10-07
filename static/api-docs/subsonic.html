@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JamServe Subsonic API Docs</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			font-family: Arial, sans-serif;
+			background-color: #212830;
+			color: #F0F0F0;
+		}
+
+		openapi-explorer::part(section-main-content) {
+			--border-color: #717070 !important;
+			--light-border-color: #717070 !important;
+			--bg2: #1e1e1e !important;
+			--font-size-mono: 18px !important;
+		}
+	</style>
+</head>
+<body>
+<openapi-explorer spec-url="/docs/subsonic-openapi.json"
+				  collapse table fill-defaults="true" schema-description-expanded="true"
+				  nav-item-spacing="compact" show-components="true"
+				  bg-color="#212830"
+				  text-color="#F0F0F0"
+				  header-bg-color="#2d2d32"
+				  nav-text-color="#F0F0F0"
+				  nav-bg-color="#1D2F3B"
+				  nav-hover-text-color="#FFFFFF"
+				  primary-color="#F0F0F0"
+				  secondary-color="#b8810a"
+				  @spec-loaded="onSpecLoaded"
+>
+</openapi-explorer>
+<script type="module" src="/docs/subsonic.js"></script>
+<script type="module" src="/docs/openapi-explorer.min.js"></script>
+</body>
+</html>

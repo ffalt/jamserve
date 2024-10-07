@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { UserRole } from '../../types/enums.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let IncludesUserArgs = class IncludesUserArgs {
 };
 IncludesUserArgs = __decorate([
@@ -66,6 +67,16 @@ UserPasswordUpdateArgs = __decorate([
     ObjParamsType()
 ], UserPasswordUpdateArgs);
 export { UserPasswordUpdateArgs };
+let UserGenerateSusonicTokenArgs = class UserGenerateSusonicTokenArgs {
+};
+__decorate([
+    ObjField({ description: 'Password of calling user (or admin) is required to generate/update the Subsonic token' }),
+    __metadata("design:type", String)
+], UserGenerateSusonicTokenArgs.prototype, "password", void 0);
+UserGenerateSusonicTokenArgs = __decorate([
+    ObjParamsType()
+], UserGenerateSusonicTokenArgs);
+export { UserGenerateSusonicTokenArgs };
 let UserEmailUpdateArgs = class UserEmailUpdateArgs {
 };
 __decorate([
@@ -108,7 +119,7 @@ __decorate([
     __metadata("design:type", Array)
 ], UserFilterArgs.prototype, "ids", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], UserFilterArgs.prototype, "since", void 0);

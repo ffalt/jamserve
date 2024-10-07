@@ -78,6 +78,7 @@ export var SessionMode;
 (function (SessionMode) {
     SessionMode["browser"] = "browser";
     SessionMode["jwt"] = "jwt";
+    SessionMode["subsonic"] = "subsonic";
 })(SessionMode || (SessionMode = {}));
 export var DBObjectType;
 (function (DBObjectType) {
@@ -103,6 +104,7 @@ export var DBObjectType;
     DBObjectType["tag"] = "tag";
     DBObjectType["series"] = "series";
     DBObjectType["genre"] = "genre";
+    DBObjectType["subsonic"] = "subsonic";
 })(DBObjectType || (DBObjectType = {}));
 export var AudioFormatType;
 (function (AudioFormatType) {
@@ -301,6 +303,8 @@ export var FolderOrderFields;
     FolderOrderFields["name"] = "name";
     FolderOrderFields["title"] = "title";
     FolderOrderFields["year"] = "year";
+    FolderOrderFields["artist"] = "artist";
+    FolderOrderFields["album"] = "album";
 })(FolderOrderFields || (FolderOrderFields = {}));
 export var PlaylistEntryOrderFields;
 (function (PlaylistEntryOrderFields) {

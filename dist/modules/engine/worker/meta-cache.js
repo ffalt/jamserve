@@ -206,7 +206,7 @@ export class MetaMergerCache {
             name: aa.name,
             nameSort: aa.nameSort || aa.name,
             mbArtistID: aa.mbArtistID,
-            albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [],
+            albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : []
         });
         await artist.roots.add(this.root);
         await artist.folders.add(trackInfo.folder);

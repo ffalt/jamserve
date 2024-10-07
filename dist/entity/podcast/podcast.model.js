@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { PodcastStatus } from '../../types/enums.js';
 import { Base, Page } from '../base/base.model.js';
 import { EpisodeBase } from '../episode/episode.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let PodcastBase = class PodcastBase extends Base {
 };
 __decorate([
@@ -133,43 +134,43 @@ export { PodcastIndex };
 let PodcastDiscover = class PodcastDiscover {
 };
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "url", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "title", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "author", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "description", void 0);
 __decorate([
-    ObjField(() => Number),
+    ObjField(),
     __metadata("design:type", Number)
 ], PodcastDiscover.prototype, "subscribers", void 0);
 __decorate([
-    ObjField(() => Number),
+    ObjField(),
     __metadata("design:type", Number)
 ], PodcastDiscover.prototype, "subscribers_last_week", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "logo_url", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "scaled_logo_url", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "website", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "mygpo_link", void 0);
 PodcastDiscover = __decorate([
@@ -189,15 +190,15 @@ export { PodcastDiscoverPage };
 let PodcastDiscoverTag = class PodcastDiscoverTag {
 };
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscoverTag.prototype, "title", void 0);
 __decorate([
-    ObjField(() => String),
+    ObjField(),
     __metadata("design:type", String)
 ], PodcastDiscoverTag.prototype, "tag", void 0);
 __decorate([
-    ObjField(() => Number),
+    ObjField(),
     __metadata("design:type", Number)
 ], PodcastDiscoverTag.prototype, "usage", void 0);
 PodcastDiscoverTag = __decorate([

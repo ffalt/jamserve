@@ -31,8 +31,8 @@ import { ORM } from '../../orm/index.js';
 import { ORMEntities } from '../orm/entities.js';
 import { ORMRepositories } from '../orm/repositories.js';
 import { registerORMEnums } from '../orm/enum-registration.js';
-import { NotFoundError } from '../../rest/index.js';
 import { Genre } from '../../../entity/genre/genre.js';
+import { NotFoundError } from '../../deco/express/express-error.js';
 registerORMEnums();
 export class Orm {
     constructor(em) {
@@ -108,6 +108,9 @@ export class Orm {
             this.User
         ].find(repo => repo.objType === destType);
     }
+    async findInRepos(id, repos) {
+        return Orm.findInReposTypes(id, repos);
+    }
     async findInImageTypes(id) {
         return Orm.findInReposTypes(id, [
             this.Album,
@@ -159,19 +162,26 @@ export class Orm {
     }
 }
 let OrmService = class OrmService {
-    async init(config) {
-        const db = config.env.db.dialect === 'sqlite' ? {
+    sqliteConfig(config) {
+        return {
             dialect: 'sqlite',
             storage: path.resolve(config.env.paths.data, 'jam.sqlite')
-        } :
-            {
-                dialect: config.env.db.dialect,
-                username: config.env.db.user,
-                password: config.env.db.password,
-                database: config.env.db.name,
-                host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
-                port: config.env.db.port ? Number(config.env.db.port) : undefined
-            };
+        };
+    }
+    dialoectConfig(config) {
+        return {
+            dialect: config.env.db.dialect,
+            username: config.env.db.user,
+            password: config.env.db.password,
+            database: config.env.db.name,
+            host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+            port: config.env.db.port ? Number(config.env.db.port) : undefined
+        };
+    }
+    async init(config) {
+        const db = config.env.db.dialect === 'sqlite' ?
+            this.sqliteConfig(config) :
+            this.dialoectConfig(config);
         this.orm = await ORM.init({
             entities: ORMEntities,
             repositories: ORMRepositories,

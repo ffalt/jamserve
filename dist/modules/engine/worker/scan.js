@@ -75,7 +75,7 @@ export class WorkerScan {
             track: tag?.trackNr,
             mbArtistID: tag?.mbArtistID,
             mbReleaseID: tag?.mbReleaseID,
-            mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`,
+            mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`
         };
     }
     async setTrackValues(file, track) {

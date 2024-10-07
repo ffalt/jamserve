@@ -13,7 +13,7 @@ export async function downloadFile(url, filename) {
         }
         response.body.pipe(dest);
         dest.on('close', () => resolve());
-        dest.on('error', (e) => {
+        dest.on('error', e => {
             fileDeleteIfExists(filename).then(() => {
                 reject(e);
             }).catch(_ => {

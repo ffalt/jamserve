@@ -8,10 +8,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { TrackBase } from '../track/track.model.js';
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { EpisodeBase } from '../episode/episode.model.js';
 import { Page } from '../base/base.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let BookmarkBase = class BookmarkBase {
 };
 __decorate([

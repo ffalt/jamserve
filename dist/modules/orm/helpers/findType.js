@@ -33,13 +33,13 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
         };
         return {
             getType,
-            typeOptions: options,
+            typeOptions: options
         };
     }
     else if (metadataDesignType) {
         return {
             getType: () => metadataDesignType,
-            typeOptions: options,
+            typeOptions: options
         };
     }
     else {

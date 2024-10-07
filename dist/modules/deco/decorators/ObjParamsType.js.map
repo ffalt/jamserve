@@ -1,0 +1,1 @@
+{"version":3,"file":"ObjParamsType.js","sourceRoot":"","sources":["../../../../src/modules/deco/decorators/ObjParamsType.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,iBAAiB,CAAC,QAAyB;IAC1D,OAAO,MAAM,CAAC,EAAE;QACf,QAAQ,CAAC,aAAa,CAAC,IAAI,CAAC;YAC3B,IAAI,EAAE,MAAM,CAAC,IAAI;YACjB,MAAM;YACN,MAAM,EAAE,EAAE;SACV,CAAC,CAAC;IACJ,CAAC,CAAC;AACH,CAAC"}

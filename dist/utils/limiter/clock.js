@@ -17,6 +17,6 @@ export function getMilliseconds() {
     return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
 }
 export function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 //# sourceMappingURL=clock.js.map

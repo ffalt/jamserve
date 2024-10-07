@@ -8,10 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { NotFoundError } from '../../modules/rest/index.js';
 import { DBObjectType } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
 import { StateService } from '../state/state.service.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 const log = logger('NowPlayingService');
 let NowPlayingService = class NowPlayingService {
     constructor() {
@@ -32,7 +32,7 @@ let NowPlayingService = class NowPlayingService {
         this.playing.push(result);
         this.report(orm, [
             { id: episode.id, type: DBObjectType.episode },
-            { id: episode.podcast.idOrFail(), type: DBObjectType.podcast },
+            { id: episode.podcast.idOrFail(), type: DBObjectType.podcast }
         ], user).catch(e => log.error(e));
         return result;
     }
@@ -46,7 +46,7 @@ let NowPlayingService = class NowPlayingService {
             { id: track.artist.id(), type: DBObjectType.artist },
             { id: track.folder.id(), type: DBObjectType.folder },
             { id: track.series.id(), type: DBObjectType.series },
-            { id: track.root.id(), type: DBObjectType.root },
+            { id: track.root.id(), type: DBObjectType.root }
         ], user).catch(e => log.error(e));
         return result;
     }

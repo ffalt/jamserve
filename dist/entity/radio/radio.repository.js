@@ -11,15 +11,17 @@ export class RadioRepository extends BaseRepository {
         return this.buildDefaultOrder(order);
     }
     async buildFilter(filter, _) {
-        return filter ? QHelper.buildQuery([
-            { id: filter.ids },
-            { name: QHelper.like(filter.query, this.em.dialect) },
-            { name: QHelper.eq(filter.name) },
-            { url: QHelper.eq(filter.url) },
-            { homepage: QHelper.eq(filter.homepage) },
-            { disabled: QHelper.eq(filter.disabled) },
-            { createdAt: QHelper.gte(filter.since) }
-        ]) : {};
+        return filter ?
+            QHelper.buildQuery([
+                { id: filter.ids },
+                { name: QHelper.like(filter.query, this.em.dialect) },
+                { name: QHelper.eq(filter.name) },
+                { url: QHelper.eq(filter.url) },
+                { homepage: QHelper.eq(filter.homepage) },
+                { disabled: QHelper.eq(filter.disabled) },
+                { createdAt: QHelper.gte(filter.since) }
+            ]) :
+            {};
     }
 }
 //# sourceMappingURL=radio.repository.js.map

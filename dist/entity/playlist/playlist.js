@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { User } from '../user/user.js';
 import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
-import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
+import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, ManyToOne, OneToMany, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
 import { State, StateQL } from '../state/state.js';
@@ -47,7 +47,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Playlist.prototype, "isPublic", void 0);
 __decorate([
-    Field(() => Float),
+    Field(() => Int),
     Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], Playlist.prototype, "duration", void 0);

@@ -11,13 +11,20 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Podcast, PodcastDiscover, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus } from './podcast.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { EpisodePage } from '../episode/episode.model.js';
 import { IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs } from './podcast.args.js';
 import { EpisodeOrderArgs, IncludesEpisodeArgs } from '../episode/episode.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
 import { logger } from '../../utils/logger.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 const log = logger('PodcastController');
 let PodcastController = class PodcastController {
     async id(id, podcastArgs, podcastChildrenArgs, episodeArgs, { orm, engine, user }) {

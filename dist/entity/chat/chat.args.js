@@ -7,9 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ArgsType, Field, Float } from 'type-graphql';
+import { ArgsType, Field, Int } from 'type-graphql';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let ChatCreateArgs = class ChatCreateArgs {
 };
 __decorate([
@@ -33,8 +34,8 @@ export { ChatRemoveArgs };
 let ChatFilterArgs = class ChatFilterArgs {
 };
 __decorate([
-    Field(() => Float, { nullable: true }),
-    ObjField(() => Number, { nullable: true, description: 'filter by message timestamp', min: 0, example: examples.timestamp }),
+    Field(() => Int, { nullable: true }),
+    ObjField({ nullable: true, description: 'filter by message timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], ChatFilterArgs.prototype, "since", void 0);
 ChatFilterArgs = __decorate([

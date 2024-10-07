@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Arg, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { Waveform, WaveformQL } from './waveform.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 let WaveformResolver = class WaveformResolver {
     async waveform(id, { orm }) {
         const result = await orm.findInWaveformTypes(id);

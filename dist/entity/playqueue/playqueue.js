@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { User } from '../user/user.js';
 import { PlayQueueEntry, PlayQueueEntryQL } from '../playqueueentry/playqueue-entry.js';
-import { Field, Float, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, OneToMany, OneToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base } from '../base/base.js';
 import { PlayQueueEntryOrderFields } from '../../types/enums.js';
@@ -26,12 +26,12 @@ __decorate([
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "current", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "position", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], PlayQueue.prototype, "duration", void 0);

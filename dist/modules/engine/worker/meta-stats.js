@@ -4,11 +4,11 @@ import { MetaStatBuilder } from '../../../utils/stats-builder.js';
 import { extractAlbumName } from '../../../utils/album-name.js';
 import { MUSICBRAINZ_VARIOUS_ARTISTS_ID, MUSICBRAINZ_VARIOUS_ARTISTS_NAME } from '../../../types/consts.js';
 const typeByGenreNames = {
-    audiobook: AlbumType.audiobook,
+    'audiobook': AlbumType.audiobook,
     'audio theater': AlbumType.audiobook,
     'audio drama': AlbumType.audiobook,
     'audio series': AlbumType.audiobook,
-    soundtrack: AlbumType.soundtrack
+    'soundtrack': AlbumType.soundtrack
 };
 const typeByMusicbrainzString = [
     { type: AlbumType.audiobook, names: ['audiobook', 'spokenword', 'audiodrama', 'audio drama', 'audio theater', 'audio series'] },

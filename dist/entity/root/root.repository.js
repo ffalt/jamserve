@@ -19,7 +19,7 @@ export class RootRepository extends BaseRepository {
             { name: QHelper.like(filter.query, this.em.dialect) },
             { name: QHelper.eq(filter.name) },
             { createdAt: QHelper.gte(filter.since) },
-            { strategy: QHelper.inOrEqual(filter.strategies) },
+            { strategy: QHelper.inOrEqual(filter.strategies) }
         ]);
         result.include = QHelper.includeQueries([
             { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },

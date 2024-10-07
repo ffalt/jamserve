@@ -120,7 +120,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Episode.prototype, "date", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Episode.prototype, "duration", void 0);

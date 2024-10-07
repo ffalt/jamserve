@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { OrmService } from '../../engine/services/orm.service.js';
 import { EngineService } from '../../engine/services/engine.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import express from 'express';
 import { ArgumentValidationError, buildSchema, registerEnumType } from 'type-graphql';
 import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, DefaultOrderFields, EpisodeOrderFields, FolderOrderFields, FolderType, GenreOrderFields, ListType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackOrderFields, UserRole } from '../../../types/enums.js';
 import { UserFavoritesResolver, UserResolver } from '../../../entity/user/user.resolver.js';
@@ -37,7 +36,6 @@ import { StatsResolver } from '../../../entity/stats/stats.resolver.js';
 import { StateResolver } from '../../../entity/state/state.resolver.js';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver.js';
 import { AdminResolver } from '../../../entity/admin/admin.resolver.js';
-import path from 'path';
 import { MetadataResolver } from '../../../entity/metadata/metadata.resolver.js';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
@@ -120,9 +118,7 @@ function formatValidationErrors(validationError) {
             constraints: validationError.constraints
         }),
         ...(validationError.children &&
-            validationError.children.length !== 0 && {
-            children: validationError.children.map((child) => formatValidationErrors(child))
-        })
+            validationError.children.length !== 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
     };
 }
 export class ValidationError extends GraphQLError {
@@ -130,7 +126,7 @@ export class ValidationError extends GraphQLError {
         super('Validation Error', {
             extensions: {
                 code: 'BAD_USER_INPUT',
-                validationErrors: validationErrors.map((validationError) => formatValidationErrors(validationError))
+                validationErrors: validationErrors.map(validationError => formatValidationErrors(validationError))
             }
         });
         Object.setPrototypeOf(this, ValidationError.prototype);
@@ -144,11 +140,6 @@ function formatGraphQLFormatError(formattedError, error) {
     return formattedError;
 }
 let ApolloMiddleware = class ApolloMiddleware {
-    async playground() {
-        const api = express.Router();
-        api.get('*', express.static(path.resolve('./static/graphql/')));
-        return api;
-    }
     async middleware() {
         this.schema = await buildGraphQlSchema();
         const apollo = new ApolloServer({

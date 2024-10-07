@@ -8,16 +8,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
-import { UserRole } from '../../types/enums.js';
+import { SessionMode, UserRole } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'path';
 import fse from 'fs-extra';
-import { InvalidParamError, UnauthError } from '../../modules/rest/index.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import { randomString } from '../../utils/random.js';
+import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { hashMD5 } from '../../utils/md5.js';
+import { SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 let UserService = class UserService {
     constructor() {
         this.userAvatarPath = this.configService.getDataPath(['images']);
@@ -154,6 +156,44 @@ let UserService = class UserService {
         user.roleStream = !!args.roleStream;
         user.roleUpload = !!args.roleUpload;
         await orm.User.persistAndFlush(user);
+        return user;
+    }
+    async authSubsonicPassword(orm, name, pass) {
+        if ((!pass) || (!pass.length)) {
+            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        }
+        const user = await orm.User.findOne({ where: { name } });
+        if (!user) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
+        const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
+        if (!session) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
+        if (pass !== session.jwth) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
+        return user;
+    }
+    async authSubsonicToken(orm, name, token, salt) {
+        if (!name || name.trim().length === 0) {
+            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        }
+        if ((!token) || (!token.length)) {
+            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        }
+        const user = await orm.User.findOne({ where: { name } });
+        if (!user) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
+        const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
+        if (!session) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
+        const t = hashMD5(session.jwth + salt);
+        if (token !== t) {
+            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+        }
         return user;
     }
 };

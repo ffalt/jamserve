@@ -45,7 +45,7 @@ export class IoCommandsTrack {
         else {
             delayedCmd.request.parameters.tags.push({ trackID, tag });
         }
-        this.delayedTrackTagWrite.startTimeOut(delayedCmd, (request) => this.owner.addRequest(request));
+        this.delayedTrackTagWrite.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
         return this.owner.getRequestInfo(delayedCmd.request);
     }
     async fix(trackID, fixID, rootID) {
@@ -61,7 +61,7 @@ export class IoCommandsTrack {
         else {
             delayedCmd.request.parameters.fixes.push({ trackID, fixID });
         }
-        this.delayedTrackFix.startTimeOut(delayedCmd, (request) => this.owner.addRequest(request));
+        this.delayedTrackFix.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
         return this.owner.getRequestInfo(delayedCmd.request);
     }
 }

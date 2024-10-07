@@ -10,10 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get, NotFoundError, PathParam, PathParams } from '../../modules/rest/index.js';
 import { DownloadFormatType, UserRole } from '../../types/enums.js';
 import { ApiDownloadTypes } from '../../types/consts.js';
 import { DownloadArgs } from './download.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { PathParam } from '../../modules/rest/decorators/PathParam.js';
+import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 let DownloadController = class DownloadController {
     async download(id, downloadArgs, { orm, engine, user }) {

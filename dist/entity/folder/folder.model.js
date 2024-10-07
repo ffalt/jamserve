@@ -9,10 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Page } from '../base/base.model.js';
 import { TrackBase } from '../track/track.model.js';
-import { ObjField, ResultType } from '../../modules/rest/index.js';
 import { Artwork } from '../artwork/artwork.model.js';
 import { FolderHealthHint } from '../health/health.model.js';
 import { FolderBase } from './folder-base.model.js';
+import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let Folder = class Folder extends FolderBase {
 };
 __decorate([

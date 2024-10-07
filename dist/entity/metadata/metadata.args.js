@@ -8,8 +8,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let LastFMLookupArgs = class LastFMLookupArgs {
 };
 __decorate([

@@ -1,14 +1,6 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import { getMethodMetadata } from '../helpers/method-metadata.js';
-import { getTypeDecoratorParams } from '../helpers/decorators.js';
+import { BasePost } from '../../deco/decorators/Post.js';
 export function Post(route, returnTypeFuncOrOptions, maybeOptions) {
-    const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
-    return (prototype, methodName) => {
-        if (!route) {
-            throw new Error(`Must specify REST route for POST function ${String(methodName)}`);
-        }
-        const metadata = getMethodMetadata(prototype, methodName, route, returnTypeFunc, options);
-        getMetadataStorage().collectPostHandlerMetadata(metadata);
-    };
+    return BasePost(getMetadataStorage(), route, returnTypeFuncOrOptions, maybeOptions);
 }
 //# sourceMappingURL=Post.js.map

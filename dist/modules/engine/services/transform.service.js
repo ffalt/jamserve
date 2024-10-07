@@ -53,7 +53,7 @@ let TransformService = class TransformService {
         return {
             ...(await this.Bookmark.bookmarkBase(orm, o)),
             track: bookmarkArgs.bookmarkIncTrack && o.track.id() ? await this.Track.trackBase(orm, await o.track.getOrFail(), trackArgs, user) : undefined,
-            episode: bookmarkArgs.bookmarkIncTrack && o.episode.id() ? await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user) : undefined,
+            episode: bookmarkArgs.bookmarkIncTrack && o.episode.id() ? await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user) : undefined
         };
     }
     async episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user) {
@@ -69,8 +69,8 @@ let TransformService = class TransformService {
                 await this.Track.trackBases(orm, await o.tracks.getItems(), trackArgs, user) :
                 undefined,
             folders: folderChildrenArgs.folderIncChildren || folderChildrenArgs.folderIncFolders ?
-                await this.Folder.folderChildren(orm, o, folderChildrenArgs, user)
-                : undefined,
+                await this.Folder.folderChildren(orm, o, folderChildrenArgs, user) :
+                undefined,
             artworks: folderChildrenArgs.folderIncArtworks ?
                 await this.Artwork.artworkBases(orm, await o.artworks.getItems(), artworkArgs, user) :
                 undefined
@@ -110,7 +110,7 @@ let TransformService = class TransformService {
     async podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user) {
         return {
             ...(await this.Podcast.podcastBase(orm, o, podcastArgs, user)),
-            episodes: podcastChildrenArgs.podcastIncEpisodes ? await Promise.all((await o.episodes.getItems()).map(t => this.Episode.episodeBase(orm, t, episodeArgs, user))) : undefined,
+            episodes: podcastChildrenArgs.podcastIncEpisodes ? await Promise.all((await o.episodes.getItems()).map(t => this.Episode.episodeBase(orm, t, episodeArgs, user))) : undefined
         };
     }
     async nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user) {

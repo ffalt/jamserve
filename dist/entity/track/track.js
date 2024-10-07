@@ -14,7 +14,7 @@ import { Album, AlbumQL } from '../album/album.js';
 import { Artist, ArtistQL } from '../artist/artist.js';
 import { MediaTagRawQL, Tag, TagQL } from '../tag/tag.js';
 import { Bookmark, BookmarkQL } from '../bookmark/bookmark.js';
-import { Field, Float, Int, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, ORM_DATETIME, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base, PaginatedResponse } from '../base/base.js';
 import { State, StateQL } from '../state/state.js';
@@ -66,7 +66,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Track.prototype, "statModified", void 0);
 __decorate([
-    Field(() => Float),
+    Field(() => Int),
     Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], Track.prototype, "fileSize", void 0);

@@ -11,18 +11,20 @@ export class PlaylistRepository extends BaseRepository {
         return this.buildDefaultOrder(order);
     }
     async buildFilter(filter, user) {
-        return filter ? QHelper.buildQuery([
-            { id: filter.ids },
-            { name: QHelper.like(filter.query, this.em.dialect) },
-            { name: QHelper.eq(filter.name) },
-            { comment: QHelper.eq(filter.comment) },
-            { createdAt: QHelper.gte(filter.since) },
-            { user: QHelper.inOrEqual(filter.userIDs) },
-            QHelper.or([
-                { isPublic: true },
-                { user: user?.id }
-            ])
-        ]) : {};
+        return filter ?
+            QHelper.buildQuery([
+                { id: filter.ids },
+                { name: QHelper.like(filter.query, this.em.dialect) },
+                { name: QHelper.eq(filter.name) },
+                { comment: QHelper.eq(filter.comment) },
+                { createdAt: QHelper.gte(filter.since) },
+                { user: QHelper.inOrEqual(filter.userIDs) },
+                QHelper.or([
+                    { isPublic: true },
+                    { user: user?.id }
+                ])
+            ]) :
+            {};
     }
 }
 //# sourceMappingURL=playlist.repository.js.map

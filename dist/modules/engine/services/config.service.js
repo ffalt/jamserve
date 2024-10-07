@@ -20,7 +20,7 @@ let ConfigService = class ConfigService {
             port: Number(process.env.JAM_PORT) || 4040,
             jwt: {
                 secret: process.env.JAM_JWT_SECRET || 'keyboard cat is sad because no secret has been set',
-                maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE),
+                maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
             },
             session: {
                 secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
@@ -45,6 +45,20 @@ let ConfigService = class ConfigService {
         };
         this.getDataPath = (parts) => path.resolve(this.env.paths.data, ...parts);
         this.tools = ThirdPartyConfig;
+        this.rateLimits = {
+            frontend: {
+                windowMs: 10 * 60 * 1000,
+                limit: 1000
+            },
+            docs: {
+                windowMs: 10 * 60 * 1000,
+                limit: 100
+            },
+            graphlql: {
+                windowMs: 10 * 60 * 1000,
+                limit: 1000
+            }
+        };
         const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
         try {
             this.firstStart = fse.readJSONSync(configFirstStartFile);

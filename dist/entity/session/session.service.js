@@ -12,6 +12,7 @@ import { OrmService } from '../../modules/engine/services/orm.service.js';
 import { SessionMode } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import seq from 'sequelize';
+import { randomString } from '../../utils/random.js';
 let SessionService = SessionService_1 = class SessionService {
     constructor() {
         this.events = [];
@@ -44,7 +45,8 @@ let SessionService = SessionService_1 = class SessionService {
             await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
         }
         session.expires = typeof data.cookie.expires === 'boolean' ?
-            (data.cookie.expires ? new Date() : undefined) : (data.cookie.expires === null ? undefined : data.cookie.expires);
+            (data.cookie.expires ? new Date() : undefined) :
+            (data.cookie.expires === null ? undefined : data.cookie.expires);
         await orm.Session.persistAndFlush(session);
     }
     async all() {
@@ -136,6 +138,24 @@ let SessionService = SessionService_1 = class SessionService {
             sessionID: session.sessionID,
             passport: { user: session.user.idOrFail() }
         };
+    }
+    async createSubsonic(userID) {
+        const orm = this.ormService.fork();
+        let session = (await orm.Session.findOne({ where: { user: userID, mode: SessionMode.subsonic } }));
+        if (!session) {
+            session = orm.Session.create({
+                client: 'Subsonic Client',
+                mode: SessionMode.subsonic,
+                sessionID: `${userID}_subsonic`,
+                agent: 'Subsonic Client',
+                cookie: '{}'
+            });
+        }
+        const user = await orm.User.findOneOrFailByID(userID);
+        await session.user.set(user);
+        session.jwth = randomString(16);
+        await orm.Session.persist(session, true);
+        return session;
     }
 };
 __decorate([

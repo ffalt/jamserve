@@ -56,7 +56,7 @@ export class WaveformGenerator {
         const waveArea = area()
             .x((a, i) => x(i))
             .y0((b, i) => y(minArray[i]))
-            .y1((c) => y(c));
+            .y1(c => y(c));
         const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
         const d3Element = select(fakedom.window.document).select('body');
         const svg = d3Element.append('svg')

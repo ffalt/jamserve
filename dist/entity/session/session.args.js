@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { SessionMode, SessionOrderFields } from '../../types/enums.js';
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let SessionFilterArgs = class SessionFilterArgs {
 };
 __decorate([
@@ -19,8 +20,8 @@ __decorate([
     __metadata("design:type", Array)
 ], SessionFilterArgs.prototype, "ids", void 0);
 __decorate([
-    ObjField(() => Number, { nullable: true, description: 'filter by session timestamp', min: 0, example: examples.timestamp }),
-    Field(() => Float, { nullable: true }),
+    ObjField({ nullable: true, description: 'filter by session timestamp', min: 0, example: examples.timestamp }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "since", void 0);
 __decorate([
@@ -34,13 +35,13 @@ __decorate([
     __metadata("design:type", String)
 ], SessionFilterArgs.prototype, "agent", void 0);
 __decorate([
-    ObjField(() => Number, { nullable: true, description: 'filter by since expiry date', min: 0, example: examples.timestamp }),
-    Field(() => Float, { nullable: true }),
+    ObjField({ nullable: true, description: 'filter by since expiry date', min: 0, example: examples.timestamp }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "expiresFrom", void 0);
 __decorate([
-    ObjField(() => Number, { nullable: true, description: 'filter by to expiry date', min: 0, example: examples.timestamp }),
-    Field(() => Float, { nullable: true }),
+    ObjField({ nullable: true, description: 'filter by to expiry date', min: 0, example: examples.timestamp }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], SessionFilterArgs.prototype, "expiresTo", void 0);
 __decorate([

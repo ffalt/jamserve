@@ -11,11 +11,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Root, RootPage, RootUpdateStatus } from './root.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, Post, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs } from './root.args.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
 import { PageArgs } from '../base/base.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
 let RootController = class RootController {
     async id(id, rootArgs, { orm, engine, user }) {
         return engine.transform.Root.root(orm, await orm.Root.oneOrFailByID(id), rootArgs, user);

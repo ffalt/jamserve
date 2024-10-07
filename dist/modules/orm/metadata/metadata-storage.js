@@ -7,15 +7,6 @@ export class MetadataStorage {
         this.initialized = false;
         ensureReflectMetadataExists();
     }
-    collectEnumMetadata(definition) {
-        this.enums.push(definition);
-    }
-    collectEntityMetadata(definition) {
-        this.entities.push(definition);
-    }
-    collectPropertyMetadata(definition) {
-        this.fields.push(definition);
-    }
     build() {
         if (!this.initialized) {
             this.buildClassMetadata(this.entities);

@@ -25,16 +25,18 @@ export class EpisodeRepository extends BaseRepository {
         return [];
     }
     async buildFilter(filter, _) {
-        return filter ? QHelper.buildQuery([
-            { id: filter.ids },
-            { name: QHelper.like(filter.query, this.em.dialect) },
-            { name: QHelper.eq(filter.name) },
-            { status: QHelper.inOrEqual(filter.statuses) },
-            { guid: QHelper.inOrEqual(filter.guids) },
-            { author: QHelper.inOrEqual(filter.authors) },
-            { createdAt: QHelper.gte(filter.since) },
-            { podcast: QHelper.inOrEqual(filter.podcastIDs) }
-        ]) : {};
+        return filter ?
+            QHelper.buildQuery([
+                { id: filter.ids },
+                { name: QHelper.like(filter.query, this.em.dialect) },
+                { name: QHelper.eq(filter.name) },
+                { status: QHelper.inOrEqual(filter.statuses) },
+                { guid: QHelper.inOrEqual(filter.guids) },
+                { author: QHelper.inOrEqual(filter.authors) },
+                { createdAt: QHelper.gte(filter.since) },
+                { podcast: QHelper.inOrEqual(filter.podcastIDs) }
+            ]) :
+            {};
     }
 }
 //# sourceMappingURL=episode.repository.js.map

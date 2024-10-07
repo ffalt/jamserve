@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { User } from '../user/user.js';
 import { Track, TrackQL } from '../track/track.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
-import { Field, Float, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 import { Base, PaginatedResponse } from '../base/base.js';
 let Bookmark = class Bookmark extends Base {
@@ -22,7 +22,7 @@ let Bookmark = class Bookmark extends Base {
     }
 };
 __decorate([
-    Field(() => Float),
+    Field(() => Int),
     Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], Bookmark.prototype, "position", void 0);

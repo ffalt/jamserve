@@ -25,7 +25,7 @@ export class PlaylistEntryRepository extends BaseRepository {
             return {};
         }
         return QHelper.buildQuery([
-            { playlist: QHelper.inOrEqual(filter.playlistIDs) },
+            { playlist: QHelper.inOrEqual(filter.playlistIDs) }
         ]);
     }
 }

@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { AdminSettings } from './admin.js';
-import { ObjParamsType } from '../../modules/rest/index.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
 let AdminSettingsArgs = class AdminSettingsArgs extends AdminSettings {
 };
 AdminSettingsArgs = __decorate([

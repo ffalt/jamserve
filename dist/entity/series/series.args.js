@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { AlbumType, ListType } from '../../types/enums.js';
 import { DefaultOrderArgs, FilterArgs, PaginatedFilterArgs } from '../base/base.args.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let IncludesSeriesArgs = class IncludesSeriesArgs {
 };
 __decorate([
@@ -79,7 +80,7 @@ __decorate([
     __metadata("design:type", Array)
 ], SeriesFilterArgs.prototype, "albumTypes", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], SeriesFilterArgs.prototype, "since", void 0);

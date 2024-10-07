@@ -11,12 +11,22 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var UserController_1;
-import { User, UserPage } from './user.model.js';
-import { BodyParam, BodyParams, Controller, Ctx, Get, InvalidParamError, Post, QueryParam, QueryParams, UnauthError, Upload, UploadFile } from '../../modules/rest/index.js';
+import { SubsonicToken, User, UserPage } from './user.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
+import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserGenerateSusonicTokenArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
 import { randomString } from '../../utils/random.js';
 import { PageArgs } from '../base/base.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { InvalidParamError, NotFoundError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
+import { Upload } from '../../modules/rest/decorators/Upload.js';
 let UserController = UserController_1 = class UserController {
     async id(id, userArgs, { orm, engine, user }) {
         return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
@@ -63,6 +73,14 @@ let UserController = UserController_1 = class UserController {
     async uploadUserImage(id, file, { orm, engine, user }) {
         const u = await UserController_1.validateUserOrAdmin(orm, id, user);
         return engine.user.setUserImage(u, file.name);
+    }
+    async generateSubsonicToken(id, args, { orm, engine, user }) {
+        const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+        const session = await engine.session.createSubsonic(u.id);
+        if (!session) {
+            return Promise.reject(NotFoundError());
+        }
+        return { token: session.jwth };
     }
     static async validatePassword(orm, engine, password, user) {
         const result = await engine.user.auth(orm, user.name, password);
@@ -171,6 +189,15 @@ __decorate([
     __metadata("design:paramtypes", [String, UploadFile, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "uploadUserImage", null);
+__decorate([
+    Post('/subsonic/generate', () => SubsonicToken, { description: 'Generate a subsonic client token', roles: [UserRole.stream], summary: 'Subsonic Token' }),
+    __param(0, BodyParam('id', { description: 'User Id', isID: true })),
+    __param(1, BodyParams()),
+    __param(2, Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, UserGenerateSusonicTokenArgs, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "generateSubsonicToken", null);
 UserController = UserController_1 = __decorate([
     Controller('/user', { tags: ['User'] })
 ], UserController);

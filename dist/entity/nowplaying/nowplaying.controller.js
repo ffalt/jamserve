@@ -10,12 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { BodyParam, Controller, Ctx, Get, Post, QueryParams } from '../../modules/rest/index.js';
 import { UserRole } from '../../types/enums.js';
 import { NowPlaying } from './nowplaying.model.js';
 import { IncludesNowPlayingArgs } from './nowplaying.args.js';
 import { IncludesTrackArgs } from '../track/track.args.js';
 import { IncludesEpisodeArgs } from '../episode/episode.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 let NowPlayingController = class NowPlayingController {
     async list(nowPlayingArgs, trackArgs, episodeArgs, { orm, engine, user }) {
         const result = await engine.nowPlaying.getNowPlaying();

@@ -7,10 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { PlaylistEntryOrderFields } from '../../types/enums.js';
 import { OrderByArgs } from '../base/base.args.js';
 import { Field, ID, InputType } from 'type-graphql';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let PlaylistEntryOrderArgs = class PlaylistEntryOrderArgs extends OrderByArgs {
 };
 __decorate([

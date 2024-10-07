@@ -17,17 +17,19 @@ export class SessionRepository extends BaseRepository {
         return [];
     }
     async buildFilter(filter, user) {
-        return filter ? QHelper.buildQuery([
-            { id: filter.ids },
-            { createdAt: QHelper.gte(filter.since) },
-            { client: QHelper.eq(filter.client) },
-            { agent: QHelper.eq(filter.agent) },
-            { mode: QHelper.eq(filter.mode) },
-            { expires: QHelper.lte(filter.expiresTo) },
-            { expires: QHelper.gte(filter.expiresFrom) },
-            { user: QHelper.inOrEqual(filter.userIDs) },
-            { user: user?.id }
-        ]) : {};
+        return filter ?
+            QHelper.buildQuery([
+                { id: filter.ids },
+                { createdAt: QHelper.gte(filter.since) },
+                { client: QHelper.eq(filter.client) },
+                { agent: QHelper.eq(filter.agent) },
+                { mode: QHelper.eq(filter.mode) },
+                { expires: QHelper.lte(filter.expiresTo) },
+                { expires: QHelper.gte(filter.expiresFrom) },
+                { user: QHelper.inOrEqual(filter.userIDs) },
+                { user: user?.id }
+            ]) :
+            {};
     }
     async byUserID(userID) {
         return await this.find({ where: { user: userID } });

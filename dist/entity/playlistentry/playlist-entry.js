@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Track, TrackQL } from '../track/track.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
 import { Playlist, PlaylistQL } from '../playlist/playlist.js';
-import { Field, Float, ObjectType } from 'type-graphql';
+import { Field, Int, ObjectType } from 'type-graphql';
 import { Base } from '../base/base.js';
 import { Entity, ManyToOne, ORM_INT, Property, Reference } from '../../modules/orm/index.js';
 let PlaylistEntry = class PlaylistEntry extends Base {
@@ -22,7 +22,7 @@ let PlaylistEntry = class PlaylistEntry extends Base {
     }
 };
 __decorate([
-    Field(() => Float),
+    Field(() => Int),
     Property(() => ORM_INT),
     __metadata("design:type", Number)
 ], PlaylistEntry.prototype, "position", void 0);

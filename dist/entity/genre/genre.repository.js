@@ -31,7 +31,7 @@ export class GenreRepository extends BaseRepository {
             { name: QHelper.eq(filter.name) }
         ]);
         result.include = QHelper.includeQueries([
-            { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
+            { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] }
         ]);
         return result;
     }

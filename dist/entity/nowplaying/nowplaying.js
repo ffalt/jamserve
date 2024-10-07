@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Track, TrackQL } from '../track/track.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
-import { Field, Float, ID, ObjectType } from 'type-graphql';
+import { Field, ID, Int, ObjectType } from 'type-graphql';
 let NowPlaying = class NowPlaying {
 };
 __decorate([
-    Field(() => Float),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], NowPlaying.prototype, "time", void 0);
 __decorate([

@@ -8,9 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { DefaultOrderFields, ListType } from '../../types/enums.js';
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { ArgsType, Field, InputType, Int } from 'type-graphql';
 import { Max, Min } from 'class-validator';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let ListArgs = class ListArgs {
 };
 __decorate([
@@ -18,7 +19,7 @@ __decorate([
     __metadata("design:type", String)
 ], ListArgs.prototype, "list", void 0);
 __decorate([
-    ObjField(() => String, { nullable: true, description: 'seed for random list', example: 'jksfb23jhsdf' }),
+    ObjField({ nullable: true, description: 'seed for random list', example: 'jksfb23jhsdf' }),
     __metadata("design:type", String)
 ], ListArgs.prototype, "seed", void 0);
 ListArgs = __decorate([

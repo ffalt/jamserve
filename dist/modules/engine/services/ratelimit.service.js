@@ -23,7 +23,7 @@ let RateLimitService = class RateLimitService {
         this.limiterConsecutiveOutOfLimits = new RateLimiterMemory({
             keyPrefix: 'login_consecutive_outoflimits',
             points: 99999,
-            duration: 0,
+            duration: 0
         });
     }
     async loginSlowDown(req, res) {

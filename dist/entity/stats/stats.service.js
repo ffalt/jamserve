@@ -39,7 +39,7 @@ let StatsService = class StatsService {
                     live: await orm.Album.countFilter({ rootIDs, albumTypes: [AlbumType.live] }),
                     ep: await orm.Album.countFilter({ rootIDs, albumTypes: [AlbumType.ep] }),
                     unknown: await orm.Album.countFilter({ rootIDs, albumTypes: [AlbumType.unknown] }),
-                    single: await orm.Album.countFilter({ rootIDs, albumTypes: [AlbumType.single] }),
+                    single: await orm.Album.countFilter({ rootIDs, albumTypes: [AlbumType.single] })
                 },
                 artistTypes: {
                     album: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.album] }),
@@ -52,7 +52,7 @@ let StatsService = class StatsService {
                     live: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.live] }),
                     ep: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.ep] }),
                     unknown: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.unknown] }),
-                    single: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.single] }),
+                    single: await orm.Artist.countFilter({ rootIDs, albumTypes: [AlbumType.single] })
                 }
             };
             this.stats.push(stat);
@@ -77,7 +77,7 @@ let StatsService = class StatsService {
                 live: await orm.Album.countListFilter(list, { albumTypes: [AlbumType.live] }, user),
                 ep: await orm.Album.countListFilter(list, { albumTypes: [AlbumType.ep] }, user),
                 unknown: await orm.Album.countListFilter(list, { albumTypes: [AlbumType.unknown] }, user),
-                single: await orm.Album.countListFilter(list, { albumTypes: [AlbumType.single] }, user),
+                single: await orm.Album.countListFilter(list, { albumTypes: [AlbumType.single] }, user)
             },
             artistTypes: {
                 album: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.album] }, user),
@@ -90,7 +90,7 @@ let StatsService = class StatsService {
                 live: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.live] }, user),
                 ep: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.ep] }, user),
                 unknown: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.unknown] }, user),
-                single: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.single] }, user),
+                single: await orm.Artist.countListFilter(list, { albumTypes: [AlbumType.single] }, user)
             }
         };
         return result;

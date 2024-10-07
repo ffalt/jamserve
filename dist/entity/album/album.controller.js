@@ -11,7 +11,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Album, AlbumIndex, AlbumPage } from './album.model.js';
-import { Controller, Ctx, Get, QueryParam, QueryParams } from '../../modules/rest/index.js';
 import { TrackOrderFields, UserRole } from '../../types/enums.js';
 import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { TrackPage } from '../track/track.model.js';
@@ -19,6 +18,11 @@ import { AlbumFilterArgs, AlbumOrderArgs, IncludesAlbumArgs, IncludesAlbumChildr
 import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
 import { IncludesArtistArgs } from '../artist/artist.args.js';
 import { ListArgs, PageArgs } from '../base/base.args.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 let AlbumController = class AlbumController {
     async id(id, albumArgs, albumChildrenArgs, trackArgs, artistArgs, { orm, engine, user }) {
         return engine.transform.album(orm, await orm.Album.oneOrFailByID(id), albumArgs, albumChildrenArgs, trackArgs, artistArgs, user);

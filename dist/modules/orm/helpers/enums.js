@@ -1,9 +1,9 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 export function registerEnumType(enumObj, enumConfig) {
-    getMetadataStorage().collectEnumMetadata({
+    getMetadataStorage().enums.push({
         enumObj,
         name: enumConfig.name,
-        description: enumConfig.description,
+        description: enumConfig.description
     });
 }
 //# sourceMappingURL=enums.js.map

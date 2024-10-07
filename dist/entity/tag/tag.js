@@ -172,12 +172,12 @@ __decorate([
     __metadata("design:type", String)
 ], Tag.prototype, "chapters", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaDuration", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaBitRate", void 0);
@@ -187,10 +187,15 @@ __decorate([
     __metadata("design:type", String)
 ], Tag.prototype, "mediaFormat", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),
     __metadata("design:type", Number)
 ], Tag.prototype, "mediaSampleRate", void 0);
+__decorate([
+    Field(() => Int, { nullable: true }),
+    Property(() => ORM_INT, { nullable: true }),
+    __metadata("design:type", Number)
+], Tag.prototype, "mediaBitDepth", void 0);
 __decorate([
     Field(() => Int, { nullable: true }),
     Property(() => ORM_INT, { nullable: true }),

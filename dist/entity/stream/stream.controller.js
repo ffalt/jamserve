@@ -10,17 +10,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Ctx, Get, NotFoundError, PathParam, PathParams } from '../../modules/rest/index.js';
 import { AudioFormatType, UserRole } from '../../types/enums.js';
-import { StreamArgs } from './stream.args.js';
+import { StreamParamArgs, StreamPathArgs } from './stream.args.js';
 import { ApiStreamTypes } from '../../types/consts.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { PathParam } from '../../modules/rest/decorators/PathParam.js';
+import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 let StreamController = class StreamController {
-    async stream(id, streamArgs, { orm, engine, user }) {
+    async stream(id, streamArgs, streamParamArgs, { orm, engine }) {
         const result = await orm.findInStreamTypes(id);
         if (!result) {
             return Promise.reject(NotFoundError());
         }
-        return engine.stream.streamDBObject(result.obj, result.objType, streamArgs.format, streamArgs.maxBitRate, user);
+        return engine.stream.streamDBObject(result.obj, result.objType, {
+            format: streamArgs.format,
+            maxBitRate: streamArgs.maxBitRate,
+            timeOffset: streamParamArgs.timeOffset
+        });
     }
 };
 __decorate([
@@ -44,9 +54,11 @@ __decorate([
     }),
     __param(0, PathParam('id', { description: 'Media Id', isID: true })),
     __param(1, PathParams()),
-    __param(2, Ctx()),
+    __param(2, QueryParams()),
+    __param(3, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, StreamArgs, Object]),
+    __metadata("design:paramtypes", [String, StreamPathArgs,
+        StreamParamArgs, Object]),
     __metadata("design:returntype", Promise)
 ], StreamController.prototype, "stream", null);
 StreamController = __decorate([

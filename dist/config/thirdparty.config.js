@@ -8,6 +8,6 @@ export const ThirdPartyConfig = {
     coverartarchive: { userAgent: `${userAgent} ( jamserve@protonmail.com )` },
     wikipedia: { userAgent: `${userAgent} ( jamserve@protonmail.com )` },
     lyricsovh: { userAgent: `${userAgent} ( jamserve@protonmail.com )` },
-    gpodder: { userAgent: `${userAgent} ( jamserve@protonmail.com )` },
+    gpodder: { userAgent: `${userAgent} ( jamserve@protonmail.com )` }
 };
 //# sourceMappingURL=thirdparty.config.js.map

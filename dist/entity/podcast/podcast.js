@@ -148,11 +148,11 @@ __decorate([
     __metadata("design:type", String)
 ], PodcastDiscoverQL.prototype, "description", void 0);
 __decorate([
-    Field(() => Number),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], PodcastDiscoverQL.prototype, "subscribers", void 0);
 __decorate([
-    Field(() => Number),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], PodcastDiscoverQL.prototype, "subscribers_last_week", void 0);
 __decorate([
@@ -192,7 +192,7 @@ __decorate([
     __metadata("design:type", String)
 ], PodcastDiscoverTagQL.prototype, "tag", void 0);
 __decorate([
-    Field(() => Number),
+    Field(() => Int),
     __metadata("design:type", Number)
 ], PodcastDiscoverTagQL.prototype, "usage", void 0);
 PodcastDiscoverTagQL = __decorate([

@@ -10,9 +10,9 @@ export function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
         prototype,
         propertyKey,
         returnTypeFunc,
-        typeOptions: opt,
+        typeOptions: opt
     });
-    getMetadataStorage().collectPropertyMetadata({
+    getMetadataStorage().fields.push({
         name: propertyKey,
         getType,
         typeOptions,

@@ -11,10 +11,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Session } from './session.model.js';
-import { BodyParam, Controller, Ctx, Get, Post } from '../../modules/rest/index.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 import { UserSession } from './user-session.model.js';
 import { UserRole } from '../../types/enums.js';
+import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Get } from '../../modules/rest/decorators/Get.js';
+import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/Post.js';
+import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 let SessionController = class SessionController {
     session({ engine, user }) {
         let sessionUser;

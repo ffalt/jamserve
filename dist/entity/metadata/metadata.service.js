@@ -19,8 +19,8 @@ import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
 import seq from 'sequelize';
-import { InvalidParamError } from '../../modules/rest/index.js';
 import fetch from 'node-fetch';
+import { InvalidParamError } from '../../modules/deco/express/express-error.js';
 const log = logger('Metadata');
 let MetaDataService = MetaDataService_1 = class MetaDataService {
     constructor() {

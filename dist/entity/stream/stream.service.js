@@ -13,10 +13,10 @@ import { AudioModule } from '../../modules/audio/audio.module.js';
 import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream.js';
 import { fileSuffix } from '../../utils/fs-utils.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { GenericError, InvalidParamError } from '../../modules/rest/index.js';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
+import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
 let StreamService = class StreamService {
-    async streamFile(filename, id, sourceFormat, destFormat, maxBitRate) {
+    async streamFile(filename, id, sourceFormat, opts) {
         let stats;
         try {
             stats = await fse.stat(filename);
@@ -27,33 +27,33 @@ let StreamService = class StreamService {
         if (!stats) {
             return Promise.reject(GenericError('File not found'));
         }
-        destFormat = destFormat || AudioFormatType.mp3;
+        let destFormat = opts?.format || AudioFormatType.mp3;
         if (destFormat[0] === '.') {
             destFormat = destFormat.slice(1);
         }
-        const bitRate = maxBitRate || 0;
+        const bitRate = opts?.maxBitRate || 0;
         if (destFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat || fileSuffix(filename), destFormat, bitRate)) {
             return this.audioModule.transcoder.get(filename, id, destFormat, bitRate);
         }
         return { file: { filename, name: `${id}.${destFormat}` } };
     }
-    async streamTrack(track, format, maxBitRate) {
+    async streamTrack(track, opts) {
         const tag = await track.tag.get();
-        return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, format, maxBitRate);
+        return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, opts);
     }
-    async streamEpisode(episode, format, maxBitRate) {
+    async streamEpisode(episode, opts) {
         const tag = await episode.tag.get();
         if (episode.path && tag?.mediaFormat) {
-            return this.streamFile(episode.path, episode.id, tag?.mediaFormat, format, maxBitRate);
+            return this.streamFile(episode.path, episode.id, tag?.mediaFormat, opts);
         }
         return Promise.reject(GenericError('Podcast episode not ready'));
     }
-    async streamDBObject(o, type, format, maxBitRate, _user) {
+    async streamDBObject(o, type, opts) {
         switch (type) {
             case DBObjectType.track:
-                return this.streamTrack(o, format, maxBitRate);
+                return this.streamTrack(o, opts);
             case DBObjectType.episode:
-                return this.streamEpisode(o, format, maxBitRate);
+                return this.streamEpisode(o, opts);
             default:
         }
         return Promise.reject(InvalidParamError('Invalid Object Type for Streaming'));

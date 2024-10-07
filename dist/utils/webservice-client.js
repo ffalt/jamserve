@@ -31,7 +31,7 @@ export class WebserviceClient {
         await this.limit();
         const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
         const response = await fetch(url + params, {
-            headers: { 'User-Agent': this.userAgent },
+            headers: { 'User-Agent': this.userAgent }
         });
         if (!ignoreStatus && response.status !== 200) {
             return Promise.reject(new Error('Invalid Result'));

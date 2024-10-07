@@ -7,11 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjField, ObjParamsType } from '../../modules/rest/index.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ArgsType, Field, Float, ID, InputType } from 'type-graphql';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import { ListType, PodcastOrderFields, PodcastStatus } from '../../types/enums.js';
 import { FilterArgs, OrderByArgs, PaginatedFilterArgs } from '../base/base.args.js';
+import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
+import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 let IncludesPodcastArgs = class IncludesPodcastArgs {
 };
 __decorate([
@@ -83,7 +84,7 @@ __decorate([
     __metadata("design:type", Array)
 ], PodcastFilterArgs.prototype, "episodeIDs", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     ObjField({ nullable: true, description: 'filter by Creation timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PodcastFilterArgs.prototype, "since", void 0);
@@ -98,12 +99,12 @@ __decorate([
     __metadata("design:type", Array)
 ], PodcastFilterArgs.prototype, "statuses", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     ObjField({ nullable: true, description: 'filter by since Last Check timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PodcastFilterArgs.prototype, "lastCheckFrom", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     ObjField({ nullable: true, description: 'filter by until Last Check timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PodcastFilterArgs.prototype, "lastCheckTo", void 0);
@@ -156,7 +157,7 @@ __decorate([
     __metadata("design:type", Array)
 ], PodcastFilterArgsQL.prototype, "episodeIDs", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], PodcastFilterArgsQL.prototype, "since", void 0);
 __decorate([
@@ -168,11 +169,11 @@ __decorate([
     __metadata("design:type", Array)
 ], PodcastFilterArgsQL.prototype, "statuses", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], PodcastFilterArgsQL.prototype, "lastCheckFrom", void 0);
 __decorate([
-    Field(() => Float, { nullable: true }),
+    Field(() => Int, { nullable: true }),
     __metadata("design:type", Number)
 ], PodcastFilterArgsQL.prototype, "lastCheckTo", void 0);
 __decorate([

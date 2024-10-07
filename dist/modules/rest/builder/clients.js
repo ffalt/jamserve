@@ -80,7 +80,7 @@ export function getResultType(call) {
                 resultType = enumInfo.name;
             }
             else {
-                const fObjectType = metadata.resultType(type);
+                const fObjectType = metadata.resultTypes.find(it => it.target === type);
                 resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
             }
         }
@@ -157,7 +157,7 @@ export function getCustomParameterTemplate(customPathParameters, call, result) {
     const routeParts = [];
     const validateNames = [];
     customPathParameters.groups.forEach(g => {
-        const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => alias.hideParameters.includes(g.name));
+        const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => (alias.hideParameters || []).includes(g.name));
         if (hasOptionalAlias) {
             routeParts.push('${params.' + g.name + ' ? ' + '`' + (g.prefix || '') + '${params.' + g.name + '}` : \'\'}');
         }

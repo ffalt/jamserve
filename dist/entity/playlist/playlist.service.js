@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var PlaylistService_1;
 import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums.js';
-import { NotFoundError } from '../../modules/rest/index.js';
+import { NotFoundError } from '../../modules/deco/express/express-error.js';
 let PlaylistService = PlaylistService_1 = class PlaylistService {
     static async getDuration(media) {
         switch (media.objType) {
@@ -31,7 +31,11 @@ let PlaylistService = PlaylistService_1 = class PlaylistService {
             duration: 0
         });
         await playlist.user.set(user);
+        await orm.Playlist.persistAndFlush(playlist);
         const ids = args.mediaIDs || [];
+        if (ids.length === 0) {
+            return playlist;
+        }
         let position = 1;
         let duration = 0;
         for (const id of ids) {
@@ -47,6 +51,7 @@ let PlaylistService = PlaylistService_1 = class PlaylistService {
             orm.PlaylistEntry.persistLater(entry);
             position++;
         }
+        await orm.PlaylistEntry.flush();
         playlist.duration = duration;
         await orm.Playlist.persistAndFlush(playlist);
         return playlist;

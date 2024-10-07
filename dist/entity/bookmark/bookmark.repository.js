@@ -36,8 +36,8 @@ export class BookmarkRepository extends BaseRepository {
                 { createdAt: QHelper.gte(filter.since) },
                 { user: QHelper.inOrEqual(filter.userIDs) },
                 { user: user?.roleAdmin ? undefined : user?.id }
-            ]
-            : [{ user: user?.roleAdmin ? undefined : user?.id }]);
+            ] :
+            [{ user: user?.roleAdmin ? undefined : user?.id }]);
     }
 }
 //# sourceMappingURL=bookmark.repository.js.map

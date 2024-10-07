@@ -3,7 +3,7 @@ import { getNameDecoratorParams } from '../helpers/decorators.js';
 export function Entity(nameOrOptions, maybeOptions) {
     const { name, options } = getNameDecoratorParams(nameOrOptions, maybeOptions);
     return target => {
-        getMetadataStorage().collectEntityMetadata({
+        getMetadataStorage().entities.push({
             name: name || target.name,
             target,
             fields: [],
