@@ -20,6 +20,7 @@ import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
+import path from 'path';
 const log = logger('SubsonicApi');
 let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
     async stream(query, { orm, engine, user }) {
@@ -57,8 +58,30 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
         }
         return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
     }
-    async getLyricsBySongId(_query, _ctx) {
-        return { lyricsList: { structuredLyrics: [] } };
+    async getLyricsBySongId(query, { engine, orm }) {
+        const track = await orm.Track.findOneOrFailByID(query.id);
+        const tag = await track.tag.get();
+        const structuredLyrics = [];
+        const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
+        if (slyrics) {
+            const l = { lang: slyrics.language || 'und', synced: true };
+            l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
+            structuredLyrics.push(l);
+        }
+        if (tag?.lyrics) {
+            const l = { lang: 'und', synced: false };
+            l.line = tag.lyrics.split('\n').map(value => ({ value }));
+            structuredLyrics.push(l);
+        }
+        else if (tag?.artist && tag?.title && !slyrics) {
+            const lyrics = await engine.metadata.lyrics(orm, tag.artist, tag.title);
+            if (lyrics?.lyrics) {
+                const l = { lang: 'und', synced: false };
+                l.line = lyrics.lyrics.split('\n').map(value => ({ value }));
+                structuredLyrics.push(l);
+            }
+        }
+        return { lyricsList: { structuredLyrics } };
     }
     async getLyrics(query, { orm, engine }) {
         if (!query.artist || !query.title) {

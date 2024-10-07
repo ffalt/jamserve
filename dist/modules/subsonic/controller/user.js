@@ -39,16 +39,16 @@ let SubsonicUserApi = class SubsonicUserApi {
         return { users: { user: users.map(SubsonicFormatter.packUser) } };
     }
     async createUser(_query, _ctx) {
-        return {};
+        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
     }
     async changePassword(_query, _ctx) {
-        return {};
+        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
     }
     async updateUser(_query, _ctx) {
-        return {};
+        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
     }
     async deleteUser(_query, _ctx) {
-        return {};
+        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
     }
 };
 __decorate([

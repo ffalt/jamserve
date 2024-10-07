@@ -97,6 +97,18 @@ __decorate([
     SubsonicObjField(),
     __metadata("design:type", Number)
 ], SubsonicArtist.prototype, "averageRating", void 0);
+__decorate([
+    SubsonicObjField(),
+    __metadata("design:type", Number)
+], SubsonicArtist.prototype, "albumCount", void 0);
+__decorate([
+    SubsonicObjField(),
+    __metadata("design:type", String)
+], SubsonicArtist.prototype, "musicBrainzId", void 0);
+__decorate([
+    SubsonicObjField(),
+    __metadata("design:type", String)
+], SubsonicArtist.prototype, "artistImageUrl", void 0);
 SubsonicArtist = __decorate([
     SubsonicResultType()
 ], SubsonicArtist);

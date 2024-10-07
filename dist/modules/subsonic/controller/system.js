@@ -13,9 +13,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense, SubsonicResponseScanStatus } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { logger } from '../../../utils/logger.js';
+const log = logger('SubsonicApi');
 let SubsonicSystemApi = class SubsonicSystemApi {
     async getLicense(_ctx) {
         return { license: { valid: true, email: 'example@@example.com' } };
@@ -31,8 +34,23 @@ let SubsonicSystemApi = class SubsonicSystemApi {
             ]
         };
     }
-    async jukeboxControl(_query, _ctx) {
+    async jukeboxControl(_query, { user }) {
+        if (!user.roleAdmin) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         return { jukeboxStatus: { currentIndex: 0, playing: false, gain: 0 } };
+    }
+    async getScanStatus({ engine }) {
+        return { scanStatus: { scanning: engine.io.scanning } };
+    }
+    async startScan({ engine, orm, user }) {
+        if (!user.roleAdmin) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
+        if (!engine.io.scanning) {
+            engine.io.root.startUpRefresh(orm, true).catch(e => log.error(e));
+        }
+        return {};
     }
 };
 __decorate([
@@ -80,6 +98,28 @@ __decorate([
     __metadata("design:paramtypes", [SubsonicParameterJukebox, Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicSystemApi.prototype, "jukeboxControl", null);
+__decorate([
+    SubsonicRoute('/getScanStatus', () => SubsonicResponseScanStatus, {
+        summary: 'Scan Status',
+        description: 'Returns the current status for media library scanning.',
+        tags: ['System']
+    }),
+    __param(0, SubsonicCtx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SubsonicSystemApi.prototype, "getScanStatus", null);
+__decorate([
+    SubsonicRoute('/startScan', () => SubsonicOKResponse, {
+        summary: 'Start Status',
+        description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',
+        tags: ['System']
+    }),
+    __param(0, SubsonicCtx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SubsonicSystemApi.prototype, "startScan", null);
 SubsonicSystemApi = __decorate([
     SubsonicController()
 ], SubsonicSystemApi);

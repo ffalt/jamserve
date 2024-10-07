@@ -57,14 +57,14 @@ export class SubsonicFormatter {
             username: user.name,
             email: user.email,
             maxBitRate: user.maxBitRate,
-            avatarLastChanged: undefined,
+            avatarLastChanged: SubsonicFormatter.formatSubSonicDate(user.updatedAt),
             folder: undefined,
             scrobblingEnabled: false,
             adminRole: user.roleAdmin,
             settingsRole: user.roleAdmin,
             downloadRole: user.roleStream,
             uploadRole: user.roleUpload,
-            playlistRole: user.roleAdmin,
+            playlistRole: true,
             coverArtRole: user.roleAdmin,
             commentRole: user.roleAdmin,
             podcastRole: user.rolePodcast,
@@ -454,7 +454,8 @@ SubsonicFormatter.ERRORS = {
     CLIENT_OLD: { code: SubsonicFormatter.FAIL.CLIENT_OLD, fail: 'Incompatible Subsonic REST protocol version. Client must upgrade.' },
     NOT_FOUND: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: `The requested data was not found.` },
     UNAUTH: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Not authorised' },
-    NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Sharing is disabled on this server.' },
+    NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Sharing is disabled via Subsonic API.' },
+    NO_USER_MANAGEMENT: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'User manangement is disabled via Subsonic API.' },
     NOT_IMPLEMENTED: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: 'Not implemented' }
 };
 //# sourceMappingURL=formatter.js.map

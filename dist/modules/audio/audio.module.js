@@ -111,6 +111,13 @@ let AudioModule = class AudioModule {
         }
         return;
     }
+    async extractTagLyrics(filename) {
+        const suffix = fileSuffix(filename);
+        if (suffix === AudioFormatType.mp3) {
+            return this.mp3.extractTagSyncedLyrics(filename);
+        }
+        return;
+    }
     async clearCacheByIDs(ids) {
         await this.transcoder.clearCacheByIDs(ids);
         await this.waveform.clearCacheByIDs(ids);

@@ -43,13 +43,42 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
         albumid3.song = childs;
         return { album: albumid3 };
     }
-    async getArtistInfo(query, { engine, orm }) {
+    async getArtistInfo(query, { engine, orm, user }) {
+        const limitCount = query.count || 20;
+        const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+        const limitLastFMSimilarArtists = async (info) => {
+            const similar = info.similar?.artist || [];
+            if (similar.length === 0) {
+                return [];
+            }
+            const result = [];
+            for (const sim of similar) {
+                if (result.length == limitCount) {
+                    break;
+                }
+                const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
+                if (artist) {
+                    const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
+                    result.push(await SubsonicFormatter.packArtist(artist, state));
+                }
+                else if (includeNotPresent) {
+                    result.push({
+                        id: '-1',
+                        name: sim.name,
+                        musicBrainzId: sim.mbid,
+                        artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+                        albumCount: 0
+                    });
+                }
+            }
+            return result;
+        };
         const folder = await orm.Folder.findOneOrFailByID(query.id);
         if (folder) {
             if (folder.mbArtistID) {
                 const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
                 if (lastfm?.artist) {
-                    return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+                    return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
                 }
             }
             else if (folder.artist) {
@@ -57,20 +86,49 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
                 if (al?.artist) {
                     const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
                     if (lastfm?.artist) {
-                        return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+                        return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
                     }
                 }
             }
         }
         return { artistInfo: {} };
     }
-    async getArtistInfo2(query, { engine, orm }) {
+    async getArtistInfo2(query, { engine, orm, user }) {
+        const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+        const limitCount = query.count || 20;
+        const limitLastFMSimilarArtists = async (info) => {
+            const similar = info.similar?.artist || [];
+            if (similar.length === 0) {
+                return [];
+            }
+            const result = [];
+            for (const sim of similar) {
+                if (result.length == limitCount) {
+                    break;
+                }
+                const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
+                if (artist) {
+                    const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
+                    result.push(await SubsonicFormatter.packArtist(artist, state));
+                }
+                else if (includeNotPresent) {
+                    result.push({
+                        id: '-1',
+                        name: sim.name,
+                        musicBrainzId: sim.mbid,
+                        artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+                        albumCount: 0
+                    });
+                }
+            }
+            return result;
+        };
         const artist = await orm.Artist.findOneOrFailByID(query.id);
         if (artist) {
             if (artist.mbArtistID) {
                 const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
                 if (lastfm && lastfm.artist) {
-                    return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+                    return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
                 }
             }
             else if (artist.name) {
@@ -78,7 +136,7 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
                 if (al && al.artist) {
                     const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
                     if (lastfm && lastfm.artist) {
-                        return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+                        return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
                     }
                 }
             }

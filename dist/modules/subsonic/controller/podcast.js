@@ -52,27 +52,42 @@ let SubsonicPodcastApi = class SubsonicPodcastApi {
         newestPodcasts.episode = await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user);
         return { newestPodcasts };
     }
-    async createPodcastChannel(query, { orm, engine }) {
+    async createPodcastChannel(query, { orm, engine, user }) {
+        if (!user.rolePodcast) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         await engine.podcast.create(orm, query.url);
         return {};
     }
-    async deletePodcastChannel(query, { orm, engine }) {
+    async deletePodcastChannel(query, { orm, engine, user }) {
+        if (!user.rolePodcast) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const podcast = await orm.Podcast.findOneOrFailByID(query.id);
         engine.podcast.remove(orm, podcast).catch(e => log.error(e));
         return {};
     }
-    async refreshPodcasts({ orm, engine }) {
+    async refreshPodcasts({ orm, engine, user }) {
+        if (!user.rolePodcast) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         engine.podcast.refreshPodcasts(orm).catch(e => log.error(e));
         return {};
     }
-    async downloadPodcastEpisode(query, { orm, engine }) {
+    async downloadPodcastEpisode(query, { orm, engine, user }) {
+        if (!user.rolePodcast) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const episode = await orm.Episode.findOneOrFailByID(query.id);
         if (!episode.path) {
             engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e));
         }
         return {};
     }
-    async deletePodcastEpisode(query, { orm, engine }) {
+    async deletePodcastEpisode(query, { orm, engine, user }) {
+        if (!user.rolePodcast) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const episode = await orm.Episode.findOneOrFailByID(query.id);
         await engine.episode.deleteEpisode(orm, episode);
         return {};

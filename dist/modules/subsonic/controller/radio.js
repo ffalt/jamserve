@@ -26,12 +26,18 @@ let SubsonicInternetRadioApi = class SubsonicInternetRadioApi {
         }
         return { internetRadioStations: { internetRadioStation } };
     }
-    async createInternetRadioStation(query, { orm }) {
+    async createInternetRadioStation(query, { orm, user }) {
+        if (!user.roleAdmin) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl, disabled: false });
         await orm.Radio.persistAndFlush(radio);
         return {};
     }
-    async updateInternetRadioStation(query, { orm }) {
+    async updateInternetRadioStation(query, { orm, user }) {
+        if (!user.roleAdmin) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const radio = await orm.Radio.findOneOrFailByID(query.id);
         radio.name = query.name === undefined ? radio.name : query.name;
         radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl;
@@ -39,7 +45,10 @@ let SubsonicInternetRadioApi = class SubsonicInternetRadioApi {
         await orm.Radio.persistAndFlush(radio);
         return {};
     }
-    async deleteInternetRadioStation(query, { orm }) {
+    async deleteInternetRadioStation(query, { orm, user }) {
+        if (!user.roleAdmin) {
+            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+        }
         const radio = await orm.Radio.findOneOrFailByID(query.id);
         await orm.Radio.removeAndFlush(radio);
         return {};

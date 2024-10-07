@@ -127,5 +127,33 @@ export class AudioModuleMP3 {
         }
         return;
     }
+    async extractTagSyncedLyrics(filename) {
+        log.debug('extractTagSyncedLyrics', filename);
+        const id3v2 = new ID3v2();
+        const tag = await id3v2.read(filename);
+        const resolveTimeStampFormat = (timestampFormat) => {
+            switch (timestampFormat) {
+                case 1:
+                    return 'MPEG frames';
+                default:
+                    return 'milliseconds';
+            }
+        };
+        if (tag) {
+            const frames = tag.frames.filter(f => ['SLT'].includes(f.id));
+            if (frames.length > 0) {
+                const frame = frames.find(f => f.value?.contentType === 1);
+                if (frame) {
+                    return {
+                        language: frame.value.language,
+                        contentType: 'lyrics',
+                        timestampFormat: resolveTimeStampFormat(frame.value.timestampFormat),
+                        events: frame.value.events
+                    };
+                }
+            }
+        }
+        return;
+    }
 }
 //# sourceMappingURL=mp3.module.js.map
