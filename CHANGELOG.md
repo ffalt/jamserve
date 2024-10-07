@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.23](https://github.com/ffalt/jamserve/compare/v0.5.22...v0.5.23) (2024-10-07)
+
+
+### Features
+
+* **api:** prepare support for timeOffset in streaming calls ([3eaac00](https://github.com/ffalt/jamserve/commit/3eaac004a91203e668563c82952a4dcbbd07355f))
+* **api:** support subsonic/opensubsonic api and extensions ([d268ec1](https://github.com/ffalt/jamserve/commit/d268ec188547fcee1340a0c68f58db2baf564835))
+* **logging:** add rotation log file writing ([421bba6](https://github.com/ffalt/jamserve/commit/421bba6910dc65ad363e47b4f4fbd2c6bfde1814))
+* **ratelimit:** add limits for doc file requests ([9c23a81](https://github.com/ffalt/jamserve/commit/9c23a81a9fdbf305e67bf1e3e39a32bb57516484))
+* **ratelimit:** add limits for frontend file requests ([0a1504f](https://github.com/ffalt/jamserve/commit/0a1504fc243594980aec592c16b2d2cf6c45aa1c))
+
+
+### Bug Fixes
+
+* **graphql:** use integer instead of float ([aa4f4ef](https://github.com/ffalt/jamserve/commit/aa4f4eff6a2234e503d4d861215271cc61fb402a))
+
 ## [0.5.22](https://github.com/ffalt/jamserve/compare/v0.5.21...v0.5.22) (2024-10-01)
 
 ## [0.5.21](https://github.com/ffalt/jamserve/compare/v0.5.20...v0.5.21) (2024-09-13)
