@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.24](https://github.com/ffalt/jamserve/compare/v0.5.23...v0.5.24) (2024-10-07)
+
+
+### Features
+
+* **subsonic:** load synced lyrics from id3 tags ([9adfb18](https://github.com/ffalt/jamserve/commit/9adfb18280efb5edba28681167576d14d2008e57))
+
 ## [0.5.23](https://github.com/ffalt/jamserve/compare/v0.5.22...v0.5.23) (2024-10-07)
 
 
