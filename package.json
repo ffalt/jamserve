@@ -98,7 +98,7 @@
   },
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "11.7.0",
-    "@eslint/js": "9.11.1",
+    "@eslint/js": "9.12.0",
     "@jest/globals": "29.7.0",
     "@stylistic/eslint-plugin": "2.8.0",
     "@types/archiver": "6.0.2",
