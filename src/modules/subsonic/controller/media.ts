@@ -17,12 +17,13 @@ import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
-import { SubsonicResponseLyrics, SubsonicResponseLyricsList } from '../model/subsonic-rest-data.js';
+import { SubsonicResponseLyrics, SubsonicResponseLyricsList, SubsonicStructuredLyrics } from '../model/subsonic-rest-data.js';
 import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
 import { StreamOptions } from '../../../entity/stream/stream.service.js';
+import path from 'path';
 
 const log = logger('SubsonicApi');
 
@@ -108,9 +109,32 @@ export class SubsonicMediaRetrievalApi {
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
 	})
-	async getLyricsBySongId(@SubsonicParams() _query: SubsonicParameterLyricsByID, @SubsonicCtx() _ctx: Context): Promise<SubsonicResponseLyricsList> {
-		// TODO: get sync lyrics from tag
-		return { lyricsList: { structuredLyrics: [] } };
+	async getLyricsBySongId(@SubsonicParams() query: SubsonicParameterLyricsByID, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseLyricsList> {
+		const track = await orm.Track.findOneOrFailByID(query.id);
+		const tag = await track.tag.get();
+		const structuredLyrics: Array<SubsonicStructuredLyrics> = [];
+
+		// TODO: store synchronizd lyrics or at least a boolean if this file loading is necessary
+		const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
+		if (slyrics) {
+			const l: SubsonicStructuredLyrics = { lang: slyrics.language || 'und', synced: true };
+			l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
+			structuredLyrics.push(l);
+		}
+
+		if (tag?.lyrics) {
+			const l: SubsonicStructuredLyrics = { lang: 'und', synced: false };
+			l.line = tag.lyrics.split('\n').map(value => ({ value }));
+			structuredLyrics.push(l);
+		} else if (tag?.artist && tag?.title && !slyrics) {
+			const lyrics = await engine.metadata.lyrics(orm, tag.artist, tag.title);
+			if (lyrics?.lyrics) {
+				const l: SubsonicStructuredLyrics = { lang: 'und', synced: false };
+				l.line = lyrics.lyrics.split('\n').map(value => ({ value }));
+				structuredLyrics.push(l);
+			}
+		}
+		return { lyricsList: { structuredLyrics } };
 	}
 
 	/**

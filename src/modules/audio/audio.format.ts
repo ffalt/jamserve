@@ -50,6 +50,16 @@ export interface TrackMedia {
 	mediaVersion?: string;
 }
 
+export interface TrackSyncronizedLyrics {
+	language: string;
+	timestampFormat: string;
+	contentType: string;
+	events: Array<{
+		timestamp: number;
+		text: string;
+	}>;
+}
+
 export class FORMAT {
 	static packJamServeMedia(data?: IMP3.MPEG): TrackMedia {
 		if (!data) {

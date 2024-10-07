@@ -3,9 +3,13 @@ import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
 import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense } from '../model/subsonic-rest-data.js';
+import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense, SubsonicResponseScanStatus } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicFormatter } from '../formatter.js';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('SubsonicApi');
 
 @SubsonicController()
 export class SubsonicSystemApi {
@@ -62,7 +66,10 @@ export class SubsonicSystemApi {
 		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
 		tags: ['System']
 	})
-	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, @SubsonicCtx() _ctx: Context): Promise<SubsonicResponseJukeboxStatus> {
+	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, @SubsonicCtx() { user }: Context): Promise<SubsonicResponseJukeboxStatus> {
+		if (!user.roleAdmin) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 action 	Yes 		The operation to perform. Must be one of: get, status (since 1.7.0), set (since 1.7.0), start, stop, skip, add, clear, remove, shuffle, setGain
@@ -72,5 +79,37 @@ export class SubsonicSystemApi {
 		 gain 	No 		Used by setGain to control the playback volume. A float value between 0.0 and 1.0.
 		 */
 		return { jukeboxStatus: { currentIndex: 0, playing: false, gain: 0 } };
+	}
+
+	/**
+	 * Returns the current status for media library scanning. Takes no extra parameters.
+	 * Since 1.15.0
+	 */
+	@SubsonicRoute('/getScanStatus', () => SubsonicResponseScanStatus, {
+		summary: 'Scan Status',
+		description: 'Returns the current status for media library scanning.',
+		tags: ['System']
+	})
+	async getScanStatus(@SubsonicCtx() { engine }: Context): Promise<SubsonicResponseScanStatus> {
+		return { scanStatus: { scanning: engine.io.scanning } };
+	}
+
+	/**
+	 * Initiates a rescan of the media libraries. Takes no extra parameters.
+	 * Since 1.15.0
+	 */
+	@SubsonicRoute('/startScan', () => SubsonicOKResponse, {
+		summary: 'Start Status',
+		description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',
+		tags: ['System']
+	})
+	async startScan(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+		if (!user.roleAdmin) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
+		if (!engine.io.scanning) {
+			engine.io.root.startUpRefresh(orm, true).catch(e => log.error(e)); // do not wait;
+		}
+		return {};
 	}
 }

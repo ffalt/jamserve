@@ -88,11 +88,14 @@ export class SubsonicPodcastApi {
 		description: 'Adds a new Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 url 	Yes 		The URL of the Podcast to add.
 		 */
+		if (!user.rolePodcast) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		await engine.podcast.create(orm, query.url);
 		return {};
 	}
@@ -106,11 +109,14 @@ export class SubsonicPodcastApi {
 		description: 'Deletes a Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
+		if (!user.rolePodcast) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
 		return {};
@@ -125,7 +131,10 @@ export class SubsonicPodcastApi {
 		description: 'Requests the server to check for new Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async refreshPodcasts(@SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async refreshPodcasts(@SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+		if (!user.rolePodcast) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
 		return {};
 	}
@@ -139,11 +148,14 @@ export class SubsonicPodcastApi {
 		description: 'Request the server to start downloading a given Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
 		 */
+		if (!user.rolePodcast) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		if (!episode.path) {
 			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
@@ -160,11 +172,14 @@ export class SubsonicPodcastApi {
 		description: 'Deletes a Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicOKResponse> {
+	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
+		if (!user.rolePodcast) {
+			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		await engine.episode.deleteEpisode(orm, episode);
 		return {};

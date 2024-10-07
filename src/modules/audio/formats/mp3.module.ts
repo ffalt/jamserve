@@ -1,7 +1,7 @@
 import { ID3v1, ID3v2, IID3V2, IMP3Analyzer, MP3 } from 'jamp3';
 import { StaticPool } from 'node-worker-threads-pool';
 import { logger } from '../../../utils/logger.js';
-import { FORMAT } from '../audio.format.js';
+import { FORMAT, TrackSyncronizedLyrics } from '../audio.format.js';
 import { AudioScanResult } from '../audio.module.js';
 import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
 import path, { dirname } from 'path';
@@ -140,6 +140,56 @@ export class AudioModuleMP3 {
 			}
 			if (frame) {
 				return (frame.value).bin;
+			}
+		}
+		return;
+	}
+
+	async extractTagSyncedLyrics(filename: string): Promise<TrackSyncronizedLyrics | undefined> {
+		log.debug('extractTagSyncedLyrics', filename);
+		const id3v2 = new ID3v2();
+		const tag = await id3v2.read(filename);
+
+		// const resolveContentType = (contentType: number) => {
+		// 	switch (contentType) {
+		// 		case 1:
+		// 			return 'lyrics';
+		// 		case 2:
+		// 			return 'text transcription';
+		// 		case 3:
+		// 			return 'part name';
+		// 		case 4:
+		// 			return 'events';
+		// 		case 5:
+		// 			return 'chord';
+		// 		case 6:
+		// 			return 'trivia';
+		// 		default:
+		// 			return 'other';
+		// 	}
+		// };
+
+		const resolveTimeStampFormat = (timestampFormat: number) => {
+			switch (timestampFormat) {
+				case 1:
+					return 'MPEG frames';
+				default:
+					return 'milliseconds';
+			}
+		};
+
+		if (tag) {
+			const frames = tag.frames.filter(f => ['SLT'].includes(f.id)) as Array<IID3V2.Frames.SynchronisedLyricsFrame>;
+			if (frames.length > 0) {
+				const frame = frames.find(f => f.value?.contentType === 1);
+				if (frame) {
+					return {
+						language: frame.value.language,
+						contentType: 'lyrics', // resolveContentType(value.contentType),
+						timestampFormat: resolveTimeStampFormat(frame.value.timestampFormat),
+						events: frame.value.events
+					};
+				}
 			}
 		}
 		return;

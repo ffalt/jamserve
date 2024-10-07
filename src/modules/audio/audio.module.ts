@@ -1,6 +1,6 @@
 import { fileSuffix } from '../../utils/fs-utils.js';
 import { ImageModule } from '../image/image.module.js';
-import { FORMAT, TrackMedia, TrackTag } from './audio.format.js';
+import { FORMAT, TrackMedia, TrackSyncronizedLyrics, TrackTag } from './audio.format.js';
 import { AcousticbrainzClient } from './clients/acousticbrainz-client.js';
 import { AcoustidClient } from './clients/acoustid-client.js';
 import { CoverArtArchiveClient } from './clients/coverartarchive-client.js';
@@ -133,6 +133,14 @@ export class AudioModule {
 		}
 		if (suffix === AudioFormatType.flac) {
 			return this.flac.extractTagImage(filename);
+		}
+		return;
+	}
+
+	async extractTagLyrics(filename: string): Promise<TrackSyncronizedLyrics | undefined> {
+		const suffix = fileSuffix(filename);
+		if (suffix === AudioFormatType.mp3) {
+			return this.mp3.extractTagSyncedLyrics(filename);
 		}
 		return;
 	}

@@ -120,6 +120,15 @@ export class SubsonicArtist {
 
 	@SubsonicObjField()
 	averageRating?: SubsonicAverageRating; //  Added in 1.13.0
+
+	@SubsonicObjField()
+	albumCount?: number; // OpenSubsonic
+
+	@SubsonicObjField()
+	musicBrainzId?: string; // OpenSubsonic
+
+	@SubsonicObjField()
+	artistImageUrl?: string; // OpenSubsonic
 }
 
 @SubsonicResultType()
@@ -788,16 +797,16 @@ export class SubsonicStructuredLyrics {
 	lang!: string;
 
 	@SubsonicObjField()
-	synced?: boolean;
+	synced!: boolean;
 
 	@SubsonicObjField(() => [SubsonicLyricsLine])
 	line?: Array<SubsonicLyricsLine>;
 
 	@SubsonicObjField()
-	displayArtist!: string;
+	displayArtist?: string;
 
 	@SubsonicObjField()
-	displayTitle!: string;
+	displayTitle?: string;
 
 	@SubsonicObjField()
 	offset?: number;

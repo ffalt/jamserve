@@ -3,7 +3,6 @@ import { SubsonicBookmarkApi } from './controller/bookmarks.js';
 import { SubsonicBrowsingApi } from './controller/browsing.js';
 import { SubsonicChatApi } from './controller/chat.js';
 import { SubsonicInternetRadioApi } from './controller/radio.js';
-import { SubsonicLibraryApi } from './controller/library.js';
 import { SubsonicListsApi } from './controller/lists.js';
 import { SubsonicMediaRetrievalApi } from './controller/media.js';
 import { SubsonicPlaylistsApi } from './controller/playlists.js';
@@ -26,6 +25,5 @@ export const SubsonicControllers = [
 	SubsonicSystemApi,
 	SubsonicMediaRetrievalApi,
 	SubsonicAnnotationApi,
-	SubsonicListsApi,
-	SubsonicLibraryApi
+	SubsonicListsApi
 ];

@@ -10,7 +10,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-params.js';
 import {
-	SubsonicAlbumWithSongsID3,
+	SubsonicAlbumWithSongsID3, SubsonicArtist, SubsonicArtistID3,
 	SubsonicArtistWithAlbumsID3,
 	SubsonicChild,
 	SubsonicGenre, SubsonicMusicFolder,
@@ -33,6 +33,7 @@ import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
+import { LastFM } from '../../audio/clients/lastfm-rest-data.js';
 
 @SubsonicController()
 export class SubsonicBrowsingApi {
@@ -96,56 +97,56 @@ export class SubsonicBrowsingApi {
 		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseArtistInfo> {
+	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
 		count 	No 	20 	Max number of similar artists to return.
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		 */
-		// TODO: repair subsonic artistinfo similar
-		// let includeNotPresent = false;
-		// if (query.includeNotPresent !== undefined) {
-		// 	includeNotPresent = query.includeNotPresent;
-		// }
-		// const limitCount = query.count || 20;
-		// let similar = artistInfo.similar || [];
-		// similar = paginate(similar, limitCount, 0);
-		// const folders: Array<Folder> = similar.filter(s => !!s.folder).map(s => <Folder>s.folder);
-		// const children = await this.prepareFolders(folders, user);
-		// const artists: Array<SubsonicArtist> = similar.map(s => {
-		// 	let child: SubsonicChild | undefined;
-		// 	if (s.folder) {
-		// 		const f = s.folder;
-		// 		child = children.find(c => c.id === f.id);
-		// 	}
-		// 	if (child) {
-		// 		return {
-		// 			id: child.id,
-		// 			name: s.name,
-		// 			starred: child.starred,
-		// 			userRating: child.userRating,
-		// 			averageRating: child.averageRating
-		// 		};
-		// 	}
-		// 	return {
-		// 		id: '-1', // report an invalid id (as does subsonic/airsonic)
-		// 		name: s.name
-		// 	};
-		// });
+		const limitCount = query.count || 20;
+		const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+
+		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtist>> => {
+			const similar = info.similar?.artist || [];
+			if (similar.length === 0) {
+				return [];
+			}
+			const result: Array<SubsonicArtist> = [];
+			for (const sim of similar) {
+				if (result.length == limitCount) {
+					break;
+				}
+				const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
+				if (artist) {
+					const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
+					result.push(await SubsonicFormatter.packArtist(artist, state));
+				} else if (includeNotPresent) {
+					result.push({
+						id: '-1', // report an invalid id (as does subsonic/airsonic)
+						name: sim.name,
+						musicBrainzId: sim.mbid,
+						artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+						albumCount: 0
+					});
+				}
+			}
+			return result;
+		};
+
 		const folder = await orm.Folder.findOneOrFailByID(query.id);
 		if (folder) {
 			if (folder.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
 				if (lastfm?.artist) {
-					return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+					return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 				}
 			} else if (folder.artist) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
 				if (al?.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm?.artist) {
-						return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist) };
+						return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 					}
 				}
 			}
@@ -162,45 +163,56 @@ export class SubsonicBrowsingApi {
 		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseArtistInfo2> {
+	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
 		count 	No 	20 	Max number of similar artists to return.
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		*/
-		// TODO: repair subsonic artistinfo similar
-		// let includeNotPresent = false;
-		// if (query.includeNotPresent !== undefined) {
-		// 	includeNotPresent = query.includeNotPresent;
-		// }
-		// const ids = (infos.similar || []).filter(sim => !!sim.artist).map(sim => (<Artist>sim.artist).id);
-		// const states = await engine.stateService.findOrCreateMany(ids, user.id, DBObjectType.artist);
-		// const result: Array<SubsonicArtistID3> = [];
-		// (infos.similar || []).forEach(sim => {
-		// 	if (sim.artist) {
-		// 		result.push(FORMAT.packArtist(sim.artist, states[sim.artist.id]));
-		// 	} else if (includeNotPresent) {
-		// 		result.push({
-		// 			id: '-1', // report an invalid id (as does subsonic/airsonic)
-		// 			name: sim.name,
-		// 			albumCount: 0
-		// 		});
-		// 	}
-		// });
+		const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+		const limitCount = query.count || 20;
+
+		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtistID3>> => {
+			const similar = info.similar?.artist || [];
+			if (similar.length === 0) {
+				return [];
+			}
+			const result: Array<SubsonicArtistID3> = [];
+			for (const sim of similar) {
+				if (result.length == limitCount) {
+					break;
+				}
+				const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
+				if (artist) {
+					const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
+					result.push(await SubsonicFormatter.packArtist(artist, state));
+				} else if (includeNotPresent) {
+					result.push({
+						id: '-1', // report an invalid id (as does subsonic/airsonic)
+						name: sim.name,
+						musicBrainzId: sim.mbid,
+						artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+						albumCount: 0
+					});
+				}
+			}
+			return result;
+		};
+
 		const artist = await orm.Artist.findOneOrFailByID(query.id);
 		if (artist) {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
 				if (lastfm && lastfm.artist) {
-					return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+					return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 				}
 			} else if (artist.name) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
 				if (al && al.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 					if (lastfm && lastfm.artist) {
-						return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist) };
+						return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 					}
 				}
 			}

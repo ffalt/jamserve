@@ -79,7 +79,8 @@ export class SubsonicFormatter {
 		CLIENT_OLD: { code: SubsonicFormatter.FAIL.CLIENT_OLD, fail: 'Incompatible Subsonic REST protocol version. Client must upgrade.' },
 		NOT_FOUND: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: `The requested data was not found.` },
 		UNAUTH: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Not authorised' },
-		NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Sharing is disabled on this server.' },
+		NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Sharing is disabled via Subsonic API.' },
+		NO_USER_MANAGEMENT: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'User manangement is disabled via Subsonic API.' },
 		NOT_IMPLEMENTED: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: 'Not implemented' }
 	};
 
@@ -161,14 +162,14 @@ export class SubsonicFormatter {
 			username: user.name,
 			email: user.email,
 			maxBitRate: user.maxBitRate,
-			avatarLastChanged: undefined, // user.avatarLastChanged !== undefined ? FORMAT.formatSubSonicDate(user.avatarLastChanged) : undefined,
+			avatarLastChanged: SubsonicFormatter.formatSubSonicDate(user.updatedAt),
 			folder: undefined,
 			scrobblingEnabled: false, // user.scrobblingEnabled,
 			adminRole: user.roleAdmin,
 			settingsRole: user.roleAdmin, // user.roles.settingsRole,
 			downloadRole: user.roleStream, // user.roles.downloadRole,
 			uploadRole: user.roleUpload,
-			playlistRole: user.roleAdmin, // user.roles.playlistRole,
+			playlistRole: true, // user.roles.playlistRole,
 			coverArtRole: user.roleAdmin, // user.roles.coverArtRole,
 			commentRole: user.roleAdmin, // user.roles.commentRole,
 			podcastRole: user.rolePodcast,
@@ -181,20 +182,20 @@ export class SubsonicFormatter {
 
 	static async packFolderIndexArtist(entry: FolderIndexEntry, state?: State): Promise<SubsonicArtist> {
 		/*
-<xs:complexType name="Artist">
-	<xs:attribute name="id" type="xs:string" use="required"/>
-	<xs:attribute name="name" type="xs:string" use="required"/>
-	<xs:attribute name="starred" type="xs:dateTime" use="optional"/> <!-- Added in 1.10.1 -->
-	<xs:attribute name="userRating" type="sub:UserRating" use="optional"/>  <!-- Added in 1.13.0 -->
-	<xs:attribute name="averageRating" type="sub:AverageRating" use="optional"/>  <!-- Added in 1.13.0 -->
-</xs:complexType>
-	 */
+		<xs:complexType name="Artist">
+			<xs:attribute name="id" type="xs:string" use="required"/>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="starred" type="xs:dateTime" use="optional"/> <!-- Added in 1.10.1 -->
+			<xs:attribute name="userRating" type="sub:UserRating" use="optional"/>  <!-- Added in 1.13.0 -->
+			<xs:attribute name="averageRating" type="sub:AverageRating" use="optional"/>  <!-- Added in 1.13.0 -->
+		</xs:complexType>
+	    */
 		return {
 			id: entry.id,
 			name: entry.name,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
-			// TODO: averageRating
+			// "averageRating": state.avgrated,
 		};
 	}
 
@@ -252,19 +253,20 @@ export class SubsonicFormatter {
 
 	static async packFolderArtist(folder: Folder, state?: State): Promise<SubsonicArtist> {
 		/*
-    <xs:complexType name="Artist">
-        <xs:attribute name="id" type="xs:string" use="required"/>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="starred" type="xs:dateTime" use="optional"/> <!-- Added in 1.10.1 -->
-        <xs:attribute name="userRating" type="sub:UserRating" use="optional"/>  <!-- Added in 1.13.0 -->
-        <xs:attribute name="averageRating" type="sub:AverageRating" use="optional"/>  <!-- Added in 1.13.0 -->
-    </xs:complexType>
+		    <xs:complexType name="Artist">
+		        <xs:attribute name="id" type="xs:string" use="required"/>
+		        <xs:attribute name="name" type="xs:string" use="required"/>
+		        <xs:attribute name="starred" type="xs:dateTime" use="optional"/> <!-- Added in 1.10.1 -->
+		        <xs:attribute name="userRating" type="sub:UserRating" use="optional"/>  <!-- Added in 1.13.0 -->
+		        <xs:attribute name="averageRating" type="sub:AverageRating" use="optional"/>  <!-- Added in 1.13.0 -->
+		    </xs:complexType>
 		 */
 		return {
 			id: folder.id,
 			name: folder.title || folder.artist || '',
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
+			// "averageRating": state.avgrated,
 		};
 	}
 
@@ -313,9 +315,10 @@ export class SubsonicFormatter {
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-			// recordLabels: [{name:'demo'}],
 			musicBrainzId: album.mbReleaseID,
 			genres: genres.length ? genres.map(g => ({ name: g.name })) : undefined,
+			isCompilation: album.albumType === AlbumType.compilation
+			// recordLabels: [{name:'demo'}],
 			// artists: [{id:'demo', name:'demo'}],
 			// displayArtist: 'Artist 1 feat. Artist 2',
 			// releaseTypes: ['Album', 'Remixes'],
@@ -323,7 +326,6 @@ export class SubsonicFormatter {
 			// sortName: "lagerfeuer (8-bit)",
 			// "originalReleaseDate": { "year": 2001, "month": 3, "day": 10 },
 			// "releaseDate": { "year": 2001, "month": 3, "day": 10}
-			isCompilation: album.albumType === AlbumType.compilation
 			// "discTitles": [{ "disc": 0, "title": "Disc 0 title" }, { "disc": 2, "title": "Disc 1 title" }]
 		};
 	}
@@ -469,7 +471,6 @@ export class SubsonicFormatter {
 		moods?: Array<string>; // OpenSubsonic
 		replayGain?: SubSonicReplayGain; // OpenSubsonic
 		 */
-
 		const suffix = fileSuffix(track.name);
 		const tag = await track.tag.get();
 		const result: SubsonicChild = {
@@ -490,7 +491,6 @@ export class SubsonicFormatter {
 			suffix,
 			contentType: mimeTypes.lookup(suffix) || 'audio/mpeg',
 			isVideo: false,
-			// path: path.join(track.path, track.fileName),
 			discNumber: tag?.disc,
 			albumId: track.album.id(),
 			artistId: track.artist.id(),
@@ -498,19 +498,20 @@ export class SubsonicFormatter {
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
-			// "rank": 0,
-			// "averageRating": track.state.avgrated,
-			// "bookmarkPosition": track.state.bookmark,
 			bitDepth: tag?.mediaBitDepth,
 			samplingRate: tag?.mediaSampleRate,
 			channelCount: tag?.mediaChannels,
 			mediaType: 'song',
 			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
-			// bpm: tag?.bpm; //  OpenSubsonic
-			// comment: tag?.comment; //  OpenSubsonic
 			sortName: tag?.titleSort,
 			musicBrainzId: tag?.mbTrackID,
 			genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined
+			// path: path.join(track.path, track.fileName),
+			// "rank": 0,
+			// "averageRating": track.state.avgrated,
+			// "bookmarkPosition": track.state.bookmark,
+			// bpm: tag?.bpm; //  OpenSubsonic
+			// comment: tag?.comment; //  OpenSubsonic
 			// artists?: Array<SubsonicArtistsID3>; //  OpenSubsonic
 			// albumArtists? : Array<SubsonicArtistsID3>; //  OpenSubsonic
 			// contributors? : Array<SubsonicContributor>; //  OpenSubsonic
@@ -584,10 +585,6 @@ export class SubsonicFormatter {
 	static async packPodcastEpisode(episode: Episode, state?: State, status?: PodcastStatus): Promise<SubsonicPodcastEpisode> {
 		const tag = await episode.tag.get();
 		const result: SubsonicPodcastEpisode = {
-			// albumId:episode.albumId,
-			// artistId:episode.artistId,
-			// averageRating:episode.averageRating, // TODO: podcast episode state.averageRating
-			// bookmarkPosition:episode.bookmarkPosition, // TODO: podcast episode state.bookmarkPosition
 			streamId: episode.id,
 			coverArt: episode.id,
 			channelId: episode.podcast.idOrFail(),
@@ -613,6 +610,10 @@ export class SubsonicFormatter {
 			created: SubsonicFormatter.formatSubSonicDate(episode.statCreated),
 			duration: SubsonicFormatter.packDuration(tag?.mediaDuration),
 			bitRate: SubsonicFormatter.packBitrate(tag?.mediaBitRate)
+			// albumId:episode.albumId,
+			// artistId:episode.artistId,
+			// averageRating:episode.averageRating,
+			// bookmarkPosition:episode.bookmarkPosition,
 		};
 		if (episode.path) {
 			result.suffix = fileSuffix(episode.path);
