@@ -139,7 +139,7 @@
     "chance": "1.1.12",
     "commit-and-tag-version": "12.4.4",
     "conventional-changelog-cli": "5.0.0",
-    "eslint": "9.11.1",
+    "eslint": "9.13.0",
     "eslint-plugin-jest": "28.8.3",
     "jest": "29.7.0",
     "jest-openapi": "0.14.2",
