@@ -100,7 +100,7 @@
     "@apidevtools/json-schema-ref-parser": "11.7.2",
     "@eslint/js": "9.13.0",
     "@jest/globals": "29.7.0",
-    "@stylistic/eslint-plugin": "2.10.0",
+    "@stylistic/eslint-plugin": "2.10.1",
     "@types/archiver": "6.0.3",
     "@types/bcrypt": "5.0.2",
     "@types/chance": "1.1.6",
