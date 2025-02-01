@@ -98,8 +98,7 @@ describe('Services', () => {
 				});
 
 				it('should try to refresh a podcast', async () => {
-					const scope = mockNock()
-						.get('/podcast.xml').reply(404);
+					const scope = mockNock().get('/podcast.xml').reply(404);
 					await engine.podcast.refresh(orm, podcast);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'
 					expect(podcast.errorMessage).toEqual(expect.stringMatching(/Bad status code 404/));
