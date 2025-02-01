@@ -29,6 +29,6 @@ export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterA
 					])
 				]
 			) :
-				{};
+			{};
 	}
 }

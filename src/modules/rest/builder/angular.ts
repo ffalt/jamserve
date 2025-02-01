@@ -83,8 +83,8 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramTyp
 		tick: call.customPathParameters ? '`' : '\'',
 		baseFunc:
 			resultType ?
-					(method === 'post' ? 'requestPostData' : (resultType === 'string' ? 'requestString' : 'requestData')) :
-					(method === 'post' ? 'requestPostDataOK' : 'requestOK'),
+				(method === 'post' ? 'requestPostData' : (resultType === 'string' ? 'requestString' : 'requestData')) :
+				(method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 		baseFuncParameters: paramType ? 'params' : '{}',
 		apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
 		description: callDescription(call)

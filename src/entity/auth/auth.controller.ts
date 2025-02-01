@@ -74,10 +74,7 @@ export class AuthController {
 		const client = req.body.client || 'Unknown Client';
 		// context.req.client = client;
 		const token = credentials.jwt ?
-			generateJWT(user.id, client,
-				engine.config.env.jwt.secret,
-				engine.config.env.jwt.maxAge
-			) :
+			generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) :
 			undefined;
 		if (req.session) { // express session data obj
 			const session: SessionData = req.session as any;

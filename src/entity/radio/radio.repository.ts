@@ -26,6 +26,6 @@ export class RadioRepository extends BaseRepository<Radio, RadioFilterArgs, Radi
 					{ createdAt: QHelper.gte(filter.since) }
 				]
 			) :
-				{};
+			{};
 	}
 }

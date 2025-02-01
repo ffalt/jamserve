@@ -41,6 +41,6 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 					{ podcast: QHelper.inOrEqual(filter.podcastIDs) }
 				]
 			) :
-				{};
+			{};
 	}
 }

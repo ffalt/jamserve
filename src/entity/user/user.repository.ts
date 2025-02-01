@@ -28,6 +28,6 @@ export class UserRepository extends BaseRepository<User, UserFilterArgs, UserOrd
 					{ id: user?.roleAdmin ? undefined : user?.id }
 				]
 			) :
-				{};
+			{};
 	}
 }

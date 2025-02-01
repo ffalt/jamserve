@@ -34,7 +34,7 @@ export class SessionRepository extends BaseRepository<Session, SessionFilterArgs
 					{ user: user?.id }
 				]
 			) :
-				{};
+			{};
 	}
 
 	async byUserID(userID: string): Promise<Array<Session>> {

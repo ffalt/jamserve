@@ -30,17 +30,17 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 
 	async buildFilter(filter?: BookmarkFilterArgs, user?: User): Promise<FindOptions<Bookmark>> {
 		return QHelper.buildQuery<Bookmark>(filter ?
-				[
-					{ id: filter.ids },
-					{ comment: QHelper.like(filter.query, this.em.dialect) },
-					{ comment: QHelper.eq(filter.comment) },
-					{ track: QHelper.inOrEqual(filter.trackIDs) },
-					{ episode: QHelper.inOrEqual(filter.episodeIDs) },
-					{ createdAt: QHelper.gte(filter.since) },
-					{ user: QHelper.inOrEqual(filter.userIDs) },
-					{ user: user?.roleAdmin ? undefined : user?.id }
-				] :
-				[{ user: user?.roleAdmin ? undefined : user?.id }]
+			[
+				{ id: filter.ids },
+				{ comment: QHelper.like(filter.query, this.em.dialect) },
+				{ comment: QHelper.eq(filter.comment) },
+				{ track: QHelper.inOrEqual(filter.trackIDs) },
+				{ episode: QHelper.inOrEqual(filter.episodeIDs) },
+				{ createdAt: QHelper.gte(filter.since) },
+				{ user: QHelper.inOrEqual(filter.userIDs) },
+				{ user: user?.roleAdmin ? undefined : user?.id }
+			] :
+			[{ user: user?.roleAdmin ? undefined : user?.id }]
 		);
 	}
 }

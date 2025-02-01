@@ -34,6 +34,7 @@ export default tseslint.config(
 		files: ['**/*.ts'],
 		rules: {
 			'@stylistic/semi': 'error',
+			'@stylistic/indent': ['error', 'tab'],
 			'@stylistic/operator-linebreak': ['error', 'after'],
 			'@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: false }],
 			'@typescript-eslint/no-explicit-any': 'off',
