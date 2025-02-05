@@ -982,7 +982,7 @@ describe('WorkerService', () => {
 						it('should handle 404s', async () => {
 							const scope = mockNock()
 								.get('/nonexisting.png').reply(404);
-							await expect(workerService.artwork.download({ ...opts, artworkURL: mockNockURL('nonexisting.png') })).rejects.toThrow('Not Found');
+							await expect(workerService.artwork.download({ ...opts, artworkURL: mockNockURL('nonexisting.png') })).rejects.toThrow('404');
 							expect(scope.isDone()).toBe(true); // 'No request has been made'
 						});
 
