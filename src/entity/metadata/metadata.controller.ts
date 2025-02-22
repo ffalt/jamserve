@@ -7,6 +7,7 @@ import {
 	CoverArtArchiveLookupArgs,
 	LastFMLookupArgs,
 	LyricsOVHSearchArgs,
+	LrclibSearchArgs,
 	MusicBrainzLookupArgs,
 	MusicBrainzSearchArgs,
 	WikidataLookupArgs,
@@ -33,12 +34,21 @@ export class MetaDataController {
 	}
 
 	@Get('/lyricsovh/search', () => MetaDataResult,
-		{ description: 'Search Lyrics.ovh data', summary: 'Search Lyrics' })
+		{ description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' })
 	async lyricsovhSearch(
 		@QueryParams() args: LyricsOVHSearchArgs,
 		@Ctx() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.lyrics(orm, args.artist, args.title) };
+		return { data: await engine.metadata.lyricsOVH(orm, args.artist, args.title) };
+	}
+
+	@Get('/lrclib/get', () => MetaDataResult,
+		{ description: 'Get Lrclib.net data', summary: 'Get Lyrics on lrclib.net' })
+	async lcrlibSearch(
+		@QueryParams() args: LrclibSearchArgs,
+		@Ctx() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.lrclibGet(orm, args.artist, args.title, args.album, args.duration) };
 	}
 
 	@Get('/acoustid/lookup', () => MetaDataResult,

@@ -691,6 +691,7 @@ type TagQL {
   series: String
   seriesNr: String
   lyrics: String
+  syncedlyrics: String
   chapters: [TagChapterQL!]
   mediaDuration: Int
   mediaBitRate: Int

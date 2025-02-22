@@ -82,7 +82,7 @@ export class TrackController {
 		@Ctx() { orm, engine }: Context
 	): Promise<TrackLyrics> {
 		const track = await orm.Track.oneOrFailByID(id);
-		return engine.metadata.lyricsByTrack(orm, track);
+		return await engine.metadata.lyricsByTrack(orm, track);
 	}
 
 	@Get(

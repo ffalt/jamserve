@@ -38,6 +38,12 @@ export class TrackLyrics {
 	})
 	lyrics?: string;
 
+	@ObjField({
+		nullable: true,
+		description: 'Synced Lyrics'
+	})
+	syncedLyrics?: string;
+
 	@ObjField({ nullable: true, description: 'Audio Tag or External Service' })
 	source?: string;
 }

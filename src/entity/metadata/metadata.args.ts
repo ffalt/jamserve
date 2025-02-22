@@ -22,6 +22,21 @@ export class LyricsOVHSearchArgs {
 }
 
 @ObjParamsType()
+export class LrclibSearchArgs {
+	@ObjField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' })
+	title!: string;
+
+	@ObjField({ description: 'Song Artist', example: 'Primus' })
+	artist!: string;
+
+	@ObjField({ description: 'Song Album', example: 'Sailing the Seas of Cheese' })
+	album?: string;
+
+	@ObjField({ description: 'Song Duration in seconds', example: 191 })
+	duration?: number;
+}
+
+@ObjParamsType()
 export class AcoustidLookupArgs {
 	@ObjField({ description: 'Track ID', example: examples.mbTrackID })
 	trackID!: string;

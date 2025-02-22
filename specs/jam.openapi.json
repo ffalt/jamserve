@@ -13432,7 +13432,7 @@
 		"/metadata/lyricsovh/search": {
 			"get": {
 				"operationId": "MetaDataController.lyricsovhSearch",
-				"summary": "Search Lyrics",
+				"summary": "Search Lyrics on lyrics.ovh",
 				"description": "Search Lyrics.ovh data",
 				"tags": [
 					"Meta Data"
@@ -13447,6 +13447,95 @@
 						"schema": {
 							"type": "string",
 							"description": "Song Artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"description": "Song Title",
+						"required": true,
+						"example": "Jerry Was a Race Car Driver",
+						"schema": {
+							"type": "string",
+							"description": "Song Title"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/lrclib/get": {
+			"get": {
+				"operationId": "MetaDataController.lcrlibSearch",
+				"summary": "Get Lyrics on lrclib.net",
+				"description": "Get Lrclib.net data",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "album",
+						"description": "Song Album",
+						"required": true,
+						"example": "Sailing the Seas of Cheese",
+						"schema": {
+							"type": "string",
+							"description": "Song Album"
+						}
+					},
+					{
+						"in": "query",
+						"name": "artist",
+						"description": "Song Artist",
+						"required": true,
+						"example": "Primus",
+						"schema": {
+							"type": "string",
+							"description": "Song Artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "duration",
+						"description": "Song Duration in seconds",
+						"required": true,
+						"example": 191,
+						"schema": {
+							"type": "integer",
+							"description": "Song Duration in seconds"
 						}
 					},
 					{
@@ -27071,6 +27160,10 @@
 					"lyrics": {
 						"type": "string",
 						"description": "Lyrics"
+					},
+					"syncedLyrics": {
+						"type": "string",
+						"description": "Synced Lyrics"
 					},
 					"source": {
 						"type": "string",

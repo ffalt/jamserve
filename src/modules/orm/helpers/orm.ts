@@ -55,6 +55,9 @@ export class ORM {
 		if (!table?.mediaBitDepth) {
 			await queryInterface.addColumn('Tag', 'mediaBitDepth', { type: seq.DataTypes.INTEGER, allowNull: true });
 		}
+		if (!table?.syncedlyrics) {
+			await queryInterface.addColumn('Tag', 'syncedlyrics', { type: seq.DataTypes.TEXT, allowNull: true });
+		}
 	}
 
 	async ensureSchema(): Promise<void> {

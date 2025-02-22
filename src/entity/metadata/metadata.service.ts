@@ -22,6 +22,8 @@ import seq from 'sequelize';
 import fetch from 'node-fetch';
 import { InvalidParamError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
+import { Tag } from '../tag/tag.js';
 
 const log = logger('Metadata');
 
@@ -35,12 +37,7 @@ export class MetaDataService {
 	private audioModule!: AudioModule;
 
 	private static async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: string): Promise<void> {
-		const item = await orm.MetaData.create({
-			name,
-			dataType,
-			data
-		}
-		);
+		const item = await orm.MetaData.create({ name, dataType, data });
 		await orm.MetaData.persistAndFlush(item);
 	}
 
@@ -155,7 +152,7 @@ export class MetaDataService {
 			});
 	}
 
-	async lyrics(orm: Orm, artist: string, song: string): Promise<TrackLyrics> {
+	async lyricsOVH(orm: Orm, artist: string, song: string): Promise<TrackLyrics> {
 		return this.searchInStore<TrackLyrics>(orm, `lyrics-${artist}/${song}`,
 			MetaDataType.lyrics, async () => {
 				let result = await this.audioModule.lyricsOVH.search(artist, song);
@@ -171,6 +168,20 @@ export class MetaDataService {
 					}
 				}
 				return result;
+			});
+	}
+
+	async lrclibFind(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<TrackLyrics> {
+		return this.searchInStore<TrackLyrics>(orm, `lrclib-find-${track_name}/${artist_name}/${album_name}/${duration}`,
+			MetaDataType.lyrics, async () => {
+				return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
+			});
+	}
+
+	async lrclibGet(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<LrclibResult> {
+		return this.searchInStore<LrclibResult>(orm, `lrclib-get-${track_name}/${artist_name}/${album_name}/${duration}`,
+			MetaDataType.lyrics, async () => {
+				return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
 			});
 	}
 
@@ -216,26 +227,47 @@ export class MetaDataService {
 
 	async lyricsByTrack(orm: Orm, track: Track): Promise<TrackLyrics> {
 		const tag = await track.tag.get();
-		if (tag?.lyrics) {
-			return { lyrics: tag.lyrics };
-		}
-		const song = tag?.title;
-		if (!song) {
+		if (!tag) {
 			return {};
 		}
+		if (tag.lyrics || tag.syncedlyrics) {
+			return { lyrics: tag.lyrics, syncedLyrics: tag.syncedlyrics };
+		}
 		try {
-			let result: TrackLyrics | undefined;
-			if (tag?.artist) {
-				result = await this.lyrics(orm, tag.artist, song);
-			}
-			if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
-				result = await this.lyrics(orm, tag.albumArtist, song);
+			let result: TrackLyrics | undefined = await this.lyricsLrcLibByTrackTag(orm, track, tag);
+			if (!result || !(result.lyrics || result.syncedLyrics)) {
+				result = await this.lyricsOVHByTrackTag(orm, track, tag);
 			}
 			return result || {};
 		} catch (e: any) {
 			log.error(e);
 			return {};
 		}
+	}
+
+	async lyricsLrcLibByTrackTag(orm: Orm, track: Track, tag: Tag): Promise<TrackLyrics | undefined> {
+		if (!tag.title) {
+			return {};
+		}
+		let result: TrackLyrics = await this.lrclibFind(orm, tag.title, tag.artist || tag.albumArtist || '', tag.album);
+		if (!result || !(result.lyrics || result.syncedLyrics)) {
+			result = await this.lrclibFind(orm, tag.title || '', tag.artist || tag.albumArtist || '');
+		}
+		return result;
+	}
+
+	async lyricsOVHByTrackTag(orm: Orm, _track: Track, tag: Tag): Promise<TrackLyrics | undefined> {
+		if (!tag.title) {
+			return {};
+		}
+		let result: TrackLyrics | undefined;
+		if ((!result || !result.lyrics) && tag?.artist) {
+			result = await this.lyricsOVH(orm, tag.artist, tag.title);
+		}
+		if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
+			result = await this.lyricsOVH(orm, tag.albumArtist, tag.title);
+		}
+		return result;
 	}
 
 	async coverartarchiveImage(url?: string): Promise<ApiBinaryResult | undefined> {

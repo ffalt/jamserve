@@ -35,6 +35,7 @@ export interface TrackTag {
 	series?: string;
 	seriesNr?: string;
 	lyrics?: string;
+	syncedlyrics?: string;
 	chapters?: string;
 }
 

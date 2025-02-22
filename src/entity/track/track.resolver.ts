@@ -98,7 +98,7 @@ export class TrackResolver {
 
 	@FieldResolver(() => TrackLyricsQL)
 	async lyrics(@GQLRoot() track: Track, @Ctx() { engine, orm }: Context): Promise<TrackLyrics> {
-		return engine.metadata.lyricsByTrack(orm, track);
+		return await engine.metadata.lyricsByTrack(orm, track);
 	}
 
 	@FieldResolver(() => MediaTagRawQL)

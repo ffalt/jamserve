@@ -125,6 +125,10 @@ export class Tag extends Base {
 	@Property(() => String, { nullable: true })
 	lyrics?: string;
 
+	@Field(() => String, { nullable: true })
+	@Property(() => String, { nullable: true })
+	syncedlyrics?: string;
+
 	@Field(() => [TagChapterQL], { nullable: true })
 	@Property(() => String, { nullable: true })
 	chapters?: string;// Array<TagChapter>;

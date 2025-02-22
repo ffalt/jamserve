@@ -20,6 +20,7 @@ import { ConfigService } from '../engine/services/config.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { AdminSettingsExternal } from '../../entity/admin/admin.js';
 import { GpodderClient } from './clients/gpodder-client.js';
+import { LrclibClient } from './clients/lrclib-client.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
@@ -32,6 +33,7 @@ export class AudioModule {
 	acoustid: AcoustidClient;
 	lastFM: LastFMClient;
 	lyricsOVH: LyricsOVHClient;
+	lrclib: LrclibClient;
 	acousticbrainz: AcousticbrainzClient;
 	coverArtArchive: CoverArtArchiveClient;
 	wikipedia: WikipediaClient;
@@ -59,6 +61,7 @@ export class AudioModule {
 		this.lastFM = new LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
 		this.acoustid = new AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
 		this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
+		this.lrclib = new LrclibClient(this.configService.tools.lrclib.userAgent);
 		this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
 		this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
 
@@ -79,6 +82,7 @@ export class AudioModule {
 		this.acoustid.enabled = enabled;
 		this.lastFM.enabled = enabled;
 		this.lyricsOVH.enabled = enabled;
+		this.lrclib.enabled = enabled;
 		this.acousticbrainz.enabled = enabled;
 		this.coverArtArchive.enabled = enabled;
 		this.wikipedia.enabled = enabled;
