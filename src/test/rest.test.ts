@@ -373,6 +373,7 @@ describe('REST', () => {
 								case 'podcast/discover/byTag':
 								case 'podcast/discover/tags':
 								case 'podcast/discover':
+								case 'metadata/lrclib/get':
 								case 'metadata/lyricsovh/search':
 								case 'metadata/musicbrainz/search':
 								case 'metadata/acousticbrainz/lookup':
