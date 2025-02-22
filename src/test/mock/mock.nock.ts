@@ -1,11 +1,11 @@
 import nock from 'nock';
 
-const INVALID_URL = 'https://invaliddomain.invaliddomain.invaliddomaininvaliddomain';
+const TESTING_URL = 'https://example.com';
 
 export function mockNockURL(route: string): string {
-	return `${INVALID_URL}/${route}`;
+	return `${TESTING_URL}/${route}`;
 }
 
 export function mockNock(): nock.Scope {
-	return nock(INVALID_URL);
+	return nock(TESTING_URL);
 }
