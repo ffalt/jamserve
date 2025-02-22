@@ -21,11 +21,6 @@ export class WaveformGenerator {
 	async svg(filename: string, width?: number): Promise<string> {
 		const data = await this.json(filename);
 		return this.buildSvg(data, width);
-		// const svg = this.buildSvg(data, width);
-		// const svgo = new SVGO();
-		// const optimized = await svgo.optimize(svg);
-		// return optimized.data;
-		// return svg;
 	}
 
 	private async generateWaveform(filename: string): Promise<Waveform> {
@@ -49,17 +44,11 @@ export class WaveformGenerator {
 		const height = 256;
 		const x = scaleLinear();
 		const y = scaleLinear();
-		let wfd = WaveformData.create(data);
-		if (width !== undefined) {
-			const samplesPerPixel = Math.floor(wfd.duration * wfd.sample_rate / width);
-			wfd = wfd.resample({ width: width * 2, scale: (samplesPerPixel < wfd.scale) ? wfd.scale : undefined });
-		} else {
-			width = 4000;
-		}
+		const wfd = WaveformData.create(data);
 		const channel = wfd.channel(0);
 		const minArray = channel.min_array();
 		const maxArray = channel.max_array();
-		x.domain([0, wfd.length]).rangeRound([0, width]);
+		x.domain([0, wfd.length]).rangeRound([0, width || 4000]);
 		y.domain([min(minArray) as any, max(maxArray) as any]).rangeRound([0, height]);
 		const waveArea = area()
 			.x((a, i) => x(i))
