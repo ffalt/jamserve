@@ -147,7 +147,7 @@
     "openapi-validator": "0.14.2",
     "supertest": "7.0.0",
     "tmp": "0.2.3",
-    "ts-jest": "29.2.5",
+    "ts-jest": "29.2.6",
     "ts-node": "10.9.2",
     "tsc-watch": "6.2.1",
     "typescript": "5.7.3",
