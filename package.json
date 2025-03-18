@@ -75,7 +75,7 @@
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
-    "pg": "8.13.3",
+    "pg": "8.14.1",
     "pg-hstore": "2.3.4",
     "rate-limiter-flexible": "5.0.5",
     "reflect-metadata": "0.2.2",
