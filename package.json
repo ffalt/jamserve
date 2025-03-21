@@ -145,7 +145,7 @@
     "jest-openapi": "0.14.2",
     "nock": "13.5.6",
     "openapi-validator": "0.14.2",
-    "supertest": "7.0.0",
+    "supertest": "7.1.0",
     "tmp": "0.2.3",
     "ts-jest": "29.2.6",
     "ts-node": "10.9.2",
