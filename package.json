@@ -141,7 +141,7 @@
     "eslint-plugin-jest": "28.11.0",
     "jest": "29.7.0",
     "jest-openapi": "0.14.2",
-    "nock": "13.5.6",
+    "nock": "14.0.2",
     "openapi-validator": "0.14.2",
     "supertest": "7.1.0",
     "tmp": "0.2.3",
