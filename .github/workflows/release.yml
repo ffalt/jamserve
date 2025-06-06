@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ffalt/jam-test
+    permissions:
+      contents: read
     env:
       JAM_DB_HOST: postgres
     steps:
@@ -41,6 +43,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

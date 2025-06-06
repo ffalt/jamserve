@@ -9,6 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: CI
+    permissions:
+      contents: read
     container:
       image: ffalt/jam-test
     env:
