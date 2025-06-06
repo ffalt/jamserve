@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.25](https://github.com/ffalt/jamserve/compare/v0.5.24...v0.5.25) (2025-06-06)
+
+
+### Features
+
+* **lyrics:** add support for lrclib ([59862d4](https://github.com/ffalt/jamserve/commit/59862d4cca67a79b7b68e176ca87878e02511ee4))
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([40373ff](https://github.com/ffalt/jamserve/commit/40373ff76032a2fdf8283393b61058417b8ebf70))
+
 ## [0.5.24](https://github.com/ffalt/jamserve/compare/v0.5.23...v0.5.24) (2024-10-07)
 
 
