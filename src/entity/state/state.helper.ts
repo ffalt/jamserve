@@ -56,7 +56,7 @@ export class StateHelper {
 
 	async findOrCreate(destID: string, destType: DBObjectType, user: User): Promise<State> {
 		const state = await this.stateRepo.findOne({ where: { user: user.id, destID, destType } });
-		return state || await this.emptyState(destID, destType, user);
+		return state || (await this.emptyState(destID, destType, user));
 	}
 
 	async getHighestRatedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {

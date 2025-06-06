@@ -152,7 +152,7 @@ export class ImageService {
 	}
 
 	async getObjImage(orm: Orm, o: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
-		return await this.getObjImageByType(orm, o, type, size, format) ?? await this.paintImage(o, type, size, format);
+		return (await this.getObjImageByType(orm, o, type, size, format)) ?? (await this.paintImage(o, type, size, format));
 	}
 
 	async paintImage(obj: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {

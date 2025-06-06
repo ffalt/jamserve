@@ -97,7 +97,7 @@ export class TrackController {
 		const tracks = await orm.Track.findFilter(filter, [], {}, user);
 		const result: Array<MediaIDTagRaw> = [];
 		for (const track of tracks) {
-			const raw = await engine.track.getRawTag(track) || {};
+			const raw = (await engine.track.getRawTag(track)) || {};
 			result.push({ id: track.id, ...raw });
 		}
 		return result;

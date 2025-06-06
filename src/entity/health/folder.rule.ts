@@ -55,7 +55,7 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (!folder.artist) {
 					missing.push('artist');
 				}
-				if (await folder.genres.count() === 0) {
+				if ((await folder.genres.count()) === 0) {
 					missing.push('genre');
 				}
 				if (!folder.albumTrackCount) {
