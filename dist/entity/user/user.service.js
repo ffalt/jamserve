@@ -42,7 +42,7 @@ let UserService = class UserService {
         if (!user) {
             return Promise.reject(InvalidParamError('username', 'Invalid Username'));
         }
-        if (!await bcryptComparePassword(pass, user.hash)) {
+        if (!(await bcryptComparePassword(pass, user.hash))) {
             return Promise.reject(InvalidParamError('password', 'Invalid Password'));
         }
         return user;

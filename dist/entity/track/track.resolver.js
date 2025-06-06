@@ -74,7 +74,7 @@ let TrackResolver = class TrackResolver {
         return { obj: track, objType: DBObjectType.track };
     }
     async lyrics(track, { engine, orm }) {
-        return engine.metadata.lyricsByTrack(orm, track);
+        return await engine.metadata.lyricsByTrack(orm, track);
     }
     async rawTag(track, { engine }) {
         return (await engine.track.getRawTag(track)) || {};

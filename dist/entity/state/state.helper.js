@@ -47,7 +47,7 @@ export class StateHelper {
     }
     async findOrCreate(destID, destType, user) {
         const state = await this.stateRepo.findOne({ where: { user: user.id, destID, destType } });
-        return state || await this.emptyState(destID, destType, user);
+        return state || (await this.emptyState(destID, destType, user));
     }
     async getHighestRatedDestIDs(destType, userID) {
         const states = await this.stateRepo.find({

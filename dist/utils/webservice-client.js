@@ -26,10 +26,19 @@ export class WebserviceClient {
         const limiter = this.limiter;
         await limiter.removeTokens(1);
     }
+    formatParams(parameters) {
+        const obj = { ...parameters };
+        Object.keys(obj).forEach(key => {
+            if (obj[key] === undefined) {
+                delete obj[key];
+            }
+        });
+        return `?${new URLSearchParams(obj)}`;
+    }
     async getJson(url, parameters, ignoreStatus) {
         this.checkDisabled();
         await this.limit();
-        const params = parameters ? `?${new URLSearchParams(parameters)}` : '';
+        const params = parameters ? this.formatParams(parameters) : '';
         const response = await fetch(url + params, {
             headers: { 'User-Agent': this.userAgent }
         });

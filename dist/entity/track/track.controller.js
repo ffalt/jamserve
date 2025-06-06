@@ -41,13 +41,13 @@ let TrackController = class TrackController {
     }
     async lyrics(id, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(id);
-        return engine.metadata.lyricsByTrack(orm, track);
+        return await engine.metadata.lyricsByTrack(orm, track);
     }
     async rawTagGet(filter, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
         const result = [];
         for (const track of tracks) {
-            const raw = await engine.track.getRawTag(track) || {};
+            const raw = (await engine.track.getRawTag(track)) || {};
             result.push({ id: track.id, ...raw });
         }
         return result;

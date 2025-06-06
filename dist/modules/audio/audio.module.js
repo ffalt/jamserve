@@ -27,6 +27,7 @@ import { SettingsService } from '../../entity/settings/settings.service.js';
 import { ConfigService } from '../engine/services/config.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { GpodderClient } from './clients/gpodder-client.js';
+import { LrclibClient } from './clients/lrclib-client.js';
 export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 let AudioModule = class AudioModule {
     constructor() {
@@ -37,6 +38,7 @@ let AudioModule = class AudioModule {
         this.lastFM = new LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
         this.acoustid = new AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
         this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
+        this.lrclib = new LrclibClient(this.configService.tools.lrclib.userAgent);
         this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
         this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
         this.coverArtArchive = new CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
@@ -55,6 +57,7 @@ let AudioModule = class AudioModule {
         this.acoustid.enabled = enabled;
         this.lastFM.enabled = enabled;
         this.lyricsOVH.enabled = enabled;
+        this.lrclib.enabled = enabled;
         this.acousticbrainz.enabled = enabled;
         this.coverArtArchive.enabled = enabled;
         this.wikipedia.enabled = enabled;

@@ -167,6 +167,11 @@ __decorate([
     __metadata("design:type", String)
 ], Tag.prototype, "lyrics", void 0);
 __decorate([
+    Field(() => String, { nullable: true }),
+    Property(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], Tag.prototype, "syncedlyrics", void 0);
+__decorate([
     Field(() => [TagChapterQL], { nullable: true }),
     Property(() => String, { nullable: true }),
     __metadata("design:type", String)

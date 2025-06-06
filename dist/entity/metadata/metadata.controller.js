@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole } from '../../types/enums.js';
 import { MetaDataResult } from './metadata.model.js';
-import { AcousticBrainzLookupArgs, AcoustidLookupArgs, CoverArtArchiveImageArgs, CoverArtArchiveLookupArgs, LastFMLookupArgs, LyricsOVHSearchArgs, MusicBrainzLookupArgs, MusicBrainzSearchArgs, WikidataLookupArgs, WikidataSummaryArgs, WikipediaSummaryArgs } from './metadata.args.js';
+import { AcousticBrainzLookupArgs, AcoustidLookupArgs, CoverArtArchiveImageArgs, CoverArtArchiveLookupArgs, LastFMLookupArgs, LyricsOVHSearchArgs, LrclibSearchArgs, MusicBrainzLookupArgs, MusicBrainzSearchArgs, WikidataLookupArgs, WikidataSummaryArgs, WikipediaSummaryArgs } from './metadata.args.js';
 import { ApiImageTypes } from '../../types/consts.js';
 import { Controller } from '../../modules/rest/decorators/Controller.js';
 import { Get } from '../../modules/rest/decorators/Get.js';
@@ -23,7 +23,10 @@ let MetaDataController = class MetaDataController {
         return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };
     }
     async lyricsovhSearch(args, { orm, engine }) {
-        return { data: await engine.metadata.lyrics(orm, args.artist, args.title) };
+        return { data: await engine.metadata.lyricsOVH(orm, args.artist, args.title) };
+    }
+    async lcrlibSearch(args, { orm, engine }) {
+        return { data: await engine.metadata.lrclibGet(orm, args.artist, args.title, args.album, args.duration) };
     }
     async acoustidLookup(args, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(args.trackID);
@@ -63,13 +66,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "lastfmLookup", null);
 __decorate([
-    Get('/lyricsovh/search', () => MetaDataResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics' }),
+    Get('/lyricsovh/search', () => MetaDataResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' }),
     __param(0, QueryParams()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [LyricsOVHSearchArgs, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "lyricsovhSearch", null);
+__decorate([
+    Get('/lrclib/get', () => MetaDataResult, { description: 'Get Lrclib.net data', summary: 'Get Lyrics on lrclib.net' }),
+    __param(0, QueryParams()),
+    __param(1, Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [LrclibSearchArgs, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "lcrlibSearch", null);
 __decorate([
     Get('/acoustid/lookup', () => MetaDataResult, { description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' }),
     __param(0, QueryParams()),

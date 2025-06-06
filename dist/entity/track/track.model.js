@@ -63,6 +63,13 @@ __decorate([
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "lyrics", void 0);
 __decorate([
+    ObjField({
+        nullable: true,
+        description: 'Synced Lyrics'
+    }),
+    __metadata("design:type", String)
+], TrackLyrics.prototype, "syncedLyrics", void 0);
+__decorate([
     ObjField({ nullable: true, description: 'Audio Tag or External Service' }),
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "source", void 0);

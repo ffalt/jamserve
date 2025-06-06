@@ -30,11 +30,7 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         this.topTracks = new MetadataServiceTopTracks(this);
     }
     static async addToStore(orm, name, dataType, data) {
-        const item = await orm.MetaData.create({
-            name,
-            dataType,
-            data
-        });
+        const item = await orm.MetaData.create({ name, dataType, data });
         await orm.MetaData.persistAndFlush(item);
     }
     async cleanUp(orm) {
@@ -120,7 +116,7 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
             return this.audioModule.musicbrainz.lookup({ type, id: mbid, inc });
         });
     }
-    async lyrics(orm, artist, song) {
+    async lyricsOVH(orm, artist, song) {
         return this.searchInStore(orm, `lyrics-${artist}/${song}`, MetaDataType.lyrics, async () => {
             let result = await this.audioModule.lyricsOVH.search(artist, song);
             const cutVariants = ['(', '/', '[', ':'];
@@ -135,6 +131,16 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
                 }
             }
             return result;
+        });
+    }
+    async lrclibFind(orm, track_name, artist_name, album_name, duration) {
+        return this.searchInStore(orm, `lrclib-find-${track_name}/${artist_name}/${album_name}/${duration}`, MetaDataType.lyrics, async () => {
+            return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
+        });
+    }
+    async lrclibGet(orm, track_name, artist_name, album_name, duration) {
+        return this.searchInStore(orm, `lrclib-get-${track_name}/${artist_name}/${album_name}/${duration}`, MetaDataType.lyrics, async () => {
+            return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
         });
     }
     async wikipediaSummary(orm, title, lang) {
@@ -173,20 +179,16 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
     }
     async lyricsByTrack(orm, track) {
         const tag = await track.tag.get();
-        if (tag?.lyrics) {
-            return { lyrics: tag.lyrics };
-        }
-        const song = tag?.title;
-        if (!song) {
+        if (!tag) {
             return {};
         }
+        if (tag.lyrics || tag.syncedlyrics) {
+            return { lyrics: tag.lyrics, syncedLyrics: tag.syncedlyrics };
+        }
         try {
-            let result;
-            if (tag?.artist) {
-                result = await this.lyrics(orm, tag.artist, song);
-            }
-            if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
-                result = await this.lyrics(orm, tag.albumArtist, song);
+            let result = await this.lyricsLrcLibByTrackTag(orm, track, tag);
+            if (!result || !(result.lyrics || result.syncedLyrics)) {
+                result = await this.lyricsOVHByTrackTag(orm, track, tag);
             }
             return result || {};
         }
@@ -194,6 +196,29 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
             log.error(e);
             return {};
         }
+    }
+    async lyricsLrcLibByTrackTag(orm, track, tag) {
+        if (!tag.title) {
+            return {};
+        }
+        let result = await this.lrclibFind(orm, tag.title, tag.artist || tag.albumArtist || '', tag.album);
+        if (!result || !(result.lyrics || result.syncedLyrics)) {
+            result = await this.lrclibFind(orm, tag.title || '', tag.artist || tag.albumArtist || '');
+        }
+        return result;
+    }
+    async lyricsOVHByTrackTag(orm, _track, tag) {
+        if (!tag.title) {
+            return {};
+        }
+        let result;
+        if ((!result || !result.lyrics) && tag?.artist) {
+            result = await this.lyricsOVH(orm, tag.artist, tag.title);
+        }
+        if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
+            result = await this.lyricsOVH(orm, tag.albumArtist, tag.title);
+        }
+        return result;
     }
     async coverartarchiveImage(url) {
         if (!this.audioModule.coverArtArchive.enabled) {

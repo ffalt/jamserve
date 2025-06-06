@@ -39,6 +39,28 @@ LyricsOVHSearchArgs = __decorate([
     ObjParamsType()
 ], LyricsOVHSearchArgs);
 export { LyricsOVHSearchArgs };
+let LrclibSearchArgs = class LrclibSearchArgs {
+};
+__decorate([
+    ObjField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' }),
+    __metadata("design:type", String)
+], LrclibSearchArgs.prototype, "title", void 0);
+__decorate([
+    ObjField({ description: 'Song Artist', example: 'Primus' }),
+    __metadata("design:type", String)
+], LrclibSearchArgs.prototype, "artist", void 0);
+__decorate([
+    ObjField({ description: 'Song Album', example: 'Sailing the Seas of Cheese' }),
+    __metadata("design:type", String)
+], LrclibSearchArgs.prototype, "album", void 0);
+__decorate([
+    ObjField({ description: 'Song Duration in seconds', example: 191 }),
+    __metadata("design:type", Number)
+], LrclibSearchArgs.prototype, "duration", void 0);
+LrclibSearchArgs = __decorate([
+    ObjParamsType()
+], LrclibSearchArgs);
+export { LrclibSearchArgs };
 let AcoustidLookupArgs = class AcoustidLookupArgs {
 };
 __decorate([

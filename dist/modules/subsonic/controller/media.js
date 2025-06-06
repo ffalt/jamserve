@@ -74,7 +74,7 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
             structuredLyrics.push(l);
         }
         else if (tag?.artist && tag?.title && !slyrics) {
-            const lyrics = await engine.metadata.lyrics(orm, tag.artist, tag.title);
+            const lyrics = await engine.metadata.lyricsOVH(orm, tag.artist, tag.title);
             if (lyrics?.lyrics) {
                 const l = { lang: 'und', synced: false };
                 l.line = lyrics.lyrics.split('\n').map(value => ({ value }));
@@ -87,7 +87,7 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
         if (!query.artist || !query.title) {
             return { lyrics: { value: '' } };
         }
-        const lyrics = await engine.metadata.lyrics(orm, query.artist, query.title);
+        const lyrics = await engine.metadata.lyricsOVH(orm, query.artist, query.title);
         if (!lyrics || !lyrics.lyrics) {
             return { lyrics: { value: '' } };
         }

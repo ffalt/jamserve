@@ -91,7 +91,7 @@ export class MetaMergerCache {
                 return album;
             }
         }
-        return await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } }) || undefined;
+        return (await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } })) || undefined;
     }
     async findAlbumInCache(trackInfo, artist) {
         if (trackInfo.tag.mbReleaseID) {

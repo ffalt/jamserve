@@ -108,7 +108,7 @@ let ImageService = ImageService_1 = class ImageService {
         return;
     }
     async getObjImage(orm, o, type, size, format) {
-        return await this.getObjImageByType(orm, o, type, size, format) ?? await this.paintImage(o, type, size, format);
+        return (await this.getObjImageByType(orm, o, type, size, format)) ?? (await this.paintImage(o, type, size, format));
     }
     async paintImage(obj, type, size, format) {
         const s = await ImageService_1.getCoverArtText(obj, type);
