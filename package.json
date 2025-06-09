@@ -40,7 +40,7 @@
     "body-parser": "2.2.0",
     "class-validator": "0.14.2",
     "common-password-checker": "0.1.0",
-    "console-table-printer": "2.14.1",
+    "console-table-printer": "2.14.2",
     "cors": "2.8.5",
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
