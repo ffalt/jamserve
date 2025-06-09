@@ -121,7 +121,7 @@
     "@types/mustache": "4.2.6",
     "@types/node": "22.15.30",
     "@types/node-fetch": "3.0.2",
-    "@types/on-finished": "2.3.4",
+    "@types/on-finished": "2.3.5",
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
