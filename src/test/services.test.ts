@@ -125,7 +125,7 @@ describe('Services', () => {
 				});
 
 				it('should update a podcast', async () => {
-					let scope = mockNock()
+					let scope = mockNock().persist(false)
 						.get('/podcast.xml').reply(200, MockFeed1.xml, { 'Content-Type': 'application/xml; charset=utf-8' });
 					await engine.podcast.refresh(orm, podcast);
 					expect(scope.isDone()).toBe(true); //  'No request has been made'

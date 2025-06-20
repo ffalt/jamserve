@@ -7,5 +7,5 @@ export function mockNockURL(route: string): string {
 }
 
 export function mockNock(): nock.Scope {
-	return nock(TESTING_URL);
+	return nock(TESTING_URL).persist();
 }
