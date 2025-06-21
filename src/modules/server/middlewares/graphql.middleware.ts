@@ -18,7 +18,7 @@ export class GraphqlMiddleware {
 
 	async playground(): Promise<express.Router> {
 		const api = express.Router();
-		api.get('*', express.static(path.resolve('./static/graphql/')));
+		api.get('{*splat}', express.static(path.resolve('./static/graphql/')));
 		return api;
 	}
 

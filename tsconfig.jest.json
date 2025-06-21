@@ -1,13 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "module": "ESNext",
-    "types": [
-      "node",
-      "jest"
-    ],
+    "types": ["node", "jest"],
+    "module": "esnext",
     "rootDir": "./"
   },
   "include": [

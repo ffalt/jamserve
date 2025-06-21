@@ -25,7 +25,7 @@ export class RateLimitService {
 	});
 
 	async loginSlowDown(req: express.Request, res: express.Response): Promise<boolean> {
-		const key = req.ip;
+		const key = req.ip as string;
 		try {
 			const resConsume = await this.loginLimiter.consume(key);
 			if (resConsume.remainingPoints <= 0) {
@@ -49,7 +49,7 @@ export class RateLimitService {
 	}
 
 	async loginSlowDownReset(req: express.Request): Promise<void> {
-		const key = req.ip;
+		const key = req.ip as string;
 		await this.limiterConsecutiveOutOfLimits.delete(key);
 		await this.loginLimiter.delete(key);
 	}
