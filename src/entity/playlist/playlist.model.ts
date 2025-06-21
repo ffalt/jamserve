@@ -19,7 +19,7 @@ export class PlaylistBase extends Base {
 	comment?: string;
 
 	@ObjField({ description: 'Playlist Created Timestamp', min: 0, example: examples.timestamp })
-	created!: number;
+	declare created: number;
 
 	@ObjField({ description: 'Playlist Changed Timestamp', min: 0, example: examples.timestamp })
 	changed!: number;

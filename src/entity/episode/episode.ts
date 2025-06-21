@@ -76,6 +76,7 @@ export class Episode extends Base {
 	@Property(() => String, { nullable: true })
 	summary?: string;
 
+	@Field(() => Date)
 	@Property(() => ORM_DATETIME)
 	date!: Date;
 
@@ -129,9 +130,6 @@ export class EpisodeQL extends Episode {
 
 	@Field(() => Date, { nullable: true })
 	fileModified?: Date;
-
-	@Field(() => Date)
-	date!: Date;
 
 	@Field(() => [EpisodeChapterQL!], { nullable: true })
 	chapters?: Array<EpisodeChapter>;

@@ -47,7 +47,12 @@ export abstract class ApiBaseResponder {
 			// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
-			res.sendFile(data.file.filename, { filename: data.file.name || path.basename(data.file.filename) });
+			res.sendFile(data.file.filename, {
+				dotfiles: 'deny',
+				headers: {
+					'Content-Disposition': `attachment; filename="${data.file.name || path.basename(data.file.filename)}"`
+				}
+			});
 		}
 	}
 

@@ -17,6 +17,7 @@ export class Podcast extends Base {
 	@Property(() => String)
 	url!: string;
 
+	@Field(() => Date)
 	@Property(() => ORM_DATETIME, { nullable: true })
 	lastCheck?: Date;
 
@@ -69,9 +70,6 @@ export class Podcast extends Base {
 export class PodcastQL extends Podcast {
 	@Field(() => Int)
 	episodesCount!: number;
-
-	@Field(() => Date)
-	lastCheck!: Date;
 
 	@Field(() => StateQL)
 	state!: State;
