@@ -3,11 +3,11 @@
 
 {{#withHttpEvent}}
 import {HttpEvent} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import {Observable} from 'rxjs';
 {{/withHttpEvent}}
 {{^withHttpEvent}}
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 {{/withHttpEvent}}
 
 import {JamBaseService} from '../jam.base.service';
@@ -20,11 +20,9 @@ import {JamParameters} from '../model/jam-rest-params';
 
 @Injectable()
 export class Jam{{part}}Service {
-
-	constructor(private base: JamBaseService) {
-	}
-
+	private readonly base = inject(JamBaseService);
 	{{#list}}
+
 	{{#description}}
 	/**
 	 * {{{description}}}
@@ -36,6 +34,5 @@ export class Jam{{part}}Service {
     	{{/validate}}
 		return this.base.{{{baseFunc}}}{{#baseFuncResultType}}<{{{baseFuncResultType}}}>{{/baseFuncResultType}}({{#apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{^apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{{apiPath}}}{{#apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{^apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{#baseFuncParameters}}, {{{baseFuncParameters}}}{{/baseFuncParameters}});
 	}
-
 	{{/list}}
 }

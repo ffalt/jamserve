@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import {HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpSentEvent} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import {Observable} from 'rxjs';
 
 export interface HTTPOptions {
@@ -23,9 +23,7 @@ async function handleError(e: any): Promise<any> {
 
 @Injectable()
 export class JamHttpService {
-
-	constructor(public client: HttpClient) {
-	}
+	readonly client = inject(HttpClient);
 
 	async raw(url: string, options: HTTPOptions): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		try {
@@ -81,5 +79,4 @@ export class JamHttpService {
 			withCredentials: options.withCredentials
 		}));
 	}
-
 }
