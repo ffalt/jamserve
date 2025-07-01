@@ -116,6 +116,7 @@ __decorate([
     __metadata("design:type", String)
 ], Episode.prototype, "summary", void 0);
 __decorate([
+    Field(() => Date),
     Property(() => ORM_DATETIME),
     __metadata("design:type", Date)
 ], Episode.prototype, "date", void 0);
@@ -188,10 +189,6 @@ __decorate([
     Field(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], EpisodeQL.prototype, "fileModified", void 0);
-__decorate([
-    Field(() => Date),
-    __metadata("design:type", Date)
-], EpisodeQL.prototype, "date", void 0);
 __decorate([
     Field(() => [EpisodeChapterQL], { nullable: true }),
     __metadata("design:type", Array)

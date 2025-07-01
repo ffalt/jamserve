@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import {HttpEvent, HttpParams, HttpSentEvent} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import {Observable} from 'rxjs';
 
 import {JamAuthService} from './jam.auth.service';
@@ -10,9 +10,8 @@ import {JamHttpService} from './jam.http.service';
 
 @Injectable()
 export class JamBaseService {
-
-	constructor(private http: JamHttpService, private authService: JamAuthService) {
-	}
+	private readonly http = inject(JamHttpService);
+	private readonly authService = inject(JamAuthService);
 
 	buildRequest(view: string, params: any, forDOM: boolean): { url: string; parameters: HttpParams } {
 		const buildParams = params || {};

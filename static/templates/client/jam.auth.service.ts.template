@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {Injectable, inject} from '@angular/core';
 import {JamConfiguration} from './jam.configuration';
 import {HTTPOptions, JamHttpService} from './jam.http.service';
 import {Jam} from './model/jam-rest-data';
@@ -24,9 +24,8 @@ export class JamAuthService {
 	auth?: Auth = undefined;
 	checked: boolean = false;
 	loaded: boolean = false;
-
-	constructor(private http: JamHttpService, private configuration: JamConfiguration) {
-	}
+	private readonly http = inject(JamHttpService);
+	private readonly configuration = inject(JamConfiguration);
 
 	async load(): Promise<void> {
 		const o = await this.configuration.fromStorage();
@@ -135,5 +134,4 @@ export class JamAuthService {
 	isLoggedIn(): boolean {
 		return !!(this.user && this.auth);
 	}
-
 }

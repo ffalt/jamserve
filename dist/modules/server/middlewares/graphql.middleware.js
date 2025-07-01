@@ -18,7 +18,7 @@ const log = logger('Graphql');
 let GraphqlMiddleware = class GraphqlMiddleware {
     async playground() {
         const api = express.Router();
-        api.get('*', express.static(path.resolve('./static/graphql/')));
+        api.get('{*splat}', express.static(path.resolve('./static/graphql/')));
         return api;
     }
     async middleware(configService) {

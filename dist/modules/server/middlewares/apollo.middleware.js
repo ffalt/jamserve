@@ -39,7 +39,7 @@ import { AdminResolver } from '../../../entity/admin/admin.resolver.js';
 import { MetadataResolver } from '../../../entity/metadata/metadata.resolver.js';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });

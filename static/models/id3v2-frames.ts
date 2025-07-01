@@ -396,5 +396,4 @@ export declare namespace ID3v2Frames {
 		'XSOP'?: Array<Text>;
 		'XSOT'?: Array<Text>;
 	}
-
 }

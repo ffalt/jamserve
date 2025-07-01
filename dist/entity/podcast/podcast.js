@@ -30,6 +30,7 @@ __decorate([
     __metadata("design:type", String)
 ], Podcast.prototype, "url", void 0);
 __decorate([
+    Field(() => Date),
     Property(() => ORM_DATETIME, { nullable: true }),
     __metadata("design:type", Date)
 ], Podcast.prototype, "lastCheck", void 0);
@@ -99,10 +100,6 @@ __decorate([
     Field(() => Int),
     __metadata("design:type", Number)
 ], PodcastQL.prototype, "episodesCount", void 0);
-__decorate([
-    Field(() => Date),
-    __metadata("design:type", Date)
-], PodcastQL.prototype, "lastCheck", void 0);
 __decorate([
     Field(() => StateQL),
     __metadata("design:type", State)

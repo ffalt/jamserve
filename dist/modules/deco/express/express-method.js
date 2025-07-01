@@ -141,7 +141,7 @@ export class ExpressMethod {
             route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
         }
         const roles = get.roles || ctrl?.roles || [];
-        router.all(`${route}(.view)?`, async (req, res, next) => {
+        router.all(`${route}{.view}`, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
                     throw UnauthError();

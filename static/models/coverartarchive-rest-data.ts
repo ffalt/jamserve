@@ -1,8 +1,6 @@
 // CoverArtArchive API Version 1.0
-/* eslint-disable @typescript-eslint/naming-convention */
 
 export declare namespace CoverArtArchive {
-
 	export interface Response {
 		'images': Array<Image>;
 		'release'?: string;
@@ -28,5 +26,4 @@ export declare namespace CoverArtArchive {
 			'large': string;
 		};
 	}
-
 }

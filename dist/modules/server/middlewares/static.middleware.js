@@ -13,9 +13,9 @@ export function staticMiddleware(configService) {
     const favicon = path.resolve('./static/api-docs/favicon.ico');
     router.get('/', (_req, res) => res.sendFile(indexHTML));
     router.get('/index.html', (_req, res) => res.sendFile(indexHTML));
-    router.get('/*', express.static(path.resolve(configService.env.paths.frontend)));
+    router.get('/*splat', express.static(path.resolve(configService.env.paths.frontend)));
     router.get('/favicon.ico', (_req, res) => res.sendFile(favicon));
-    router.get('*', (_req, res) => res.sendFile(indexHTML));
+    router.get('{*splat}', (_req, res) => res.sendFile(indexHTML));
     return router;
 }
 //# sourceMappingURL=static.middleware.js.map
