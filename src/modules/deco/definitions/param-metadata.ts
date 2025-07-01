@@ -50,12 +50,4 @@ export interface RestParamsMetadata extends CommonArgMetadata {
 	propertyName: string | undefined;
 }
 
-// prettier-ignore
-export type ParamMetadata =
-	| InfoParamMetadata
-	| PubSubParamMetadata
-	| ContextParamMetadata
-	| RootParamMetadata
-	| RestParamMetadata
-	| RestParamsMetadata
-	;
+export type ParamMetadata = InfoParamMetadata | PubSubParamMetadata | ContextParamMetadata | RootParamMetadata | RestParamMetadata | RestParamsMetadata;

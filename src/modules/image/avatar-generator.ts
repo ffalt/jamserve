@@ -13,14 +13,7 @@ import path from 'path';
 import seedrandom from 'seedrandom';
 import sharp from 'sharp';
 
-export type AvatarPart =
-	| 'background'
-	| 'face'
-	| 'clothes'
-	| 'head'
-	| 'hair'
-	| 'eye'
-	| 'mouth';
+export type AvatarPart = 'background' | 'face' | 'clothes' | 'head' | 'hair' | 'eye' | 'mouth';
 
 export interface AvatarGenearatorSettings {
 	parts: Array<AvatarPart>;
