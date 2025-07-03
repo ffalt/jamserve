@@ -23,19 +23,19 @@ const log = logger('PodcastService');
 
 @InRequestScope
 export class PodcastService {
-	private podcastRefreshDebounce = new DebouncePromises<void>();
+	private readonly podcastRefreshDebounce = new DebouncePromises<void>();
 	private readonly podcastsPath: string;
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	@Inject
-	private configService!: ConfigService;
+	private readonly configService!: ConfigService;
 
 	@Inject
-	private episodeService!: EpisodeService;
+	private readonly episodeService!: EpisodeService;
 
 	constructor() {
 		this.podcastsPath = this.configService.getDataPath(['podcasts']);

@@ -37,6 +37,10 @@ exclude_patterns = [
   "**/protos/**",
   "**/seed/**",
   "**/target/**",
+  "**/local/**",
+  "**/static/**",
+  "**/deploy/**",
+  "**/data/**",
   "**/templates/**",
   "**/testdata/**",
   "**/vendor/**",
@@ -60,6 +64,8 @@ mode = "comment"
 name = "default"
 default = true
 
+[[plugin]]
+name = "prettier"
 
 [[plugin]]
 name = "actionlint"

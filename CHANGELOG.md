@@ -6,11 +6,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.5.25](https://github.com/ffalt/jamserve/compare/v0.5.24...v0.5.25) (2025-06-06)
 
-
 ### Features
 
 * **lyrics:** add support for lrclib ([59862d4](https://github.com/ffalt/jamserve/commit/59862d4cca67a79b7b68e176ca87878e02511ee4))
-
 
 ### Bug Fixes
 
@@ -18,13 +16,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.5.24](https://github.com/ffalt/jamserve/compare/v0.5.23...v0.5.24) (2024-10-07)
 
-
 ### Features
 
 * **subsonic:** load synced lyrics from id3 tags ([9adfb18](https://github.com/ffalt/jamserve/commit/9adfb18280efb5edba28681167576d14d2008e57))
 
 ## [0.5.23](https://github.com/ffalt/jamserve/compare/v0.5.22...v0.5.23) (2024-10-07)
-
 
 ### Features
 
@@ -33,7 +29,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **logging:** add rotation log file writing ([421bba6](https://github.com/ffalt/jamserve/commit/421bba6910dc65ad363e47b4f4fbd2c6bfde1814))
 * **ratelimit:** add limits for doc file requests ([9c23a81](https://github.com/ffalt/jamserve/commit/9c23a81a9fdbf305e67bf1e3e39a32bb57516484))
 * **ratelimit:** add limits for frontend file requests ([0a1504f](https://github.com/ffalt/jamserve/commit/0a1504fc243594980aec592c16b2d2cf6c45aa1c))
-
 
 ### Bug Fixes
 
