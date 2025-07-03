@@ -38,7 +38,7 @@ describe('extractAlbumName function', () => {
 			'Album Name (Collection)', // Collection
 			'Album Name (Maxi)', // Maxi
 			'Album Name (Bonus Disc)' // Bonus Disc
-		])('Should remove format information in parentheses', (input) => {
+		])('Should remove format information in parentheses', input => {
 			expect(extractAlbumName(input)).toBe('Album Name');
 		});
 	});
@@ -79,7 +79,7 @@ describe('extractAlbumName function', () => {
 			'Album Name [Collection]', // Collection
 			'Album Name [Maxi]', // Maxi
 			'Album Name [Bonus Disc]' // Bonus Disc
-		])('Should remove format information in square brackets', (input) => {
+		])('Should remove format information in square brackets', input => {
 			expect(extractAlbumName(input)).toBe('Album Name');
 		});
 	});
@@ -90,7 +90,7 @@ describe('extractAlbumName function', () => {
 			'Album Name -CD2', // no space
 			'Album Name- CD3', // space after
 			'Album Name-CD4' // no spaces
-		])('Should remove CD numbers with hyphens', (input) => {
+		])('Should remove CD numbers with hyphens', input => {
 			expect(extractAlbumName(input)).toBe('Album Name');
 		});
 	});
@@ -115,7 +115,7 @@ describe('extractAlbumName function', () => {
 	describe('multiple patterns in the same string', () => {
 		test.each([
 			'Album Name (2023) [Deluxe Edition] - CD1', // standard order
-			'Album Name [Remastered] (2 CDs) - CD2', // different order
+			'Album Name [Remastered] (2 CDs) - CD2' // different order
 		])('Should remove multiple patterns', input => {
 			expect(extractAlbumName(input)).toBe('Album Name');
 		});
@@ -124,7 +124,7 @@ describe('extractAlbumName function', () => {
 	describe('preserving text that doesn\'t match the patterns', () => {
 		test.each([
 			'Album Name (with Special Guest)', // parentheses
-			'Album Name [Live at Wembley]', // square brackets
+			'Album Name [Live at Wembley]' // square brackets
 		])('Should preserve text that doesn\'t match patterns', input => {
 			expect(extractAlbumName(input)).toBe(input);
 		});

@@ -70,7 +70,6 @@ describe('WorkerService', () => {
 			afterEach(async () => {
 				await engine.stop();
 				await fse.remove(dir.name);
-				// dir.removeCallback();
 			});
 
 			describe('scan with mock data', () => {
@@ -164,7 +163,6 @@ describe('WorkerService', () => {
 						});
 						await validateMock(mockRoot2, workerService, orm);
 						await fse.remove(mockRoot2.path);
-						// dir2.removeCallback();
 
 						await fse.ensureDir(mockRoot2.path);
 						changes = await workerService.root.refresh({ rootID: mockRoot2.id });
@@ -449,7 +447,6 @@ describe('WorkerService', () => {
 						for (const track of tracks) {
 							await fse.remove(path.join(track.path, track.fileName));
 							const changes = await workerService.root.refresh({ rootID: mockRoot.id });
-							// const changes = await workerService.track.remove({rootID: mockRoot.id, trackIDs: [track.id]});
 							expect(changes.tracks.removed.size).toBe(1); // 'Removed Tracks count doesn't match'
 							await checkRemoveStates(changes.artists.removed.ids());
 							await checkRemoveStates(changes.albums.removed.ids());
