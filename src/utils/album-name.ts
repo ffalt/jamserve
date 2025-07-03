@@ -1,9 +1,31 @@
 export function extractAlbumName(name: string): string {
-	const result = name
-		.replace(/\(((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))\)/gi, '')
-		.replace(/\[((\d\d\d\d)|(\d* ?cds)|(cd ?\d*)|(disc ?\d*)|(disc ?\d*:.*)|(bonus.*)|(.*edition)|(.*retail)|(\d* of \d*)|(eps?|bootleg|deluxe|promo|single|lp|limited edition|retro|ost|uvs|demp|demos|remastered|remix|live|remixes|vinyl|collection|maxi|bonus disc))]/gi, '')
-		.replace(/-? cd\d*/gi, '')
-		.trim();
+	// Process the input string with multiple simpler regex patterns
+	let result = name;
+
+	// Common patterns to remove (each with complexity < 20)
+	const patterns = [
+		/[([]([\d]{4})[)\]]/gi,                  // years
+		/[([](cd\s*\d*)[)\]]/gi,                 // CD numbers
+		/[([](disc\s*\d*)[)\]]/gi,               // disc numbers
+		/[([](disc\s*\d*:.*)[)\]]/gi,            // disc with description
+		/[([](bonus.*)[)\]]/gi,                  // bonus content
+		/[([](.*(edition|retail))[)\]]/gi,       // editions and retail
+		/[([](\d+\s*cds?)[)\]]/gi,               // CD counts
+		/[([](\d+\s*of\s*\d+)[)\]]/gi,           // disc numbering
+		/[([](ep|bootleg|deluxe|promo)[)\]]/gi,  // format keywords 1
+		/[([](single|lp|retro|ost|uvs)[)\]]/gi,  // format keywords 2
+		/[([](demp|demos|remix(es)?)[)\]]/gi,    // format keywords 3
+		/[([](remaster(ed)?|live|vinyl)[)\]]/gi, // format keywords 4
+		/[([](collection|maxi)[)\]]/gi,          // format keywords 5
+		/-\s*cd\d*/gi                            // CD numbers with hyphens
+	];
+
+	// Apply each pattern
+	for (const pattern of patterns) {
+		result = result.replace(pattern, '');
+	}
+
+	result = result.trim();
 	if (result.length === 0) {
 		return name.trim();
 	}
