@@ -10,9 +10,13 @@ export interface IDCacheResult {
 }
 
 export class IDFolderCache<T> {
-	private cacheDebounce = new DebouncePromises<IDCacheResult>();
+	private readonly cacheDebounce = new DebouncePromises<IDCacheResult>();
 
-	constructor(public dataPath: string, public filePrefix: string, private resolveParams: (params: T) => string) {
+	constructor(
+		public dataPath: string,
+		public filePrefix: string,
+		private readonly resolveParams: (params: T) => string
+	) {
 	}
 
 	prefixCacheFilename(id: string): string {

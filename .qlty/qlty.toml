@@ -65,9 +65,6 @@ name = "default"
 default = true
 
 [[plugin]]
-name = "prettier"
-
-[[plugin]]
 name = "actionlint"
 
 [[plugin]]
@@ -78,10 +75,6 @@ name = "eslint"
 version = "9.30.0"
 package_file = "package.json"
 package_filters = ["eslint", "jest"]
-
-[[plugin]]
-name = "markdownlint"
-mode = "comment"
 
 [[plugin]]
 name = "osv-scanner"
@@ -105,3 +98,7 @@ name = "trufflehog"
 
 [[plugin]]
 name = "yamllint"
+
+[[triage]]
+match.rules = ["radarlint-js:typescript:S3626"]
+set.ignored = true

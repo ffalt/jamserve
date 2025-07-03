@@ -79,7 +79,6 @@ export class Logger {
 	}
 
 	error(format: string | Error, ...params: Array<any>): void {
-		// console.error(format);
 		this.applyLog('error', format.toString(), params);
 	}
 

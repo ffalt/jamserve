@@ -58,14 +58,14 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 }
 
 export function ensureTrailingPathSeparator(s: string): string {
-	if (s.length > 0 && s[s.length - 1] !== path.sep) {
+	if (!s.endsWith(path.sep)) {
 		return s + path.sep;
 	}
 	return s;
 }
 
 export function removeTrailingPathSeparator(s: string): string {
-	if (s.length > 0 && s[s.length - 1] === path.sep) {
+	if (s.endsWith(path.sep)) {
 		return s.slice(0, s.length - 1);
 	}
 	return s;

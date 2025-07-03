@@ -82,7 +82,7 @@ export class MetaStatBuilder {
 
 	statTrackCount(name: string, trackTotal?: number, disc?: number): void {
 		if (trackTotal !== undefined) {
-			const slug = `${(disc !== undefined ? disc : 1)}-${trackTotal}`;
+			const slug = `${(disc ?? 1)}-${trackTotal}`;
 			this.stats[name] = this.stats[name] || {};
 			this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: trackTotal };
 			this.stats[name][slug].count += 1;

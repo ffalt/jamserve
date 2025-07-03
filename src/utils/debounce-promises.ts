@@ -1,5 +1,5 @@
 export class DebouncePromises<T> {
-	private pendingPromises = new Map<string, Array<(err: Error | null, result?: T) => void>>();
+	private readonly pendingPromises = new Map<string, Array<(err: Error | null, result?: T) => void>>();
 
 	private getPendingArray(id: string): Array<(err: Error | null, result?: T) => void> {
 		return this.pendingPromises.get(id) || [];

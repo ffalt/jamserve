@@ -1089,57 +1089,60 @@ function buildGenreSlugs(): void {
 	}
 }
 
-export function getKnownGenre(genre: string): string | undefined {
-	const slug = slugify(genre);
+function findByGenreSlug(part: string): string | undefined {
+	const slug = slugify(part);
 	buildGenreSlugs();
 	return GenresSlugs[slug];
+}
+
+function cleanGenrePartSlug(part: string): Array<string> | undefined {
+	const result = findByGenreSlug(part);
+	if (result) {
+		return [result];
+	}
+	if (!part.includes(' & ')) {
+		return [part];
+	}
+	const subParts = part.split('&');
+	let results: Array<string> = [];
+	for (const sub of subParts) {
+		results = results.concat(cleanGenre(sub));
+	}
+	return results;
+}
+
+function cleanGenrePart(part: string): Array<string> | undefined {
+	// test for (number)
+	const numpart = /\((\d+)\)/.exec(part);
+	let num: number | undefined;
+	if (numpart) {
+		num = parseInt(numpart[1], 10);
+		part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
+	}
+	if (part.length === 0 && (num !== undefined)) {
+		const s = genreData.id3v1[num];
+		if (s) {
+			part = s;
+		}
+	}
+	if (part.length > 0) {
+		return cleanGenrePartSlug(part);
+	}
+	return;
 }
 
 export function cleanGenre(genre: string): Array<string> {
 	const results: Array<string> = [];
 	const parts = genre.split('/');
-	parts.forEach(part => {
-		// test for (number)
-		part = part.trim();
-		const numpart = /\((\d+)\)/.exec(part);
-		let num: number | undefined;
-		if (numpart) {
-			num = parseInt(numpart[1], 10);
-			part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
-		}
-		if (part.length === 0 && (num !== undefined)) {
-			const s = genreData.id3v1[num];
-			if (s) {
-				part = s;
-			}
-		}
-		if (part.length > 0) {
-			const slug = slugify(part);
-			let result: string | undefined;
-			buildGenreSlugs();
-			if (GenresSlugs && GenresSlugs[slug]) {
-				result = GenresSlugs[slug];
-			}
-			if (!result && part.includes(' & ')) {
-				const subParts = part.split('&');
-				subParts.forEach(sub => {
-					const subs = cleanGenre(sub);
-					for (const s of subs) {
-						if (!results.includes(s)) {
-							results.push(s);
-						}
-					}
-				});
-			} else if (result) {
-				if (!results.includes(result)) {
-					results.push(result);
-				}
-			} else {
-				if (!results.includes(part)) {
-					results.push(part);
+	for (const part of parts) {
+		const result = cleanGenrePart(part.trim());
+		if (result) {
+			for (const cleaned of result) {
+				if (!results.includes(cleaned)) {
+					results.push(cleaned);
 				}
 			}
 		}
-	});
+	}
 	return results;
 }
