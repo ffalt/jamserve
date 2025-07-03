@@ -1,8 +1,6 @@
 export function extractAlbumName(name: string): string {
-	// Process the input string with multiple simpler regex patterns
 	let result = name;
 
-	// Common patterns to remove (each with complexity < 20)
 	const patterns = [
 		/[([]([\d]{4})[)\]]/gi,                  // years
 		/[([](cd\s*\d*)[)\]]/gi,                 // CD numbers

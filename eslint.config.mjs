@@ -7,7 +7,6 @@ export default tseslint.config(
 	eslint.configs.recommended,
 	...tseslint.configs.recommended,
 	stylistic.configs.customize({
-		// the following options are the default values
 		indent: 'tab',
 		quotes: 'single',
 		braceStyle: '1tbs',
@@ -37,6 +36,10 @@ export default tseslint.config(
 			'@stylistic/indent': ['error', 'tab'],
 			'@stylistic/operator-linebreak': ['error', 'after'],
 			'@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: false }],
+			'@stylistic/no-multi-spaces': ['error', {
+				ignoreEOLComments: false,
+				ImportAttribute: true
+			}],
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/no-unsafe-function-type': 'off',
 			'@typescript-eslint/no-unused-vars': [

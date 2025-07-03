@@ -134,7 +134,7 @@ describe('extractAlbumName function', () => {
 		test.each([
 			'Album Name (DELUXE EDITION)', // uppercase
 			'Album Name (deluxe edition)', // lowercase
-			'Album Name (Deluxe Edition)', // mixed case
+			'Album Name (Deluxe Edition)' // mixed case
 		])('Should be case insensitive', input => {
 			expect(extractAlbumName(input)).toBe('Album Name');
 		});
