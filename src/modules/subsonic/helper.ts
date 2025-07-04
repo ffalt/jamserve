@@ -64,14 +64,14 @@ export class SubsonicHelper {
 	}
 
 	static async prepareBookmarks(orm: Orm, bookmarks: Array<Bookmark>, user: User): Promise<Array<SubsonicBookmark>> {
-		const bookmarkDestID = (bookmark: Bookmark) => (bookmark.track.id() || bookmark.episode.id() as string);
+		const bookmarkDestID = (bookmark: Bookmark) => ((bookmark.track.id() || bookmark.episode.id()));
 
-		const removeDups = (list: Array<string>): Array<string> => {
-			return list.filter((item, pos) => list.indexOf(item) === pos);
+		const removeDups = (list: Array<string | undefined>): Array<string> => {
+			return list.filter((item, pos) => list.indexOf(item) === pos).filter(s => s !== undefined);
 		};
 
 		const trackIDs = removeDups(bookmarks.map(bookmark => bookmarkDestID(bookmark)));
-		const userIds = removeDups(bookmarks.map(bookmark => bookmark.user.id() as string));
+		const userIds = removeDups(bookmarks.map(bookmark => bookmark.user.id()));
 		const tracks = await orm.Track.findByIDs(trackIDs);
 		const childs = await this.prepareTracks(orm, tracks, user);
 		const users = await orm.User.findByIDs(userIds);

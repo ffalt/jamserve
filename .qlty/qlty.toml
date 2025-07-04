@@ -100,5 +100,8 @@ name = "trufflehog"
 name = "yamllint"
 
 [[triage]]
-match.rules = ["radarlint-js:typescript:S3626"]
+match.rules = [
+  "radarlint-js:typescript:S3626",
+  "radarlint-js:typescript:S6564"
+]
 set.ignored = true

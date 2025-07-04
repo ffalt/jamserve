@@ -25,9 +25,12 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Err
 				fn(null, Buffer.from(data, 'binary'));
 			});
 		})
-		.end((err, res) => {
+		.end((err: Error | undefined, res: { body: Buffer }) => {
 			if (err) {
 				return done(err);
+			}
+			if (res.body === null) {
+				return done(Error('Invalid Body response'));
 			}
 			let isClosedByError = false;
 			yauzl.fromBuffer(res.body, (e: Error | null, zipfile: ZipFile | undefined) => {
@@ -65,7 +68,7 @@ function downloadJSON(req: TestAgent<supertest.Test>, url: string, done: (e?: Er
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
-		.end((err, res) => {
+		.end((err: Error | undefined, res: { body: any }) => {
 			if (err) {
 				return done(err);
 			}
@@ -80,7 +83,7 @@ function downloadContent(req: TestAgent<supertest.Test>, url: string, contentTyp
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', contentType)
-		.end((err, _) => {
+		.end((err: Error | undefined) => {
 			if (err) {
 				return done(err);
 			}
@@ -112,7 +115,6 @@ describe('Generators', () => {
 		await server.engine.stop();
 		await server.stop();
 		await fse.remove(dir.name);
-		// dir.removeCallback();
 		snapshot.restore();
 	});
 

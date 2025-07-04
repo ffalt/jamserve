@@ -21,11 +21,11 @@ export class ValidData {
 	}
 
 	static generateValidIntegerData(schema: SchemaObject): any {
-		return chance.integer({ min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100 });
+		return chance.integer({ min: schema.minimum ?? 1, max: (schema.maximum ?? 101) - 1 });
 	}
 
 	static generateValidNumberData(schema: SchemaObject): any {
-		return chance.floating({ min: schema.minimum !== undefined ? schema.minimum : 1, max: schema.maximum !== undefined ? schema.maximum - 1 : 100, fixed: 2 });
+		return chance.floating({ min: schema.minimum ?? 1, max: (schema.maximum ?? 101) - 1, fixed: 2 });
 	}
 
 	static generateValidBooleanData(_: SchemaObject): any {
@@ -55,7 +55,7 @@ export class ValidData {
 			case 'array':
 				return ValidData.generateValidArrayData(schema);
 			default:
-				console.error(`TODO: mock valid data for type ${schema.type} ${JSON.stringify(schema)}`);
+				console.error(`Create mock valid data for type ${schema.type} ${JSON.stringify(schema)}`);
 				return [];
 		}
 	}
@@ -147,7 +147,7 @@ export class InvalidData {
 			case 'array':
 				return InvalidData.generateInvalidArrayData(schema, isField);
 			default:
-				console.error(`TODO: mock invalid data for type ${schema.type} ${JSON.stringify(schema)}`);
+				console.error(`Create mock invalid data for type ${schema.type} ${JSON.stringify(schema)}`);
 				return [];
 		}
 	}
@@ -276,7 +276,7 @@ export class MockRequests {
 	}
 
 	static async generateRequestMocks(spec: OpenAPIObject): Promise<Array<RequestMock>> {
-		const derefSpec = (await refParser.dereference(spec)) as OpenAPIObject;
+		const derefSpec: OpenAPIObject = (await refParser.dereference(spec));
 		let requestMocks: Array<RequestMock> = [];
 		const paths = Object.keys(derefSpec.paths);
 		for (const apiPath of paths) {

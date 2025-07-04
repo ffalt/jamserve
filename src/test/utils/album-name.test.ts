@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { extractAlbumName } from '../utils/album-name.js';
+import { extractAlbumName } from '../../utils/album-name.js';
 
 describe('extractAlbumName function', () => {
 	describe('removal of text in parentheses', () => {
