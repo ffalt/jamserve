@@ -15,9 +15,9 @@ export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise
 
 @InRequestScope
 export class FolderService {
-	checker = new FolderRulesChecker();
+	readonly checker = new FolderRulesChecker();
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	async collectFolderPath(folder?: Folder): Promise<Array<Folder>> {
 		const result: Array<Folder> = [];

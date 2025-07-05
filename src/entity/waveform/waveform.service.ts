@@ -34,15 +34,15 @@ export interface WaveFormData {
 @InRequestScope
 export class WaveformService {
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	async getWaveform(obj: Base, objType: DBObjectType, format?: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		format = (format || WaveformDefaultFormat);
 		switch (objType) {
 			case DBObjectType.track:
-				return this.getTrackWaveform(obj as Track, format as WaveformFormatType, width);
+				return this.getTrackWaveform(obj as Track, format, width);
 			case DBObjectType.episode:
-				return this.getEpisodeWaveform(obj as Episode, format as WaveformFormatType, width);
+				return this.getEpisodeWaveform(obj as Episode, format, width);
 			default:
 		}
 		return Promise.reject(InvalidParamError('Invalid Object Type for Waveform generation'));
@@ -94,7 +94,7 @@ export class WaveformService {
 	}
 
 	async getEpisodeWaveform(episode: Episode, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
-		if (episode.path && episode.path) {
+		if (episode.id && episode.path) {
 			return this.audioModule.waveform.get(episode.id, episode.path, format, width);
 		}
 		return Promise.reject(GenericError('Podcast episode not ready'));

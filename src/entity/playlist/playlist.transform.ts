@@ -24,7 +24,7 @@ export class PlaylistTransformService extends BaseTransformService {
 			userID: u.id,
 			userName: u.name,
 			entriesCount: await o.entries.count(),
-			entriesIDs: playlistArgs.playlistIncEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined,
+			entriesIDs: playlistArgs.playlistIncEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())).filter(id => id !== undefined) : undefined,
 			state: playlistArgs.playlistIncState ? await this.state(orm, o.id, DBObjectType.playlist, user.id) : undefined
 		};
 	}

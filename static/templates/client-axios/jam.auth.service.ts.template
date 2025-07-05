@@ -41,7 +41,7 @@ export class JamAuthService {
 			} else {
 				this.user = undefined;
 			}
-		} catch (e: any) {
+		} catch (e) {
 			throw (e || Error('Server error'));
 		}
 	}
@@ -74,7 +74,7 @@ export class JamAuthService {
 			};
 			await this.configuration.toStorage({auth: this.auth, user: this.user});
 			await this.configuration.userChangeNotify(this.user);
-		} catch (e: any) {
+		} catch (e) {
 			console.error(e);
 			await this.clear();
 			if (e.error && e.error.error) {
@@ -91,7 +91,7 @@ export class JamAuthService {
 		if (this.auth && this.auth.token) {
 			return {Authorization: `Bearer ${this.auth.token}`};
 		}
-		return undefined;
+		return;
 	}
 
 	getHTTPOptions(): HTTPOptions {

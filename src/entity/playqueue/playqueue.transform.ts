@@ -8,7 +8,7 @@ import { PlayQueueBase } from './playqueue.model.js';
 
 @InRequestScope
 export class PlayQueueTransformService extends BaseTransformService {
-	async playQueueBase(orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, user: User): Promise<PlayQueueBase> {
+	async playQueueBase(_orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, user: User): Promise<PlayQueueBase> {
 		const u = o.user.id() === user.id ? user : await o.user.getOrFail();
 		return {
 			changed: o.updatedAt.valueOf(),

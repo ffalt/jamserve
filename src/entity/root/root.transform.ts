@@ -10,7 +10,7 @@ import { IoService } from '../../modules/engine/services/io.service.js';
 @InRequestScope
 export class RootTransformService extends BaseTransformService {
 	@Inject
-	private ioService!: IoService;
+	private readonly ioService!: IoService;
 
 	async root(orm: Orm, o: ORMRoot, rootArgs: IncludesRootArgs, user: User): Promise<Root> {
 		return {

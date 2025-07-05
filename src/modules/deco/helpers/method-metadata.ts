@@ -28,7 +28,7 @@ export function getMethodMetadata(prototype: object, propertyKey: string | symbo
 		returnTypeOptions,
 		params: [],
 		defaultReturnTypeFormat,
-		schemaName: options.name || methodName,
+		schemaName: options.name ?? methodName,
 		target: prototype.constructor,
 		description: options.description,
 		summary: options.summary,

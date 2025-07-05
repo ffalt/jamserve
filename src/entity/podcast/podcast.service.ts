@@ -66,7 +66,7 @@ export class PodcastService {
 	}
 
 	private async mergeEpisodes(orm: Orm, podcast: Podcast, episodes: Array<EpisodeData>): Promise<Array<Episode>> {
-		if ((!episodes) || (!episodes.length)) {
+		if (!episodes?.length) {
 			return [];
 		}
 		const newEpisodes: Array<Episode> = [];
@@ -118,7 +118,7 @@ export class PodcastService {
 			await fse.ensureDir(podcastPath);
 			try {
 				podcast.image = await this.imageModule.storeImage(podcastPath, 'cover', tag.image);
-			} catch (e: any) {
+			} catch (e) {
 				podcast.image = undefined;
 				log.info('Downloading Podcast image failed', e);
 			}
@@ -144,7 +144,7 @@ export class PodcastService {
 					podcast.status = PodcastStatus.error;
 					podcast.errorMessage = 'No Podcast Feed Data';
 				}
-			} catch (e: any) {
+			} catch (e) {
 				log.info('Refreshing Podcast failed', e);
 				podcast.status = PodcastStatus.error;
 				podcast.errorMessage = (e || '').toString();
@@ -152,9 +152,9 @@ export class PodcastService {
 			podcast.lastCheck = new Date();
 			await orm.Podcast.persistAndFlush(podcast);
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
-		} catch (e: any) {
+		} catch (e) {
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 

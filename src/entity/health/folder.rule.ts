@@ -26,17 +26,17 @@ function isAlbumTopMostFolder(orm: Orm, folder: Folder, parents: Array<Folder>):
 
 async function validateFolderArtwork(orm: Orm, folder: Folder): Promise<RuleResult | undefined> {
 	const artwork = await getFolderDisplayArtwork(orm, folder);
-	if (artwork && (artwork.format === 'invalid')) {
-		return { details: [{ reason: 'Broken or unsupported File Format' }] };
+	if (artwork?.format === 'invalid') {
+		return { details: [{ reason: 'Broken or unsupported file format' }] };
 	}
-	if (artwork && artwork.path) {
+	if (artwork?.path) {
 		let actual = fileSuffix(artwork.name);
 		if (actual === 'jpg') {
 			actual = 'jpeg';
 		}
 		const expected = artwork.format;
 		if (actual !== expected) {
-			return { details: [{ reason: 'Wrong File Extension', actual, expected }] };
+			return { details: [{ reason: 'Wrong file extension', actual, expected }] };
 		}
 	}
 	return;
@@ -203,7 +203,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
 			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const artwork = await getFolderDisplayArtwork(orm, folder);
-				if (artwork && artwork.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
+				if (artwork?.height && artwork?.width && (artwork.height < 300 || artwork.width < 300)) {
 					return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
 				}
 			}

@@ -83,9 +83,9 @@ export class PlaylistService {
 	}
 
 	async update(orm: Orm, args: PlaylistMutateArgs, playlist: Playlist): Promise<void> {
-		playlist.name = (args.name !== undefined) ? args.name : playlist.name;
-		playlist.isPublic = (args.isPublic !== undefined) ? args.isPublic : playlist.isPublic;
-		playlist.comment = (args.comment !== undefined) ? args.comment : playlist.comment;
+		playlist.name = args.name ?? playlist.name;
+		playlist.isPublic = args.isPublic ?? playlist.isPublic;
+		playlist.comment = args.comment ?? playlist.comment;
 		playlist.duration = await this.updateEntries(orm, args.mediaIDs || [], args, playlist);
 		orm.Playlist.persistLater(playlist);
 		await orm.em.flush();

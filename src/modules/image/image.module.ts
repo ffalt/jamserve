@@ -45,9 +45,15 @@ export class ImageModule {
 
 	constructor() {
 		this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
-		this.cache = new IDFolderCache<{ size?: number; format?: string }>(this.imageCachePath, 'thumb', (params: { size?: number; format?: string }) => {
-			return `${params.size !== undefined ? `-${params.size}` : ''}.${params.format || this.format}`;
-		});
+		this.cache = new IDFolderCache<{ size?: number; format?: string }>(
+			this.imageCachePath,
+			'thumb',
+			(params: { size?: number; format?: string }) => {
+				const sizePrefix = params.size !== undefined ? `-${params.size}` : '';
+				const fileFormat = params.format || this.format;
+				return `${sizePrefix}.${fileFormat}`;
+			}
+		);
 	}
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {

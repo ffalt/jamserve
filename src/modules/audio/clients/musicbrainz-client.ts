@@ -25,10 +25,10 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 
 		const walk = (o: any): any => {
 			if (o === null) {
-				return undefined;
+				return;
 			}
 			if (o === undefined) {
-				return undefined;
+				return;
 			}
 			if (Array.isArray(o)) {
 				return o.map(walk).filter((sub: any) => sub !== undefined);
@@ -67,7 +67,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 
 	protected isRateLimitError(body?: { error?: string }): boolean {
 		// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
-		return !!(body?.error && body.error.includes('allowable rate limit'));
+		return !!(body?.error?.includes('allowable rate limit'));
 	}
 
 	async search(params: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {
@@ -106,7 +106,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	}
 
 	async browse(params: MusicbrainzClientApi.ParameterBrowse): Promise<MusicBrainz.Response> {
-		const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || !LookupBrowseTypes[params.type].includes(key));
+		const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type]?.includes(key));
 		if (invalidKey) {
 			return Promise.reject(Error(`Invalid browse lookup key for type ${params.type}: ${invalidKey}`));
 		}

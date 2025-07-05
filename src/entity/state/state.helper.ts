@@ -6,9 +6,9 @@ import { EntityManager, EntityRepository } from '../../modules/orm/index.js';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
 export class StateHelper {
-	private stateRepo: EntityRepository<State>;
+	private readonly stateRepo: EntityRepository<State>;
 
-	constructor(private em: EntityManager) {
+	constructor(private readonly em: EntityManager) {
 		this.stateRepo = this.em.getRepository(State);
 	}
 

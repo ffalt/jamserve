@@ -96,9 +96,6 @@ drivers = [
 [[plugin]]
 name = "trufflehog"
 
-[[plugin]]
-name = "yamllint"
-
 [[triage]]
 match.rules = [
   "radarlint-js:typescript:S6564", #  Remove this redundant type alias

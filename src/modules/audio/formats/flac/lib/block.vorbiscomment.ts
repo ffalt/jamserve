@@ -31,7 +31,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 				pos += commentLen + 4;
 			}
 			this.hasData = true;
-		} catch (e: any) {
+		} catch (e) {
 			this.error = e;
 			this.hasData = false;
 		}

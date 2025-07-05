@@ -76,8 +76,8 @@ export class Flac {
 			});
 			try {
 				reader.pipe(processor);
-			} catch (e: any) {
-				reject(e);
+			} catch (e) {
+				reject(e as Error);
 			}
 		});
 	}
@@ -132,12 +132,12 @@ export class Flac {
 				await fse.remove(filename);
 			}
 			await fse.move(tmpFile, filename);
-		} catch (e: any) {
+		} catch (e) {
 			const exists = await fse.pathExists(tmpFile);
 			if (exists) {
 				await fse.remove(tmpFile);
 			}
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 
@@ -180,7 +180,7 @@ export class Flac {
 			height: mdb.height,
 			bitsPerPixel: mdb.bitsPerPixel,
 			colors: mdb.colors,
-			pictureData: mdb.pictureData as Buffer
+			pictureData: mdb.pictureData ?? Buffer.alloc(0)
 		};
 	}
 }

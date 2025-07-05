@@ -47,7 +47,7 @@ describe('bcrypt functions', () => {
 			const password = 'testPassword123';
 			const invalidHash = 'invalidHash';
 
-			await expect(await bcryptComparePassword(password, invalidHash)).toBe(false);
+			expect(await bcryptComparePassword(password, invalidHash)).toBe(false);
 		});
 	});
 });

@@ -140,7 +140,7 @@ export class FORMAT {
 	}
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
-		if (!data || !data.format || !data.format.tags) {
+		if (!data?.format?.tags) {
 			return { format: TagFormatType.none };
 		}
 		const simple: { [name: string]: string | undefined } = {};
@@ -179,7 +179,7 @@ export class FORMAT {
 
 	static packID3v1JamServeTag(data?: IID3V1.Tag): TrackTag | undefined {
 		if (!data) {
-			return undefined;
+			return;
 		}
 		const simple = data.value;
 		const genre = (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined;
@@ -196,18 +196,8 @@ export class FORMAT {
 
 	static packID3v2JamServeTag(data?: IID3V2.Tag): TrackTag | undefined {
 		if (!data) {
-			return undefined;
+			return;
 		}
-		// const chapters: Array<TrackTagChapter> = data.frames.filter(frame => frame.id === 'CHAP').map(c => {
-		// 	const chapter = <Chapter>c;
-		// 	const chapterTag = simplifyTag({id: data.id, start: 0, end: 0, head: data.head, frames: c.subframes || []});
-		// 	return {
-		// 		id: chapter.id,
-		// 		start: chapter.value.start,
-		// 		end: chapter.value.end,
-		// 		title: chapterTag.TITLE
-		// 	};
-		// });
 		const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
 		const pics = data.frames.filter(f => f.id === 'APIC');
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
@@ -250,8 +240,8 @@ export class FORMAT {
 	}
 
 	static packFlacVorbisCommentJamServeTag(comment?: FlacComment, pictures?: Array<FlacPicture>): TrackTag | undefined {
-		if (!comment || !comment.tag) {
-			return undefined;
+		if (!comment?.tag) {
+			return;
 		}
 		const simple: { [key: string]: string | undefined } = comment.tag;
 		return {

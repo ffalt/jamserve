@@ -132,8 +132,8 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.id3v2Valid,
 		name: 'ID3v2 is invalid',
 		mp3: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
-			if (tagCache.mp3Warnings && tagCache.mp3Warnings.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
+		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.mp3Warnings?.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
 				return {
 					details: tagCache.mp3Warnings.id3v2.map(m => {
 						return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
@@ -147,7 +147,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.id3v2Garbage,
 		name: 'ID3v2 has garbage frames',
 		mp3: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.id3v2) {
 				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.includes(frame.id));
 				if (frames.length > 0) {
@@ -171,7 +171,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.mp3Garbage,
 		name: 'MP3 has unaccounted data',
 		mp3: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.mp3Warnings?.mpeg) {
 				const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
 				if (warnings.length > 0) {
@@ -251,7 +251,7 @@ const trackRules: Array<TrackRuleInfo> = [
 ];
 
 export class TrackRulesChecker {
-	constructor(private audiomodule: AudioModule) {
+	constructor(private readonly audiomodule: AudioModule) {
 	}
 
 	async run(track: Track, checkMedia: boolean): Promise<Array<TrackHealthHint>> {
@@ -279,18 +279,16 @@ export class TrackRulesChecker {
 				log.debug('Check Media with flac', filename);
 				mediaCache.flacWarnings = await flac_test(filename);
 			}
-		} else {
-			if (isMP3(track, tag)) {
-				const id3v2 = new ID3v2();
-				mediaCache.id3v2 = await id3v2.read(filename);
-				if (mediaCache.id3v2) {
-					mediaCache.mp3Warnings = {
-						xing: [],
-						mpeg: [],
-						id3v1: [],
-						id3v2: ID3v2.check(mediaCache.id3v2)
-					};
-				}
+		} else if (isMP3(track, tag)) {
+			const id3v2 = new ID3v2();
+			mediaCache.id3v2 = await id3v2.read(filename);
+			if (mediaCache.id3v2) {
+				mediaCache.mp3Warnings = {
+					xing: [],
+					mpeg: [],
+					id3v1: [],
+					id3v2: ID3v2.check(mediaCache.id3v2)
+				};
 			}
 		}
 		const folder = await track.folder.getOrFail();

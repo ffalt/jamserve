@@ -45,13 +45,13 @@ export class AudioModule {
 	waveformCachePath: string;
 	transcodeCachePath: string;
 	@Inject
-	private configService!: ConfigService;
+	private readonly configService!: ConfigService;
 
 	@Inject
-	private settingsService!: SettingsService;
+	private readonly settingsService!: SettingsService;
 
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	constructor() {
 		this.waveformCachePath = this.configService.getDataPath(['cache', 'waveforms']);
@@ -125,8 +125,8 @@ export class AudioModule {
 			} else {
 				return Promise.reject(Error(`Writing to format ${suffix} is currently not supported`));
 			}
-		} catch (e: any) {
-			return Promise.reject(e);
+		} catch (e) {
+			return Promise.reject(e as Error);
 		}
 	}
 

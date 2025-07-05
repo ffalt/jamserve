@@ -5,7 +5,8 @@ import { Acoustid } from './acoustid-rest-data.js';
 
 const log = logger('Acoustid');
 
-// const ALL_META_DEFAULT = 'recordings recordingids releases releaseids releasegroups releasegroupids tracks compress usermeta sources';
+// ALL_META:
+// recordings recordingids releases releaseids releasegroups releasegroupids tracks compress usermeta sources
 
 const META_DEFAULT = 'recordings releases releasegroups tracks compress usermeta sources';
 

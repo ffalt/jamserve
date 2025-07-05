@@ -124,7 +124,7 @@ export abstract class BaseOpenApiBuilder {
 		if (p.patch) {
 			return p.patch.tags;
 		}
-		return undefined;
+		return;
 	}
 
 	protected abstract buildPaths(schemas: Schemas, openapi: OpenAPIObject): void;

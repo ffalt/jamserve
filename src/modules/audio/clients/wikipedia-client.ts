@@ -112,7 +112,7 @@ export class WikipediaClient extends WebserviceClient {
 			redirects: 1,
 			titles: title
 		});
-		if (!data || !data.query || !data.query.pages) {
+		if (!data?.query?.pages) {
 			return;
 		}
 		const pages = data.query.pages;
@@ -138,9 +138,9 @@ export class WikipediaClient extends WebserviceClient {
 		// &props=sitelinks|info
 		const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${(id)}`;
 		const data = await this.getJson<WikiData.Response, void>(url);
-		if (!data || !data.entities) {
-			return;
+		if (data?.entities) {
+			return data.entities[id];
 		}
-		return data.entities[id];
+		return;
 	}
 }

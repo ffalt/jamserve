@@ -15,7 +15,7 @@ const log = logger('NowPlayingService');
 export class NowPlayingService {
 	private playing: Array<NowPlaying> = [];
 	@Inject
-	private stateService!: StateService;
+	private readonly stateService!: StateService;
 
 	async getNowPlaying(): Promise<Array<NowPlaying>> {
 		return this.playing;

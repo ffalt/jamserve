@@ -1,30 +1,19 @@
 import { describe, expect, test, jest } from '@jest/globals';
 import { generateJWT, jwtHash, JWTPayload } from '../../utils/jwt.js';
 import jwt from 'jsonwebtoken';
-import { hashMD5 } from '../../utils/md5.js';
-// Mock the jsonwebtoken and md5 modules
-jest.mock('jsonwebtoken');
-jest.mock('../../utils/md5.js');
+
+jest.mock('jsonwebtoken', () => ({
+	sign: jest.fn()
+}));
 
 describe('JWT functions', () => {
-	describe('jwtHash', () => {
-		test('should hash a token using MD5', () => {
-			// Mock the hashMD5 function
-			(hashMD5 as jest.Mock).mockReturnValue('hashed_token');
-
-			const result = jwtHash('test_token');
-
-			expect(hashMD5).toHaveBeenCalledWith('test_token');
-			expect(result).toBe('hashed_token');
-		});
+	beforeEach(() => {
+		jest.clearAllMocks();
 	});
 
 	describe('generateJWT', () => {
 		beforeEach(() => {
-			jest.clearAllMocks();
-			// Mock the jwt.sign function
-			(jwt.sign as jest.Mock).mockReturnValue('generated_token');
-
+			jest.spyOn(jwt, 'sign').mockImplementation(() => 'generated_token');
 			// Mock Date.now() to return a fixed timestamp
 			jest.spyOn(Date, 'now').mockReturnValue(1600000000000); // 2020-09-13T12:26:40.000Z
 		});

@@ -35,7 +35,7 @@ export class JamHttpService {
 			};
 			const result = await axios.get(url, opts);
 			return {buffer: result.data, contentType: result.headers['content-type'] || ''};
-		} catch (e: any) {
+		} catch (e) {
 			return handleError(e);
 		}
 	}
@@ -44,7 +44,7 @@ export class JamHttpService {
 		try {
 			const result = await axios.get(url, {params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials});
 			return result.data;
-		} catch (e: any) {
+		} catch (e) {
 			return handleError(e);
 		}
 	}
@@ -57,7 +57,7 @@ export class JamHttpService {
 				{params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials}
 			);
 			return result.data;
-		} catch (e: any) {
+		} catch (e) {
 			return handleError(e);
 		}
 	}
@@ -75,7 +75,7 @@ export class JamHttpService {
 				}
 			);
 			return result.data;
-		} catch (e: any) {
+		} catch (e) {
 			return handleError(e);
 		}
 	}

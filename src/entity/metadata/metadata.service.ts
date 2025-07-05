@@ -34,10 +34,10 @@ export class MetaDataService {
 	similarTracks = new MetadataServiceSimilarTracks(this);
 	topTracks = new MetadataServiceTopTracks(this);
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	private static async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: string): Promise<void> {
-		const item = await orm.MetaData.create({ name, dataType, data });
+		const item = orm.MetaData.create({ name, dataType, data });
 		await orm.MetaData.persistAndFlush(item);
 	}
 
@@ -146,10 +146,15 @@ export class MetaDataService {
 	}
 
 	async musicbrainzLookup(orm: Orm, type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response> {
-		return this.searchInStore<MusicBrainz.Response>(orm, `lookup-${type}${mbid}${inc ? inc : ''}`,
-			MetaDataType.musicbrainz, async () => {
+		const lookupKey = ['lookup-', type, mbid, inc || ''].join('');
+		return this.searchInStore<MusicBrainz.Response>(
+			orm,
+			lookupKey,
+			MetaDataType.musicbrainz,
+			async () => {
 				return this.audioModule.musicbrainz.lookup({ type, id: mbid, inc });
-			});
+			}
+		);
 	}
 
 	async lyricsOVH(orm: Orm, artist: string, song: string): Promise<TrackLyrics> {
@@ -279,7 +284,8 @@ export class MetaDataService {
 		}
 		const response = await fetch(url);
 		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
-		const buffer = await response.buffer();
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
 		return {
 			buffer: { buffer, contentType: response.headers.get('content-type') || 'image' }
 		};

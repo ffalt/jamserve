@@ -59,7 +59,7 @@ class LastFMClientBeautify {
 
 	private static walk(o: any, parent: any): any {
 		if (o === null || o === undefined) {
-			return undefined;
+			return;
 		}
 		if (Array.isArray(o)) {
 			return o.map((sub: any) => LastFMClientBeautify.walk(sub, parent)).filter((sub: any) => sub !== undefined);
@@ -91,7 +91,7 @@ export class LastFMClient extends WebserviceClient {
 		try {
 			return await response.json() as any;
 		} catch (err) {
-			return Promise.reject(err);
+			return Promise.reject(err as Error);
 		}
 	}
 
@@ -112,7 +112,7 @@ export class LastFMClient extends WebserviceClient {
 			return LastFMClientBeautify.beautify(data) as LastFM.Result;
 		} catch (e: any) {
 			log.error(e);
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 

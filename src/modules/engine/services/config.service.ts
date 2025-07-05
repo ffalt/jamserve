@@ -92,7 +92,7 @@ export class ConfigService {
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
 			this.firstStart = fse.readJSONSync(configFirstStartFile);
-		} catch (e: any) {
+		} catch (e) {
 			console.error('Error loading first start config', e);
 			this.firstStart = {
 				adminUser: undefined,

@@ -84,7 +84,7 @@ export class FlacProcessorStream extends Transform {
 
 	private scanSetFlac(chunk: Chunk, pos: number): void {
 		if (this.reportID3) {
-			let rest = chunk.buffer.slice(0, pos);
+			let rest = Buffer.from(chunk.buffer.subarray(0, pos));
 			if (this.buf) {
 				rest = Buffer.concat([this.buf, rest]);
 			}
@@ -98,7 +98,7 @@ export class FlacProcessorStream extends Transform {
 
 	private scan(chunk: Chunk): void {
 		for (let i = chunk.pos; i < chunk.length; i++) {
-			const slice = chunk.buffer.slice(i, i + 4).toString('utf8', 0);
+			const slice = Buffer.from(chunk.buffer.subarray(i, i + 4)).toString('utf8', 0);
 			if (slice === 'fLaC') {
 				this.scanSetFlac(chunk, i);
 				return;
@@ -117,13 +117,13 @@ export class FlacProcessorStream extends Transform {
 			if (this.bufPos > 0 && this.buf) {
 				// Part of this block's data is in backup buffer, copy rest over
 				chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.pos + minCapacity - this.bufPos);
-				slice = this.buf.slice(0, minCapacity);
+				slice = Buffer.from(this.buf.subarray(0, minCapacity));
 			} else {
 				// Entire block fits in current chunk
-				slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity);
+				slice = Buffer.from(chunk.buffer.subarray(chunk.pos, chunk.pos + minCapacity));
 			}
 		} else {
-			slice = chunk.buffer.slice(chunk.pos, chunk.pos + minCapacity - this.bufPos);
+			slice = Buffer.from(chunk.buffer.subarray(chunk.pos, chunk.pos + minCapacity - this.bufPos));
 		}
 		// Push block after validation
 		if (validate(slice, true)) {
@@ -142,7 +142,7 @@ export class FlacProcessorStream extends Transform {
 			chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
 		} else {
 			// Push incomplete block after validation
-			const slice = chunk.buffer.slice(chunk.pos, chunk.length);
+			const slice = Buffer.from(chunk.buffer.subarray(chunk.pos, chunk.length));
 			if (validate(slice, false)) {
 				this.push(slice);
 			}
@@ -237,7 +237,7 @@ export class FlacProcessorStream extends Transform {
 	private validateMarker(slice: Buffer): boolean {
 		this.isFlac = (slice.toString('utf8', 0) === 'fLaC');
 		if (!this.isFlac) {
-			this.hasID3 = slice.slice(0, 3).toString('utf8', 0) === 'ID3';
+			this.hasID3 = Buffer.from(slice.subarray(0, 3)).toString('utf8', 0) === 'ID3';
 			if (!this.hasID3) {
 				this.hasError = true;
 				this.destroy(new Error('Not supported file format'));

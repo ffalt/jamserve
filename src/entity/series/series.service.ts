@@ -24,7 +24,7 @@ export class SeriesService {
 			return this.folderService.getImage(orm, p, size, format);
 		}
 		for (const folder of folders) {
-			const result = this.folderService.getImage(orm, folder, size, format);
+			const result = await this.folderService.getImage(orm, folder, size, format);
 			if (result) {
 				return result;
 			}

@@ -20,7 +20,7 @@ export interface StreamOptions {
 @InRequestScope
 export class StreamService {
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	async streamFile(filename: string, id: string, sourceFormat?: string, opts?: StreamOptions): Promise<ApiBinaryResult> {
 		let stats: fse.Stats | undefined;
@@ -33,7 +33,7 @@ export class StreamService {
 			return Promise.reject(GenericError('File not found'));
 		}
 		let destFormat = opts?.format || AudioFormatType.mp3;
-		if (destFormat[0] === '.') {
+		if (destFormat.startsWith('.')) {
 			destFormat = destFormat.slice(1);
 		}
 		const bitRate = opts?.maxBitRate || 0;

@@ -13,7 +13,6 @@ import { Album } from '../album/album.js';
 import { Artist } from '../artist/artist.js';
 import { User } from '../user/user.js';
 import { Root } from '../root/root.js';
-import { AudioModule } from '../../modules/audio/audio.module.js';
 import { PodcastService } from '../podcast/podcast.service.js';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
@@ -30,37 +29,34 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 @InRequestScope
 export class ImageService {
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly podcastService!: PodcastService;
 
 	@Inject
-	private podcastService!: PodcastService;
+	private readonly trackService!: TrackService;
 
 	@Inject
-	private trackService!: TrackService;
+	private readonly folderService!: FolderService;
 
 	@Inject
-	private folderService!: FolderService;
+	private readonly userService!: UserService;
 
 	@Inject
-	private userService!: UserService;
+	private readonly rootService!: RootService;
 
 	@Inject
-	private rootService!: RootService;
+	private readonly seriesService!: SeriesService;
 
 	@Inject
-	private seriesService!: SeriesService;
+	private readonly artistService!: ArtistService;
 
 	@Inject
-	private artistService!: ArtistService;
+	private readonly albumService!: AlbumService;
 
 	@Inject
-	private albumService!: AlbumService;
-
-	@Inject
-	private artworkService!: ArtworkService;
+	private readonly artworkService!: ArtworkService;
 
 	private static getCoverArtTextFolder(folder: Folder): string {
 		let result: string | undefined;
@@ -92,7 +88,7 @@ export class ImageService {
 
 	private static async getCoverArtTextTrack(track: Track): Promise<string> {
 		const tag = await track.tag.get();
-		return tag && tag.title ? tag.title : path.basename(track.path);
+		return tag?.title ?? path.basename(track.path);
 	}
 
 	private static getCoverArtTextPodcast(podcast: Podcast): string {

@@ -64,10 +64,10 @@ export class Feed {
 
 	static maybeDecompress(res: NodeJS.ReadableStream, encoding: string, done: (err?: Error) => void): NodeJS.ReadableStream {
 		let decompress;
-		if (encoding.match(/\bdeflate\b/)) {
+		if ((/\bdeflate\b/).exec(encoding)) {
 			decompress = zlib.createInflate();
 			decompress.on('error', done);
-		} else if (encoding.match(/\bgzip\b/)) {
+		} else if ((/\bgzip\b/).exec(encoding)) {
 			decompress = zlib.createGunzip();
 			decompress.on('error', done);
 		}
@@ -122,17 +122,13 @@ export class Feed {
 				});
 				feedParser.on('error', done);
 				feedParser.on('end', done);
-				// const charset = Feed.getParams(res.headers.get('content-type') || '').charset;
-				// const encoding = res.headers.get('content-encoding') || 'identity';
-				// let pipestream = Feed.maybeDecompress(res.body, encoding, done);
-				// const pipestream = Feed.maybeTranslate(res.body, charset, done);
 				if (!res.body) {
 					return done(Error('Bad feed stream'));
 				}
 				res.body.pipe(feedParser);
 			});
 		} else {
-			throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`);
+			throw new Error(`Bad status code ${res.status} ${res.statusText ?? ''}`.trimEnd());
 		}
 	}
 
@@ -148,7 +144,7 @@ export class Feed {
 			image: data.feed.image && data.feed.image.url ? data.feed.image.url : undefined,
 			categories: data.feed.categories
 		};
-		if (data.feed['itunes:summary'] && data.feed['itunes:summary']['#']) {
+		if (data.feed?.['itunes:summary']?.['#']) {
 			tag.description = data.feed['itunes:summary']['#'];
 		}
 		const episodes: Array<EpisodeData> = data.posts.map(post => {
@@ -156,7 +152,7 @@ export class Feed {
 
 			const anypost = post as any;
 			let duration: number | undefined;
-			if (anypost['itunes:duration'] && anypost['itunes:duration']['#']) {
+			if (anypost?.['itunes:duration']?.['#']) {
 				duration = Feed.parseItunesDurationSeconds(anypost['itunes:duration']['#']);
 			}
 			const pscChaps: any = anypost['psc:chapters'];
@@ -177,7 +173,7 @@ export class Feed {
 				enclosures: (post.enclosures || []).map(e => {
 					return { ...e, length: e.length ? Number(e.length) : undefined };
 				}),
-				date: post.date ? post.date : undefined,
+				date: post.date ?? undefined,
 				name: post.title,
 				duration,
 				chapters

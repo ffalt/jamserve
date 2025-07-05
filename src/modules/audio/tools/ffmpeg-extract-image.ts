@@ -9,8 +9,8 @@ export async function extractFFmpegImage(filename: string, index: number, stream
 			.on('end', () => {
 				resolve();
 			})
-			.on('error', err => {
-				reject(err as Error);
+			.on('error', (err: Error) => {
+				reject(err);
 			});
 		proc.writeToStream(stream, { end: true });
 	});

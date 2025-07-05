@@ -14,11 +14,11 @@ export async function downloadFile(url: string, filename: string): Promise<void>
 		}
 		response.body.pipe(dest);
 		dest.on('close', () => resolve());
-		dest.on('error', e => {
+		dest.on('error', (e: Error) => {
 			fileDeleteIfExists(filename).then(() => {
-				reject(e as Error);
+				reject(e);
 			}).catch(_ => {
-				reject(e as Error);
+				reject(e);
 			});
 		});
 	});

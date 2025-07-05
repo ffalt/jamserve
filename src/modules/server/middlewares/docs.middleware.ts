@@ -54,7 +54,7 @@ export class DocsMiddleware {
 			const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
 const explorer = document.getElementsByTagName('openapi-explorer')[0];  
 setTimeout(() => {
-	explorer.setAuthenticationConfiguration('UserAuth', {token: '${req.user?.name || ''}'});
+	explorer.setAuthenticationConfiguration('UserAuth', {token: '${req.user?.name ?? ''}'});
 	// explorer.setAuthenticationConfiguration('PasswordAuth', {token: 'dev'}); 
 	explorer.setAuthenticationConfiguration('VersionAuth', {token: '1.16.0'});
 	explorer.setAuthenticationConfiguration('ClientAuth', {token: 'Api Docs Test Client'});

@@ -28,7 +28,7 @@ export class MetaStatBuilder {
 
 	private static getMostUsedTagValue<T>(list: Array<MetaStatValue<T>>, multi?: T): T | undefined {
 		if (list.length === 0) {
-			return undefined;
+			return;
 		}
 		if (list.length === 1) {
 			return list[0].val;

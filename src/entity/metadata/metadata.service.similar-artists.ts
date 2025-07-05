@@ -15,7 +15,7 @@ export class MetadataServiceSimilarArtists {
 
 	private async getLastFMSimilarArtists(orm: Orm, mbArtistID: string): Promise<Array<SimilarArtist>> {
 		const lastfm = await this.service.lastFMLookup(orm, LastFMLookupType.artist, mbArtistID);
-		if (lastfm && lastfm.artist && lastfm.artist.similar && lastfm.artist.similar.artist) {
+		if (lastfm?.artist?.similar?.artist) {
 			return lastfm.artist.similar.artist;
 		}
 		return [];
@@ -47,7 +47,7 @@ export class MetadataServiceSimilarArtists {
 			similar = await this.getLastFMSimilarArtists(orm, mbArtistID);
 		} else if (artist) {
 			const a = await this.service.lastFMArtistSearch(orm, artist);
-			if (a && a.artist) {
+			if (a?.artist) {
 				similar = await this.getLastFMSimilarArtists(orm, a.artist.mbid);
 			}
 		}

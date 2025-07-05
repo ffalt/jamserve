@@ -84,13 +84,13 @@ export class EpisodeService {
 				episode.fileSize = stat.size;
 				episode.duration = result.mediaDuration;
 				episode.path = filename;
-			} catch (e: any) {
+			} catch (e) {
 				episode.status = PodcastStatus.error;
 				episode.error = (e || '').toString();
 			}
 			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-		} catch (e: any) {
+		} catch (e) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 			return Promise.reject(e);
 		}

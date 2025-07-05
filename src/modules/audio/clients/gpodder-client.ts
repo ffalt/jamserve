@@ -34,7 +34,7 @@ export class GpodderClient extends WebserviceClient {
 		const url = `https://gpodder.net/clientconfig.json`;
 		log.info('requesting', url);
 		const data = await this.getJson<GpodderClientConfig, void>(url);
-		const isValid = data && data.mygpo?.baseurl && data['mygpo-feedservice'].baseurl && (!isNaN(data.update_timeout));
+		const isValid = data?.mygpo?.baseurl && data?.['mygpo-feedservice']?.baseurl && !isNaN(data?.update_timeout);
 		if (!isValid) {
 			throw new Error('Gpodder API has changed & can not be used with this server version');
 		}
@@ -75,9 +75,9 @@ export class GpodderClient extends WebserviceClient {
 	}
 
 	private static ensureHTTPS(url: string): string {
-		if (url && url.toLowerCase().startsWith('http:')) {
+		if (url?.toLowerCase().startsWith('http:')) {
 			return 'https:' + url.slice(5);
-		} else if (url && url.toLowerCase().startsWith('https:')) {
+		} else if (url?.toLowerCase().startsWith('https:')) {
 			return url;
 		} else {
 			return '';

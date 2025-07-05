@@ -21,7 +21,7 @@ export class AudioModuleFLAC {
 				...FORMAT.packFlacMediaInfoJamServeMedia(result.media),
 				...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
 			};
-		} catch (e: any) {
+		} catch (e) {
 			console.error(e);
 			return { format: TagFormatType.none };
 		}

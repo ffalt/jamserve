@@ -20,10 +20,10 @@ import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/form
 @InRequestScope
 export class UserService {
 	@Inject
-	private configService!: ConfigService;
+	private readonly configService!: ConfigService;
 
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	private readonly userAvatarPath: string;
 
@@ -44,7 +44,7 @@ export class UserService {
 	}
 
 	async auth(orm: Orm, name: string, pass: string): Promise<User> {
-		if ((!pass) || (!pass.length)) {
+		if (!pass?.length) {
 			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
 		}
 		const user = await this.findByName(orm, name);
@@ -113,7 +113,7 @@ export class UserService {
 	}
 
 	async validatePassword(password: string): Promise<void> {
-		if ((!password) || (!password.trim().length)) {
+		if (!password?.trim().length) {
 			return Promise.reject(InvalidParamError('Invalid Password'));
 		}
 		if (password.length < 4) {
@@ -131,7 +131,7 @@ export class UserService {
 	}
 
 	async setUserEmail(orm: Orm, user: User, email: string): Promise<void> {
-		if ((!email) || (!email.trim().length)) {
+		if (!email?.trim().length) {
 			return Promise.reject(InvalidParamError('email', 'Invalid Email'));
 		}
 		user.email = email;
@@ -139,14 +139,6 @@ export class UserService {
 	}
 
 	async remove(orm: Orm, user: User): Promise<void> {
-		/*
-			await this.stateStore.removeByQuery({userID: user.id});
-		await this.playlistStore.removeByQuery({userID: user.id});
-		await this.bookmarkStore.removeByQuery({userID: user.id});
-		await this.playQueueStore.removeByQuery({userID: user.id});
-		await this.sessionStore.removeByQuery({userID: user.id});
-		await this.userStore.remove(user.id);
-		 */
 		await orm.User.removeAndFlush(user);
 		await this.imageModule.clearImageCacheByIDs([user.id]);
 		await fileDeleteIfExists(this.avatarImageFilename(user));
@@ -162,7 +154,7 @@ export class UserService {
 	}
 
 	public async create(orm: Orm, args: UserMutateArgs): Promise<User> {
-		if (!args.name || args.name.trim().length === 0) {
+		if (!args?.name.trim().length) {
 			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({ where: { name: args.name } });
@@ -175,7 +167,7 @@ export class UserService {
 	}
 
 	public async update(orm: Orm, user: User, args: UserMutateArgs): Promise<User> {
-		if (!args.name || args.name.trim().length === 0) {
+		if (!args?.name.trim().length) {
 			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({ where: { name: args.name } });

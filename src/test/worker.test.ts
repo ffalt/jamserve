@@ -666,7 +666,9 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					});
 					// restore the folder and rescan
 					const mockFolder = mockRoot.folders.find(f => f.name === 'artist 1');
-					await writeMockFolder(mockFolder!);
+					if (mockFolder) {
+						await writeMockFolder(mockFolder);
+					}
 					const restorechanges = await workerService.root.refresh({ rootID: mockRoot.id });
 					expectChanges(restorechanges, {
 						tracksNew: trackCount,
@@ -727,7 +729,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 						tracksUpdate: trackCount
 					});
 					// move it back
-					changes = await workerService.folder.move({ rootID: mockRoot.id, newParentID: oldParentID as string, folderIDs: [albumFolder.id] });
+					changes = await workerService.folder.move({ rootID: mockRoot.id, newParentID: oldParentID, folderIDs: [albumFolder.id] });
 					expectChanges(changes, {
 						foldersUpdate: 5,
 						albumsUpdate: 1,

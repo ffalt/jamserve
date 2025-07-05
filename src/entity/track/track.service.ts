@@ -20,13 +20,13 @@ const log = logger('TrackService');
 export class TrackService {
 	readonly checker: TrackRulesChecker;
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	@Inject
-	private folderService!: FolderService;
+	private readonly folderService!: FolderService;
 
 	constructor() {
 		this.checker = new TrackRulesChecker(this.audioModule);

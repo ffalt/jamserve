@@ -17,7 +17,7 @@ export interface Song {
 }
 
 export class MetadataServiceSimilarTracks {
-	constructor(private service: MetaDataService) {
+	constructor(private readonly service: MetaDataService) {
 	}
 
 	async findSongTrackIDs(orm: Orm, songs: Array<Song>): Promise<Array<string>> {
@@ -34,7 +34,7 @@ export class MetadataServiceSimilarTracks {
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
 		const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
 		for (const sim of ids) {
-			const t = await list.find(async tr => (await tr.tag.get())?.mbTrackID === sim.mbid);
+			const t = list.find(async tr => (await tr.tag.get())?.mbTrackID === sim.mbid);
 			if (!t) {
 				vals.push(sim);
 			} else {

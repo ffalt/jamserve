@@ -13,9 +13,9 @@ export interface SessionNotifyEventObject {
 @InRequestScope
 export class SessionService {
 	@Inject
-	private ormService!: OrmService;
+	private readonly ormService!: OrmService;
 
-	private events: Array<SessionNotifyEventObject> = [];
+	private readonly events: Array<SessionNotifyEventObject> = [];
 	private jwthCache: Array<string> = [];
 
 	expired(data: Session): boolean {
@@ -29,7 +29,7 @@ export class SessionService {
 	async set(sid: string, data: SessionData): Promise<void> {
 		const orm = this.ormService.fork();
 		let session = await this.getSession(sid);
-		if (!data.passport || !data.passport.user) {
+		if (!data.passport?.user) {
 			if (session) {
 				await orm.Session.removeAndFlush(session);
 			}
@@ -48,7 +48,7 @@ export class SessionService {
 		}
 		session.expires = typeof data.cookie.expires === 'boolean' ?
 			(data.cookie.expires ? new Date() : undefined) :
-			(data.cookie.expires === null ? undefined : data.cookie.expires);
+			(data.cookie.expires ?? undefined);
 		await orm.Session.persistAndFlush(session);
 	}
 

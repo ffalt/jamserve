@@ -12,11 +12,11 @@ export function getTypeDecoratorParams<T extends object>(
 	if (typeof returnTypeFuncOrOptions === 'function') {
 		return {
 			returnTypeFunc: returnTypeFuncOrOptions,
-			options: maybeOptions || {}
+			options: maybeOptions ?? {}
 		};
 	} else {
 		return {
-			options: returnTypeFuncOrOptions || {}
+			options: returnTypeFuncOrOptions ?? {}
 		};
 	}
 }
@@ -28,11 +28,11 @@ export function getNameDecoratorParams<T extends DescriptionOptions>(
 	if (typeof nameOrOptions === 'string') {
 		return {
 			name: nameOrOptions,
-			options: maybeOptions || ({} as T)
+			options: maybeOptions ?? ({} as T)
 		};
 	} else {
 		return {
-			options: nameOrOptions || ({} as T)
+			options: nameOrOptions ?? ({} as T)
 		};
 	}
 }

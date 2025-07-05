@@ -30,17 +30,17 @@ export class LyricsOVHClient extends WebserviceClient {
 		const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
 		log.info('requesting', url);
 		const data = await this.getJson<LyricsOVHResult | undefined, undefined>(url, undefined, true);
-		if (!data || !data.lyrics) {
-			return;
+		if (data?.lyrics) {
+			return { lyrics: data.lyrics, source: url };
 		}
-		return { lyrics: data.lyrics, source: url };
+		return;
 	}
 
 	private static cleanString(s: string): string {
 		return encodeURIComponent(s
 			.replace(/[’´`]/g, '\'')
 			.replace(/[():]/g, ' ')
-			.replace(/[‐]/g, '-')
+			.replace(/‐/g, '-')
 			.normalize()
 			.trim()
 		);
