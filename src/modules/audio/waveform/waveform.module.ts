@@ -17,12 +17,20 @@ export interface WaveformResult {
 }
 
 export class WaveformModule {
-	private waveformCache: IDFolderCache<{ width?: number; format: string }>;
+	private readonly waveformCache: IDFolderCache<{ width?: number; format: string }>;
 
 	constructor(waveformCachePath: string) {
-		this.waveformCache = new IDFolderCache<{ width?: number; format: string }>(waveformCachePath, 'waveform', (params: { width?: number; format: string }) => {
-			return `${params.width !== undefined ? `-${params.width}` : ''}.${params.format}`;
-		});
+		this.waveformCache = new IDFolderCache<{ width?: number; format: string }>(
+			waveformCachePath,
+			'waveform',
+			(params: { width?: number; format: string }) => {
+				let suffix = '';
+				if (params.width !== undefined) {
+					suffix = `-${params.width}`;
+				}
+				return `${suffix}.${params.format}`;
+			}
+		);
 	}
 
 	private static async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {

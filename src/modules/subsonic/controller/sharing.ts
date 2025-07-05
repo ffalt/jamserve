@@ -6,7 +6,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicOKResponse, SubsonicResponseShares } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
 export class SubsonicSharingApi {
@@ -40,7 +40,7 @@ export class SubsonicSharingApi {
 		 description 	No 		A user-defined description that will be displayed to people visiting the shared media.
 		 expires 	No 		The time at which the share expires. Given as milliseconds since 1970.
 		 */
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
 	}
 
 	/**
@@ -59,7 +59,7 @@ export class SubsonicSharingApi {
 		 description 	No 		A user-defined description that will be displayed to people visiting the shared media.
 		 expires 	No 		The time at which the share expires. Given as milliseconds since 1970, or zero to remove the expiration.
 		 */
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
 	}
 
 	/**
@@ -76,6 +76,6 @@ export class SubsonicSharingApi {
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the share to delete.
 		*/
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
 	}
 }

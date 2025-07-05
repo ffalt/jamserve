@@ -16,19 +16,6 @@ export abstract class TranscoderStream implements StreamData {
 		return SupportedTranscodeAudioFormat.includes(format);
 	}
 
-	static async getAvailableFormats(): Promise<Array<{ format: string; name: string }>> {
-		return new Promise<Array<{ format: string; name: string }>>((resolve, reject) => {
-			ffmpeg().getAvailableFormats((err, formats) => {
-				if (err || !formats) {
-					return reject(err);
-				}
-				resolve(Object.keys(formats).filter(key => formats[key].canDemux).map(key => {
-					return { format: key, name: formats[key].description };
-				}));
-			});
-		});
-	}
-
 	static getTranscodeProc(source: string, format: string, maxBitRate: number): ffmpeg.FfmpegCommand {
 		const proc = ffmpeg({ source })
 			.withNoVideo();

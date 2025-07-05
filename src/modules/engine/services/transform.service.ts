@@ -62,24 +62,24 @@ import { UserTransformService } from '../../../entity/user/user.transform.js';
 
 @InRequestScope
 export class TransformService {
-	@Inject Base!: BaseTransformService;
-	@Inject Chat!: ChatTransformService;
-	@Inject Genre!: GenreTransformService;
-	@Inject Radio!: RadioTransformService;
-	@Inject Root!: RootTransformService;
-	@Inject Podcast!: PodcastTransformService;
-	@Inject Episode!: EpisodeTransformService;
-	@Inject Folder!: FolderTransformService;
-	@Inject Track!: TrackTransformService;
-	@Inject Series!: SeriesTransformService;
-	@Inject Artist!: ArtistTransformService;
-	@Inject Album!: AlbumTransformService;
-	@Inject Artwork!: ArtworkTransformService;
-	@Inject Playlist!: PlaylistTransformService;
-	@Inject Bookmark!: BookmarkTransformService;
-	@Inject PlayQueue!: PlayQueueTransformService;
-	@Inject Session!: SessionTransformService;
-	@Inject User!: UserTransformService;
+	@Inject readonly Base!: BaseTransformService;
+	@Inject readonly Chat!: ChatTransformService;
+	@Inject readonly Genre!: GenreTransformService;
+	@Inject readonly Radio!: RadioTransformService;
+	@Inject readonly Root!: RootTransformService;
+	@Inject readonly Podcast!: PodcastTransformService;
+	@Inject readonly Episode!: EpisodeTransformService;
+	@Inject readonly Folder!: FolderTransformService;
+	@Inject readonly Track!: TrackTransformService;
+	@Inject readonly Series!: SeriesTransformService;
+	@Inject readonly Artist!: ArtistTransformService;
+	@Inject readonly Album!: AlbumTransformService;
+	@Inject readonly Artwork!: ArtworkTransformService;
+	@Inject readonly Playlist!: PlaylistTransformService;
+	@Inject readonly Bookmark!: BookmarkTransformService;
+	@Inject readonly PlayQueue!: PlayQueueTransformService;
+	@Inject readonly Session!: SessionTransformService;
+	@Inject readonly User!: UserTransformService;
 
 	async album(orm: Orm, o: ORMAlbum, albumArgs: IncludesAlbumArgs, albumChildrenArgs: IncludesAlbumChildrenArgs, trackArgs: IncludesTrackArgs, artistIncludes: IncludesArtistArgs, user: User): Promise<Album> {
 		return {

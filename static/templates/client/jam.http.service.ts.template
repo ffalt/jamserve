@@ -38,7 +38,7 @@ export class JamHttpService {
 				})
 					.subscribe(res => {
 						if (!res || !res.body) {
-							return reject(new Error('Invalid Binary Server Response'));
+							return reject(Error('Invalid Binary Server Response'));
 						}
 						resolve({buffer: res.body as ArrayBuffer, contentType: res.headers.get('content-type') || 'invalid'});
 					});

@@ -5,13 +5,12 @@ import { Model, Transaction, FindOptions } from 'sequelize';
 import { OrderByOptions } from '../definitions/types.js';
 
 export class Collection<T extends IDEntity<T>> {
-	private initialized = false;
 	private field!: PropertyMetadata;
 	private list?: Array<T>;
 	private itemCount?: number;
 	public changeSet?: { add?: Array<T>; set?: Array<T>; remove?: Array<T> };
 
-	constructor(private owner: AnyEntity) {
+	constructor(private readonly owner: AnyEntity) {
 	}
 
 	manage(field: PropertyMetadata): void {
@@ -42,7 +41,6 @@ export class Collection<T extends IDEntity<T>> {
 	clear(): void {
 		this.list = undefined;
 		this.itemCount = undefined;
-		this.initialized = false;
 		this.changeSet = undefined;
 	}
 
@@ -57,7 +55,6 @@ export class Collection<T extends IDEntity<T>> {
 		const entity = this.owner as ManagedEntity;
 		const func = this.sourceFunc('get');
 		options = options || this.getOrderOptions();
-		// TODO: get from entity cache
 		const sources: Array<Model<T>> = await func(options);
 		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name || '', source as any));
 		if (this.changeSet) {
@@ -73,7 +70,6 @@ export class Collection<T extends IDEntity<T>> {
 			}
 		}
 		this.list = list;
-		this.initialized = true;
 		return this.list;
 	}
 

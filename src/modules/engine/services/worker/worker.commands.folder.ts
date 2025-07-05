@@ -3,7 +3,7 @@ import { WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMov
 import { Changes } from '../../worker/changes.js';
 
 export class WorkerCommandsFolder {
-	constructor(private owner: WorkerService) {
+	constructor(private readonly owner: WorkerService) {
 	}
 
 	async remove(parameters: WorkerRequestRemoveFolders): Promise<Changes> {

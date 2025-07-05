@@ -41,20 +41,15 @@ export function mapManagedToSource(instance: ManagedEntity): void {
 	}
 }
 
-// export async function saveManagedEntity(instance: ManagedEntity): Promise<void> {
-// 	mapManagedToSource(instance);
-// 	await instance._source.save();
-// }
-
 export function cleanManagedEntityRelations(instance: ManagedEntity): void {
 	for (const field of instance._meta.fields) {
 		if (field.isRelation) {
 			const refOrCollection = instance[field.name];
 			if (refOrCollection instanceof Reference) {
-				const ref = refOrCollection as Reference<any>;
+				const ref: Reference<any> = refOrCollection;
 				ref.clear();
 			} else if (refOrCollection instanceof Collection) {
-				const collection = refOrCollection as Collection<any>;
+				const collection: Collection<any> = refOrCollection;
 				collection.clear();
 			}
 		}
@@ -65,12 +60,8 @@ export async function saveManagedEntityRelations(instance: ManagedEntity, transa
 	for (const field of instance._meta.fields) {
 		if (field.isRelation) {
 			const refOrCollection = instance[field.name];
-			// if (refOrCollection instanceof Reference) {
-			// const ref = refOrCollection as Reference<any>;
-			// await ref.flush();
-			// } else
 			if (refOrCollection instanceof Collection) {
-				const collection = refOrCollection as Collection<any>;
+				const collection: Collection<any> = refOrCollection;
 				await collection.flush(transaction);
 			}
 		}
@@ -86,10 +77,10 @@ export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata
 		if (field.isRelation) {
 			const refOrCollection = entity[field.name];
 			if (refOrCollection instanceof Reference) {
-				const ref = refOrCollection as Reference<any>;
+				const ref: Reference<any> = refOrCollection;
 				ref.manage(field);
 			} else if (refOrCollection instanceof Collection) {
-				const collection = refOrCollection as Collection<any>;
+				const collection: Collection<any> = refOrCollection;
 				collection.manage(field);
 			}
 		} else {

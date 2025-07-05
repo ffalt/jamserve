@@ -11,30 +11,31 @@ import { IoCommandsRoot } from './io/io.commands.root.js';
 import { IoCommandsTrack } from './io/io.commands.track.js';
 
 const log = logger('IO');
+
 /*
 	The IO Service queues the requests coming from REST & Services, the actual work is done through WorkerService
  */
 @InRequestScope
 export class IoService {
 	@Inject
-	public orm!: OrmService;
+	public readonly orm!: OrmService;
 
 	@Inject
-	public workerService!: WorkerService;
+	public readonly workerService!: WorkerService;
 
+	public readonly artwork = new IoCommandsArtwork(this);
+	public readonly folder = new IoCommandsFolder(this);
+	public readonly root = new IoCommandsRoot(this);
+	public readonly track = new IoCommandsTrack(this);
 	public scanning = false;
-	private afterRefreshListeners: Array<() => Promise<void>> = [];
-	private rootStatus = new Map<string, RootStatus>();
+
+	private readonly rootStatus = new Map<string, RootStatus>();
+	private readonly queue: Array<IoRequest<WorkerRequestParameters>> = [];
+	private readonly history: Array<{ id: string; error?: string; date: number }> = [];
 	private current: IoRequest<WorkerRequestParameters> | undefined;
-	private queue: Array<IoRequest<WorkerRequestParameters>> = [];
+	private afterRefreshListeners: Array<() => Promise<void>> = [];
 	private nextID: number = Date.now();
 	private afterScanTimeout: ReturnType<typeof setTimeout> | undefined;
-	private history: Array<{ id: string; error?: string; date: number }> = [];
-
-	public artwork = new IoCommandsArtwork(this);
-	public folder = new IoCommandsFolder(this);
-	public root = new IoCommandsRoot(this);
-	public track = new IoCommandsTrack(this);
 
 	private async runRequest(cmd: IoRequest<WorkerRequestParameters>): Promise<void> {
 		this.clearAfterRefresh();

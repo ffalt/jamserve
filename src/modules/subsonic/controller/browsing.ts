@@ -31,7 +31,7 @@ import {
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 import { LastFM } from '../../audio/clients/lastfm-rest-data.js';
 
@@ -105,7 +105,7 @@ export class SubsonicBrowsingApi {
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		 */
 		const limitCount = query.count || 20;
-		const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+		const includeNotPresent = query.includeNotPresent ?? false;
 
 		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtist>> => {
 			const similar = info.similar?.artist || [];
@@ -170,7 +170,7 @@ export class SubsonicBrowsingApi {
 		count 	No 	20 	Max number of similar artists to return.
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		*/
-		const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+		const includeNotPresent = query.includeNotPresent ?? false;
 		const limitCount = query.count || 20;
 
 		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtistID3>> => {
@@ -204,14 +204,14 @@ export class SubsonicBrowsingApi {
 		if (artist) {
 			if (artist.mbArtistID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
-				if (lastfm && lastfm.artist) {
+				if (lastfm?.artist) {
 					return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 				}
 			} else if (artist.name) {
 				const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
-				if (al && al.artist) {
+				if (al?.artist) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-					if (lastfm && lastfm.artist) {
+					if (lastfm?.artist) {
 						return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
 					}
 				}
@@ -238,14 +238,14 @@ export class SubsonicBrowsingApi {
 		if (folder) {
 			if (folder.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
-				if (lastfm && lastfm.album) {
+				if (lastfm?.album) {
 					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
 				}
 			} else if (folder.album && folder.artist) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
-				if (al && al.album) {
+				if (al?.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-					if (lastfm && lastfm.album) {
+					if (lastfm?.album) {
 						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
 					}
 				}
@@ -272,14 +272,14 @@ export class SubsonicBrowsingApi {
 		if (album) {
 			if (album.mbReleaseID) {
 				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
-				if (lastfm && lastfm.album) {
+				if (lastfm?.album) {
 					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
 				}
 			} else if (album.name && album.artist.id()) {
 				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, (await album.artist.getOrFail()).name);
-				if (al && al.album) {
+				if (al?.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-					if (lastfm && lastfm.album) {
+					if (lastfm?.album) {
 						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
 					}
 				}
@@ -309,8 +309,7 @@ export class SubsonicBrowsingApi {
 		}, user, engine.settings.settings.index.ignoreArticles);
 		const folderIndex = await engine.transform.Folder.folderIndex(orm, folderIndexORM);
 		if (query.ifModifiedSince && query.ifModifiedSince > 0 && (folderIndex.lastModified <= query.ifModifiedSince)) {
-			const empty: any = {};
-			return empty;
+			return {};
 		}
 		let ids: Array<string> = [];
 		folderIndex.groups.forEach(group => {
@@ -449,7 +448,7 @@ export class SubsonicBrowsingApi {
 		 */
 		const result = await orm.findInRepos(query.id, [orm.Track, orm.Folder, orm.Artist, orm.Album]);
 		if (!result?.obj) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		let tracks: PageResult<Track> | undefined;
 		const page = { take: query.count || 50, skip: 0 };
@@ -491,7 +490,7 @@ export class SubsonicBrowsingApi {
 		const page = { take: query.count || 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
 		const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
-		return { similarSongs2: SubsonicFormatter.packSimilarSongs2(childs) };
+		return { similarSongs2: SubsonicFormatter.packSimilarSongs(childs) };
 	}
 
 	/**

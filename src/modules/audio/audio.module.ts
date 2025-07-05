@@ -123,7 +123,7 @@ export class AudioModule {
 			} else if (suffix === AudioFormatType.flac) {
 				await this.flac.write(filename, tag);
 			} else {
-				return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
+				return Promise.reject(Error(`Writing to format ${suffix} is currently not supported`));
 			}
 		} catch (e: any) {
 			return Promise.reject(e);

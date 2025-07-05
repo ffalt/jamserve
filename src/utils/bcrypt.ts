@@ -5,7 +5,7 @@ export async function bcryptPassword(password: string): Promise<string> {
 		const saltRounds = 10;
 		bcrypt.hash(password, saltRounds, (err, hashAndSalt) => {
 			if (err) {
-				reject(err);
+				reject(err as Error);
 			} else {
 				// bcrypt stores salt & version concatenated to the hash
 				resolve(hashAndSalt);
@@ -18,7 +18,7 @@ export async function bcryptComparePassword(password: string, hashAndSalt: strin
 	return new Promise<boolean>((resolve, reject) => {
 		bcrypt.compare(password, hashAndSalt, (err, res) => {
 			if (err) {
-				reject(err);
+				reject(err as Error);
 			} else {
 				resolve(res);
 			}

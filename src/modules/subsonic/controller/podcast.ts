@@ -9,7 +9,7 @@ import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicNewestPodcasts, SubsonicOKResponse, SubsonicPodcastChannel, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 
 const log = logger('SubsonicApi');
@@ -94,7 +94,7 @@ export class SubsonicPodcastApi {
 		 url 	Yes 		The URL of the Podcast to add.
 		 */
 		if (!user.rolePodcast) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		await engine.podcast.create(orm, query.url);
 		return {};
@@ -115,7 +115,7 @@ export class SubsonicPodcastApi {
 		 id 	Yes 		The ID of the Podcast channel to delete.
 		 */
 		if (!user.rolePodcast) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
 		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
@@ -133,7 +133,7 @@ export class SubsonicPodcastApi {
 	})
 	async refreshPodcasts(@SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		if (!user.rolePodcast) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
 		return {};
@@ -154,7 +154,7 @@ export class SubsonicPodcastApi {
 		 id 	Yes 		The ID of the Podcast episode to download.
 		 */
 		if (!user.rolePodcast) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		if (!episode.path) {
@@ -178,7 +178,7 @@ export class SubsonicPodcastApi {
 		 id 	Yes 		The ID of the Podcast episode to delete.
 		 */
 		if (!user.rolePodcast) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		await engine.episode.deleteEpisode(orm, episode);

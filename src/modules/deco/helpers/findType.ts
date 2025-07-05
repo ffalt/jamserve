@@ -22,9 +22,9 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 	let metadataDesignType: Function | undefined;
 	const reflectedType: Function[] | Function | undefined = Reflect.getMetadata(metadataKey, prototype, propertyKey);
 	if (metadataKey === 'design:paramtypes') {
-		metadataDesignType = (reflectedType as Function[])[parameterIndex!];
+		metadataDesignType = (reflectedType as Function[])[parameterIndex ?? -1];
 	} else {
-		metadataDesignType = reflectedType as Function | undefined;
+		metadataDesignType = reflectedType as Function;
 	}
 
 	if (
@@ -51,7 +51,7 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 		};
 	} else if (metadataDesignType) {
 		return {
-			getType: () => metadataDesignType!,
+			getType: () => metadataDesignType,
 			typeOptions: options
 		};
 	} else {

@@ -30,11 +30,15 @@ export function getAlbumSlug(trackInfo: MetaMergeTrackInfo): string {
 }
 
 export class MetaMergerCache {
-	private artistCache: Array<{ artist: Artist; slugs: Array<string> }> = [];
-	private seriesCache: Array<{ artist: Artist; series: Series }> = [];
-	private albumCache: Array<{ artist: Artist; album: Album; series?: string }> = [];
+	private readonly artistCache: Array<{ artist: Artist; slugs: Array<string> }> = [];
+	private readonly seriesCache: Array<{ artist: Artist; series: Series }> = [];
+	private readonly albumCache: Array<{ artist: Artist; album: Album; series?: string }> = [];
 
-	constructor(private orm: Orm, private changes: Changes, private root: Root) {
+	constructor(
+		private readonly orm: Orm,
+		private readonly changes: Changes,
+		private readonly root: Root
+	) {
 	}
 
 	// series
@@ -195,10 +199,6 @@ export class MetaMergerCache {
 				// disabled merging with id AND slug. if aa.mbArtistID is wrong, it's causing wrongly combined artists
 				// in all following new tracks of those artists all over the place, which is worse than duplicated artist entries
 				// not sure how to handle invalid data better in this stage
-
-				// if (!artist.slugs.includes(slug)) {
-				// 	artist.slugs.push(slug);
-				// }
 				return artist.artist;
 			}
 		}

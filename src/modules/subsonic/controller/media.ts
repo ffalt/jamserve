@@ -21,7 +21,7 @@ import { SubsonicResponseLyrics, SubsonicResponseLyricsList, SubsonicStructuredL
 import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { StreamOptions } from '../../../entity/stream/stream.service.js';
 import path from 'path';
 
@@ -52,7 +52,7 @@ export class SubsonicMediaRetrievalApi {
 		 */
 		const o = await orm.findInStreamTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		const opts: StreamOptions = {
 			maxBitRate: query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined,
@@ -72,7 +72,7 @@ export class SubsonicMediaRetrievalApi {
 			}
 			default:
 		}
-		return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 	}
 
 	/**
@@ -91,11 +91,11 @@ export class SubsonicMediaRetrievalApi {
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
 		 */
 		if (!query.id) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		const o = await orm.findInDownloadTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		return engine.download.getObjDownload(o.obj, o.objType, undefined, user);
 	}
@@ -113,25 +113,44 @@ export class SubsonicMediaRetrievalApi {
 		const track = await orm.Track.findOneOrFailByID(query.id);
 		const tag = await track.tag.get();
 		const structuredLyrics: Array<SubsonicStructuredLyrics> = [];
+		let hasSynced = false;
+		let hasUnssynced = false;
 
-		// TODO: store synchronizd lyrics or at least a boolean if this file loading is necessary
-		const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
-		if (slyrics) {
-			const l: SubsonicStructuredLyrics = { lang: slyrics.language || 'und', synced: true };
-			l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
-			structuredLyrics.push(l);
-		}
-
-		if (tag?.lyrics) {
+		const splitLyrics = (lyrics: string): SubsonicStructuredLyrics => {
 			const l: SubsonicStructuredLyrics = { lang: 'und', synced: false };
-			l.line = tag.lyrics.split('\n').map(value => ({ value }));
-			structuredLyrics.push(l);
-		} else if (tag?.artist && tag?.title && !slyrics) {
-			const lyrics = await engine.metadata.lyricsOVH(orm, tag.artist, tag.title);
-			if (lyrics?.lyrics) {
-				const l: SubsonicStructuredLyrics = { lang: 'und', synced: false };
-				l.line = lyrics.lyrics.split('\n').map(value => ({ value }));
+			l.line = lyrics.split('\n').map(value => ({ value }));
+			return l;
+		};
+		if (tag?.syncedlyrics) {
+			structuredLyrics.push(splitLyrics(tag.syncedlyrics));
+			hasSynced = true;
+		}
+		if (tag?.lyrics) {
+			structuredLyrics.push(splitLyrics(tag.lyrics));
+			hasUnssynced = true;
+		}
+		if (!hasSynced) {
+			const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
+			if (slyrics) {
+				const l: SubsonicStructuredLyrics = { lang: slyrics.language || 'und', synced: true };
+				l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
 				structuredLyrics.push(l);
+			}
+		}
+		if (tag?.artist && tag?.title) {
+			const trackLyrics = await engine.metadata.lyricsLrcLibByTrackTag(orm, track, tag);
+			if (trackLyrics?.syncedLyrics && !hasSynced) {
+				structuredLyrics.push(splitLyrics(trackLyrics.syncedLyrics));
+				hasUnssynced = true;
+			}
+			if (trackLyrics?.lyrics && !hasUnssynced) {
+				structuredLyrics.push(splitLyrics(trackLyrics.lyrics));
+			}
+			if (!hasSynced && !hasUnssynced) {
+				const lyrics = await engine.metadata.lyricsOVH(orm, tag.artist, tag.title);
+				if (lyrics?.lyrics) {
+					structuredLyrics.push(splitLyrics(lyrics.lyrics));
+				}
 			}
 		}
 		return { lyricsList: { structuredLyrics } };
@@ -156,7 +175,7 @@ export class SubsonicMediaRetrievalApi {
 			return { lyrics: { value: '' } };
 		}
 		const lyrics = await engine.metadata.lyricsOVH(orm, query.artist, query.title);
-		if (!lyrics || !lyrics.lyrics) {
+		if (!lyrics?.lyrics) {
 			return { lyrics: { value: '' } };
 		}
 		return { lyrics: { artist: query.artist, title: query.title, value: lyrics.lyrics.replace(/\r\n/g, '\n') } };
@@ -180,7 +199,7 @@ export class SubsonicMediaRetrievalApi {
 		 */
 		const o = await orm.findInImageTypes(query.id);
 		if (!o?.obj) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		return engine.image.getObjImage(orm, o.obj, o.objType, query.size);
 	}
@@ -203,7 +222,7 @@ export class SubsonicMediaRetrievalApi {
 		const name = query.username;
 		const user = await engine.user.findByName(orm, name);
 		if (!user) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		return engine.image.getObjImage(orm, user, DBObjectType.user);
 	}
@@ -246,6 +265,6 @@ export class SubsonicMediaRetrievalApi {
 		 The server will automatically choose video dimensions that are suitable for the given bitrates. Since 1.9.0 you may explicitly request a certain width (480)
 		  and height (360) like so: bitRate=1000@480x360
 		 */
-		return Promise.reject(SubsonicFormatter.ERRORS.NOT_IMPLEMENTED);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_IMPLEMENTED));
 	}
 }

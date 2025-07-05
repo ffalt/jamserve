@@ -246,6 +246,17 @@ describe.each(DBConfigs)('REST with %o', db => {
 							}
 							break;
 						}
+						case 'folder/search':
+						case 'folder/index':
+						case 'track/search':
+						case 'artwork/search':
+						case 'track/health':
+						case 'track/rawTag/get': {
+							if (call.data.childOfID) {
+								call.data.childOfID = folder.id;
+							}
+							break;
+						}
 						case 'folder/artist/similar/tracks':
 						case 'folder/artist/similar': {
 							expected = 500;
@@ -282,13 +293,6 @@ describe.each(DBConfigs)('REST with %o', db => {
 							call.data.id = playlist.id;
 							break;
 						}
-						case 'folder/search':
-						case 'folder/index': {
-							if (call.data.childOfID) {
-								call.data.childOfID = folder.id;
-							}
-							break;
-						}
 						case 'bookmark/id': {
 							call.data.id = bookmark.id;
 							break;
@@ -303,13 +307,6 @@ describe.each(DBConfigs)('REST with %o', db => {
 						case 'track/lyrics':
 						case 'track/id': {
 							call.data.id = track.id;
-							break;
-						}
-						case 'track/health':
-						case 'track/rawTag/get': {
-							if (call.data.childOfID) {
-								call.data.childOfID = folder.id;
-							}
 							break;
 						}
 						case 'episode/status':
@@ -336,13 +333,6 @@ describe.each(DBConfigs)('REST with %o', db => {
 						case 'image/{id}.{format}':
 						case 'image/{id}_{size}.{format}': {
 							call.params.id = track.id;
-							break;
-						}
-						case 'track/search':
-						case 'artwork/search': {
-							if (call.data.childOfID) {
-								call.data.childOfID = folder.id;
-							}
 							break;
 						}
 						case 'artist/similar/tracks':
@@ -388,9 +378,6 @@ describe.each(DBConfigs)('REST with %o', db => {
 							call.data.url = 'http://coverartarchive.org/invalid.png';
 							break;
 						}
-						// default: {
-						// 	console.debug(call.apiName, call.data);
-						// }
 					}
 					await mockCall(call, expected, tokens.all);
 				}

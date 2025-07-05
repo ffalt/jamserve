@@ -7,7 +7,7 @@ export class Reference<T extends IDEntity<T>> {
 	private field!: PropertyMetadata;
 	private obj?: T;
 
-	constructor(private owner: AnyEntity) {
+	constructor(private readonly owner: AnyEntity) {
 	}
 
 	manage(field: PropertyMetadata): void {

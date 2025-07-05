@@ -199,13 +199,13 @@ export class ExpressParameters {
 		return this.validateParameter(param, result, false, metadata);
 	}
 
-	private mapArgFields(argumentType: ClassMetadata, data: any, args: any = {}, metadata: MetadataStorage): void {
-		argumentType.fields!.forEach(field => {
+	private mapArgFields(argumentType: ClassMetadata, data: any, args: { [key: string]: string }, metadata: MetadataStorage): void {
+		argumentType.fields.forEach(field => {
 			args[field.name] = this.validateParameter(field, data, true, metadata);
 		});
 	}
 
-	private prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): any {
+	private prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): { [key: string]: string } {
 		const type = param.getType();
 		const argumentType = metadata.argumentTypes.find(it => it.target === type);
 		if (!argumentType) {
@@ -214,7 +214,7 @@ export class ExpressParameters {
 				`is not a class decorated with '@ObjParamsType' decorator!`
 			);
 		}
-		const args: any = {};
+		const args: { [key: string]: string } = {};
 		const data: any = ExpressParameters.getData(param.mode, context);
 		iterateArguments(metadata.argumentTypes, argumentType, argument => {
 			this.mapArgFields(argument, data, args, metadata);

@@ -27,7 +27,7 @@ function parseMP3ValWarning(data: string): MP3ValWarning {
 	i = s.indexOf('"');
 	s = s.slice(i).trim();
 	let offset: string | undefined;
-	if (s[0] === '(') {
+	if (s.startsWith('(')) {
 		i = s.indexOf(')');
 		offset = s.slice(1, i - 1);
 	}

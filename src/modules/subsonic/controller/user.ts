@@ -5,7 +5,7 @@ import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicP
 import { SubsonicOKResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
 export class SubsonicUserApi {
@@ -27,11 +27,11 @@ export class SubsonicUserApi {
 			return { user: SubsonicFormatter.packUser(user) };
 		}
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const u = await orm.User.findOne({ where: { name: query.username } });
 		if (!u) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		return { user: SubsonicFormatter.packUser(u) };
 	}
@@ -47,7 +47,7 @@ export class SubsonicUserApi {
 	})
 	async getUsers(@SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseUsers> {
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const users = await orm.User.all();
 		return { users: { user: users.map(SubsonicFormatter.packUser) } };
@@ -83,7 +83,7 @@ export class SubsonicUserApi {
 				 videoConversionRole 	No 	false 	(Since 1.15.0) Whether the user is allowed to start video conversions.
 				 musicFolderId 	No 	All folders 	(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
 				 */
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
 	}
 
 	/**
@@ -101,7 +101,7 @@ export class SubsonicUserApi {
 			 username 	Yes 		The name of the user which should change its password.
 			 password 	Yes 		The new password of the new user, either in clear text of hex-encoded (see above).
 		*/
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
 	}
 
 	/**
@@ -134,7 +134,7 @@ export class SubsonicUserApi {
 		 musicFolderId 	No 		(Since 1.12.0) IDs of the music folders the user is allowed access to. Include the parameter once for each folder.
 		 maxBitRate 	No 		(Since 1.13.0) The maximum bit rate (in Kbps) for the user. Audio streams of higher bit rates are automatically downsampled to this bit rate. Legal values: 0 (no limit), 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320.
 		 */
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
 	}
 
 	/**
@@ -151,6 +151,6 @@ export class SubsonicUserApi {
 			 Parameter 	Required 	Default 	Comment
 			 username 	Yes 		The name of the user to delete.
 		*/
-		return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+		return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
 	}
 }

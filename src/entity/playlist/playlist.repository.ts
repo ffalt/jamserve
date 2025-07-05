@@ -23,7 +23,7 @@ export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterA
 					{ comment: QHelper.eq(filter.comment) },
 					{ createdAt: QHelper.gte(filter.since) },
 					{ user: QHelper.inOrEqual(filter.userIDs) },
-					QHelper.or([
+					QHelper.or<any>([
 						{ isPublic: true },
 						{ user: user?.id }
 					])

@@ -6,7 +6,7 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense, SubsonicResponseScanStatus } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { logger } from '../../../utils/logger.js';
 
 const log = logger('SubsonicApi');
@@ -68,7 +68,7 @@ export class SubsonicSystemApi {
 	})
 	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, @SubsonicCtx() { user }: Context): Promise<SubsonicResponseJukeboxStatus> {
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		/*
 		 Parameter 	Required 	Default 	Comment
@@ -105,10 +105,10 @@ export class SubsonicSystemApi {
 	})
 	async startScan(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		if (!engine.io.scanning) {
-			engine.io.root.startUpRefresh(orm, true).catch(e => log.error(e)); // do not wait;
+			engine.io.root.refreshAllMeta(orm).catch(e => log.error(e)); // do not wait;
 		}
 		return {};
 	}

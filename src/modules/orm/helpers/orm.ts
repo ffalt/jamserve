@@ -3,8 +3,9 @@ import seq, { Sequelize } from 'sequelize';
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { ORMConfig } from '../definitions/config.js';
 import { ModelBuilder } from '../builder/schema.js';
+
 export class ORM {
-	public cache = new EntityCache();
+	public readonly cache = new EntityCache();
 
 	static async init(config: ORMConfig): Promise<ORM> {
 		const sequelize = new Sequelize(config.options);
@@ -13,7 +14,7 @@ export class ORM {
 		return orm;
 	}
 
-	constructor(public sequelize: Sequelize, private config: ORMConfig) {
+	constructor(public readonly sequelize: Sequelize, private readonly config: ORMConfig) {
 	}
 
 	async init(): Promise<void> {
@@ -28,7 +29,6 @@ export class ORM {
 	}
 
 	async updateSchema(): Promise<void> {
-		// TODO: run migration only if needed
 		const queryInterface = this.sequelize.getQueryInterface();
 		let table = await queryInterface.describeTable('State');
 		if (table?.played && table.played.type !== 'INTEGER') {

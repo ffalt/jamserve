@@ -18,7 +18,7 @@ export class WebserviceClient {
 		try {
 			return await response.json() as T;
 		} catch (err) {
-			return Promise.reject(err);
+			return Promise.reject(err as Error);
 		}
 	}
 
@@ -52,11 +52,11 @@ export class WebserviceClient {
 			// timeout: 20000
 		});
 		if (!ignoreStatus && response.status !== 200) {
-			return Promise.reject(new Error('Invalid Result'));
+			return Promise.reject(Error('Invalid Result'));
 		}
 		const result = await this.parseResult<T>(response);
 		if (result === undefined) {
-			return Promise.reject(new Error('Invalid Result'));
+			return Promise.reject(Error('Invalid Result'));
 		}
 		return result;
 	}

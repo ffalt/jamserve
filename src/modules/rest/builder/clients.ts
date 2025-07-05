@@ -97,8 +97,10 @@ export function buildCallSections(
 	generateClientCalls: (call: MethodMetadata, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>
 ): void {
 	for (const call of calls) {
-		const tag = call.controllerClassMetadata!.name.replace('Controller', '');
-		sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
+		if (call.controllerClassMetadata) {
+			const tag = call.controllerClassMetadata.name.replace('Controller', '');
+			sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
+		}
 	}
 }
 
@@ -179,9 +181,9 @@ function getCallParamArgType(param: RestParamMetadata, metadata: MetadataStorage
 function getCallParamArgsType(param: RestParamsMetadata, metadata: MetadataStorage) {
 	const type = param.getType();
 	const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-	let typeString = fObjectType?.name ? ('JamParameters.' + fObjectType?.name) : 'any';
+	let typeString = fObjectType?.name ? `JamParameters.${fObjectType?.name}` : 'any';
 	if (param.typeOptions.array) {
-		typeString = 'Array<' + typeString + '>';
+		typeString = `Array<${typeString}>`;
 	}
 	return typeString;
 }
@@ -205,7 +207,7 @@ export function getCallParamType(call: MethodMetadata): string {
 
 export function callDescription(call: MethodMetadata): string | undefined {
 	const roles = call.controllerClassMetadata?.roles || call.roles || [];
-	const result = (call.description || '') + (roles && roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
+	const result = (call.description ?? '') + (roles?.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
 	return result.trim();
 }
 
@@ -215,13 +217,13 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 	customPathParameters.groups.forEach(g => {
 		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => (alias.hideParameters || []).includes(g.name));
 		if (hasOptionalAlias) {
-			routeParts.push('${params.' + g.name + ' ? ' + '`' + (g.prefix || '') + '${params.' + g.name + '}` : \'\'}');
+			routeParts.push(`$\{params.${g.name} ? \`${g.prefix || ''}$\{params.${g.name}}\` : ''}`);
 		} else {
 			validateNames.push(g.name);
-			routeParts.push((g.prefix || '') + '${params.' + g.name + '}');
+			routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);
 		}
 	});
-	const validateCode = 'if (' + validateNames.map(s => '!params.' + s).join(' && ') + ') { ' + result + '; }';
+	const validateCode = `if (${validateNames.map(s => '!params.' + s).join(' && ')}) { ${result}; }`;
 	return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
 
@@ -229,19 +231,13 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 	return {
 		pipe: {
 			pipe: (res: express.Response): void => {
-				// log.verbose('Start streaming');
 				const archive = archiver('zip', { zlib: { level: 9 } });
 				archive.on('error', err => {
-					// log.error('archiver err ' + err);
 					throw err;
 				});
 				res.contentType('zip');
 				res.type('application/zip');
 				res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-				// stream.setHeader('Content-Length', stat.size); do NOT report wrong size!
-				res.on('finish', () => {
-					// log.verbose('streamed ' + archive.pointer() + ' total bytes');
-				});
 				for (const entry of list) {
 					archive.append(entry.content, { name: entry.name });
 				}

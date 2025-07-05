@@ -10,15 +10,15 @@ export async function downloadFile(url: string, filename: string): Promise<void>
 	return new Promise((resolve, reject) => {
 		const dest = fs.createWriteStream(filename);
 		if (!response.body) {
-			return reject(new Error('Bad file stream'));
+			return reject(Error('Bad file stream'));
 		}
 		response.body.pipe(dest);
 		dest.on('close', () => resolve());
 		dest.on('error', e => {
 			fileDeleteIfExists(filename).then(() => {
-				reject(e);
+				reject(e as Error);
 			}).catch(_ => {
-				reject(e);
+				reject(e as Error);
 			});
 		});
 	});

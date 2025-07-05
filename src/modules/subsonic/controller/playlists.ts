@@ -8,7 +8,7 @@ import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameter
 import { SubsonicOKResponse, SubsonicPlaylistWithSongs, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 import { Track } from '../../../entity/track/track.js';
 
@@ -32,7 +32,7 @@ export class SubsonicPlaylistsApi {
 		 */
 		let playlist: Playlist | undefined;
 		if (!query.playlistId && !query.name) {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		if (query.playlistId) {
 			const playlistId = query.playlistId;
@@ -48,7 +48,7 @@ export class SubsonicPlaylistsApi {
 			playlist = await ctx.engine.playlist.create(ctx.orm, { name: query.name, isPublic: false, mediaIDs }, ctx.user);
 		}
 		if (!playlist) {
-			return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		const entries = await playlist.entries.getItems();
 		const tracks: Array<Track> = [];
@@ -85,7 +85,7 @@ export class SubsonicPlaylistsApi {
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.playlistId);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(e => e.track.id());
@@ -99,7 +99,7 @@ export class SubsonicPlaylistsApi {
 		await engine.playlist.update(orm, {
 			name: query.name || playlist.name,
 			comment: query.comment || playlist.comment,
-			isPublic: query.public !== undefined ? query.public : playlist.isPublic,
+			isPublic: query.public ?? playlist.isPublic,
 			mediaIDs
 		}, playlist);
 		return {};
@@ -121,7 +121,7 @@ export class SubsonicPlaylistsApi {
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (user.id !== playlist.user.id()) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		await engine.playlist.remove(orm, playlist);
 		return {};
@@ -144,11 +144,11 @@ export class SubsonicPlaylistsApi {
 		let userID = user.id;
 		if ((query.username) && (query.username !== user.name)) {
 			if (!user.roleAdmin) {
-				return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 			}
 			const u = await engine.user.findByName(orm, query.username);
 			if (!u) {
-				return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 			}
 			userID = u.id;
 		}
@@ -176,7 +176,7 @@ export class SubsonicPlaylistsApi {
 		 */
 		const playlist = await orm.Playlist.findOneOrFailByID(query.id);
 		if (playlist.user.id() !== user.id) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const result = await SubsonicHelper.preparePlaylist(orm, playlist, user);
 		return { playlist: result };

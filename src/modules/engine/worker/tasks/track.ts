@@ -15,9 +15,12 @@ import { TrackTag } from '../../../audio/audio.format.js';
 import { Genre } from '../../../../entity/genre/genre.js';
 
 export class TrackUpdater {
-	private genresCache: Array<Genre> = [];
+	private readonly genresCache: Array<Genre> = [];
 
-	constructor(private orm: Orm, private audioModule: AudioModule, private changes: Changes) {
+	constructor(
+		private readonly orm: Orm,
+		private readonly audioModule: AudioModule,
+		private readonly changes: Changes) {
 	}
 
 	public async updateTrackValues(track: Track, filename: string): Promise<void> {

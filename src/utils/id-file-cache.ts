@@ -70,7 +70,7 @@ export class IDFolderCache<T> {
 			return result;
 		} catch (e) {
 			this.cacheDebounce.reject(cacheID, e as Error);
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 }

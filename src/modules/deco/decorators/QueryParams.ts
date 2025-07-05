@@ -19,7 +19,7 @@ export function BaseQueryParams(
 			kind: 'args',
 			mode: 'query',
 			propertyName: extractPropertyName(prototype, propertyKey, parameterIndex),
-			...getParamInfo({ prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options })
+			...getParamInfo({ prototype, propertyKey: propertyKey, parameterIndex, returnTypeFunc, options })
 		});
 	};
 }

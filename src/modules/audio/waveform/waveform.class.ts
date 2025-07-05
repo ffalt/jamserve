@@ -35,7 +35,7 @@ export class Waveform {
 	opts: WaveformOptions = { samplesPerPixel: 256, sampleRate: 44100 };
 	samples: Array<number> = [];
 
-	constructor(private stream: Stream, opts: WaveformOptions) {
+	constructor(private readonly stream: Stream, opts: WaveformOptions) {
 		this.opts = { ...this.opts, ...(opts || {}) };
 	}
 

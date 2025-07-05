@@ -3,7 +3,7 @@ import { WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMov
 import { IoService } from '../io.service.js';
 
 export class IoCommandsFolder {
-	constructor(private owner: IoService) {
+	constructor(private readonly owner: IoService) {
 	}
 
 	async move(folderIDs: Array<string>, newParentID: string, rootID: string): Promise<AdminChangeQueueInfo> {

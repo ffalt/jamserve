@@ -13,12 +13,10 @@ export function useAuthenticatedCors(configService: ConfigService): express.Requ
 			origin(origin, cb): void {
 				if (!origin || origins.includes(origin)) {
 					cb(null, true);
+				} else if (req.method === 'OPTIONS' || req.query.jwt) {
+					cb(null, true);
 				} else {
-					if (req.method === 'OPTIONS' || req.query.jwt) {
-						cb(null, true);
-					} else {
-						cb(new Error('Not allowed by CORS'));
-					}
+					cb(new Error('Not allowed by CORS'));
 				}
 			},
 			methods: ['GET', 'POST']

@@ -18,7 +18,7 @@ registerRestEnums();
 @InRequestScope
 export class RestMiddleware {
 	@Inject
-	configService!: ConfigService;
+	readonly configService!: ConfigService;
 
 	middleware(): express.Router {
 		const api = express.Router();

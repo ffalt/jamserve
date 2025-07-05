@@ -115,7 +115,6 @@ export class ArtworkWorker extends BaseWorker {
 		if (!suffix || suffix.length === 0 || suffix === 'invalid') {
 			return Promise.reject(Error('Image Format invalid/not known'));
 		}
-		// TODO: backup old file in case copy fails
 		await fileDeleteIfExists(path.join(artwork.path, artwork.name));
 		artwork.name = `${name}.${suffix}`;
 		try {

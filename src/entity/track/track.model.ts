@@ -44,6 +44,9 @@ export class TrackLyrics {
 	})
 	syncedLyrics?: string;
 
+	@ObjField({ nullable: true, description: 'Language of the the lyrics' })
+	language?: string;
+
 	@ObjField({ nullable: true, description: 'Audio Tag or External Service' })
 	source?: string;
 }

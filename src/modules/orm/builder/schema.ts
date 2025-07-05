@@ -6,13 +6,14 @@ import { ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneTo
 import { MetadataStorage } from '../metadata/metadata-storage.js';
 
 export class DBModel {
-
+	constructor(public readonly db: boolean) {
+	}
 }
 
 export class ModelBuilder {
-	modelMap = new Map<string, any>();
+	readonly modelMap = new Map<string, any>();
 
-	constructor(private sequelize: Sequelize, private metadata: MetadataStorage) {
+	constructor(private readonly sequelize: Sequelize, private readonly metadata: MetadataStorage) {
 	}
 
 	private async buildColumnAttributeModel(field: PropertyMetadata, entity: EntityMetadata): Promise<DataType | ModelAttributeColumnOptions | undefined> {
@@ -138,17 +139,6 @@ export class ModelBuilder {
 						name: sourceField.name
 					}
 			});
-			// destModel.hasOne(sourceModel, {
-			// 	as: sourceField.name // + 'ORM',
-			// foreignKey:
-			// 	{
-			// 		allowNull: o2o.nullable,
-			// 		name: destField.name,
-			// 		as: destField.name + 'ORM'
-			// 	}
-			// });
-			// console.log(sourceModel.name + ' belongsTo '+destModel.name);
-			// console.log(destModel.name + ' hasOne '+sourceModel.name);
 		}
 	}
 
@@ -177,7 +167,6 @@ export class ModelBuilder {
 		if ((destField.typeOptions as RelationOptions).relation !== 'many2one') {
 			throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
 		}
-		// console.log(destModel.name + ' belongsTo ' + sourceModel.name);
 		sourceModel.hasMany(destModel, {
 			type: seq.DataTypes.UUID,
 			as: sourceField.name + 'ORM',
@@ -187,7 +176,6 @@ export class ModelBuilder {
 		destModel.belongsTo(sourceModel, {
 			type: seq.DataTypes.UUID,
 			as: destField.name + 'ORM',
-			// onDelete: o2m.onDelete,
 			foreignKey: {
 				name: destField.name,
 				allowNull: o2m.nullable
@@ -210,7 +198,7 @@ export class ModelBuilder {
 	}
 
 	async build(): Promise<DBModel> {
-		const result = new DBModel();
+		const result = new DBModel(true);
 		const entities = this.metadata.entities.filter(e => !e.isAbstract);
 		for (const entity of entities) {
 			await this.buildEntityModel(entity);

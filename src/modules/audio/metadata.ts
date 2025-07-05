@@ -9,11 +9,10 @@ import { ID3v2Frames, RawTag } from './rawTag.js';
 import { TrackTag } from './audio.format.js';
 
 function prepareFrame(frame: ID3v2Frames.Frame): void {
-	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
-		const binValue = frame.value as any;
-		binValue.bin = binValue.bin.toString('base64');
+	if (frame?.value && (frame as ID3v2Frames.Bin).value.bin) {
+		frame.value.bin = frame.value.bin.toString('base64');
 	}
-	if (frame && frame.subframes) {
+	if (frame?.subframes) {
 		frame.subframes.forEach(prepareFrame);
 	}
 }
@@ -152,7 +151,7 @@ export function flacToRawTagPictures(builder: ID3V24TagBuilder, flacInfo: FlacIn
 }
 
 export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
-	if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
+	if (!flacInfo?.comment?.tag) {
 		return;
 	}
 	const simple = flacInfo.comment.tag;
@@ -215,20 +214,20 @@ export function trackTagToRawTag(tag: TrackTag): RawTag {
 }
 
 function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
-	if (frame && frame.value && (frame as ID3v2Frames.Bin).value.bin) {
-		const bin = (frame.value as any).bin;
+	if (frame?.value && (frame as ID3v2Frames.Bin).value.bin) {
+		const bin = frame.value.bin;
 		if (typeof bin === 'string') {
-			(frame.value as any).bin = Buffer.from(bin, 'base64');
+			frame.value.bin = Buffer.from(bin, 'base64');
 		}
 	}
-	if (frame && frame.subframes) {
+	if (frame?.subframes) {
 		frame.subframes.forEach(rawFrameToID3v2);
 	}
 }
 
 export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
 	const frames: Array<IID3V2.Frame> = [];
-	Object.keys(tag.frames).map(id => {
+	Object.keys(tag.frames).forEach(id => {
 		const f = tag.frames[id] || [];
 		f.forEach(frame => {
 			rawFrameToID3v2(frame);

@@ -19,7 +19,7 @@ import {
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 
 @SubsonicController()
@@ -194,7 +194,7 @@ export class SubsonicListsApi {
 				);
 				break;
 			default:
-				return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 		}
 		const result = await SubsonicHelper.prepareFolders(orm, folders, user);
 		return { albumList: { album: result } };
@@ -311,7 +311,7 @@ export class SubsonicListsApi {
 				);
 				break;
 			default:
-				return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 		}
 		const result = await SubsonicHelper.prepareAlbums(orm, albums, user);
 		return { albumList2: { album: result } };

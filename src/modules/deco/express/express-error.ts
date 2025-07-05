@@ -31,15 +31,27 @@ export function MissingParamError(param: string): ApiError {
 }
 
 export function InvalidParamError(param: string, msg?: string): ApiError {
-	return new ApiError(`${Errors.invalidParameter}: ${param}${msg ? ` - ${msg}` : ''}`, 422);
+	let message = `${Errors.invalidParameter}: ${param}`;
+	if (msg) {
+		message += ` - ${msg}`;
+	}
+	return new ApiError(message, 422);
 }
 
 export function NotFoundError(msg?: string): ApiError {
-	return new ApiError(`${Errors.itemNotFound}${msg ? `: ${msg}` : ''}`, 404);
+	let message = Errors.itemNotFound;
+	if (msg) {
+		message += `: ${msg}`;
+	}
+	return new ApiError(message, 404);
 }
 
 export function UnauthError(msg?: string): ApiError {
-	return new ApiError(`${Errors.unauthorized}${msg ? `: ${msg}` : ''}`, 401);
+	let message = Errors.unauthorized;
+	if (msg) {
+		message += `: ${msg}`;
+	}
+	return new ApiError(message, 401);
 }
 
 export function GenericError(msg?: string): ApiError {

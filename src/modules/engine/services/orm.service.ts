@@ -108,9 +108,9 @@ export class Orm {
 
 	private static async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		for (const repo of repos) {
-			const obj = await repo.findOneByID(id);
+			const obj: Base = await repo.findOneByID(id);
 			if (obj) {
-				return { obj: obj as any, objType: repo.objType };
+				return { obj, objType: repo.objType };
 			}
 		}
 		return;

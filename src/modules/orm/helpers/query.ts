@@ -2,14 +2,14 @@ import seq, { FindOptions, Includeable, WhereOptions, WhereAttributeHashValue } 
 
 export class QHelper {
 	static eq<T>(value?: T): T | undefined {
-		return (value !== undefined && value !== null) ? value : undefined;
+		return value ?? undefined;
 	}
 
 	static like(value?: string, dialect?: string): WhereAttributeHashValue<string> | undefined {
 		if (dialect === 'postgres') {
-			return (value) ? { [seq.Op.iLike]: `%${value}%` } : undefined;
+			return value ? { [seq.Op.iLike]: `%${value}%` } : undefined;
 		} else {
-			return (value) ? { [seq.Op.like]: `%${value}%` } : undefined;
+			return value ? { [seq.Op.like]: `%${value}%` } : undefined;
 		}
 	}
 
@@ -40,8 +40,8 @@ export class QHelper {
 		return (value !== undefined) ? { [seq.Op.ne]: value } : undefined;
 	}
 
-	static or<Entity>(list: Array<WhereOptions<Entity> | any>): WhereAttributeHashValue<Entity | any> {
-		return { [seq.Op.or]: QHelper.cleanList<Entity>(list) };
+	static or<T>(list: Array<WhereOptions<T>>): WhereAttributeHashValue<T> {
+		return { [seq.Op.or]: QHelper.cleanList<T>(list) };
 	}
 
 	static inOrEqual<T>(list?: Array<T>): WhereAttributeHashValue<any> | T | undefined {

@@ -51,8 +51,8 @@ export class OpenApiRefBuilder {
 
 	private mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
 		const argumentInstance = new (argumentType.target as any)();
-		argumentType.fields!.forEach(field => {
-			if (hideParameters && hideParameters.includes(field.name)) {
+		argumentType.fields.forEach(field => {
+			if (hideParameters?.includes(field.name)) {
 				return;
 			}
 			field.typeOptions.defaultValue = getDefaultValue(
@@ -85,7 +85,7 @@ export class OpenApiRefBuilder {
 		param: RestParamMetadata, parameters: Array<ParameterObject>,
 		ctrl: ControllerClassMetadata | undefined, schemas: Schemas, hideParameters?: string[]
 	): void {
-		if (hideParameters && hideParameters.includes(param.name)) {
+		if (hideParameters?.includes(param.name)) {
 			return;
 		}
 		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;

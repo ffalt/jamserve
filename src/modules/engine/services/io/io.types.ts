@@ -51,11 +51,10 @@ export class IoRequest<T extends WorkerRequestParameters> {
 			return await this.execute(this.parameters);
 		} catch (e: any) {
 			console.error(e.stack);
-			// log.error('Scanning Error', this.rootID, e.toString());
 			if (['EACCES', 'ENOENT'].includes(e.code)) {
 				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
 			}
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 }

@@ -20,7 +20,9 @@ export class SubsonicMiddleware {
 	controllers = SubsonicControllers;
 
 	middleware(): express.Router {
-		void this.controllers.length; // include, so meta storage finds the controllers
+		if (this.controllers.length === 0) {
+			throw Error('No subsonic controllers');
+		}
 		const router = express.Router();
 		router.use(SubsonicParameterMiddleWare);
 		router.use(SubsonicLoginMiddleWare);

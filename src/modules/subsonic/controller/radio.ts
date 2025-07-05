@@ -6,7 +6,7 @@ import { SubsonicParams } from '../decorators/SubsonicParams.js';
 import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-params.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
 export class SubsonicInternetRadioApi {
@@ -45,7 +45,7 @@ export class SubsonicInternetRadioApi {
 		homepageUrl 	No 		The home page URL for the station.
 		 */
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl, disabled: false });
 		await orm.Radio.persistAndFlush(radio);
@@ -70,12 +70,12 @@ export class SubsonicInternetRadioApi {
 		homepageUrl 	No 		The home page URL for the station.
 		 */
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const radio = await orm.Radio.findOneOrFailByID(query.id);
-		radio.name = query.name === undefined ? radio.name : query.name;
-		radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl;
-		radio.homepage = query.homepageUrl === undefined ? radio.homepage : query.homepageUrl;
+		radio.name = query.name ?? radio.name;
+		radio.url = query.streamUrl ?? radio.url;
+		radio.homepage = query.homepageUrl ?? radio.homepage;
 		await orm.Radio.persistAndFlush(radio);
 		return {};
 	}
@@ -95,7 +95,7 @@ export class SubsonicInternetRadioApi {
 		id 	Yes 		The ID for the station.
 		 */
 		if (!user.roleAdmin) {
-			return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const radio = await orm.Radio.findOneOrFailByID(query.id);
 		await orm.Radio.removeAndFlush(radio);

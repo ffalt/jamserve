@@ -28,7 +28,7 @@ export function BasePathParam(
 			description: (options as PathParamOptions).description,
 			example: (options as PathParamOptions).example,
 			deprecationReason: (options as PathParamOptions).deprecationReason,
-			...getParamInfo({ prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options })
+			...getParamInfo({ prototype, propertyKey: propertyKey, parameterIndex, returnTypeFunc, options })
 		});
 	};
 }

@@ -3,7 +3,7 @@ import { WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequest
 import { Changes } from '../../worker/changes.js';
 
 export class WorkerCommandsArtwork {
-	constructor(private owner: WorkerService) {
+	constructor(private readonly owner: WorkerService) {
 	}
 
 	async rename(parameters: WorkerRequestRenameArtwork): Promise<Changes> {

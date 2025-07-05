@@ -60,8 +60,27 @@ export interface StateMap {
 	[id: string]: State;
 }
 
+export class SubsonicApiError extends Error {
+	readonly code: number;
+	readonly fail: string;
+
+	constructor(opts: { code: number; fail: string }) {
+		// Calling parent constructor of base Error class.
+		super(opts.fail);
+
+		this.code = opts.code || 500;
+		this.fail = opts.fail;
+
+		// Saving class name in the property of our custom error as a shortcut.
+		this.name = this.constructor.name;
+
+		// Capturing stack trace, excluding constructor call from it.
+		Error.captureStackTrace(this, this.constructor);
+	}
+}
+
 export class SubsonicFormatter {
-	static FAIL = {
+	static readonly FAIL = {
 		GENERIC: 0,
 		PARAMETER: 10,
 		CLIENT_OLD: 20,
@@ -71,7 +90,7 @@ export class SubsonicFormatter {
 		NOTFOUND: 70
 	};
 
-	static ERRORS = {
+	static readonly ERRORS = {
 		LOGIN_FAILED: { code: SubsonicFormatter.FAIL.CREDENTIALS, fail: 'Wrong username or password.' },
 		PARAM_MISSING: { code: SubsonicFormatter.FAIL.PARAMETER, fail: 'Required parameter is missing.' },
 		PARAM_INVALID: { code: SubsonicFormatter.FAIL.PARAMETER, fail: 'Required parameter is invalid.' },
@@ -193,7 +212,7 @@ export class SubsonicFormatter {
 		return {
 			id: entry.id,
 			name: entry.name,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
 			// "averageRating": state.avgrated,
 		};
@@ -247,7 +266,7 @@ export class SubsonicFormatter {
 			id: folder.id,
 			parent: folder.parent.id(),
 			name: path.basename(folder.path),
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
@@ -264,7 +283,7 @@ export class SubsonicFormatter {
 		return {
 			id: folder.id,
 			name: folder.title || folder.artist || '',
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
 			// "averageRating": state.avgrated,
 		};
@@ -311,9 +330,9 @@ export class SubsonicFormatter {
 			duration: SubsonicFormatter.packDuration(album.duration),
 			year: album.year,
 			genre: await SubsonicFormatter.packGenres(genres),
-			created: SubsonicFormatter.formatSubSonicDate(album.createdAt) as string,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
+			created: SubsonicFormatter.formatSubSonicDate(album.createdAt) || '',
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			played: state?.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			musicBrainzId: album.mbReleaseID,
 			genres: genres.length ? genres.map(g => ({ name: g.name })) : undefined,
@@ -369,7 +388,7 @@ export class SubsonicFormatter {
 			coverArt: artist.id,
 			albumCount: await artist.albums.count(),
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			musicBrainzId: artist.mbArtistID,
 			sortName: artist.nameSort
 			// roles: artist.roles
@@ -496,13 +515,13 @@ export class SubsonicFormatter {
 			artistId: track.artist.id(),
 			type: 'music',
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
 			bitDepth: tag?.mediaBitDepth,
 			samplingRate: tag?.mediaSampleRate,
 			channelCount: tag?.mediaChannels,
 			mediaType: 'song',
-			played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
+			played: state?.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
 			sortName: tag?.titleSort,
 			musicBrainzId: tag?.mbTrackID,
 			genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined
@@ -565,7 +584,7 @@ export class SubsonicFormatter {
 			albumId: ((await folder.albums.getIDs()) || [])[0],
 			artistId: ((await folder.artists.getIDs()) || [])[0],
 			created: SubsonicFormatter.formatSubSonicDate(folder.createdAt),
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
 		};
 	}
 
@@ -591,7 +610,7 @@ export class SubsonicFormatter {
 			description: episode.summary,
 			publishDate: episode.date !== undefined ? SubsonicFormatter.formatSubSonicDate(episode.date) : undefined,
 			title: episode.name,
-			status: status ? status : episode.status,
+			status: status || episode.status,
 			id: episode.id,
 			parent: episode.podcast.id(),
 			artist: tag ? tag.artist : episode.author,
@@ -602,7 +621,7 @@ export class SubsonicFormatter {
 			discNumber: tag?.disc,
 			type: 'podcast',
 			playCount: state?.played && state?.played > 0 ? state.played : 0,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			isVideo: false,
 			isDir: false,
@@ -637,10 +656,10 @@ export class SubsonicFormatter {
 			comment: playlist.comment || '',
 			public: playlist.isPublic,
 			duration: SubsonicFormatter.packDuration(playlist.duration),
-			created: SubsonicFormatter.formatSubSonicDate(playlist.createdAt) as string,
-			changed: SubsonicFormatter.formatSubSonicDate(playlist.updatedAt) as string,
+			created: SubsonicFormatter.formatSubSonicDate(playlist.createdAt) || '',
+			changed: SubsonicFormatter.formatSubSonicDate(playlist.updatedAt) || '',
 			coverArt: playlist.coverArt,
-			starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+			starred: state?.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			allowedUser: [], // playlist.allowedUser,
 			songCount: await playlist.entries.count(),
@@ -664,18 +683,12 @@ export class SubsonicFormatter {
 			username,
 			position: bookmark.position,
 			comment: bookmark.comment,
-			created: SubsonicFormatter.formatSubSonicDate(bookmark.createdAt) as string,
-			changed: SubsonicFormatter.formatSubSonicDate(bookmark.updatedAt) as string
+			created: SubsonicFormatter.formatSubSonicDate(bookmark.createdAt) || '',
+			changed: SubsonicFormatter.formatSubSonicDate(bookmark.updatedAt) || ''
 		};
 	}
 
-	static packSimilarSongs(childs: Array<SubsonicChild>): SubsonicSimilarSongs {
-		return {
-			song: childs
-		};
-	}
-
-	static packSimilarSongs2(childs: Array<SubsonicChild>): SubsonicSimilarSongs2 {
+	static packSimilarSongs(childs: Array<SubsonicChild>): SubsonicSimilarSongs | SubsonicSimilarSongs2 {
 		return {
 			song: childs
 		};

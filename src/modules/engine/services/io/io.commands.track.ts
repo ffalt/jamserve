@@ -6,10 +6,10 @@ import { TrackHealthID } from '../../../../types/enums.js';
 import { DelayedRequests } from './io.helpers.js';
 
 export class IoCommandsTrack {
-	delayedTrackTagWrite = new DelayedRequests<WorkerRequestWriteTrackTags>();
-	delayedTrackFix = new DelayedRequests<WorkerRequestFixTrack>();
+	readonly delayedTrackTagWrite = new DelayedRequests<WorkerRequestWriteTrackTags>();
+	readonly delayedTrackFix = new DelayedRequests<WorkerRequestFixTrack>();
 
-	constructor(private owner: IoService) {
+	constructor(private readonly owner: IoService) {
 	}
 
 	async remove(id: string, rootID: string): Promise<AdminChangeQueueInfo> {

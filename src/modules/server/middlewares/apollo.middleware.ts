@@ -181,8 +181,8 @@ function formatGraphQLFormatError(
 
 @InRequestScope
 export class ApolloMiddleware {
-	@Inject private orm!: OrmService;
-	@Inject private engine!: EngineService;
+	@Inject private readonly orm!: OrmService;
+	@Inject private readonly engine!: EngineService;
 	private schema!: GraphQLSchema;
 
 	async middleware(): Promise<express.RequestHandler> {

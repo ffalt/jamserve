@@ -89,11 +89,9 @@ export class ExpressMethod {
 					`is not a class decorated with '@ResultType' decorator!`
 				);
 			}
-			// eslint-disable-next-line prefer-spread
-			const result = await instance[method.methodName].apply(instance, args);
+			const result = await instance[method.methodName](...args);
 			responder.sendData(context.req, context.res, result);
 		} catch (e: any) {
-			// console.error(e);
 			log.error(e.fail || e.message);
 			responder.sendError(context.req, context.res, e);
 		}
@@ -128,8 +126,9 @@ export class ExpressMethod {
 							req.params.pathParameters,
 							post,
 							options
-						), pathParameters: undefined
-					} as any;
+						),
+						pathParameters: undefined
+					};
 				}
 				await this.callMethod(post, { req, res, next, orm: (req as any).orm, engine: (req as any).engine, user: req.user }, 'Post', options, metadata);
 			} catch (e: any) {
@@ -164,7 +163,7 @@ export class ExpressMethod {
 							get,
 							options
 						), pathParameters: undefined
-					} as any;
+					};
 				}
 				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get', options, metadata);
 			} catch (e: any) {
@@ -199,7 +198,7 @@ export class ExpressMethod {
 							get,
 							options
 						), pathParameters: undefined
-					} as any;
+					};
 				}
 				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'All', options, metadata);
 			} catch (e: any) {

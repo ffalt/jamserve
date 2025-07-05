@@ -36,12 +36,12 @@ sharp.simd(false);
 
 @InRequestScope
 export class ImageModule {
-	private format = 'png';
+	private readonly format = 'png';
 	private font: JimpFont | undefined;
-	private cache: IDFolderCache<{ size?: number; format?: string }>;
+	private readonly cache: IDFolderCache<{ size?: number; format?: string }>;
 	private readonly imageCachePath: string;
 	@Inject
-	private configService!: ConfigService;
+	private readonly configService!: ConfigService;
 
 	constructor() {
 		this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
@@ -86,9 +86,9 @@ export class ImageModule {
 			}
 		});
 		image.resize({ w: size, h: size });
-		const mime = mimeTypes.lookup(format ? format : this.format);
+		const mime = mimeTypes.lookup(format || this.format);
 		if (!mime) {
-			return Promise.reject('Unknown Image Format Request');
+			return Promise.reject(Error('Unknown Image Format Request'));
 		}
 		if (mime === 'image/webp') {
 			const png_buffer = await image.getBuffer('image/png');
@@ -120,7 +120,7 @@ export class ImageModule {
 		if (size || (fileFormat !== format)) {
 			const mime = mimeTypes.lookup(format);
 			if (!mime) {
-				return Promise.reject(`Unknown Image Format Request: ${format} ${filename}`);
+				return Promise.reject(Error(`Unknown Image Format Request: ${format} ${filename}`));
 			}
 			const sharpy = sharp(filename, { failOn: 'none' });
 			if (size) {
@@ -141,12 +141,12 @@ export class ImageModule {
 		const destFormat = format || info.format;
 		const contentType = mimeTypes.lookup(destFormat);
 		if (!contentType) {
-			return Promise.reject(`Unknown Image Format Request: ${format}`);
+			return Promise.reject(Error(`Unknown Image Format Request: ${format}`));
 		}
 		if (size) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer, { failOnError: false })
+					buffer: await sharp(buffer, { failOn: 'warning' })
 						.resize(size, size, { fit: sharp.fit.cover })
 						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
@@ -157,7 +157,7 @@ export class ImageModule {
 		if (format && info.format !== destFormat) {
 			return {
 				buffer: {
-					buffer: await sharp(buffer, { failOnError: false })
+					buffer: await sharp(buffer, { failOn: 'warning' })
 						.toFormat(destFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
@@ -220,7 +220,7 @@ export class ImageModule {
 	// }
 
 	async resizeImagePNG(filename: string, destination: string, size: number): Promise<void> {
-		await sharp(filename, { failOnError: false })
+		await sharp(filename, { failOn: 'warning' })
 			.resize(size, size, { fit: sharp.fit.cover })
 			.png()
 			.toFile(destination);
@@ -266,10 +266,10 @@ export class ImageModule {
 	}
 
 	async getImageInfo(filename: string): Promise<ImageInfo> {
-		return ImageModule.formatImageInfo(sharp(filename, { failOnError: false }));
+		return ImageModule.formatImageInfo(sharp(filename, { failOn: 'warning' }));
 	}
 
 	async getImageInfoBuffer(bin: Buffer): Promise<ImageInfo> {
-		return ImageModule.formatImageInfo(sharp(bin, { failOnError: false }));
+		return ImageModule.formatImageInfo(sharp(bin, { failOn: 'warning' }));
 	}
 }

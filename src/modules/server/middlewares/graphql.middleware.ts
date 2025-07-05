@@ -11,10 +11,10 @@ const log = logger('Graphql');
 @InRequestScope
 export class GraphqlMiddleware {
 	@Inject
-	configService!: ConfigService;
+	readonly configService!: ConfigService;
 
 	@Inject
-	apollo!: ApolloMiddleware;
+	readonly apollo!: ApolloMiddleware;
 
 	async playground(): Promise<express.Router> {
 		const api = express.Router();

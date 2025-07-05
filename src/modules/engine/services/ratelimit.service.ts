@@ -34,7 +34,6 @@ export class RateLimitService {
 			}
 			res.set('X-RateLimit-Limit', `${this.loginLimiterOption.points}`);
 			res.set('X-RateLimit-Remaining', `${resConsume.remainingPoints}`);
-			// res.set('X-RateLimit-Reset', `${new Date(Date.now() + resConsume.msBeforeNext)}`);
 			return false;
 		} catch (rlRejected: any) {
 			if (rlRejected instanceof Error) {

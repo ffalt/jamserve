@@ -28,7 +28,7 @@ export function BaseUpload(
 			description: (options as UploadOptions).description,
 			example: (options as UploadOptions).example,
 			deprecationReason: (options as UploadOptions).deprecationReason,
-			...getParamInfo({ prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options })
+			...getParamInfo({ prototype, propertyKey: propertyKey, parameterIndex, returnTypeFunc, options })
 		});
 	};
 }

@@ -5,7 +5,7 @@ import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterStat
 import { SubsonicOKResponse } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 
 @SubsonicController()
@@ -64,7 +64,7 @@ export class SubsonicAnnotationApi {
 		 rating 	Yes 		The rating between 1 and 5 (inclusive), or 0 to remove the rating.
 		 */
 		if ((query.rating < 0) || (query.rating > 5)) {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 		}
 		await engine.state.rate(orm, query.id, query.rating, user);
 		return {};

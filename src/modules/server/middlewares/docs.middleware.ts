@@ -12,7 +12,7 @@ import { ConfigService } from '../../engine/services/config.service.js';
 
 @InRequestScope
 export class DocsMiddleware {
-	@Inject private apollo!: ApolloMiddleware;
+	@Inject private readonly apollo!: ApolloMiddleware;
 
 	getOpenApiSchema(): string {
 		const openapi = buildOpenApi();

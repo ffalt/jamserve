@@ -15,7 +15,7 @@ import { randomString } from '../../utils/random.js';
 import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { hashMD5 } from '../../utils/md5.js';
-import { SubsonicFormatter } from '../../modules/subsonic/formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 
 @InRequestScope
 export class UserService {
@@ -194,40 +194,40 @@ export class UserService {
 
 	public async authSubsonicPassword(orm: Orm, name: string, pass: string): Promise<User> {
 		if ((!pass) || (!pass.length)) {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		const user = await orm.User.findOne({ where: { name } });
 		if (!user) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
 		if (!session) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		if (pass !== session.jwth) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
 	}
 
 	public async authSubsonicToken(orm: Orm, name: string, token: string, salt: string): Promise<User> {
 		if (!name || name.trim().length === 0) {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		if ((!token) || (!token.length)) {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		const user = await orm.User.findOne({ where: { name } });
 		if (!user) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
 		if (!session) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		const t = hashMD5(session.jwth + salt);
 		if (token !== t) {
-			return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
 	}

@@ -8,6 +8,8 @@ import {
 import { OpenApiRefBuilder } from './openapi-refs.js';
 import { ClassType } from 'type-graphql';
 
+type ErrorResponseType = ClassType<any> | Function | object | symbol;
+
 export abstract class BaseOpenApiBuilder {
 	refsBuilder: OpenApiRefBuilder;
 
@@ -32,7 +34,7 @@ export abstract class BaseOpenApiBuilder {
 		}
 	}
 
-	abstract fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject): void;
+	abstract fillFormatResponses(type: ErrorResponseType, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject): void;
 
 	protected buildResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, schemas: Schemas): ResponsesObject {
 		const responses: ResponsesObject = {};

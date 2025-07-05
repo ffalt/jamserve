@@ -245,7 +245,7 @@ export class MetaDataService {
 		}
 	}
 
-	async lyricsLrcLibByTrackTag(orm: Orm, track: Track, tag: Tag): Promise<TrackLyrics | undefined> {
+	async lyricsLrcLibByTrackTag(orm: Orm, _track: Track, tag: Tag): Promise<TrackLyrics | undefined> {
 		if (!tag.title) {
 			return {};
 		}

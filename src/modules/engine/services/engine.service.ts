@@ -139,7 +139,7 @@ export class EngineService {
 			const root = orm.Root.create({
 				name: first.name,
 				path: first.path,
-				strategy: first.strategy as RootScanStrategy || RootScanStrategy.auto
+				strategy: first.strategy ?? RootScanStrategy.auto
 			});
 			await orm.Root.persistAndFlush(root);
 		}

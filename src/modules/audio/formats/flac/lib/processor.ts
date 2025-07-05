@@ -50,7 +50,11 @@ export class FlacProcessorStream extends Transform {
 	private mdbPush = false;
 	private mdbLastWritten = false;
 
-	constructor(private reportID3: boolean = false, private parseMetaDataBlocks: boolean = false, options?: TransformOptions) {
+	constructor(
+		private readonly reportID3: boolean = false,
+		private readonly parseMetaDataBlocks: boolean = false,
+		options?: TransformOptions
+	) {
 		super(options);
 	}
 
@@ -223,8 +227,8 @@ export class FlacProcessorStream extends Transform {
 			case STATE.MDB:
 				this.processMDB(chunk);
 				break;
-			default:
 			case STATE.PASS_THROUGH:
+			default:
 				this.processPASSTHROUGH(chunk);
 				break;
 		}

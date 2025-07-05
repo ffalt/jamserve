@@ -33,8 +33,7 @@ export function replaceFileSystemChars(s: string, replace: string): string {
 		.replace(/[?/!\\"|*]/g, replace);
 }
 
-// eslint-disable-next-line no-control-regex
-const FolderSystemCharsRegEx = /[<>:"/\\|?*\x00-\x1F]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
+const FolderSystemCharsRegEx = /[<>:"/\\|?*]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
 
 export function containsFolderSystemChars(s: string): boolean {
 	return FolderSystemCharsRegEx.test(s);

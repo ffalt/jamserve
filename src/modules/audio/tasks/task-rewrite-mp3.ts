@@ -28,18 +28,17 @@ export async function rewriteAudio(param: string): Promise<void> {
 		await fse.rename(tempFile, param);
 	} catch (e: any) {
 		await fileDeleteIfExists(tempFile);
-		return Promise.reject(e);
+		return Promise.reject(e as Error);
 	}
 }
 
 if (parentPort && process.env.JAM_USE_TASKS) {
-	parentPort.on('message', async (param: any) => {
+	const caller = parentPort;
+	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
 			throw new Error('param must be a string.');
 		}
 		await rewriteAudio(param);
-		if (parentPort) {
-			parentPort.postMessage(undefined);
-		}
+		caller.postMessage(undefined);
 	});
 }

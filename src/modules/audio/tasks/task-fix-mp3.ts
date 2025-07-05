@@ -12,13 +12,12 @@ export async function fixMP3(filename: string): Promise<void> {
 }
 
 if (parentPort && process.env.JAM_USE_TASKS) {
-	parentPort.on('message', async (param: any) => {
+	const caller = parentPort;
+	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
 			throw new Error('param must be a string.');
 		}
 		await fixMP3(param);
-		if (parentPort) {
-			parentPort.postMessage(undefined);
-		}
+		caller.postMessage(undefined);
 	});
 }

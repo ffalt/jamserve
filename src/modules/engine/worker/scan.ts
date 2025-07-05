@@ -40,7 +40,7 @@ export abstract class OnDemandTrackMatch {
 }
 
 export class ObjTrackMatch {
-	constructor(private match: MatchTrack) {
+	constructor(private readonly match: MatchTrack) {
 	}
 
 	async get(): Promise<MatchTrack> {
@@ -49,7 +49,7 @@ export class ObjTrackMatch {
 }
 
 export class ObjLoadTrackMatch {
-	constructor(private track: Track) {
+	constructor(private readonly track: Track) {
 	}
 
 	async get(): Promise<MatchTrack> {
@@ -70,7 +70,13 @@ export class WorkerScan {
 	root!: Root;
 	trackUpdater: TrackUpdater;
 
-	constructor(private orm: Orm, private rootID: string, private audioModule: AudioModule, private imageModule: ImageModule, private changes: Changes) {
+	constructor(
+		private readonly orm: Orm,
+		private readonly rootID: string,
+		audioModule: AudioModule,
+		private readonly imageModule: ImageModule,
+		private readonly changes: Changes
+	) {
 		this.trackUpdater = new TrackUpdater(orm, audioModule, changes);
 	}
 

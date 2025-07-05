@@ -1214,7 +1214,7 @@ export class SubsonicResponseAlbumInfo {
 @SubsonicResultType()
 export class SubsonicResponseIndexes {
 	@SubsonicObjField(() => SubsonicIndexes)
-	indexes!: SubsonicIndexes;
+	indexes?: SubsonicIndexes;
 }
 
 @SubsonicResultType()

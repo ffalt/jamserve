@@ -7,12 +7,10 @@ export async function extractFFmpegImage(filename: string, index: number, stream
 			.addOption('-map', `0:${index}`)
 			.toFormat('mjpeg')
 			.on('end', () => {
-				// logger.verbose('image extracted');
 				resolve();
 			})
 			.on('error', err => {
-				// logger.error('an error happened while extracting image: ' + err.message + ' ' + filename);
-				reject(err);
+				reject(err as Error);
 			});
 		proc.writeToStream(stream, { end: true });
 	});

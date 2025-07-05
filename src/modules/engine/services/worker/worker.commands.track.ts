@@ -3,7 +3,7 @@ import { WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRefreshTra
 import { Changes } from '../../worker/changes.js';
 
 export class WorkerCommandsTrack {
-	constructor(private owner: WorkerService) {
+	constructor(private readonly owner: WorkerService) {
 	}
 
 	async refresh(parameters: WorkerRequestRefreshTracks): Promise<Changes> {

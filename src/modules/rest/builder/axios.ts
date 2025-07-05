@@ -15,13 +15,13 @@ function generateUploadClientCalls(call: MethodMetadata, name: string, paramType
 		baseFunc: 'upload',
 		baseFuncParameters: `${paramType ? 'params' : '{}'}, '${upload.name}', file, onUploadProgress`,
 		tick: '\'',
-		apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
+		apiPath: (call.controllerClassMetadata?.route ?? '') + (call.route ?? ''),
 		description: callDescription(call)
 	}];
 }
 
 function generateUrlClientCall(call: MethodMetadata, name: string, paramsType: string): MustacheDataClientCallFunction {
-	let route = (call.route || '');
+	let route = (call.route ?? '');
 	let validate = undefined;
 	let baseParam = 'params';
 	if (call.customPathParameters) {
@@ -33,14 +33,14 @@ function generateUrlClientCall(call: MethodMetadata, name: string, paramsType: s
 	return {
 		name: `${name}Url`,
 		paramName: 'params',
-		paramsType: (paramsType || '{}') + ', forDom: boolean',
+		paramsType: `${paramsType ?? '{}'}, forDom: boolean`,
 		resultType: 'string',
 		baseFuncResultType: '',
 		baseFunc: 'buildRequestUrl',
-		baseFuncParameters: baseParam + ', forDom',
+		baseFuncParameters: `${baseParam}, forDom`,
 		tick: call.customPathParameters ? '`' : '\'',
 		validate,
-		apiPath: (call.controllerClassMetadata?.route || '') + route,
+		apiPath: (call.controllerClassMetadata?.route ?? '') + route,
 		description: callDescription(call),
 		sync: true
 	};
@@ -59,14 +59,14 @@ function generateBinClientCall(call: MethodMetadata, name: string, paramsType: s
 	return {
 		name: `${name}Binary`,
 		paramName: 'params',
-		paramsType: paramsType || '{}',
+		paramsType: paramsType ?? '{}',
 		resultType: '{buffer: ArrayBuffer; contentType: string}',
 		baseFuncResultType: '',
 		baseFunc: 'binary',
 		baseFuncParameters: baseParam,
 		tick: call.customPathParameters ? '`' : '\'',
 		validate,
-		apiPath: (call.controllerClassMetadata?.route || '') + route,
+		apiPath: (call.controllerClassMetadata?.route ?? '') + route,
 		description: callDescription(call)
 	};
 }
@@ -80,13 +80,13 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramTyp
 	return [{
 		name,
 		paramName: paramType ? 'params' : '',
-		paramsType: paramType || '',
-		resultType: resultType ? resultType : 'void',
-		baseFuncResultType: resultType || '',
+		paramsType: paramType ?? '',
+		resultType: resultType ?? 'void',
+		baseFuncResultType: resultType ?? '',
 		baseFunc: resultType ? (method === 'post' ? 'requestPostData' : 'requestData') : (method === 'post' ? 'requestPostDataOK' : 'requestOK'),
 		baseFuncParameters: paramType ? 'params' : '{}',
 		tick: call.customPathParameters ? '`' : '\'',
-		apiPath: (call.controllerClassMetadata?.route || '') + (call.route || ''),
+		apiPath: (call.controllerClassMetadata?.route ?? '') + (call.route ?? ''),
 		description: callDescription(call)
 	}];
 }

@@ -15,7 +15,7 @@ export function BaseGet(
 		returnTypeFuncOrOptions = routeOrReturnTypeFuncOrOptions as any;
 		route = undefined;
 	} else {
-		route = routeOrReturnTypeFuncOrOptions as string;
+		route = routeOrReturnTypeFuncOrOptions;
 	}
 	const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
 	return (prototype, methodName) => {

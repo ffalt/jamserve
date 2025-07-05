@@ -11,7 +11,7 @@ export function getTypeDecoratorParams<T extends object>(
 ): TypeDecoratorParams<T> {
 	if (typeof returnTypeFuncOrOptions === 'function') {
 		return {
-			returnTypeFunc: returnTypeFuncOrOptions as ReturnTypeFunc,
+			returnTypeFunc: returnTypeFuncOrOptions,
 			options: maybeOptions || {}
 		};
 	} else {

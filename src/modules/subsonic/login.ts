@@ -29,7 +29,7 @@ import { EngineService } from '../engine/services/engine.service.js';
 import { Orm } from '../engine/services/orm.service.js';
 import semver from 'semver';
 import { SUBSONIC_VERSION } from './version.js';
-import { SubsonicFormatter } from './formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
 import { SubsonicError } from './model/subsonic-rest-data.js';
 
 export function hexEncode(n: string): string {
@@ -74,7 +74,7 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	if (req.parameters.password) {
 		let pass = req.parameters.password;
 		if (typeof pass !== 'string') {
-			return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 		}
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
@@ -84,11 +84,11 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	if (req.parameters.token && req.parameters.salt) {
 		return req.engine.user.authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
 	}
-	return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+	return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 }
 
 export function validateSubsonicParams(req: SubsonicRequest, res: express.Response): boolean {
-	if (!req.parameters || !req.parameters.client) {
+	if (!req.parameters?.client) {
 		sendError(req, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
 		return false;
 	}

@@ -20,7 +20,7 @@ export function getParamInfo({ prototype, propertyKey, parameterIndex, returnTyp
 	const { getType, typeOptions } = findType({
 		metadataKey: 'design:paramtypes',
 		prototype,
-		propertyKey: propertyKey as string,
+		propertyKey,
 		parameterIndex,
 		returnTypeFunc,
 		typeOptions: options

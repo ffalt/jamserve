@@ -44,7 +44,6 @@ export abstract class ApiBaseResponder {
 		} else if (data.buffer) {
 			res.set('Content-Type', data.buffer.contentType);
 			res.set('Content-Length', data.buffer.buffer.length.toString());
-			// 			res.set('Cache-Control', 'public, max-age=' + config.max_age);
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
 			res.sendFile(data.file.filename, {

@@ -14,7 +14,7 @@ export async function rewriteWriteFFmpeg(filename: string, destination: string):
 		proc.on('end', () => {
 			resolve();
 		}).on('error', err => {
-			reject(err);
+			reject(err as Error);
 		});
 		proc.run();
 	});

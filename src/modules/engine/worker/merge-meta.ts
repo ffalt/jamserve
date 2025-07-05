@@ -20,7 +20,11 @@ export class MetaMerger {
 	cache!: MetaMergerCache;
 	root!: Root;
 
-	constructor(private orm: Orm, private changes: Changes, private rootID: string) {
+	constructor(
+		private readonly orm: Orm,
+		private readonly changes: Changes,
+		private readonly rootID: string
+	) {
 	}
 
 	private static async collectArtistNames(artist: Artist): Promise<{ artistName: string; artistSortName: string; slug: string }> {

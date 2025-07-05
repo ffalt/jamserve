@@ -11,7 +11,7 @@ export class DebouncePromises<T> {
 				if (err) {
 					reject(err);
 				} else if (!result) {
-					reject(new Error('Invalid Promise Result'));
+					reject(Error('Invalid Promise Result'));
 				} else {
 					resolve(result);
 				}

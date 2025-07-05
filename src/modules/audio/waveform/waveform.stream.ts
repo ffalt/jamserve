@@ -25,8 +25,8 @@ export class WaveformStream extends Transform {
 
 	constructor(atSamplesPerPixel?: number, atSampleRate?: number) {
 		super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
-		this._samplesPerPixel = atSamplesPerPixel != null ? atSamplesPerPixel : 256;
-		this._sampleRate = atSampleRate != null ? atSampleRate : 44100;
+		this._samplesPerPixel = atSamplesPerPixel ?? 256;
+		this._sampleRate = atSampleRate ?? 44100;
 		const options: Ffmpeg.FfmpegCommandOptions = {
 			source: this._buf as Readable
 		};
@@ -58,22 +58,8 @@ export class WaveformStream extends Transform {
 	}
 
 	start(): void {
-		// TODO: oddByte is always null => commented out
-		// let oddByte: number | null = null;
-		// let i: number;
-		// let value: number;
 		let data: Buffer | undefined = this._out.read();
 		while (data && data.length > 0) {
-			// i = 0;
-			// if (oddByte != null) {
-			// 	value = ((data.readInt8(0) << 8) | oddByte);
-			// 	oddByte = null;
-			// 	i = 1;
-			// } else {
-			// value = data.readInt16LE(0);
-			// i = 2;
-			// }
-			// this.readResults(value, i, data);
 			this.readResults(data.readInt16LE(0), 2, data);
 			data = this._out.read();
 		}

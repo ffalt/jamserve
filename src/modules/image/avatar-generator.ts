@@ -35,7 +35,7 @@ interface VariantsMap {
 
 export class AvatarGenerator {
 	private readonly _variants: VariantsMap;
-	private _parts: Array<AvatarPart>;
+	private readonly _parts: Array<AvatarPart>;
 
 	constructor(settings: Partial<AvatarGenearatorSettings> = {}) {
 		const cfg = {
@@ -45,6 +45,7 @@ export class AvatarGenerator {
 		this._variants = AvatarGenerator.BuildVariantsMap(cfg);
 		this._parts = cfg.parts;
 	}
+
 	//
 	// get variants(): Array<string> {
 	// 	return Object.keys(this._variants);
@@ -61,19 +62,21 @@ export class AvatarGenerator {
 		return discriminators.reduce(
 			(variants, discriminator) => {
 				const dir = path.join(partsLocation, discriminator);
-				variants[discriminator] = fs.readdirSync(dir).reduce((ps: PartsMap, fileName: string) => {
-					const match = fileRegex.exec(fileName);
-					if (match) {
-						const part = match[1] as AvatarPart;
-						if (!ps[part]) {
-							ps[part] = [];
-						}
-						ps[part][Number(match[2])] = path.join(dir, fileName);
-					}
-					return ps;
-				},
-				{} as PartsMap
-				);
+				variants[discriminator] = fs.readdirSync(dir)
+					.reduce(
+						(ps: PartsMap, fileName: string) => {
+							const match = fileRegex.exec(fileName);
+							if (match) {
+								const part = match[1] as AvatarPart;
+								if (!ps[part]) {
+									ps[part] = [];
+								}
+								ps[part][Number(match[2])] = path.join(dir, fileName);
+							}
+							return ps;
+						},
+						{} as PartsMap
+					);
 				return variants;
 			},
 			{} as VariantsMap
@@ -91,15 +94,11 @@ export class AvatarGenerator {
 		}
 		const rng = seedrandom(id);
 		return this._parts
-			.map(
-				(partName: AvatarPart): string => {
-					const partVariants = variantParts[partName];
-					return (
-						partVariants &&
-						partVariants[Math.floor(rng() * partVariants.length)]
-					);
-				}
-			)
+			.map((partName: AvatarPart): string | undefined => {
+				const partVariants = variantParts[partName];
+				return partVariants ? partVariants[Math.floor(rng() * partVariants.length)] : undefined;
+			})
+			.filter(part => part !== undefined)
 			.filter(Boolean);
 	}
 

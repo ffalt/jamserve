@@ -3,7 +3,7 @@ import { WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefresh
 import { Changes } from '../../worker/changes.js';
 
 export class WorkerCommandsRoot {
-	constructor(private owner: WorkerService) {
+	constructor(private readonly owner: WorkerService) {
 	}
 
 	async refresh(parameters: WorkerRequestRefreshRoot): Promise<Changes> {

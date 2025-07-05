@@ -1,6 +1,5 @@
 import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
-import { RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 import { FieldMetadata } from '../../deco/definitions/field-metadata.js';
 import { ClassMetadata } from '../../deco/definitions/class-metadata.js';
@@ -53,7 +52,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 			fieldType = 'JamEnums.' + enumInfo.name;
 		} else {
 			const fObjectType = metadata.resultTypes.find(t => t.target === fType);
-			fieldType = fObjectType?.name || 'any';
+			fieldType = fObjectType?.name ?? 'any';
 		}
 	}
 	if (typeOptions.array) {
@@ -106,24 +105,28 @@ export function buildTSResultTypes(): string {
 
 function getCombinedType(call: MethodMetadata) {
 	if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
-		const combineName = call.controllerClassMetadata?.name.replace('Controller', '') +
-			call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args';
+		const combineName = [
+			call.controllerClassMetadata?.name.replace('Controller', ''),
+			call.methodName[0].toUpperCase(),
+			call.methodName.slice(1),
+			'Args'
+		].join('');
 		const names: Array<string> = [];
 		call.params.forEach(p => {
 			if (p.kind === 'args') {
-				const type = (p as RestParamsMetadata).getType();
+				const type = p.getType();
 				const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
 				if (argumentType) {
 					names.push(argumentType.name);
 				} else {
-					names.push('ERROR: Could not find argument type for ' + p.methodName + ' ' + (p as RestParamsMetadata).propertyName);
+					names.push(`ERROR: Could not find argument type for ${p.methodName} ${p.propertyName}`);
 				}
 			} else if (p.kind === 'arg' && p.name === 'id') {
 				names.push('ID');
 			} else if (p.kind === 'arg' && p.mode === 'file') {
 				// nope ignore
 			} else if (p.kind !== 'context') {
-				names.push('ERROR: TODO: support mixing kinds in combining parameters for ' + JSON.stringify(p));
+				names.push('ERROR: support mixing kinds in combining parameters for ' + JSON.stringify(p));
 			}
 		});
 		return [`${tab}export type ${combineName} = ${names.join(' & ')};\n`];

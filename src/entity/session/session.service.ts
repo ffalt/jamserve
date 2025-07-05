@@ -173,7 +173,7 @@ export class SessionService {
 		const user = await orm.User.findOneOrFailByID(userID);
 		await session.user.set(user);
 		session.jwth = randomString(16);
-		await orm.Session.persist(session, true);
+		await orm.Session.persistAndFlush(session);
 		return session;
 	}
 }

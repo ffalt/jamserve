@@ -7,13 +7,12 @@ export async function removeID3v1(filename: string): Promise<IMP3.RemoveResult |
 }
 
 if (parentPort && process.env.JAM_USE_TASKS) {
-	parentPort.on('message', async (param: any) => {
+	const caller = parentPort;
+	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
 			throw new Error('param must be a string.');
 		}
 		const result = await removeID3v1(param);
-		if (parentPort) {
-			parentPort.postMessage(result);
-		}
+		caller.postMessage(result);
 	});
 }

@@ -101,7 +101,16 @@ name = "yamllint"
 
 [[triage]]
 match.rules = [
-  "radarlint-js:typescript:S3626",
-  "radarlint-js:typescript:S6564"
+  "radarlint-js:typescript:S6564", #  Remove this redundant type alias
+  "radarlint-js:typescript:S3626", # Remove this redundant jump.
+  "radarlint-js:typescript:S1135" # Complete the task associated to this "TODO" comment.
+]
+set.ignored = true
+
+[[triage]]
+match.file_patterns = ["*.test.ts"]
+match.rules = [
+  "radarlint-js:typescript:S3776",
+  "radarlint-js:typescript:S2004"
 ]
 set.ignored = true

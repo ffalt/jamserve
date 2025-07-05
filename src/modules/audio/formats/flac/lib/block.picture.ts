@@ -102,6 +102,6 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		return Buffer.byteLength(this.mimeType) + 4 +
 			Buffer.byteLength(this.description) + 4 +
 			+16 +
-			(this.pictureData ? this.pictureData.length : 0) + 4;
+			(this.pictureData?.length ?? 0) + 4;
 	}
 }

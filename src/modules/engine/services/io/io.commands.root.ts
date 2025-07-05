@@ -5,7 +5,7 @@ import { WorkerRequestCreateRoot, WorkerRequestRefreshRoot, WorkerRequestRefresh
 import { Orm } from '../orm.service.js';
 
 export class IoCommandsRoot {
-	constructor(private owner: IoService) {
+	constructor(private readonly owner: IoService) {
 	}
 
 	async update(rootID: string, name: string, path: string, strategy: RootScanStrategy): Promise<AdminChangeQueueInfo> {

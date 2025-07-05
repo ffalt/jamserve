@@ -8,7 +8,7 @@ import { Artwork } from '../../../entity/artwork/artwork.js';
 import { Genre } from '../../../entity/genre/genre.js';
 
 export class IdSet<T extends { id: string }> {
-	private set = new Set<string>();
+	private readonly set = new Set<string>();
 
 	get size(): number {
 		return this.set.size;

@@ -28,7 +28,7 @@ export function BaseBodyParam(
 			description: (options as BodyParamOptions).description,
 			example: (options as BodyParamOptions).example,
 			deprecationReason: (options as BodyParamOptions).deprecationReason,
-			...getParamInfo({ prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options })
+			...getParamInfo({ prototype, propertyKey: propertyKey, parameterIndex, returnTypeFunc, options })
 		});
 	};
 }

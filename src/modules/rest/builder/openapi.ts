@@ -11,11 +11,11 @@ import { ClassType } from 'type-graphql';
 class OpenApiBuilder extends BaseOpenApiBuilder {
 	protected buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
 		const parameters: Array<ParameterObject> = this.refsBuilder.buildParameters(method, ctrl, schemas, alias);
-		const path = (ctrl.route || '') + (alias?.route || method.route || '');
+		const path = (ctrl.route ?? '') + (alias?.route ?? method.route ?? '');
 		const roles = method.roles || ctrl.roles || [];
 		const o: OperationObject = {
-			operationId: `${ctrl.name}.${method.methodName}${alias?.route || ''}`,
-			summary: `${method.summary || method.description} ${alias?.name || ''}`.trim(),
+			operationId: `${ctrl.name}.${method.methodName}${alias?.route ?? ''}`,
+			summary: `${method.summary || method.description} ${alias?.name ?? ''}`.trim(),
 			description: method.description,
 			deprecated: method.deprecationReason || ctrl.deprecationReason ? true : undefined,
 			tags: method.tags || ctrl.tags,

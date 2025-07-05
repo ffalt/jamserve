@@ -15,7 +15,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 
 	const registerAutoClean = (req: express.Request, res: express.Response): void => {
 		finishedRequest(res, err => {
-			if (err && req.file && req.file.path) {
+			if (err && req.file?.path) {
 				fileDeleteIfExists(req.file.path).catch(e => {
 					console.error(e);
 				});

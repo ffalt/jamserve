@@ -11,12 +11,12 @@ export function getTypeDecoratorParams<T extends object>(
 ): TypeDecoratorParams<T> {
 	if (typeof returnTypeFuncOrOptions === 'function') {
 		return {
-			returnTypeFunc: returnTypeFuncOrOptions as ReturnTypeFunc,
-			options: maybeOptions || {}
+			returnTypeFunc: returnTypeFuncOrOptions,
+			options: maybeOptions ?? {}
 		};
 	} else {
 		return {
-			options: returnTypeFuncOrOptions || {}
+			options: returnTypeFuncOrOptions ?? {}
 		};
 	}
 }
@@ -28,11 +28,11 @@ export function getNameDecoratorParams<T extends SchemaNameOptions>(
 	if (typeof nameOrOptions === 'string') {
 		return {
 			name: nameOrOptions,
-			options: maybeOptions || ({} as T)
+			options: maybeOptions ?? ({} as T)
 		};
 	} else {
 		return {
-			options: nameOrOptions || ({} as T)
+			options: nameOrOptions ?? ({} as T)
 		};
 	}
 }

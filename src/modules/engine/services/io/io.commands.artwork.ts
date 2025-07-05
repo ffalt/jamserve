@@ -4,7 +4,7 @@ import { WorkerRequestCreateArtwork, WorkerRequestDownloadArtwork, WorkerRequest
 import { ArtworkImageType } from '../../../../types/enums.js';
 
 export class IoCommandsArtwork {
-	constructor(private owner: IoService) {
+	constructor(private readonly owner: IoService) {
 	}
 
 	async rename(artworkID: string, newName: string, rootID: string): Promise<AdminChangeQueueInfo> {

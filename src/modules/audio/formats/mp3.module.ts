@@ -63,7 +63,7 @@ export class AudioModuleMP3 {
 	async readRaw(filename: string): Promise<RawTag | undefined> {
 		const id3v2 = new ID3v2();
 		const result = await id3v2.read(filename);
-		if (!result || !result.head) {
+		if (!result?.head) {
 			return Promise.reject(Error('No ID3v2 Tag found'));
 		}
 		return id3v2ToRawTag(result);
@@ -150,32 +150,30 @@ export class AudioModuleMP3 {
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
 
-		// const resolveContentType = (contentType: number) => {
-		// 	switch (contentType) {
-		// 		case 1:
-		// 			return 'lyrics';
-		// 		case 2:
-		// 			return 'text transcription';
-		// 		case 3:
-		// 			return 'part name';
-		// 		case 4:
-		// 			return 'events';
-		// 		case 5:
-		// 			return 'chord';
-		// 		case 6:
-		// 			return 'trivia';
-		// 		default:
-		// 			return 'other';
-		// 	}
-		// };
+		const resolveContentType = (contentType: number) => {
+			switch (contentType) {
+				case 1:
+					return 'lyrics';
+				case 2:
+					return 'text transcription';
+				case 3:
+					return 'part name';
+				case 4:
+					return 'events';
+				case 5:
+					return 'chord';
+				case 6:
+					return 'trivia';
+				default:
+					return 'other';
+			}
+		};
 
 		const resolveTimeStampFormat = (timestampFormat: number) => {
-			switch (timestampFormat) {
-				case 1:
-					return 'MPEG frames';
-				default:
-					return 'milliseconds';
+			if (timestampFormat === 1) {
+				return 'MPEG frames';
 			}
+			return 'milliseconds';
 		};
 
 		if (tag) {
@@ -185,7 +183,7 @@ export class AudioModuleMP3 {
 				if (frame) {
 					return {
 						language: frame.value.language,
-						contentType: 'lyrics', // resolveContentType(value.contentType),
+						contentType: resolveContentType(frame.value.contentType),
 						timestampFormat: resolveTimeStampFormat(frame.value.timestampFormat),
 						events: frame.value.events
 					};

@@ -27,7 +27,7 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 		propertyKey
 	);
 	if (metadataKey === 'design:paramtypes') {
-		metadataDesignType = (reflectedType as Function[])[parameterIndex!];
+		metadataDesignType = (reflectedType as Function[])[parameterIndex ?? 0];
 	} else {
 		metadataDesignType = reflectedType as Function | undefined;
 	}
@@ -47,7 +47,10 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 			let r = returnTypeFunc();
 			if (typeof r === 'string') {
 				const fStringResolvedObjectType = getMetadataStorage().entities.find(it => it.target.name === r);
-				r = fStringResolvedObjectType!.target;
+				if (!fStringResolvedObjectType) {
+					throw Error(`Target type ${r} not found.`);
+				}
+				r = fStringResolvedObjectType.target;
 			}
 			if (Array.isArray(r)) {
 				options.array = true;
@@ -61,7 +64,7 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 		};
 	} else if (metadataDesignType) {
 		return {
-			getType: () => metadataDesignType!,
+			getType: () => metadataDesignType,
 			typeOptions: options
 		};
 	} else {

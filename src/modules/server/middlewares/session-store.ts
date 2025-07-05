@@ -3,13 +3,11 @@ import { SessionNotifyEventObject, SessionService } from '../../../entity/sessio
 import { SessionData } from '../../../types/express.js';
 
 export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
-	private cache = new Map<string, SessionData>();
-	// @Inject
-	// private sessionService!: SessionService;
+	private readonly cache = new Map<string, SessionData>();
 
-	constructor(private sessionService: SessionService) {
+	constructor(private readonly sessionService: SessionService) {
 		super();
-		this.sessionService.registerNotify(this); // TODO: better notify system in node? use RX?
+		this.sessionService.registerNotify(this);
 	}
 
 	async clearCache(): Promise<void> {

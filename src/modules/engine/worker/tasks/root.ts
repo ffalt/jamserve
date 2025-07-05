@@ -13,7 +13,7 @@ import { Folder } from '../../../../entity/folder/folder.js';
 export class RootWorker extends BaseWorker {
 	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
 		const d = dir.trim();
-		if (d[0] === '.') {
+		if (d.startsWith('.')) {
 			return Promise.reject(Error('Root Directory must be absolute'));
 		}
 		if (d.length === 0 || d.includes('*')) {
@@ -72,9 +72,7 @@ export class RootWorker extends BaseWorker {
 			}
 		}
 		if (rootMatch) {
-			// console.log(this.logNode(rootMatch));
 			await this.loadEmptyUnchanged(rootMatch);
-			// console.log(this.logNode(rootMatch));
 			const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
 			await scanMerger.merge(rootMatch);
 		}

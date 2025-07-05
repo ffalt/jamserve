@@ -9,6 +9,7 @@ import { Orm } from '../services/orm.service.js';
 import { Folder } from '../../../entity/folder/folder.js';
 import { QHelper } from '../../orm/index.js';
 import { Genre } from '../../../entity/genre/genre.js';
+import { isExtraFolder } from '../../../utils/foldertype.js';
 
 const log = logger('IO.MergeScan');
 
@@ -22,7 +23,11 @@ export interface MergeNode {
 }
 
 export class WorkerMergeScan {
-	constructor(private orm: Orm, private strategy: RootScanStrategy, private changes: Changes) {
+	constructor(
+		private readonly orm: Orm,
+		private readonly strategy: RootScanStrategy,
+		private readonly changes: Changes
+	) {
 	}
 
 	async mergeMatch(matchRoot: MatchNode): Promise<void> {
@@ -37,12 +42,6 @@ export class WorkerMergeScan {
 			log.debug('Syncing Folder Changes to DB');
 			await this.orm.em.flush();
 		}
-	}
-
-	private static isExtraFolder(node: MergeNode): boolean {
-		// TODO: generalise extra folder detection (an admin setting?)
-		const name = path.basename(node.path).toLowerCase();
-		return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
 	}
 
 	private static getMultiAlbumFolderType(node: MergeNode): FolderType {
@@ -76,7 +75,7 @@ export class WorkerMergeScan {
 			// root folder is always a collection
 			return FolderType.collection;
 		}
-		if (WorkerMergeScan.isExtraFolder(node)) {
+		if (isExtraFolder(node.path)) {
 			// special folder handling
 			return FolderType.extras;
 		}
@@ -109,7 +108,6 @@ export class WorkerMergeScan {
 		}
 		switch (type) {
 			case FolderType.collection:
-				// node.folder.albumType = undefined;
 				node.folder.mbArtistID = undefined;
 				node.folder.mbReleaseID = undefined;
 				node.folder.mbAlbumType = undefined;

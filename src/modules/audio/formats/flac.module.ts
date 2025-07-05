@@ -9,7 +9,7 @@ import { TagFormatType } from '../../../types/enums.js';
 import { RawTag } from '../rawTag.js';
 
 export class AudioModuleFLAC {
-	constructor(private imageModule: ImageModule) {
+	constructor(private readonly imageModule: ImageModule) {
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {
@@ -30,7 +30,7 @@ export class AudioModuleFLAC {
 	async readRaw(filename: string): Promise<RawTag | undefined> {
 		const flac = new Flac();
 		const result = await flac.read(filename);
-		if (!result || !result.comment) {
+		if (!result?.comment) {
 			return Promise.reject(Error('No Flac Vorbis Comment found'));
 		}
 		return flacToRawTag(result);
@@ -40,7 +40,6 @@ export class AudioModuleFLAC {
 		const id3 = rawTagToID3v2(tag);
 		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
 		const flac = new Flac();
-		// TODO: add tests for flac writing, make backup copy as long it is not well tested
 		const exits = await fse.pathExists(`${filename}.bak`);
 		if (!exits) {
 			await fse.copy(filename, `${filename}.bak`);
@@ -51,7 +50,7 @@ export class AudioModuleFLAC {
 	async extractTagImage(filename: string): Promise<Buffer | undefined> {
 		const flac = new Flac();
 		const tag = await flac.read(filename);
-		if (tag && tag.pictures) {
+		if (tag?.pictures) {
 			let pic = tag.pictures.find(p => p.pictureType === 3 /* ID3v2 picture type "cover front" used in FLAC */);
 			if (!pic) {
 				pic = tag.pictures[0];

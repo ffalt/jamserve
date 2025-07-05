@@ -89,10 +89,10 @@ export class EntityManager {
 				if (change.persist) {
 					mapManagedToSource(change.persist);
 					await change.persist._source.save({ transaction: t });
-				} else if (change.remove && change.remove.entity) {
+				} else if (change.remove?.entity) {
 					await change.remove.entity._source.destroy({ transaction: t });
 					this.parent.cache.remove(change.entityName, change.remove.entity);
-				} else if (change.remove && change.remove.query) {
+				} else if (change.remove?.query) {
 					const model = this.model(change.entityName);
 					change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction: t });
 					this.parent.cache.removePrefixed(change.entityName);
@@ -105,7 +105,7 @@ export class EntityManager {
 			}
 			for (const change of this.changeSet) {
 				if (change.persist) {
-					cleanManagedEntityRelations(change.persist as ManagedEntity);
+					cleanManagedEntityRelations(change.persist);
 					this.parent.cache.remove(change.entityName, change.persist);
 				}
 			}
@@ -116,16 +116,6 @@ export class EntityManager {
 			throw error;
 		}
 	}
-
-	persist<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[], flush = false): void | Promise<void> {
-		if (flush) {
-			return this.persistAndFlush(entityName, entity);
-		} else {
-			this.persistLater(entityName, entity);
-		}
-	}
-
-	// *
 
 	private async fromCacheOrLoad<T extends IDEntity<T>>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
 		const toLoadIDs: Array<string> = [];
@@ -285,14 +275,6 @@ export class EntityManager {
 		const entity = this.mapEntity(entityName, _source);
 		Object.keys(idData).forEach(key => (entity as any)[key] = (idData as any)[key]);
 		return entity;
-	}
-
-	remove<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity, flush: boolean): void | Promise<void> {
-		if (flush) {
-			return this.removeAndFlush(entityName, entity);
-		} else {
-			this.removeLater(entityName, entity);
-		}
 	}
 
 	async removeAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity): Promise<void> {

@@ -26,10 +26,6 @@ export interface AbstractClassOptions {
 	isAbstract?: boolean;
 }
 
-export interface AbstractOptions {
-	abstract?: boolean;
-}
-
 export interface EnumConfig {
 	name: string;
 	description?: string;
@@ -44,8 +40,6 @@ export interface OwnerOptions {
 }
 
 export declare type MappedByFunc<T> = (e: T) => any;
-
-// (e: T) => any; // (string & keyof T) | ((e: T) => any);
 
 export interface MappedByOptions<T> {
 	mappedBy?: MappedByFunc<T>;

@@ -3,17 +3,12 @@ import { EntityData, EntityName, IDEntity } from '../typings.js';
 import { FindOptions } from 'sequelize';
 
 export class EntityRepository<Entity extends IDEntity<Entity>> {
-	constructor(protected readonly em: EntityManager,
-		protected readonly entityName: EntityName<Entity>) {
+	constructor(protected readonly em: EntityManager, protected readonly entityName: EntityName<Entity>) {
 	}
 
 	buildOrderByFindOptions(_order?: Array<{ orderBy: any; orderDesc?: boolean }>): FindOptions<Entity> | undefined {
 		// to be overwritten
 		return;
-	}
-
-	persist(entity: Entity | Entity[], flush = false): void | Promise<void> {
-		return this.em.persist(this.entityName, entity, flush);
 	}
 
 	async persistAndFlush(entity: Entity | Entity[]): Promise<void> {
@@ -66,10 +61,6 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 
 	async removeByQueryAndFlush(options: FindOptions<Entity>): Promise<number> {
 		return this.em.removeByQueryAndFlush(this.entityName, options);
-	}
-
-	remove(entity: Entity, flush: boolean): void | Promise<void> {
-		return this.em.remove(this.entityName, entity, flush);
 	}
 
 	async removeAndFlush(entity: Entity): Promise<void> {

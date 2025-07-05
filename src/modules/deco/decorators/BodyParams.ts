@@ -18,7 +18,7 @@ export function BaseBodyParams(
 			kind: 'args',
 			mode: 'body',
 			propertyName: String(propertyKey),
-			...getParamInfo({ prototype, propertyKey: propertyKey as string, parameterIndex, returnTypeFunc, options })
+			...getParamInfo({ prototype, propertyKey: propertyKey, parameterIndex, returnTypeFunc, options })
 		});
 	};
 }
