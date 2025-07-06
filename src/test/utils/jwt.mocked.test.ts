@@ -95,7 +95,7 @@ describe('JWT functions', () => {
 			const hash = jwtHash(token);
 			expect(hash).toBeDefined();
 			expect(typeof hash).toBe('string');
-			expect(hash.length).toBe(32); // MD5 hash is 32 characters
+			expect(hash.length).toBe(64); // sha256 hash is 32 characters
 		});
 	});
 });
