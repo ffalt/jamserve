@@ -141,7 +141,7 @@
     "conventional-changelog-cli": "5.0.0",
     "eslint": "9.30.0",
     "eslint-plugin-jest": "29.0.1",
-    "jest": "30.0.3",
+    "jest": "30.0.4",
     "jest-openapi": "0.14.2",
     "nock": "13.5.6",
     "openapi-validator": "0.14.2",
