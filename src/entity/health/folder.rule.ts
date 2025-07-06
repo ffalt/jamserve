@@ -136,7 +136,7 @@ const folderRules: Array<FolderRuleInfo> = [
 
 			function getNiceAlbumFolderName(): string {
 				const year = folder.year ? folder.year.toString() : '';
-				const name = replaceFolderSystemChars(sanitizeName(folder.album || ''), '_');
+				const name = replaceFolderSystemChars(sanitizeName(folder.album ?? ''), '_');
 				const s = (year.length > 0 ? `[${replaceFolderSystemChars(year, '_')}] ` : '') + name;
 				return s.trim();
 			}

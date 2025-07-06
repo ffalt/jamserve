@@ -15,11 +15,11 @@ export class PlaylistService {
 		switch (media.objType) {
 			case DBObjectType.episode: {
 				const episodeTag = await (media.obj as Episode).tag.get();
-				return (episodeTag?.mediaDuration || 0);
+				return (episodeTag?.mediaDuration ?? 0);
 			}
 			case DBObjectType.track: {
 				const trackTag = await (media.obj as Track).tag.get();
-				return (trackTag?.mediaDuration || 0);
+				return (trackTag?.mediaDuration ?? 0);
 			}
 		}
 		return 0;

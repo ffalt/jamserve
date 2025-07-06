@@ -13,6 +13,10 @@ export class PlaylistTransformService extends BaseTransformService {
 	async playlistBase(orm: Orm, o: ORMPlaylist, playlistArgs: IncludesPlaylistArgs, user: User): Promise<PlaylistBase> {
 		const u = await o.user.getOrFail();
 		const entries = playlistArgs.playlistIncEntriesIDs || playlistArgs.playlistIncEntries ? await o.entries.getItems() : [];
+		let entriesIDs: Array<string> | undefined = undefined;
+		if (playlistArgs.playlistIncEntriesIDs) {
+			entriesIDs = entries.map(t => (t.track.id()) ?? (t.episode.id())).filter(id => id !== undefined);
+		}
 		return {
 			id: o.id,
 			name: o.name,
@@ -24,7 +28,7 @@ export class PlaylistTransformService extends BaseTransformService {
 			userID: u.id,
 			userName: u.name,
 			entriesCount: await o.entries.count(),
-			entriesIDs: playlistArgs.playlistIncEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())).filter(id => id !== undefined) : undefined,
+			entriesIDs,
 			state: playlistArgs.playlistIncState ? await this.state(orm, o.id, DBObjectType.playlist, user.id) : undefined
 		};
 	}

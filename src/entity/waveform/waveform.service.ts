@@ -37,7 +37,7 @@ export class WaveformService {
 	private readonly audioModule!: AudioModule;
 
 	async getWaveform(obj: Base, objType: DBObjectType, format?: WaveformFormatType, width?: number): Promise<WaveformResult> {
-		format = (format || WaveformDefaultFormat);
+		format = (format ?? WaveformDefaultFormat);
 		switch (objType) {
 			case DBObjectType.track:
 				return this.getTrackWaveform(obj as Track, format, width);

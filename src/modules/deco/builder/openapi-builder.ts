@@ -40,7 +40,7 @@ export abstract class BaseOpenApiBuilder {
 		const responses: ResponsesObject = {};
 		if (method.binary) {
 			this.fillBinaryResponses(method.binary, responses);
-		} else if (method.getReturnType && method.getReturnType()) {
+		} else if (method.getReturnType?.()) {
 			const type = method.getReturnType();
 			if (type === String) {
 				this.fillStringResponse(method, responses);

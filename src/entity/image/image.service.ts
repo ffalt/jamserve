@@ -92,7 +92,7 @@ export class ImageService {
 	}
 
 	private static getCoverArtTextPodcast(podcast: Podcast): string {
-		return podcast.title || podcast.url;
+		return podcast.title ?? podcast.url;
 	}
 
 	private static async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
@@ -153,6 +153,6 @@ export class ImageService {
 
 	async paintImage(obj: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult> {
 		const s = await ImageService.getCoverArtText(obj, type);
-		return this.imageModule.paint(s, size || 128, format);
+		return this.imageModule.paint(s, size ?? 128, format);
 	}
 }
