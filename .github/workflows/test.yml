@@ -42,7 +42,7 @@ jobs:
           debug: true
       - uses: qltysh/qlty-action/coverage@v1
         with:
-          token: {{secrets.QLTY_COVERAGE_TOKEN}}
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: coverage/lcov.info
     services:
       postgres:
