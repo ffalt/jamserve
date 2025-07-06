@@ -32,14 +32,8 @@ jobs:
       - run: npm install --os=linux --cpu=x64 sharp
       - name: Try to build
         run: npm run build
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v9.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: npm run coverage
-          coverageLocations: ${{github.workspace}}/coverage/lcov.info:lcov
-          debug: true
+      - name: Test with  coverage
+        run: npm run coverage
       - uses: qltysh/qlty-action/coverage@v1
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
