@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { hashMD5 } from './md5.js';
+import crypto from 'crypto';
 
 export interface JWTPayload {
 	id: string;
@@ -8,7 +8,7 @@ export interface JWTPayload {
 }
 
 export function jwtHash(token: string): string {
-	return hashMD5(token);
+	return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 export function generateJWT(userID: string, client: string, secret: string, maxAge: number): string {

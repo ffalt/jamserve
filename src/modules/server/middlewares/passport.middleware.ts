@@ -6,7 +6,7 @@ import { EngineService } from '../../engine/services/engine.service.js';
 import { User } from '../../../entity/user/user.js';
 import { EngineRequest } from './engine.middleware.js';
 import { logger } from '../../../utils/logger.js';
-import { hashMD5 } from '../../../utils/md5.js';
+import { jwtHash } from '../../../utils/jwt.js';
 
 const log = logger('Passport');
 
@@ -16,10 +16,6 @@ export interface UserRequest extends EngineRequest {
 	jwt: boolean;
 	jwth?: string;
 	params: any;
-}
-
-function jwthash(token: string): string {
-	return hashMD5(token);
 }
 
 function passPortAuth(name: string, next: express.NextFunction, req: UserRequest, jwth: string, res: express.Response<any, Record<string, any>>) {
@@ -103,7 +99,7 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 			// no or not valid auth token, go to next login method (request will fail eventually if req.user is not set)
 			return next();
 		}
-		const jwth = jwthash(token);
+		const jwth = jwtHash(token);
 		req.engine.rateLimit.loginSlowDown(req, res)
 			.then(() => {
 				passPortAuth(name, next, req, jwth, res);
