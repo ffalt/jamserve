@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.5.26](https://github.com/ffalt/jamserve/compare/v0.5.25...v0.5.26) (2025-07-01)
 
+* **deps:** update
+
 ## [0.5.25](https://github.com/ffalt/jamserve/compare/v0.5.24...v0.5.25) (2025-06-06)
 
 ### Features
@@ -193,7 +195,7 @@ All notable changes to this project will be documented in this file. See [commit
 ### ⚠ BREAKING CHANGES
 
 * **esm:** "firststart.config.js" is now a json file
-"firststart.config.json"
+  "firststart.config.json"
 
 ### Features
 

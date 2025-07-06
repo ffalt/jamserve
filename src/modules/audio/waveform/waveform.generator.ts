@@ -48,7 +48,7 @@ export class WaveformGenerator {
 		const channel = wfd.channel(0);
 		const minArray = channel.min_array();
 		const maxArray = channel.max_array();
-		x.domain([0, wfd.length]).rangeRound([0, width || 4000]);
+		x.domain([0, wfd.length]).rangeRound([0, width ?? 4000]);
 		y.domain([min(minArray) as any, max(maxArray) as any]).rangeRound([0, height]);
 		const waveArea = area()
 			.x((a, i) => x(i))
@@ -69,6 +69,6 @@ export class WaveformGenerator {
 			.attr('fill', 'darkgreen')
 			.attr('d', waveArea as any);
 		const node = svg.node();
-		return node?.outerHTML || '';
+		return node?.outerHTML ?? '';
 	}
 }

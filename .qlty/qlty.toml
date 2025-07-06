@@ -96,6 +96,10 @@ drivers = [
 [[plugin]]
 name = "trufflehog"
 
+[[plugin]]
+name = "markdownlint"
+mode = "comment"
+
 [[triage]]
 # disable openapi hints for now
 match.rules = [
@@ -108,6 +112,8 @@ set.ignored = true
 
 [[triage]]
 match.rules = [
+  "markdownlint:MD013", # Line length
+  "markdownlint:MD024", # Multiple headings with the same content
   "ripgrep:TODO", # Complete the task associated to this "TODO" comment.
   "radarlint-js:typescript:S2301", # Provide multiple methods instead of using "boolean" to determine which action to take.
   "radarlint-js:typescript:S4043", # Move this array "sort" operation to a separate statement or replace it with "toSorted" (Not available in ES2020)
