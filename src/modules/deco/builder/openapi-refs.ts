@@ -46,7 +46,11 @@ export class OpenApiRefBuilder {
 	}
 
 	private mapExample(typeOptions: FieldOptions & TypeOptions, schemas: Schemas): string | undefined {
-		return typeOptions.isID ? ((schemas['ID'] as SchemaObject).type === 'integer' ? exampleIDInt : exampleID) : typeOptions.example;
+		if (!typeOptions.isID) {
+			return typeOptions.example;
+		}
+		const idSchemaType = (schemas['ID'] as SchemaObject).type;
+		return idSchemaType === 'integer' ? exampleIDInt : exampleID;
 	}
 
 	private mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
@@ -189,7 +193,12 @@ export class OpenApiRefBuilder {
 			}
 		}
 		return parameters.sort((a, b) => {
-			const result = (a.required === b.required) ? 0 : a.required ? -1 : 1;
+			let result = 1;
+			if (a.required === b.required) {
+				result = 0;
+			} else if (a.required) {
+				result = -1;
+			}
 			if (result === 0) {
 				return a.name.localeCompare(b.name);
 			}

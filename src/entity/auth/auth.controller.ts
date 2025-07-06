@@ -59,12 +59,12 @@ export class AuthController {
 							.then(session => {
 								resolve(session);
 							})
-							.catch(e => {
+							.catch((e: Error) => {
 								reject(e);
 							});
 					}
 				})
-				.catch(e => {
+				.catch((e: Error) => {
 					reject(e);
 				});
 		});
@@ -72,7 +72,6 @@ export class AuthController {
 
 	private static buildSessionResult(req: express.Request, credentials: CredentialsArgs, user: User, engine: EngineService): Session {
 		const client = req.body.client || 'Unknown Client';
-		// context.req.client = client;
 		const token = credentials.jwt ?
 			generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) :
 			undefined;

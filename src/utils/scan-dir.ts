@@ -39,7 +39,7 @@ export class DirScanner {
 		const folders: Array<{ dir: string; stat: fse.Stats }> = [];
 		const list = await fse.readdir(dir);
 		for (const filename of list) {
-			if (filename[0] !== '.') {
+			if (!filename.startsWith('.')) {
 				const sub = path.join(dir, filename);
 				const subStat = await fse.stat(sub);
 				if (subStat.isDirectory()) {

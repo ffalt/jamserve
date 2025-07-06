@@ -175,9 +175,13 @@ export class FlacProcessorStream extends Transform {
 
 	private processMARKER(chunk: Chunk): void {
 		if (this.safePush(chunk, 4, true, slice => this.validateMarker(slice))) {
-			this.state = (!this.isFlac && this.hasID3) ?
-				STATE.SCAN_MARKER :
-				(this.isFlac ? STATE.MDB_HEADER : STATE.PASS_THROUGH);
+			let newState: STATE = STATE.PASS_THROUGH;
+			if (!this.isFlac && this.hasID3) {
+				newState = STATE.SCAN_MARKER;
+			} else if (this.isFlac) {
+				newState = STATE.MDB_HEADER;
+			}
+			this.state = newState;
 		} else {
 			chunk.done = true;
 		}

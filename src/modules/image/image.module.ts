@@ -50,7 +50,7 @@ export class ImageModule {
 			'thumb',
 			(params: { size?: number; format?: string }) => {
 				const sizePrefix = params.size !== undefined ? `-${params.size}` : '';
-				const fileFormat = params.format || this.format;
+				const fileFormat = params.format ?? this.format;
 				return `${sizePrefix}.${fileFormat}`;
 			}
 		);
@@ -74,7 +74,7 @@ export class ImageModule {
 	}
 
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
-		size = size || 320;
+		size = size ?? 320;
 		const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
 		if (!this.font) {
 			this.font = await loadFont(SANS_32_WHITE);
@@ -92,7 +92,7 @@ export class ImageModule {
 			}
 		});
 		image.resize({ w: size, h: size });
-		const mime = mimeTypes.lookup(format || this.format);
+		const mime = mimeTypes.lookup(format ?? this.format);
 		if (!mime) {
 			return Promise.reject(Error('Unknown Image Format Request'));
 		}
@@ -144,7 +144,7 @@ export class ImageModule {
 		if (!format && size && !SupportedWriteImageFormat.includes(info.format)) {
 			format = ImageFormatType.jpeg;
 		}
-		const destFormat = format || info.format;
+		const destFormat = format ?? info.format;
 		const contentType = mimeTypes.lookup(destFormat);
 		if (!contentType) {
 			return Promise.reject(Error(`Unknown Image Format Request: ${format}`));
@@ -260,10 +260,10 @@ export class ImageModule {
 		try {
 			const metadata = await sharpy.metadata();
 			return {
-				width: metadata.width || 0,
-				height: metadata.height || 0,
-				format: metadata.format || '',
-				colorDepth: metadata.density || 0,
+				width: metadata.width ?? 0,
+				height: metadata.height ?? 0,
+				format: metadata.format ?? '',
+				colorDepth: metadata.density ?? 0,
 				colors: 0
 			};
 		} catch {

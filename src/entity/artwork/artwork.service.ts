@@ -12,10 +12,10 @@ import { ImageResult } from '../../modules/image/image.format.js';
 @InRequestScope
 export class ArtworkService {
 	@Inject
-	private ioService!: IoService;
+	private readonly ioService!: IoService;
 
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	async createByUrl(folder: Folder, url: string, types: Array<ArtworkImageType>): Promise<AdminChangeQueueInfo> {
 		return this.ioService.artwork.download(folder.id, url, types, folder.root.idOrFail());

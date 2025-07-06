@@ -112,8 +112,8 @@ export class WorkerScan {
 	static async buildTrackMatch(track: Track): Promise<MatchTrack> {
 		const tag = await track.tag.get();
 		return {
-			artist: tag?.albumArtist || tag?.artist,
-			artistSort: tag?.albumArtistSort || tag?.artistSort,
+			artist: tag?.albumArtist ?? tag?.artist,
+			artistSort: tag?.albumArtistSort ?? tag?.artistSort,
 			genres: tag?.genres,
 			album: tag?.album,
 			series: tag?.series,
@@ -124,7 +124,7 @@ export class WorkerScan {
 			track: tag?.trackNr,
 			mbArtistID: tag?.mbArtistID,
 			mbReleaseID: tag?.mbReleaseID,
-			mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`
+			mbAlbumType: `${tag?.mbAlbumType ?? ''}/${tag?.mbAlbumStatus ?? ''}`
 		};
 	}
 

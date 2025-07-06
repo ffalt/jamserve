@@ -13,7 +13,7 @@ export abstract class BaseCompressStream implements StreamData {
 
 	protected constructor(filename: string, format?: string) {
 		this.filename = replaceFileSystemChars(filename, '_').replace(/ /g, '_');
-		this.format = format || 'zip';
+		this.format = format ?? 'zip';
 		if (!BaseCompressStream.isSupportedFormat(this.format)) {
 			throw new Error('Unsupported Download Format');
 		}

@@ -9,12 +9,13 @@ on:
     paths-ignore:
       - 'README.md'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     container:
       image: ffalt/jam-test
       options: --user 1001

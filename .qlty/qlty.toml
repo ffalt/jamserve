@@ -97,8 +97,25 @@ drivers = [
 name = "trufflehog"
 
 [[triage]]
+# disable openapi hints for now
 match.rules = [
-  "radarlint-js:typescript:S6564", #  Remove this redundant type alias
+  "checkov:CKV_OPENAPI_5", # Ensure that security operations is not empty.
+  "checkov:CKV_OPENAPI_4", # Ensure that the global security field has rules defined
+  "checkov:CKV_OPENAPI_21", # Ensure that arrays have a maximum number of items
+  "checkov:CKV_OPENAPI_20", # Ensure that API keys are not sent over cleartext
+]
+set.ignored = true
+
+[[triage]]
+match.rules = [
+  "ripgrep:TODO", # Complete the task associated to this "TODO" comment.
+  "radarlint-js:typescript:S2301", # Provide multiple methods instead of using "boolean" to determine which action to take.
+  "radarlint-js:typescript:S4043", # Move this array "sort" operation to a separate statement or replace it with "toSorted" (Not available in ES2020)
+  "radarlint-js:typescript:S3776", # Refactor this function to reduce its Cognitive Complexity
+  "radarlint-js:typescript:S6397", # (Regex) Replace character class by the character itself.
+  "radarlint-js:typescript:S107", # Async method has too many parameters
+  "radarlint-js:typescript:S4325", # This assertion is unnecessary since it does not change the type of the expression. (False positives in GraphQL @Arg('id', () => ID!))
+  "radarlint-js:typescript:S6564", # Remove this redundant type alias
   "radarlint-js:typescript:S3626", # Remove this redundant jump.
   "radarlint-js:typescript:S1135" # Complete the task associated to this "TODO" comment.
 ]
@@ -107,6 +124,7 @@ set.ignored = true
 [[triage]]
 match.file_patterns = ["*.test.ts"]
 match.rules = [
+  "radarlint-js:typescript:S1186", # Unexpected empty function
   "radarlint-js:typescript:S3776",
   "radarlint-js:typescript:S2004"
 ]

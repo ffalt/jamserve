@@ -126,15 +126,24 @@ export class MetaDataService {
 	}
 
 	async acousticbrainzLookup(orm: Orm, mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
-		return this.searchInStore<AcousticBrainz.Response>(orm, `lookup-${mbid}${nr !== undefined ? `-${nr}` : ''}`,
-			MetaDataType.acousticbrainz, async () => {
+		const suffix = nr !== undefined ? `-${nr}` : '';
+		const lookupKey = `lookup-${mbid}${suffix}`;
+		return this.searchInStore<AcousticBrainz.Response>(
+			orm,
+			lookupKey,
+			MetaDataType.acousticbrainz,
+			async () => {
 				return this.audioModule.acousticbrainz.highLevel(mbid, nr);
 			});
 	}
 
 	async coverartarchiveLookup(orm: Orm, type: string, mbid: string): Promise<CoverArtArchive.Response> {
-		return this.searchInStore<CoverArtArchive.Response>(orm, `lookup-${type}${mbid}`,
-			MetaDataType.coverartarchive, async () => {
+		const lookupKey = ['lookup-', type, mbid].join('');
+		return this.searchInStore<CoverArtArchive.Response>(
+			orm,
+			lookupKey,
+			MetaDataType.coverartarchive,
+			async () => {
 				if (type === CoverArtArchiveLookupType.release) {
 					return this.audioModule.coverArtArchive.releaseImages(mbid);
 				}
@@ -163,7 +172,7 @@ export class MetaDataService {
 				let result = await this.audioModule.lyricsOVH.search(artist, song);
 				const cutVariants = ['(', '/', '[', ':'];
 				for (const cut of cutVariants) {
-					if (!result || !result.lyrics) {
+					if (!result?.lyrics) {
 						if (song.includes(cut)) {
 							const title = song.slice(0, song.indexOf(cut)).trim();
 							if (title.length > 0) {
@@ -266,10 +275,10 @@ export class MetaDataService {
 			return {};
 		}
 		let result: TrackLyrics | undefined;
-		if ((!result || !result.lyrics) && tag?.artist) {
+		if (!result?.lyrics && tag?.artist) {
 			result = await this.lyricsOVH(orm, tag.artist, tag.title);
 		}
-		if ((!result || !result.lyrics) && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
+		if (!result?.lyrics && tag?.albumArtist && (tag?.artist !== tag?.albumArtist)) {
 			result = await this.lyricsOVH(orm, tag.albumArtist, tag.title);
 		}
 		return result;
@@ -279,7 +288,8 @@ export class MetaDataService {
 		if (!this.audioModule.coverArtArchive.enabled) {
 			throw new Error('External service is disabled');
 		}
-		if (!url || !(url.match(/^http(s)?:\/\/coverartarchive.org/))) {
+		const pattern = /^http(s)?:\/\/coverartarchive.org/;
+		if (!url || !pattern.exec(url)) {
 			return Promise.reject(InvalidParamError('url'));
 		}
 		const response = await fetch(url);

@@ -7,7 +7,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 @InRequestScope
 export class ChatService {
 	@Inject
-	private settingsService!: SettingsService;
+	private readonly settingsService!: SettingsService;
 
 	private messages: Array<Chat> = [];
 	private duration: moment.Duration = moment.duration(0, 's');

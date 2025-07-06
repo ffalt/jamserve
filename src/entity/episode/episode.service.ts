@@ -18,16 +18,16 @@ const log = logger('EpisodeService');
 
 @InRequestScope
 export class EpisodeService {
-	private episodeDownloadDebounce = new DebouncePromises<void>();
+	private readonly episodeDownloadDebounce = new DebouncePromises<void>();
 	private readonly podcastsPath: string;
 	@Inject
-	private audioModule!: AudioModule;
+	private readonly audioModule!: AudioModule;
 
 	@Inject
-	private imageModule!: ImageModule;
+	private readonly imageModule!: ImageModule;
 
 	@Inject
-	private configService!: ConfigService;
+	private readonly configService!: ConfigService;
 
 	constructor() {
 		this.podcastsPath = this.configService.getDataPath(['podcasts']);
@@ -92,7 +92,7 @@ export class EpisodeService {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 		} catch (e) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-			return Promise.reject(e);
+			return Promise.reject(e as Error);
 		}
 	}
 
@@ -130,7 +130,7 @@ export class EpisodeService {
 			return;
 		}
 		const tag = await episode.tag.get();
-		if (tag && tag.nrTagImages) {
+		if (tag?.nrTagImages) {
 			const result = await this.imageModule.getExisting(episode.id, size, format);
 			if (result) {
 				return result;

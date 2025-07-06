@@ -6,13 +6,12 @@ import { PageArgs } from '../base/base.args.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export class MetadataServiceTopTracks {
-	constructor(private service: MetaDataService) {
-
+	constructor(private readonly service: MetaDataService) {
 	}
 
 	async byArtistName(orm: Orm, artist: string, page?: PageArgs): Promise<PageResult<Track>> {
 		const result = await this.service.lastFMTopTracksArtist(orm, artist);
-		if (result && result.toptracks && result.toptracks.track) {
+		if (result?.toptracks?.track) {
 			const songs: Array<Song> = result.toptracks.track.map(t => {
 				return {
 					name: t.name,

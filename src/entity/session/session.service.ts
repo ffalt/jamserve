@@ -46,9 +46,13 @@ export class SessionService {
 		if (session.user.id() !== data.passport.user) {
 			await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
 		}
-		session.expires = typeof data.cookie.expires === 'boolean' ?
-			(data.cookie.expires ? new Date() : undefined) :
-			(data.cookie.expires ?? undefined);
+		let expires: Date | undefined;
+		if (typeof data.cookie.expires === 'boolean') {
+			expires = data.cookie.expires ? new Date() : undefined;
+		} else {
+			expires = data.cookie.expires ?? undefined;
+		}
+		session.expires = expires;
 		await orm.Session.persistAndFlush(session);
 	}
 

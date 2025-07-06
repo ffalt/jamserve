@@ -3,6 +3,7 @@ import { Arg, Authorized, Ctx, ID, Query, Resolver } from 'type-graphql';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { AdminChangeQueueInfoQL, AdminSettings, AdminSettingsQL } from './admin.js';
 
+// qlty-ignore: radarlint-js:typescript:S2094 ( Unexpected empty class.)
 class AdminChangeQueueInfo {
 }
 

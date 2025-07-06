@@ -24292,17 +24292,6 @@
 					"groups"
 				]
 			},
-			"ListType": {
-				"type": "string",
-				"enum": [
-					"random",
-					"highest",
-					"avghighest",
-					"frequent",
-					"faved",
-					"recent"
-				]
-			},
 			"AlbumOrderFields": {
 				"type": "string",
 				"enum": [
@@ -24315,6 +24304,17 @@
 					"seriesNr",
 					"duration",
 					"albumType"
+				]
+			},
+			"ListType": {
+				"type": "string",
+				"enum": [
+					"random",
+					"highest",
+					"avghighest",
+					"frequent",
+					"faved",
+					"recent"
 				]
 			},
 			"AlbumPage": {
@@ -27164,6 +27164,10 @@
 					"syncedLyrics": {
 						"type": "string",
 						"description": "Synced Lyrics"
+					},
+					"language": {
+						"type": "string",
+						"description": "Language of the the lyrics"
 					},
 					"source": {
 						"type": "string",

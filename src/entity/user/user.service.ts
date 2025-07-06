@@ -185,7 +185,7 @@ export class UserService {
 	}
 
 	public async authSubsonicPassword(orm: Orm, name: string, pass: string): Promise<User> {
-		if ((!pass) || (!pass.length)) {
+		if (!pass?.length) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		const user = await orm.User.findOne({ where: { name } });
@@ -203,10 +203,10 @@ export class UserService {
 	}
 
 	public async authSubsonicToken(orm: Orm, name: string, token: string, salt: string): Promise<User> {
-		if (!name || name.trim().length === 0) {
+		if (!name?.trim().length) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
-		if ((!token) || (!token.length)) {
+		if (!token?.length) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
 		const user = await orm.User.findOne({ where: { name } });

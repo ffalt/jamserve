@@ -223,8 +223,8 @@ const trackRules: Array<TrackRuleInfo> = [
 		id: TrackHealthID.mp3MediaValid,
 		name: 'MP3 Media is invalid',
 		mp3: true,
-		run: async (folder: Folder, track: Track, tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
-			if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
+		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
+			if (tagCache.mp3Warnings?.mpeg) {
 				const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !fixable.includes(m.msg));
 				if (mp3Warnings.length > 0) {
 					return {

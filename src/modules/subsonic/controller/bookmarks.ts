@@ -106,7 +106,10 @@ export class SubsonicBookmarkApi {
 		current 	No 		The ID of the current playing song.
 		position 	No 		The position in milliseconds within the currently playing song.
 		 */
-		const mediaIDs: Array<SubsonicID> = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
+		let mediaIDs: Array<SubsonicID> = [];
+		if (query.id) {
+			mediaIDs = Array.isArray(query.id) ? query.id : [query.id];
+		}
 		await engine.playQueue.set(orm, {
 			mediaIDs,
 			currentID: query.current,

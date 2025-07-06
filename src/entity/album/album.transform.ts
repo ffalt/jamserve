@@ -54,7 +54,7 @@ export class AlbumTransformService extends BaseTransformService {
 				id: item.id,
 				name: item.name,
 				artist: artist?.name || '[INVALID ARTIST]',
-				artistID: artist?.id || (await item.artist.id()) || 'INVALID_ARTIST_ID',
+				artistID: artist?.id || item.artist.id() || 'INVALID_ARTIST_ID',
 				trackCount: await item.tracks.count()
 			};
 		});

@@ -41,8 +41,8 @@ export class MetaMerger {
 				metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
 			}
 		}
-		const artistName = metaStatBuilder.mostUsed('artist') || cUnknownArtist;
-		return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') || artist.name };
+		const artistName = metaStatBuilder.mostUsed('artist') ?? cUnknownArtist;
+		return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') ?? artist.name };
 	}
 
 	private static async collectArtistAlbumTypes(artist: Artist): Promise<Array<AlbumType>> {
@@ -284,7 +284,7 @@ export class MetaMerger {
 		const genreMap = new Map<string, Genre>();
 		for (const track of tracks) {
 			const tag = await track.tag.get();
-			duration += (tag?.mediaDuration || 0);
+			duration += (tag?.mediaDuration ?? 0);
 			metaStatBuilder.statID('seriesNr', tag?.seriesNr);
 			metaStatBuilder.statNumber('year', tag?.year);
 			metaStatBuilder.statID('mbArtistID', tag?.mbArtistID);
@@ -295,7 +295,7 @@ export class MetaMerger {
 		}
 		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
 		album.mbReleaseID = metaStatBuilder.mostUsed('mbReleaseID');
-		album.name = metaStatBuilder.mostUsed('album', album.name) || album.name;
+		album.name = metaStatBuilder.mostUsed('album', album.name) ?? album.name;
 		album.slug = slugify(album.name);
 		album.duration = duration;
 		album.seriesNr = metaStatBuilder.mostUsed('seriesNr');

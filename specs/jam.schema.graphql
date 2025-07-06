@@ -634,6 +634,7 @@ type EpisodeQL {
   path: String
   link: String
   summary: String
+  date: DateTimeISO!
   duration: Int
   guid: String
   author: String
@@ -644,7 +645,6 @@ type EpisodeQL {
   state: StateQL!
   fileCreated: DateTimeISO
   fileModified: DateTimeISO
-  date: DateTimeISO!
   chapters: [EpisodeChapterQL!]
   enclosures: [EpisodeEnclosureQL!]
   waveform: WaveformQL!
@@ -740,6 +740,7 @@ type PodcastQL {
   updatedAt: DateTimeISO!
   name: String!
   url: String!
+  lastCheck: DateTimeISO!
   status: PodcastStatus!
   image: String
   errorMessage: String
@@ -752,7 +753,6 @@ type PodcastQL {
   categories: [String!]!
   episodes: [EpisodeQL!]!
   episodesCount: Int!
-  lastCheck: DateTimeISO!
   state: StateQL!
 }
 

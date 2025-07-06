@@ -2,11 +2,10 @@ import { DBObjectType, DefaultOrderFields, ListType } from '../../types/enums.js
 import { IndexResult, IndexResultGroup, OrderHelper, PageResult } from './base.js';
 import { StateHelper } from '../state/state.helper.js';
 import { EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions } from '../../modules/orm/index.js';
-import seq from 'sequelize';
+import seq, { Includeable } from 'sequelize';
 import { User } from '../user/user.js';
 import { DefaultOrderArgs, PageArgs } from './base.args.js';
 import { paginate } from './base.utils.js';
-import { Includeable } from 'sequelize';
 import shuffleSeed from 'shuffle-seed';
 import { InvalidParamError, NotFoundError } from '../../modules/deco/express/express-error.js';
 
@@ -275,10 +274,10 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				// to avoid duplicate entries, shuffle MUST be seeded
 				if (!s) {
 					// if the api caller does not specify a seed, the random list will be "random" only per day for a user
-					// (dups can still occure on day change between two requests)
+					// (dups can still occur on day change between two requests)
 					s = `${userID}_${new Date().toISOString().split('T')[0]}`;
 				}
-				ids.sort();
+				ids.sort((a, b) => a.localeCompare(b));
 				ids = shuffleSeed.shuffle(ids, s);
 				break;
 			}

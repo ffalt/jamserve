@@ -9,10 +9,10 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 @InRequestScope
 export class AlbumService {
 	@Inject
-	private trackService!: TrackService;
+	private readonly trackService!: TrackService;
 
 	@Inject
-	private folderService!: FolderService;
+	private readonly folderService!: FolderService;
 
 	private static async getAlbumFolder(album: Album): Promise<Folder | undefined> {
 		const folders = await album.folders.getItems();

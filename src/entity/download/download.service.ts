@@ -63,7 +63,7 @@ export class DownloadService {
 	}
 
 	private static async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
-		const userID = await playlist.user.id();
+		const userID = playlist.user.id();
 		if (userID !== user.id && !playlist.isPublic) {
 			return Promise.reject(UnauthError());
 		}

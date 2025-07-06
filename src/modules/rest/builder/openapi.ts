@@ -15,7 +15,7 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 		const roles = method.roles || ctrl.roles || [];
 		const o: OperationObject = {
 			operationId: `${ctrl.name}.${method.methodName}${alias?.route ?? ''}`,
-			summary: `${method.summary || method.description} ${alias?.name ?? ''}`.trim(),
+			summary: `${method.summary ?? method.description} ${alias?.name ?? ''}`.trim(),
 			description: method.description,
 			deprecated: method.deprecationReason || ctrl.deprecationReason ? true : undefined,
 			tags: method.tags || ctrl.tags,

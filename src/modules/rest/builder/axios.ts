@@ -47,7 +47,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, paramsType: s
 }
 
 function generateBinClientCall(call: MethodMetadata, name: string, paramsType: string): MustacheDataClientCallFunction {
-	let route = (call.route || '');
+	let route = call.route ?? '';
 	let validate = undefined;
 	let baseParam = 'params';
 	if (call.customPathParameters) {
@@ -77,13 +77,19 @@ function generateBinaryClientCalls(call: MethodMetadata, name: string, paramType
 
 function generateRequestClientCalls(call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
 	const resultType = getResultType(call);
+	let baseFunc: string;
+	if (resultType) {
+		baseFunc = method === 'post' ? 'requestPostData' : 'requestData';
+	} else {
+		baseFunc = method === 'post' ? 'requestPostDataOK' : 'requestOK';
+	}
 	return [{
 		name,
 		paramName: paramType ? 'params' : '',
 		paramsType: paramType ?? '',
 		resultType: resultType ?? 'void',
 		baseFuncResultType: resultType ?? '',
-		baseFunc: resultType ? (method === 'post' ? 'requestPostData' : 'requestData') : (method === 'post' ? 'requestPostDataOK' : 'requestOK'),
+		baseFunc,
 		baseFuncParameters: paramType ? 'params' : '{}',
 		tick: call.customPathParameters ? '`' : '\'',
 		apiPath: (call.controllerClassMetadata?.route ?? '') + (call.route ?? ''),

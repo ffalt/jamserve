@@ -60,7 +60,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			return new Promise<R>((resolve, reject) => {
 				setTimeout(() => {
 					this.get(req).then(resolve).catch(reject);
-				}, this.options.retryDelay || 3000);
+				}, this.options.retryDelay ?? 3000);
 			});
 		}
 		return Promise.reject(error);

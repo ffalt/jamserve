@@ -217,7 +217,7 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 	customPathParameters.groups.forEach(g => {
 		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => (alias.hideParameters || []).includes(g.name));
 		if (hasOptionalAlias) {
-			routeParts.push(`$\{params.${g.name} ? \`${g.prefix || ''}$\{params.${g.name}}\` : ''}`);
+			routeParts.push(`$\{params.${g.name} ? \`${g.prefix ?? ''}$\{params.${g.name}}\` : ''}`);
 		} else {
 			validateNames.push(g.name);
 			routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);

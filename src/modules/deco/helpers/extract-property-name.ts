@@ -1,12 +1,16 @@
 // https://stackoverflow.com/questions/1007981/how-to-get-function-parameter-names-values-dynamically
-function $args(func: Function): Array<string> {
-	return (func + '')
+export function $args(func: Function): Array<string> {
+	const functionStr = (func + '')
 		.replace(/[/][/].*$/mg, '') // strip single-line comments
 		.replace(/\s+/g, '') // strip white space
-		.replace(/[/][*][^/*]*[*][/]/g, '') // strip multi-line comments
-		.split('){', 1)[0].replace(/^[^(]*[(]/, '') // extract the parameters
-		.replace(/=[^,]+/g, '') // strip any ES6 defaults
-		.split(',').filter(Boolean); // split & filter [""]
+		.replace(/\/\*[\s\S]*?\*\//g, ''); // strip multi-line comments
+
+	const pattern = /(?:function\s*)?(?:\w+\s*)?\(([^)]*)\)/;
+	const matched = pattern.exec(functionStr);
+
+	return matched?.[1]?.split(',')
+		.map(param => param.replace(/=.*$/, '').trim()) // remove default values
+		.filter(Boolean) ?? []; // filter empty strings
 }
 
 // eslint-disable-next-line @typescript-eslint/no-wrapper-object-types

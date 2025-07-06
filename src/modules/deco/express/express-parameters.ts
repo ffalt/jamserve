@@ -62,6 +62,7 @@ export class ExpressParameters {
 			if (value && Array.isArray(value)) {
 				array = value;
 			} else if (value) {
+				// qlty-ignore: radarlint-js:typescript:S6551
 				const s = `${value}`;
 				if (s.length === 0) {
 					throw InvalidParamError(param.name);

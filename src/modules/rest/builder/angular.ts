@@ -74,6 +74,16 @@ function generateBinaryClientCalls(call: MethodMetadata, name: string, paramType
 
 function generateRequestClientCalls(call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get'): Array<MustacheDataClientCallFunction> {
 	const resultType = getResultType(call);
+	let baseFunc: string;
+	if (resultType) {
+		if (method === 'post') {
+			baseFunc = 'requestPostData';
+		} else {
+			baseFunc = resultType === 'string' ? 'requestString' : 'requestData';
+		}
+	} else {
+		baseFunc = method === 'post' ? 'requestPostDataOK' : 'requestOK';
+	}
 	return [{
 		name,
 		paramName: paramType ? 'params' : '',
@@ -81,10 +91,7 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramTyp
 		resultType: resultType ?? 'void',
 		baseFuncResultType: resultType === 'string' ? '' : (resultType ?? ''),
 		tick: call.customPathParameters ? '`' : '\'',
-		baseFunc:
-			resultType ?
-				(method === 'post' ? 'requestPostData' : (resultType === 'string' ? 'requestString' : 'requestData')) :
-				(method === 'post' ? 'requestPostDataOK' : 'requestOK'),
+		baseFunc,
 		baseFuncParameters: paramType ? 'params' : '{}',
 		apiPath: (call.controllerClassMetadata?.route ?? '') + (call.route ?? ''),
 		description: callDescription(call)

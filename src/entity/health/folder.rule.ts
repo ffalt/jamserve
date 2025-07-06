@@ -85,10 +85,8 @@ const folderRules: Array<FolderRuleInfo> = [
 				const missing = [];
 				if (!folder.mbReleaseID) {
 					missing.push('musicbrainz album id');
-				} else {
-					if (!folder.mbAlbumType) {
-						missing.push('musicbrainz album type');
-					}
+				} else if (!folder.mbAlbumType) {
+					missing.push('musicbrainz album type');
 				}
 				if (missing.length > 0) {
 					return {

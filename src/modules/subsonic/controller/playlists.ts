@@ -44,7 +44,10 @@ export class SubsonicPlaylistsApi {
 			await this.updatePlaylist(updateQuery, ctx);
 			playlist = await ctx.orm.Playlist.findOneOrFailByID(playlistId);
 		} else if (query.name) {
-			const mediaIDs = query.songId !== undefined ? (Array.isArray(query.songId) ? query.songId : [query.songId]) : [];
+			let mediaIDs: Array<any> = [];
+			if (query.songId !== undefined) {
+				mediaIDs = Array.isArray(query.songId) ? query.songId : [query.songId];
+			}
 			playlist = await ctx.engine.playlist.create(ctx.orm, { name: query.name, isPublic: false, mediaIDs }, ctx.user);
 		}
 		if (!playlist) {
@@ -89,7 +92,10 @@ export class SubsonicPlaylistsApi {
 		}
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(e => e.track.id());
-		const removeTracks = query.songIndexToRemove !== undefined ? (Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove]) : [];
+		let removeTracks: Array<any> = [];
+		if (query.songIndexToRemove !== undefined) {
+			removeTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
+		}
 		trackIDs = trackIDs.filter((_id, index) => !removeTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);

@@ -7,7 +7,7 @@ import { Container } from 'typescript-ioc';
 
 dotenv.config();
 
-configureLogger(process.env.JAM_LOG_LEVEL || 'info', process.env.JAM_LOG_FILE);
+configureLogger(process.env.JAM_LOG_LEVEL ?? 'info', process.env.JAM_LOG_FILE);
 
 const log = logger('Server');
 

@@ -107,7 +107,7 @@ export class MetadataServiceSimilarTracks {
 			data = await this.service.lastFMSimilarTracksSearch(orm, tag.title, tag.artist);
 		}
 		let ids: Array<string> = [];
-		if (data && data.similartracks && data.similartracks.track) {
+		if (data?.similartracks?.track) {
 			const songs = data.similartracks.track.map(t => {
 				return {
 					name: t.name,

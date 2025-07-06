@@ -11,7 +11,7 @@ export class MetadataResolver {
 		if (folder.folderType === FolderType.artist) {
 			return { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) };
 		} else {
-			return { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) };
+			return { info: await engine.metadata.extInfo.byFolderAlbum(orm, folder) };
 		}
 	}
 

@@ -194,12 +194,18 @@ export class MockRequests {
 		const invalids = InvalidData.generateInvalidDataByParameter(property);
 		return invalids.map(invalid => {
 			const data = combineData(params.map(p => p === property ? invalid : ValidData.generateValidDataByParameter(p)));
+			let expectedStatus: number;
+			if (isQuery) {
+				expectedStatus = 422;
+			} else {
+				expectedStatus = data[property.name] === '' ? 400 : 422;
+			}
 			return {
 				apiName,
 				method,
 				roles,
 				valid: false,
-				expect: isQuery ? 422 : ((data[property.name] === '') ? 400 : 422),
+				expect: expectedStatus,
 				message: `"${property.name}" set to "${invalid.invalid}"`,
 				property: property.name,
 				data

@@ -41,11 +41,11 @@ export interface ENVConfig {
 @InRequestScope
 export class ConfigService {
 	env: ENVConfig = {
-		domain: process.env.JAM_DOMAIN || 'http://localhost',
-		host: process.env.JAM_HOST || '127.0.0.1',
-		port: Number(process.env.JAM_PORT) || 4040,
+		domain: process.env.JAM_DOMAIN ?? 'http://localhost',
+		host: process.env.JAM_HOST ?? '127.0.0.1',
+		port: Number(process.env.JAM_PORT ?? 4040),
 		jwt: {
-			secret: process.env.JAM_JWT_SECRET || 'keyboard cat is sad because no secret has been set',
+			secret: process.env.JAM_JWT_SECRET ?? 'keyboard cat is sad because no secret has been set',
 			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
 		},
 		session: {

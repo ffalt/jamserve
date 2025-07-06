@@ -80,6 +80,7 @@ export class ChangesWorker extends BaseWorker {
 			await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
 			stateCleanIds.appendIDs(playlistEntryIDs);
 			// TODO: collect and update playlists
+			// qlty-ignore: radarlint-js:typescript:S125
 			/*
 							log.debug('Updating Playlist:', playlist.name);
 							await updatePlayListTracks(this.store.trackStore, playlist);

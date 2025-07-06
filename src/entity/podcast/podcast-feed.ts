@@ -141,7 +141,7 @@ export class Feed {
 			author: data.feed.author,
 			generator: data.feed.generator,
 			language: data.feed.language,
-			image: data.feed.image && data.feed.image.url ? data.feed.image.url : undefined,
+			image: data.feed.image?.url,
 			categories: data.feed.categories
 		};
 		if (data.feed?.['itunes:summary']?.['#']) {

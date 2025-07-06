@@ -10,7 +10,7 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 @InRequestScope
 export class ArtistService {
 	@Inject
-	private folderService!: FolderService;
+	private readonly folderService!: FolderService;
 
 	canHaveArtistImage(artist: Artist): boolean {
 		return (artist.albumTypes.length > 0 && artist.mbArtistID !== MUSICBRAINZ_VARIOUS_ARTISTS_ID);

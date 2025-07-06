@@ -143,7 +143,7 @@ export class RootWorker extends BaseWorker {
 	}
 
 	private logNode(node?: MergeNode): Array<string> {
-		let stat = [' '.repeat(node?.folder?.level || 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
+		let stat = [' '.repeat(node?.folder?.level ?? 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
 		(node?.children || []).forEach(n => {
 			stat = stat.concat(this.logNode(n));
 		});

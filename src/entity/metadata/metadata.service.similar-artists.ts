@@ -9,7 +9,7 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import SimilarArtist = LastFM.SimilarArtist;
 
 export class MetadataServiceSimilarArtists {
-	constructor(private service: MetaDataService) {
+	constructor(private readonly service: MetaDataService) {
 
 	}
 
