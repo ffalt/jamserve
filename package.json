@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@apollo/server": "4.12.2",
-    "@as-integrations/express5": "1.1.0",
+    "@as-integrations/express5": "1.1.1",
     "archiver": "7.0.1",
     "bcrypt": "6.0.0",
     "body-parser": "2.2.0",
