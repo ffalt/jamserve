@@ -83,7 +83,7 @@
     "seedrandom": "3.0.5",
     "semver": "7.7.2",
     "sequelize": "6.37.7",
-    "sharp": "0.34.2",
+    "sharp": "0.34.3",
     "shuffle-seed": "1.1.6",
     "sqlite3": "5.1.7",
     "tiny-async-pool": "2.1.0",
