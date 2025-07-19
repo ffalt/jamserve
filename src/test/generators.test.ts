@@ -8,8 +8,8 @@ import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { initTest } from './init.js';
 import { Container, Snapshot } from 'typescript-ioc';
-import DoneCallback = jest.DoneCallback;
 import TestAgent from 'supertest/lib/agent.js';
+import { describe, it, beforeAll, afterAll } from '@jest/globals';
 
 initTest();
 
@@ -119,16 +119,16 @@ describe('Generators', () => {
 	});
 
 	describe('must download', () => {
-		it('angular-client.zip', (done: DoneCallback) => {
+		it('angular-client.zip', done => {
 			downloadZip(request, '/docs/angular-client.zip', done);
 		});
-		it('axios-client.zip', (done: DoneCallback) => {
+		it('axios-client.zip', done => {
 			downloadZip(request, '/docs/axios-client.zip', done);
 		});
-		it('openapi.json', (done: DoneCallback) => {
+		it('openapi.json', done => {
 			downloadJSON(request, '/docs/openapi.json', done);
 		});
-		it('schema.graphql', (done: DoneCallback) => {
+		it('schema.graphql', done => {
 			downloadContent(request, '/docs/schema.graphql', /application\/graphql/, done);
 		});
 	});

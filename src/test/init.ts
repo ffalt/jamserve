@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import nock from 'nock';
 import { configureLogger } from '../utils/logger.js';
 

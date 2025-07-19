@@ -8,6 +8,7 @@ import { extendSpecMockTrack, MockTrack } from './mock.track.js';
 import { Changes } from '../../modules/engine/worker/changes.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { StateHelper } from '../../entity/state/state.helper.js';
+import { expect } from '@jest/globals';
 
 export interface MockSpecRoot extends MockSpecFolder {
 	id: string;

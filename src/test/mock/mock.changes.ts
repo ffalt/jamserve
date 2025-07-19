@@ -2,6 +2,7 @@ import { Changes, ChangeSet } from '../../modules/engine/worker/changes.js';
 import { MockRoot, validateMock } from './mock.root.js';
 import { WorkerService } from '../../modules/engine/services/worker.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
+import { expect } from '@jest/globals';
 
 function validateChangeSet(name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
 	expect(changeSet.added.size).toBe(added); // `New ${name} count doesnt match`
