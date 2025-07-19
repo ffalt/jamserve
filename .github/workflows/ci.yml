@@ -17,8 +17,12 @@ jobs:
       JAM_DB_HOST: postgres
     steps:
       - uses: actions/checkout@v4
-      - run: npm install
-      - run: npm install --os=linux --cpu=x64 sharp
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+      - run: npm ci
+#      - run: npm install --os=linux --cpu=x64 sharp
       - run: npm run build
       - run: npm run test
     services:

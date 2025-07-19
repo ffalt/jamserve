@@ -24,12 +24,12 @@ jobs:
       NODE_ENV: development
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/setup-node@v4
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-build-${{ hashFiles('**/package-lock.json') }}
-      - run: npm install
-      - run: npm install --os=linux --cpu=x64 sharp
+          node-version: 22.x
+          cache: 'npm'
+      - run: npm ci
+#      - run: npm install --os=linux --cpu=x64 sharp
       - name: Try to build
         run: npm run build
       - name: Test with  coverage
