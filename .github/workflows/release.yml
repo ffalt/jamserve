@@ -7,7 +7,8 @@ on:
 name: release
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 jobs:
   test:
@@ -24,7 +25,6 @@ jobs:
           node-version: 22.x
           cache: 'npm'
       - run: npm ci
-#      - run: npm install --os=linux --cpu=x64 sharp
       - run: npm run test
     services:
       postgres:

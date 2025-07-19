@@ -29,7 +29,6 @@ jobs:
           node-version: 22.x
           cache: 'npm'
       - run: npm ci
-#      - run: npm install --os=linux --cpu=x64 sharp
       - name: Try to build
         run: npm run build
       - name: Test with  coverage
