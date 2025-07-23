@@ -32,7 +32,9 @@
     "releaselog": "conventional-changelog -p angular -r 2 -o RELEASELOG.md"
   },
   "overrides": {
-    "axios": "1.10.0"
+    "axios": "1.10.0",
+    "node-gyp": "11.2.0",
+    "form-data": "4.0.4"
   },
   "dependencies": {
     "@apollo/server": "5.0.0",
