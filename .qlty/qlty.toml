@@ -115,6 +115,7 @@ match.rules = [
   "markdownlint:MD013", # Line length
   "markdownlint:MD024", # Multiple headings with the same content
   "ripgrep:TODO", # Complete the task associated to this "TODO" comment.
+  "radarlint-js:typescript:S6671", # Expected the Promise rejection reason to be an Error.
   "radarlint-js:typescript:S2301", # Provide multiple methods instead of using "boolean" to determine which action to take.
   "radarlint-js:typescript:S4043", # Move this array "sort" operation to a separate statement or replace it with "toSorted" (Not available in ES2020)
   "radarlint-js:typescript:S3776", # Refactor this function to reduce its Cognitive Complexity

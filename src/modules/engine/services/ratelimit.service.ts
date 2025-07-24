@@ -38,7 +38,7 @@ export class RateLimitService {
 		} catch (error) {
 			if (error instanceof Error) {
 				throw error;
-			} else if (Object.prototype.hasOwnProperty.call(error, 'msBeforeNext')) {
+			} else if (error && typeof error === 'object' && Object.hasOwn(error, 'msBeforeNext')) {
 				const seconds = Math.round((error as any).msBeforeNext / 1000) || 1;
 				res.set('Retry-After', `${seconds}`);
 				res.status(429).send(`Too Many Requests, try again in ${seconds} seconds`);
