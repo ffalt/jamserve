@@ -99,7 +99,7 @@ export class SubsonicPlaylistsApi {
 		trackIDs = trackIDs.filter((_id, index) => !removeTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
-			trackIDs = trackIDs.concat(songAdd);
+			trackIDs = [...trackIDs, ...songAdd];
 		}
 		const mediaIDs = trackIDs.filter(t => t !== undefined);
 		await engine.playlist.update(orm, {

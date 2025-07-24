@@ -110,7 +110,7 @@ export class RootController {
 			return await engine.io.root.refresh(args.id);
 		} else {
 			const result = await engine.io.root.refreshAll(orm);
-			return result[result.length - 1];
+			return result.at(-1) || { id: '' };
 		}
 	}
 
@@ -127,7 +127,7 @@ export class RootController {
 			return await engine.io.root.refreshMeta(args.id);
 		} else {
 			const result = await engine.io.root.refreshAll(orm);
-			return result[result.length - 1];
+			return result.at(-1) || { id: '' };
 		}
 	}
 }

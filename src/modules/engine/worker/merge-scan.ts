@@ -2,7 +2,7 @@ import { Changes } from './changes.js';
 import { MatchNode, OnDemandTrackMatch } from './scan.js';
 import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
-import path from 'path';
+import path from 'node:path';
 import { logger } from '../../../utils/logger.js';
 import { MatchNodeMetaStats, MetaStat } from './meta-stats.js';
 import { Orm } from '../services/orm.service.js';
@@ -94,7 +94,7 @@ export class WorkerMergeScan {
 		if (node.children.length === 1) {
 			return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
 		}
-		if (!metaStat.hasMultipleArtists && !!node.children.find(d => d.folder.folderType === FolderType.artist)) {
+		if (!metaStat.hasMultipleArtists && !!node.children.some(d => d.folder.folderType === FolderType.artist)) {
 			// choose artist folder, if it's not an pure album (without artist folders in children nodes)
 			return FolderType.artist;
 		}
@@ -107,7 +107,7 @@ export class WorkerMergeScan {
 			node.changed = true;
 		}
 		switch (type) {
-			case FolderType.collection:
+			case FolderType.collection: {
 				node.folder.mbArtistID = undefined;
 				node.folder.mbReleaseID = undefined;
 				node.folder.mbAlbumType = undefined;
@@ -117,13 +117,15 @@ export class WorkerMergeScan {
 				node.folder.album = undefined;
 				node.folder.year = undefined;
 				break;
-			case FolderType.artist:
+			}
+			case FolderType.artist: {
 				node.folder.mbReleaseID = undefined;
 				node.folder.mbAlbumType = undefined;
 				node.folder.mbReleaseGroupID = undefined;
 				node.folder.album = undefined;
 				node.folder.year = undefined;
 				break;
+			}
 			default:
 		}
 	}
@@ -133,12 +135,11 @@ export class WorkerMergeScan {
 			WorkerMergeScan.setFolderType(node, FolderType.multialbum);
 		}
 		for (const child of node.children) {
-			if (child.folder.folderType !== FolderType.extras) {
+			if (child.folder.folderType !== FolderType.extras &&
 				// parent multialbum gets same album type as child multialbum folder
-				if (node.folder.albumType !== child.folder.albumType) {
-					node.folder.albumType = child.folder.albumType;
-					node.changed = true;
-				}
+				node.folder.albumType !== child.folder.albumType) {
+				node.folder.albumType = child.folder.albumType;
+				node.changed = true;
 			}
 			WorkerMergeScan.markMultiAlbumChildDirs(child);
 		}
@@ -163,7 +164,7 @@ export class WorkerMergeScan {
 		folder.albumType = metaStat.albumType;
 		folder.artist = metaStat.artist;
 		folder.artistSort = metaStat.artistSort;
-		folder.title = title !== name ? title : undefined;
+		folder.title = title === name ? undefined : title;
 		folder.name = name;
 		folder.mbReleaseID = metaStat.mbReleaseID;
 		folder.mbReleaseGroupID = metaStat.mbReleaseGroupID;
@@ -209,10 +210,8 @@ export class WorkerMergeScan {
 				changed = true;
 			}
 		}
-		if (changed) {
-			if (!this.changes.folders.added.hasID(node.folder.id) && !this.changes.folders.removed.hasID(node.folder.id)) {
-				this.changes.folders.updated.addID(node.folder.id);
-			}
+		if (changed && !this.changes.folders.added.hasID(node.folder.id) && !this.changes.folders.removed.hasID(node.folder.id)) {
+			this.changes.folders.updated.addID(node.folder.id);
 		}
 		node.changed = changed;
 	}

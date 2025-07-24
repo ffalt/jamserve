@@ -1,5 +1,5 @@
 import { IMP3Analyzer, MP3Analyzer } from 'jamp3';
-import { parentPort } from 'worker_threads';
+import { parentPort } from 'node:worker_threads';
 
 export async function analyzeMP3(filename: string): Promise<IMP3Analyzer.Report> {
 	const mp3ana = new MP3Analyzer();
@@ -10,7 +10,7 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
 	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
-			throw new Error('param must be a string.');
+			throw new TypeError('param must be a string.');
 		}
 		const result = await analyzeMP3(param);
 		caller.postMessage(result);

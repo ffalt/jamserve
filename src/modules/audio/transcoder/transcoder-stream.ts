@@ -20,33 +20,38 @@ export abstract class TranscoderStream implements StreamData {
 		const proc = ffmpeg({ source })
 			.withNoVideo();
 		switch (format) {
-			case AudioFormatType.flv:
+			case AudioFormatType.flv: {
 				return proc.toFormat(format).addOptions(['-ar 44100', `-maxrate ${maxBitRate || 128}k`]);
+			}
 			case AudioFormatType.ogg:
-			case AudioFormatType.oga:
+			case AudioFormatType.oga: {
 				return proc.toFormat(format)
 					.withAudioCodec('libvorbis')
 					.addOptions([`-maxrate ${maxBitRate || 128}k`]);
-			case AudioFormatType.mp3:
+			}
+			case AudioFormatType.mp3: {
 				return proc
 					.toFormat(format)
 					.withAudioBitrate(`${maxBitRate || 128}k`)
 					.withAudioCodec('libmp3lame');
+			}
 			case AudioFormatType.mp4:
-			case AudioFormatType.m4a:
+			case AudioFormatType.m4a: {
 				return proc
 					.toFormat('mp4')
 					.withAudioBitrate(`${maxBitRate || 128}k`);
+			}
 			case AudioFormatType.webma: {
 				return proc
 					.toFormat('webm')
 					// .withAudioBitrate(`${maxBitRate || 128}k`) TODO: which max bitrate/audiocodec for webm
 				;
 			}
-			default:
+			default: {
 				return proc
 					.toFormat(format)
 					.withAudioBitrate(`${maxBitRate || 128}k`);
+			}
 		}
 	}
 

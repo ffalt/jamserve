@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Folder } from '../folder/folder.js';
@@ -97,52 +97,72 @@ export class ImageService {
 
 	private static async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
 		switch (type) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				return await ImageService.getCoverArtTextTrack(o as Track);
-			case DBObjectType.folder:
+			}
+			case DBObjectType.folder: {
 				return ImageService.getCoverArtTextFolder(o as Folder);
-			case DBObjectType.episode:
+			}
+			case DBObjectType.episode: {
 				return await ImageService.getCoverArtTextEpisode(o as Episode);
-			case DBObjectType.podcast:
+			}
+			case DBObjectType.podcast: {
 				return ImageService.getCoverArtTextPodcast(o as Podcast);
-			case DBObjectType.playlist:
+			}
+			case DBObjectType.playlist: {
 				return (o as Playlist).name;
-			case DBObjectType.series:
+			}
+			case DBObjectType.series: {
 				return (o as Series).name;
-			case DBObjectType.album:
+			}
+			case DBObjectType.album: {
 				return (o as Album).name;
-			case DBObjectType.artist:
+			}
+			case DBObjectType.artist: {
 				return (o as Artist).name;
-			case DBObjectType.user:
+			}
+			case DBObjectType.user: {
 				return (o as User).name;
-			case DBObjectType.root:
+			}
+			case DBObjectType.root: {
 				return (o as Root).name;
+			}
 		}
 		return type;
 	}
 
 	async getObjImageByType(orm: Orm, o: Base, type: DBObjectType, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		switch (type) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				return this.trackService.getImage(orm, o as Track, size, format);
-			case DBObjectType.folder:
+			}
+			case DBObjectType.folder: {
 				return this.folderService.getImage(orm, o as Folder, size, format);
-			case DBObjectType.artist:
+			}
+			case DBObjectType.artist: {
 				return this.artistService.getImage(orm, o as Artist, size, format);
-			case DBObjectType.album:
+			}
+			case DBObjectType.album: {
 				return this.albumService.getImage(orm, o as Album, size, format);
-			case DBObjectType.user:
+			}
+			case DBObjectType.user: {
 				return this.userService.getImage(orm, o as User, size, format);
-			case DBObjectType.podcast:
+			}
+			case DBObjectType.podcast: {
 				return this.podcastService.getImage(orm, o as Podcast, size, format);
-			case DBObjectType.episode:
+			}
+			case DBObjectType.episode: {
 				return this.podcastService.getEpisodeImage(orm, o as Episode, size, format);
-			case DBObjectType.series:
+			}
+			case DBObjectType.series: {
 				return this.seriesService.getImage(orm, o as Series, size, format);
-			case DBObjectType.artwork:
+			}
+			case DBObjectType.artwork: {
 				return this.artworkService.getImage(orm, o as Artwork, size, format);
-			case DBObjectType.root:
+			}
+			case DBObjectType.root: {
 				return this.rootService.getImage(orm, o as Root, size, format);
+			}
 		}
 		return;
 	}

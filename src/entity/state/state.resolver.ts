@@ -1,7 +1,7 @@
 import { Arg, Ctx, ID, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { State, StateQL } from './state.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(StateQL)
 export class StateResolver {
@@ -12,7 +12,7 @@ export class StateResolver {
 	): Promise<State> {
 		const result = await orm.findInStateTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return await orm.State.findOrCreate(result.obj.id, result.objType, user.id);
 	}

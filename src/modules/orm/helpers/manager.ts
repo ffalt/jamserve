@@ -68,14 +68,14 @@ export class EntityManager {
 		return this.repositoryMap[entityName] as unknown as U;
 	}
 
-	persistAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]): Promise<void> {
+	persistAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): Promise<void> {
 		this.persistLater(entityName, entity);
 		return this.flush();
 	}
 
-	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | AnyEntity[]): void {
-		let entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
-		entities = entities.filter(e => !this.changeSet.find(c => c.persist === e));
+	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
+		let entities: Array<AnyEntity> = Array.isArray(entity) ? entity : [entity];
+		entities = entities.filter(e => !this.changeSet.some(c => c.persist === e));
 		this.changeSet.push(...(entities.map(e => ({ entityName: entityName as string, persist: e as ManagedEntity }))));
 	}
 
@@ -117,7 +117,7 @@ export class EntityManager {
 		}
 	}
 
-	private async fromCacheOrLoad<T extends IDEntity<T>>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
+	private async fromCacheOrLoad<T extends IDEntity<T>>(entityName: EntityName<T>, ids: Array<string>): Promise<Array<T>> {
 		const toLoadIDs: Array<string> = [];
 		const fromCache: Array<T> = [];
 		for (const id of ids) {
@@ -137,7 +137,8 @@ export class EntityManager {
 		for (const item of loaded) {
 			this.parent.cache.set(entityName, item);
 		}
-		return loaded.concat(fromCache).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+		const list = [...loaded, ...fromCache];
+		return list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
 	}
 
 	async findOne<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T | undefined> {
@@ -165,7 +166,7 @@ export class EntityManager {
 
 	async findOneByID<T extends IDEntity<T>>(entityName: EntityName<T>, id: string): Promise<T | undefined> {
 		if (!id || id.trim().length === 0) {
-			return Promise.reject(Error('Invalid ID'));
+			return Promise.reject(new Error('Invalid ID'));
 		}
 		if (this.useCache) {
 			const cached = this.parent.cache.get(entityName, id);
@@ -185,7 +186,7 @@ export class EntityManager {
 		return result;
 	}
 
-	async find<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<T[]> {
+	async find<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<Array<T>> {
 		if (this.useCache) {
 			const ids = await this.findIDs(entityName, options);
 			return await this.fromCacheOrLoad(entityName, ids);
@@ -195,7 +196,7 @@ export class EntityManager {
 		return rows.map(source => this.mapEntity(entityName, source));
 	}
 
-	async findAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: T[] }> {
+	async findAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; entities: Array<T> }> {
 		if (this.useCache) {
 			const { count, ids } = await this.findIDsAndCount(entityName, options);
 			const entities = await this.fromCacheOrLoad(entityName, ids);
@@ -206,9 +207,8 @@ export class EntityManager {
 		return { count, entities: rows.map(source => this.mapEntity(entityName, source)) };
 	}
 
-	// *
-
-	async all<T extends IDEntity<T>>(entityName: EntityName<T>): Promise<T[]> {
+	async all<T extends IDEntity<T>>(entityName: EntityName<T>): Promise<Array<T>> {
+		// eslint-disable-next-line unicorn/no-array-method-this-argument
 		return this.find(entityName, {});
 	}
 
@@ -228,7 +228,8 @@ export class EntityManager {
 		return result;
 	}
 
-	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<T[]> {
+	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<Array<T>> {
+		// eslint-disable-next-line unicorn/no-array-method-this-argument
 		return this.find(entityName, { where: { id: ids } as any });
 	}
 
@@ -239,14 +240,14 @@ export class EntityManager {
 		return result?.id;
 	}
 
-	async findIDs<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string[]> {
+	async findIDs<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<Array<string>> {
 		const model = this.model(entityName);
 		const opts = { ...options, raw: true, attributes: ['id'] };
 		const result = await model.findAll<any>(opts);
 		return result.map(o => o.id);
 	}
 
-	async findIDsAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; ids: string[] }> {
+	async findIDsAndCount<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<{ count: number; ids: Array<string> }> {
 		const model = this.model(entityName);
 		const opts = { ...options, raw: true, attributes: ['id'] };
 		const { count, rows } = await model.findAndCountAll<any>(opts);
@@ -264,16 +265,18 @@ export class EntityManager {
 	mapEntity<T extends AnyEntity<T>>(entityName: EntityName<T>, source: Model<T>): T {
 		const meta = this.metadata.entities.find(e => e.name === entityName);
 		if (!meta) {
-			throw Error('Invalid ORM setup');
+			throw new Error('Invalid ORM setup');
 		}
 		return createManagedEntity<T>(meta, source, this);
 	}
 
 	create<T extends IDEntity<T>>(entityName: EntityName<T>, data: EntityData<T>): T {
 		const idData = { id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
-		const _source = this.model<T>(entityName).build(idData);
-		const entity = this.mapEntity(entityName, _source);
-		Object.keys(idData).forEach(key => (entity as any)[key] = (idData as any)[key]);
+		const source = this.model<T>(entityName).build(idData);
+		const entity = this.mapEntity(entityName, source);
+		for (const key of Object.keys(idData)) {
+			(entity as any)[key] = (idData as any)[key];
+		}
 		return entity;
 	}
 
@@ -283,7 +286,7 @@ export class EntityManager {
 	}
 
 	removeLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
-		const entities: AnyEntity[] = Array.isArray(entity) ? entity : [entity];
+		const entities: Array<AnyEntity> = Array.isArray(entity) ? entity : [entity];
 		this.changeSet.push(...(entities.map(e => ({ entityName: entityName as string, remove: { entity: e as ManagedEntity } }))));
 	}
 

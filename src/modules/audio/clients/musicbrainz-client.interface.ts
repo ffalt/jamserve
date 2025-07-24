@@ -1,6 +1,6 @@
 export interface Request {
 	path: string;
-	query: { [name: string]: string | undefined };
+	query: Record<string, string | undefined>;
 	retry: number;
 	offset?: number;
 	limit?: number;
@@ -196,7 +196,7 @@ export interface ParameterLookup {
 
 export interface ParameterBrowse {
 	type: string;
-	lookupIds: { [type: string]: string };
+	lookupIds: Record<string, string>;
 	inc?: string;
 	limit?: number;
 	offset?: number;

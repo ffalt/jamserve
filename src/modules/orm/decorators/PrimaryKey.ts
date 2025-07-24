@@ -4,6 +4,8 @@ import { SymbolKeysNotSupportedError } from 'type-graphql';
 import { ORM_ID } from '../definitions/orm-types.js';
 import { TypeValueThunk } from '../../deco/definitions/types.js';
 
+const defaultType = () => ORM_ID;
+
 export function PrimaryKey(type?: TypeValueThunk): MethodAndPropDecorator;
 export function PrimaryKey(type?: TypeValueThunk): MethodDecorator | PropertyDecorator {
 	return (prototype, propertyKey, _) => {
@@ -11,10 +13,9 @@ export function PrimaryKey(type?: TypeValueThunk): MethodDecorator | PropertyDec
 			throw new SymbolKeysNotSupportedError();
 		}
 		const opt: PrimaryFieldOptions = { primaryKey: true };
-		const deaultType = () => ORM_ID;
 		getMetadataStorage().fields.push({
 			name: propertyKey,
-			getType: type || deaultType,
+			getType: type || defaultType,
 			isRelation: false,
 			typeOptions: opt,
 			target: prototype.constructor

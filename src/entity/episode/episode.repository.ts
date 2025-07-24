@@ -12,17 +12,22 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 	buildOrder(order?: EpisodeOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case EpisodeOrderFields.created:
+			case EpisodeOrderFields.created: {
 				return [['createdAt', direction]];
-			case EpisodeOrderFields.updated:
+			}
+			case EpisodeOrderFields.updated: {
 				return [['updatedAt', direction]];
-			case EpisodeOrderFields.status:
+			}
+			case EpisodeOrderFields.status: {
 				return [['status', direction]];
-			case EpisodeOrderFields.name:
+			}
+			case EpisodeOrderFields.name: {
 				return [['name', direction]];
+			}
 			case EpisodeOrderFields.default:
-			case EpisodeOrderFields.date:
+			case EpisodeOrderFields.date: {
 				return [['date', direction]];
+			}
 		}
 		return [];
 	}

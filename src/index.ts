@@ -25,18 +25,20 @@ async function stop(): Promise<void> {
 	try {
 		await server.stop();
 		process.exit();
-	} catch (e) {
-		console.error('Error on server stop', e);
+	} catch (error) {
+		console.error('Error on server stop', error);
 		process.exit(1);
 	}
 }
 
 process.on('SIGTERM', () => {
-	stop().catch(e => {
-		console.error(e);
-	});
+	stop()
+		.catch(error => {
+			console.error(error);
+		});
 });
 
-run().catch(e => {
-	console.error(e);
-});
+run()
+	.catch(error => {
+		console.error(error);
+	});

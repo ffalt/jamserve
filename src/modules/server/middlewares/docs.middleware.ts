@@ -1,7 +1,7 @@
 import { Inject, InRequestScope } from 'typescript-ioc';
 import express from 'express';
 import { ApolloMiddleware } from './apollo.middleware.js';
-import path from 'path';
+import path from 'node:path';
 import { buildOpenApi } from '../../rest/builder/openapi.js';
 import { buildAngularClientZip } from '../../rest/builder/angular.js';
 import { buildAxiosClientZip } from '../../rest/builder/axios.js';
@@ -16,12 +16,12 @@ export class DocsMiddleware {
 
 	getOpenApiSchema(): string {
 		const openapi = buildOpenApi();
-		return JSON.stringify(openapi, null, '\t');
+		return JSON.stringify(openapi, undefined, '\t');
 	}
 
 	getSubsonicOpenApiSchema(): string {
 		const openapi = buildSubsonicOpenApi();
-		return JSON.stringify(openapi, null, '\t');
+		return JSON.stringify(openapi, undefined, '\t');
 	}
 
 	middleware(configService: ConfigService): express.Router {

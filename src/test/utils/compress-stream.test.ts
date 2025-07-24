@@ -4,7 +4,7 @@ import { CompressFolderStream } from '../../utils/compress-folder-stream.js';
 import { CompressListStream } from '../../utils/compress-list-stream.js';
 import archiver from 'archiver';
 import express from 'express';
-import path from 'path';
+import path from 'node:path';
 import tmp from 'tmp';
 
 // Mock implementation of BaseCompressStream for testing
@@ -111,7 +111,7 @@ describe('Compress Stream Classes', () => {
 	});
 
 	describe('CompressListStream', () => {
-		let tempFiles: string[] = [];
+		let tempFiles: Array<string> = [];
 
 		beforeEach(() => {
 			// Create temporary files

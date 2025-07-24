@@ -5,12 +5,12 @@ import { v4 } from 'uuid';
 
 const chance = new Chance();
 
-export class ValidData {
-	static generateValidDataByParameter(param: ParameterObject): { name: string; data: any } {
+export const ValidData = {
+	generateValidDataByParameter(param: ParameterObject): { name: string; data: any } {
 		return { name: param.name, data: ValidData.generateValidDataSchema(param.schema as SchemaObject) };
-	}
+	},
 
-	static generateValidStringData(schema: SchemaObject): any {
+	generateValidStringData(schema: SchemaObject): any {
 		if (schema.format === 'uuid') {
 			return v4();
 		}
@@ -18,21 +18,21 @@ export class ValidData {
 			return schema.enum[chance.integer({ min: 0, max: schema.enum.length - 1 })];
 		}
 		return chance.string();
-	}
+	},
 
-	static generateValidIntegerData(schema: SchemaObject): any {
+	generateValidIntegerData(schema: SchemaObject): any {
 		return chance.integer({ min: schema.minimum ?? 1, max: (schema.maximum ?? 101) - 1 });
-	}
+	},
 
-	static generateValidNumberData(schema: SchemaObject): any {
+	generateValidNumberData(schema: SchemaObject): any {
 		return chance.floating({ min: schema.minimum ?? 1, max: (schema.maximum ?? 101) - 1, fixed: 2 });
-	}
+	},
 
-	static generateValidBooleanData(_: SchemaObject): any {
+	generateValidBooleanData(_: SchemaObject): any {
 		return chance.bool();
-	}
+	},
 
-	static generateValidArrayData(schema: SchemaObject): any {
+	generateValidArrayData(schema: SchemaObject): any {
 		if (!schema.items) {
 			return [];
 		}
@@ -40,39 +40,43 @@ export class ValidData {
 			ValidData.generateValidDataSchema(schema.items as SchemaObject),
 			ValidData.generateValidDataSchema(schema.items as SchemaObject)
 		];
-	}
+	},
 
-	static generateValidDataSchema(schema: SchemaObject): any {
+	generateValidDataSchema(schema: SchemaObject): any {
 		switch (schema.type) {
-			case 'integer':
+			case 'integer': {
 				return ValidData.generateValidIntegerData(schema);
-			case 'number':
+			}
+			case 'number': {
 				return ValidData.generateValidNumberData(schema);
-			case 'string':
+			}
+			case 'string': {
 				return ValidData.generateValidStringData(schema);
-			case 'boolean':
+			}
+			case 'boolean': {
 				return ValidData.generateValidBooleanData(schema);
-			case 'array':
+			}
+			case 'array': {
 				return ValidData.generateValidArrayData(schema);
-			default:
+			}
+			default: {
 				console.error(`Create mock valid data for type ${schema.type} ${JSON.stringify(schema)}`);
 				return [];
+			}
 		}
 	}
-}
+};
 
-export class InvalidData {
-	static generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
+export const InvalidData = {
+	generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
 		const schema = param.schema as SchemaObject;
 		return InvalidData.generateInvalidDataBySchema(schema, false, !!schema.required)
 			.map(o => ({ ...o, name: param.name }));
-	}
+	},
 
-	static generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({ data: chance.string(), invalid: 'string' });
-		result.push({ data: '', invalid: 'empty string' });
-		result.push({ data: true, invalid: 'boolean' });
+		result.push({ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' });
 		let num = 0;
 		while (Number.isInteger(num)) {
 			num = chance.floating({ min: schema.minimum || 1, max: schema.maximum || 100, fixed: 2 });
@@ -85,13 +89,11 @@ export class InvalidData {
 			result.push({ data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}` });
 		}
 		return result;
-	}
+	},
 
-	static generateInvalidNumberData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
+	generateInvalidNumberData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({ data: chance.string(), invalid: 'string' });
-		result.push({ data: '', invalid: 'empty string' });
-		result.push({ data: true, invalid: 'boolean' });
+		result.push({ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' });
 		if (schema.minimum !== undefined) {
 			result.push({ data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}` });
 		}
@@ -99,9 +101,9 @@ export class InvalidData {
 			result.push({ data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}` });
 		}
 		return result;
-	}
+	},
 
-	static generateInvalidStringData(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
+	generateInvalidStringData(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
 		if (schema.default === undefined && isField && required) { // if the default value available, these parameter are always valid to omit
 			result.push({ data: '', invalid: 'empty string' });
@@ -110,18 +112,20 @@ export class InvalidData {
 			result.push({ data: 'invalid', invalid: 'invalid enum' });
 		}
 		return result;
-	}
+	},
 
-	static generateInvalidBooleanData(_: SchemaObject): Array<{ data: any; invalid: string }> {
+	generateInvalidBooleanData(_: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({ data: '', invalid: 'empty string' });
-		result.push({ data: chance.string(), invalid: 'string' });
-		result.push({ data: chance.integer() + 2, invalid: 'integer > 1' });
-		result.push({ data: -(chance.integer() + 1), invalid: 'integer < 0' });
+		result.push(
+			{ data: '', invalid: 'empty string' },
+			{ data: chance.string(), invalid: 'string' },
+			{ data: chance.integer() + 2, invalid: 'integer > 1' },
+			{ data: -(chance.integer() + 1), invalid: 'integer < 0' }
+		);
 		return result;
-	}
+	},
 
-	static generateInvalidArrayData(schema: SchemaObject, isField: boolean): Array<{ data: any; invalid: string }> {
+	generateInvalidArrayData(schema: SchemaObject, isField: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
 		if (schema.required && isField) {
 			result.push({ data: null, invalid: 'null' });
@@ -129,29 +133,35 @@ export class InvalidData {
 		const array = [ValidData.generateValidDataSchema(schema.items as SchemaObject).data];
 		const invalids = InvalidData.generateInvalidDataBySchema(schema.items as SchemaObject, isField, !!schema.required);
 		for (const invalid of invalids) {
-			result.push({ data: array.concat([invalid.data]), invalid: invalid.invalid });
+			result.push({ data: [...array, invalid.data], invalid: invalid.invalid });
 		}
 		return result;
-	}
+	},
 
-	static generateInvalidDataBySchema(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
+	generateInvalidDataBySchema(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
 		switch (schema.type) {
-			case 'integer':
+			case 'integer': {
 				return InvalidData.generateInvalidIntegerData(schema);
-			case 'number':
+			}
+			case 'number': {
 				return InvalidData.generateInvalidNumberData(schema);
-			case 'string':
+			}
+			case 'string': {
 				return InvalidData.generateInvalidStringData(schema, isField, required);
-			case 'boolean':
+			}
+			case 'boolean': {
 				return InvalidData.generateInvalidBooleanData(schema);
-			case 'array':
+			}
+			case 'array': {
 				return InvalidData.generateInvalidArrayData(schema, isField);
-			default:
+			}
+			default: {
 				console.error(`Create mock invalid data for type ${schema.type} ${JSON.stringify(schema)}`);
 				return [];
+			}
 		}
 	}
-}
+};
 
 function combineData(list: Array<{ name: string; data: any }>): any {
 	const result: any = {};
@@ -175,8 +185,8 @@ export interface RequestMock {
 
 export class MockRequests {
 	static generateValidRequestMock(apiName: string, method: string, roles: Array<string>, params: Array<ParameterObject>, property?: string): RequestMock {
-		const queryData = combineData(params.filter(p => p.in === 'query').map(ValidData.generateValidDataByParameter));
-		const pathData = combineData(params.filter(p => p.in === 'path').map(ValidData.generateValidDataByParameter));
+		const queryData = combineData(params.filter(p => p.in === 'query').map(element => ValidData.generateValidDataByParameter(element)));
+		const pathData = combineData(params.filter(p => p.in === 'path').map(element => ValidData.generateValidDataByParameter(element)));
 		return {
 			apiName,
 			method,
@@ -234,49 +244,49 @@ export class MockRequests {
 		return mocks;
 	}
 
-	private static generatePathParameterMocks(pathParameters: ParameterObject[], mocks: Array<RequestMock>, apiName: string, method: string, roles: Array<string>) {
+	private static generatePathParameterMocks(pathParameters: Array<ParameterObject>, mocks: Array<RequestMock>, apiName: string, method: string, roles: Array<string>) {
 		const minRequired: Array<ParameterObject> = pathParameters.filter(p => p.required);
 		const optional: Array<ParameterObject> = pathParameters.filter(p => !p.required);
 		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired));
 		for (const item of optional) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired.concat([item]), item.name));
+			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
 		}
 		if (pathParameters.length !== minRequired.length) {
 			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, pathParameters));
 		}
 		for (const item of minRequired) {
 			const paramMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, minRequired, item);
-			paramMocks.forEach(p => {
+			for (const p of paramMocks) {
 				p.params = p.data;
 				p.data = undefined;
-			});
-			mocks = mocks.concat(paramMocks);
+			}
+			mocks = [...mocks, ...paramMocks];
 		}
 		for (const item of optional) {
-			const paramMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, minRequired.concat([item]), item);
-			paramMocks.forEach(p => {
+			const paramMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, [...minRequired, item], item);
+			for (const p of paramMocks) {
 				p.params = p.data;
 				p.data = undefined;
-			});
-			mocks = mocks.concat(paramMocks);
+			}
+			mocks = [...mocks, ...paramMocks];
 		}
 		return mocks;
 	}
 
-	private static generateQueryParameterMocks(queryParameters: ParameterObject[], pathParameters: ParameterObject[], mocks: Array<RequestMock>, apiName: string, method: string, roles: Array<string>) {
+	private static generateQueryParameterMocks(queryParameters: Array<ParameterObject>, pathParameters: Array<ParameterObject>, mocks: Array<RequestMock>, apiName: string, method: string, roles: Array<string>) {
 		const minRequiredPath: Array<ParameterObject> = pathParameters.filter(p => p.required);
-		const minRequired: Array<ParameterObject> = queryParameters.filter(p => p.required).concat(minRequiredPath);
+		const minRequired: Array<ParameterObject> = [...queryParameters.filter(p => p.required), ...minRequiredPath];
 		const optional: Array<ParameterObject> = queryParameters.filter(p => !p.required);
 		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired));
 		for (const item of optional) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired.concat([item]), item.name));
+			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
 		}
-		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, queryParameters.concat(minRequiredPath)));
+		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...queryParameters, ...minRequiredPath]));
 		for (const item of minRequired) {
-			mocks = mocks.concat(MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, minRequired, item));
+			mocks = [...mocks, ...MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, minRequired, item)];
 		}
 		for (const item of optional) {
-			mocks = mocks.concat(MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, minRequired.concat([item]), item));
+			mocks = [...mocks, ...MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, [...minRequired, item], item)];
 		}
 		return mocks;
 	}
@@ -290,7 +300,7 @@ export class MockRequests {
 			const operations = Object.keys(derefSpec.paths[apiPath]);
 			for (const operation of operations) {
 				const path = derefSpec.paths[apiPath];
-				requestMocks = requestMocks.concat(await MockRequests.generateRequestMock(api, operation, (path as any)[operation] as OperationObject));
+				requestMocks = [...requestMocks, ...await MockRequests.generateRequestMock(api, operation, (path as any)[operation] as OperationObject)];
 			}
 		}
 		return requestMocks;

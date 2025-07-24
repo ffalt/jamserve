@@ -21,8 +21,8 @@ export class AudioModuleFLAC {
 				...FORMAT.packFlacMediaInfoJamServeMedia(result.media),
 				...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
 			};
-		} catch (e) {
-			console.error(e);
+		} catch (error) {
+			console.error(error);
 			return { format: TagFormatType.none };
 		}
 	}
@@ -31,7 +31,7 @@ export class AudioModuleFLAC {
 		const flac = new Flac();
 		const result = await flac.read(filename);
 		if (!result?.comment) {
-			return Promise.reject(Error('No Flac Vorbis Comment found'));
+			return Promise.reject(new Error('No Flac Vorbis Comment found'));
 		}
 		return flacToRawTag(result);
 	}

@@ -7,7 +7,7 @@ import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
 import { PlayQueueSetArgs } from './playqueue.args.js';
 import { PlayQueue } from './playqueue.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlayQueueService {
@@ -46,11 +46,12 @@ export class PlayQueueService {
 		for (const id of ids) {
 			const media = await orm.findInStreamTypes(id);
 			if (!media) {
-				return Promise.reject(NotFoundError());
+				return Promise.reject(notFoundError());
 			}
 			mediaList.push(media);
 		}
-		const oldEntries = (await queue.entries.getItems()).sort((a, b) => b.position - a.position);
+		const entries = await queue.entries.getItems();
+		const oldEntries = entries.sort((a, b) => b.position - a.position);
 		let duration = 0;
 		let position = 1;
 		for (const media of mediaList) {

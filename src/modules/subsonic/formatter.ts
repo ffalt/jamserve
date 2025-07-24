@@ -33,7 +33,7 @@ import { State } from '../../entity/state/state.js';
 import { IndexResult, IndexResultGroup } from '../../entity/base/base.js';
 import { Artist } from '../../entity/artist/artist.js';
 import { Folder } from '../../entity/folder/folder.js';
-import path from 'path';
+import path from 'node:path';
 import { Album } from '../../entity/album/album.js';
 import { Collection } from '../orm/index.js';
 import { Genre } from '../../entity/genre/genre.js';
@@ -56,9 +56,7 @@ export interface SubsonicAPIResponse {
 	'subsonic-response': SubsonicResponse;
 }
 
-export interface StateMap {
-	[id: string]: State;
-}
+export type StateMap = Record<string, State>;
 
 export class SubsonicApiError extends Error {
 	readonly code: number;
@@ -73,9 +71,6 @@ export class SubsonicApiError extends Error {
 
 		// Saving class name in the property of our custom error as a shortcut.
 		this.name = this.constructor.name;
-
-		// Capturing stack trace, excluding constructor call from it.
-		Error.captureStackTrace(this, this.constructor);
 	}
 }
 
@@ -133,7 +128,7 @@ export class SubsonicFormatter {
 		 70 	The requested data was not found.
 		 */
 
-		const codeStrings: { [num: number]: string } = {
+		const codeStrings: Record<number, string> = {
 			0: 'A generic error.',
 			10: 'Required parameter is missing.',
 			20: 'Incompatible Subsonic REST protocol version. Client must upgrade.',
@@ -335,7 +330,7 @@ export class SubsonicFormatter {
 			played: state?.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
 			userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
 			musicBrainzId: album.mbReleaseID,
-			genres: genres.length ? genres.map(g => ({ name: g.name })) : undefined,
+			genres: genres.length > 0 ? genres.map(g => ({ name: g.name })) : undefined,
 			isCompilation: album.albumType === AlbumType.compilation
 			// recordLabels: [{name:'demo'}],
 			// artists: [{id:'demo', name:'demo'}],
@@ -350,14 +345,14 @@ export class SubsonicFormatter {
 	}
 
 	static packDuration(duration?: number): number {
-		if (!duration || duration <= 0 || isNaN(duration)) {
+		if (!duration || duration <= 0 || Number.isNaN(duration)) {
 			return -1;
 		}
 		return Math.trunc(duration / 1000);
 	}
 
 	static packBitrate(bitrate?: number): number | undefined {
-		return bitrate !== undefined ? Math.round(bitrate / 1000) : undefined;
+		return bitrate === undefined ? undefined : Math.round(bitrate / 1000);
 	}
 
 	static async packGenreCollection(genres: Collection<Genre>): Promise<string | undefined> {
@@ -396,15 +391,22 @@ export class SubsonicFormatter {
 	}
 
 	static packImageInfo(info: LastFM.Album | LastFM.Artist, result: SubsonicAlbumInfo | SubsonicArtistInfo): void {
-		(info.image || []).forEach(i => {
-			if (i.size === 'small') {
-				result.smallImageUrl = i.url;
-			} else if (i.size === 'medium') {
-				result.mediumImageUrl = i.url;
-			} else if (i.size === 'large') {
-				result.largeImageUrl = i.url;
+		for (const i of (info.image || [])) {
+			switch (i.size) {
+				case 'small': {
+					result.smallImageUrl = i.url;
+					break;
+				}
+				case 'medium': {
+					result.mediumImageUrl = i.url;
+					break;
+				}
+				case 'large': {
+					result.largeImageUrl = i.url;
+					break;
+				}
 			}
-		});
+		}
 	}
 
 	static packAlbumInfo(info: LastFM.Album): SubsonicAlbumInfo {
@@ -608,7 +610,7 @@ export class SubsonicFormatter {
 			coverArt: episode.id,
 			channelId: episode.podcast.idOrFail(),
 			description: episode.summary,
-			publishDate: episode.date !== undefined ? SubsonicFormatter.formatSubSonicDate(episode.date) : undefined,
+			publishDate: episode.date === undefined ? undefined : SubsonicFormatter.formatSubSonicDate(episode.date),
 			title: episode.name,
 			status: status || episode.status,
 			id: episode.id,

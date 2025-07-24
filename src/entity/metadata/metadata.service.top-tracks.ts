@@ -23,6 +23,6 @@ export class MetadataServiceTopTracks {
 			const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
 			return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
 		}
-		return { items: [], ...(page || {}), total: 0 };
+		return { items: [], ...page, total: 0 };
 	}
 }

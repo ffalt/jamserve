@@ -1,5 +1,5 @@
 import { ConfigService, ENVConfig, ENVConfigDB } from '../../modules/engine/services/config.service.js';
-import path from 'path';
+import path from 'node:path';
 import { ThirdPartyConfig } from '../../config/thirdparty.config.js';
 import { Container, Scope } from 'typescript-ioc';
 import { OrmService } from '../../modules/engine/services/orm.service.js';
@@ -18,8 +18,8 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 			domain: 'http://localhost:4141',
 			host: '0.0.0.0',
 			port: 4141,
-			jwt: { maxAge: 800000, secret: 'secret' },
-			session: { proxy: false, maxAge: 800000, secret: 'secret', secure: false, allowedCookieDomains: [] },
+			jwt: { maxAge: 800_000, secret: 'secret' },
+			session: { proxy: false, maxAge: 800_000, secret: 'secret', secure: false, allowedCookieDomains: [] },
 			db,
 			paths: { data: dataPath, frontend: './static/jamberry' }
 		};
@@ -27,15 +27,15 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		rateLimits = {
 			frontend: {
 				windowMs: 60 * 60 * 1000, // 60 minutes
-				limit: 60000 // max 60000 requests per windowMs
+				limit: 60_000 // max 60000 requests per windowMs
 			},
 			docs: {
 				windowMs: 60 * 60 * 1000, // 60 minutes
-				limit: 60000 // max 60000 requests per windowMs
+				limit: 60_000 // max 60000 requests per windowMs
 			},
 			graphlql: {
 				windowMs: 60 * 60 * 1000, // 60 minutes
-				limit: 60000 // max 60000 requests per windowMs
+				limit: 60_000 // max 60000 requests per windowMs
 			}
 		};
 

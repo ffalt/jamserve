@@ -68,8 +68,10 @@ export class ModelBuilder {
 		if (!opts.mappedBy) {
 			throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);
 		}
-		const properties: { [name: string]: PropertyMetadata } = {};
-		destEntity.fields.forEach(f => properties[f.name] = f);
+		const properties: Record<string, PropertyMetadata> = {};
+		for (const f of destEntity.fields) {
+			properties[f.name] = f;
+		}
 		const destField = opts.mappedBy(properties);
 		if (!destField) {
 			throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);

@@ -40,7 +40,7 @@ export class ChatService {
 	async get(since?: number): Promise<Array<Chat>> {
 		await this.cleanOld();
 		let list: Array<Chat> = this.messages;
-		if (since !== undefined && !isNaN(since)) {
+		if (since !== undefined && !Number.isNaN(since)) {
 			list = list.filter(msg => msg.created.valueOf() > since);
 		}
 		return list;

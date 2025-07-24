@@ -2,7 +2,7 @@ import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
-import zlib from 'zlib';
+import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
 import { EpisodeChapter } from '../episode/episode.js';
 
@@ -42,7 +42,7 @@ export class Feed {
 
 	static parseItunesDurationSeconds(s: string): number {
 		const num = Number(s);
-		if (!s.includes(':') && !isNaN(num)) {
+		if (!s.includes(':') && !Number.isNaN(num)) {
 			return num;
 		}
 		if (s.length === 5) {
@@ -51,9 +51,9 @@ export class Feed {
 		return moment.duration(s).as('seconds');
 	}
 
-	static getParams(str: string): { [key: string]: string } {
+	static getParams(str: string): Record<string, string> {
 		return str.split(';').reduce(
-			(para: { [key: string]: string }, param: string) => {
+			(para: Record<string, string>, param: string) => {
 				const parts = param.split('=').map(part => part.trim());
 				if (parts.length === 2) {
 					para[parts[0]] = parts[1];
@@ -64,10 +64,10 @@ export class Feed {
 
 	static maybeDecompress(res: NodeJS.ReadableStream, encoding: string, done: (err?: Error) => void): NodeJS.ReadableStream {
 		let decompress;
-		if ((/\bdeflate\b/).exec(encoding)) {
+		if ((/\bdeflate\b/).test(encoding)) {
 			decompress = zlib.createInflate();
 			decompress.on('error', done);
-		} else if ((/\bgzip\b/).exec(encoding)) {
+		} else if ((/\bgzip\b/).test(encoding)) {
 			decompress = zlib.createGunzip();
 			decompress.on('error', done);
 		}
@@ -83,8 +83,8 @@ export class Feed {
 				// If we're using iconv, stream will be the output of iconv
 				// otherwise it will remain the output of request
 				res = res.pipe(iv);
-			} catch (err) {
-				res.emit('error', err);
+			} catch (error) {
+				res.emit('error', error);
 			}
 		}
 		return res;
@@ -101,7 +101,7 @@ export class Feed {
 			}
 		});
 		if (res.ok && res.status === 200) {
-			let feed: { [key: string]: any };
+			let feed: Record<string, any>;
 			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
 				const done = (err?: Error): void => {
 					if (err) {
@@ -123,7 +123,7 @@ export class Feed {
 				feedParser.on('error', done);
 				feedParser.on('end', done);
 				if (!res.body) {
-					return done(Error('Bad feed stream'));
+					return done(new Error('Bad feed stream'));
 				}
 				res.body.pipe(feedParser);
 			});
@@ -171,7 +171,7 @@ export class Feed {
 				guid: post.guid || post.link,
 				summary: post.summary,
 				enclosures: (post.enclosures || []).map(e => {
-					return { ...e, length: e.length ? Number(e.length) : undefined };
+					return { ...e, length: e.length === undefined ? undefined : Number(e.length) };
 				}),
 				date: post.date ?? undefined,
 				name: post.title,

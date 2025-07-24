@@ -276,7 +276,8 @@ export class SubsonicBrowsingApi {
 					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
 				}
 			} else if (album.name && album.artist.id()) {
-				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, (await album.artist.getOrFail()).name);
+				const artist = await album.artist.getOrFail();
+				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, artist.name);
 				if (al?.album) {
 					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 					if (lastfm?.album) {
@@ -312,9 +313,9 @@ export class SubsonicBrowsingApi {
 			return {};
 		}
 		let ids: Array<string> = [];
-		folderIndex.groups.forEach(group => {
-			ids = ids.concat(group.items.map(folder => folder.id));
-		});
+		for (const group of folderIndex.groups) {
+			ids = [...ids, ...group.items.map(folder => folder.id)];
+		}
 		const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.folder, user.id);
 		return {
 			indexes: {
@@ -346,9 +347,9 @@ export class SubsonicBrowsingApi {
 			user, engine.settings.settings.index.ignoreArticles
 		);
 		let ids: Array<string> = [];
-		artistIndex.groups.forEach(group => {
-			ids = ids.concat(group.items.map(artist => artist.id));
-		});
+		for (const group of artistIndex.groups) {
+			ids = [...ids, ...group.items.map(artist => artist.id)];
+		}
 		const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.artist, user.id);
 		return {
 			artists: {
@@ -377,9 +378,9 @@ export class SubsonicBrowsingApi {
 		const folders = await folder.children.getItems();
 		let childs: Array<SubsonicChild> = [];
 		let list = await SubsonicHelper.prepareFolders(orm, folders, user);
-		childs = childs.concat(list);
+		childs = [...childs, ...list];
 		list = await SubsonicHelper.prepareTracks(orm, tracks, user);
-		childs = childs.concat(list);
+		childs = [...childs, ...list];
 		const state = await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
 		const directory = await SubsonicFormatter.packDirectory(folder, state);
 		directory.child = childs;
@@ -453,18 +454,22 @@ export class SubsonicBrowsingApi {
 		let tracks: PageResult<Track> | undefined;
 		const page = { take: query.count || 50, skip: 0 };
 		switch (result.objType) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				tracks = await engine.metadata.similarTracks.byTrack(orm, result.obj as Track, page);
 				break;
-			case DBObjectType.folder:
+			}
+			case DBObjectType.folder: {
 				tracks = await engine.metadata.similarTracks.byFolder(orm, result.obj as Folder, page);
 				break;
-			case DBObjectType.artist:
+			}
+			case DBObjectType.artist: {
 				tracks = await engine.metadata.similarTracks.byArtist(orm, result.obj as Artist, page);
 				break;
-			case DBObjectType.album:
+			}
+			case DBObjectType.album: {
 				tracks = await engine.metadata.similarTracks.byAlbum(orm, result.obj as Album, page);
 				break;
+			}
 			default:
 		}
 		const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];

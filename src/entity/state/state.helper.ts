@@ -70,13 +70,13 @@ export class StateHelper {
 	async getAvgHighestDestIDs(destType: DBObjectType): Promise<Array<string>> {
 		// TODO: calc avg in db
 		const states = await this.stateRepo.find({ where: { destType, rated: { [seq.Op.gte]: 1 } } });
-		const ratings: { [id: string]: Array<number> } = {};
-		states.forEach(state => {
+		const ratings: Record<string, Array<number>> = {};
+		for (const state of states) {
 			if (state.rated !== undefined) {
 				ratings[state.destID] = ratings[state.destID] || [];
 				ratings[state.destID].push(state.rated);
 			}
-		});
+		}
 		const list = Object.keys(ratings).map(key => {
 			return {
 				id: key,

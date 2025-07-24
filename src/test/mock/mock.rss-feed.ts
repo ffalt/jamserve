@@ -100,7 +100,7 @@ export const MockFeed1 = {
 			status: 'new',
 			summary: 'The story of an election in America where everything went wrong -- bribery, hacking, ballot-stuffing. And the 17 year old kid who tried to save the day.',
 			date: new Date('Thu, 02 Jul 2020 10:00:00 -0000'),
-			duration: 2898000,
+			duration: 2_898_000,
 			guid: 'c12efe66-e2c3-11e9-be80-f323214a92a2',
 			author: 'Gimlet',
 			chaptersJSON: undefined,
@@ -116,7 +116,7 @@ export const MockFeed1 = {
 				'Akash\'s YouTube\n' +
 				'Akash\'s podcast episode',
 			date: new Date('Thu, 16 Jul 2020 10:00:00 -0000'),
-			duration: 2049000,
+			duration: 2_049_000,
 			guid: 'c1335c36-e2c3-11e9-be80-c3b0fad514de',
 			author: 'Gimlet',
 			chaptersJSON: undefined,

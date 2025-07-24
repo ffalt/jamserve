@@ -4,6 +4,7 @@ import { $args } from '../../../../modules/deco/helpers/extract-property-name.js
 describe('$args', () => {
 	test('should extract parameters from simple function', () => {
 		function testFunc(_param1: string, _param2: number) {
+			console.log('test');
 		}
 
 		const result = $args(testFunc);
@@ -12,6 +13,7 @@ describe('$args', () => {
 
 	test('should handle function with no parameters', () => {
 		function emptyFunc() {
+			console.log('test');
 		}
 
 		const result = $args(emptyFunc);
@@ -20,6 +22,7 @@ describe('$args', () => {
 
 	test('should handle function with default values', () => {
 		function defaultParamsFunc(_param1 = 'default', _param2 = 42) {
+			console.log('test');
 		}
 
 		const result = $args(defaultParamsFunc);
@@ -32,6 +35,7 @@ describe('$args', () => {
 			_param1: string,
 			_param2: number // Another comment
 		) {
+			console.log('test');
 		}
 
 		const result = $args(commentedFunc);
@@ -47,6 +51,7 @@ describe('$args', () => {
 			 */
 			_param2: number
 		) {
+			console.log('test');
 		}
 
 		const result = $args(multiCommentFunc);
@@ -55,6 +60,7 @@ describe('$args', () => {
 
 	test('should handle arrow functions', () => {
 		const arrowFunc = (_param1: string, _param2: number) => {
+			console.log('test');
 		};
 		const result = $args(arrowFunc);
 		expect(result).toEqual(['_param1', '_param2']);
@@ -66,6 +72,7 @@ describe('$args', () => {
 			_param2: { key: string },
 			_param3: string | number
 		) {
+			console.log('test');
 		}
 
 		const result = $args(complexFunc);

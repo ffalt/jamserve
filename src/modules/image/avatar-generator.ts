@@ -8,8 +8,8 @@
 
 /* This is included because jamserve uses a newer version of sharp */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import seedrandom from 'seedrandom';
 import sharp from 'sharp';
 
@@ -27,11 +27,8 @@ export const defaultAvatarSettings: AvatarGenearatorSettings = {
 	imageExtension: '.png'
 };
 
-type PartsMap = { [key in AvatarPart]: Array<string> };
-
-interface VariantsMap {
-	[key: string]: PartsMap;
-}
+type PartsMap = Record<AvatarPart, Array<string>>;
+type VariantsMap = Record<string, PartsMap>;
 
 export class AvatarGenerator {
 	private readonly _variants: VariantsMap;
@@ -104,7 +101,7 @@ export class AvatarGenerator {
 
 	public async generate(id: string, variant: string): Promise<sharp.Sharp> {
 		const parts = this.getParts(id, variant);
-		if (!parts.length) {
+		if (parts.length === 0) {
 			throw new Error(`variant '${variant}'does not contain any parts`);
 		}
 		const { width, height } = await sharp(parts[0]).metadata();

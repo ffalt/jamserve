@@ -1,5 +1,5 @@
 import moment from 'moment';
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import * as MusicbrainzClientApi from '../../modules/audio/clients/musicbrainz-client.interface.js';
 import { logger } from '../../utils/logger.js';
@@ -20,7 +20,7 @@ import { CoverArtArchive } from '../../modules/audio/clients/coverartarchive-res
 import { MusicBrainz } from '../../modules/audio/clients/musicbrainz-rest-data.js';
 import seq from 'sequelize';
 import fetch from 'node-fetch';
-import { InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
 import { Tag } from '../tag/tag.js';
@@ -126,7 +126,7 @@ export class MetaDataService {
 	}
 
 	async acousticbrainzLookup(orm: Orm, mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response> {
-		const suffix = nr !== undefined ? `-${nr}` : '';
+		const suffix = nr === undefined ? '' : `-${nr}`;
 		const lookupKey = `lookup-${mbid}${suffix}`;
 		return this.searchInStore<AcousticBrainz.Response>(
 			orm,
@@ -150,7 +150,7 @@ export class MetaDataService {
 				if (type === CoverArtArchiveLookupType.releaseGroup) {
 					return this.audioModule.coverArtArchive.releaseGroupImages(mbid);
 				}
-				return Promise.reject(Error('Invalid CoverArtArchive Lookup Type'));
+				return Promise.reject(new Error('Invalid CoverArtArchive Lookup Type'));
 			});
 	}
 
@@ -172,12 +172,10 @@ export class MetaDataService {
 				let result = await this.audioModule.lyricsOVH.search(artist, song);
 				const cutVariants = ['(', '/', '[', ':'];
 				for (const cut of cutVariants) {
-					if (!result?.lyrics) {
-						if (song.includes(cut)) {
-							const title = song.slice(0, song.indexOf(cut)).trim();
-							if (title.length > 0) {
-								result = await this.audioModule.lyricsOVH.search(artist, title);
-							}
+					if (!result?.lyrics && song.includes(cut)) {
+						const title = song.slice(0, song.indexOf(cut)).trim();
+						if (title.length > 0) {
+							result = await this.audioModule.lyricsOVH.search(artist, title);
 						}
 					}
 				}
@@ -199,8 +197,7 @@ export class MetaDataService {
 			});
 	}
 
-	async wikipediaSummary(orm: Orm, title: string, lang: string | undefined): Promise<WikipediaSummaryResponse> {
-		lang = lang || 'en';
+	async wikipediaSummary(orm: Orm, title: string, lang: string = 'en'): Promise<WikipediaSummaryResponse> {
 		return this.searchInStore<WikipediaSummaryResponse>(orm, `summary-${title}/${lang}`,
 			MetaDataType.wikipedia, async () => {
 				return { summary: await this.audioModule.wikipedia.summary(title, lang) };
@@ -253,8 +250,8 @@ export class MetaDataService {
 				result = await this.lyricsOVHByTrackTag(orm, track, tag);
 			}
 			return result || {};
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 			return {};
 		}
 	}
@@ -289,8 +286,8 @@ export class MetaDataService {
 			throw new Error('External service is disabled');
 		}
 		const pattern = /^http(s)?:\/\/coverartarchive.org/;
-		if (!url || !pattern.exec(url)) {
-			return Promise.reject(InvalidParamError('url'));
+		if (!url || !pattern.test(url)) {
+			return Promise.reject(invalidParamError('url'));
 		}
 		const response = await fetch(url);
 		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);

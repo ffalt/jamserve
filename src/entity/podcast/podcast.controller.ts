@@ -114,7 +114,7 @@ export class PodcastController {
 		@Ctx() { orm, engine, user }: Context
 	): Promise<Podcast> {
 		const podcast = await engine.podcast.create(orm, args.url);
-		engine.podcast.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
+		engine.podcast.refresh(orm, podcast).catch(error => log.error(error)); // do not wait
 		return engine.transform.podcast(orm, podcast, {}, {}, {}, user);
 	}
 
@@ -128,9 +128,9 @@ export class PodcastController {
 	): Promise<void> {
 		if (args.id) {
 			const podcast = await orm.Podcast.oneOrFailByID(args.id);
-			engine.podcast.refresh(orm, podcast).catch(e => log.error(e)); // do not wait
+			engine.podcast.refresh(orm, podcast).catch(error => log.error(error)); // do not wait
 		} else {
-			engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
+			engine.podcast.refreshPodcasts(orm).catch(error => log.error(error)); // do not wait
 		}
 	}
 

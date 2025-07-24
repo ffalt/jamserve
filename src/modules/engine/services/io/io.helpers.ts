@@ -36,6 +36,6 @@ export class DelayedRequests<T extends WorkerRequestParameters> {
 		delayedCmd.timeout = setTimeout(() => {
 			this.requests.delete(delayedCmd.rootID);
 			onStart(delayedCmd.request);
-		}, 10000);
+		}, 10_000);
 	}
 }

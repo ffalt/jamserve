@@ -44,7 +44,7 @@ import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.reposit
 import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository.js';
 import { PodcastRepository } from '../../../entity/podcast/podcast.repository.js';
 import { SettingsRepository } from '../../../entity/settings/settings.repository.js';
-import path from 'path';
+import path from 'node:path';
 import { EntityManager, ORM } from '../../orm/index.js';
 import { ORMEntities } from '../orm/entities.js';
 import { ORMRepositories } from '../orm/repositories.js';
@@ -53,7 +53,7 @@ import { ConfigService } from './config.service.js';
 import { Options } from 'sequelize';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 import { Genre } from '../../../entity/genre/genre.js';
-import { NotFoundError } from '../../deco/express/express-error.js';
+import { notFoundError } from '../../deco/express/express-error.js';
 
 registerORMEnums();
 
@@ -125,7 +125,7 @@ export class Orm {
 		for (const id of ids) {
 			const media = await this.findInStreamTypes(id);
 			if (!media) {
-				return Promise.reject(NotFoundError());
+				return Promise.reject(notFoundError());
 			}
 			list.push(media);
 		}
@@ -233,7 +233,7 @@ export class OrmService {
 			username: config.env.db.user,
 			password: config.env.db.password,
 			database: config.env.db.name,
-			host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+			host: config.env.db.socket ?? config.env.db.host,
 			port: config.env.db.port ? Number(config.env.db.port) : undefined
 		};
 	}

@@ -1,7 +1,7 @@
 import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
 import { IDFolderCache } from '../../utils/id-file-cache.js';
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import tmp from 'tmp';
 
 interface TestParams {

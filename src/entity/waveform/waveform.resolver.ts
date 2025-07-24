@@ -1,7 +1,7 @@
 import { Arg, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { Waveform, WaveformQL } from './waveform.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(WaveformQL)
 export class WaveformResolver {
@@ -12,7 +12,7 @@ export class WaveformResolver {
 	): Promise<Waveform> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return result as Waveform;
 	}

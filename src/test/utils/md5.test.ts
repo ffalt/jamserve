@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { hashMD5 } from '../../utils/md5.js';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 describe('MD5 functions', () => {
 	describe('hashMD5', () => {

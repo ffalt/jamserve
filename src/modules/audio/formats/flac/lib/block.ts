@@ -1,12 +1,9 @@
 export class MetaDataBlock {
-	error: any;
-	hasData = false;
-	removed = false;
+	error: any = null;
+	hasData: boolean = false;
+	removed: boolean = false;
 
 	constructor(public isLast: boolean, public type: number) {
-		this.error = null;
-		this.hasData = false;
-		this.removed = false;
 	}
 
 	remove(): void {

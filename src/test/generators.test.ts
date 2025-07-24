@@ -30,7 +30,7 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Err
 				return done(err);
 			}
 			if (res.body === null) {
-				return done(Error('Invalid Body response'));
+				return done(new Error('Invalid Body response'));
 			}
 			let isClosedByError = false;
 			yauzl.fromBuffer(res.body, (e: Error | null, zipfile: ZipFile | undefined) => {
@@ -38,7 +38,7 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Err
 					return done(e);
 				}
 				if (!zipfile) {
-					return done(Error('Invalid Zip Buffer'));
+					return done(new Error('Invalid Zip Buffer'));
 				}
 				zipfile.on('error', (ze: Error) => {
 					isClosedByError = true;
@@ -57,7 +57,7 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (e?: Err
 					const errorMessage = yauzl.validateFileName(entry.fileName);
 					if (errorMessage) {
 						isClosedByError = true;
-						done(Error(`Unexpected Zip Content ${entry.fileName}`));
+						done(new Error(`Unexpected Zip Content ${entry.fileName}`));
 					}
 				});
 			});
@@ -73,7 +73,7 @@ function downloadJSON(req: TestAgent<supertest.Test>, url: string, done: (e?: Er
 				return done(err);
 			}
 			if (typeof res.body !== 'object') {
-				return done(Error('Invalid JSON Response'));
+				return done(new Error('Invalid JSON Response'));
 			}
 			done();
 		});

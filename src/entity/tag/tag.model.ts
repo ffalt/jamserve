@@ -22,7 +22,7 @@ export class MediaIDTagRaw extends MediaTagRaw {
 
 @ResultType({ description: 'Media Audio Info' })
 export class MediaInfo {
-	@ObjField({ description: 'Bit Rate', example: 320000 })
+	@ObjField({ description: 'Bit Rate', example: 320_000 })
 	bitRate?: number;
 
 	@ObjField({ nullable: true, description: 'Media Format', example: 'flac' })
@@ -31,13 +31,13 @@ export class MediaInfo {
 	@ObjField({ nullable: true, description: 'Media Channels', example: 2 })
 	channels?: number;
 
-	@ObjField({ nullable: true, description: 'Sample Rate (Hz)', example: 44100 })
+	@ObjField({ nullable: true, description: 'Sample Rate (Hz)', example: 44_100 })
 	sampleRate?: number;
 
 	@ObjField({ nullable: true, description: 'Bit Depth', example: 16 })
 	bitDepth?: number;
 
-	@ObjField({ nullable: true, description: 'File Size', example: 31321516 })
+	@ObjField({ nullable: true, description: 'File Size', example: 31_321_516 })
 	size?: number;
 }
 
@@ -94,7 +94,7 @@ export class MediaBase extends Base {
 	@ObjField(() => JamObjectType, { description: 'Media Base Object Type', example: JamObjectType.track })
 	objType!: JamObjectType;
 
-	@ObjField({ description: 'Duration of Track', min: 0, example: 12345 })
+	@ObjField({ description: 'Duration of Track', min: 0, example: 12_345 })
 	duration!: number;
 
 	@ObjField(() => MediaTag, { nullable: true, description: 'Tag Meta Information' })

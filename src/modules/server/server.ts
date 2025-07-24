@@ -1,5 +1,5 @@
 import { Inject, InRequestScope } from 'typescript-ioc';
-import http from 'http';
+import http from 'node:http';
 import express from 'express';
 import { EngineService } from '../engine/services/engine.service.js';
 import bodyParser from 'body-parser';
@@ -109,7 +109,7 @@ export class Server {
 	async start(): Promise<void> {
 		log.debug(`starting express on ${this.getURL()}`);
 		this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
-		this.server.setTimeout(4 * 60000); // 4 minutes
+		this.server.setTimeout(4 * 60_000); // 4 minutes
 		const domain = this.getDomain();
 		log.table([
 			{ Content: 'Frontend', URL: `${domain}` },

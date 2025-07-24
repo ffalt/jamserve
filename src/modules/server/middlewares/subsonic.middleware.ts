@@ -21,7 +21,7 @@ export class SubsonicMiddleware {
 
 	middleware(): express.Router {
 		if (this.controllers.length === 0) {
-			throw Error('No subsonic controllers');
+			throw new Error('No subsonic controllers');
 		}
 		const router = express.Router();
 		router.use(SubsonicParameterMiddleWare);

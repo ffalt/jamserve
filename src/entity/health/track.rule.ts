@@ -1,5 +1,5 @@
 import { ID3v2, IID3V1, IID3V2, IMP3Analyzer } from 'jamp3';
-import path from 'path';
+import path from 'node:path';
 import { AudioModule, ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module.js';
 import { flac_test } from '../../modules/audio/tools/flac.js';
 import { logger } from '../../utils/logger.js';
@@ -42,13 +42,13 @@ const analyzeErrors = {
 	]
 };
 
-const fixable = analyzeErrors.xingMissing.concat(analyzeErrors.xing).concat(analyzeErrors.mpeg);
+const FIXABLE = new Set([...analyzeErrors.xingMissing, ...analyzeErrors.xing, ...analyzeErrors.mpeg]);
 
-const GARBAGE_FRAMES_IDS: Array<string> = [
+const GARBAGE_FRAMES_IDS = new Set([
 	'PRIV', // application specific binary, mostly windows media player
 	'COMM',
 	'POPM'
-];
+]);
 
 interface TrackRuleInfo {
 	id: TrackHealthID;
@@ -149,14 +149,14 @@ const trackRules: Array<TrackRuleInfo> = [
 		mp3: true,
 		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.id3v2) {
-				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.includes(frame.id));
+				const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.has(frame.id));
 				if (frames.length > 0) {
 					const ids: Array<string> = [];
-					frames.forEach(frame => {
+					for (const frame of frames) {
 						if (!ids.includes(frame.id)) {
 							ids.push(frame.id);
 						}
-					});
+					}
 					return {
 						details: ids.map(m => {
 							return { reason: m };
@@ -225,7 +225,7 @@ const trackRules: Array<TrackRuleInfo> = [
 		mp3: true,
 		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.mp3Warnings?.mpeg) {
-				const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !fixable.includes(m.msg));
+				const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !FIXABLE.has(m.msg));
 				if (mp3Warnings.length > 0) {
 					return {
 						details: mp3Warnings.map(m => {

@@ -20,17 +20,14 @@ export interface GetTypeParams {
 
 export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }: GetTypeParams): TypeInfo {
 	const options: TypeOptions = { ...typeOptions };
-	let metadataDesignType: Function | undefined;
-	const reflectedType: Function[] | Function | undefined = Reflect.getMetadata(
+	const reflectedType: Array<Function> | Function | undefined = Reflect.getMetadata(
 		metadataKey,
 		prototype,
 		propertyKey
 	);
-	if (metadataKey === 'design:paramtypes') {
-		metadataDesignType = (reflectedType as Function[])[parameterIndex ?? 0];
-	} else {
-		metadataDesignType = reflectedType as Function | undefined;
-	}
+	const metadataDesignType = metadataKey === 'design:paramtypes' ?
+		(reflectedType as Array<Function>)[parameterIndex ?? 0] :
+		reflectedType as Function | undefined;
 
 	if (
 		!returnTypeFunc &&
@@ -48,7 +45,7 @@ export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, 
 			if (typeof r === 'string') {
 				const fStringResolvedObjectType = getMetadataStorage().entities.find(it => it.target.name === r);
 				if (!fStringResolvedObjectType) {
-					throw Error(`Target type ${r} not found.`);
+					throw new Error(`Target type ${r} not found.`);
 				}
 				r = fStringResolvedObjectType.target;
 			}

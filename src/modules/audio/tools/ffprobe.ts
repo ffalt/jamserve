@@ -12,7 +12,7 @@ export interface ProbeResult {
 		size: string; // '10600329',
 		bit_rate: string; // '128004',
 		probe_score: number;
-		tags: { [name: string]: string };
+		tags: Record<string, string>;
 	};
 	frames?: Array<{
 		media_type: string; //  'audio',

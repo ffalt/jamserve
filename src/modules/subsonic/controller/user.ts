@@ -50,7 +50,7 @@ export class SubsonicUserApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const users = await orm.User.all();
-		return { users: { user: users.map(SubsonicFormatter.packUser) } };
+		return { users: { user: users.map(element => SubsonicFormatter.packUser(element)) } };
 	}
 
 	/**

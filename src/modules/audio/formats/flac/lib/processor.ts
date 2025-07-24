@@ -3,7 +3,7 @@
  License: MIT
  **/
 
-import { Transform, TransformCallback, TransformOptions } from 'stream';
+import { Transform, TransformCallback, TransformOptions } from 'node:stream';
 import { MetaDataBlock } from './block.js';
 import { MetaDataBlockPicture } from './block.picture.js';
 import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
@@ -105,7 +105,7 @@ export class FlacProcessorStream extends Transform {
 			}
 		}
 		if (this.reportID3) {
-			this.buf = !this.buf ? chunk.buffer : Buffer.concat([this.buf, chunk.buffer]);
+			this.buf = this.buf ? Buffer.concat([this.buf, chunk.buffer]) : chunk.buffer;
 		}
 	}
 
@@ -216,25 +216,31 @@ export class FlacProcessorStream extends Transform {
 
 	private process(chunk: Chunk): void {
 		switch (this.state) {
-			case STATE.IDLE:
+			case STATE.IDLE: {
 				this.processIDLE();
 				break;
-			case STATE.SCAN_MARKER:
+			}
+			case STATE.SCAN_MARKER: {
 				this.processSCANMARKER(chunk);
 				break;
-			case STATE.MARKER:
+			}
+			case STATE.MARKER: {
 				this.processMARKER(chunk);
 				break;
-			case STATE.MDB_HEADER:
+			}
+			case STATE.MDB_HEADER: {
 				this.processMDBHEADER(chunk);
 				break;
-			case STATE.MDB:
+			}
+			case STATE.MDB: {
 				this.processMDB(chunk);
 				break;
-			case STATE.PASS_THROUGH:
-			default:
+			}
+			// case STATE.PASS_THROUGH:
+			default: {
 				this.processPASSTHROUGH(chunk);
 				break;
+			}
 		}
 	}
 
@@ -255,19 +261,23 @@ export class FlacProcessorStream extends Transform {
 		// Create appropriate MDB object
 		// (data is injected later in _validateMDB, if parseMetaDataBlocks option is set to true)
 		switch (type) {
-			case MDB_TYPE.STREAMINFO:
+			case MDB_TYPE.STREAMINFO: {
 				return new MetaDataBlockStreamInfo(this.mdbLast);
-			case MDB_TYPE.VORBIS_COMMENT:
+			}
+			case MDB_TYPE.VORBIS_COMMENT: {
 				return new BlockVorbiscomment(this.mdbLast);
-			case MDB_TYPE.PICTURE:
+			}
+			case MDB_TYPE.PICTURE: {
 				return new MetaDataBlockPicture(this.mdbLast);
+			}
 			// case MDB_TYPE.PADDING:
 			// case MDB_TYPE.APPLICATION:
 			// case MDB_TYPE.SEEKTABLE:
 			// case MDB_TYPE.CUESHEET:
 			// case MDB_TYPE.INVALID:
-			default:
+			default: {
 				return new MetaDataBlock(this.mdbLast, type);
+			}
 		}
 	}
 
@@ -280,9 +290,9 @@ export class FlacProcessorStream extends Transform {
 			// The consumer may change the MDB's isLast flag in the preprocess handler.
 			// Here that flag is updated in the MDB header.
 			if (this.mdb.isLast) {
-				header |= 0x80000000;
+				header |= 0x80_00_00_00;
 			} else {
-				header &= 0x7FFFFFFF;
+				header &= 0x7F_FF_FF_FF;
 			}
 			slice.writeUInt32BE(header, 0);
 		}
@@ -295,7 +305,7 @@ export class FlacProcessorStream extends Transform {
 		const header = slice.readUInt32BE(0);
 		const type = (header >>> 24) & 0x7F;
 		this.mdbLast = (((header >>> 24) & 0x80) !== 0);
-		this.mdbLen = header & 0xFFFFFF;
+		this.mdbLen = header & 0xFF_FF_FF;
 		this.mdb = this.initMDB(type);
 		this.emit('preprocess', this.mdb);
 		return this.preProcess(slice, header);

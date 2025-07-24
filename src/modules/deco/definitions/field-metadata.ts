@@ -9,7 +9,7 @@ export interface FieldMetadata {
 	typeOptions: FieldOptions & TypeOptions;
 	description: string | undefined;
 	deprecationReason: string | undefined;
-	params?: ParamMetadata[];
-	roles?: string[];
+	params?: Array<ParamMetadata>;
+	roles?: Array<string>;
 	simple?: boolean;
 }

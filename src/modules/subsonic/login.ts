@@ -40,7 +40,7 @@ export function hexEncode(n: string): string {
 		i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
 	}
 	for (let t = 0; t < n.length; t++) {
-		r[t] = i[n.charCodeAt(t)];
+		r[t] = i[n.codePointAt(t) as number];
 	}
 	return r.join('');
 }
@@ -48,7 +48,7 @@ export function hexEncode(n: string): string {
 export function hexDecode(hex: string): string {
 	let str = '';
 	for (let i = 0; i < hex.length; i += 2) {
-		str += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16));
+		str += String.fromCodePoint(Number.parseInt(hex.slice(i, i + 2), 16));
 	}
 	return str.trim();
 }
@@ -134,8 +134,8 @@ export async function subsonicLoginRateLimited(req: SubsonicRequest, res: expres
 
 export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
 	subsonicLoginRateLimited(req as SubsonicRequest, res, next)
-		.catch(e => {
-			return (new ApiResponder()).sendError(req, res, e);
+		.catch(error => {
+			return (new ApiResponder()).sendError(req, res, error);
 		});
 }
 

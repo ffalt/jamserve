@@ -6,23 +6,23 @@ import { Track } from '../track/track.js';
 import { Episode } from '../episode/episode.js';
 import { User } from '../user/user.js';
 import seq from 'sequelize';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class BookmarkService {
 	async create(orm: Orm, destID: string, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
 		let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: destID }, { track: destID }] } });
-		if (!bookmark) {
+		if (bookmark) {
+			bookmark.comment = comment;
+		} else {
 			const result = await orm.findInStreamTypes(destID);
 			if (!result) {
-				return Promise.reject(NotFoundError());
+				return Promise.reject(notFoundError());
 			}
 			bookmark = orm.Bookmark.create({ position, comment });
 			await bookmark.episode.set(result.objType === DBObjectType.episode ? result.obj as Episode : undefined);
 			await bookmark.track.set(result.objType === DBObjectType.track ? result.obj as Track : undefined);
 			await bookmark.user.set(user);
-		} else {
-			bookmark.comment = comment;
 		}
 		await orm.Bookmark.persistAndFlush(bookmark);
 		return bookmark;

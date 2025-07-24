@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream.js';
 import { fileSuffix } from '../../utils/fs-utils.js';
@@ -9,7 +9,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { genericError, invalidParamError } from '../../modules/deco/express/express-error.js';
 
 export interface StreamOptions {
 	maxBitRate?: number;
@@ -30,7 +30,7 @@ export class StreamService {
 			stats = undefined;
 		}
 		if (!stats) {
-			return Promise.reject(GenericError('File not found'));
+			return Promise.reject(genericError('File not found'));
 		}
 		let destFormat = opts?.format || AudioFormatType.mp3;
 		if (destFormat.startsWith('.')) {
@@ -54,17 +54,19 @@ export class StreamService {
 		if (episode.path && tag?.mediaFormat) {
 			return this.streamFile(episode.path, episode.id, tag?.mediaFormat, opts);
 		}
-		return Promise.reject(GenericError('Podcast episode not ready'));
+		return Promise.reject(genericError('Podcast episode not ready'));
 	}
 
 	async streamDBObject(o: Base, type: DBObjectType, opts?: StreamOptions): Promise<ApiBinaryResult> {
 		switch (type) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				return this.streamTrack(o as Track, opts);
-			case DBObjectType.episode:
+			}
+			case DBObjectType.episode: {
 				return this.streamEpisode(o as Episode, opts);
+			}
 			default:
 		}
-		return Promise.reject(InvalidParamError('Invalid Object Type for Streaming'));
+		return Promise.reject(invalidParamError('Invalid Object Type for Streaming'));
 	}
 }

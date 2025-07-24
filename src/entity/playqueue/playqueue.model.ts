@@ -20,7 +20,7 @@ export class PlayQueueBase {
 	@ObjField({ nullable: true, description: 'Current Entry Index in PlayQueue', min: 0, example: 1 })
 	currentIndex?: number;
 
-	@ObjField({ nullable: true, description: 'Position in Current Entry', min: 0, example: 12345 })
+	@ObjField({ nullable: true, description: 'Position in Current Entry', min: 0, example: 12_345 })
 	mediaPosition?: number;
 
 	@ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp })

@@ -49,12 +49,12 @@ export class IoRequest<T extends WorkerRequestParameters> {
 	async run(): Promise<Changes> {
 		try {
 			return await this.execute(this.parameters);
-		} catch (e: any) {
-			console.error(e.stack);
-			if (['EACCES', 'ENOENT'].includes(e.code)) {
-				return Promise.reject(Error('Directory not found/no access/error in filesystem'));
+		} catch (error: any) {
+			console.error(error.stack);
+			if (['EACCES', 'ENOENT'].includes(error.code)) {
+				return Promise.reject(new Error('Directory not found/no access/error in filesystem'));
 			}
-			return Promise.reject(e as Error);
+			return Promise.reject(error);
 		}
 	}
 }

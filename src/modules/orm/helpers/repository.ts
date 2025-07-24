@@ -11,11 +11,11 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 		return;
 	}
 
-	async persistAndFlush(entity: Entity | Entity[]): Promise<void> {
+	async persistAndFlush(entity: Entity | Array<Entity>): Promise<void> {
 		await this.em.persistAndFlush(this.entityName, entity);
 	}
 
-	persistLater(entity: Entity | Entity[]): void {
+	persistLater(entity: Entity | Array<Entity>): void {
 		this.em.persistLater(this.entityName, entity);
 	}
 
@@ -35,7 +35,7 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 		return this.em.findOneOrFailByID<Entity>(this.entityName, id);
 	}
 
-	async findByIDs(ids: Array<string>): Promise<Entity[]> {
+	async findByIDs(ids: Array<string>): Promise<Array<Entity>> {
 		return this.em.findByIDs<Entity>(this.entityName, ids);
 	}
 
@@ -43,19 +43,20 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 		return this.em.findOneID<Entity>(this.entityName, options);
 	}
 
-	async findIDs(options: FindOptions<Entity>): Promise<string[]> {
+	async findIDs(options: FindOptions<Entity>): Promise<Array<string>> {
 		return this.em.findIDs<Entity>(this.entityName, options);
 	}
 
-	async find(options: FindOptions<Entity>): Promise<Entity[]> {
+	async find(options: FindOptions<Entity>): Promise<Array<Entity>> {
+		// eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
 		return this.em.find<Entity>(this.entityName, options);
 	}
 
-	async all(): Promise<Entity[]> {
+	async all(): Promise<Array<Entity>> {
 		return this.em.all<Entity>(this.entityName);
 	}
 
-	async findAndCount(options: FindOptions<Entity>): Promise<{ entities: Entity[]; count: number }> {
+	async findAndCount(options: FindOptions<Entity>): Promise<{ entities: Array<Entity>; count: number }> {
 		return this.em.findAndCount<Entity>(this.entityName, options);
 	}
 

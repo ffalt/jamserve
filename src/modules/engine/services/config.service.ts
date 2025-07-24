@@ -1,6 +1,6 @@
 import { ThirdPartyConfig, ThirdpartyToolsConfig } from '../../../config/thirdparty.config.js';
 import { InRequestScope } from 'typescript-ioc';
-import path from 'path';
+import path from 'node:path';
 import { FirstStartConfig } from '../../../config/firststart.config.js';
 import { getMaxAge } from '../../../utils/max-age.js';
 import { Dialect } from 'sequelize';
@@ -92,8 +92,8 @@ export class ConfigService {
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
 			this.firstStart = fse.readJSONSync(configFirstStartFile);
-		} catch (e) {
-			console.error('Error loading first start config', e);
+		} catch (error) {
+			console.error('Error loading first start config', error);
 			this.firstStart = {
 				adminUser: undefined,
 				roots: []

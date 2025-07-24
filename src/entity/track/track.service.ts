@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Track, TrackHealth } from './track.js';

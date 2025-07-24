@@ -8,7 +8,7 @@ import { Controller } from '../../modules/rest/decorators/Controller.js';
 import { Get } from '../../modules/rest/decorators/Get.js';
 import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { GenericError, NotFoundError } from '../../modules/deco/express/express-error.js';
+import { genericError, notFoundError } from '../../modules/deco/express/express-error.js';
 import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 import { PathParam } from '../../modules/rest/decorators/PathParam.js';
 import { PathParams } from '../../modules/rest/decorators/PathParams.js';
@@ -26,7 +26,7 @@ export class WaveformController {
 	): Promise<WaveFormData | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.json);
 		if (bin.json) {
@@ -36,9 +36,10 @@ export class WaveformController {
 			return JSON.parse(bin.buffer.buffer.toString());
 		}
 		if (bin.file) {
-			return JSON.parse((await fse.readFile(bin.file.filename)).toString());
+			const file = await fse.readFile(bin.file.filename);
+			return JSON.parse(file.toString());
 		}
-		return Promise.reject(GenericError('Error on Waveform generation'));
+		return Promise.reject(genericError('Error on Waveform generation'));
 	}
 
 	@Get('/svg',
@@ -54,16 +55,17 @@ export class WaveformController {
 	): Promise<string> {
 		const result = await orm.findInWaveformTypes(args.id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.svg, args.width);
 		if (bin.buffer) {
 			return bin.buffer.buffer.toString();
 		}
 		if (bin.file) {
-			return (await fse.readFile(bin.file.filename)).toString();
+			const file = await fse.readFile(bin.file.filename);
+			return file.toString();
 		}
-		return Promise.reject(GenericError('Error on Waveform generation'));
+		return Promise.reject(genericError('Error on Waveform generation'));
 	}
 
 	@Get(
@@ -92,7 +94,7 @@ export class WaveformController {
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInWaveformTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
 	}

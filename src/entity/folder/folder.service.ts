@@ -1,7 +1,7 @@
 import { Folder, FolderHealth } from './folder.js';
 import { Artwork } from '../artwork/artwork.js';
 import { ArtworkImageType, FolderType } from '../../types/enums.js';
-import path from 'path';
+import path from 'node:path';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
@@ -10,7 +10,8 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 
 export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise<Artwork | undefined> {
 	const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
-	return (await folder.artworks.getItems()).find(a => a.types.includes(search));
+	const items = await folder.artworks.getItems();
+	return items.find(a => a.types.includes(search));
 }
 
 @InRequestScope

@@ -77,7 +77,7 @@ export class GenreController {
 		@Ctx() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-		const orders = [{ orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
+		const orders = [{ orderBy: order?.orderBy ?? TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
 		return await orm.Track.searchTransformFilter(
 			{ genreIDs }, orders, page, user,
 			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)

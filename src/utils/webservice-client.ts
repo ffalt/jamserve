@@ -1,4 +1,4 @@
-import { RateLimiter } from './limiter/RateLimiter.js';
+import { RateLimiter } from './limiter/rate-limiter.js';
 import fetch, { Response } from 'node-fetch';
 
 export class WebserviceClient {
@@ -13,12 +13,12 @@ export class WebserviceClient {
 
 	protected async parseResult<T>(response: Response): Promise<T | undefined> {
 		if (response.status === 404) {
-			return Promise.reject(Error(`${response.status} ${response.statusText || ''}`));
+			return Promise.reject(new Error(`${response.status} ${response.statusText || ''}`));
 		}
 		try {
 			return await response.json() as T;
-		} catch (err) {
-			return Promise.reject(err as Error);
+		} catch (error) {
+			return Promise.reject(error);
 		}
 	}
 
@@ -35,11 +35,11 @@ export class WebserviceClient {
 
 	protected formatParams<P>(parameters: P): string {
 		const obj: any = { ...parameters };
-		Object.keys(obj).forEach(key => {
+		for (const key of Object.keys(obj)) {
 			if (obj[key] === undefined) {
 				delete obj[key];
 			}
-		});
+		}
 		return `?${new URLSearchParams(obj)}`;
 	}
 
@@ -52,11 +52,11 @@ export class WebserviceClient {
 			// timeout: 20000
 		});
 		if (!ignoreStatus && response.status !== 200) {
-			return Promise.reject(Error('Invalid Result'));
+			return Promise.reject(new Error('Invalid Result'));
 		}
 		const result = await this.parseResult<T>(response);
 		if (result === undefined) {
-			return Promise.reject(Error('Invalid Result'));
+			return Promise.reject(new Error('Invalid Result'));
 		}
 		return result;
 	}

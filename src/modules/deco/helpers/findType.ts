@@ -19,13 +19,10 @@ export interface GetTypeParams {
 
 export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }: GetTypeParams): TypeInfo {
 	const options: TypeOptions = { ...typeOptions };
-	let metadataDesignType: Function | undefined;
-	const reflectedType: Function[] | Function | undefined = Reflect.getMetadata(metadataKey, prototype, propertyKey);
-	if (metadataKey === 'design:paramtypes') {
-		metadataDesignType = (reflectedType as Function[])[parameterIndex ?? -1];
-	} else {
-		metadataDesignType = reflectedType as Function;
-	}
+	const reflectedType: Array<Function> | Function | undefined = Reflect.getMetadata(metadataKey, prototype, propertyKey);
+	const metadataDesignType = metadataKey === 'design:paramtypes' ?
+		(reflectedType as Array<Function>)[parameterIndex ?? -1] :
+		reflectedType as Function;
 
 	if (
 		!returnTypeFunc &&

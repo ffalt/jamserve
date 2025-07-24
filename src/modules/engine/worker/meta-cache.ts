@@ -82,11 +82,11 @@ export class MetaMergerCache {
 			return series;
 		}
 		series = await this.orm.Series.findOne({ where: { name: trackInfo.tag.series, artist: artist.id } });
-		if (!series) {
+		if (series) {
+			this.changes.series.updated.add(series);
+		} else {
 			series = await this.buildSeries(trackInfo, artist);
 			this.changes.series.added.add(series);
-		} else {
-			this.changes.series.updated.add(series);
 		}
 		await series.albums.add(album);
 		this.seriesCache.push({ series, artist });
@@ -151,7 +151,8 @@ export class MetaMergerCache {
 		}
 		const album = await this.orm.Album.findOneByID(id);
 		if (album) {
-			this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: (await album.series.get())?.name });
+			const series = await album.series.get();
+			this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: series?.name });
 			this.changes.albums.updated.add(album);
 		}
 		return album || undefined;
@@ -163,11 +164,11 @@ export class MetaMergerCache {
 			return album;
 		}
 		album = await this.findAlbumInDB(trackInfo, artist);
-		if (!album) {
+		if (album) {
+			this.changes.albums.updated.add(album);
+		} else {
 			album = await this.buildAlbum(trackInfo, artist);
 			this.changes.albums.added.add(album);
-		} else {
-			this.changes.albums.updated.add(album);
 		}
 		this.albumCache.push({ album, artist, series: trackInfo.tag.series });
 		return album;
@@ -284,15 +285,15 @@ export class MetaMergerCache {
 			return artist;
 		}
 		artist = await this.findArtistInDB(trackInfo, albumArtist);
-		if (!artist) {
+		if (artist) {
+			this.changes.artists.updated.add(artist);
+		} else {
 			const name = (albumArtist ? (trackInfo.tag.albumArtist ?? trackInfo.tag.artist) : trackInfo.tag.artist) ?? cUnknownArtist;
 			if (name === MUSICBRAINZ_VARIOUS_ARTISTS_NAME) {
 				return this.findOrCreateCompilationArtist();
 			}
 			artist = await this.buildArtist(trackInfo, albumArtist);
 			this.changes.artists.added.add(artist);
-		} else {
-			this.changes.artists.updated.add(artist);
 		}
 		this.artistCache.push({ artist, slugs: [artist.slug] });
 		return artist;

@@ -3,7 +3,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { ApolloMiddleware } from './apollo.middleware.js';
-import path from 'path';
+import path from 'node:path';
 import RateLimit from 'express-rate-limit';
 
 const log = logger('Graphql');

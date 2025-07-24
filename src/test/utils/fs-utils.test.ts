@@ -11,7 +11,7 @@ import {
 	ensureTrailingPathSeparator,
 	removeTrailingPathSeparator
 } from '../../utils/fs-utils.js';
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import tmp from 'tmp';
 
@@ -26,7 +26,7 @@ describe('fs-utils functions', () => {
 		afterEach(() => {
 			try {
 				tempFile.removeCallback();
-			} catch (_) {
+			} catch {
 				// Ignore errors during cleanup
 			}
 		});
@@ -53,7 +53,7 @@ describe('fs-utils functions', () => {
 		afterEach(() => {
 			try {
 				tempDir.removeCallback();
-			} catch (_) {
+			} catch {
 				// Ignore errors during cleanup
 			}
 		});

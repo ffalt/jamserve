@@ -54,8 +54,8 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			buffer.copy(this.pictureData, 0, pos + 4, pictureDataLength);
 
 			this.hasData = true;
-		} catch (e) {
-			this.error = e;
+		} catch (error) {
+			this.error = error;
 			this.hasData = false;
 		}
 	}
@@ -68,7 +68,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		if (this.pictureData) {
 			let header = size;
 			header |= (this.type << 24);
-			header |= (this.isLast ? 0x80000000 : 0);
+			header |= (this.isLast ? 0x80_00_00_00 : 0);
 			header = header >>> 0;
 			buffer.writeUInt32BE(header, pos);
 			pos += 4;

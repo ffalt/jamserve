@@ -20,11 +20,11 @@ export abstract class BaseOpenApiBuilder {
 	protected fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
 		if (parameters.length > 0) {
 			responses['422'] = { description: Errors.invalidParameter };
-			if (parameters.find(p => p.required)) {
+			if (parameters.some(p => p.required)) {
 				responses['400'] = { description: Errors.missingParameter };
 			}
 		}
-		if (parameters.find(p => {
+		if (parameters.some(p => {
 			return (p.schema as ReferenceObject)?.$ref === SCHEMA_ID || (((p.schema as SchemaObject)?.items || {}) as ReferenceObject).$ref === SCHEMA_ID;
 		})) {
 			responses['404'] = { description: Errors.itemNotFound };
@@ -77,13 +77,13 @@ export abstract class BaseOpenApiBuilder {
 	protected fillStringResponse(method: MethodMetadata, responses: ResponsesObject): void {
 		const content: ContentObject = {};
 		const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
-		mimeTypes.forEach(mime => content[mime] = { schema: { type: 'string' } });
+		for (const mime of mimeTypes) content[mime] = { schema: { type: 'string' } };
 		responses['200'] = { description: 'string data', content };
 	}
 
 	protected fillBinaryResponses(binary: Array<string>, responses: ResponsesObject): void {
 		const content: ContentObject = {};
-		binary.forEach(mime => content[mime] = { schema: { type: 'string', format: 'binary' } });
+		for (const mime of binary) content[mime] = { schema: { type: 'string', format: 'binary' } };
 		responses['200'] = { description: 'binary data', content };
 	}
 

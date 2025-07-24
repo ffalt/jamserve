@@ -22,11 +22,11 @@ export class ArtworkRepository extends BaseRepository<Artwork, ArtworkFilterArgs
 		if (filter?.childOfID) {
 			const folderRepo = this.em.getRepository<Folder, FolderRepository>(Folder);
 			const folder = await folderRepo.oneOrFailByID(filter.childOfID);
-			folderIDs = folderIDs.concat(await folderRepo.findAllDescendantsIds(folder));
+			folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder)];
 			folderIDs.push(filter.childOfID);
 		}
 		if (filter?.folderIDs) {
-			folderIDs = folderIDs.concat(filter.folderIDs);
+			folderIDs = [...folderIDs, ...filter.folderIDs];
 		}
 		return QHelper.buildQuery<Artwork>([
 			{ id: filter.ids },

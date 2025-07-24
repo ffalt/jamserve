@@ -1,7 +1,7 @@
 import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
 import { ClassMetadata } from '../definitions/class-metadata.js';
 
-export function iterateControllers(controllerClasses: ControllerClassMetadata[], ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void): void {
+export function iterateControllers(controllerClasses: Array<ControllerClassMetadata>, ctrl: ControllerClassMetadata, onControl: (ctrl: ControllerClassMetadata) => void): void {
 	onControl(ctrl);
 	let superClass = Object.getPrototypeOf(ctrl.target);
 	while (superClass.prototype !== undefined) {
@@ -13,7 +13,7 @@ export function iterateControllers(controllerClasses: ControllerClassMetadata[],
 	}
 }
 
-export function iterateArguments(argumentTypes: ClassMetadata[], argument: ClassMetadata, onArgument: (argument: ClassMetadata) => void): void {
+export function iterateArguments(argumentTypes: Array<ClassMetadata>, argument: ClassMetadata, onArgument: (argument: ClassMetadata) => void): void {
 	onArgument(argument);
 	let superClass = Object.getPrototypeOf(argument.target);
 	while (superClass.prototype !== undefined) {

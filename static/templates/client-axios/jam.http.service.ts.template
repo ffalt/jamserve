@@ -17,7 +17,7 @@ export interface HTTPOptions {
 async function handleError(e: any): Promise<any> {
 	console.error(e);
 	if (e.status === 0) {
-		return Promise.reject(Error('Could not reach server'));
+		return Promise.reject(new Error('Could not reach server'));
 	}
 	return Promise.reject(e);
 }

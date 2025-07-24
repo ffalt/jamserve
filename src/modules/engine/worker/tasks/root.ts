@@ -14,15 +14,15 @@ export class RootWorker extends BaseWorker {
 	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
 		const d = dir.trim();
 		if (d.startsWith('.')) {
-			return Promise.reject(Error('Root Directory must be absolute'));
+			return Promise.reject(new Error('Root Directory must be absolute'));
 		}
 		if (d.length === 0 || d.includes('*')) {
-			return Promise.reject(Error('Root Directory invalid'));
+			return Promise.reject(new Error('Root Directory invalid'));
 		}
 		const roots = await orm.Root.all();
 		for (const r of roots) {
 			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
-				return Promise.reject(Error('Root path already used'));
+				return Promise.reject(new Error('Root path already used'));
 			}
 		}
 	}
@@ -67,7 +67,7 @@ export class RootWorker extends BaseWorker {
 					const tracks = await RootWorker.buildMergeTracks(parents[0]);
 					rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
 				}
-				const pathToChild = parents.slice(1).concat([folder]);
+				const pathToChild = [...parents.slice(1), folder];
 				await this.buildMergeNode(pathToChild, rootMatch);
 			}
 		}
@@ -120,7 +120,7 @@ export class RootWorker extends BaseWorker {
 		if (!parent) {
 			return [];
 		}
-		return (await this.getParents(parent)).concat([parent]);
+		return [...(await this.getParents(parent)), parent];
 	}
 
 	private async loadEmptyUnchanged(node: MergeNode): Promise<void> {
@@ -144,9 +144,9 @@ export class RootWorker extends BaseWorker {
 
 	private logNode(node?: MergeNode): Array<string> {
 		let stat = [' '.repeat(node?.folder?.level ?? 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
-		(node?.children || []).forEach(n => {
-			stat = stat.concat(this.logNode(n));
-		});
+		for (const n of (node?.children || [])) {
+			stat = [...stat, ...this.logNode(n)];
+		}
 		return stat;
 	}
 

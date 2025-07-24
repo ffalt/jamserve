@@ -6,7 +6,7 @@ import fse from 'fs-extra';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
-import path from 'path';
+import path from 'node:path';
 import { RestParamMetadata, RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 
@@ -33,9 +33,7 @@ export interface Part {
 	isLast?: boolean;
 }
 
-export interface MustacheDataClientCallSections {
-	[name: string]: Array<MustacheDataClientCallFunction>;
-}
+export type MustacheDataClientCallSections = Record<string, Array<MustacheDataClientCallFunction>>;
 
 export type GenerateRequestClientCallsFunction = (call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>;
 export type GenerateBinaryClientCallsFunction = (call: MethodMetadata, name: string, paramType: string) => Array<MustacheDataClientCallFunction>;
@@ -47,7 +45,7 @@ function generateClientCalls(
 	generateBinaryClientCalls: GenerateBinaryClientCallsFunction,
 	generateUploadClientCalls: GenerateUploadClientCallsFunction
 ): Array<MustacheDataClientCallFunction> {
-	const name = call.methodName.replace(/\//g, '_');
+	const name = call.methodName.replaceAll('/', '_');
 	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
 	const paramType = getCallParamType(call);
 	if (upload) {
@@ -84,9 +82,9 @@ export async function buildPartService(template: string, key: string, part: stri
 	const list = calls.map(call => {
 		return { ...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType) };
 	});
-	const withHttpEvent = !!calls.find(c => c.resultType.includes('HttpEvent'));
-	const withJam = !!calls.find(c => c.resultType.includes('Jam.'));
-	const withJamParam = !!calls.find(c => c.paramsType.includes('JamParameter'));
+	const withHttpEvent = calls.some(c => c.resultType.includes('HttpEvent'));
+	const withJam = calls.some(c => c.resultType.includes('Jam.'));
+	const withJamParam = calls.some(c => c.paramsType.includes('JamParameter'));
 	return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam });
 }
 
@@ -99,7 +97,7 @@ export function buildCallSections(
 	for (const call of calls) {
 		if (call.controllerClassMetadata) {
 			const tag = call.controllerClassMetadata.name.replace('Controller', '');
-			sections[tag] = (sections[tag] || []).concat(generateClientCalls(call, method));
+			sections[tag] = [...(sections[tag] || []), ...generateClientCalls(call, method)];
 		}
 	}
 }
@@ -112,15 +110,16 @@ export function wrapLong(s: string): string {
 }
 
 export async function buildTemplate(template: string, data: unknown = {}): Promise<string> {
-	return Mustache.render((await fse.readFile(template)).toString(), data);
+	const file = await fse.readFile(template);
+	return Mustache.render(file.toString(), data);
 }
 
 export async function buildParts(template: string, serviceParts: Array<Part>): Promise<string> {
 	const list: Array<Part> = serviceParts
 		.sort((a, b) => a.name.localeCompare(b.name));
-	list.forEach((p, i) => {
+	for (const [i, p] of list.entries()) {
 		p.isLast = i === list.length - 1;
-	});
+	}
 	return buildTemplate(template, { list });
 }
 
@@ -129,19 +128,27 @@ export function getResultType(call: MethodMetadata): string | undefined {
 	let resultType: string | undefined;
 	if (call.getReturnType) {
 		const type = call.getReturnType();
-		if (type === String) {
-			resultType = 'string';
-		} else if (type === Number) {
-			resultType = 'string';
-		} else if (type === Boolean) {
-			resultType = 'boolean';
-		} else {
-			const enumInfo = metadata.enums.find(e => e.enumObj === type);
-			if (enumInfo) {
-				resultType = enumInfo.name;
-			} else {
-				const fObjectType = metadata.resultTypes.find(it => it.target === type);
-				resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
+		switch (type) {
+			case String: {
+				resultType = 'string';
+				break;
+			}
+			case Number: {
+				resultType = 'string';
+				break;
+			}
+			case Boolean: {
+				resultType = 'boolean';
+				break;
+			}
+			default: {
+				const enumInfo = metadata.enums.find(e => e.enumObj === type);
+				if (enumInfo) {
+					resultType = enumInfo.name;
+				} else {
+					const fObjectType = metadata.resultTypes.find(it => it.target === type);
+					resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
+				}
 			}
 		}
 		if (call.returnTypeOptions?.array) {
@@ -157,19 +164,29 @@ function getCallParamArgType(param: RestParamMetadata, metadata: MetadataStorage
 	const optional = param.typeOptions.nullable ? '?' : '';
 	if (param.name === 'id') {
 		typeString = param.typeOptions.nullable ? 'JamParameters.MaybeID' : 'JamParameters.ID';
-	} else if (type === Boolean) {
-		typeString = `{${param.name}${optional}: boolean}`;
-	} else if (type === Number) {
-		typeString = `{${param.name}${optional}: number}`;
-	} else if (type === String) {
-		typeString = `{${param.name}${optional}: string}`;
 	} else {
-		const enumInfo = metadata.enums.find(e => e.enumObj === type);
-		if (enumInfo) {
-			typeString = `{${param.name}${optional}: ${enumInfo.name}`;
-		} else {
-			const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-			typeString = fObjectType?.name ? ('JamParameter.' + fObjectType?.name) : 'any';
+		switch (type) {
+			case Boolean: {
+				typeString = `{${param.name}${optional}: boolean}`;
+				break;
+			}
+			case Number: {
+				typeString = `{${param.name}${optional}: number}`;
+				break;
+			}
+			case String: {
+				typeString = `{${param.name}${optional}: string}`;
+				break;
+			}
+			default: {
+				const enumInfo = metadata.enums.find(e => e.enumObj === type);
+				if (enumInfo) {
+					typeString = `{${param.name}${optional}: ${enumInfo.name}`;
+				} else {
+					const fObjectType = metadata.argumentTypes.find(it => it.target === type);
+					typeString = fObjectType?.name ? ('JamParameter.' + fObjectType?.name) : 'any';
+				}
+			}
 		}
 	}
 	if (param.typeOptions.array) {
@@ -214,15 +231,15 @@ export function callDescription(call: MethodMetadata): string | undefined {
 export function getCustomParameterTemplate(customPathParameters: CustomPathParameters, call: MethodMetadata, result: string): { validateCode: string; paramRoute: string } {
 	const routeParts: Array<string> = [];
 	const validateNames: Array<string> = [];
-	customPathParameters.groups.forEach(g => {
-		const hasOptionalAlias = !!(call.aliasRoutes || []).find(alias => (alias.hideParameters || []).includes(g.name));
+	for (const g of customPathParameters.groups) {
+		const hasOptionalAlias = !!(call.aliasRoutes || []).some(alias => (alias.hideParameters || []).includes(g.name));
 		if (hasOptionalAlias) {
 			routeParts.push(`$\{params.${g.name} ? \`${g.prefix ?? ''}$\{params.${g.name}}\` : ''}`);
 		} else {
 			validateNames.push(g.name);
 			routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);
 		}
-	});
+	}
 	const validateCode = `if (${validateNames.map(s => '!params.' + s).join(' && ')}) { ${result}; }`;
 	return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
@@ -245,9 +262,10 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 					archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
 				}
 				archive.pipe(res);
-				archive.finalize().catch(e => {
-					console.error(e);
-				});
+				archive.finalize()
+					.catch(error => {
+						console.error(error);
+					});
 			}
 		}
 	};

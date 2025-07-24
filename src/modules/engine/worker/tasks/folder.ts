@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { Folder } from '../../../../entity/folder/folder.js';
 import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import { FolderType } from '../../../../types/enums.js';
@@ -16,17 +16,17 @@ export class FolderWorker extends BaseWorker {
 		const newPath = path.join(destPath, destName);
 		const exists = await fse.pathExists(newPath);
 		if (exists) {
-			return Promise.reject(Error('Folder name already used in Destination'));
+			return Promise.reject(new Error('Folder name already used in Destination'));
 		}
 	}
 
 	private async moveFolder(orm: Orm, folder: Folder, newParent: Folder, changes: Changes): Promise<void> {
 		const oldParent = await folder.parent.get();
 		if (!oldParent) {
-			return Promise.reject(Error('Root folder can not be moved'));
+			return Promise.reject(new Error('Root folder can not be moved'));
 		}
 		if (oldParent.id === newParent.id) {
-			return Promise.reject(Error('Folder name already used in Destination'));
+			return Promise.reject(new Error('Folder name already used in Destination'));
 		}
 		const p = newParent.path;
 		const name = path.basename(folder.path);
@@ -35,7 +35,7 @@ export class FolderWorker extends BaseWorker {
 		try {
 			await fse.move(folder.path, newPath);
 		} catch {
-			return Promise.reject(Error('Folder moving failed'));
+			return Promise.reject(new Error('Folder moving failed'));
 		}
 		await FolderWorker.updateFolder(orm, folder, newParent, newPath, changes);
 	}
@@ -71,7 +71,7 @@ export class FolderWorker extends BaseWorker {
 	async create(orm: Orm, parentID: string, name: string, root: Root, changes: Changes): Promise<void> {
 		const parent = await orm.Folder.findOneByID(parentID);
 		if (!parent) {
-			return Promise.reject(Error('Destination Folder not found'));
+			return Promise.reject(new Error('Destination Folder not found'));
 		}
 		name = await validateFolderName(name);
 		const parentPath = ensureTrailingPathSeparator(parent.path);
@@ -85,7 +85,7 @@ export class FolderWorker extends BaseWorker {
 			path: destination,
 			folderType: FolderType.extras,
 			level: parent.level + 1,
-			title: name !== title ? title : undefined,
+			title: name === title ? undefined : title,
 			year,
 			statCreated: stat.ctime,
 			statModified: stat.mtime
@@ -102,12 +102,12 @@ export class FolderWorker extends BaseWorker {
 		const trashPath = path.join(root.path, '.trash');
 		for (const folder of folders) {
 			if (folder.level === 0) {
-				return Promise.reject(Error('Root folder can not be deleted'));
+				return Promise.reject(new Error('Root folder can not be deleted'));
 			}
 			try {
 				await fse.move(folder.path, path.join(trashPath, `${Date.now()}_${path.basename(folder.path)}`));
 			} catch {
-				return Promise.reject(Error('Folder removing failed'));
+				return Promise.reject(new Error('Folder removing failed'));
 			}
 			const folders = await orm.Folder.findAllDescendants(folder);
 			changes.folders.removed.append(folders);
@@ -126,7 +126,7 @@ export class FolderWorker extends BaseWorker {
 	async rename(orm: Orm, folderID: string, newName: string, changes: Changes): Promise<void> {
 		const folder = await orm.Folder.findOneByID(folderID);
 		if (!folder) {
-			return Promise.reject(Error('Folder not found'));
+			return Promise.reject(new Error('Folder not found'));
 		}
 		const name = await validateFolderName(newName);
 		const oldPath = ensureTrailingPathSeparator(folder.path);
@@ -136,7 +136,7 @@ export class FolderWorker extends BaseWorker {
 		try {
 			await fse.rename(oldPath, newPath);
 		} catch {
-			return Promise.reject(Error('Folder renaming failed'));
+			return Promise.reject(new Error('Folder renaming failed'));
 		}
 		const folders = await orm.Folder.findAllDescendants(folder);
 		const dest = ensureTrailingPathSeparator(newPath);
@@ -162,10 +162,10 @@ export class FolderWorker extends BaseWorker {
 	async move(orm: Orm, newParentID: string, moveFolderIDs: Array<string>, changes: Changes): Promise<void> {
 		const newParent = await orm.Folder.findOneByID(newParentID);
 		if (!newParent) {
-			return Promise.reject(Error('Destination Folder not found'));
+			return Promise.reject(new Error('Destination Folder not found'));
 		}
 		if (moveFolderIDs.includes(newParentID)) {
-			return Promise.reject(Error('Folder cannot be moved to itself'));
+			return Promise.reject(new Error('Folder cannot be moved to itself'));
 		}
 		changes.folders.updated.add(newParent);
 		for (const id of moveFolderIDs) {

@@ -20,19 +20,19 @@ export abstract class Base {
 }
 
 export interface IndexResultGroup<Entity> {
-	items: Entity[];
+	items: Array<Entity>;
 	name: string;
 }
 
 export interface IndexResult<EntityGroup> {
-	groups: EntityGroup[];
+	groups: Array<EntityGroup>;
 }
 
 export function IndexGroup<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
 	@ObjectType()
 	abstract class IndexResultResponseClass implements IndexResultGroup<Entity> {
 		@Field(() => [EntityQLClass])
-		items!: Entity[];
+		items!: Array<Entity>;
 
 		@Field(() => String)
 		name!: string;
@@ -45,7 +45,7 @@ export function Index<EntityQL extends object>(EntityQLClass: ClassType<EntityQL
 	@ObjectType()
 	abstract class IndexResponseClass implements IndexResult<EntityQL> {
 		@Field(() => [EntityQLClass])
-		groups!: EntityQL[];
+		groups!: Array<EntityQL>;
 	}
 
 	return IndexResponseClass;
@@ -57,7 +57,7 @@ export function PaginatedResponse<Entity extends object, EntityQL extends object
 		// here we use the runtime argument
 		@Field(() => [EntityQLClass])
 		// and here the generic type
-		items!: Entity[];
+		items!: Array<Entity>;
 
 		@Field(() => Int)
 		total!: number;
@@ -79,12 +79,12 @@ export interface PageResult<T> {
 	items: Array<T>;
 }
 
-export class OrderHelper {
-	static direction(args?: OrderByArgs): string {
+export const OrderHelper = {
+	direction(args?: OrderByArgs): string {
 		return args?.orderDesc ? 'DESC' : 'ASC';
-	}
+	},
 
-	static inverse(order: string): string {
+	inverse(order: string): string {
 		return order === 'ASC' ? 'DESC' : 'ASC';
 	}
-}
+};

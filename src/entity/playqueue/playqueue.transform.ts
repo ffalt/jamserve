@@ -10,6 +10,11 @@ import { PlayQueueBase } from './playqueue.model.js';
 export class PlayQueueTransformService extends BaseTransformService {
 	async playQueueBase(_orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, user: User): Promise<PlayQueueBase> {
 		const u = o.user.id() === user.id ? user : await o.user.getOrFail();
+		let entriesIDs: Array<string> | undefined;
+		if (playQueueArgs.playQueueEntriesIDs) {
+			const entries = await o.entries.getItems();
+			entriesIDs = entries.map(t => (t.track.id()) || (t.episode.id())) as Array<string>;
+		}
 		return {
 			changed: o.updatedAt.valueOf(),
 			changedBy: o.changedBy,
@@ -19,7 +24,7 @@ export class PlayQueueTransformService extends BaseTransformService {
 			userID: u.id,
 			userName: u.name,
 			entriesCount: await o.entries.count(),
-			entriesIDs: playQueueArgs.playQueueEntriesIDs ? (await o.entries.getItems()).map(t => (t.track.id()) || (t.episode.id())) as Array<string> : undefined
+			entriesIDs
 		};
 	}
 }

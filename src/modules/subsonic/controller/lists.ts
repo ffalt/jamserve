@@ -104,85 +104,99 @@ export class SubsonicListsApi {
 		const skip = query.offset || 0;
 		let folders: Array<Folder> = [];
 		switch (query.type) {
-			case 'random':
-				folders = (await orm.Folder.findListFilter(
+			case 'random': {
+				const data = await orm.Folder.findListFilter(
 					ListType.random,
 					undefined,
 					{ folderTypes: FolderTypesAlbum },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				folders = data.items;
 				break;
-			case 'starred':
-				folders = (await orm.Folder.findListFilter(
+			}
+			case 'starred': {
+				const data = await orm.Folder.findListFilter(
 					ListType.faved,
 					undefined,
 					{ folderTypes: FolderTypesAlbum },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				folders = data.items;
 				break;
-			case 'frequent':
-				folders = (await orm.Folder.findListFilter(
+			}
+			case 'frequent': {
+				const data = await orm.Folder.findListFilter(
 					ListType.frequent,
 					undefined,
 					{ folderTypes: FolderTypesAlbum },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				folders = data.items;
 				break;
-			case 'recent':
-				folders = (await orm.Folder.findListFilter(
+			}
+			case 'recent': {
+				const data = await orm.Folder.findListFilter(
 					ListType.recent,
 					undefined,
 					{ folderTypes: FolderTypesAlbum },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				folders = data.items;
 				break;
-			case 'highest':
-				folders = (await orm.Folder.findListFilter(
+			}
+			case 'highest': {
+				const data = await orm.Folder.findListFilter(
 					ListType.highest,
 					undefined,
 					{ folderTypes: FolderTypesAlbum },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				folders = data.items;
 				break;
-			case 'newest':
+			}
+			case 'newest': {
 				folders = await orm.Folder.findFilter(
 					{ folderTypes: FolderTypesAlbum },
 					[{ orderBy: FolderOrderFields.created, orderDesc: true }],
 					{ skip, take }
 				);
 				break;
-			case 'alphabeticalByArtist':
+			}
+			case 'alphabeticalByArtist': {
 				folders = await orm.Folder.findFilter(
 					{ folderTypes: FolderTypesAlbum },
 					[{ orderBy: FolderOrderFields.artist, orderDesc: false }],
 					{ skip, take }
 				);
 				break;
-			case 'alphabeticalByName':
+			}
+			case 'alphabeticalByName': {
 				folders = await orm.Folder.findFilter(
 					{ folderTypes: FolderTypesAlbum },
 					[{ orderBy: FolderOrderFields.album, orderDesc: false }],
 					{ skip, take }
 				);
 				break;
-			case 'byGenre':
+			}
+			case 'byGenre': {
 				folders = await orm.Folder.findFilter(
 					{ folderTypes: FolderTypesAlbum, genres: query.genre ? [query.genre] : undefined },
 					[{ orderBy: FolderOrderFields.album, orderDesc: false }],
 					{ skip, take }
 				);
 				break;
-			case 'byYear':
+			}
+			case 'byYear': {
 				folders = await orm.Folder.findFilter(
 					{
 						folderTypes: FolderTypesAlbum,
@@ -193,8 +207,10 @@ export class SubsonicListsApi {
 					{ skip, take }
 				);
 				break;
-			default:
+			}
+			default: {
 				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
+			}
 		}
 		const result = await SubsonicHelper.prepareFolders(orm, folders, user);
 		return { albumList: { album: result } };
@@ -225,93 +241,109 @@ export class SubsonicListsApi {
 		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		let albums: Array<Album> = [];
 		switch (query.type) {
-			case 'random':
-				albums = (await orm.Album.findListFilter(
+			case 'random': {
+				const data = await orm.Album.findListFilter(
 					ListType.random,
 					undefined,
 					{ rootIDs },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				albums = data.items;
 				break;
-			case 'starred':
-				albums = (await orm.Album.findListFilter(
+			}
+			case 'starred': {
+				const data = await orm.Album.findListFilter(
 					ListType.faved,
 					undefined,
 					{ rootIDs },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				albums = data.items;
 				break;
-			case 'frequent':
-				albums = (await orm.Album.findListFilter(
+			}
+			case 'frequent': {
+				const data = await orm.Album.findListFilter(
 					ListType.frequent,
 					undefined,
 					{ rootIDs },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				albums = data.items;
 				break;
-			case 'recent':
-				albums = (await orm.Album.findListFilter(
+			}
+			case 'recent': {
+				const data = await orm.Album.findListFilter(
 					ListType.recent,
 					undefined,
 					{ rootIDs },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				albums = data.items;
 				break;
-			case 'highest':
-				albums = (await orm.Album.findListFilter(
+			}
+			case 'highest': {
+				const data = await orm.Album.findListFilter(
 					ListType.highest,
 					undefined,
 					{ rootIDs },
 					undefined,
 					{ skip, take },
 					user
-				)).items;
+				);
+				albums = data.items;
 				break;
-			case 'byGenre':
+			}
+			case 'byGenre': {
 				albums = await orm.Album.findFilter(
 					{ genres: query.genre ? [query.genre] : undefined, rootIDs },
 					[{ orderBy: AlbumOrderFields.name, orderDesc: false }],
 					{ skip, take }
 				);
 				break;
-			case 'byYear':
+			}
+			case 'byYear': {
 				albums = await orm.Album.findFilter(
 					{ fromYear: query.fromYear, toYear: query.toYear, rootIDs },
 					[{ orderBy: AlbumOrderFields.name, orderDesc: false }],
 					{ skip, take }
 				);
 				break;
-			case 'newest':
+			}
+			case 'newest': {
 				albums = await orm.Album.findFilter(
 					{ rootIDs },
 					[{ orderBy: AlbumOrderFields.created, orderDesc: true }],
 					{ skip, take }
 				);
 				break;
-			case 'alphabeticalByArtist':
+			}
+			case 'alphabeticalByArtist': {
 				albums = await orm.Album.findFilter(
 					{ rootIDs },
 					[{ orderBy: AlbumOrderFields.artist, orderDesc: true }],
 					{ skip, take }
 				);
 				break;
-			case 'alphabeticalByName':
+			}
+			case 'alphabeticalByName': {
 				albums = await orm.Album.findFilter(
 					{ rootIDs },
 					[{ orderBy: AlbumOrderFields.name, orderDesc: true }],
 					{ skip, take }
 				);
 				break;
-			default:
+			}
+			default: {
 				return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
+			}
 		}
 		const result = await SubsonicHelper.prepareAlbums(orm, albums, user);
 		return { albumList2: { album: result } };

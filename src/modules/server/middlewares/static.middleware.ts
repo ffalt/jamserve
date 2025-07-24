@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import express from 'express';
 import { ConfigService } from '../../engine/services/config.service.js';
 import RateLimit from 'express-rate-limit';

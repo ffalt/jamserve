@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import { parentPort } from 'worker_threads';
+import { parentPort } from 'node:worker_threads';
 import { mp3val } from '../tools/mp3val.js';
 
 export async function fixMP3(filename: string): Promise<void> {
@@ -15,7 +15,7 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
 	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
-			throw new Error('param must be a string.');
+			throw new TypeError('param must be a string.');
 		}
 		await fixMP3(param);
 		caller.postMessage(undefined);

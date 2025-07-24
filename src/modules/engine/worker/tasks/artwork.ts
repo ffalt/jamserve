@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
 import { Changes } from '../changes.js';
 import { Artwork } from '../../../../entity/artwork/artwork.js';
@@ -11,7 +11,7 @@ import { Folder } from '../../../../entity/folder/folder.js';
 import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../services/orm.service.js';
 
-export const FolderTypeImageName: { [foldertype: string]: string } = {
+export const FolderTypeImageName: Record<string, string> = {
 	unknown: 'folder',
 	artist: 'artist',
 	collection: 'folder',
@@ -38,7 +38,7 @@ export class ArtworkWorker extends BaseWorker {
 	async rename(orm: Orm, artworkID: string, newName: string, changes: Changes): Promise<void> {
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(Error(`Artwork not found`));
+			return Promise.reject(new Error(`Artwork not found`));
 		}
 		artwork.name = await this.renameFile(artwork.path, artwork.name, newName);
 		await this.updateArtworkImageFile(artwork);
@@ -63,7 +63,7 @@ export class ArtworkWorker extends BaseWorker {
 			suffix = info.format;
 		}
 		if (!suffix || suffix.length === 0 || suffix === 'invalid') {
-			return Promise.reject(Error('Image Format invalid/not known'));
+			return Promise.reject(new Error('Image Format invalid/not known'));
 		}
 		let dest = `${name}.${suffix}`;
 		let nr = 2;
@@ -76,18 +76,18 @@ export class ArtworkWorker extends BaseWorker {
 
 	async create(orm: Orm, folderID: string, artworkFilename: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
 		if (!artworkFilename || !(await fse.pathExists(artworkFilename))) {
-			return Promise.reject(Error('Invalid Artwork File Name'));
+			return Promise.reject(new Error('Invalid Artwork File Name'));
 		}
 		const folder = await orm.Folder.findOneByID(folderID);
 		if (!folder) {
-			return Promise.reject(Error(`Folder not found`));
+			return Promise.reject(new Error(`Folder not found`));
 		}
 		const dest = await this.getArtworkFilenameUnique(folder, artworkFilename, types);
 		const destFile = path.join(folder.path, dest);
 		try {
 			await fse.copy(artworkFilename, destFile);
 		} catch {
-			return Promise.reject(Error(`Importing artwork failed`));
+			return Promise.reject(new Error(`Importing artwork failed`));
 		}
 		const artwork = orm.Artwork.create({
 			name: dest,
@@ -103,24 +103,24 @@ export class ArtworkWorker extends BaseWorker {
 
 	async replace(orm: Orm, artworkID: string, artworkFilename: string, changes: Changes): Promise<void> {
 		if (!artworkFilename || !(await fse.pathExists(artworkFilename))) {
-			return Promise.reject(Error('Invalid Artwork File Name'));
+			return Promise.reject(new Error('Invalid Artwork File Name'));
 		}
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(Error(`Artwork not found`));
+			return Promise.reject(new Error(`Artwork not found`));
 		}
 		const name = basenameStripExt(artwork.name);
 		const info = await this.imageModule.getImageInfo(artworkFilename);
 		const suffix = info.format;
 		if (!suffix || suffix.length === 0 || suffix === 'invalid') {
-			return Promise.reject(Error('Image Format invalid/not known'));
+			return Promise.reject(new Error('Image Format invalid/not known'));
 		}
 		await fileDeleteIfExists(path.join(artwork.path, artwork.name));
 		artwork.name = `${name}.${suffix}`;
 		try {
 			await fse.copy(artworkFilename, path.join(artwork.path, artwork.name));
 		} catch {
-			return Promise.reject(Error(`Importing artwork failed`));
+			return Promise.reject(new Error(`Importing artwork failed`));
 		}
 		await this.updateArtworkImageFile(artwork);
 		changes.artworks.updated.add(artwork);
@@ -142,7 +142,7 @@ export class ArtworkWorker extends BaseWorker {
 	async remove(orm: Orm, root: Root, artworkID: string, changes: Changes): Promise<void> {
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(Error(`Artwork not found`));
+			return Promise.reject(new Error(`Artwork not found`));
 		}
 		await this.moveToTrash(root, artwork.path, artwork.name);
 		changes.artworks.removed.add(artwork);
@@ -152,15 +152,15 @@ export class ArtworkWorker extends BaseWorker {
 	async move(orm: Orm, artworkIDs: Array<string>, newParentID: string, changes: Changes): Promise<void> {
 		const artworks = await orm.Artwork.findByIDs(artworkIDs);
 		if (artworks.length !== artworkIDs.length) {
-			return Promise.reject(Error('Artwork not found'));
+			return Promise.reject(new Error('Artwork not found'));
 		}
 		const newParent = await orm.Folder.findOneByID(newParentID);
 		if (!newParent) {
-			return Promise.reject(Error('Destination Folder not found'));
+			return Promise.reject(new Error('Destination Folder not found'));
 		}
 		for (const artwork of artworks) {
 			if (await fse.pathExists(path.join(newParent.path, artwork.name))) {
-				return Promise.reject(Error('File name is already used in folder'));
+				return Promise.reject(new Error('File name is already used in folder'));
 			}
 		}
 		changes.folders.updated.add(newParent);

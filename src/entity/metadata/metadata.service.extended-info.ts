@@ -29,7 +29,7 @@ export class MetadataServiceExtendedInfo {
 			let rel = result.artist.relations.find(r => r.type === 'wikidata');
 			if (rel?.url?.resource) {
 				const list = rel.url.resource.split('/');
-				const id = list[list.length - 1];
+				const id = list.at(-1) || '';
 				const res = await this.getWikiDataExtendedInfo(orm, id, 'en');
 				if (res) {
 					return res;
@@ -38,7 +38,7 @@ export class MetadataServiceExtendedInfo {
 			rel = result.artist.relations.find(r => r.type === 'wikipedia');
 			if (rel?.url?.resource) {
 				const list = rel.url.resource.split('/');
-				const title = list[list.length - 1];
+				const title = list.at(-1) || '';
 				const lang = list[2].split('.')[0];
 				const wiki = await this.service.wikipediaSummary(orm, title, lang);
 				if (wiki?.summary) {
@@ -55,7 +55,7 @@ export class MetadataServiceExtendedInfo {
 			const rel = lookup.release.relations.find(r => r.type === 'wikidata');
 			if (rel?.url?.resource) {
 				const list = rel.url.resource.split('/');
-				const id = list[list.length - 1];
+				const id = list.at(-1) || '';
 				return this.getWikiDataExtendedInfo(orm, id, 'en');
 			}
 		}
@@ -133,8 +133,8 @@ export class MetadataServiceExtendedInfo {
 			if (!info && artist.name) {
 				info = await this.getArtistInfoByName(orm, artist.name);
 			}
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 		}
 		return info;
 	}
@@ -147,8 +147,8 @@ export class MetadataServiceExtendedInfo {
 					return info;
 				}
 			}
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 		}
 		return;
 	}
@@ -163,8 +163,8 @@ export class MetadataServiceExtendedInfo {
 			if (!info && album.name && artist) {
 				info = await this.getAlbumInfoByName(orm, album.name, artist.name);
 			}
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 		}
 		return info;
 	}
@@ -178,8 +178,8 @@ export class MetadataServiceExtendedInfo {
 			if (!info && folder.artist) {
 				info = await this.getArtistInfoByName(orm, folder.artist);
 			}
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 		}
 		return info;
 	}
@@ -193,8 +193,8 @@ export class MetadataServiceExtendedInfo {
 			if (!info && folder.album && folder.artist) {
 				info = await this.getAlbumInfoByName(orm, folder.album, folder.artist);
 			}
-		} catch (e: any) {
-			log.error(e);
+		} catch (error: any) {
+			log.error(error);
 		}
 		return info;
 	}

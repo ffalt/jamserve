@@ -16,9 +16,9 @@ export function buildTSEnums(): string {
 	for (const enumInfo of metadata.enums) {
 		const enumObj = enumInfo.enumObj as any;
 		const entries: Array<string> = [];
-		Object.keys(enumObj).forEach(key => {
+		for (const key of Object.keys(enumObj)) {
 			entries.push(`${tab + key} = '${enumObj[key]}'`);
-		});
+		}
 		sl.push('export enum ' + enumInfo.name + ' {\n' + entries.join(',\n') + '\n}\n');
 	}
 	return sl.join('\n');
@@ -32,27 +32,35 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		jsDoc.push(`${field.description}`);
 	}
 	const fType = field.getType();
-	if (fType === String) {
-		fieldType = 'string';
-	} else if (fType === Number) {
-		fieldType = 'number';
-		jsDoc.push(`@TJS-type integer`);
-		if (typeOptions.min !== undefined) {
-			jsDoc.push(`@minimum ${typeOptions.min}`);
+	switch (fType) {
+		case String: {
+			fieldType = 'string';
+			break;
 		}
-		if (typeOptions.max !== undefined) {
-			jsDoc.push(`@maximum ${typeOptions.max}`);
+		case Number: {
+			fieldType = 'number';
+			jsDoc.push(`@TJS-type integer`);
+			if (typeOptions.min !== undefined) {
+				jsDoc.push(`@minimum ${typeOptions.min}`);
+			}
+			if (typeOptions.max !== undefined) {
+				jsDoc.push(`@maximum ${typeOptions.max}`);
+			}
+			break;
 		}
-	} else if (fType === Boolean) {
-		fieldType = 'boolean';
-		jsDoc.push(`@TJS-type boolean`);
-	} else {
-		const enumInfo = metadata.enums.find(e => e.enumObj === fType);
-		if (enumInfo) {
-			fieldType = 'JamEnums.' + enumInfo.name;
-		} else {
-			const fObjectType = metadata.resultTypes.find(t => t.target === fType);
-			fieldType = fObjectType?.name ?? 'any';
+		case Boolean: {
+			fieldType = 'boolean';
+			jsDoc.push(`@TJS-type boolean`);
+			break;
+		}
+		default: {
+			const enumInfo = metadata.enums.find(e => e.enumObj === fType);
+			if (enumInfo) {
+				fieldType = 'JamEnums.' + enumInfo.name;
+			} else {
+				const fObjectType = metadata.resultTypes.find(t => t.target === fType);
+				fieldType = fObjectType?.name ?? 'any';
+			}
 		}
 	}
 	if (typeOptions.array) {
@@ -96,9 +104,11 @@ export function buildTSResultTypes(): string {
 		`import * as JamEnums from './jam-enums';\n`,
 		'export declare namespace Jam {\n'
 	];
-	metadata.resultTypes
-		.sort((a, b) => a.name.localeCompare(b.name))
-		.forEach(type => buildTSType(type, metadata, sl, false, metadata.resultTypes));
+	const list = metadata.resultTypes
+		.sort((a, b) => a.name.localeCompare(b.name));
+	for (const type of list) {
+		buildTSType(type, metadata, sl, false, metadata.resultTypes);
+	}
 	sl.push('}');
 	return sl.join('\n') + '\n';
 }
@@ -112,7 +122,7 @@ function getCombinedType(call: MethodMetadata) {
 			'Args'
 		].join('');
 		const names: Array<string> = [];
-		call.params.forEach(p => {
+		for (const p of call.params) {
 			if (p.kind === 'args') {
 				const type = p.getType();
 				const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
@@ -128,7 +138,7 @@ function getCombinedType(call: MethodMetadata) {
 			} else if (p.kind !== 'context') {
 				names.push('ERROR: support mixing kinds in combining parameters for ' + JSON.stringify(p));
 			}
-		});
+		}
 		return [`${tab}export type ${combineName} = ${names.join(' & ')};\n`];
 	}
 	return [];
@@ -142,11 +152,15 @@ export function buildTSParameterTypes(): string {
 		`import * as JamEnums from './jam-enums';\n`,
 		'export declare namespace JamParameters {\n'
 	];
-	metadata.argumentTypes
-		.sort((a, b) => a.name.localeCompare(b.name))
-		.forEach(type => buildTSType(type, metadata, sl, true, metadata.argumentTypes));
-	sl.push(`${tab}export interface ID {\n${tabtab}id: string;\n${tab}}\n`);
-	sl.push(`${tab}export interface MaybeID {\n${tabtab}id?: string;\n${tab}}\n`);
+	const list = metadata.argumentTypes
+		.sort((a, b) => a.name.localeCompare(b.name));
+	for (const type of list) {
+		buildTSType(type, metadata, sl, true, metadata.argumentTypes);
+	}
+	sl.push(
+		`${tab}export interface ID {\n${tabtab}id: string;\n${tab}}\n`,
+		`${tab}export interface MaybeID {\n${tabtab}id?: string;\n${tab}}\n`
+	);
 	for (const get of metadata.gets) {
 		sl.push(...getCombinedType(get));
 	}

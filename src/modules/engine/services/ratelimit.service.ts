@@ -20,7 +20,7 @@ export class RateLimitService {
 	loginLimiter = new RateLimiterMemory(this.loginLimiterOption);
 	limiterConsecutiveOutOfLimits = new RateLimiterMemory({
 		keyPrefix: 'login_consecutive_outoflimits',
-		points: 99999, // doesn't matter much, this is just counter
+		points: 99_999, // doesn't matter much, this is just counter
 		duration: 0 // never expire
 	});
 
@@ -35,14 +35,16 @@ export class RateLimitService {
 			res.set('X-RateLimit-Limit', `${this.loginLimiterOption.points}`);
 			res.set('X-RateLimit-Remaining', `${resConsume.remainingPoints}`);
 			return false;
-		} catch (rlRejected: any) {
-			if (rlRejected instanceof Error) {
-				throw rlRejected;
-			} else {
-				const seconds = Math.round(rlRejected.msBeforeNext / 1000) || 1;
+		} catch (error) {
+			if (error instanceof Error) {
+				throw error;
+			} else if (Object.prototype.hasOwnProperty.call(error, 'msBeforeNext')) {
+				const seconds = Math.round((error as any).msBeforeNext / 1000) || 1;
 				res.set('Retry-After', `${seconds}`);
 				res.status(429).send(`Too Many Requests, try again in ${seconds} seconds`);
 				return true;
+			} else {
+				throw error;
 			}
 		}
 	}

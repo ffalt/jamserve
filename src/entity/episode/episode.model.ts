@@ -8,7 +8,7 @@ import { ObjField } from '../../modules/rest/decorators/ObjField.js';
 
 @ResultType({ description: 'Episode Chapter' })
 export class EpisodeChapter {
-	@ObjField({ description: 'Chapter Start Time', min: 0, example: 12345 })
+	@ObjField({ description: 'Chapter Start Time', min: 0, example: 12_345 })
 	start!: number;
 
 	@ObjField({ description: 'Chapter Title', example: 'Topic: Awesomeness' })

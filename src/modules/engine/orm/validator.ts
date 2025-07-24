@@ -32,13 +32,13 @@ export class Validator {
 		for (const state of states) {
 			log.info(`Validating State "${state.destType}" by User ${state.user.id()}`);
 			const repo = orm.byType(state.destType);
-			if (!repo) {
-				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
-			} else {
+			if (repo) {
 				const obj = await repo.findOneByID(state.destID);
 				if (!obj) {
 					log.error(`Missing DestObj "${state.destID}" in State [${state.id}]`);
 				}
+			} else {
+				log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
 			}
 		}
 	}

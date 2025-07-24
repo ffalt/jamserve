@@ -20,7 +20,7 @@ export class SubsonicInternetRadioApi {
 		tags: ['Radio']
 	})
 	async getInternetRadioStations(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
-		const radios = (await orm.Radio.all()).filter(radio => !radio.disabled);
+		const radios = await orm.Radio.findFilter({ disabled: false });
 		const internetRadioStation = [];
 		for (const radio of radios) {
 			internetRadioStation.push(await SubsonicFormatter.packRadio(radio));

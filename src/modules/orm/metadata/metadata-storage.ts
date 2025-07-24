@@ -4,9 +4,9 @@ import { EnumMetadata } from '../../deco/definitions/enum-metadata.js';
 import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 
 export class MetadataStorage {
-	entities: EntityMetadata[] = [];
-	fields: PropertyMetadata[] = [];
-	enums: EnumMetadata[] = [];
+	entities: Array<EntityMetadata> = [];
+	fields: Array<PropertyMetadata> = [];
+	enums: Array<EnumMetadata> = [];
 	initialized = false;
 
 	constructor() {
@@ -21,30 +21,30 @@ export class MetadataStorage {
 		}
 	}
 
-	private buildFieldMetadata(definitions: PropertyMetadata[]): void {
-		definitions.forEach(def => {
+	private buildFieldMetadata(definitions: Array<PropertyMetadata>): void {
+		for (const def of definitions) {
 			if (def.isRelation) {
 				const type = def.getType();
 				def.linkedEntity = this.entities.find(e => e.target === type);
 			}
-		});
+		}
 	}
 
-	private buildClassMetadata(definitions: EntityMetadata[]): void {
-		definitions.forEach(def => {
+	private buildClassMetadata(definitions: Array<EntityMetadata>): void {
+		for (const def of definitions) {
 			if (!def.fields || def.fields.length === 0) {
 				let fields = this.fields.filter(field => field.target === def.target);
 				let superClass = Object.getPrototypeOf(def.target);
 				while (superClass.prototype !== undefined) {
 					const superArgumentType = definitions.find(it => it.target === superClass);
 					if (superArgumentType) {
-						fields = fields.concat(this.fields.filter(field => field.target === superArgumentType.target));
+						fields = [...fields, ...this.fields.filter(field => field.target === superArgumentType.target)];
 					}
 					superClass = Object.getPrototypeOf(superClass);
 				}
 				def.fields = fields;
 			}
-		});
+		}
 	}
 
 	clear(): void {

@@ -118,7 +118,7 @@ export class SubsonicPodcastApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
-		engine.podcast.remove(orm, podcast).catch(e => log.error(e));
+		engine.podcast.remove(orm, podcast).catch(error => log.error(error));
 		return {};
 	}
 
@@ -135,7 +135,7 @@ export class SubsonicPodcastApi {
 		if (!user.rolePodcast) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
-		engine.podcast.refreshPodcasts(orm).catch(e => log.error(e)); // do not wait
+		engine.podcast.refreshPodcasts(orm).catch(error => log.error(error)); // do not wait
 		return {};
 	}
 
@@ -158,7 +158,7 @@ export class SubsonicPodcastApi {
 		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		if (!episode.path) {
-			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
+			engine.episode.downloadEpisode(orm, episode).catch(error => log.error(error)); // do not wait
 		}
 		return {};
 	}

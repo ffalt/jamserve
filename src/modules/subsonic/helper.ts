@@ -15,55 +15,55 @@ import { SubsonicParameterState } from './model/subsonic-rest-params.js';
 import { SubsonicAlbumID3, SubsonicArtist, SubsonicArtistID3, SubsonicBookmark, SubsonicChild, SubsonicPlaylistWithSongs, SubsonicPodcastEpisode } from './model/subsonic-rest-data.js';
 import { StateMap, SubsonicFormatter } from './formatter.js';
 
-export class SubsonicHelper {
-	static async loadStates(orm: Orm, ids: Array<string>, type: DBObjectType, userID: string): Promise<StateMap> {
+export const SubsonicHelper = {
+	async loadStates(orm: Orm, ids: Array<string>, type: DBObjectType, userID: string): Promise<StateMap> {
 		const states = await orm.State.findMany(ids, type, userID);
 		const result: StateMap = {};
 		for (const state of states) {
 			result[state.destID] = state;
 		}
 		return result;
-	}
+	},
 
-	static async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
+	async prepareList<T extends Base, R>(orm: Orm, type: DBObjectType, objs: Array<T>, pack: (o: T, state?: State) => Promise<R>, user: User): Promise<Array<R>> {
 		const states = await SubsonicHelper.loadStates(orm, objs.map(o => o.id), type, user.id);
 		const result: Array<R> = [];
 		for (const o of objs) {
 			result.push(await pack(o, states[o.id]));
 		}
 		return result;
-	}
+	},
 
-	static async prepareObj<T extends Base, R>(orm: Orm, type: DBObjectType, obj: T, pack: (o: T, state: State) => Promise<R>, user: User): Promise<R> {
+	async prepareObj<T extends Base, R>(orm: Orm, type: DBObjectType, obj: T, pack: (o: T, state: State) => Promise<R>, user: User): Promise<R> {
 		const state = await orm.State.findOrCreate(obj.id, type, user.id);
 		return pack(obj, state);
-	}
+	},
 
-	static async prepareAlbums(orm: Orm, albums: Array<Album>, user: User): Promise<Array<SubsonicAlbumID3>> {
+	async prepareAlbums(orm: Orm, albums: Array<Album>, user: User): Promise<Array<SubsonicAlbumID3>> {
 		return this.prepareList<Album, SubsonicAlbumID3>(orm, DBObjectType.album, albums, SubsonicFormatter.packAlbum, user);
-	}
+	},
 
-	static async prepareArtists(orm: Orm, artists: Array<Artist>, user: User): Promise<Array<SubsonicArtistID3>> {
+	async prepareArtists(orm: Orm, artists: Array<Artist>, user: User): Promise<Array<SubsonicArtistID3>> {
 		return this.prepareList<Artist, SubsonicArtistID3>(orm, DBObjectType.artist, artists, SubsonicFormatter.packArtist, user);
-	}
+	},
 
-	static async prepareFolders(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicChild>> {
+	async prepareFolders(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicChild>> {
 		return this.prepareList<Folder, SubsonicChild>(orm, DBObjectType.folder, folders, SubsonicFormatter.packFolder, user);
-	}
+	},
 
-	static async prepareFolderArtists(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicArtist>> {
+	async prepareFolderArtists(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicArtist>> {
 		return this.prepareList<Folder, SubsonicArtist>(orm, DBObjectType.folder, folders, SubsonicFormatter.packFolderArtist, user);
-	}
+	},
 
-	static async prepareTrack(orm: Orm, track: Track, user: User): Promise<SubsonicChild> {
+	async prepareTrack(orm: Orm, track: Track, user: User): Promise<SubsonicChild> {
 		return this.prepareObj<Track, SubsonicChild>(orm, DBObjectType.track, track, SubsonicFormatter.packTrack, user);
-	}
+	},
 
-	static async prepareTracks(orm: Orm, tracks: Array<Track>, user: User): Promise<Array<SubsonicChild>> {
+	async prepareTracks(orm: Orm, tracks: Array<Track>, user: User): Promise<Array<SubsonicChild>> {
 		return this.prepareList<Track, SubsonicChild>(orm, DBObjectType.track, tracks, SubsonicFormatter.packTrack, user);
-	}
+	},
 
-	static async prepareBookmarks(orm: Orm, bookmarks: Array<Bookmark>, user: User): Promise<Array<SubsonicBookmark>> {
+	async prepareBookmarks(orm: Orm, bookmarks: Array<Bookmark>, user: User): Promise<Array<SubsonicBookmark>> {
 		const bookmarkDestID = (bookmark: Bookmark) => ((bookmark.track.id() || bookmark.episode.id()));
 
 		const removeDups = (list: Array<string | undefined>): Array<string> => {
@@ -85,18 +85,18 @@ export class SubsonicHelper {
 			}
 		}
 		return result;
-	}
+	},
 
-	static async preparePlaylist(orm: Orm, playlist: Playlist, user: User): Promise<SubsonicPlaylistWithSongs> {
+	async preparePlaylist(orm: Orm, playlist: Playlist, user: User): Promise<SubsonicPlaylistWithSongs> {
 		const entries = await playlist.entries.getItems();
 		const trackIDs = entries.map(entry => entry.track.id()).filter(t => t !== undefined);
 		const tracks = await orm.Track.findByIDs(trackIDs);
 		const states = await SubsonicHelper.loadStates(orm, tracks.map(o => o.id), DBObjectType.track, user.id);
 		states[playlist.id] = await orm.State.findOrCreate(playlist.id, DBObjectType.playlist, user.id);
 		return SubsonicFormatter.packPlaylistWithSongs(playlist, tracks, states);
-	}
+	},
 
-	static async prepareEpisodes(engine: EngineService, orm: Orm, episodes: Array<Episode>, user: User): Promise<Array<SubsonicPodcastEpisode>> {
+	async prepareEpisodes(engine: EngineService, orm: Orm, episodes: Array<Episode>, user: User): Promise<Array<SubsonicPodcastEpisode>> {
 		const states = await SubsonicHelper.loadStates(orm, episodes.map(o => o.id), DBObjectType.episode, user.id);
 		const result: Array<SubsonicPodcastEpisode> = [];
 		for (const episode of episodes) {
@@ -104,22 +104,22 @@ export class SubsonicHelper {
 				(engine.episode.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status)));
 		}
 		return result;
-	}
+	},
 
-	static async collectStateChangeIds(query: SubsonicParameterState): Promise<Array<string>> {
+	async collectStateChangeIds(query: SubsonicParameterState): Promise<Array<string>> {
 		let result: Array<string> = [];
 		if (query.id) {
 			const ids = Array.isArray(query.id) ? query.id : [query.id];
-			result = result.concat(ids);
+			result = [...result, ...ids];
 		}
 		if (query.albumId) {
 			const ids = Array.isArray(query.albumId) ? query.albumId : [query.albumId];
-			result = result.concat(ids);
+			result = [...result, ...ids];
 		}
 		if (query.artistId) {
 			const ids = Array.isArray(query.artistId) ? query.artistId : [query.artistId];
-			result = result.concat(ids);
+			result = [...result, ...ids];
 		}
 		return result;
 	}
-}
+};

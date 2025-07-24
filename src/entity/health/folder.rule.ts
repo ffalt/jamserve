@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { fileSuffix, replaceFolderSystemChars } from '../../utils/fs-utils.js';
 import { RuleResult } from './rule.js';
 import { AlbumTypesArtistMusic, FolderHealthID, FolderType, FolderTypesAlbum } from '../../types/enums.js';
@@ -16,7 +16,7 @@ interface FolderRuleInfo {
 
 function isAlbumTopMostFolder(orm: Orm, folder: Folder, parents: Array<Folder>): boolean {
 	if (folder.folderType === FolderType.multialbum) {
-		const parent = parents[parents.length - 1];
+		const parent = parents.at(-1);
 		if (parent && parent.folderType === FolderType.multialbum) {
 			return false;
 		}
@@ -61,10 +61,8 @@ const folderRules: Array<FolderRuleInfo> = [
 				if (!folder.albumTrackCount) {
 					missing.push('album total track count');
 				}
-				if (folder.albumType !== undefined && AlbumTypesArtistMusic.includes(folder.albumType)) {
-					if (!folder.year) {
-						missing.push('year');
-					}
+				if (folder.albumType !== undefined && AlbumTypesArtistMusic.includes(folder.albumType) && !folder.year) {
+					missing.push('year');
 				}
 				if (missing.length > 0) {
 					return {
@@ -120,13 +118,14 @@ const folderRules: Array<FolderRuleInfo> = [
 		id: FolderHealthID.albumNameConform,
 		name: 'Album folder name is not conform',
 		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
+			// eslint-disable-next-line unicorn/consistent-function-scoping
 			function sanitizeName(s: string): string {
 				return s
-					.replace(/[!?]/g, '_')
-					.replace(/< ?>/g, ' - ')
-					.replace(/[/]/g, '-')
-					.replace(/\.\.\./g, '…')
-					.replace(/ {2}/g, ' ')
+					.replaceAll(/[!?]/g, '_')
+					.replaceAll(/< ?>/g, ' - ')
+					.replaceAll(/[/]/g, '-')
+					.replaceAll('...', '…')
+					.replaceAll(/ {2}/g, ' ')
 					.trim();
 			}
 
@@ -141,12 +140,14 @@ const folderRules: Array<FolderRuleInfo> = [
 				return s.trim();
 			}
 
+			// eslint-disable-next-line unicorn/consistent-function-scoping
 			function slug(folderPath: string): string {
-				return path.basename(folderPath).trim().replace(/[_:!?/ ]/g, '').toLowerCase();
+				return path.basename(folderPath).trim().replaceAll(/[_:!?/ ]/g, '').toLowerCase();
 			}
 
+			// eslint-disable-next-line unicorn/consistent-function-scoping
 			function niceSlug(nicename: string): string {
-				return nicename.replace(/[_:!?/ ]/g, '').toLowerCase();
+				return nicename.replaceAll(/[_:!?/ ]/g, '').toLowerCase();
 			}
 
 			function checkNiceName(nicename: string): RuleResult | undefined {
@@ -160,10 +161,8 @@ const folderRules: Array<FolderRuleInfo> = [
 
 			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const hasArtist = parents.find(p => p.folderType === FolderType.artist);
-				if (hasArtist) {
-					if ((folder.album) && (folder.year) && (folder.year > 0)) {
-						return checkNiceName(getNiceAlbumFolderName());
-					}
+				if (hasArtist && (folder.album) && (folder.year) && (folder.year > 0)) {
+					return checkNiceName(getNiceAlbumFolderName());
 				}
 				if ((folder.album)) {
 					return checkNiceName(getNiceOtherFolderName(folder.album));
@@ -236,9 +235,9 @@ const folderRules: Array<FolderRuleInfo> = [
 		name: 'Artist folder name is not conform',
 		run: async (orm, folder): Promise<RuleResult | undefined> => {
 			if (folder.folderType === FolderType.artist && folder.artist) {
-				const nameSlug = path.basename(folder.path).trim().replace(/[_:!?/ ]/g, '').toLowerCase();
+				const nameSlug = path.basename(folder.path).trim().replaceAll(/[_:!?/ ]/g, '').toLowerCase();
 				const artistName = replaceFolderSystemChars(folder.artist, '_');
-				const artistNameSlug = artistName.replace(/[_:!?/ ]/g, '').toLowerCase();
+				const artistNameSlug = artistName.replaceAll(/[_:!?/ ]/g, '').toLowerCase();
 				if (nameSlug.localeCompare(artistNameSlug) !== 0) {
 					return { details: [{ reason: 'not equal', actual: path.basename(folder.path), expected: artistName }] };
 				}

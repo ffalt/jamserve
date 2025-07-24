@@ -4,7 +4,7 @@ import { EntityManager } from '../helpers/manager.js';
 import { Model } from 'sequelize';
 
 export interface ManagedEntity extends IDEntity {
-	_source: Model & { [name: string]: any };
+	_source: Model & Record<string, any>;
 	_em: EntityManager;
 	_meta: EntityMetadata;
 }

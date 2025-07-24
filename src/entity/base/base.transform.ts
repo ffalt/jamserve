@@ -14,7 +14,7 @@ export class BaseTransformService {
 		groups: Array<{ name: string; items: Array<Y> }>;
 	}> {
 		return {
-			lastModified: new Date().valueOf(),
+			lastModified: Date.now(),
 			groups: await Promise.all(result.groups.map(async group => {
 				return {
 					name: group.name,

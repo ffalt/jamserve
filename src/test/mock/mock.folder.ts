@@ -1,5 +1,5 @@
 import { AlbumType, FolderType } from '../../types/enums.js';
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { writeImage } from './mock.image.js';
 import { extendSpecMockTrack, MockSpecTrack, MockTrack, writeMockTrack } from './mock.track.js';

@@ -1,11 +1,11 @@
-import { Interval, TokenBucket } from './TokenBucket.js';
+import { Interval, TokenBucket } from './token-bucket.js';
 import { getMilliseconds, wait } from './clock.js';
 
-export type RateLimiterOpts = {
+export interface RateLimiterOpts {
 	tokensPerInterval: number;
 	interval: Interval;
 	fireImmediately?: boolean;
-};
+}
 
 /**
  * A generic rate limiter. Underneath the hood, this uses a token bucket plus

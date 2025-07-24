@@ -99,7 +99,7 @@ export class AlbumController {
 		@Ctx() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const albumIDs = await orm.Album.findIDsFilter(filter, user);
-		const orders = [{ orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
+		const orders = [{ orderBy: order?.orderBy ?? TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
 		return await orm.Track.searchTransformFilter(
 			{ albumIDs }, orders, page, user,
 			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)

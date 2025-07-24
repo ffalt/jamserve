@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { InRequestScope } from 'typescript-ioc';
 import { Episode } from '../episode/episode.js';
 import { Track } from '../track/track.js';
@@ -15,13 +15,13 @@ import { DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { Artwork } from '../artwork/artwork.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError, unauthError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class DownloadService {
 	private static async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
 		if (!episode.path) {
-			return Promise.reject(Error('Podcast episode not ready'));
+			return Promise.reject(new Error('Podcast episode not ready'));
 		}
 		return { pipe: new CompressListStream([episode.path], path.basename(episode.path), format) };
 	}
@@ -65,7 +65,7 @@ export class DownloadService {
 	private static async downloadPlaylist(playlist: Playlist, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		const userID = playlist.user.id();
 		if (userID !== user.id && !playlist.isPublic) {
-			return Promise.reject(UnauthError());
+			return Promise.reject(unauthError());
 		}
 		const entries = await playlist.entries.getItems();
 		const fileList: Array<string> = [];
@@ -86,26 +86,35 @@ export class DownloadService {
 
 	async getObjDownload(o: Base, objType: DBObjectType, format: string | undefined, user: User): Promise<ApiBinaryResult> {
 		switch (objType) {
-			case DBObjectType.track:
+			case DBObjectType.track: {
 				return DownloadService.downloadTrack(o as Track, format);
-			case DBObjectType.artwork:
+			}
+			case DBObjectType.artwork: {
 				return DownloadService.downloadArtwork(o as Artwork, format);
-			case DBObjectType.folder:
+			}
+			case DBObjectType.folder: {
 				return DownloadService.downloadFolder(o as Folder, format);
-			case DBObjectType.artist:
+			}
+			case DBObjectType.artist: {
 				return this.downloadArtist(o as Artist, format);
-			case DBObjectType.series:
+			}
+			case DBObjectType.series: {
 				return this.downloadSeries(o as Series, format);
-			case DBObjectType.album:
+			}
+			case DBObjectType.album: {
 				return this.downloadAlbum(o as Album, format);
-			case DBObjectType.episode:
+			}
+			case DBObjectType.episode: {
 				return DownloadService.downloadEpisode(o as Episode, format);
-			case DBObjectType.podcast:
+			}
+			case DBObjectType.podcast: {
 				return this.downloadPodcast(o as Podcast, format);
-			case DBObjectType.playlist:
+			}
+			case DBObjectType.playlist: {
 				return DownloadService.downloadPlaylist(o as Playlist, format, user);
+			}
 			default:
 		}
-		return Promise.reject(InvalidParamError('type', 'Invalid Download Type'));
+		return Promise.reject(invalidParamError('type', 'Invalid Download Type'));
 	}
 }

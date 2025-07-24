@@ -9,16 +9,16 @@ import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
 
 export class MetadataStorage {
 	initialized = false;
-	all: MethodMetadata[] = [];
-	gets: MethodMetadata[] = [];
-	posts: MethodMetadata[] = [];
-	resultTypes: ResultClassMetadata[] = [];
-	inputTypes: ClassMetadata[] = [];
-	argumentTypes: ClassMetadata[] = [];
-	enums: EnumMetadata[] = [];
-	controllerClasses: ControllerClassMetadata[] = [];
-	fields: FieldMetadata[] = [];
-	params: ParamMetadata[] = [];
+	all: Array<MethodMetadata> = [];
+	gets: Array<MethodMetadata> = [];
+	posts: Array<MethodMetadata> = [];
+	resultTypes: Array<ResultClassMetadata> = [];
+	inputTypes: Array<ClassMetadata> = [];
+	argumentTypes: Array<ClassMetadata> = [];
+	enums: Array<EnumMetadata> = [];
+	controllerClasses: Array<ControllerClassMetadata> = [];
+	fields: Array<FieldMetadata> = [];
+	params: Array<ParamMetadata> = [];
 
 	constructor() {
 		ensureReflectMetadataExists();
@@ -36,24 +36,24 @@ export class MetadataStorage {
 		}
 	}
 
-	private buildClassMetadata(definitions: ClassMetadata[]): void {
-		definitions.forEach(def => {
+	private buildClassMetadata(definitions: Array<ClassMetadata>): void {
+		for (const def of definitions) {
 			if (!def.fields || def.fields.length === 0) {
 				const fields = this.fields.filter(field => field.target === def.target);
-				fields.forEach(field => {
+				for (const field of fields) {
 					field.params = this.params.filter(
 						param => param.target === field.target && field.name === param.methodName
 					);
-				});
+				}
 				def.fields = fields;
 			}
-		});
+		}
 	}
 
-	private buildControllersMetadata(definitions: MethodMetadata[]): void {
-		definitions.forEach(def => {
+	private buildControllersMetadata(definitions: Array<MethodMetadata>): void {
+		for (const def of definitions) {
 			def.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === def.target);
 			def.params = this.params.filter(param => param.target === def.target && def.methodName === param.methodName);
-		});
+		}
 	}
 }

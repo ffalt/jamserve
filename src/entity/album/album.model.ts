@@ -13,7 +13,7 @@ export class AlbumBase extends Base {
 	@ObjField(() => AlbumType, { description: 'Album Type', example: AlbumType.compilation })
 	albumType!: AlbumType;
 
-	@ObjField({ description: 'Album Play Duration', example: 12345 })
+	@ObjField({ description: 'Album Play Duration', example: 12_345 })
 	duration!: number;
 
 	@ObjField({ description: 'Album Artist Id', isID: true })

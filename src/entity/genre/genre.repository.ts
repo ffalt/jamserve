@@ -13,13 +13,16 @@ export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, Genr
 	buildOrder(order?: GenreOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case GenreOrderFields.created:
+			case GenreOrderFields.created: {
 				return [['createdAt', direction]];
-			case GenreOrderFields.updated:
+			}
+			case GenreOrderFields.updated: {
 				return [['updatedAt', direction]];
+			}
 			case GenreOrderFields.name:
-			case GenreOrderFields.default:
+			case GenreOrderFields.default: {
 				return [['name', direction]];
+			}
 		}
 		return [];
 	}

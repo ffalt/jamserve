@@ -108,7 +108,7 @@ export class SubsonicSystemApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		if (!engine.io.scanning) {
-			engine.io.root.refreshAllMeta(orm).catch(e => log.error(e)); // do not wait;
+			engine.io.root.refreshAllMeta(orm).catch(error => log.error(error)); // do not wait;
 		}
 		return {};
 	}

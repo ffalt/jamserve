@@ -1,5 +1,5 @@
 import { EngineService } from '../modules/engine/services/engine.service.js';
-import path from 'path';
+import path from 'node:path';
 import tmp from 'tmp';
 import fse from 'fs-extra';
 import { WorkerService } from '../modules/engine/services/worker.service.js';
@@ -561,7 +561,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					const folders = await orm.Folder.find({ where: { root: mockRoot.id } });
 					const folder = folders[0];
 					if (!folder) {
-						throw Error('Invalid Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					await expect(workerService.folder.create({ rootID: mockRoot.id, parentID: folder.id, name: '' })).rejects.toThrow('Invalid Directory Name');
 					await expect(workerService.folder.create({ rootID: mockRoot.id, parentID: folder.id, name: '.' })).rejects.toThrow('Invalid Directory Name');
@@ -570,7 +570,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 					const child = await findWithParent(folders);
 					if (!child) {
-						throw Error('Invalid Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					const parentID = child.parent.idOrFail();
 					await expect(workerService.folder.create({ rootID: mockRoot.id, parentID, name: path.basename(child.path) })).rejects.toThrow('Folder name already used in Destination');
@@ -603,7 +603,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'rename');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.folder.rename({ rootID: mockRoot.id, folderID: folder.id, newName: 'valid' })).rejects.toThrow('Folder renaming failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -612,7 +612,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should rename and update all folder & track paths', async () => {
 					const folderIds = await orm.Folder.findIDs({ where: { root: mockRoot.id } });
 					if (folderIds.length === 0) {
-						throw Error('Invalid Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 
 					for (const id of folderIds) {
@@ -643,7 +643,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'move'); // mock move, since we don't delete, but move to trash folder
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.folder.remove({ rootID: mockRoot.id, folderIDs: [artistFolder.id] })).rejects.toThrow('Folder removing failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -706,7 +706,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'move');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.folder.move({ rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id] })).rejects.toThrow('Folder moving failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -717,7 +717,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					const artworkCount = await orm.Artwork.countFilter({ childOfID: albumFolder.id });
 					const oldParentID = albumFolder.parent.id();
 					if (!oldParentID) {
-						throw Error('Invalid Test Setup');
+						throw new Error('Invalid Test Setup');
 					}
 					let changes = await workerService.folder.move({ rootID: mockRoot.id, newParentID: artistFolder.id, folderIDs: [albumFolder.id] });
 					expectChanges(changes, {
@@ -916,7 +916,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should handle fs errors', async () => {
 					const ext = path.extname(artwork.name);
 					const mockFn = jest.spyOn(fse, 'rename');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.artwork.rename({ ...opts, newName: 'valid' + ext })).rejects.toThrow('File renaming failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -945,7 +945,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'move');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.artwork.remove(opts)).rejects.toThrow('Moving to Trash failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -1012,7 +1012,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'copy');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.artwork.create(opts)).rejects.toThrow('Importing artwork failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -1066,7 +1066,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'copy');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.artwork.replace(opts)).rejects.toThrow('Importing artwork failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -1081,7 +1081,8 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should replace an artwork', async () => {
 					const changes = await workerService.artwork.replace(opts);
 					expectChanges(changes, { artworksUpdate: 1 });
-					expect((await orm.Artwork.oneOrFailByID(changes.artworks.updated.ids()[0])).name).toBe('front.jpeg');
+					const result = await orm.Artwork.oneOrFailByID(changes.artworks.updated.ids()[0]);
+					expect(result.name).toBe('front.jpeg');
 				});
 			});
 		});
@@ -1155,7 +1156,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'rename');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.track.rename(opts)).rejects.toThrow('File renaming failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();
@@ -1189,7 +1190,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle fs errors', async () => {
 					const mockFn = jest.spyOn(fse, 'move');
-					mockFn.mockImplementation(() => Promise.reject(Error('Some fs error')));
+					mockFn.mockImplementation(() => Promise.reject(new Error('Some fs error')));
 					await expect(workerService.track.remove(opts)).rejects.toThrow('Moving to Trash failed');
 					expect(mockFn).toHaveBeenCalled();
 					mockFn.mockRestore();

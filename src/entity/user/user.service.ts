@@ -4,7 +4,7 @@ import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
 import { SessionMode, UserRole } from '../../types/enums.js';
 import { JWTPayload } from '../../utils/jwt.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
@@ -12,7 +12,7 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import { UserMutateArgs } from './user.args.js';
 import { randomString } from '../../utils/random.js';
-import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError, unauthError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { hashMD5 } from '../../utils/md5.js';
 import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
@@ -33,7 +33,7 @@ export class UserService {
 
 	async findByName(orm: Orm, name: string): Promise<User | undefined> {
 		if (!name || name.trim().length === 0) {
-			return Promise.reject(UnauthError('Invalid Username'));
+			return Promise.reject(unauthError('Invalid Username'));
 		}
 		return await orm.User.findOne({ where: { name } });
 	}
@@ -45,21 +45,21 @@ export class UserService {
 
 	async auth(orm: Orm, name: string, pass: string): Promise<User> {
 		if (!pass?.length) {
-			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
+			return Promise.reject(invalidParamError('password', 'Invalid Password'));
 		}
 		const user = await this.findByName(orm, name);
 		if (!user) {
-			return Promise.reject(InvalidParamError('username', 'Invalid Username'));
+			return Promise.reject(invalidParamError('username', 'Invalid Username'));
 		}
 		if (!(await bcryptComparePassword(pass, user.hash))) {
-			return Promise.reject(InvalidParamError('password', 'Invalid Password'));
+			return Promise.reject(invalidParamError('password', 'Invalid Password'));
 		}
 		return user;
 	}
 
 	public async authJWT(orm: Orm, jwtPayload: JWTPayload): Promise<User | undefined> {
 		if (!jwtPayload?.id) {
-			return Promise.reject(InvalidParamError('token', 'Invalid token'));
+			return Promise.reject(invalidParamError('token', 'Invalid token'));
 		}
 		return await orm.User.findOneByID(jwtPayload.id);
 	}
@@ -114,13 +114,13 @@ export class UserService {
 
 	async validatePassword(password: string): Promise<void> {
 		if (!password?.trim().length) {
-			return Promise.reject(InvalidParamError('Invalid Password'));
+			return Promise.reject(invalidParamError('Invalid Password'));
 		}
 		if (password.length < 4) {
-			return Promise.reject(InvalidParamError('Password is too short'));
+			return Promise.reject(invalidParamError('Password is too short'));
 		}
 		if (commonPassword(password)) {
-			return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
+			return Promise.reject(new Error('Your password is found in the most frequently used password list and too easy to guess'));
 		}
 	}
 
@@ -132,7 +132,7 @@ export class UserService {
 
 	async setUserEmail(orm: Orm, user: User, email: string): Promise<void> {
 		if (!email?.trim().length) {
-			return Promise.reject(InvalidParamError('email', 'Invalid Email'));
+			return Promise.reject(invalidParamError('email', 'Invalid Email'));
 		}
 		user.email = email;
 		await orm.User.persistAndFlush(user);
@@ -155,11 +155,11 @@ export class UserService {
 
 	public async create(orm: Orm, args: UserMutateArgs): Promise<User> {
 		if (!args?.name.trim().length) {
-			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
+			return Promise.reject(invalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({ where: { name: args.name } });
 		if (existingUser) {
-			return Promise.reject(InvalidParamError('name', 'Username already exists'));
+			return Promise.reject(invalidParamError('name', 'Username already exists'));
 		}
 		const pass = randomString(32);
 		return await this.createUser(orm, args.name,
@@ -168,11 +168,11 @@ export class UserService {
 
 	public async update(orm: Orm, user: User, args: UserMutateArgs): Promise<User> {
 		if (!args?.name.trim().length) {
-			return Promise.reject(InvalidParamError('name', 'Invalid Username'));
+			return Promise.reject(invalidParamError('name', 'Invalid Username'));
 		}
 		const existingUser = await orm.User.findOne({ where: { name: args.name } });
 		if (existingUser && existingUser.id !== user.id) {
-			return Promise.reject(InvalidParamError('name', 'Username already exists'));
+			return Promise.reject(invalidParamError('name', 'Username already exists'));
 		}
 		user.name = args.name;
 		user.email = args.email || user.email;

@@ -55,21 +55,21 @@ export class JamBaseService {
 
 	async requestString(path: string, params: any): Promise<string> {
 		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(Error('Not logged in'));
+			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.get<string>(path, params, 'text');
 	}
 
 	async requestData<T>(path: string, params: any): Promise<T> {
 		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(Error('Not logged in'));
+			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.get<T>(path, params);
 	}
 
 	async requestPostData<T>(path: string, params: any): Promise<T> {
 		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(Error('Not logged in'));
+			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.post<T>(path, {}, params);
 	}
@@ -88,7 +88,7 @@ export class JamBaseService {
 
 	async binary(path: string, params?: any): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(Error('Not logged in'));
+			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.raw(path, params);
 	}

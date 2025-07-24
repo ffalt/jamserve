@@ -45,7 +45,8 @@ export class Collection<T extends IDEntity<T>> {
 	}
 
 	async getIDs(options?: FindOptions<T>): Promise<Array<string>> {
-		return (await this.getItems(options)).map(item => item.id);
+		const list = await this.getItems(options);
+		return list.map(item => item.id);
 	}
 
 	async getItems(options?: FindOptions<IDEntity<T>>): Promise<Array<T>> {
@@ -62,7 +63,7 @@ export class Collection<T extends IDEntity<T>> {
 				list = this.changeSet.set as Array<any>;
 			}
 			if (this.changeSet.add) {
-				list = list.concat(this.changeSet.add as Array<any>);
+				list = [...list, ...this.changeSet.add];
 			}
 			const removed = this.changeSet.remove;
 			if (removed) {
@@ -105,7 +106,7 @@ export class Collection<T extends IDEntity<T>> {
 	async add(item: T): Promise<void> {
 		this.changeSet = this.changeSet || {};
 		this.changeSet.add = this.changeSet.add || [];
-		if (!this.changeSet.add.find(e => e.id === item.id)) {
+		if (!this.changeSet.add.some(e => e.id === item.id)) {
 			this.changeSet.add.push(item);
 			if (this.list) {
 				this.list.push(item);

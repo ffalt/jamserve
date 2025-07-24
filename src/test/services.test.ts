@@ -25,9 +25,9 @@ function salt(length: number): string {
 			return n.toString(); // 1-10
 		}
 		if (n < 36) {
-			return String.fromCharCode(n + 55); // A-Z
+			return String.fromCodePoint(n + 55); // A-Z
 		}
-		return String.fromCharCode(n + 61); // a-z
+		return String.fromCodePoint(n + 61); // a-z
 	};
 	while (s.length < length) {
 		s += randomchar();

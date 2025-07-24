@@ -10,12 +10,12 @@ export function BaseGet(
 	maybeOptions?: MethodOptions
 ): MethodDecorator {
 	let route: string | undefined = undefined;
-	if (typeof routeOrReturnTypeFuncOrOptions !== 'string') {
+	if (typeof routeOrReturnTypeFuncOrOptions === 'string') {
+		route = routeOrReturnTypeFuncOrOptions;
+	} else {
 		maybeOptions = returnTypeFuncOrOptions as any;
 		returnTypeFuncOrOptions = routeOrReturnTypeFuncOrOptions as any;
 		route = undefined;
-	} else {
-		route = routeOrReturnTypeFuncOrOptions;
 	}
 	const { options, returnTypeFunc } = getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions);
 	return (prototype, methodName) => {

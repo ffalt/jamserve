@@ -6,7 +6,7 @@
  */
 
 import Ffmpeg from 'fluent-ffmpeg';
-import { PassThrough, Readable, Transform, TransformCallback } from 'stream';
+import { PassThrough, Readable, Transform, TransformCallback } from 'node:stream';
 import { logger } from '../../../utils/logger.js';
 
 const log = logger('waveform.stream');
@@ -26,7 +26,7 @@ export class WaveformStream extends Transform {
 	constructor(atSamplesPerPixel?: number, atSampleRate?: number) {
 		super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
 		this._samplesPerPixel = atSamplesPerPixel ?? 256;
-		this._sampleRate = atSampleRate ?? 44100;
+		this._sampleRate = atSampleRate ?? 44_100;
 		const options: Ffmpeg.FfmpegCommandOptions = {
 			source: this._buf as Readable
 		};

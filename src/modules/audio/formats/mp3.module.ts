@@ -4,19 +4,19 @@ import { logger } from '../../../utils/logger.js';
 import { FORMAT, TrackSyncronizedLyrics } from '../audio.format.js';
 import { AudioScanResult } from '../audio.module.js';
 import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
-import path, { dirname } from 'path';
+import path from 'node:path';
 import { TagFormatType } from '../../../types/enums.js';
 import { RawTag } from '../rawTag.js';
 import { analyzeMP3 } from '../tasks/task-analyze-mp3.js';
 import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
 import { fixMP3 } from '../tasks/task-fix-mp3.js';
 import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 const taskPath = path.join(__dirname, '..', 'tasks');
 export const taskRewriteMp3 = path.join(taskPath, 'task-rewrite-mp3.js');
 export const taskFixMp3 = path.join(taskPath, 'task-fix-mp3.js');
@@ -64,7 +64,7 @@ export class AudioModuleMP3 {
 		const id3v2 = new ID3v2();
 		const result = await id3v2.read(filename);
 		if (!result?.head) {
-			return Promise.reject(Error('No ID3v2 Tag found'));
+			return Promise.reject(new Error('No ID3v2 Tag found'));
 		}
 		return id3v2ToRawTag(result);
 	}
@@ -145,37 +145,43 @@ export class AudioModuleMP3 {
 		return;
 	}
 
+	resolveTimeStampFormat(timestampFormat: number) {
+		if (timestampFormat === 1) {
+			return 'MPEG frames';
+		}
+		return 'milliseconds';
+	}
+
+	resolveContentType(contentType: number) {
+		switch (contentType) {
+			case 1: {
+				return 'lyrics';
+			}
+			case 2: {
+				return 'text transcription';
+			}
+			case 3: {
+				return 'part name';
+			}
+			case 4: {
+				return 'events';
+			}
+			case 5: {
+				return 'chord';
+			}
+			case 6: {
+				return 'trivia';
+			}
+			default: {
+				return 'other';
+			}
+		}
+	};
+
 	async extractTagSyncedLyrics(filename: string): Promise<TrackSyncronizedLyrics | undefined> {
 		log.debug('extractTagSyncedLyrics', filename);
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
-
-		const resolveContentType = (contentType: number) => {
-			switch (contentType) {
-				case 1:
-					return 'lyrics';
-				case 2:
-					return 'text transcription';
-				case 3:
-					return 'part name';
-				case 4:
-					return 'events';
-				case 5:
-					return 'chord';
-				case 6:
-					return 'trivia';
-				default:
-					return 'other';
-			}
-		};
-
-		const resolveTimeStampFormat = (timestampFormat: number) => {
-			if (timestampFormat === 1) {
-				return 'MPEG frames';
-			}
-			return 'milliseconds';
-		};
-
 		if (tag) {
 			const frames = tag.frames.filter(f => ['SLT'].includes(f.id)) as Array<IID3V2.Frames.SynchronisedLyricsFrame>;
 			if (frames.length > 0) {
@@ -183,8 +189,8 @@ export class AudioModuleMP3 {
 				if (frame) {
 					return {
 						language: frame.value.language,
-						contentType: resolveContentType(frame.value.contentType),
-						timestampFormat: resolveTimeStampFormat(frame.value.timestampFormat),
+						contentType: this.resolveContentType(frame.value.contentType),
+						timestampFormat: this.resolveTimeStampFormat(frame.value.timestampFormat),
 						events: frame.value.events
 					};
 				}

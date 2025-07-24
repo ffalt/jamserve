@@ -7,7 +7,7 @@ import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class PlaylistService {
@@ -44,7 +44,7 @@ export class PlaylistService {
 		for (const id of ids) {
 			const media = await orm.findInStreamTypes(id);
 			if (!media) {
-				return Promise.reject(NotFoundError());
+				return Promise.reject(notFoundError());
 			}
 			duration += await PlaylistService.getDuration(media);
 			const entry = orm.PlaylistEntry.create({ position });
@@ -62,7 +62,8 @@ export class PlaylistService {
 
 	private async updateEntries(orm: Orm, ids: Array<string>, args: PlaylistMutateArgs, playlist: Playlist): Promise<number> {
 		const mediaList = await orm.findListInStreamTypes(ids);
-		const oldEntries = (await playlist.entries.getItems()).sort((a, b) => b.position - a.position);
+		const entries = await playlist.entries.getItems();
+		const oldEntries = entries.sort((a, b) => b.position - a.position);
 		let duration = 0;
 		let position = 1;
 		for (const media of mediaList) {

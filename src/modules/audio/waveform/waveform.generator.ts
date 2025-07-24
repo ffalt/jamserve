@@ -2,7 +2,7 @@ import { max, min } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 import { area } from 'd3-shape';
 import { select } from 'd3-selection';
-import fs from 'fs';
+import fs from 'node:fs';
 import WaveformData from 'waveform-data';
 import { WaveDataResponse, Waveform } from './waveform.class.js';
 import { JSDOM } from 'jsdom';
@@ -28,7 +28,7 @@ export class WaveformGenerator {
 		return new Promise<Waveform>((resolve, reject) => {
 			const wf: Waveform = new Waveform(stream, {
 				samplesPerPixel: 256,
-				sampleRate: 44100
+				sampleRate: 44_100
 			});
 			wf.run(err => {
 				if (err) {

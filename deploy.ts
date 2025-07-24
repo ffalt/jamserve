@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
 
 export async function spawnNPM(): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
@@ -56,7 +56,7 @@ start()
 	.then(() => {
 		process.exit(0);
 	})
-	.catch(e => {
-		console.log(e);
+	.catch(error => {
+		console.log(error);
 		process.exit(1);
 	});

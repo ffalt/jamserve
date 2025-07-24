@@ -96,7 +96,7 @@ export class MetaMerger {
 	}
 
 	private async loadChangedMeta(): Promise<void> {
-		const trackIDs = this.changes.tracks.updated.ids().concat(this.changes.tracks.removed.ids());
+		const trackIDs = [...this.changes.tracks.updated.ids(), ...this.changes.tracks.removed.ids()];
 		if (trackIDs.length > 0) {
 			log.info('Updating Metadata');
 			// Load all artists/albums/series for track, in case track artist changed
@@ -143,7 +143,7 @@ export class MetaMerger {
 	}
 
 	private async applyChangedTracksMeta(): Promise<void> {
-		const changedTracks = this.changes.tracks.added.ids().concat(this.changes.tracks.updated.ids());
+		const changedTracks = [...this.changes.tracks.added.ids(), ...this.changes.tracks.updated.ids()];
 		const folderCache = new Map<string, Folder>();
 		for (const id of changedTracks) {
 			await this.applyChangedTrackMeta(id, folderCache);
@@ -161,7 +161,7 @@ export class MetaMerger {
 		const currentAlbumArtistTracks = await this.orm.Track.findFilter({ albumArtistIDs: [id] });
 		const albumTracks = currentAlbumArtistTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await artist.albumTracks.set(albumTracks);
-		const allTracks = tracks.concat(albumTracks);
+		const allTracks = [...tracks, ...albumTracks];
 		if (allTracks.length === 0) {
 			this.changes.artists.removed.add(artist);
 			this.changes.artists.updated.delete(artist);
@@ -177,20 +177,20 @@ export class MetaMerger {
 			artist.slug = slug;
 			artist.nameSort = artistSortName;
 		}
-		const albums = (await artist.albums.getItems()).filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
+		const artistAlbums = await artist.albums.getItems();
+		const albums = artistAlbums.filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
 		await artist.albums.set(albums);
 		const folders: Array<Folder> = [];
 		for (const folder of (await artist.folders.getItems())) {
-			if ((await folder.albums.getItems()).find(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
+			const folderAlbums = await folder.albums.getItems();
+			if (folderAlbums.some(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
 				folders.push(folder);
 			}
 		}
 		for (const folder of folders) {
 			const parent = await folder.parent.get();
-			if (parent?.folderType === FolderType.artist) {
-				if (!folders.find(f => f.id === parent.id)) {
-					folders.push(parent);
-				}
+			if (parent?.folderType === FolderType.artist && !folders.some(f => f.id === parent.id)) {
+				folders.push(parent);
 			}
 		}
 		await artist.folders.set(folders);
@@ -207,7 +207,7 @@ export class MetaMerger {
 	}
 
 	private async applyChangedArtistsMeta(): Promise<void> {
-		const artistIDs = this.changes.artists.updated.ids().concat(this.changes.artists.added.ids());
+		const artistIDs = [...this.changes.artists.updated.ids(), ...this.changes.artists.added.ids()];
 		for (const id of artistIDs) {
 			await this.applyChangedArtistMeta(id);
 			await this.flushIfNeeded('Artist');
@@ -219,7 +219,8 @@ export class MetaMerger {
 		const series = await this.orm.Series.oneOrFailByID(id);
 		log.debug('Updating series', series.name);
 		const albumTypes = new Set<AlbumType>();
-		const albums = (await series.albums.getItems()).filter(t => !this.changes.albums.removed.has(t));
+		const seriesAlbums = await series.albums.getItems();
+		const albums = seriesAlbums.filter(t => !this.changes.albums.removed.has(t));
 		const currentTracks = await this.orm.Track.findFilter({ seriesIDs: [id] });
 		const tracks = currentTracks.filter(t => !this.changes.tracks.removed.has(t));
 		await series.tracks.set(tracks);
@@ -231,7 +232,9 @@ export class MetaMerger {
 			for (const album of albums) {
 				albumTypes.add(album.albumType);
 				const genres = await album.genres.getItems();
-				genres.forEach(genre => genreMap.set(genre.id, genre));
+				for (const genre of genres) {
+					genreMap.set(genre.id, genre);
+				}
 			}
 			await series.genres.set([...genreMap.values()]);
 			series.albumTypes = [...albumTypes];
@@ -240,7 +243,7 @@ export class MetaMerger {
 	}
 
 	private async applyChangedSeriesMeta(): Promise<void> {
-		const seriesIDs = this.changes.series.updated.ids().concat(this.changes.series.added.ids());
+		const seriesIDs = [...this.changes.series.updated.ids(), ...this.changes.series.added.ids()];
 		for (const id of seriesIDs) {
 			await this.applyChangedSerieMeta(id);
 			await this.flushIfNeeded('Series');
@@ -262,12 +265,12 @@ export class MetaMerger {
 		}
 	}
 
-	private async updateAlbumMeta(album: Album, tracks: Track[]): Promise<void> {
+	private async updateAlbumMeta(album: Album, tracks: Array<Track>): Promise<void> {
 		const folders: Array<Folder> = [];
 		const albumFolders = await album.folders.getItems();
 		for (const folder of albumFolders) {
 			const folderAlbums = await folder.albums.getItems();
-			if (folderAlbums.find(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
+			if (folderAlbums.some(a => a.id === album.id) && !this.changes.folders.removed.has(folder)) {
 				folders.push(folder);
 			}
 		}
@@ -291,7 +294,9 @@ export class MetaMerger {
 			metaStatBuilder.statID('mbReleaseID', tag?.mbReleaseID);
 			metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
 			const genres = await track.genres.getItems();
-			genres.forEach(genre => genreMap.set(genre.id, genre));
+			for (const genre of genres) {
+				genreMap.set(genre.id, genre);
+			}
 		}
 		album.mbArtistID = metaStatBuilder.mostUsed('mbArtistID');
 		album.mbReleaseID = metaStatBuilder.mostUsed('mbReleaseID');
@@ -305,7 +310,7 @@ export class MetaMerger {
 	}
 
 	private async applyChangedAlbumsMeta(): Promise<void> {
-		const albumIDs = this.changes.albums.updated.ids().concat(this.changes.albums.added.ids());
+		const albumIDs = [...this.changes.albums.updated.ids(), ...this.changes.albums.added.ids()];
 		for (const id of albumIDs) {
 			await this.applyChangedAlbumMeta(id);
 			await this.flushIfNeeded('Album');

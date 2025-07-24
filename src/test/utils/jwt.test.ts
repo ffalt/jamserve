@@ -7,7 +7,7 @@ describe('JWT functions', () => {
 		const userId = 'user123';
 		const client = 'web';
 		const secret = 'test_secret';
-		const maxAge = 3600000; // 1 hour
+		const maxAge = 3_600_000; // 1 hour
 
 		const token = generateJWT(userId, client, secret, maxAge);
 

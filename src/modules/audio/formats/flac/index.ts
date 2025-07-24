@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import fse from 'fs-extra';
 import { MetaDataBlock } from './lib/block.js';
 import { MetaDataBlockPicture } from './lib/block.picture.js';
@@ -9,9 +9,7 @@ import { FlacProcessorStream, MDB_TYPE } from './lib/processor.js';
 
 export interface FlacComment {
 	vendor: string;
-	tag: {
-		[key: string]: string;
-	};
+	tag: Record<string, string>;
 }
 
 export interface FlacPicture {
@@ -55,11 +53,9 @@ export class Flac {
 					result.media = Flac.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
 				} else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
-				} else if (mdb.type === MDB_TYPE.PICTURE) {
-					if ((mdb as MetaDataBlockPicture).pictureData) {
-						result.pictures = result.pictures || [];
-						result.pictures.push(Flac.formatMediaPicture(mdb as MetaDataBlockPicture));
-					}
+				} else if (mdb.type === MDB_TYPE.PICTURE && (mdb as MetaDataBlockPicture).pictureData) {
+					result.pictures = result.pictures || [];
+					result.pictures.push(Flac.formatMediaPicture(mdb as MetaDataBlockPicture));
 				}
 			});
 			processor.on('id3', (buffer: Buffer) => {
@@ -76,19 +72,19 @@ export class Flac {
 			});
 			try {
 				reader.pipe(processor);
-			} catch (e) {
-				reject(e as Error);
+			} catch (error) {
+				reject(error);
 			}
 		});
 	}
 
 	async writeTo(filename: string, destination: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
 		if (flacBlocks.length === 0) {
-			return Promise.reject(Error('Must write minimum 1 MetaDataBlock'));
+			return Promise.reject(new Error('Must write minimum 1 MetaDataBlock'));
 		}
-		flacBlocks.forEach(flacBlock => {
+		for (const flacBlock of flacBlocks) {
 			flacBlock.isLast = false;
-		});
+		}
 		const reader = fs.createReadStream(filename);
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
@@ -99,7 +95,10 @@ export class Flac {
 				}
 				if (mdb.isLast) {
 					if (mdb.remove) {
-						flacBlocks[flacBlocks.length - 1].isLast = true;
+						const lastBlock = flacBlocks.at(-1);
+						if (lastBlock) {
+							lastBlock.isLast = true;
+						}
 					}
 					for (const block of flacBlocks) {
 						processor.push(block.publish());
@@ -132,20 +131,20 @@ export class Flac {
 				await fse.remove(filename);
 			}
 			await fse.move(tmpFile, filename);
-		} catch (e) {
+		} catch (error) {
 			const exists = await fse.pathExists(tmpFile);
 			if (exists) {
 				await fse.remove(tmpFile);
 			}
-			return Promise.reject(e as Error);
+			return Promise.reject(error);
 		}
 	}
 
 	private formatMediaComment(mdb: BlockVorbiscomment): FlacComment {
-		const tag: { [key: string]: string } = {};
-		mdb.comments.forEach(line => {
+		const tag: Record<string, string> = {};
+		for (const line of mdb.comments) {
 			const pos = line.indexOf('=');
-			const key = line.slice(0, pos).toUpperCase().replace(/ /g, '_');
+			const key = line.slice(0, pos).toUpperCase().replaceAll(' ', '_');
 			let i = 1;
 			let suffix = '';
 			while (tag[key + suffix]) {
@@ -153,7 +152,7 @@ export class Flac {
 				suffix = `|${i}`;
 			}
 			tag[key + suffix] = line.slice(pos + 1);
-		});
+		}
 		return { vendor: mdb.vendor, tag };
 	}
 

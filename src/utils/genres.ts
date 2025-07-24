@@ -1074,18 +1074,20 @@ const genreData = {
 	]
 };
 
-let GenresSlugs: { [slug: string]: string }; // will be build on first use
+let GenresSlugs: Record<string, string>; // will be build on first use
 
 export const Genres: Array<string> = genreData.list;
 
 function slugify(genre: string): string {
-	return genre.replace(/[& \-.]/g, '').toLowerCase();
+	return genre.replaceAll(/[& \-.]/g, '').toLowerCase();
 }
 
 function buildGenreSlugs(): void {
 	if (!GenresSlugs) {
 		GenresSlugs = {};
-		Genres.forEach(g => GenresSlugs[slugify(g)] = g);
+		for (const g of Genres) {
+			GenresSlugs[slugify(g)] = g;
+		}
 	}
 }
 
@@ -1106,7 +1108,7 @@ function cleanGenrePartSlug(part: string): Array<string> | undefined {
 	const subParts = part.split('&');
 	let results: Array<string> = [];
 	for (const sub of subParts) {
-		results = results.concat(cleanGenre(sub));
+		results = [...results, ...cleanGenre(sub)];
 	}
 	return results;
 }
@@ -1116,7 +1118,7 @@ function cleanGenrePart(part: string): Array<string> | undefined {
 	const numpart = /\((\d+)\)/.exec(part);
 	let num: number | undefined;
 	if (numpart) {
-		num = parseInt(numpart[1], 10);
+		num = Number(numpart[1]);
 		part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
 	}
 	if (part.length === 0 && (num !== undefined)) {

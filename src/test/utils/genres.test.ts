@@ -6,16 +6,16 @@ describe('genres functions and constants', () => {
 		test('should be an array of strings', () => {
 			expect(Array.isArray(Genres)).toBe(true);
 			expect(Genres.length).toBeGreaterThan(0);
-			Genres.forEach(genre => {
+			for (const genre of Genres) {
 				expect(typeof genre).toBe('string');
-			});
+			}
 		});
 
 		test('should contain common music genres', () => {
 			const commonGenres = ['Rock', 'Pop', 'Jazz', 'Blues', 'Classical', 'Hip Hop', 'Electronic'];
-			commonGenres.forEach(genre => {
+			for (const genre of commonGenres) {
 				expect(Genres).toContain(genre);
-			});
+			}
 		});
 	});
 

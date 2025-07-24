@@ -56,13 +56,13 @@ export class IoCommandsTrack {
 			return this.owner.getRequestInfo(oldRequest);
 		}
 		let delayedCmd = this.delayedTrackTagWrite.findByRoot(rootID);
-		if (!delayedCmd) {
+		if (delayedCmd) {
+			delayedCmd.request.parameters.tags.push({ trackID, tag });
+		} else {
 			delayedCmd = this.delayedTrackTagWrite.register(rootID,
 				new IoRequest<WorkerRequestWriteTrackTags>(this.owner.generateRequestID(),
 					WorkerRequestMode.writeTrackTags, p => this.owner.workerService.track.writeTags(p), { rootID, tags: [{ trackID, tag }] })
 			);
-		} else {
-			delayedCmd.request.parameters.tags.push({ trackID, tag });
 		}
 		this.delayedTrackTagWrite.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
 		return this.owner.getRequestInfo(delayedCmd.request);
@@ -75,13 +75,13 @@ export class IoCommandsTrack {
 			return this.owner.getRequestInfo(oldRequest);
 		}
 		let delayedCmd = this.delayedTrackFix.findByRoot(rootID);
-		if (!delayedCmd) {
+		if (delayedCmd) {
+			delayedCmd.request.parameters.fixes.push({ trackID, fixID });
+		} else {
 			delayedCmd = this.delayedTrackFix.register(rootID,
 				new IoRequest<WorkerRequestFixTrack>(this.owner.generateRequestID(),
 					WorkerRequestMode.fixTrack, p => this.owner.workerService.track.fix(p), { rootID, fixes: [{ trackID, fixID }] })
 			);
-		} else {
-			delayedCmd.request.parameters.fixes.push({ trackID, fixID });
 		}
 		this.delayedTrackFix.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
 		return this.owner.getRequestInfo(delayedCmd.request);

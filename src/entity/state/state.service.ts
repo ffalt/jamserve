@@ -4,7 +4,7 @@ import { User } from '../user/user.js';
 import { State } from './state.js';
 import { StateHelper } from './state.helper.js';
 import { DBObjectType } from '../../types/enums.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class StateService {
@@ -16,7 +16,7 @@ export class StateService {
 	): Promise<State> {
 		const result = await orm.findInStateTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		const helper = new StateHelper(orm.em);
 		return await helper.fav(result.obj.id, result.objType, user, !!remove);
@@ -30,7 +30,7 @@ export class StateService {
 	): Promise<State> {
 		const result = await orm.findInStateTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		const helper = new StateHelper(orm.em);
 		return await helper.rate(result.obj.id, result.objType, user, rating);

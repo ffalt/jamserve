@@ -31,8 +31,8 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 				pos += commentLen + 4;
 			}
 			this.hasData = true;
-		} catch (e) {
-			this.error = e;
+		} catch (error) {
+			this.error = error;
 			this.hasData = false;
 		}
 	}
@@ -44,7 +44,7 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 
 		let header = size;
 		header |= (this.type << 24);
-		header |= (this.isLast ? 0x80000000 : 0);
+		header |= (this.isLast ? 0x80_00_00_00 : 0);
 		buffer.writeUInt32BE(header, pos);
 		pos += 4;
 

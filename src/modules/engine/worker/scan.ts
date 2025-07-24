@@ -6,7 +6,7 @@ import { Changes } from './changes.js';
 import { FileTyp, FolderType } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
 import { Track } from '../../../entity/track/track.js';
-import path from 'path';
+import path from 'node:path';
 import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
 import { AudioModule } from '../../audio/audio.module.js';
 import { Orm } from '../services/orm.service.js';
@@ -169,7 +169,7 @@ export class WorkerScan {
 			level: dir.level,
 			path: dir.path,
 			name,
-			title: name !== title ? title : undefined,
+			title: name === title ? undefined : title,
 			year,
 			folderType: FolderType.unknown,
 			statCreated: dir.ctime,
@@ -246,7 +246,7 @@ export class WorkerScan {
 		for (const subDir of dir.directories) {
 			if (subDir.path !== folder.path) {
 				const subFolder = folders.find(f => f.path === subDir.path);
-				result.children.push(!subFolder ? await this.buildNode(subDir, folder) : await this.scanNode(subDir, subFolder));
+				result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
 			}
 		}
 		for (const child of folders) {
@@ -273,7 +273,7 @@ export class WorkerScan {
 		}
 	}
 
-	private async scanArtwork(artwork: Artwork, scanArtworks: ScanFile[], foundScanArtworks: Array<ScanFile>, result: MatchNode): Promise<void> {
+	private async scanArtwork(artwork: Artwork, scanArtworks: Array<ScanFile>, foundScanArtworks: Array<ScanFile>, result: MatchNode): Promise<void> {
 		const filename = path.join(artwork.path, artwork.name);
 		const scanArtwork = scanArtworks.find(t => t.path == filename);
 		if (!scanArtwork) {
@@ -308,7 +308,7 @@ export class WorkerScan {
 		}
 	}
 
-	private async scanTrack(track: Track, scanTracks: ScanFile[], foundScanTracks: Array<ScanFile>, result: MatchNode) {
+	private async scanTrack(track: Track, scanTracks: Array<ScanFile>, foundScanTracks: Array<ScanFile>, result: MatchNode) {
 		const filename = path.join(track.path, track.fileName);
 		const scanTrack = scanTracks.find(t => t.path == filename);
 		if (!scanTrack) {
@@ -342,7 +342,7 @@ export class WorkerScan {
 				await this.removeFolder(oldParent);
 			}
 		}
-		const rootMatch: MatchNode = !parent ? await this.buildNode(dir) : await this.scanNode(dir, parent);
+		const rootMatch: MatchNode = parent ? await this.scanNode(dir, parent) : await this.buildNode(dir);
 		if (this.orm.em.hasChanges()) {
 			log.debug('Syncing Track/Artwork Changes to DB');
 			await this.orm.em.flush();

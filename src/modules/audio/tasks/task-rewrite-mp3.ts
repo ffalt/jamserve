@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import { ID3v2, IID3V2 } from 'jamp3';
-import { parentPort } from 'worker_threads';
+import { parentPort } from 'node:worker_threads';
 import { fileDeleteIfExists, fileSuffix } from '../../../utils/fs-utils.js';
 import { rewriteWriteFFmpeg } from '../tools/ffmpeg-rewrite.js';
 import { AudioFormatType } from '../../../types/enums.js';
@@ -17,18 +17,14 @@ export async function rewriteAudio(param: string): Promise<void> {
 		}
 		await rewriteWriteFFmpeg(param, tempFile);
 		const exits = await fse.pathExists(backupFile);
-		if (exits) {
-			await fileDeleteIfExists(param);
-		} else {
-			await fse.copy(param, backupFile);
-		}
+		await (exits ? fileDeleteIfExists(param) : fse.copy(param, backupFile));
 		if (tag) {
 			await id3v2.write(tempFile, tag, 4, 0, { keepBackup: false, paddingSize: 10 });
 		}
 		await fse.rename(tempFile, param);
-	} catch (e) {
+	} catch (error) {
 		await fileDeleteIfExists(tempFile);
-		return Promise.reject(e as Error);
+		return Promise.reject(error);
 	}
 }
 
@@ -36,7 +32,7 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
 	caller.on('message', async (param: any) => {
 		if (typeof param !== 'string') {
-			throw new Error('param must be a string.');
+			throw new TypeError('param must be a string.');
 		}
 		await rewriteAudio(param);
 		caller.postMessage(undefined);

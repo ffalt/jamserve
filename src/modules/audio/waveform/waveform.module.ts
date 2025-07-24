@@ -36,20 +36,23 @@ export class WaveformModule {
 	private static async generateWaveform(filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		const wf = new WaveformGenerator();
 		switch (format) {
-			case WaveformFormatType.svg:
+			case WaveformFormatType.svg: {
 				return { buffer: { buffer: Buffer.from(await wf.svg(filename, width), 'ascii'), contentType: 'image/svg+xml' } };
-			case WaveformFormatType.json:
+			}
+			case WaveformFormatType.json: {
 				return { json: await wf.json(filename) };
-			case WaveformFormatType.dat:
+			}
+			case WaveformFormatType.dat: {
 				return { buffer: { buffer: await wf.binary(filename), contentType: 'application/binary' } };
+			}
 			default:
 		}
-		return Promise.reject(Error('Invalid Format for Waveform generation'));
+		return Promise.reject(new Error('Invalid Format for Waveform generation'));
 	}
 
 	async get(id: string, filename: string, format: WaveformFormatType, width?: number): Promise<WaveformResult> {
 		if (!filename || !(await fse.pathExists(filename))) {
-			return Promise.reject(Error('Invalid filename for waveform generation'));
+			return Promise.reject(new Error('Invalid filename for waveform generation'));
 		}
 		return this.waveformCache.get(id, { format, width }, async cacheFilename => {
 			const result = await WaveformModule.generateWaveform(filename, format, width);

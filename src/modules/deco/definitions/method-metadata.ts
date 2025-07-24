@@ -7,15 +7,15 @@ export interface MethodMetadata extends CustomPathParameterOptions, BinaryOption
 	schemaName: string;
 	target: Function;
 	controllerClassMetadata?: ControllerClassMetadata;
-	params: ParamMetadata[];
+	params: Array<ParamMetadata>;
 	getReturnType?: TypeValueThunk;
 	returnTypeOptions?: TypeOptions;
-	responseStringMimeTypes?: string[];
+	responseStringMimeTypes?: Array<string>;
 	route?: string;
 	description?: string;
 	summary?: string;
 	deprecationReason?: string;
 	defaultReturnTypeFormat?: string;
 	example: any;
-	tags?: string[];
+	tags?: Array<string>;
 }

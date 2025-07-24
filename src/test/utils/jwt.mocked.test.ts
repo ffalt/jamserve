@@ -15,7 +15,7 @@ describe('JWT functions', () => {
 		beforeEach(() => {
 			jest.spyOn(jwt, 'sign').mockImplementation(() => 'generated_token');
 			// Mock Date.now() to return a fixed timestamp
-			jest.spyOn(Date, 'now').mockReturnValue(1600000000000); // 2020-09-13T12:26:40.000Z
+			jest.spyOn(Date, 'now').mockReturnValue(1_600_000_000_000); // 2020-09-13T12:26:40.000Z
 		});
 
 		afterEach(() => {
@@ -33,14 +33,14 @@ describe('JWT functions', () => {
 		});
 
 		test('should include expiration time if maxAge is greater than 0', () => {
-			const maxAge = 3600000; // 1 hour in milliseconds
+			const maxAge = 3_600_000; // 1 hour in milliseconds
 			const result = generateJWT('user123', 'web', 'secret', maxAge);
 
 			expect(jwt.sign).toHaveBeenCalledWith(
 				{
 					id: 'user123',
 					client: 'web',
-					exp: Math.floor((1600000000000 + maxAge) / 1000) // Expected expiration timestamp
+					exp: Math.floor((1_600_000_000_000 + maxAge) / 1000) // Expected expiration timestamp
 				},
 				'secret'
 			);
@@ -80,7 +80,7 @@ describe('JWT functions', () => {
 			const userId = 'user123';
 			const client = 'web';
 			const secret = 'test_secret';
-			const maxAge = 3600000; // 1 hour
+			const maxAge = 3_600_000; // 1 hour
 
 			const token = generateJWT(userId, client, secret, maxAge);
 

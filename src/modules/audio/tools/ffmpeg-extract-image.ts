@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg';
-import fs from 'fs';
+import fs from 'node:fs';
 
 export async function extractFFmpegImage(filename: string, index: number, stream: fs.WriteStream): Promise<void> {
 	return new Promise((resolve, reject) => {

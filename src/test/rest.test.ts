@@ -11,7 +11,7 @@ import { FolderType, RootScanStrategy, UserRole } from '../types/enums.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { MockRequests, RequestMock } from './mock/mock.request.js';
 import { ensureTrailingPathSeparator } from '../utils/fs-utils.js';
-import path from 'path';
+import path from 'node:path';
 import { buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock } from './mock/mock.root.js';
 import { initTest } from './init.js';
 import { Container, Snapshot } from 'typescript-ioc';
@@ -31,7 +31,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 	let request: TestAgent<supertest.Test>;
 	let mockCall: (mock: RequestMock, expected: number, token?: string) => supertest.Test;
 	let mockRoot: MockRoot;
-	const tokens: { [role: string]: string } = {
+	const tokens: Record<string, string> = {
 		admin: '',
 		podcast: '',
 		stream: '',
@@ -81,25 +81,25 @@ describe.each(DBConfigs)('REST with %o', db => {
 		}
 
 		openapi = JSON.parse(server.docs.getOpenApiSchema());
-		const joi = (jestOpenAPI as any).default ? (jestOpenAPI as any).default : (jestOpenAPI as any);
+		const joi = (jestOpenAPI as any).default ?? (jestOpenAPI as any);
 		joi(openapi as OpenAPISpecObject);
 
 		const get = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
 			let url = apiPrefix + mock.apiName;
 			if (mock.params) {
 				const split = mock.apiName.split('/');
-				let api = split[split.length - 1];
-				Object.keys(mock.params).forEach(key => {
+				let api = split.at(-1) || '';
+				for (const key of Object.keys(mock.params)) {
 					const value = mock.params[key];
 					api = api.replace(`{${key}}`, encodeURIComponent(`${value}`));
-				});
+				}
 				if (api.trim().length === 0) {
 					expected = 404;
 				}
 				split[split.length - 1] = api;
 				url = apiPrefix + split.join('/');
 			}
-			const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, null, '\t');
+			const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, undefined, '\t');
 			return request.get(url)
 				.query(mock.data)
 				.set('Authorization', token ? `Bearer ${token}` : '')
@@ -114,18 +114,18 @@ describe.each(DBConfigs)('REST with %o', db => {
 			let url = apiPrefix + mock.apiName;
 			if (mock.params) {
 				const split = mock.apiName.split('/');
-				let api = split[split.length - 1];
-				Object.keys(mock.params).forEach(key => {
+				let api = split.at(-1) || '';
+				for (const key of Object.keys(mock.params)) {
 					const value = mock.params[key];
 					api = api.replace(`{${key}}`, value);
-				});
+				}
 				if (api.trim().length === 0) {
 					expected = 404;
 				}
 				split[split.length - 1] = api;
 				url = apiPrefix + split.join('/');
 			}
-			const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, null, '\t');
+			const message = JSON.stringify({ url, message: token ? undefined : 'should fail of missing auth', mock }, undefined, '\t');
 			return request.post(url)
 				.query({})
 				.send(mock.data)
@@ -138,16 +138,12 @@ describe.each(DBConfigs)('REST with %o', db => {
 				});
 		};
 		mockCall = (mock, expected, token): supertest.Test => {
-			if (mock.method === 'get') {
-				return get(mock, expected, token);
-			} else {
-				return post(mock, expected, token);
-			}
+			return mock.method === 'get' ? get(mock, expected, token) : post(mock, expected, token);
 		};
 		mocks = await MockRequests.generateRequestMocks(openapi);
 		validMocks = [];
 		for (const call of mocks) {
-			if (call.valid && !validMocks.find(c => c.apiName === call.apiName)) {
+			if (call.valid && !validMocks.some(c => c.apiName === call.apiName)) {
 				validMocks.push(call);
 			}
 		}
@@ -177,7 +173,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 		for (const role of roles) {
 			it('should reject all calls without role ' + role, async () => {
 				for (const call of validMocks) {
-					if (call.roles.length > 0 && call.roles.indexOf(role) < 0) {
+					if (call.roles.length > 0 && !call.roles.includes(role)) {
 						await mockCall(call, 401, tokens[role]);
 					}
 				}

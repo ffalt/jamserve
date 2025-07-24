@@ -31,7 +31,7 @@ export class TranscoderModule {
 
 	async get(filename: string, id: string, format: string, maxBitRate: number): Promise<TranscoderResult> {
 		if (!TranscoderStream.validTranscoding(format as AudioFormatType)) {
-			return Promise.reject(Error('Unsupported transcoding format'));
+			return Promise.reject(new Error('Unsupported transcoding format'));
 		}
 		return this.transcodeCache.get(id, { format, maxBitRate }, async cacheFilename => {
 			log.debug('Writing transcode cache file', cacheFilename);

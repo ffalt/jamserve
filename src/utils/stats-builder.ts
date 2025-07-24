@@ -10,17 +10,15 @@ export type MetaStatString = MetaStatValue<string>;
 export type MetaStatNumber = MetaStatValue<number>;
 
 export class MetaStatBuilder {
-	stats: {
-		[name: string]: { [key: string]: { count: number; val: string } };
-	} = {};
+	stats: Record<string, Record<string, { count: number; val: string }>> = {};
 
-	private static convert2Numlist(o: { [key: string]: { count: number; val: string } }): Array<MetaStatNumber> {
+	private static convert2Numlist(o: Record<string, { count: number; val: string }>): Array<MetaStatNumber> {
 		return Object.keys(o)
 			.map(key => ({ count: o[key].count, val: Number(o[key].val) }))
 			.sort((a, b) => a.count - b.count);
 	}
 
-	private static convert2list(o: { [key: string]: { count: number; val: string } }): Array<MetaStatString> {
+	private static convert2list(o: Record<string, { count: number; val: string }>): Array<MetaStatString> {
 		return Object.keys(o)
 			.map(key => o[key])
 			.sort((a, b) => a.count - b.count);

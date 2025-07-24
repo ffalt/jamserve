@@ -69,10 +69,6 @@ export class IoCommandsRoot {
 	}
 
 	async startUpRefresh(orm: Orm, forceRescan: boolean): Promise<void> {
-		if (!forceRescan) {
-			await this.refreshAll(orm);
-		} else {
-			await this.refreshAllMeta(orm);
-		}
+		await (forceRescan ? this.refreshAllMeta(orm) : this.refreshAll(orm));
 	}
 }

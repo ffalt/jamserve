@@ -35,7 +35,7 @@ import { EnumMetadata } from '../../deco/definitions/enum-metadata.js';
 import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
 
 export function registerRestEnums(): void {
-	const enums: EnumMetadata[] = getMetadataStorage().enums;
+	const enums: Array<EnumMetadata> = getMetadataStorage().enums;
 	registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' }, enums);
 	registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' }, enums);
 	registerEnumType(TrackOrderFields, { name: 'TrackOrderFields' }, enums);

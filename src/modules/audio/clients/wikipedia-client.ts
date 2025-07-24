@@ -75,14 +75,10 @@ export interface WikiPHPApiPage {
 export interface WikiPHPApiSummary {
 	batchcomplete: string;
 	warnings?: {
-		extracts?: {
-			[id: string]: string;
-		};
+		extracts?: Record<string, string>;
 	};
 	query: {
-		pages: {
-			[name: string]: WikiPHPApiPage;
-		};
+		pages: Record<string, WikiPHPApiPage>;
 	};
 }
 

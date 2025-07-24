@@ -30,6 +30,4 @@ validate()
 	.then(() => {
 		log.info('Done 🍓.');
 	})
-	.catch(e => {
-		console.error(e);
-	});
+	.catch(console.error);

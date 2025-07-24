@@ -83,7 +83,7 @@ export class FORMAT {
 		if (!data.streams) {
 			return {};
 		}
-		const stream = data.streams.filter(s => s.codec_type === 'audio')[0];
+		const stream = data.streams.find(s => s.codec_type === 'audio');
 		if (!stream) {
 			return {};
 		}
@@ -116,7 +116,7 @@ export class FORMAT {
 	static parseNum(s: string | undefined): number | undefined {
 		if (s !== undefined) {
 			const n = Number(s.trim());
-			if (isNaN(n)) {
+			if (Number.isNaN(n)) {
 				return;
 			}
 			return n;
@@ -131,7 +131,7 @@ export class FORMAT {
 		s = s.slice(0, 4).trim();
 		if (s.length === 4) {
 			const n = Number(s);
-			if (isNaN(n)) {
+			if (Number.isNaN(n)) {
 				return;
 			}
 			return n;
@@ -143,10 +143,10 @@ export class FORMAT {
 		if (!data?.format?.tags) {
 			return { format: TagFormatType.none };
 		}
-		const simple: { [name: string]: string | undefined } = {};
-		Object.keys(data.format.tags).forEach(key => {
-			simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
-		});
+		const simple: Record<string, string | undefined> = {};
+		for (const key of Object.keys(data.format.tags)) {
+			simple[key.toUpperCase().replaceAll(' ', '_')] = FORMAT.cleanText(data.format.tags[key]);
+		}
 		return {
 			format: TagFormatType.ffmpeg,
 			artist: simple.ARTIST,
@@ -236,14 +236,14 @@ export class FORMAT {
 	}
 
 	private static cleanText(s: string | undefined): string | undefined {
-		return s !== undefined ? s.replace(/ {2}/g, ' ').trim() : undefined;
+		return s === undefined ? undefined : s.replaceAll(/ {2}/g, ' ').trim();
 	}
 
 	static packFlacVorbisCommentJamServeTag(comment?: FlacComment, pictures?: Array<FlacPicture>): TrackTag | undefined {
 		if (!comment?.tag) {
 			return;
 		}
-		const simple: { [key: string]: string | undefined } = comment.tag;
+		const simple: Record<string, string | undefined> = comment.tag;
 		return {
 			format: TagFormatType.vorbis,
 			album: simple.ALBUM,

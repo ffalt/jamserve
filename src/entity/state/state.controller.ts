@@ -8,7 +8,7 @@ import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 import { Post } from '../../modules/rest/decorators/Post.js';
 import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
@@ -26,7 +26,7 @@ export class StateController {
 	): Promise<State | undefined> {
 		const result = await orm.findInStateTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return engine.transform.Base.state(orm, id, result.objType, user.id);
 	}

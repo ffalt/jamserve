@@ -48,8 +48,9 @@ export const ORMEntities = [
 	User
 ];
 
+// eslint-disable-next-line unicorn/prefer-array-index-of
 const empty = ORMEntities.findIndex(e => e === undefined);
-if (empty >= 0) {
+if (empty !== -1) {
 	console.error(ORMEntities);
 	throw new Error('Entity missing, probably because of a circular reference');
 }

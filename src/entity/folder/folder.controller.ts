@@ -16,7 +16,7 @@ import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 import { Post } from '../../modules/rest/decorators/Post.js';
 import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError } from '../../modules/deco/express/express-error.js';
 import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
 
 @Controller('/folder', { tags: ['Folder'], roles: [UserRole.stream] })
@@ -252,7 +252,7 @@ export class FolderController {
 		@Ctx() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (args.ids.length === 0) {
-			throw InvalidParamError('ids', 'Must have entries');
+			throw invalidParamError('ids', 'Must have entries');
 		}
 		const folder = await orm.Folder.oneOrFailByID(args.ids[0]);
 		return await engine.io.folder.move(args.ids, args.newParentID, folder.root.idOrFail());

@@ -1,7 +1,7 @@
 import type { ValidatorOptions } from 'class-validator';
 import { ClassType, TypeResolver } from 'type-graphql';
 
-export const bannedTypes: Function[] = [Promise, Array, Object, Function];
+export const bannedTypes: Array<Function> = [Promise, Array, Object, Function];
 
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
@@ -52,11 +52,11 @@ export interface AbstractClassOptions {
 }
 
 export interface ImplementsClassOptions {
-	implements?: Function | Function[];
+	implements?: Function | Array<Function>;
 }
 
 export interface AuthOptions {
-	roles?: string[];
+	roles?: Array<string>;
 }
 
 export interface AbstractOptions {
@@ -78,8 +78,8 @@ export interface NumberOptions {
 }
 
 export interface BinaryOptions {
-	binary?: string[];
-	responseStringMimeTypes?: string[];
+	binary?: Array<string>;
+	responseStringMimeTypes?: Array<string>;
 }
 
 export interface CustomPathParameterGroup extends NumberOptions {
@@ -96,12 +96,12 @@ export interface CustomPathParameters {
 export interface CustomPathParameterAliasRouteOptions {
 	route: string;
 	name?: string;
-	hideParameters?: string[];
+	hideParameters?: Array<string>;
 }
 
 export interface CustomPathParameterOptions {
 	customPathParameters?: CustomPathParameters;
-	aliasRoutes?: CustomPathParameterAliasRouteOptions[];
+	aliasRoutes?: Array<CustomPathParameterAliasRouteOptions>;
 }
 
 export declare type MethodAndPropDecorator = PropertyDecorator & MethodDecorator;

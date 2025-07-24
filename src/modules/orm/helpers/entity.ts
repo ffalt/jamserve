@@ -28,11 +28,11 @@ function transformValueForUse(value: any, field: PropertyMetadata): any {
 
 export function mapManagedToSource(instance: ManagedEntity): void {
 	const source: any = instance._source;
-	instance._meta.fields.forEach(field => {
+	for (const field of instance._meta.fields) {
 		if (!field.isRelation) {
 			source.set(field.name, transformValueForDB(instance[field.name], field));
 		}
-	});
+	}
 	if (!instance._source.createdAt) {
 		instance._source.createdAt = instance.createdAt;
 	}
@@ -73,7 +73,7 @@ export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata
 	Object.defineProperty(entity, '_em', { enumerable: false, value: em, writable: false });
 	Object.defineProperty(entity, '_source', { enumerable: false, value: source, writable: false });
 	Object.defineProperty(entity, '_meta', { enumerable: false, value: meta, writable: false });
-	meta.fields.forEach(field => {
+	for (const field of meta.fields) {
 		if (field.isRelation) {
 			const refOrCollection = entity[field.name];
 			if (refOrCollection instanceof Reference) {
@@ -86,7 +86,7 @@ export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata
 		} else {
 			entity[field.name] = transformValueForUse(source.get(field.name), field);
 		}
-	});
+	}
 	entity['createdAt'] = source.get('createdAt');
 	entity['updatedAt'] = source.get('updatedAt');
 	return entity;

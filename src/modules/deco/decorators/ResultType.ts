@@ -6,7 +6,8 @@ export type ObjectTypeOptions = DescriptionOptions & AbstractClassOptions & Impl
 
 export function BaseResultType(metadata: MetadataStorage, nameOrOptions?: string | ObjectTypeOptions, maybeOptions?: ObjectTypeOptions): ClassDecorator {
 	const { name, options } = getNameDecoratorParams(nameOrOptions, maybeOptions);
-	const interfaceClasses = options.implements && ([] as Function[]).concat(options.implements);
+	// eslint-disable-next-line unicorn/prefer-spread
+	const interfaceClasses = options.implements && ([] as Array<Function>).concat(options.implements);
 	return target => {
 		metadata.resultTypes.push({
 			name: name || target.name,

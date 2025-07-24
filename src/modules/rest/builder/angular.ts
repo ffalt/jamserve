@@ -36,7 +36,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, paramsType: s
 		resultType: 'string',
 		baseFuncResultType: '',
 		baseFunc: 'buildRequestUrl',
-		baseFuncParameters: !call.customPathParameters ? 'params' : '{}',
+		baseFuncParameters: call.customPathParameters ? '{}' : 'params',
 		tick: call.customPathParameters ? '`' : '\'',
 		validate,
 		apiPath: (call.controllerClassMetadata?.route ?? '') + route,
@@ -60,7 +60,7 @@ function generateBinClientCall(call: MethodMetadata, name: string, paramsType: s
 		resultType: '{ buffer: ArrayBuffer; contentType: string }',
 		baseFuncResultType: '',
 		baseFunc: 'binary',
-		baseFuncParameters: !call.customPathParameters ? 'params' : '{}',
+		baseFuncParameters: call.customPathParameters ? '{}' : 'params',
 		tick: call.customPathParameters ? '`' : '\'',
 		validate,
 		apiPath: (call.controllerClassMetadata?.route ?? '') + route,
@@ -106,19 +106,19 @@ export async function buildAngularClientList(): Promise<Array<{ name: string; co
 		(key, part, calls) =>
 			buildPartService('./static/templates/client/jam.part.service.ts.template', key, part, calls)
 	);
-	return parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content })).concat(
-		...[
-			{ name: `jam.service.ts`, content: await buildParts('./static/templates/client/jam.service.ts.template', parts) },
-			{ name: `jam.module.ts`, content: await buildParts('./static/templates/client/jam.module.ts.template', parts) },
-			{ name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client/jam.auth.service.ts.template', { apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION }) },
-			{ name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client/jam.base.service.ts.template') },
-			{ name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client/jam.http.service.ts.template') },
-			{ name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client/jam.configuration.ts.template') },
-			{ name: `index.ts`, content: await buildTemplate('./static/templates/client/index.ts.template') },
-			{ name: 'model/jam-rest-data.ts', content: buildTSResultTypes() },
-			{ name: 'model/jam-rest-params.ts', content: buildTSParameterTypes() },
-			{ name: 'model/jam-enums.ts', content: buildTSEnums() }
-		]);
+	const list = parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }));
+	return [...list,
+		{ name: `jam.service.ts`, content: await buildParts('./static/templates/client/jam.service.ts.template', parts) },
+		{ name: `jam.module.ts`, content: await buildParts('./static/templates/client/jam.module.ts.template', parts) },
+		{ name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client/jam.auth.service.ts.template', { apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION }) },
+		{ name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client/jam.base.service.ts.template') },
+		{ name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client/jam.http.service.ts.template') },
+		{ name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client/jam.configuration.ts.template') },
+		{ name: `index.ts`, content: await buildTemplate('./static/templates/client/index.ts.template') },
+		{ name: 'model/jam-rest-data.ts', content: buildTSResultTypes() },
+		{ name: 'model/jam-rest-params.ts', content: buildTSParameterTypes() },
+		{ name: 'model/jam-enums.ts', content: buildTSEnums() }
+	];
 }
 
 export async function buildAngularClientZip(): Promise<ApiBinaryResult> {

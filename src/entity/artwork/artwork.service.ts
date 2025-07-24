@@ -4,7 +4,7 @@ import { ArtworkImageType } from '../../types/enums.js';
 import { Folder } from '../folder/folder.js';
 import { IoService } from '../../modules/engine/services/io.service.js';
 import { Artwork } from './artwork.js';
-import path from 'path';
+import path from 'node:path';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ImageResult } from '../../modules/image/image.format.js';
@@ -26,18 +26,21 @@ export class ArtworkService {
 	}
 
 	async upload(artwork: Artwork, filename: string): Promise<AdminChangeQueueInfo> {
-		return this.ioService.artwork.replace(artwork.id, filename, (await artwork.folder.getOrFail()).root.idOrFail());
+		const folder = await artwork.folder.getOrFail();
+		return this.ioService.artwork.replace(artwork.id, filename, folder.root.idOrFail());
 	}
 
 	async rename(artwork: Artwork, newName: string): Promise<AdminChangeQueueInfo> {
-		return this.ioService.artwork.rename(artwork.id, newName, (await artwork.folder.getOrFail()).root.idOrFail());
+		const folder = await artwork.folder.getOrFail();
+		return this.ioService.artwork.rename(artwork.id, newName, folder.root.idOrFail());
 	}
 
 	async remove(artwork: Artwork): Promise<AdminChangeQueueInfo> {
-		return this.ioService.artwork.delete(artwork.id, (await artwork.folder.getOrFail()).root.idOrFail());
+		const folder = await artwork.folder.getOrFail();
+		return this.ioService.artwork.delete(artwork.id, folder.root.idOrFail());
 	}
 
-	async getImage(orm: Orm, artwork: Artwork, size: number | undefined, format: string | undefined): Promise<ImageResult> {
+	async getImage(_orm: Orm, artwork: Artwork, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		return this.imageModule.get(artwork.id, path.join(artwork.path, artwork.name), size, format);
 	}
 }

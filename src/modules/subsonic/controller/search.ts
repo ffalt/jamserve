@@ -73,13 +73,13 @@ export class SubsonicSearchApi {
 		 */
 		const searchResult2: SubsonicSearchResult2 = {};
 		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
-		const q = (query.query || '').replace(/\*/g, '');
+		const q = (query.query || '').replaceAll('*', '');
 		const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount || 20, skip: query.songOffset || 0 });
 		searchResult2.song = await SubsonicHelper.prepareTracks(orm, trackList, user);
 
 		const artistFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.artist] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
 		const albumFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.album] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
-		const ids = (albumFolderList.map(f => f.id)).concat(artistFolderList.map(f => f.id));
+		const ids = [...(albumFolderList.map(f => f.id)), ...artistFolderList.map(f => f.id)];
 		const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.folder, user.id);
 		searchResult2.artist = [];
 		searchResult2.album = [];

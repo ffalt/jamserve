@@ -72,10 +72,11 @@ export class FolderTransformService extends BaseTransformService {
 			folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
 			folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs
 		};
-		return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
+		const items = await o.children.getItems();
+		return await Promise.all(items.map(t => this.folderBase(orm, t, folderArgs, user)));
 	}
 
-	async folderIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMFolder>>): Promise<FolderIndex> {
+	async folderIndex(_orm: Orm, result: IndexResult<IndexResultGroup<ORMFolder>>): Promise<FolderIndex> {
 		return this.index(result, async item => {
 			return {
 				id: item.id,
@@ -86,12 +87,13 @@ export class FolderTransformService extends BaseTransformService {
 	}
 
 	async folderTag(o: ORMFolder): Promise<FolderTag> {
+		const genres = await o.genres.getItems();
 		return {
 			album: o.album,
 			albumType: o.albumType,
 			artist: o.artist,
 			artistSort: o.artistSort,
-			genres: (await o.genres.getItems()).map(g => g.name),
+			genres: genres.map(g => g.name),
 			year: o.year,
 			mbArtistID: o.mbArtistID,
 			mbReleaseID: o.mbReleaseID,
@@ -99,7 +101,7 @@ export class FolderTransformService extends BaseTransformService {
 		};
 	}
 
-	async folderParents(orm: Orm, o: ORMFolder): Promise<Array<FolderParent>> {
+	async folderParents(_orm: Orm, o: ORMFolder): Promise<Array<FolderParent>> {
 		const result: Array<FolderParent> = [];
 		let parent: ORMFolder | undefined = o;
 		while (parent) {

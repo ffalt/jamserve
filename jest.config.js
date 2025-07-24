@@ -2,7 +2,7 @@ export default {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	coverageDirectory: 'coverage',
-	testTimeout: 1000000,
+	testTimeout: 1_000_000,
 	extensionsToTreatAsEsm: ['.ts'],
 	maxWorkers: 1,
 	roots: [

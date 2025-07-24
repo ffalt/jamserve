@@ -12,18 +12,22 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 	buildOrder(order?: BookmarkOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case BookmarkOrderFields.created:
+			case BookmarkOrderFields.created: {
 				return [['createdAt', direction]];
-			case BookmarkOrderFields.updated:
+			}
+			case BookmarkOrderFields.updated: {
 				return [['updatedAt', direction]];
-			case BookmarkOrderFields.media:
+			}
+			case BookmarkOrderFields.media: {
 				return [
 					['trackORM', 'path', direction],
 					['episodeORM', 'path', direction]
 				];
+			}
 			case BookmarkOrderFields.default:
-			case BookmarkOrderFields.position:
+			case BookmarkOrderFields.position: {
 				return [['position', direction]];
+			}
 		}
 		return [];
 	}

@@ -23,22 +23,25 @@ export class MetadataServiceSimilarTracks {
 	async findSongTrackIDs(orm: Orm, songs: Array<Song>): Promise<Array<string>> {
 		const ids: Array<Song> = [];
 		const vals: Array<Song> = [];
-		songs.forEach(sim => {
+		for (const sim of songs) {
 			if (sim.mbid) {
 				ids.push(sim);
 			} else {
 				vals.push(sim);
 			}
-		});
+		}
 		const result = new Set<string>();
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
 		const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
 		for (const sim of ids) {
-			const t = list.find(async tr => (await tr.tag.get())?.mbTrackID === sim.mbid);
-			if (!t) {
-				vals.push(sim);
-			} else {
+			const t = list.find(async tr => {
+				const entry = await tr.tag.get();
+				return entry?.mbTrackID === sim.mbid;
+			});
+			if (t) {
 				result.add(t.id);
+			} else {
+				vals.push(sim);
 			}
 		}
 		for (const sim of vals) {
@@ -60,14 +63,14 @@ export class MetadataServiceSimilarTracks {
 				data = await this.service.lastFMTopTracksArtist(orm, artist.name);
 			}
 			if (data?.toptracks?.track) {
-				tracks = tracks.concat(data.toptracks.track.map(song => {
+				tracks = [...tracks, ...data.toptracks.track.map(song => {
 					return {
 						name: song.name,
 						artist: song.artist.name,
 						mbid: song.mbid,
 						url: song.url
 					};
-				}));
+				})];
 			}
 		}
 		return shuffle(tracks);
@@ -75,7 +78,7 @@ export class MetadataServiceSimilarTracks {
 
 	private async getSimilarArtistTracks(orm: Orm, similars: Array<LastFM.SimilarArtist>, page?: PageArgs): Promise<PageResult<Track>> {
 		if (!similars || similars.length === 0) {
-			return { items: [], ...(page || {}), total: 0 };
+			return { items: [], ...page, total: 0 };
 		}
 		const songs = await this.getSimilarSongs(orm, similars);
 		const ids = await this.findSongTrackIDs(orm, songs);

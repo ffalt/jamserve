@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { DebouncePromises } from './debounce-promises.js';
 
 export interface IDCacheResult {
@@ -31,9 +31,7 @@ export class IDFolderCache<T> {
 		const searches = ids.filter(id => id.length > 0).map(id => this.prefixCacheFilename(id));
 		if (searches.length > 0) {
 			let list = await fse.readdir(this.dataPath);
-			list = list.filter(name => {
-				return searches.findIndex(s => name.startsWith(s)) >= 0;
-			});
+			list = list.filter(name => searches.some(s => name.startsWith(s)));
 			for (const filename of list) {
 				await fse.unlink(path.resolve(this.dataPath, filename));
 			}
@@ -68,9 +66,9 @@ export class IDFolderCache<T> {
 			const result: IDCacheResult = { file: { filename: cachefile, name: cacheID } };
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
-		} catch (e) {
-			this.cacheDebounce.reject(cacheID, e as Error);
-			return Promise.reject(e as Error);
+		} catch (error) {
+			this.cacheDebounce.reject(cacheID, error as Error);
+			return Promise.reject(error);
 		}
 	}
 }

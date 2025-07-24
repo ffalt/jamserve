@@ -24,7 +24,7 @@ export class PlaylistBase extends Base {
 	@ObjField({ description: 'Playlist Changed Timestamp', min: 0, example: examples.timestamp })
 	changed!: number;
 
-	@ObjField({ description: 'Playlist duration', min: 0, example: 12345 })
+	@ObjField({ description: 'Playlist duration', min: 0, example: 12_345 })
 	duration!: number;
 
 	@ObjField({ description: 'Number of Entries', min: 0, example: 5 })

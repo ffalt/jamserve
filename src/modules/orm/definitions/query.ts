@@ -16,11 +16,11 @@ export interface QueryOrderMap {
 }
 
 export interface FindOptions {
-	populate?: string[] | boolean;
+	populate?: Array<string> | boolean;
 	orderBy?: QueryOrderMap;
 	limit?: number;
 	offset?: number;
 	refresh?: boolean;
-	fields?: string[];
+	fields?: Array<string>;
 	schema?: string;
 }

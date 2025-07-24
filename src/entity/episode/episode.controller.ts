@@ -83,7 +83,7 @@ export class EpisodeController {
 	): Promise<void> {
 		const episode = await orm.Episode.oneOrFailByID(id);
 		if (!episode.path) {
-			engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e)); // do not wait
+			engine.episode.downloadEpisode(orm, episode).catch(error => log.error(error)); // do not wait
 		}
 	}
 }

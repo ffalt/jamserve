@@ -15,7 +15,7 @@ import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 import { Post } from '../../modules/rest/decorators/Post.js';
 import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
 import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
-import { InvalidParamError, NotFoundError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError, notFoundError, unauthError } from '../../modules/deco/express/express-error.js';
 import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
 import { Upload } from '../../modules/rest/decorators/Upload.js';
 
@@ -78,10 +78,10 @@ export class UserController {
 		const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
 		if (user.id === id) {
 			if (!args.roleAdmin) {
-				throw InvalidParamError('roleAdmin', `You can't de-admin yourself`);
+				throw invalidParamError('roleAdmin', `You can't de-admin yourself`);
 			}
 			if (!args.roleStream) {
-				throw InvalidParamError('roleStream', `You can't remove api access for yourself`);
+				throw invalidParamError('roleStream', `You can't remove api access for yourself`);
 			}
 		}
 		return engine.transform.User.user(orm, await engine.user.update(orm, u, args), {}, user);
@@ -96,7 +96,7 @@ export class UserController {
 		@Ctx() { orm, engine, user }: Context
 	): Promise<void> {
 		if (user.id === id) {
-			throw InvalidParamError('id', `You can't remove yourself`);
+			throw invalidParamError('id', `You can't remove yourself`);
 		}
 		const u = await orm.User.oneOrFailByID(id);
 		await engine.user.remove(orm, u);
@@ -167,7 +167,7 @@ export class UserController {
 		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
 		const session = await engine.session.createSubsonic(u.id);
 		if (!session) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return { token: session.jwth };
 	}
@@ -175,7 +175,7 @@ export class UserController {
 	private static async validatePassword(orm: Orm, engine: EngineService, password: string, user: ORMUser): Promise<void> {
 		const result = await engine.user.auth(orm, user.name, password);
 		if (!result) {
-			return Promise.reject(UnauthError());
+			return Promise.reject(unauthError());
 		}
 	}
 
@@ -184,7 +184,7 @@ export class UserController {
 		if (userID === user.id || user.roleAdmin) {
 			return userID === user.id ? user : await orm.User.oneOrFailByID(userID);
 		}
-		return Promise.reject(UnauthError());
+		return Promise.reject(unauthError());
 	}
 
 	private static async validateUserOrAdmin(orm: Orm, id: string, user: ORMUser): Promise<ORMUser> {
@@ -192,7 +192,7 @@ export class UserController {
 			return user;
 		}
 		if (!user.roleAdmin) {
-			throw UnauthError();
+			throw unauthError();
 		}
 		return await orm.User.oneOrFailByID(id);
 	}

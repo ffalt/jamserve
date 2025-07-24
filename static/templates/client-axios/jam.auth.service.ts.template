@@ -62,7 +62,7 @@ export class JamAuthService {
 			}, {withCredentials: canUseSession});
 			this.user = data.user;
 			if (!this.user) {
-				return Promise.reject(Error('Invalid Server Response'));
+				return Promise.reject(new Error('Invalid Server Response'));
 			}
 			this.auth = {
 				server,

@@ -104,18 +104,18 @@ export async function buildAxiosClientList(): Promise<Array<{ name: string; cont
 		generateUploadClientCalls,
 		(key, part, calls) => buildPartService('./static/templates/client-axios/jam.part.service.ts.template', key, part, calls)
 	);
-	return parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }))
-		.concat([
-			{ name: 'jam.service.ts', content: await buildParts('./static/templates/client-axios/jam.service.ts.template', parts) },
-			{ name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.base.service.ts.template') },
-			{ name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.http.service.ts.template') },
-			{ name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client-axios/jam.configuration.ts.template') },
-			{ name: `index.ts`, content: await buildTemplate('./static/templates/client-axios/index.ts.template') },
-			{ name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.auth.service.ts.template', { apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION }) },
-			{ name: 'model/jam-rest-data.ts', content: buildTSResultTypes() },
-			{ name: 'model/jam-rest-params.ts', content: buildTSParameterTypes() },
-			{ name: 'model/jam-enums.ts', content: buildTSEnums() }
-		]);
+	const list = parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }));
+	return [...list,
+		{ name: 'jam.service.ts', content: await buildParts('./static/templates/client-axios/jam.service.ts.template', parts) },
+		{ name: `jam.base.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.base.service.ts.template') },
+		{ name: `jam.http.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.http.service.ts.template') },
+		{ name: `jam.configuration.ts`, content: await buildTemplate('./static/templates/client-axios/jam.configuration.ts.template') },
+		{ name: `index.ts`, content: await buildTemplate('./static/templates/client-axios/index.ts.template') },
+		{ name: `jam.auth.service.ts`, content: await buildTemplate('./static/templates/client-axios/jam.auth.service.ts.template', { apiPrefix: `/jam/${JAMAPI_URL_VERSION}`, version: JAMAPI_VERSION }) },
+		{ name: 'model/jam-rest-data.ts', content: buildTSResultTypes() },
+		{ name: 'model/jam-rest-params.ts', content: buildTSParameterTypes() },
+		{ name: 'model/jam-enums.ts', content: buildTSEnums() }
+	];
 }
 
 export async function buildAxiosClientZip(): Promise<ApiBinaryResult> {

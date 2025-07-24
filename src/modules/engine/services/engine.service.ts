@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { SettingsService } from '../../../entity/settings/settings.service.js';
 import { IoService } from './io.service.js';
@@ -93,8 +93,8 @@ export class EngineService {
 			log.info(`Starting rescan`);
 			this.io.root.startUpRefresh(orm, forceRescan).then(() => {
 				return forceRescan ? this.settings.saveSettings(orm) : undefined;
-			}).catch(e => {
-				log.error('Error on startup scanning', e);
+			}).catch(error => {
+				log.error('Error on startup scanning', error);
 			});
 		}
 	}

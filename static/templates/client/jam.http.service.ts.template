@@ -16,7 +16,7 @@ export interface HTTPOptions {
 async function handleError(e: any): Promise<any> {
 	console.error(e);
 	if (e.status === 0) {
-		return Promise.reject(Error('Could not reach server'));
+		return Promise.reject(new Error('Could not reach server'));
 	}
 	return Promise.reject(e);
 }
@@ -38,7 +38,7 @@ export class JamHttpService {
 				})
 					.subscribe(res => {
 						if (!res?.body) {
-							return reject(Error('Invalid Binary Server Response'));
+							return reject(new Error('Invalid Binary Server Response'));
 						}
 						resolve({buffer: res.body, contentType: res.headers.get('content-type') || 'invalid'});
 					});

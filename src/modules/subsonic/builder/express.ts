@@ -12,7 +12,7 @@ export function subsonicRouter(router: express.Router, metadata: MetadataStorage
 		}
 		let all: Array<MethodMetadata> = [];
 		iterateControllers(metadata.controllerClasses, ctrl, ctrlClass => {
-			all = all.concat(metadata.all.filter(g => g.controllerClassMetadata === ctrlClass));
+			all = [...all, ...metadata.all.filter(g => g.controllerClassMetadata === ctrlClass)];
 		});
 		const method = new ExpressMethod();
 		for (const request of all) {

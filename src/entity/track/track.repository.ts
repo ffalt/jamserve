@@ -14,31 +14,41 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 	buildOrder(order?: TrackOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case TrackOrderFields.created:
+			case TrackOrderFields.created: {
 				return [['createdAt', direction]];
-			case TrackOrderFields.updated:
+			}
+			case TrackOrderFields.updated: {
 				return [['updatedAt', direction]];
-			case TrackOrderFields.parent:
+			}
+			case TrackOrderFields.parent: {
 				return [['path', direction]];
-			case TrackOrderFields.filename:
+			}
+			case TrackOrderFields.filename: {
 				return [['path', direction], ['fileName', direction]];
-			case TrackOrderFields.album:
+			}
+			case TrackOrderFields.album: {
 				return [['albumORM', 'name', direction]];
-			case TrackOrderFields.trackNr:
+			}
+			case TrackOrderFields.trackNr: {
 				return [['tagORM', 'trackNr', direction]];
-			case TrackOrderFields.discNr:
+			}
+			case TrackOrderFields.discNr: {
 				return [['tagORM', 'disc', direction]];
-			case TrackOrderFields.seriesNr:
+			}
+			case TrackOrderFields.seriesNr: {
 				return [['tagORM', 'seriesNr', direction]];
-			case TrackOrderFields.title:
+			}
+			case TrackOrderFields.title: {
 				return [['tagORM', 'title', direction]];
-			case TrackOrderFields.default:
+			}
+			case TrackOrderFields.default: {
 				return [
 					['tagORM', 'disc', direction],
 					['path', OrderHelper.inverse(direction)],
 					['tagORM', 'trackNr', direction],
 					['tagORM', 'title', direction]
 				];
+			}
 		}
 		return [];
 	}
@@ -51,11 +61,11 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 		if (filter?.childOfID) {
 			const folderRepo = this.em.getRepository(Folder) as FolderRepository;
 			const folder = await folderRepo.oneOrFailByID(filter.childOfID);
-			folderIDs = folderIDs.concat(await folderRepo.findAllDescendantsIds(folder));
+			folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder)];
 			folderIDs.push(filter.childOfID);
 		}
 		if (filter?.folderIDs) {
-			folderIDs = folderIDs.concat(filter.folderIDs);
+			folderIDs = [...folderIDs, ...filter.folderIDs];
 		}
 		const result = QHelper.buildQuery<Track>(
 			[

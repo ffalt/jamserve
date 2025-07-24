@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { downloadFile } from '../../utils/download.js';
@@ -84,15 +84,15 @@ export class EpisodeService {
 				episode.fileSize = stat.size;
 				episode.duration = result.mediaDuration;
 				episode.path = filename;
-			} catch (e) {
+			} catch (error) {
 				episode.status = PodcastStatus.error;
-				episode.error = (e || '').toString();
+				episode.error = (error || '').toString();
 			}
 			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-		} catch (e) {
+		} catch (error) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-			return Promise.reject(e as Error);
+			return Promise.reject(error);
 		}
 	}
 

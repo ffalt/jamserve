@@ -37,7 +37,7 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 
 	get: (sid: string, callback: (err: Error | null | undefined, data?: SessionData | undefined) => void) => void = (sid, callback) => {
 		this._get(sid)
-			.then(data => callback(null, data))
+			.then(data => callback(undefined, data))
 			.catch(callback);
 	};
 
@@ -54,22 +54,22 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 			.catch(callback);
 	};
 
-	all: (callback: (err: any, obj?: { [sid: string]: SessionData } | null) => void) => void = callback => {
+	all: (callback: (err: any, obj?: Record<string, SessionData> | null) => void) => void = callback => {
 		this.sessionService.all()
 			.then(data => {
-				const result: { [id: string]: SessionData } = {};
+				const result: Record<string, SessionData> = {};
 				for (const item of data) {
 					result[item.sessionID] = item;
 				}
-				callback(null, result);
+				callback(undefined, result);
 			})
-			.catch(e => callback(e, undefined));
+			.catch(error => callback(error));
 	};
 
 	length: (callback: (err: any, length: number) => void) => void = callback => {
 		this.sessionService.count()
-			.then(data => callback(null, data))
-			.catch(e => callback(e, 0));
+			.then(data => callback(undefined, data))
+			.catch(error => callback(error, 0));
 	};
 
 	clear: (callback?: (err?: any) => void) => void = callback => {

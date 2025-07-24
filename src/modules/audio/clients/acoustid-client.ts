@@ -43,7 +43,7 @@ export class AcoustidClient extends WebserviceClient {
 			fingerprint: fp.fingerprint
 		});
 		if (data.status !== 'ok') {
-			return Promise.reject(Error(data.status));
+			return Promise.reject(new Error(data.status));
 		}
 		return data.results;
 	}

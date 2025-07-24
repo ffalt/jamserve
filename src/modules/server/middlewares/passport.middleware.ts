@@ -36,12 +36,13 @@ function passPortAuth(name: string, next: express.NextFunction, req: UserRequest
 					req.user = user;
 				}
 				next();
-				req.engine.rateLimit.loginSlowDownReset(req).catch(e => {
-					throw e;
-				});
+				req.engine.rateLimit.loginSlowDownReset(req)
+					.catch(error => {
+						throw error;
+					});
 			})
-			.catch(e => {
-				throw e;
+			.catch(error => {
+				throw error;
 			});
 	})(req, res, next);
 }
@@ -50,11 +51,11 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 	router.use(passport.initialize());
 	router.use(passport.session());
 	passport.serializeUser((user, done) => {
-		done(null, user?.id || '_invalid_');
+		done(undefined, user?.id || '_invalid_');
 	});
 	passport.deserializeUser((id: string, done) => {
 		engine.user.findByID(engine.orm.fork(), id)
-			.then(user => done(null, user))
+			.then(user => done(undefined, user))
 			.catch(done);
 	});
 
@@ -62,13 +63,13 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		{ usernameField: 'username', passwordField: 'password' },
 		(username, password, done) => {
 			engine.user.auth(engine.orm.fork(), username, password)
-				.then(user => done(null, user || false))
+				.then(user => done(undefined, user || false))
 				.catch(done);
 		}
 	));
 	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
 		engine.user.authJWT(engine.orm.fork(), jwtPayload)
-			.then(user => done(null, user || false, jwtPayload))
+			.then(user => done(undefined, user || false, jwtPayload))
 			.catch(done);
 	};
 	passport.use('jwt-header', new passportJWT.Strategy({
@@ -104,8 +105,8 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 			.then(() => {
 				passPortAuth(name, next, req, jwth, res);
 			})
-			.catch(e => {
-				throw e;
+			.catch(error => {
+				throw error;
 			});
 	}
 

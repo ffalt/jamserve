@@ -8,9 +8,6 @@ export class ApiError extends Error {
 		// Saving class name in the property of our custom error as a shortcut.
 		this.name = this.constructor.name;
 
-		// Capturing stack trace, excluding constructor call from it.
-		Error.captureStackTrace(this, this.constructor);
-
 		// You can use any additional properties you want.
 		// I'm going to use preferred HTTP status for this error types.
 		// `500` is the default value if not specified.
@@ -26,11 +23,11 @@ export const Errors = {
 	unauthorized: 'Unauthorized'
 };
 
-export function MissingParamError(param: string): ApiError {
+export function missingParamError(param: string): ApiError {
 	return new ApiError(`${Errors.missingParameter}: ${param}`, 400);
 }
 
-export function InvalidParamError(param: string, msg?: string): ApiError {
+export function invalidParamError(param: string, msg?: string): ApiError {
 	let message = `${Errors.invalidParameter}: ${param}`;
 	if (msg) {
 		message += ` - ${msg}`;
@@ -38,7 +35,7 @@ export function InvalidParamError(param: string, msg?: string): ApiError {
 	return new ApiError(message, 422);
 }
 
-export function NotFoundError(msg?: string): ApiError {
+export function notFoundError(msg?: string): ApiError {
 	let message = Errors.itemNotFound;
 	if (msg) {
 		message += `: ${msg}`;
@@ -46,7 +43,7 @@ export function NotFoundError(msg?: string): ApiError {
 	return new ApiError(message, 404);
 }
 
-export function UnauthError(msg?: string): ApiError {
+export function unauthError(msg?: string): ApiError {
 	let message = Errors.unauthorized;
 	if (msg) {
 		message += `: ${msg}`;
@@ -54,6 +51,6 @@ export function UnauthError(msg?: string): ApiError {
 	return new ApiError(message, 401);
 }
 
-export function GenericError(msg?: string): ApiError {
+export function genericError(msg?: string): ApiError {
 	return new ApiError(msg || 'Guru Meditation', 500);
 }

@@ -13,20 +13,24 @@ function prepareFrame(frame: ID3v2Frames.Frame): void {
 		frame.value.bin = frame.value.bin.toString('base64');
 	}
 	if (frame?.subframes) {
-		frame.subframes.forEach(prepareFrame);
+		for (const subframe of frame.subframes) {
+			prepareFrame(subframe);
+		}
 	}
 }
 
 export function prepareResponseTag(tag: RawTag): void {
-	Object.keys(tag.frames).forEach(key => {
+	for (const key of Object.keys(tag.frames)) {
 		const frames = tag.frames[key];
 		if (frames) {
-			frames.forEach(prepareFrame);
+			for (const frame of frames) {
+				prepareFrame(frame);
+			}
 		}
-	});
+	}
 }
 
-export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: { [key: string]: string }): void {
+export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<string, string>): void {
 	builder
 		.album(simple.ALBUM)
 		.albumSort(simple.ALBUMSORT)
@@ -125,10 +129,10 @@ export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: { [key: stri
 // builder.popm('POPM', simple['RATING:user@email']);
 // builder.idtext('TXXX', 'MusicMagic Fingerprint', simple.FINGERPRINT=MusicMagic Fingerprint);
 
-export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: { [key: string]: string }): void {
+export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<string, string>): void {
 	const pad = '000';
 	let nr = 1;
-	let id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
+	let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
 	while (simple[id]) {
 		const chapterTime = moment(simple[id]).valueOf() || 0;
 		const chapterID = simple[`${id}ID`] || id;
@@ -138,7 +142,7 @@ export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: { [key: 
 		subframeBuilder.title(chapterName).website(chapterURL);
 		builder.chapter(chapterID, chapterTime, chapterTime, 0, 0, subframeBuilder.buildFrames());
 		nr++;
-		id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
+		id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
 	}
 }
 
@@ -169,11 +173,11 @@ export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<RawTag | unde
 		version: id3v2tag.head ? id3v2tag.head.ver : 4,
 		frames: {}
 	};
-	id3v2tag.frames.forEach(frame => {
+	for (const frame of id3v2tag.frames) {
 		const f = tag.frames[frame.id] || [];
 		f.push({ id: frame.id, value: frame.value });
 		tag.frames[frame.id] = f;
-	});
+	}
 	prepareResponseTag(tag);
 	return tag;
 }
@@ -185,9 +189,9 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 	];
 	const simple = ID3v2.simplify(tag, DropFramesList) as any;
 	const comments: Array<string> = [];
-	Object.keys(simple).forEach(key => {
+	for (const key of Object.keys(simple)) {
 		comments.push(`${key}=${simple[key].toString()}`);
-	});
+	}
 	const result: Array<MetaWriteableDataBlock> = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
 	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;
 	for (const pic of pics) {
@@ -221,20 +225,21 @@ function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
 		}
 	}
 	if (frame?.subframes) {
-		frame.subframes.forEach(rawFrameToID3v2);
+		for (const subframe of frame.subframes) {
+			rawFrameToID3v2(subframe);
+		}
 	}
 }
 
 export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
 	const frames: Array<IID3V2.Frame> = [];
-	Object.keys(tag.frames).forEach(id => {
+	for (const id of Object.keys(tag.frames)) {
 		const f = tag.frames[id] || [];
-		f.forEach(frame => {
+		for (const frame of f) {
 			rawFrameToID3v2(frame);
 			frames.push(frame);
-		});
-		return;
-	});
+		}
+	}
 	return {
 		id: ITagID.ID3v2,
 		head: {

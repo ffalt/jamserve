@@ -12,7 +12,7 @@ import { Get } from '../../modules/rest/decorators/Get.js';
 import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
 import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 import { Post } from '../../modules/rest/decorators/Post.js';
 import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
 import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
@@ -32,7 +32,7 @@ export class PlaylistController {
 	): Promise<Playlist> {
 		const list = await orm.Playlist.oneOrFail({ where: { id } });
 		if (!list.isPublic && user.id !== list.user.id()) {
-			throw NotFoundError();
+			throw notFoundError();
 		}
 		return engine.transform.playlist(
 			orm, list,

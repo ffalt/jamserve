@@ -14,24 +14,33 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 	buildOrder(order?: AlbumOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case AlbumOrderFields.created:
+			case AlbumOrderFields.created: {
 				return [['createdAt', direction]];
-			case AlbumOrderFields.updated:
+			}
+			case AlbumOrderFields.updated: {
 				return [['updatedAt', direction]];
-			case AlbumOrderFields.name:
+			}
+			case AlbumOrderFields.name: {
 				return [['name', direction]];
-			case AlbumOrderFields.duration:
+			}
+			case AlbumOrderFields.duration: {
 				return [['duration', direction]];
-			case AlbumOrderFields.albumType:
+			}
+			case AlbumOrderFields.albumType: {
 				return [['albumType', direction]];
-			case AlbumOrderFields.artist:
+			}
+			case AlbumOrderFields.artist: {
 				return [['artistORM', 'name', direction]];
-			case AlbumOrderFields.year:
+			}
+			case AlbumOrderFields.year: {
 				return [['year', direction]];
-			case AlbumOrderFields.seriesNr:
+			}
+			case AlbumOrderFields.seriesNr: {
 				return this.seriesNrOrder(direction);
-			case AlbumOrderFields.default:
+			}
+			case AlbumOrderFields.default: {
 				return AlbumRepository.defaultOrder(direction);
+			}
 		}
 		return [];
 	}

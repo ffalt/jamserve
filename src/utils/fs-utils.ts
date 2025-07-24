@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 export async function fileDeleteIfExists(pathName: string): Promise<void> {
 	const exists = await fse.pathExists(pathName);
@@ -29,8 +29,8 @@ export function basenameStripExt(filename: string): string {
 
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s.toString()
-		.replace(/:/g, ' - ')
-		.replace(/[?/!\\"|*]/g, replace);
+		.replaceAll(':', ' - ')
+		.replaceAll(/[?/!\\"|*]/g, replace);
 }
 
 const FolderSystemCharsRegEx = /[<>:"/\\|?*]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
@@ -52,8 +52,8 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 		* (asterisk)
 	 */
 	return s.toString()
-		.replace(/:/g, ' -')
-		.replace(/[|*?/!\\<>"]/g, replace);
+		.replaceAll(':', ' -')
+		.replaceAll(/[|*?/!\\<>"]/g, replace);
 }
 
 export function ensureTrailingPathSeparator(s: string): string {
@@ -65,7 +65,7 @@ export function ensureTrailingPathSeparator(s: string): string {
 
 export function removeTrailingPathSeparator(s: string): string {
 	if (s.endsWith(path.sep)) {
-		return s.slice(0, s.length - 1);
+		return s.slice(0, -1);
 	}
 	return s;
 }

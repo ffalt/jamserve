@@ -1,9 +1,10 @@
 function xmlString(s: any): string {
-	return s.toString().replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&apos;');
+	return s.toString()
+		.replaceAll('&', '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;')
+		.replaceAll('\'', '&apos;');
 }
 
 function xmlContent(o: any): string {
@@ -21,7 +22,7 @@ function xmlTag(key: string, val: string, parameter: string): string {
 
 function xmlParameters(o: any): string {
 	const sl: Array<string> = [];
-	Object.keys(o).forEach(key => {
+	for (const key of Object.keys(o)) {
 		if ((key !== 'value')) {
 			const sub = o[key];
 			if (!Array.isArray(sub) && (typeof sub !== 'object')) {
@@ -31,32 +32,32 @@ function xmlParameters(o: any): string {
 				}
 			}
 		}
-	});
+	}
 	return sl.join('');
 }
 
 function xmlObject(o: any): string {
 	const sl: Array<string> = [];
-	Object.keys(o).forEach(key => {
+	for (const key of Object.keys(o)) {
 		const sub = o[key];
 		if (Array.isArray(sub)) {
-			sub.forEach(entry => {
+			for (const entry of sub) {
 				const val = xmlContent(entry) + xmlObject(entry);
 				sl.push(xmlTag(key, val, xmlParameters(entry)));
-			});
+			}
 		} else if (typeof sub === 'object') {
 			const val = xmlObject(sub);
 			sl.push(xmlTag(key, val, xmlParameters(sub)));
 		}
-	});
+	}
 	return sl.join('');
 }
 
 export function xml(o: any): string {
 	const sl: Array<string> = [];
-	Object.keys(o).forEach(key => {
+	for (const key of Object.keys(o)) {
 		const val = xmlObject(o[key]);
 		sl.push(xmlTag(key, val, xmlParameters(o[key])));
-	});
+	}
 	return `<?xml version="1.0" encoding="UTF-8"?>${sl.join('')}`;
 }

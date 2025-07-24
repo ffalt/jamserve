@@ -23,7 +23,7 @@ import { SubsonicController } from '../decorators/SubsonicController.js';
 import { SubsonicCtx } from '../decorators/SubsonicContext.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { StreamOptions } from '../../../entity/stream/stream.service.js';
-import path from 'path';
+import path from 'node:path';
 
 const log = logger('SubsonicApi');
 
@@ -62,12 +62,12 @@ export class SubsonicMediaRetrievalApi {
 		switch (o.objType) {
 			case DBObjectType.track: {
 				const res = await engine.stream.streamTrack(o.obj as Track, opts);
-				engine.nowPlaying.reportTrack(orm, o.obj as Track, user).catch(e => log.error(e)); // do not wait
+				engine.nowPlaying.reportTrack(orm, o.obj as Track, user).catch(error => log.error(error)); // do not wait
 				return res;
 			}
 			case DBObjectType.episode: {
 				const result = await engine.stream.streamEpisode(o.obj as Episode, opts);
-				engine.nowPlaying.reportEpisode(orm, o.obj as Episode, user).catch(e => log.error(e)); // do not wait
+				engine.nowPlaying.reportEpisode(orm, o.obj as Episode, user).catch(error => log.error(error)); // do not wait
 				return result;
 			}
 			default:
@@ -178,7 +178,7 @@ export class SubsonicMediaRetrievalApi {
 		if (!lyrics?.lyrics) {
 			return { lyrics: { value: '' } };
 		}
-		return { lyrics: { artist: query.artist, title: query.title, value: lyrics.lyrics.replace(/\r\n/g, '\n') } };
+		return { lyrics: { artist: query.artist, title: query.title, value: lyrics.lyrics.replaceAll('\r\n', '\n') } };
 	}
 
 	/**

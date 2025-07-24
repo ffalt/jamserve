@@ -56,7 +56,7 @@ export async function mp3val(filename: string, fix: boolean): Promise<MP3ValResu
 	}
 	const result = await spawnTool('mp3val', 'MP3VAL_PATH', [...cmds, filename]);
 	if (result.errMsg) {
-		return Promise.reject(Error(result.errMsg));
+		return Promise.reject(new Error(result.errMsg));
 	}
 	return parseMP3ValResult(result.result);
 }

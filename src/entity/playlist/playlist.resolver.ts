@@ -5,7 +5,7 @@ import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlis
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
 import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(PlaylistQL)
 export class PlaylistResolver {
@@ -13,7 +13,7 @@ export class PlaylistResolver {
 	async playlist(@Arg('id', () => ID!) id: string, @Ctx() { orm, user }: Context): Promise<Playlist> {
 		const list = await orm.Playlist.oneOrFail({ where: { id } });
 		if (!list.isPublic && user.id !== list.user.id()) {
-			throw NotFoundError();
+			throw notFoundError();
 		}
 		return list;
 	}
@@ -48,7 +48,8 @@ export class PlaylistResolver {
 
 	@FieldResolver(() => String)
 	async userName(@GQLRoot() playlist: Playlist): Promise<string> {
-		return (await playlist.user.getOrFail()).name;
+		const user = await playlist.user.getOrFail();
+		return user.name;
 	}
 
 	@FieldResolver(() => StateQL)

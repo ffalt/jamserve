@@ -22,7 +22,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { MediaBase } from '../../../entity/tag/tag.model.js';
 import { Folder } from '../../../entity/folder/folder.model.js';
 import { Artwork } from '../../../entity/artwork/artwork.model.js';
-import { Episode } from '../../../entity/episode/episode.model.js';
+import { Episode, EpisodeBase } from '../../../entity/episode/episode.model.js';
 import { Podcast } from '../../../entity/podcast/podcast.model.js';
 import { Bookmark } from '../../../entity/bookmark/bookmark.model.js';
 import { Playlist } from '../../../entity/playlist/playlist.model.js';
@@ -154,9 +154,14 @@ export class TransformService {
 	}
 
 	async playQueue(orm: Orm, o: ORMPlayQueue, playQueueArgs: IncludesPlayQueueArgs, trackArgs: IncludesTrackArgs, episodeArgs: IncludesEpisodeArgs, user: User): Promise<PlayQueue> {
+		let entries: Array<MediaBase> | undefined;
+		if (playQueueArgs.playQueueEntries) {
+			const items = await o.entries.getItems();
+			entries = await Promise.all(items.map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user)));
+		}
 		return {
 			...(await this.PlayQueue.playQueueBase(orm, o, playQueueArgs, user)),
-			entries: playQueueArgs.playQueueEntries ? await Promise.all((await o.entries.getItems()).map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
+			entries
 		};
 	}
 
@@ -171,9 +176,14 @@ export class TransformService {
 	}
 
 	async podcast(orm: Orm, o: ORMPodcast, podcastArgs: IncludesPodcastArgs, podcastChildrenArgs: IncludesPodcastChildrenArgs, episodeArgs: IncludesEpisodeArgs, user: User): Promise<Podcast> {
+		let episodes: Array<EpisodeBase> | undefined;
+		if (podcastChildrenArgs.podcastIncEpisodes) {
+			const items = await o.episodes.getItems();
+			episodes = await Promise.all(items.map(t => this.Episode.episodeBase(orm, t, episodeArgs, user)));
+		}
 		return {
 			...(await this.Podcast.podcastBase(orm, o, podcastArgs, user)),
-			episodes: podcastChildrenArgs.podcastIncEpisodes ? await Promise.all((await o.episodes.getItems()).map(t => this.Episode.episodeBase(orm, t, episodeArgs, user))) : undefined
+			episodes
 		};
 	}
 

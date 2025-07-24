@@ -53,8 +53,8 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 			let gets: Array<MethodMetadata> = [];
 			let posts: Array<MethodMetadata> = [];
 			iterateControllers(this.metadata.controllerClasses, ctrl, ctrlClass => {
-				gets = gets.concat(this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
-				posts = posts.concat(this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
+				gets = [...gets, ...this.metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass)];
+				posts = [...posts, ...this.metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass)];
 			});
 			this.buildOpenApiMethods(gets, ctrl, schemas, openapi.paths, false);
 			this.buildOpenApiMethods(posts, ctrl, schemas, openapi.paths, true);

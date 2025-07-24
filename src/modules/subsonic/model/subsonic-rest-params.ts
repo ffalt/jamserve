@@ -25,7 +25,7 @@ export class SubsonicParameterIndexes {
 	@SubsonicObjField({ nullable: true, isID: true, description: 'Only return results from the music folder with the given ID' })
 	musicFolderId?: SubsonicID;
 
-	@SubsonicObjField({ nullable: true, description: 'If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).', min: 0, example: 1727432363956 })
+	@SubsonicObjField({ nullable: true, description: 'If specified, only return a result if the artist collection has changed since the given time (in milliseconds since 1 Jan 1970).', min: 0, example: 1_727_432_363_956 })
 	ifModifiedSince?: number;
 }
 
@@ -203,7 +203,7 @@ export class SubsonicParameterChangePassword {
 
 @SubsonicObjParamsType()
 export class SubsonicParameterChatMessages {
-	@SubsonicObjField({ nullable: true, description: 'Only return messages newer than this time (in millis since Jan 1 1970).', min: 0, example: 1727432363956 })
+	@SubsonicObjField({ nullable: true, description: 'Only return messages newer than this time (in millis since Jan 1 1970).', min: 0, example: 1_727_432_363_956 })
 	since?: number;
 }
 
@@ -626,6 +626,6 @@ export class SubsonicParameterJukebox {
 	})
 	id?: SubsonicID;
 
-	@SubsonicObjField(() => Number, { nullable: true, description: ' Used by setGain to control the playback volume. A float value between 0.0 and 1.0.', min: 0.0, max: 1.0 })
+	@SubsonicObjField(() => Number, { nullable: true, description: ' Used by setGain to control the playback volume. A float value between 0.0 and 1.0.', min: 0, max: 1 })
 	gain?: number;
 }

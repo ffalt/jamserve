@@ -143,6 +143,7 @@
     "conventional-changelog-cli": "5.0.0",
     "eslint": "9.31.0",
     "eslint-plugin-jest": "29.0.1",
+    "eslint-plugin-unicorn": "^60.0.0",
     "jest": "30.0.5",
     "jest-openapi": "0.14.2",
     "nock": "13.5.6",

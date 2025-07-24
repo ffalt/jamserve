@@ -8,7 +8,7 @@ import { PathParam } from '../../modules/rest/decorators/PathParam.js';
 import { PathParams } from '../../modules/rest/decorators/PathParams.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
 
 @Controller('/stream', { tags: ['Stream'], roles: [UserRole.stream] })
@@ -42,7 +42,7 @@ export class StreamController {
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInStreamTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return engine.stream.streamDBObject(result.obj, result.objType, {
 			format: streamArgs.format,

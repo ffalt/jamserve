@@ -5,7 +5,7 @@
 
  */
 
-import { Stream } from 'stream';
+import { Stream } from 'node:stream';
 import { WaveformStream } from './waveform.stream.js';
 
 export interface WaveformOptions {
@@ -32,11 +32,11 @@ export interface WaveDataResponse {
 }
 
 export class Waveform {
-	opts: WaveformOptions = { samplesPerPixel: 256, sampleRate: 44100 };
+	opts: WaveformOptions = { samplesPerPixel: 256, sampleRate: 44_100 };
 	samples: Array<number> = [];
 
 	constructor(private readonly stream: Stream, opts: WaveformOptions) {
-		this.opts = { ...this.opts, ...(opts || {}) };
+		this.opts = { ...this.opts, ...opts };
 	}
 
 	run(cb: (err?: Error) => void): void {
@@ -44,8 +44,7 @@ export class Waveform {
 		ws.on('readable', () => {
 			let px = ws.read();
 			while (px && px.length > 0) {
-				this.samples.push(px[0]);
-				this.samples.push(px[1]);
+				this.samples.push(px[0], px[1]);
 				px = ws.read();
 			}
 		});
@@ -64,10 +63,10 @@ export class Waveform {
 		result.writeInt32LE(this.opts.samplesPerPixel, 12); // Samples per pixel
 		result.writeInt32LE(this.samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
 		let pos = 20;
-		this.samples.forEach(num => {
+		for (const num of this.samples) {
 			result.writeInt16LE(num, pos);
 			pos += 2;
-		});
+		}
 		return result;
 	}
 
@@ -81,10 +80,10 @@ export class Waveform {
 		result.writeInt32LE(this.samples.length / 2, 16); // Length of waveform data (number of minimum and maximum value pairs)
 		result.writeInt32LE(2, 20); // Channels
 		let pos = 24;
-		this.samples.forEach(num => {
+		for (const num of this.samples) {
 			result.writeInt16LE(num, pos);
 			pos += 2;
-		});
+		}
 		return result;
 	}
 

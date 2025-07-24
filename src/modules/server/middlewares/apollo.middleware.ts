@@ -86,20 +86,25 @@ function registerEnums(): void {
 
 function checkRole(role: string, context: Context): boolean {
 	switch (role) {
-		case UserRole.admin:
+		case UserRole.admin: {
 			if (!context.user.roleAdmin) return false;
 			break;
-		case UserRole.podcast:
+		}
+		case UserRole.podcast: {
 			if (!context.user.rolePodcast) return false;
 			break;
-		case UserRole.upload:
+		}
+		case UserRole.upload: {
 			if (!context.user.roleUpload) return false;
 			break;
-		case UserRole.stream:
+		}
+		case UserRole.stream: {
 			if (!context.user.roleStream) return false;
 			break;
-		default:
+		}
+		default: {
 			return false;
+		}
 	}
 	return true;
 }
@@ -147,12 +152,12 @@ function formatValidationErrors(
 			constraints: validationError.constraints
 		}),
 		...(validationError.children &&
-			validationError.children.length !== 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
+			validationError.children.length > 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
 	};
 }
 
 export class ValidationError extends GraphQLError {
-	public constructor(validationErrors: ClassValidatorValidationError[]) {
+	public constructor(validationErrors: Array<ClassValidatorValidationError>) {
 		super('Validation Error', {
 			extensions: {
 				code: 'BAD_USER_INPUT',
@@ -196,9 +201,9 @@ export class ApolloMiddleware {
 							async willSendResponse(requestContext) {
 								const { errors } = requestContext;
 								if (errors) {
-									errors.forEach((err: Error) => {
-										console.error(err);
-									});
+									for (const error of errors) {
+										console.error(error);
+									}
 								}
 							}
 						};

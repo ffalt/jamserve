@@ -46,10 +46,10 @@ export class IoService {
 			this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
 			this.history.push({ id: cmd.id, date: Date.now() });
 			this.current = undefined;
-		} catch (e: any) {
-			console.error(e);
+		} catch (error: any) {
+			console.error(error);
 			this.current = undefined;
-			let msg = e.toString();
+			let msg = error.toString();
 			if (msg.startsWith('Error:')) {
 				msg = msg.slice(6).trim();
 			}
@@ -67,11 +67,11 @@ export class IoService {
 			this.clearAfterRefresh();
 			for (const listener of this.afterRefreshListeners) {
 				listener()
-					.catch(e => {
-						console.error(e);
+					.catch(error => {
+						console.error(error);
 					});
 			}
-		}, 10000);
+		}, 10_000);
 	}
 
 	private clearAfterRefresh(): void {
@@ -100,9 +100,9 @@ export class IoService {
 				this.scanning = false;
 				log.info('Stop Processing');
 			})
-			.catch(e => {
+			.catch(error => {
 				this.scanning = false;
-				log.error(e);
+				log.error(error);
 			});
 	}
 
@@ -122,12 +122,13 @@ export class IoService {
 	}
 
 	find(param: (cmd: IoRequest<WorkerRequestParameters>) => boolean): IoRequest<WorkerRequestParameters> | undefined {
+		// eslint-disable-next-line unicorn/no-array-callback-reference
 		return this.queue.find(param);
 	}
 
 	getRequestInfo(req: IoRequest<any>): AdminChangeQueueInfo {
 		const pos = this.queue.indexOf(req);
-		return { id: req.id, pos: pos >= 0 ? pos : undefined };
+		return { id: req.id, pos: pos === -1 ? undefined : pos };
 	}
 
 	newRequest<T extends WorkerRequestParameters>(mode: WorkerRequestMode, execute: (parameters: T) => Promise<Changes>, parameters: T): AdminChangeQueueInfo {
@@ -141,7 +142,7 @@ export class IoService {
 		const cmd = this.queue.find(c => c.id === id);
 		if (cmd) {
 			const pos = this.queue.indexOf(cmd);
-			return { id, pos: pos >= 0 ? pos : undefined };
+			return { id, pos: pos === -1 ? undefined : pos };
 		}
 		const done = this.history.find(c => c.id === id);
 		if (done) {

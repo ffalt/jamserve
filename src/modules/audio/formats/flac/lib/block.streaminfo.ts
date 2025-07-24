@@ -17,7 +17,7 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 	}
 
 	remove(): void {
-		throw Error('Can\'t remove StreamInfo block!');
+		throw new Error('Can\'t remove StreamInfo block!');
 	}
 
 	parse(buffer: Buffer): void {
@@ -36,8 +36,8 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 			buffer.copy(this.checksum, 0, 18, 34);
 			this.duration = this.samples / this.sampleRate;
 			this.hasData = true;
-		} catch (e) {
-			this.error = e;
+		} catch (error) {
+			this.error = error;
 			this.hasData = false;
 		}
 	}

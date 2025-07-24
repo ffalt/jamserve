@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 export function isExtraFolder(folder: string): boolean {
 	const name = path.basename(folder).toLowerCase();

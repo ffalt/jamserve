@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import { ID3v2, ID3V24TagBuilder } from 'jamp3';
-import path from 'path';
+import path from 'node:path';
 import { mockImage } from './mock.image.js';
 
 export interface MockSpecTrack {

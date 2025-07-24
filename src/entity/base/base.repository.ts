@@ -7,7 +7,7 @@ import { User } from '../user/user.js';
 import { DefaultOrderArgs, PageArgs } from './base.args.js';
 import { paginate } from './base.utils.js';
 import shuffleSeed from 'shuffle-seed';
-import { InvalidParamError, NotFoundError } from '../../modules/deco/express/express-error.js';
+import { invalidParamError, notFoundError } from '../../modules/deco/express/express-error.js';
 
 export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;
@@ -20,13 +20,16 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	buildDefaultOrder(order?: DefaultOrderArgs): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
-			case DefaultOrderFields.created:
+			case DefaultOrderFields.created: {
 				return [['createdAt', direction]];
-			case DefaultOrderFields.updated:
+			}
+			case DefaultOrderFields.updated: {
 				return [['updatedAt', direction]];
+			}
 			case DefaultOrderFields.name:
-			case DefaultOrderFields.default:
+			case DefaultOrderFields.default: {
 				return [['name', direction]];
+			}
 		}
 		return [];
 	}
@@ -42,37 +45,37 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			return;
 		}
 		let result: Array<OrderItem> = [];
-		order.forEach(o => result = result.concat(this.buildOrder(o)));
+		for (const o of order) {
+			result = [...result, ...this.buildOrder(o)];
+		}
 		return result.length > 0 ? result : undefined;
 	}
 
 	ensureOrderIncludes(options: FindOptions<Entity>): void {
 		let hasOrder = false;
 		if (options.order) {
-			(options.order as OrderItem[]).forEach(o => {
+			for (const o of (options.order as Array<OrderItem>)) {
 				const array = o as Array<any>;
 				hasOrder = true;
 				if (array.length === 3) {
 					const key = array[0];
-					const list: Includeable[] = (options.include as Includeable[]) || [];
+					const list: Array<Includeable> = (options.include as Array<Includeable>) || [];
 					const includeEntry: any = list.find((i: any) => i.association === key);
-					if (!includeEntry) {
+					if (includeEntry) {
+						includeEntry.attributes.push(array[1]);
+					} else {
 						list.push({ association: key, attributes: [array[1]] });
 						options.include = list;
-					} else {
-						includeEntry.attributes.push(array[1]);
 					}
 				}
-			});
-		}
-		if (hasOrder && options.include && ((options.include as Array<any>).length > 0)) {
-			if ((options.include as Array<any>).find(o => !!o.where)) {
-				// workaround for:
-				// https://github.com/sequelize/sequelize/issues/12348
-				// https://github.com/sequelize/sequelize/issues/7778
-				// TODO: check if workaround is still needed
-				options.subQuery = false;
 			}
+		}
+		if (hasOrder && options.include && ((options.include as Array<any>).length > 0) && (options.include as Array<any>).some(o => !!o.where)) {
+			// workaround for:
+			// https://github.com/sequelize/sequelize/issues/12348
+			// https://github.com/sequelize/sequelize/issues/7778
+			// TODO: check if workaround is still needed
+			options.subQuery = false;
 		}
 	}
 
@@ -93,7 +96,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		try {
 			return await super.findOneOrFailByID(id);
 		} catch {
-			throw NotFoundError();
+			throw notFoundError();
 		}
 	}
 
@@ -101,7 +104,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		try {
 			return await super.findOneOrFail(options);
 		} catch {
-			throw NotFoundError();
+			throw notFoundError();
 		}
 	}
 
@@ -109,7 +112,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		try {
 			return await super.findOneOrFail(await this.buildFilter(filter, user));
 		} catch {
-			throw NotFoundError();
+			throw notFoundError();
 		}
 	}
 
@@ -136,12 +139,12 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	private static getIndexChar(name: string): string {
-		const s = name.replace(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
+		const s = name.replaceAll(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
 		if (s.length === 0) {
 			return '#';
 		}
 		const c = s.charAt(0).toUpperCase();
-		if (!isNaN(Number(c))) {
+		if (!Number.isNaN(Number(c))) {
 			return '#';
 		}
 		return c;
@@ -172,31 +175,22 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			});
 		}
 		groups.sort((a, b) => a.name.localeCompare(b.name));
-		groups.forEach(g => {
+		for (const g of groups) {
 			g.items.sort((a, b) => {
 				const av = (a[property] || '') as string;
 				const bv = (b[property] || '') as string;
 				return av.localeCompare(bv);
 			});
-		});
+		}
 		return { groups };
 	}
 
-	/* unused
-	async findOneIDorFail(options: FindOptions<Entity>): Promise<string> {
-		const result = await this.findOneID(options);
-		if (!result) {
-			throw NotFoundError();
-		}
-		return result;
-	}
-	 */
-
 	async findList(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<Entity>> {
 		const result = await this.getListIDs(list, seed, options, userID);
+		const items = await this.findByIDs(result.items);
 		return {
 			...result,
-			items: (await this.findByIDs(result.items)).sort((a, b) => result.items.indexOf(a.id) - result.items.indexOf(b.id))
+			items: items.sort((a, b) => result.items.indexOf(a.id) - result.items.indexOf(b.id))
 		};
 	}
 
@@ -281,23 +275,29 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				ids = shuffleSeed.shuffle(ids, s);
 				break;
 			}
-			case ListType.highest:
+			case ListType.highest: {
 				ids = await this.getHighestRatedIDs(opts, userID);
 				break;
-			case ListType.avghighest:
+			}
+			case ListType.avghighest: {
 				ids = await this.getAvgHighestIDs(opts);
 				break;
-			case ListType.frequent:
+			}
+			case ListType.frequent: {
 				ids = await this.getFrequentlyPlayedIDs(opts, userID);
 				break;
-			case ListType.faved:
+			}
+			case ListType.faved: {
 				ids = await this.getFavedIDs(opts, userID);
 				break;
-			case ListType.recent:
+			}
+			case ListType.recent: {
 				ids = await this.getRecentlyPlayedIDs(opts, userID);
 				break;
-			default:
-				return Promise.reject(InvalidParamError('Unknown List Type'));
+			}
+			default: {
+				return Promise.reject(invalidParamError('Unknown List Type'));
+			}
 		}
 		const total = ids.length;
 		ids = paginate(ids, page).items;

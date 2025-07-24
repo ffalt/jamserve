@@ -23,21 +23,21 @@ export class MetadataServiceSimilarArtists {
 
 	private async findSimilarArtistFolders(orm: Orm, similarArtists: Array<SimilarArtist>, page?: PageArgs): Promise<PageResult<Folder>> {
 		const names: Array<string> = [];
-		similarArtists.forEach(a => {
+		for (const a of similarArtists) {
 			if (a.name) {
 				names.push(a.name);
 			}
-		});
+		}
 		return await orm.Folder.search({ where: { folderType: FolderType.artist, artist: names }, limit: page?.take, offset: page?.skip });
 	}
 
 	private async findSimilarArtists(orm: Orm, similarArtists: Array<SimilarArtist>, page?: PageArgs): Promise<PageResult<Artist>> {
 		const names: Array<string> = [];
-		similarArtists.forEach(a => {
+		for (const a of similarArtists) {
 			if (a.name) {
 				names.push(a.name);
 			}
-		});
+		}
 		return await orm.Artist.search({ where: { name: names }, limit: page?.take, offset: page?.skip });
 	}
 
@@ -59,7 +59,7 @@ export class MetadataServiceSimilarArtists {
 		if (similar && similar.length > 0) {
 			return this.findSimilarArtists(orm, similar, page);
 		}
-		return { items: [], ...(page || {}), total: 0 };
+		return { items: [], ...page, total: 0 };
 	}
 
 	async byFolder(orm: Orm, folder: Folder, page?: PageArgs): Promise<PageResult<Folder>> {
@@ -67,6 +67,6 @@ export class MetadataServiceSimilarArtists {
 		if (similar && similar.length > 0) {
 			return this.findSimilarArtistFolders(orm, similar, page);
 		}
-		return { items: [], ...(page || {}), total: 0 };
+		return { items: [], ...page, total: 0 };
 	}
 }

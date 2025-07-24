@@ -16,9 +16,10 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 	const registerAutoClean = (req: express.Request, res: express.Response): void => {
 		finishedRequest(res, err => {
 			if (err && req.file?.path) {
-				fileDeleteIfExists(req.file.path).catch(e => {
-					console.error(e);
-				});
+				fileDeleteIfExists(req.file.path)
+					.catch(error => {
+						console.error(error);
+					});
 			}
 		});
 	};
@@ -41,8 +42,8 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 		let gets: Array<MethodMetadata> = [];
 		let posts: Array<MethodMetadata> = [];
 		iterateControllers(metadata.controllerClasses, ctrl, ctrlClass => {
-			gets = gets.concat(metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass));
-			posts = posts.concat(metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass));
+			gets = [...gets, ...metadata.gets.filter(g => g.controllerClassMetadata === ctrlClass)];
+			posts = [...posts, ...metadata.posts.filter(g => g.controllerClassMetadata === ctrlClass)];
 		});
 		for (const get of gets) {
 			routeInfos.push(method.GET(get, ctrl, router, options, metadata));

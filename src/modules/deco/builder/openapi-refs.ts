@@ -27,19 +27,26 @@ export class OpenApiRefBuilder {
 	private buildFieldSchema(type: TypeValue, typeOptions: FieldOptions & TypeOptions, schemas: Schemas): Property | undefined {
 		if (typeOptions.isID) {
 			return { $ref: SCHEMA_ID };
-		} else if (type === String) {
-			return { type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
-		} else if (type === Number) {
-			return {
-				type: 'integer', default: typeOptions.defaultValue,
-				minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
-			};
-		} else if (type === Boolean) {
-			return { type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
 		} else {
-			const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
-			if (enumInfo) {
-				return { $ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas) };
+			switch (type) {
+				case String: {
+					return { type: 'string', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
+				}
+				case Number: {
+					return {
+						type: 'integer', default: typeOptions.defaultValue,
+						minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
+					};
+				}
+				case Boolean: {
+					return { type: 'boolean', default: typeOptions.defaultValue, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined };
+				}
+				default: {
+					const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
+					if (enumInfo) {
+						return { $ref: OpenApiRefBuilder.getEnumRef(enumInfo, schemas) };
+					}
+				}
 			}
 		}
 		return;
@@ -53,11 +60,11 @@ export class OpenApiRefBuilder {
 		return idSchemaType === 'integer' ? exampleIDInt : exampleID;
 	}
 
-	private mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]) {
+	private mapArgFields(mode: string, argumentType: ClassMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: Array<string>) {
 		const argumentInstance = new (argumentType.target as any)();
-		argumentType.fields.forEach(field => {
+		for (const field of argumentType.fields) {
 			if (hideParameters?.includes(field.name)) {
-				return;
+				continue;
 			}
 			field.typeOptions.defaultValue = getDefaultValue(
 				argumentInstance,
@@ -82,12 +89,12 @@ export class OpenApiRefBuilder {
 				o.schema = { type: 'array', items: o.schema };
 			}
 			parameters.push(o);
-		});
+		}
 	}
 
 	private collectParameter(
 		param: RestParamMetadata, parameters: Array<ParameterObject>,
-		ctrl: ControllerClassMetadata | undefined, schemas: Schemas, hideParameters?: string[]
+		ctrl: ControllerClassMetadata | undefined, schemas: Schemas, hideParameters?: Array<string>
 	): void {
 		if (hideParameters?.includes(param.name)) {
 			return;
@@ -105,7 +112,7 @@ export class OpenApiRefBuilder {
 		parameters.push(o);
 	}
 
-	private collectParameterObj(param: RestParamsMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: string[]): void {
+	private collectParameterObj(param: RestParamsMetadata, parameters: Array<ParameterObject>, schemas: Schemas, hideParameters?: Array<string>): void {
 		const argumentType = this.metadata.argumentTypes.find(it => it.target === param.getType());
 		if (!argumentType) {
 			throw new Error(
@@ -146,7 +153,7 @@ export class OpenApiRefBuilder {
 		};
 		const superClass = Object.getPrototypeOf(argumentType.target);
 		if (superClass.prototype !== undefined) {
-			const allOf: (SchemaObject | ReferenceObject)[] = [{ $ref: recursiveBuild(superClass, argumentType.name, schemas) }];
+			const allOf: Array<SchemaObject | ReferenceObject> = [{ $ref: recursiveBuild(superClass, argumentType.name, schemas) }];
 			if (Object.keys(properties).length > 0) {
 				allOf.push({
 					properties,

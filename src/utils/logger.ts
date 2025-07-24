@@ -63,7 +63,7 @@ export class Logger {
 	}
 
 	private applyLog(level: string, format: string, ...params: Array<any>): void {
-		winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
+		winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format, ...params].join(' ')}`);
 	}
 
 	debug(format: string, ...params: Array<any>): void {

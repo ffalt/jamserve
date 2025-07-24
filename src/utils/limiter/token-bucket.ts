@@ -2,12 +2,12 @@ import { getMilliseconds, wait } from './clock.js';
 
 export type Interval = number | 'second' | 'sec' | 'minute' | 'min' | 'hour' | 'hr' | 'day';
 
-export type TokenBucketOpts = {
+export interface TokenBucketOpts {
 	bucketSize: number;
 	tokensPerInterval: number;
 	interval: Interval;
 	parentBucket?: TokenBucket;
-};
+}
 
 /**
  * A hierarchical token bucket for rate limiting. See
@@ -38,22 +38,27 @@ export class TokenBucket {
 		if (typeof interval === 'string') {
 			switch (interval) {
 				case 'sec':
-				case 'second':
+				case 'second': {
 					this.interval = 1000;
 					break;
+				}
 				case 'min':
-				case 'minute':
+				case 'minute': {
 					this.interval = 1000 * 60;
 					break;
+				}
 				case 'hr':
-				case 'hour':
+				case 'hour': {
 					this.interval = 1000 * 60 * 60;
 					break;
-				case 'day':
+				}
+				case 'day': {
 					this.interval = 1000 * 60 * 60 * 24;
 					break;
-				default:
+				}
+				default: {
 					throw new Error('Invalid interval ' + interval);
+				}
 			}
 		} else {
 			this.interval = interval;
@@ -95,7 +100,11 @@ export class TokenBucket {
 		// If we don't have enough tokens in this bucket, come back later
 		if (count > this.content) return comeBackLater();
 
-		if (this.parentBucket != undefined) {
+		if (this.parentBucket == undefined) {
+			// Remove the requested tokens from this bucket
+			this.content -= count;
+			return this.content;
+		} else {
 			// Remove the requested from the parent bucket first
 			const remainingTokens = await this.parentBucket.removeTokens(count);
 
@@ -108,10 +117,6 @@ export class TokenBucket {
 			this.content -= count;
 
 			return Math.min(remainingTokens, this.content);
-		} else {
-			// Remove the requested tokens from this bucket
-			this.content -= count;
-			return this.content;
 		}
 	}
 

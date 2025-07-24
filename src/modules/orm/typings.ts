@@ -1,7 +1,7 @@
 import { Reference } from './helpers/reference.js';
 import { Collection } from './helpers/collection.js';
 
-export declare type Constructor<T> = new (...args: any[]) => T;
+export declare type Constructor<T> = new (...args: Array<any>) => T;
 
 export declare type IPrimaryKeyValue = number | string | bigint | {
 	toHexString(): string;
@@ -20,7 +20,7 @@ export declare type Primary<T> = T extends {
 		} ? PK : never;
 
 export declare type DeepPartialEntity<T> = {
-	[P in keyof T]?: null | (T[P] extends (infer U)[] ? DeepPartialEntity<U>[] : T[P] extends readonly (infer U)[] ? readonly DeepPartialEntity<U>[] : T extends Date | RegExp ? T : DeepPartialEntity<T[P]> | PartialEntity<T[P]> | Primary<T[P]>);
+	[P in keyof T]?: null | (T[P] extends Array<infer U> ? Array<DeepPartialEntity<U>> : T[P] extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartialEntity<U>> : T extends Date | RegExp ? T : DeepPartialEntity<T[P]> | PartialEntity<T[P]> | Primary<T[P]>);
 };
 
 export declare type IsScalar<T> = T extends number | string | bigint | Date | RegExp ? true : never;
@@ -45,9 +45,7 @@ export declare type PartialEntity<T> = T extends Reference<infer U> ? {
 	[P in keyof T]?: PartialEntityProperty<T, P>;
 };
 
-export declare type Dictionary<T = any> = {
-	[k: string]: T;
-};
+export type Dictionary<T = any> = Record<string, T>;
 export declare type AnyEntity<T = any, PK extends keyof T = keyof T> = {
 	[K in PK]?: T[K];
 } & {
@@ -62,5 +60,5 @@ export declare type EntityClass<T extends AnyEntity<T>> = Function & {
 };
 export declare type EntityName<T extends AnyEntity<T>> = string | EntityClass<T>;
 export declare type EntityData<T extends AnyEntity<T>> = {
-	[K in keyof T]?: T[K] | Primary<T[K]> | CollectionItem<T[K]>[];
+	[K in keyof T]?: T[K] | Primary<T[K]> | Array<CollectionItem<T[K]>>;
 } & Dictionary;

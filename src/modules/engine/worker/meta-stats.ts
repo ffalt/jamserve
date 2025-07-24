@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
 import { MetaStatBuilder } from '../../../utils/stats-builder.js';
 import { extractAlbumName } from '../../../utils/album-name.js';
@@ -26,7 +26,7 @@ export interface MetaStat {
 	albumType: AlbumType;
 }
 
-const typeByGenreNames: { [name: string]: AlbumType } = {
+const typeByGenreNames: Record<string, AlbumType> = {
 	'audiobook': AlbumType.audiobook,
 	'audio theater': AlbumType.audiobook,
 	'audio drama': AlbumType.audiobook,
@@ -64,16 +64,21 @@ export class MatchNodeMetaStats {
 
 	private static getStrategyAlbumType(strategy: RootScanStrategy, hasMultipleArtists: boolean): AlbumType {
 		switch (strategy) {
-			case RootScanStrategy.auto:
+			case RootScanStrategy.auto: {
 				return hasMultipleArtists ? AlbumType.compilation : AlbumType.album;
-			case RootScanStrategy.artistalbum:
+			}
+			case RootScanStrategy.artistalbum: {
 				return AlbumType.album;
-			case RootScanStrategy.compilation:
+			}
+			case RootScanStrategy.compilation: {
 				return AlbumType.compilation;
-			case RootScanStrategy.audiobook:
+			}
+			case RootScanStrategy.audiobook: {
 				return AlbumType.audiobook;
-			default:
+			}
+			default: {
 				return AlbumType.unknown;
+			}
 		}
 	}
 

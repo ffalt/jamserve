@@ -1,6 +1,6 @@
 import { ClassType } from 'type-graphql';
 
-export const bannedTypes: Function[] = [Promise, Array, Object, Function];
+export const bannedTypes: Array<Function> = [Promise, Array, Object, Function];
 
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 

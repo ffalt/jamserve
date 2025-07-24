@@ -11,7 +11,7 @@ import { EngineService } from '../../modules/engine/services/engine.service.js';
 import express from 'express';
 import { SessionData } from '../../types/express.js';
 import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { UnauthError } from '../../modules/deco/express/express-error.js';
+import { unauthError } from '../../modules/deco/express/express-error.js';
 import { Post } from '../../modules/rest/decorators/Post.js';
 import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
@@ -26,13 +26,13 @@ export class AuthController {
 				if (err || !user) {
 					log.error(err);
 					log.error(`Login failed for [${req.ip}]`);
-					return reject(UnauthError('Invalid Auth'));
+					return reject(unauthError('Invalid Auth'));
 				}
 				req.login(user, (err2: Error) => {
 					if (err2) {
 						log.error(err2);
 						log.error(`Login failed for [${req.ip}]`);
-						return reject(UnauthError('Invalid Auth'));
+						return reject(unauthError('Invalid Auth'));
 					}
 					resolve(user);
 				});
@@ -59,13 +59,13 @@ export class AuthController {
 							.then(session => {
 								resolve(session);
 							})
-							.catch((e: Error) => {
-								reject(e);
+							.catch(error => {
+								reject(error);
 							});
 					}
 				})
-				.catch((e: Error) => {
-					reject(e);
+				.catch(error => {
+					reject(error);
 				});
 		});
 	}

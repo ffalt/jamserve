@@ -9,7 +9,7 @@ export interface StatusCodeError extends Error {
 
 export interface JSONRequest {
 	path: string;
-	query: { [name: string]: string | undefined };
+	query: Record<string, string | undefined>;
 	retry: number;
 }
 
@@ -41,7 +41,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	}
 
 	protected reqToHost(_req: T): string {
-		const port = this.options.port !== 80 ? `:${this.options.port}` : '';
+		const port = this.options.port === 80 ? '' : `:${this.options.port}`;
 		return `${this.options.host}${port}`;
 	}
 
@@ -66,12 +66,12 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		return Promise.reject(error);
 	}
 
-	protected async processError(e: Error | StatusCodeError, req: T): Promise<R> {
-		const statusCode = (e as StatusCodeError).statusCode;
+	protected async processError(error: unknown, req: T): Promise<R> {
+		const statusCode = (error as StatusCodeError).statusCode;
 		if (statusCode === 502 || statusCode === 503) {
-			return this.retry(e, req);
+			return this.retry(error as Error, req);
 		}
-		return Promise.reject(e);
+		return Promise.reject(error);
 	}
 
 	protected isRateLimitError(body?: { error?: string }): boolean {
@@ -85,11 +85,11 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		try {
 			const data = await this.getJson<R, void>(url);
 			if (this.isRateLimitError(data as { error?: string })) {
-				return this.retry(Error((data as { error: string }).error), req);
+				return this.retry(new Error((data as { error: string }).error), req);
 			}
 			return data;
-		} catch (e) {
-			return this.processError(e as Error, req);
+		} catch (error) {
+			return this.processError(error, req);
 		}
 	}
 }

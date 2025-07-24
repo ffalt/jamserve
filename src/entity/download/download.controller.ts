@@ -8,7 +8,7 @@ import { PathParam } from '../../modules/rest/decorators/PathParam.js';
 import { PathParams } from '../../modules/rest/decorators/PathParams.js';
 import { Ctx } from '../../modules/rest/decorators/Ctx.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 const description = 'Download Archive Binary [Album, Artist, Artwork, Episode, Folder, Playlist, Podcast, Series, Track]';
 
@@ -39,7 +39,7 @@ export class DownloadController {
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInDownloadTypes(id);
 		if (!result) {
-			return Promise.reject(NotFoundError());
+			return Promise.reject(notFoundError());
 		}
 		return await engine.download.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
 	}

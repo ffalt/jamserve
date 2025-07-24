@@ -1,6 +1,6 @@
 import { CustomPathParameterGroup, CustomPathParameters } from '../definitions/types.js';
 import { MethodMetadata } from '../definitions/method-metadata.js';
-import { InvalidParamError, MissingParamError } from './express-error.js';
+import { invalidParamError, missingParamError } from './express-error.js';
 import { RestOptions } from './express-method.js';
 
 function validateCustomPathParameterValue(rElement: string | undefined, group: CustomPathParameterGroup, options: RestOptions): any {
@@ -10,32 +10,37 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 		value = value.replace(group.prefix, '').trim();
 	}
 	if (value.length === 0) {
-		throw MissingParamError(group.name);
+		throw missingParamError(group.name);
 	}
-	if (type === String) {
-		return value;
-	} else if (type === Boolean) {
-		return Boolean(value);
-	} else if (type === Number) {
-		const number = Number(value);
-		if (isNaN(number)) {
-			throw InvalidParamError(group.name, 'is not a number');
-		}
-		if ((group.min !== undefined && number < group.min) ||
-			(group.max !== undefined && number > group.max)) {
-			throw InvalidParamError(group.name, 'number not in allowed range');
-		}
-		return number;
-	} else {
-		const enumInfo = options.enums.find(e => e.enumObj === type);
-		if (enumInfo) {
-			const enumObj: any = enumInfo.enumObj;
-			if (!enumObj[value]) {
-				throw InvalidParamError(group.name, `Enum value not valid`);
-			}
+	switch (type) {
+		case String: {
 			return value;
 		}
-		throw new Error('Internal: Invalid Custom Path Parameter Type ' + group.name);
+		case Boolean: {
+			return Boolean(value);
+		}
+		case Number: {
+			const number = Number(value);
+			if (Number.isNaN(number)) {
+				throw invalidParamError(group.name, 'is not a number');
+			}
+			if ((group.min !== undefined && number < group.min) ||
+				(group.max !== undefined && number > group.max)) {
+				throw invalidParamError(group.name, 'number not in allowed range');
+			}
+			return number;
+		}
+		default: {
+			const enumInfo = options.enums.find(e => e.enumObj === type);
+			if (enumInfo) {
+				const enumObj: any = enumInfo.enumObj;
+				if (!enumObj[value]) {
+					throw invalidParamError(group.name, `Enum value not valid`);
+				}
+				return value;
+			}
+			throw new Error('Internal: Invalid Custom Path Parameter Type ' + group.name);
+		}
 	}
 }
 
