@@ -101,7 +101,7 @@ export function buildTSResultTypes(): string {
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
-		`import * as JamEnums from './jam-enums';\n`,
+		`import type * as JamEnums from './jam-enums';\n`,
 		'export declare namespace Jam {\n'
 	];
 	const list = metadata.resultTypes
@@ -149,7 +149,7 @@ export function buildTSParameterTypes(): string {
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
-		`import * as JamEnums from './jam-enums';\n`,
+		`import type * as JamEnums from './jam-enums';\n`,
 		'export declare namespace JamParameters {\n'
 	];
 	const list = metadata.argumentTypes

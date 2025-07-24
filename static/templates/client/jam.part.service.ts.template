@@ -2,9 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 {{#withHttpEvent}}
-import {HttpEvent} from '@angular/common/http';
+import type {HttpEvent} from '@angular/common/http';
 import {Injectable, inject} from '@angular/core';
-import {Observable} from 'rxjs';
+import type {Observable} from 'rxjs';
 {{/withHttpEvent}}
 {{^withHttpEvent}}
 import {Injectable, inject} from '@angular/core';
@@ -12,10 +12,10 @@ import {Injectable, inject} from '@angular/core';
 
 import {JamBaseService} from '../jam.base.service';
 {{#withJam}}
-import {Jam} from '../model/jam-rest-data';
+import type {Jam} from '../model/jam-rest-data';
 {{/withJam}}
 {{#withJamParam}}
-import {JamParameters} from '../model/jam-rest-params';
+import type {JamParameters} from '../model/jam-rest-params';
 {{/withJamParam}}
 
 @Injectable()

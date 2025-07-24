@@ -2,7 +2,7 @@
 // This file was automatically generated and should not be edited.
 
 import {provideHttpClient, withInterceptorsFromDi, withJsonpSupport} from '@angular/common/http';
-import {ModuleWithProviders, NgModule, Provider} from '@angular/core';
+import {type ModuleWithProviders, NgModule, type Provider} from '@angular/core';
 
 import {JamAuthService} from './jam.auth.service';
 import {JamBaseService} from './jam.base.service';

@@ -4,8 +4,8 @@
 import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Injectable, inject} from '@angular/core';
 import {JamConfiguration} from './jam.configuration';
-import {HTTPOptions, JamHttpService} from './jam.http.service';
-import {Jam} from './model/jam-rest-data';
+import {type HTTPOptions, JamHttpService} from './jam.http.service';
+import type {Jam} from './model/jam-rest-data';
 
 export interface Auth {
 	server: string;
@@ -51,8 +51,8 @@ export class JamAuthService {
 			} else {
 				this.user = undefined;
 			}
-		} catch (e) {
-			return Promise.reject((e) || Error('Server error'));
+		} catch (error) {
+			return Promise.reject(error || new Error('Server error'));
 		}
 	}
 
@@ -81,19 +81,19 @@ export class JamAuthService {
 				server,
 				username: data.user.name,
 				session: canUseSession,
-				token: !canUseSession ? data.jwt : undefined,
+				token: canUseSession ? undefined : data.jwt,
 				version: data.version,
 				password: storePassword ? password : undefined
 			};
 			await this.configuration.toStorage({auth: this.auth, user: this.user});
 			await this.configuration.userChangeNotify(this.user);
-		} catch (e) {
+		} catch (error: any) {
 			await this.clear();
-			if (e.error?.error) {
-				return Promise.reject(new Error(e.error.error));
+			if (error?.error?.error) {
+				return Promise.reject(new Error(error.error.error));
 			}
-			if (e instanceof HttpErrorResponse) {
-				return Promise.reject(new Error(e.statusText));
+			if (error instanceof HttpErrorResponse) {
+				return Promise.reject(new Error(error.statusText));
 			}
 			return Promise.reject(new Error('Server Error'));
 		}

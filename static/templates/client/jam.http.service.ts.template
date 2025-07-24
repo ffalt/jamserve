@@ -1,9 +1,9 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {HttpClient, HttpEvent, HttpHeaders, HttpParams, HttpRequest, HttpSentEvent} from '@angular/common/http';
+import {HttpClient, type HttpEvent, type HttpHeaders, type HttpParams, HttpRequest, type HttpSentEvent} from '@angular/common/http';
 import {Injectable, inject} from '@angular/core';
-import {firstValueFrom, Observable} from 'rxjs';
+import {firstValueFrom, type Observable} from 'rxjs';
 
 export interface HTTPOptions {
 	headers?: HttpHeaders;
@@ -13,12 +13,12 @@ export interface HTTPOptions {
 	responseType?: 'arraybuffer' | 'text' | 'json';
 }
 
-async function handleError(e: any): Promise<any> {
-	console.error(e);
-	if (e.status === 0) {
+async function handleError(error: any): Promise<any> {
+	console.error(error);
+	if (error.status === 0) {
 		return Promise.reject(new Error('Could not reach server'));
 	}
-	return Promise.reject(e);
+	return Promise.reject(error);
 }
 
 @Injectable()
@@ -43,8 +43,8 @@ export class JamHttpService {
 						resolve({buffer: res.body, contentType: res.headers.get('content-type') || 'invalid'});
 					});
 			});
-		} catch (e) {
-			return handleError(e);
+		} catch (error) {
+			return handleError(error);
 		}
 	}
 
@@ -56,8 +56,8 @@ export class JamHttpService {
 					withCredentials: options.withCredentials, responseType: options.responseType as 'json'
 				}
 			)) as Promise<T>;
-		} catch (e) {
-			return handleError(e);
+		} catch (error) {
+			return handleError(error);
 		}
 	}
 
@@ -66,8 +66,8 @@ export class JamHttpService {
 			return await firstValueFrom(this.client.post<T>(url, body,
 				{params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials}
 			)) as Promise<T>;
-		} catch (e) {
-			return handleError(e);
+		} catch (error) {
+			return handleError(error);
 		}
 	}
 
