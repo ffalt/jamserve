@@ -60,7 +60,7 @@ function generateBinClientCall(call: MethodMetadata, name: string, paramsType: s
 		name: `${name}Binary`,
 		paramName: 'params',
 		paramsType: paramsType ?? '{}',
-		resultType: '{buffer: ArrayBuffer; contentType: string}',
+		resultType: '{ buffer: ArrayBuffer; contentType: string }',
 		baseFuncResultType: '',
 		baseFunc: 'binary',
 		baseFuncParameters: baseParam,

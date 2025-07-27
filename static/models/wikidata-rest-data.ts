@@ -14,7 +14,7 @@ export declare namespace WikiData {
 		datavalue: {
 			type: string;
 			value: {
-				id: string;
+				'id': string;
 				'entity-type': string;
 				'numeric-id': number;
 			} | string;

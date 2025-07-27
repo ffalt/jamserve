@@ -1,13 +1,13 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {JamAuthService} from './jam.auth.service';
-import {JamBaseService} from './jam.base.service';
-import {JamConfiguration} from './jam.configuration';
-import {JamHttpService} from './jam.http.service';
+import { JamAuthService } from './jam.auth.service';
+import { JamBaseService } from './jam.base.service';
+import { JamConfiguration } from './jam.configuration';
+import { JamHttpService } from './jam.http.service';
 
 {{#list}}
-import {Jam{{part}}Service} from './services/jam.{{{name}}}.service';
+import { Jam{{part}}Service } from './services/jam.{{{name}}}.service';
 {{/list}}
 
 export class JamService {
@@ -25,5 +25,4 @@ export class JamService {
 		this.{{{name}}} = new Jam{{part}}Service(this.base);
 	{{/list}}
 	}
-
 }

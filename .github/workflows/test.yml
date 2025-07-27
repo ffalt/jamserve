@@ -31,7 +31,7 @@ jobs:
       - run: npm ci
       - name: Try to build
         run: npm run build
-      - name: Test with  coverage
+      - name: Test with coverage
         run: npm run coverage
       - uses: qltysh/qlty-action/coverage@v1
         with:

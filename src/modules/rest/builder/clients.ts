@@ -240,7 +240,7 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 			routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);
 		}
 	}
-	const validateCode = `if (${validateNames.map(s => '!params.' + s).join(' && ')}) { ${result}; }`;
+	const validateCode = `if (${validateNames.map(s => '!params.' + s).join(' && ')}) {\n\t\t\t${result};\n\t\t}`;
 	return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
 
