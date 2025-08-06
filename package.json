@@ -150,7 +150,7 @@
     "openapi-validator": "0.14.2",
     "rimraf": "6.0.1",
     "supertest": "7.1.4",
-    "tmp": "0.2.3",
+    "tmp": "0.2.4",
     "ts-jest": "29.4.0",
     "ts-node": "10.9.2",
     "tsc-watch": "7.1.1",
