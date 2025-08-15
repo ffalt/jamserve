@@ -1,15 +1,16 @@
 import { Bookmark } from './bookmark.js';
 import { BaseRepository } from '../base/base.repository.js';
 import { BookmarkOrderFields, DBObjectType } from '../../types/enums.js';
-import { BookmarkFilterArgs, BookmarkOrderArgs } from './bookmark.args.js';
+import { BookmarkFilterParameters, BookmarkOrderParameters } from './bookmark.parameters.js';
 import { User } from '../user/user.js';
 import { OrderHelper } from '../base/base.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterArgs, BookmarkOrderArgs> {
+export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterParameters, BookmarkOrderParameters> {
 	objType = DBObjectType.bookmark;
 
-	buildOrder(order?: BookmarkOrderArgs): Array<OrderItem> {
+	buildOrder(order?: BookmarkOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case BookmarkOrderFields.created: {
@@ -32,7 +33,7 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterA
 		return [];
 	}
 
-	async buildFilter(filter?: BookmarkFilterArgs, user?: User): Promise<FindOptions<Bookmark>> {
+	async buildFilter(filter?: BookmarkFilterParameters, user?: User): Promise<FindOptions<Bookmark>> {
 		return QHelper.buildQuery<Bookmark>(filter ?
 			[
 				{ id: filter.ids },

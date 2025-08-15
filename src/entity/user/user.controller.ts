@@ -2,22 +2,22 @@ import { SubsonicToken, User, UserPage } from './user.model.js';
 import { User as ORMUser } from './user.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesUserArgs, UserEmailUpdateArgs, UserFilterArgs, UserGenerateImageArgs, UserGenerateSusonicTokenArgs, UserMutateArgs, UserOrderArgs, UserPasswordUpdateArgs } from './user.args.js';
+import { IncludesUserParameters, UserEmailUpdateParameters, UserFilterParameters, UserGenerateImageParameters, UserGenerateSubsonicTokenParameters, UserMutateParameters, UserOrderParameters, UserPasswordUpdateParameters } from './user.parameters.js';
 import { randomString } from '../../utils/random.js';
-import { PageArgs } from '../base/base.args.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
 import { EngineService } from '../../modules/engine/services/engine.service.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
-import { invalidParamError, notFoundError, unauthError } from '../../modules/deco/express/express-error.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
+import { invalidParameterError, notFoundError, unauthError } from '../../modules/deco/express/express-error.js';
 import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
-import { Upload } from '../../modules/rest/decorators/Upload.js';
+import { Upload } from '../../modules/rest/decorators/upload.js';
 
 @Controller('/user', { tags: ['User'] })
 export class UserController {
@@ -26,11 +26,11 @@ export class UserController {
 		{ description: 'Get an User by Id', roles: [UserRole.admin], summary: 'Get User' }
 	)
 	async id(
-		@QueryParam('id', { description: 'User Id', isID: true }) id: string,
-		@QueryParams() userArgs: IncludesUserArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'User Id', isID: true }) id: string,
+		@QueryParameters() parameters: IncludesUserParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<User> {
-		return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), userArgs, user);
+		return engine.transform.User.user(orm, await orm.User.oneOrFailByID(id), parameters, user);
 	}
 
 	@Get(
@@ -39,15 +39,15 @@ export class UserController {
 		{ description: 'Search Users', roles: [UserRole.admin] }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() userArgs: IncludesUserArgs,
-		@QueryParams() filter: UserFilterArgs,
-		@QueryParams() order: UserOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() parameters: IncludesUserParameters,
+		@QueryParameters() filter: UserFilterParameters,
+		@QueryParameters() order: UserOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<UserPage> {
 		return await orm.User.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.User.user(orm, o, userArgs, user)
+			o => engine.transform.User.user(orm, o, parameters, user)
 		);
 	}
 
@@ -57,11 +57,11 @@ export class UserController {
 		{ description: 'Create an User', roles: [UserRole.admin], summary: 'Create User' }
 	)
 	async create(
-		@BodyParams() args: UserMutateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameters() parameters: UserMutateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<User> {
-		await UserController.validatePassword(orm, engine, args.password, user);
-		return engine.transform.User.user(orm, await engine.user.create(orm, args), {}, user);
+		await UserController.validatePassword(orm, engine, parameters.password, user);
+		return engine.transform.User.user(orm, await engine.user.create(orm, parameters), {}, user);
 	}
 
 	@Post(
@@ -70,21 +70,21 @@ export class UserController {
 		{ description: 'Update an User', roles: [UserRole.admin], summary: 'Update User' }
 	)
 	async update(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParams() args: UserMutateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameters() parameters: UserMutateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<User> {
-		await UserController.validatePassword(orm, engine, args.password, user);
+		await UserController.validatePassword(orm, engine, parameters.password, user);
 		const u = id === user.id ? user : await orm.User.oneOrFailByID(id);
 		if (user.id === id) {
-			if (!args.roleAdmin) {
-				throw invalidParamError('roleAdmin', `You can't de-admin yourself`);
+			if (!parameters.roleAdmin) {
+				throw invalidParameterError('roleAdmin', `You can't de-admin yourself`);
 			}
-			if (!args.roleStream) {
-				throw invalidParamError('roleStream', `You can't remove api access for yourself`);
+			if (!parameters.roleStream) {
+				throw invalidParameterError('roleStream', `You can't remove api access for yourself`);
 			}
 		}
-		return engine.transform.User.user(orm, await engine.user.update(orm, u, args), {}, user);
+		return engine.transform.User.user(orm, await engine.user.update(orm, u, parameters), {}, user);
 	}
 
 	@Post(
@@ -92,11 +92,11 @@ export class UserController {
 		{ description: 'Remove an User', roles: [UserRole.admin], summary: 'Remove User' }
 	)
 	async remove(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {
 		if (user.id === id) {
-			throw invalidParamError('id', `You can't remove yourself`);
+			throw invalidParameterError('id', `You can't remove yourself`);
 		}
 		const u = await orm.User.oneOrFailByID(id);
 		await engine.user.remove(orm, u);
@@ -107,12 +107,12 @@ export class UserController {
 		{ description: 'Set an User Password', roles: [UserRole.stream], summary: 'Change Password' }
 	)
 	async changePassword(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParams() args: UserPasswordUpdateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameters() parameters: UserPasswordUpdateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
-		return engine.user.setUserPassword(orm, u, args.newPassword);
+		const u = await this.checkUserAccess(orm, engine, id, parameters.password, user);
+		return engine.user.setUserPassword(orm, u, parameters.newPassword);
 	}
 
 	@Post(
@@ -120,12 +120,12 @@ export class UserController {
 		{ description: 'Set an User Email Address', roles: [UserRole.stream], summary: 'Change Email' }
 	)
 	async changeEmail(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParams() args: UserEmailUpdateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameters() parameters: UserEmailUpdateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {
-		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
-		return engine.user.setUserEmail(orm, u, args.email);
+		const u = await this.checkUserAccess(orm, engine, id, parameters.password, user);
+		return engine.user.setUserEmail(orm, u, parameters.email);
 	}
 
 	@Post(
@@ -133,12 +133,12 @@ export class UserController {
 		{ description: 'Generate a random User Image', roles: [UserRole.stream], summary: 'Set Random Image' }
 	)
 	async generateUserImage(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParams() args: UserGenerateImageArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameters() parameters: UserGenerateImageParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {
 		const u = await UserController.validateUserOrAdmin(orm, id, user);
-		await engine.user.generateAvatar(u, args.seed || randomString(42));
+		await engine.user.generateAvatar(u, parameters.seed ?? randomString(42));
 	}
 
 	@Post(
@@ -146,9 +146,9 @@ export class UserController {
 		{ description: 'Upload an User Image', roles: [UserRole.stream], summary: 'Upload Image' }
 	)
 	async uploadUserImage(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
 		@Upload('image') file: UploadFile,
-		@Ctx() { orm, engine, user }: Context
+		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {
 		const u = await UserController.validateUserOrAdmin(orm, id, user);
 		return engine.user.setUserImage(u, file.name);
@@ -160,11 +160,11 @@ export class UserController {
 		{ description: 'Generate a subsonic client token', roles: [UserRole.stream], summary: 'Subsonic Token' }
 	)
 	async generateSubsonicToken(
-		@BodyParam('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParams() args: UserGenerateSusonicTokenArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
+		@BodyParameters() parameters: UserGenerateSubsonicTokenParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<SubsonicToken> {
-		const u = await this.checkUserAccess(orm, engine, id, args.password, user);
+		const u = await this.checkUserAccess(orm, engine, id, parameters.password, user);
 		const session = await engine.session.createSubsonic(u.id);
 		if (!session) {
 			return Promise.reject(notFoundError());

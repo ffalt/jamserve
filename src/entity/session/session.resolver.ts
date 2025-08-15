@@ -2,7 +2,7 @@ import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type
 import { Session, SessionPageQL, SessionQL } from './session.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { SessionsArgs } from './session.args.js';
+import { SessionsParameters } from './session.parameters.js';
 
 @Resolver(SessionQL)
 export class SessionResolver {
@@ -17,7 +17,7 @@ export class SessionResolver {
 	}
 
 	@Query(() => SessionPageQL, { description: 'Get a list of all sessions of the current user' })
-	async sessions(@Args() { page, filter, order }: SessionsArgs, @Ctx() { orm, user }: Context): Promise<SessionPageQL> {
+	async sessions(@Args() { page, filter, order }: SessionsParameters, @Ctx() { orm, user }: Context): Promise<SessionPageQL> {
 		return await orm.Session.searchFilter(filter, order, page, user);
 	}
 

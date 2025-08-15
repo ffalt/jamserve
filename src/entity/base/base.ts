@@ -1,6 +1,6 @@
 import { ClassType, Field, ID, Int, ObjectType } from 'type-graphql';
 import { Entity, PrimaryKey } from '../../modules/orm/index.js';
-import { OrderByArgs } from './base.args.js';
+import { OrderByParameters } from './base.parameters.js';
 
 @ObjectType()
 @Entity({ isAbstract: true })
@@ -28,7 +28,7 @@ export interface IndexResult<EntityGroup> {
 	groups: Array<EntityGroup>;
 }
 
-export function IndexGroup<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
+export function IndexGroup<Entity extends object, EntityQL extends object>(_EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>): any {
 	@ObjectType()
 	abstract class IndexResultResponseClass implements IndexResultGroup<Entity> {
 		@Field(() => [EntityQLClass])
@@ -51,7 +51,7 @@ export function Index<EntityQL extends object>(EntityQLClass: ClassType<EntityQL
 	return IndexResponseClass;
 }
 
-export function PaginatedResponse<Entity extends object, EntityQL extends object>(EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
+export function PaginatedResponse<Entity extends object, EntityQL extends object>(_EntityClass: ClassType<Entity>, EntityQLClass: ClassType<EntityQL>) {
 	@ObjectType()
 	abstract class PaginatedResponseClass {
 		// here we use the runtime argument
@@ -80,8 +80,8 @@ export interface PageResult<T> {
 }
 
 export const OrderHelper = {
-	direction(args?: OrderByArgs): string {
-		return args?.orderDesc ? 'DESC' : 'ASC';
+	direction(parameters?: OrderByParameters): string {
+		return parameters?.orderDesc ? 'DESC' : 'ASC';
 	},
 
 	inverse(order: string): string {

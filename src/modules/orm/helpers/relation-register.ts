@@ -1,13 +1,13 @@
-import { findType } from './findType.js';
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
-import { FieldOptions, ReturnTypeFunc } from '../definitions/types.js';
+import { findType } from './find-type.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
+import { FieldOptions, ReturnTypeFunction } from '../definitions/types.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 
 export function registerRelation(
 	// eslint-disable-next-line @typescript-eslint/no-wrapper-object-types
 	prototype: Object,
 	propertyKey: string | symbol,
-	returnTypeFunc: ReturnTypeFunc,
+	returnTypeFunction: ReturnTypeFunction,
 	opt: FieldOptions
 ): void {
 	if (typeof propertyKey === 'symbol') {
@@ -17,10 +17,10 @@ export function registerRelation(
 		metadataKey: 'design:type',
 		prototype,
 		propertyKey,
-		returnTypeFunc,
+		returnTypeFunc: returnTypeFunction,
 		typeOptions: opt
 	});
-	getMetadataStorage().fields.push({
+	metadataStorage().fields.push({
 		name: propertyKey,
 		getType,
 		typeOptions,

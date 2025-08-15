@@ -1,18 +1,19 @@
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, UserRole } from '../../types/enums.js';
 import { User } from './user.js';
-import { UserFilterArgs, UserOrderArgs } from './user.args.js';
+import { UserFilterParameters, UserOrderParameters } from './user.parameters.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class UserRepository extends BaseRepository<User, UserFilterArgs, UserOrderArgs> {
+export class UserRepository extends BaseRepository<User, UserFilterParameters, UserOrderParameters> {
 	objType = DBObjectType.user;
 	indexProperty = 'name';
 
-	buildOrder(order?: UserOrderArgs): Array<OrderItem> {
+	buildOrder(order?: UserOrderParameters): Array<OrderItem> {
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: UserFilterArgs, user?: User): Promise<FindOptions<User>> {
+	async buildFilter(filter?: UserFilterParameters, user?: User): Promise<FindOptions<User>> {
 		return filter ?
 			QHelper.buildQuery<User>(
 				[

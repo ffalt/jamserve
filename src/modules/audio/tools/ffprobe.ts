@@ -12,7 +12,7 @@ export interface ProbeResult {
 		size: string; // '10600329',
 		bit_rate: string; // '128004',
 		probe_score: number;
-		tags: Record<string, string>;
+		tags?: Record<string, string>;
 	};
 	frames?: Array<{
 		media_type: string; //  'audio',
@@ -78,6 +78,6 @@ export interface ProbeResult {
 	}>;
 }
 
-export async function probe(filename: string, cmds: Array<string>): Promise<ProbeResult> {
+export async function probe(filename: string, cmds: Array<string>): Promise<ProbeResult | undefined> {
 	return spawnToolJson<ProbeResult>('ffprobe', 'FFPROBE_PATH', ['-print_format', 'json', '-show_error', '-show_streams', '-show_format', ...cmds, filename]);
 }

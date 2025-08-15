@@ -1,8 +1,8 @@
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Min } from 'class-validator';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 const AdminSettingsChatMaxAgeDesc = {
 	_: 'Admin Chat Maximum Age Settings',
@@ -12,14 +12,14 @@ const AdminSettingsChatMaxAgeDesc = {
 
 @ResultType({ description: AdminSettingsChatMaxAgeDesc._ })
 @ObjectType({ description: AdminSettingsChatMaxAgeDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettingsChatMaxAge {
-	@ObjField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 })
+	@ObjectField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 })
 	@Field(() => Int, { description: AdminSettingsChatMaxAgeDesc.value })
 	@Min(0)
 	value!: number;
 
-	@ObjField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' })
+	@ObjectField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' })
 	@Field(() => String, { description: AdminSettingsChatMaxAgeDesc.unit })
 	unit!: string;
 }
@@ -36,15 +36,15 @@ const AdminSettingsChatDesc = {
 
 @ResultType({ description: AdminSettingsChatDesc._ })
 @ObjectType({ description: AdminSettingsChatDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettingsChat {
 	@Field(() => Int, { description: AdminSettingsChatDesc.maxMessages })
-	@ObjField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 })
+	@ObjectField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 })
 	@Min(0)
 	maxMessages!: number;
 
 	@Field(() => AdminSettingsChatMaxAgeQL, { description: AdminSettingsChatDesc.maxAge })
-	@ObjField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge })
+	@ObjectField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge })
 	maxAge!: AdminSettingsChatMaxAge;
 }
 
@@ -59,9 +59,9 @@ const AdminSettingsIndexDesc = {
 
 @ResultType({ description: AdminSettingsIndexDesc._ })
 @ObjectType({ description: AdminSettingsIndexDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettingsIndex {
-	@ObjField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] })
+	@ObjectField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] })
 	@Field(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles })
 	ignoreArticles!: Array<string>;
 }
@@ -77,9 +77,9 @@ const AdminSettingsLibraryDesc = {
 
 @ResultType({ description: AdminSettingsLibraryDesc._ })
 @ObjectType({ description: AdminSettingsLibraryDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettingsLibrary {
-	@ObjField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true })
+	@ObjectField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true })
 	@Field(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart })
 	scanAtStart!: boolean;
 }
@@ -95,9 +95,9 @@ const AdminSettingsExternalDesc = {
 
 @ResultType({ description: AdminSettingsExternalDesc._ })
 @ObjectType({ description: AdminSettingsExternalDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettingsExternal {
-	@ObjField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true })
+	@ObjectField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true })
 	@Field(() => Boolean, { description: AdminSettingsExternalDesc.enabled })
 	enabled!: boolean;
 }
@@ -112,21 +112,21 @@ const AdminSettingsDesc = {
 
 @ResultType({ description: AdminSettingsDesc._ })
 @ObjectType({ description: AdminSettingsDesc._ })
-@ObjParamsType()
+@ObjectParametersType()
 export class AdminSettings {
-	@ObjField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ })
+	@ObjectField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ })
 	@Field(() => AdminSettingsChatQL)
 	chat!: AdminSettingsChat;
 
-	@ObjField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ })
+	@ObjectField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ })
 	@Field(() => AdminSettingsIndexQL)
 	index!: AdminSettingsIndex;
 
-	@ObjField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ })
+	@ObjectField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ })
 	@Field(() => AdminSettingsLibraryQL)
 	library!: AdminSettingsLibrary;
 
-	@ObjField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ })
+	@ObjectField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ })
 	@Field(() => AdminSettingsExternalQL)
 	externalServices!: AdminSettingsExternal;
 }
@@ -146,19 +146,19 @@ const AdminChangeQueueInfoDesc = {
 @ResultType({ description: AdminChangeQueueInfoDesc._ })
 @ObjectType({ description: AdminChangeQueueInfoDesc._ })
 export class AdminChangeQueueInfo {
-	@ObjField({ description: AdminChangeQueueInfoDesc.id, isID: true })
+	@ObjectField({ description: AdminChangeQueueInfoDesc.id, isID: true })
 	@Field(() => ID, { description: AdminChangeQueueInfoDesc.id })
 	id!: string;
 
-	@ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 })
+	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 })
 	@Field(() => Int, { description: AdminChangeQueueInfoDesc.position })
 	position?: number;
 
-	@ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' })
+	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' })
 	@Field(() => String, { description: AdminChangeQueueInfoDesc.error })
 	error?: string;
 
-	@ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true })
+	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true })
 	@Field(() => Int, { description: AdminChangeQueueInfoDesc.done })
 	done?: number;
 }

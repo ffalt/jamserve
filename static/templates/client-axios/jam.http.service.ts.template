@@ -33,7 +33,7 @@ export class JamHttpService {
 			};
 			const result = await axios.get(url, axiosOptions);
 			return { buffer: result.data, contentType: result.headers['content-type'] ?? '' };
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}
@@ -42,7 +42,7 @@ export class JamHttpService {
 		try {
 			const result = await axios.get(url, { params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials });
 			return result.data;
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}
@@ -59,7 +59,7 @@ export class JamHttpService {
 				}
 			);
 			return result.data;
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}
@@ -77,7 +77,7 @@ export class JamHttpService {
 				}
 			);
 			return result.data;
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}

@@ -2,14 +2,14 @@ import { Track } from '../track/track.js';
 import { MetaDataService } from './metadata.service.js';
 import { Song } from './metadata.service.similar-tracks.js';
 import { PageResult } from '../base/base.js';
-import { PageArgs } from '../base/base.args.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export class MetadataServiceTopTracks {
 	constructor(private readonly service: MetaDataService) {
 	}
 
-	async byArtistName(orm: Orm, artist: string, page?: PageArgs): Promise<PageResult<Track>> {
+	async byArtistName(orm: Orm, artist: string, page?: PageParameters): Promise<PageResult<Track>> {
 		const result = await this.service.lastFMTopTracksArtist(orm, artist);
 		if (result?.toptracks?.track) {
 			const songs: Array<Song> = result.toptracks.track.map(t => {

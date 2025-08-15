@@ -2,7 +2,7 @@ import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } f
 import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { Folder, FolderQL } from '../folder/folder.js';
-import { ArtworksArgsQL } from './artwork.args.js';
+import { ArtworksParametersQL } from './artwork.parameters.js';
 
 @Resolver(ArtworkQL)
 export class ArtworkResolver {
@@ -12,7 +12,7 @@ export class ArtworkResolver {
 	}
 
 	@Query(() => ArtworkPageQL, { description: 'Search Artworks' })
-	async artworks(@Args() { page, filter, order, list, seed }: ArtworksArgsQL, @Ctx() { orm, user }: Context): Promise<ArtworkPageQL> {
+	async artworks(@Args() { page, filter, order, list, seed }: ArtworksParametersQL, @Ctx() { orm, user }: Context): Promise<ArtworkPageQL> {
 		if (list) {
 			return await orm.Artwork.findListFilter(list, seed, filter, order, page, user);
 		}

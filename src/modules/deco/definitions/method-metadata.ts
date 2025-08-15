@@ -1,5 +1,5 @@
 import { ControllerClassMetadata } from './controller-metadata.js';
-import { ParamMetadata } from './param-metadata.js';
+import { ParameterMetadata } from './parameter-metadata.js';
 import { AuthOptions, BinaryOptions, CustomPathParameterOptions, TypeOptions, TypeValueThunk } from './types.js';
 
 export interface MethodMetadata extends CustomPathParameterOptions, BinaryOptions, AuthOptions {
@@ -7,7 +7,7 @@ export interface MethodMetadata extends CustomPathParameterOptions, BinaryOption
 	schemaName: string;
 	target: Function;
 	controllerClassMetadata?: ControllerClassMetadata;
-	params: Array<ParamMetadata>;
+	parameters: Array<ParameterMetadata>;
 	getReturnType?: TypeValueThunk;
 	returnTypeOptions?: TypeOptions;
 	responseStringMimeTypes?: Array<string>;

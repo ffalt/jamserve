@@ -1,13 +1,13 @@
 import { DBObjectType, DefaultOrderFields, ListType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup, OrderHelper, PageResult } from './base.js';
 import { StateHelper } from '../state/state.helper.js';
-import { EntityRepository, FindOptions, IDEntity, Order, OrderItem, WhereOptions } from '../../modules/orm/index.js';
-import seq, { Includeable } from 'sequelize';
+import { EntityRepository, IDEntity } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem, Includeable, WhereOptions, Op, Order } from 'sequelize';
 import { User } from '../user/user.js';
-import { DefaultOrderArgs, PageArgs } from './base.args.js';
+import { DefaultOrderParameters, PageParameters } from './base.parameters.js';
 import { paginate } from './base.utils.js';
 import shuffleSeed from 'shuffle-seed';
-import { invalidParamError, notFoundError } from '../../modules/deco/express/express-error.js';
+import { invalidParameterError, notFoundError } from '../../modules/deco/express/express-error.js';
 
 export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy extends { orderDesc?: boolean }> extends EntityRepository<Entity> {
 	objType!: DBObjectType;
@@ -17,7 +17,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	abstract buildFilter(filter?: Filter, user?: User): Promise<FindOptions<Entity>>;
 
-	buildDefaultOrder(order?: DefaultOrderArgs): Array<OrderItem> {
+	buildDefaultOrder(order?: DefaultOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case DefaultOrderFields.created: {
@@ -58,13 +58,13 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				const array = o as Array<any>;
 				hasOrder = true;
 				if (array.length === 3) {
-					const key = array[0];
-					const list: Array<Includeable> = (options.include as Array<Includeable>) || [];
-					const includeEntry: any = list.find((i: any) => i.association === key);
+					const key = array.at(0);
+					const list: Array<Includeable> = (options.include as Array<Includeable> | undefined) ?? [];
+					const includeEntry: any = list.find((entry: any) => entry.association === key);
 					if (includeEntry) {
-						includeEntry.attributes.push(array[1]);
+						(includeEntry.attributes as Array<any>).push(array.at(1));
 					} else {
-						list.push({ association: key, attributes: [array[1]] });
+						list.push({ association: key, attributes: [array.at(1)] });
 						options.include = list;
 					}
 				}
@@ -79,7 +79,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		}
 	}
 
-	async buildFindOptions(filter?: Filter, order?: Array<OrderBy>, user?: User, page?: PageArgs): Promise<FindOptions<Entity>> {
+	async buildFindOptions(filter?: Filter, order?: Array<OrderBy>, user?: User, page?: PageParameters): Promise<FindOptions<Entity>> {
 		const options = filter ? await this.buildFilter(filter, user) : {};
 		options.limit = page?.take;
 		options.offset = page?.skip;
@@ -117,11 +117,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async findOneFilter(filter?: Filter, user?: User): Promise<Entity | undefined> {
-		const result = await this.findOne(await this.buildFilter(filter, user));
-		if (result !== null) {
-			return result;
-		}
-		return;
+		return await this.findOne(await this.buildFilter(filter, user));
 	}
 
 	async search(options: FindOptions<Entity>): Promise<PageResult<Entity>> {
@@ -140,10 +136,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	private static getIndexChar(name: string): string {
 		const s = name.replaceAll(/[¿…¡?[\]{}<>‘`“'&_~=:./;@#«!%$*()+\-\\|]/g, '').trim();
-		if (s.length === 0) {
-			return '#';
-		}
-		const c = s.charAt(0).toUpperCase();
+		const c = (s.at(0) ?? '#').toUpperCase();
 		if (!Number.isNaN(Number(c))) {
 			return '#';
 		}
@@ -153,7 +146,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	private static removeArticles(ignore: string, name: string): string {
 		// /^(?:(?:the|los|les)\s+)?(.*)/gi
 		const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
-		return matches ? matches[1] : name;
+		return matches?.at(1) ?? name;
 	}
 
 	async index(property: keyof Entity, options: FindOptions<Entity>, ignoreArticles?: Array<string>): Promise<IndexResult<IndexResultGroup<Entity>>> {
@@ -163,7 +156,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		for (const item of items) {
 			const value = (item[property] || '') as string;
 			const c = BaseRepository.getIndexChar(ignore ? BaseRepository.removeArticles(ignore, value) : value);
-			const list = map.get(c) || [];
+			const list = map.get(c) ?? [];
 			list.push(item);
 			map.set(c, list);
 		}
@@ -209,7 +202,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.count(await this.buildFilter(filter, user));
 	}
 
-	async findFilter(filter?: Filter | undefined, order?: Array<OrderBy> | undefined, page?: PageArgs | undefined, user?: User | undefined): Promise<Array<Entity>> {
+	async findFilter(filter?: Filter, order?: Array<OrderBy>, page?: PageParameters, user?: User): Promise<Array<Entity>> {
 		return await this.find(await this.buildFindOptions(filter, order, user, page));
 	}
 
@@ -217,22 +210,22 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.findIDs(await this.buildFilter(filter, user));
 	}
 
-	async findListFilter(list: ListType, seed: string | undefined, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
+	async findListFilter(list: ListType, seed: string | undefined, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageParameters | undefined, user: User): Promise<PageResult<Entity>> {
 		return await this.findList(list, seed, await this.buildFindOptions(filter, order, user, page), user.id);
 	}
 
-	async findListTransformFilter<T>(list: ListType, seed: string | undefined, filter: Filter, order: Array<OrderBy> | undefined, page: PageArgs, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
+	async findListTransformFilter<T>(list: ListType, seed: string | undefined, filter: Filter, order: Array<OrderBy> | undefined, page: PageParameters, user: User, transform: (item: Entity) => Promise<T>): Promise<PageResult<T>> {
 		return await this.findListTransform<T>(list, seed, await this.buildFindOptions(filter, order, user, page), user.id, transform);
 	}
 
-	async searchFilter(filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageArgs | undefined, user: User): Promise<PageResult<Entity>> {
+	async searchFilter(filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageParameters | undefined, user: User): Promise<PageResult<Entity>> {
 		return await this.search(await this.buildFindOptions(filter, order, user, page));
 	}
 
 	async searchTransformFilter<T>(
 		filter: Filter | undefined,
 		order: Array<OrderBy>,
-		page: PageArgs,
+		page: PageParameters,
 		user: User,
 		transform: (item: Entity) => Promise<T>
 	): Promise<PageResult<T>> {
@@ -257,46 +250,44 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.index(this.indexProperty as keyof Entity, await this.buildFilter(filter, user), ignoreArticles);
 	}
 
-	private async getListIDs(list: ListType, seed: string | undefined, options: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
+	private async getListIDs(list: ListType, seed: string | undefined, findOptions: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
 		let ids: Array<string> = [];
-		const opts = { ...options, limit: undefined, offset: undefined };
-		const page = { skip: options.offset, take: options.limit };
+		const options = { ...findOptions, limit: undefined, offset: undefined };
+		const page = { skip: findOptions.offset, take: findOptions.limit };
 		switch (list) {
 			case ListType.random: {
-				ids = await this.findIDs(opts);
+				ids = await this.findIDs(options);
 				let s = seed;
 				// to avoid duplicate entries, shuffle MUST be seeded
-				if (!s) {
-					// if the api caller does not specify a seed, the random list will be "random" only per day for a user
-					// (dups can still occur on day change between two requests)
-					s = `${userID}_${new Date().toISOString().split('T')[0]}`;
-				}
+				// if the api caller does not specify a seed, the random list will be "random" only per day for a user
+				// (dups can still occur on day change between two requests)
+				s ??= `${userID}_${new Date().toISOString().split('T').at(0)}`;
 				ids.sort((a, b) => a.localeCompare(b));
 				ids = shuffleSeed.shuffle(ids, s);
 				break;
 			}
 			case ListType.highest: {
-				ids = await this.getHighestRatedIDs(opts, userID);
+				ids = await this.getHighestRatedIDs(options, userID);
 				break;
 			}
 			case ListType.avghighest: {
-				ids = await this.getAvgHighestIDs(opts);
+				ids = await this.getAvgHighestIDs(options);
 				break;
 			}
 			case ListType.frequent: {
-				ids = await this.getFrequentlyPlayedIDs(opts, userID);
+				ids = await this.getFrequentlyPlayedIDs(options, userID);
 				break;
 			}
 			case ListType.faved: {
-				ids = await this.getFavedIDs(opts, userID);
+				ids = await this.getFavedIDs(options, userID);
 				break;
 			}
 			case ListType.recent: {
-				ids = await this.getRecentlyPlayedIDs(opts, userID);
+				ids = await this.getRecentlyPlayedIDs(options, userID);
 				break;
 			}
 			default: {
-				return Promise.reject(invalidParamError('Unknown List Type'));
+				return Promise.reject(invalidParameterError('Unknown List Type'));
 			}
 		}
 		const total = ids.length;
@@ -308,12 +299,10 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		if (!options.where) {
 			return ids;
 		}
-		let where: WhereOptions = { id: { [seq.Op.in]: ids } };
-		if (options.where &&
-			(Object.keys(options.where).length > 0 ||
-				Object.getOwnPropertySymbols(options.where).length > 0)
-		) {
-			where = { [seq.Op.and]: [where, options.where] };
+		let where: WhereOptions = { id: { [Op.in]: ids } };
+		if (Object.keys(options.where).length > 0 ||
+			Object.getOwnPropertySymbols(options.where).length > 0) {
+			where = { [Op.and]: [where, options.where] };
 		}
 		const list = await this.findIDs({ ...options, where });
 		return list.sort((a, b) => ids.indexOf(a) - ids.indexOf(b));
@@ -350,7 +339,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async removeLaterByIDs(ids: Array<string>): Promise<void> {
-		if (ids && ids.length > 0) {
+		if (ids.length > 0) {
 			const items = await this.findByIDs(ids);
 			for (const item of items) {
 				this.removeLater(item);

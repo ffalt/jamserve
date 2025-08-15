@@ -8,7 +8,7 @@ import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../utils/logger.js';
-import { genericError, invalidParamError } from '../../modules/deco/express/express-error.js';
+import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 
 const log = logger('Waveform');
 
@@ -47,49 +47,43 @@ export class WaveformService {
 			}
 			default:
 		}
-		return Promise.reject(invalidParamError('Invalid Object Type for Waveform generation'));
+		return Promise.reject(invalidParameterError('Invalid Object Type for Waveform generation'));
 	}
 
-	async getWaveformSVG(obj: Base, objType: DBObjectType, width?: number): Promise<string | undefined> {
+	async getWaveformSVG(obj: Base, objType: DBObjectType, width?: number): Promise<string> {
 		const result = await this.getWaveform(obj, objType, WaveformFormatType.svg, width);
-		if (result) {
-			if (result.buffer) {
-				return result.buffer.buffer.toString();
-			}
-			if (result.file) {
-				try {
-					const file = await fse.readFile(result.file.filename);
-					return file.toString();
-				} catch (error: any) {
-					log.error(error);
-					return Promise.reject(genericError('Invalid waveform result'));
-				}
-			}
-			return Promise.reject(genericError('Invalid svg waveform result'));
+		if (result.buffer) {
+			return result.buffer.buffer.toString();
 		}
-		return;
+		if (result.file) {
+			try {
+				const file = await fse.readFile(result.file.filename);
+				return file.toString();
+			} catch (error: unknown) {
+				log.error(error);
+				return Promise.reject(genericError('Invalid waveform result'));
+			}
+		}
+		return Promise.reject(genericError('Invalid svg waveform result'));
 	}
 
-	async getWaveformJSON(obj: Base, objType: DBObjectType): Promise<WaveFormData | undefined> {
+	async getWaveformJSON(obj: Base, objType: DBObjectType): Promise<WaveFormData> {
 		const result = await this.getWaveform(obj, objType, WaveformFormatType.json);
-		if (result) {
-			if (result.json) {
-				return result.json;
-			}
-			if (result.buffer) {
-				return JSON.parse(result.buffer.buffer.toString());
-			}
-			if (result.file) {
-				try {
-					return await fse.readJSON(result.file.filename);
-				} catch (error: any) {
-					log.error(error);
-					return Promise.reject(genericError('Invalid json waveform result'));
-				}
-			}
-			return Promise.reject(genericError('Invalid waveform result'));
+		if (result.json) {
+			return result.json as WaveFormData;
 		}
-		return;
+		if (result.buffer) {
+			return JSON.parse(result.buffer.buffer.toString()) as WaveFormData;
+		}
+		if (result.file) {
+			try {
+				return await fse.readJSON(result.file.filename) as WaveFormData;
+			} catch (error: unknown) {
+				log.error(error);
+				return Promise.reject(genericError('Invalid json waveform result'));
+			}
+		}
+		return Promise.reject(genericError('Invalid waveform result'));
 	}
 
 	async getTrackWaveform(track: Track, format: WaveformFormatType, width?: number): Promise<WaveformResult> {

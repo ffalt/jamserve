@@ -4,14 +4,16 @@ import { xml } from './xml.js';
 import { ApiBaseResponder, ApiBinaryResult } from '../deco/express/express-responder.js';
 
 import { SubsonicFormatter } from './formatter.js';
+import { errorNumberCode, errorToString } from '../../utils/error.js';
+import { SubsonicResponse } from './model/subsonic-rest-data.js';
 
 export class ApiResponder extends ApiBaseResponder {
-	private send(req: express.Request, res: express.Response, data: any): void {
+	private send(req: express.Request, res: express.Response, data: Record<string, any>): void {
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		const params = (req as SubsonicParameterRequest).parameters;
-		if ((params.format === 'jsonp') && (params.callback)) {
-			this.sendJSONP(req, res, params.callback, data);
-		} else if (params.format === 'json') {
+		const parameters = (req as SubsonicParameterRequest).parameters;
+		if ((parameters.format === 'jsonp') && (parameters.callback)) {
+			this.sendJSONP(req, res, parameters.callback, data);
+		} else if (parameters.format === 'json') {
 			this.sendJSON(req, res, data);
 		} else {
 			data['subsonic-response'].xmlns = 'http://subsonic.org/restapi';
@@ -19,7 +21,7 @@ export class ApiResponder extends ApiBaseResponder {
 		}
 	}
 
-	public sendData(req: express.Request, res: express.Response, data: any): void {
+	public sendData(req: express.Request, res: express.Response, data: SubsonicResponse): void {
 		this.send(req, res, SubsonicFormatter.packResponse(data));
 	}
 
@@ -27,12 +29,8 @@ export class ApiResponder extends ApiBaseResponder {
 		this.send(req, res, SubsonicFormatter.packOK());
 	}
 
-	public sendError(req: express.Request, res: express.Response, err: any): void {
-		if (err?.fail) {
-			this.send(req, res, SubsonicFormatter.packFail(err.code, err.fail));
-		} else {
-			this.send(req, res, SubsonicFormatter.packFail(SubsonicFormatter.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
-		}
+	public sendError(req: express.Request, res: express.Response, error: unknown): void {
+		this.send(req, res, SubsonicFormatter.packFail(errorNumberCode(error) ?? SubsonicFormatter.FAIL.GENERIC, errorToString(error)));
 	}
 
 	public sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {

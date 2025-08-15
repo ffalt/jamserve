@@ -3,7 +3,7 @@ import { Bookmark, BookmarkPageQL, BookmarkQL } from './bookmark.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { Track, TrackQL } from '../track/track.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
-import { BookmarksArgs } from './bookmark.args.js';
+import { BookmarksParameters } from './bookmark.parameters.js';
 
 @Resolver(BookmarkQL)
 export class BookmarkResolver {
@@ -13,7 +13,7 @@ export class BookmarkResolver {
 	}
 
 	@Query(() => BookmarkPageQL, { description: 'Search Bookmarks' })
-	async bookmarks(@Args() { filter, page, order }: BookmarksArgs, @Ctx() { orm, user }: Context): Promise<BookmarkPageQL> {
+	async bookmarks(@Args() { filter, page, order }: BookmarksParameters, @Ctx() { orm, user }: Context): Promise<BookmarkPageQL> {
 		return await orm.Bookmark.searchFilter(filter, order, page, user);
 	}
 

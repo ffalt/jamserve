@@ -2,17 +2,17 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Settings } from './settings.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem } from '../../modules/orm/index.js';
-import { DefaultOrderArgs } from '../base/base.args.js';
+import { DefaultOrderParameters } from '../base/base.parameters.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class SettingsRepository extends BaseRepository<Settings, void, DefaultOrderArgs> {
+export class SettingsRepository extends BaseRepository<Settings, void, DefaultOrderParameters> {
 	objType = DBObjectType.settings;
 
-	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
+	buildOrder(_?: DefaultOrderParameters): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(_?: void, __?: User): Promise<FindOptions<Settings>> {
+	async buildFilter(_?: unknown, __?: User): Promise<FindOptions<Settings>> {
 		return {};
 	}
 }

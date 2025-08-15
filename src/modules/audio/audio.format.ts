@@ -92,7 +92,7 @@ export class FORMAT {
 			mediaDuration: Math.floor(Number(data.format.duration) * 1000),
 			mediaBitRate: Number(data.format.bit_rate),
 			mediaSampleRate: Number(stream.sample_rate),
-			mediaBitDepth: Number(stream.bits_per_sample),
+			mediaBitDepth: Number(stream.bits_per_sample as unknown),
 			mediaChannels: stream.channels,
 			mediaMode: stream.channel_layout,
 			mediaVersion: stream.codec_long_name
@@ -140,7 +140,7 @@ export class FORMAT {
 	}
 
 	static packProbeJamServeTag(data: ProbeResult): TrackTag {
-		if (!data?.format?.tags) {
+		if (!data.format.tags || Object.keys(data.format.tags).length === 0) {
 			return { format: TagFormatType.none };
 		}
 		const simple: Record<string, string | undefined> = {};
@@ -160,10 +160,10 @@ export class FORMAT {
 			series: simple.GROUPING,
 			genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			albumArtist: simple.ALBUM_ARTIST,
-			albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
-			albumArtistSort: simple.ALBUM_ARTIST_SORT || simple.ALBUM_ARTIST_SORT_ORDER,
-			artistSort: simple.ARTIST_SORT || simple.ARTIST_SORT_ORDER,
-			titleSort: simple.TITLE_SORT || simple.TITLE_SORT_ORDER,
+			albumSort: simple.ALBUM_SORT ?? simple.ALBUM_SORT_ORDER,
+			albumArtistSort: simple.ALBUM_ARTIST_SORT ?? simple.ALBUM_ARTIST_SORT_ORDER,
+			artistSort: simple.ARTIST_SORT ?? simple.ARTIST_SORT_ORDER,
+			titleSort: simple.TITLE_SORT ?? simple.TITLE_SORT_ORDER,
 			mbTrackID: simple.TRACKID,
 			mbAlbumType: simple.ALBUMTYPE,
 			mbAlbumArtistID: simple.ALBUMARTISTID,
@@ -219,7 +219,7 @@ export class FORMAT {
 			lyrics: simple.LYRICS,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
-			year: FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE) || FORMAT.parseYear(simple.RELEASETIME),
+			year: FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE) ?? FORMAT.parseYear(simple.RELEASETIME),
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,
 			mbAlbumType: simple.RELEASETYPE,
 			mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
@@ -254,12 +254,12 @@ export class FORMAT {
 			artistSort: simple.ARTISTSORT,
 			genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
 			disc: FORMAT.parseNum(simple.DISCNUMBER),
-			discTotal: FORMAT.parseNum(simple.DISCTOTAL) || FORMAT.parseNum(simple.TOTALDISCS),
+			discTotal: FORMAT.parseNum(simple.DISCTOTAL) ?? FORMAT.parseNum(simple.TOTALDISCS),
 			title: simple.TITLE,
 			titleSort: simple.TITLESORT,
-			trackNr: FORMAT.parseNum(simple.TRACKNUMBER) || FORMAT.parseNum(simple.TRACK),
-			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) || FORMAT.parseNum(simple.TOTALTRACKS),
-			year: FORMAT.parseYear(simple.ORIGINALYEAR) || FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE),
+			trackNr: FORMAT.parseNum(simple.TRACKNUMBER) ?? FORMAT.parseNum(simple.TRACK),
+			trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) ?? FORMAT.parseNum(simple.TOTALTRACKS),
+			year: FORMAT.parseYear(simple.ORIGINALYEAR) ?? FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE),
 			lyrics: simple.LYRICS,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,

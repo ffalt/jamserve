@@ -1,13 +1,12 @@
 import { PageResult } from './base.js';
-import { PageArgs } from './base.args.js';
+import { PageParameters } from './base.parameters.js';
 
-export function paginate<T>(list: Array<T>, page: PageArgs | undefined): PageResult<T> {
-	if (!page) {
-		page = {};
+export function paginate<T>(list: Array<T>, page: PageParameters = {}): PageResult<T> {
+	const total = list.length;
+	const take = page.take;
+	if (take === undefined || take < 0) {
+		return { items: list, total, ...page };
 	}
-	if (page.take === undefined || page.take < 0) {
-		return { items: list, total: list.length, ...page };
-	}
-	page.skip = page.skip || 0;
-	return { items: list.slice(page.skip, page.skip + page.take), total: list.length, ...page };
+	const skip = page.skip ?? 0;
+	return { items: list.slice(skip, skip + take), total, ...page, skip };
 }

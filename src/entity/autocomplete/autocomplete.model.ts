@@ -1,38 +1,38 @@
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ResultType({ description: 'AutoComplete Entry' })
 export class AutoCompleteEntry {
-	@ObjField({ description: 'ID', isID: true })
+	@ObjectField({ description: 'ID', isID: true })
 	id!: string;
 
-	@ObjField({ description: 'Name', example: 'Awesome' })
+	@ObjectField({ description: 'Name', example: 'Awesome' })
 	name!: string;
 }
 
 @ResultType({ description: 'AutoComplete' })
 export class AutoComplete {
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Tracks' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Tracks' })
 	tracks?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Artists' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Artists' })
 	artists?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Albums' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Albums' })
 	albums?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Folder' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Folder' })
 	folders?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Playlist' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Playlist' })
 	playlists?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Podcasts' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Podcasts' })
 	podcasts?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Episode' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Episode' })
 	episodes?: Array<AutoCompleteEntry>;
 
-	@ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Series' })
+	@ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Series' })
 	series?: Array<AutoCompleteEntry>;
 }

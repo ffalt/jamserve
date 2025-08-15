@@ -24,6 +24,6 @@ export class WaveformResolver {
 
 	@FieldResolver(() => String)
 	async svg(@GQLRoot() waveform: Waveform, @Arg('width', () => Int) width: number, @Ctx() { engine }: Context): Promise<string> {
-		return (await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width)) ?? '';
+		return await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width);
 	}
 }

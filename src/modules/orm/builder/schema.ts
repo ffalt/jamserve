@@ -1,9 +1,10 @@
 import { EntityMetadata } from '../definitions/entity-metadata.js';
-import seq, { Sequelize, DataType, ModelAttributeColumnOptions } from 'sequelize';
+import { Sequelize, DataType, ModelAttributeColumnOptions, Model, DataTypes } from 'sequelize';
 import { PropertyMetadata } from '../definitions/property-metadata.js';
 import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '../definitions/orm-types.js';
-import { ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions } from '../definitions/types.js';
+import { ManyToManyFieldRelation, ManyToOneFieldRelation, MappedByOptions, OneToManyFieldRelation, OneToOneFieldRelation, OwnerOptions, PrimaryFieldOptions, RelationOptions, TypeValue } from '../definitions/types.js';
 import { MetadataStorage } from '../metadata/metadata-storage.js';
+import { Attributes, ModelAttributes, ModelStatic } from 'sequelize/lib/model';
 
 export class DBModel {
 	constructor(public readonly db: boolean) {
@@ -11,72 +12,71 @@ export class DBModel {
 }
 
 export class ModelBuilder {
-	readonly modelMap = new Map<string, any>();
+	readonly modelMap = new Map<string, ModelStatic<any>>();
 
 	constructor(private readonly sequelize: Sequelize, private readonly metadata: MetadataStorage) {
 	}
 
 	private async buildColumnAttributeModel(field: PropertyMetadata, entity: EntityMetadata): Promise<DataType | ModelAttributeColumnOptions | undefined> {
 		const type = field.getType();
-		const opts = field.typeOptions;
-		const allowNull = opts.nullable === true;
-		if (type === ORM_ID && (opts as PrimaryFieldOptions).primaryKey) {
+		const options = field.typeOptions;
+		const allowNull = options.nullable === true;
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (type === ORM_ID && (options as PrimaryFieldOptions).primaryKey) {
 			return {
-				type: seq.DataTypes.UUID,
-				defaultValue: seq.DataTypes.UUIDV4,
+				type: DataTypes.UUID,
+				defaultValue: DataTypes.UUIDV4,
 				allowNull: false,
 				unique: true,
 				primaryKey: true
 			};
 		}
 		if (type === ORM_ID) {
-			return { type: seq.DataTypes.UUID, defaultValue: seq.DataTypes.UUIDV4, allowNull };
+			return { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull };
 		}
 		if (type === Boolean) {
-			return { type: seq.DataTypes.BOOLEAN, allowNull };
+			return { type: DataTypes.BOOLEAN, allowNull };
 		}
 		if (type === ORM_INT) {
-			return { type: seq.DataTypes.INTEGER, allowNull };
+			return { type: DataTypes.INTEGER, allowNull };
 		}
 		if (type === ORM_DATETIME || type === Date) {
-			return { type: seq.DataTypes.DATE, allowNull };
+			return { type: DataTypes.DATE, allowNull };
 		}
 		if (type === ORM_FLOAT || type === Number) {
-			return { type: seq.DataTypes.FLOAT, allowNull };
+			return { type: DataTypes.FLOAT, allowNull };
 		}
 		if (type === String) {
 			return {
-				type: seq.DataTypes.TEXT,
+				type: DataTypes.TEXT,
 				allowNull
 			};
 		}
-		const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
+		const enumInfo = this.metadata.enumInfo(type as TypeValue);
 		if (enumInfo) {
 			return {
-				type: seq.DataTypes.TEXT,
+				type: DataTypes.TEXT,
 				allowNull
 			};
 		}
-		const fObjectType = this.metadata.entities.find(it => it.target === type);
+		const fObjectType = this.metadata.entityInfo(type as TypeValue);
 		if (fObjectType) {
 			return;
 		}
 		throw new Error(`Unknown Property Type for ${entity.name}.${field.name}. Maybe an unregistered enum or entity?`);
 	}
 
-	private resolveMappedBy(opts: MappedByOptions<any>, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata): PropertyMetadata {
-		if (!opts.mappedBy) {
+	private resolveMappedBy(options: MappedByOptions<any>, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destinationEntity: EntityMetadata): PropertyMetadata {
+		if (!options.mappedBy) {
 			throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);
 		}
-		const properties: Record<string, PropertyMetadata> = {};
-		for (const f of destEntity.fields) {
-			properties[f.name] = f;
-		}
-		const destField = opts.mappedBy(properties);
-		if (!destField) {
+		const properties: Record<string, PropertyMetadata> =
+			Object.fromEntries(destinationEntity.fields.map(f => [f.name, f] as const));
+		const destinationField: PropertyMetadata | undefined = options.mappedBy(properties);
+		if (!destinationField) {
 			throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);
 		}
-		return destField;
+		return destinationField;
 	}
 
 	private async buildEntityLinks(sourceEntity: EntityMetadata): Promise<void> {
@@ -85,34 +85,35 @@ export class ModelBuilder {
 			return;
 		}
 		for (const sourceField of sourceEntity.fields) {
-			const opts = sourceField.typeOptions as RelationOptions;
-			if (opts.relation) {
-				this.buildRelation(opts, sourceEntity, sourceField, sourceModel);
+			const options = sourceField.typeOptions as RelationOptions;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (options.relation) {
+				this.buildRelation(options, sourceEntity, sourceField, sourceModel);
 			}
 		}
 	}
 
-	private buildRelation(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, sourceModel: any) {
+	private buildRelation(options: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, sourceModel: ModelStatic<any>) {
 		const type = sourceField.getType();
-		const destEntity = this.metadata.entities.find(it => it.target === type);
-		if (destEntity) {
-			const destModel = this.modelMap.get(destEntity.name);
-			if (destModel) {
-				switch (opts.relation) {
+		const destinationEntity = this.metadata.entityInfo(type as TypeValue);
+		if (destinationEntity) {
+			const destinationModel = this.modelMap.get(destinationEntity.name);
+			if (destinationModel) {
+				switch (options.relation) {
 					case 'one2many': {
-						this.oneToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						this.oneToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
 						break;
 					}
 					case 'many2one': {
-						this.manyToOne(opts, sourceEntity, sourceField, destEntity);
+						this.manyToOne(options, sourceEntity, sourceField, destinationEntity);
 						break;
 					}
 					case 'many2many': {
-						this.manyToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						this.manyToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
 						break;
 					}
 					case 'one2one': {
-						this.oneToOne(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+						this.oneToOne(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
 						break;
 					}
 				}
@@ -120,21 +121,21 @@ export class ModelBuilder {
 		}
 	}
 
-	private oneToOne(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
-		const o2o = opts as OneToOneFieldRelation<any>;
-		const destField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destEntity);
-		if ((destField.typeOptions as RelationOptions).relation !== 'one2one') {
-			throw new Error(`Invalid OneToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+	private oneToOne(options: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destinationEntity: EntityMetadata, sourceModel: ModelStatic<any>, destinationModel: ModelStatic<any>) {
+		const o2o = options as OneToOneFieldRelation<any>;
+		const destinationField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destinationEntity);
+		if ((destinationField.typeOptions as RelationOptions).relation !== 'one2one') {
+			throw new Error(`Invalid OneToOne Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
 		}
-		if (!o2o.owner && !(destField.typeOptions as OwnerOptions).owner) {
-			throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+		if (!o2o.owner && !(destinationField.typeOptions as OwnerOptions).owner) {
+			throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destinationEntity.name}.${destinationField.name}.`);
 		}
-		if (o2o.owner && (destField.typeOptions as OwnerOptions).owner) {
-			throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+		if (o2o.owner && (destinationField.typeOptions as OwnerOptions).owner) {
+			throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destinationEntity.name}.${destinationField.name}.`);
 		}
 		if (o2o.owner) {
-			sourceModel.belongsTo(destModel, {
-				as: sourceField.name + 'ORM',
+			sourceModel.belongsTo(destinationModel, {
+				as: `${sourceField.name}ORM`,
 				foreignKey:
 					{
 						allowNull: o2o.nullable,
@@ -144,56 +145,56 @@ export class ModelBuilder {
 		}
 	}
 
-	private manyToMany(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
-		const m2m = opts as ManyToManyFieldRelation<any>;
-		const destField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destEntity);
-		if ((destField.typeOptions as RelationOptions).relation !== 'many2many') {
-			throw new Error(`Invalid ManyToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+	private manyToMany(options: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destinationEntity: EntityMetadata, sourceModel: ModelStatic<any>, destinationModel: ModelStatic<any>) {
+		const m2m = options as ManyToManyFieldRelation<any>;
+		const destinationField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destinationEntity);
+		if ((destinationField.typeOptions as RelationOptions).relation !== 'many2many') {
+			throw new Error(`Invalid ManyToMany Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
 		}
-		const through = [sourceEntity, destEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
-		destModel.belongsToMany(sourceModel, { through, as: destField.name + 'ORM', foreignKey: sourceField.name });
+		const through = [sourceEntity, destinationEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
+		destinationModel.belongsToMany(sourceModel, { through, as: `${destinationField.name}ORM`, foreignKey: sourceField.name });
 	}
 
-	private manyToOne(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata) {
-		const m2o = opts as ManyToOneFieldRelation<any>;
-		const destField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destEntity);
-		if ((destField.typeOptions as RelationOptions).relation !== 'one2many') {
-			throw new Error(`Invalid OneToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+	private manyToOne(options: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destinationEntity: EntityMetadata) {
+		const m2o = options as ManyToOneFieldRelation<any>;
+		const destinationField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destinationEntity);
+		if ((destinationField.typeOptions as RelationOptions).relation !== 'one2many') {
+			throw new Error(`Invalid OneToMany Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
 		}
 		// is handled by opposite side
 	}
 
-	private oneToMany(opts: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destEntity: EntityMetadata, sourceModel: any, destModel: any) {
-		const o2m = opts as OneToManyFieldRelation<any>;
-		const destField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destEntity);
-		if ((destField.typeOptions as RelationOptions).relation !== 'many2one') {
-			throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+	private oneToMany(options: RelationOptions, sourceEntity: EntityMetadata, sourceField: PropertyMetadata, destinationEntity: EntityMetadata, sourceModel: ModelStatic<any>, destinationModel: ModelStatic<any>) {
+		const o2m = options as OneToManyFieldRelation<any>;
+		const destinationField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destinationEntity);
+		if ((destinationField.typeOptions as RelationOptions).relation !== 'many2one') {
+			throw new Error(`Invalid ManyToOne Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
 		}
-		sourceModel.hasMany(destModel, {
-			type: seq.DataTypes.UUID,
-			as: sourceField.name + 'ORM',
+		sourceModel.hasMany(destinationModel, {
+			// type: seq.DataTypes.UUID,
+			as: `${sourceField.name}ORM`,
 			onDelete: o2m.onDelete,
-			foreignKey: destField.name
+			foreignKey: destinationField.name
 		});
-		destModel.belongsTo(sourceModel, {
-			type: seq.DataTypes.UUID,
-			as: destField.name + 'ORM',
+		destinationModel.belongsTo(sourceModel, {
+			// type: seq.DataTypes.UUID,
+			as: `${destinationField.name}ORM`,
 			foreignKey: {
-				name: destField.name,
+				name: destinationField.name,
 				allowNull: o2m.nullable
 			}
 		});
 	}
 
-	private async buildEntityModel(entity: EntityMetadata): Promise<void> {
-		const attributes: any = {};
+	private async buildEntityModel<T extends Model>(entity: EntityMetadata): Promise<void> {
+		const attributes: Record<string, DataType | ModelAttributeColumnOptions<T>> = {};
 		for (const field of entity.fields) {
 			const attribute = await this.buildColumnAttributeModel(field, entity);
 			if (attribute) {
 				attributes[field.name] = attribute;
 			}
 		}
-		const model = this.sequelize.define<any>(entity.name, attributes, {
+		const model = this.sequelize.define<T>(entity.name, attributes as ModelAttributes<T, Attributes<T>>, {
 			freezeTableName: true
 		});
 		this.modelMap.set(entity.name, model);
@@ -201,7 +202,7 @@ export class ModelBuilder {
 
 	async build(): Promise<DBModel> {
 		const result = new DBModel(true);
-		const entities = this.metadata.entities.filter(e => !e.isAbstract);
+		const entities = this.metadata.entities.filter(entity => !entity.isAbstract);
 		for (const entity of entities) {
 			await this.buildEntityModel(entity);
 		}

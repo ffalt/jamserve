@@ -16,8 +16,9 @@ import { EpisodeService } from '../episode/episode.service.js';
 import { GpodderPodcast, GpodderTag } from '../../modules/audio/clients/gpodder-rest-data.js';
 import { PageResult } from '../base/base.js';
 import { paginate } from '../base/base.utils.js';
-import { PageArgs } from '../base/base.args.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { errorToString } from '../../utils/error.js';
 
 const log = logger('PodcastService');
 
@@ -66,13 +67,13 @@ export class PodcastService {
 	}
 
 	private async mergeEpisodes(orm: Orm, podcast: Podcast, episodes: Array<EpisodeData>): Promise<Array<Episode>> {
-		if (!episodes?.length) {
+		if (episodes.length === 0) {
 			return [];
 		}
 		const newEpisodes: Array<Episode> = [];
 		const oldEpisodes = await podcast.episodes.getItems();
 		for (const epi of episodes) {
-			let episode = oldEpisodes.find(e => e.guid === epi.guid);
+			let episode = oldEpisodes.find(entry => entry.guid === epi.guid);
 			if (!episode) {
 				episode = orm.Episode.create({
 					...epi,
@@ -88,8 +89,8 @@ export class PodcastService {
 			episode.enclosuresJSON = epi.enclosures && epi.enclosures.length > 0 ? JSON.stringify(epi.enclosures) : undefined;
 			episode.date = epi.date ?? episode.date;
 			episode.summary = epi.summary;
-			episode.name = epi.name || episode.name;
-			episode.guid = epi.guid || epi.link;
+			episode.name = epi.name ?? episode.name;
+			episode.guid = epi.guid ?? epi.link;
 			episode.author = epi.author;
 			orm.Episode.persistLater(episode);
 		}
@@ -98,14 +99,14 @@ export class PodcastService {
 	}
 
 	private async updatePodcast(orm: Orm, podcast: Podcast, tag: PodcastTag, episodes: Array<EpisodeData>): Promise<void> {
-		podcast.name = tag.title || podcast.name;
+		podcast.name = tag.title ?? podcast.name;
 		podcast.author = tag.author;
 		podcast.description = tag.description;
 		podcast.title = tag.title;
 		podcast.link = tag.link;
 		podcast.generator = tag.generator;
 		podcast.language = tag.language;
-		podcast.categories = tag.categories || [];
+		podcast.categories = tag.categories ?? [];
 		if (podcast.image) {
 			const imageFile = path.resolve(this.podcastsPath, podcast.id, podcast.image);
 			if (!(await fse.pathExists(imageFile))) {
@@ -118,9 +119,9 @@ export class PodcastService {
 			await fse.ensureDir(podcastPath);
 			try {
 				podcast.image = await this.imageModule.storeImage(podcastPath, 'cover', tag.image);
-			} catch (error) {
+			} catch (error: unknown) {
 				podcast.image = undefined;
-				log.info('Downloading Podcast image failed', error);
+				log.info('Downloading Podcast image failed', errorToString(error));
 			}
 		}
 		const newEpisodes = await this.mergeEpisodes(orm, podcast, episodes);
@@ -137,22 +138,17 @@ export class PodcastService {
 			const feed = new Feed();
 			try {
 				const result = await feed.get(podcast);
-				if (result) {
-					await this.updatePodcast(orm, podcast, result.tag, result.episodes);
-					podcast.status = PodcastStatus.completed;
-				} else {
-					podcast.status = PodcastStatus.error;
-					podcast.errorMessage = 'No Podcast Feed Data';
-				}
-			} catch (error) {
-				log.info('Refreshing Podcast failed', error);
+				await this.updatePodcast(orm, podcast, result.tag, result.episodes);
+				podcast.status = PodcastStatus.completed;
+			} catch (error: unknown) {
+				log.info('Refreshing Podcast failed', errorToString(error));
 				podcast.status = PodcastStatus.error;
-				podcast.errorMessage = (error || '').toString();
+				podcast.errorMessage = errorToString(error);
 			}
 			podcast.lastCheck = new Date();
 			await orm.Podcast.persistAndFlush(podcast);
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
-		} catch (error) {
+		} catch (error: unknown) {
 			this.podcastRefreshDebounce.resolve(podcast.id, undefined);
 			return Promise.reject(error);
 		}
@@ -167,7 +163,7 @@ export class PodcastService {
 		log.info('Refreshed');
 	}
 
-	async getImage(orm: Orm, podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
+	async getImage(_orm: Orm, podcast: Podcast, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		if (podcast.image) {
 			return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
 		}
@@ -182,12 +178,12 @@ export class PodcastService {
 		return result;
 	}
 
-	async discoverTags(page: PageArgs): Promise<PageResult<GpodderTag>> {
+	async discoverTags(page: PageParameters): Promise<PageResult<GpodderTag>> {
 		const list = await this.audioModule.gpodder.tags(1000);
 		return paginate(list, page);
 	}
 
-	async discoverByTag(tag: string, page: PageArgs): Promise<PageResult<GpodderPodcast>> {
+	async discoverByTag(tag: string, page: PageParameters): Promise<PageResult<GpodderPodcast>> {
 		const list = await this.audioModule.gpodder.byTag(tag, 100);
 		return paginate(list, page);
 	}
@@ -196,7 +192,7 @@ export class PodcastService {
 		return this.audioModule.gpodder.search(name);
 	}
 
-	async discoverTop(page: PageArgs): Promise<PageResult<GpodderPodcast>> {
+	async discoverTop(page: PageParameters): Promise<PageResult<GpodderPodcast>> {
 		const list = await this.audioModule.gpodder.top(300);
 		return paginate(list, page);
 	}

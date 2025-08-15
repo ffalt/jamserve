@@ -90,12 +90,14 @@ export class EngineService {
 			log.info(`Updating from version ${version || '-'}`);
 		}
 		if (forceRescan || this.settings.settings.library.scanAtStart) {
-			log.info(`Starting rescan`);
-			this.io.root.startUpRefresh(orm, forceRescan).then(() => {
-				return forceRescan ? this.settings.saveSettings(orm) : undefined;
-			}).catch(error => {
-				log.error('Error on startup scanning', error);
-			});
+			log.info('Starting rescan');
+			this.io.root.startUpRefresh(orm, forceRescan)
+				.then(() => {
+					return forceRescan ? this.settings.saveSettings(orm) : undefined;
+				})
+				.catch((error: unknown) => {
+					log.error(error, 'Error on startup scanning');
+				});
 		}
 	}
 
@@ -108,21 +110,21 @@ export class EngineService {
 	}
 
 	async init(): Promise<void> {
-		log.debug(`check data paths`);
+		log.debug('check data paths');
 		await this.checkDataPaths();
-		log.debug(`init orm`);
+		log.debug('init orm');
 		await this.orm.init(this.config);
 	}
 
 	async start(): Promise<void> {
-		log.debug(`start orm`);
+		log.debug('start orm');
 		await this.orm.start();
 		const orm = this.orm.fork();
-		log.debug(`load settings`);
+		log.debug('load settings');
 		await this.settings.loadSettings(orm);
-		log.debug(`check first start`);
+		log.debug('check first start');
 		await this.checkFirstStart(orm);
-		log.debug(`check for rescan`);
+		log.debug('check for rescan');
 		await this.checkRescan(orm);
 	}
 

@@ -2,26 +2,26 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
 import { State } from './state.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem } from '../../modules/orm/index.js';
-import { DefaultOrderArgs } from '../base/base.args.js';
+import { DefaultOrderParameters } from '../base/base.parameters.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class StateRepository extends BaseRepository<State, void, DefaultOrderArgs> {
+export class StateRepository extends BaseRepository<State, void, DefaultOrderParameters> {
 	objType = DBObjectType.state;
 
-	buildOrder(_?: DefaultOrderArgs): Array<OrderItem> {
+	buildOrder(_?: DefaultOrderParameters): Array<OrderItem> {
 		return [];
 	}
 
-	async buildFilter(_?: void, __?: User): Promise<FindOptions<State>> {
+	async buildFilter(_?: unknown, __?: User): Promise<FindOptions<State>> {
 		return {};
 	}
 
-	async findOrCreate(destID: string, destType: DBObjectType, userID: string): Promise<State> {
-		const state = await this.findOne({ where: { user: userID, destID, destType } });
-		return state || this.create({});
+	async findOrCreate(destinationID: string, destinationType: DBObjectType, userID: string): Promise<State> {
+		const state = await this.findOne({ where: { user: userID, destID: destinationID, destType: destinationType } });
+		return state ?? this.create({});
 	}
 
-	async findMany(destIDs: Array<string>, destType: DBObjectType, userID: string): Promise<Array<State>> {
-		return await this.find({ where: { user: userID, destID: destIDs, destType } });
+	async findMany(destinationIDs: Array<string>, destinationType: DBObjectType, userID: string): Promise<Array<State>> {
+		return await this.find({ where: { user: userID, destID: destinationIDs, destType: destinationType } });
 	}
 }

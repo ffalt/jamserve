@@ -19,16 +19,16 @@ export function fileSuffix(filename: string): string {
 	return path.extname(filename).slice(1).toLowerCase();
 }
 
-export function fileExt(filename: string): string {
+export function fileExtention(filename: string): string {
 	return path.extname(filename).toLowerCase();
 }
 
-export function basenameStripExt(filename: string): string {
+export function basenameStripExtension(filename: string): string {
 	return path.basename(filename, path.extname(filename));
 }
 
 export function replaceFileSystemChars(s: string, replace: string): string {
-	return s.toString()
+	return s
 		.replaceAll(':', ' - ')
 		.replaceAll(/[?/!\\"|*]/g, replace);
 }
@@ -51,7 +51,7 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 		? (question mark)
 		* (asterisk)
 	 */
-	return s.toString()
+	return s
 		.replaceAll(':', ' -')
 		.replaceAll(/[|*?/!\\<>"]/g, replace);
 }

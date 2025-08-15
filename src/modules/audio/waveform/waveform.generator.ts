@@ -30,9 +30,9 @@ export class WaveformGenerator {
 				samplesPerPixel: 256,
 				sampleRate: 44_100
 			});
-			wf.run(err => {
-				if (err) {
-					reject(err);
+			wf.run((error?: unknown) => {
+				if (error) {
+					reject(error as unknown);
 				} else {
 					resolve(wf);
 				}
@@ -50,10 +50,10 @@ export class WaveformGenerator {
 		const maxArray = channel.max_array();
 		x.domain([0, wfd.length]).rangeRound([0, width ?? 4000]);
 		y.domain([min(minArray) as any, max(maxArray) as any]).rangeRound([0, height]);
-		const waveArea = area()
-			.x((a, i) => x(i))
-			.y0((b, i) => y(minArray[i]))
-			.y1(c => y(c as any));
+		const waveArea = area<number>()
+			.x((_a, index) => x(index))
+			.y0((_b, index) => y(minArray[index]))
+			.y1(c => y(c));
 		const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 		const d3Element = select(fakedom.window.document).select('body');
 		const svg = d3Element.append('svg')
@@ -67,7 +67,7 @@ export class WaveformGenerator {
 			.datum(maxArray)
 			.attr('stroke', 'green')
 			.attr('fill', 'darkgreen')
-			.attr('d', waveArea as any);
+			.attr('d', waveArea);
 		const node = svg.node();
 		return node?.outerHTML ?? '';
 	}

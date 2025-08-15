@@ -1,20 +1,21 @@
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Root } from './root.js';
-import { DefaultOrderArgs } from '../base/base.args.js';
+import { DefaultOrderParameters } from '../base/base.parameters.js';
 import { User } from '../user/user.js';
-import { RootFilterArgs, RootOrderArgs } from './root.args.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { RootFilterParameters, RootOrderParameters } from './root.parameters.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class RootRepository extends BaseRepository<Root, RootFilterArgs, RootOrderArgs> {
+export class RootRepository extends BaseRepository<Root, RootFilterParameters, RootOrderParameters> {
 	objType = DBObjectType.root;
 	indexProperty = 'name';
 
-	buildOrder(order?: DefaultOrderArgs): Array<OrderItem> {
+	buildOrder(order?: DefaultOrderParameters): Array<OrderItem> {
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: RootFilterArgs, _?: User): Promise<FindOptions<Root>> {
+	async buildFilter(filter?: RootFilterParameters, _?: User): Promise<FindOptions<Root>> {
 		if (!filter) {
 			return {};
 		}

@@ -8,7 +8,7 @@ import { Track, TrackQL } from '../track/track.js';
 import { Root, RootQL } from '../root/root.js';
 import { Folder, FolderQL } from '../folder/folder.js';
 import { Series, SeriesQL } from '../series/series.js';
-import { AlbumIndexArgsQL, AlbumsArgsQL } from './album.args.js';
+import { AlbumIndexParametersQL, AlbumsParametersQL } from './album.parameters.js';
 import { Genre, GenreQL } from '../genre/genre.js';
 
 @Resolver(AlbumQL)
@@ -19,7 +19,7 @@ export class AlbumResolver {
 	}
 
 	@Query(() => AlbumPageQL, { description: 'Search albums' })
-	async albums(@Args() { filter, page, order, list, seed }: AlbumsArgsQL, @Ctx() { orm, user }: Context): Promise<AlbumPageQL> {
+	async albums(@Args() { filter, page, order, list, seed }: AlbumsParametersQL, @Ctx() { orm, user }: Context): Promise<AlbumPageQL> {
 		if (list) {
 			return await orm.Album.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -27,7 +27,7 @@ export class AlbumResolver {
 	}
 
 	@Query(() => AlbumIndexQL, { description: 'Get the Navigation Index for Albums' })
-	async albumIndex(@Args() { filter }: AlbumIndexArgsQL, @Ctx() { orm }: Context): Promise<AlbumIndexQL> {
+	async albumIndex(@Args() { filter }: AlbumIndexParametersQL, @Ctx() { orm }: Context): Promise<AlbumIndexQL> {
 		return await orm.Album.indexFilter(filter);
 	}
 

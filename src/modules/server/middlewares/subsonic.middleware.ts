@@ -6,7 +6,7 @@ import { subsonicRouter } from '../../subsonic/builder/express.js';
 import { UserRole } from '../../../types/enums.js';
 import { buildSubsonicMeta } from '../../subsonic/metadata/builder.js';
 import { RestOptions } from '../../deco/express/express-method.js';
-import { getMetadataStorage } from '../../subsonic/metadata/getMetadataStorage.js';
+import { metadataStorage } from '../../subsonic/metadata/metadata-storage.js';
 import { ApiResponder } from '../../subsonic/response.js';
 import { SubsonicParameterMiddleWare } from '../../subsonic/parameters.js';
 import { SubsonicCheckAuthMiddleWare, SubsonicLoginMiddleWare } from '../../subsonic/login.js';
@@ -28,7 +28,7 @@ export class SubsonicMiddleware {
 		router.use(SubsonicLoginMiddleWare);
 		router.use(SubsonicCheckAuthMiddleWare);
 		buildSubsonicMeta();
-		const metadata = getMetadataStorage();
+		const metadata = metadataStorage();
 		const options: RestOptions = {
 			enums: metadata.enums,
 			resultTypes: metadata.resultTypes,
@@ -65,7 +65,7 @@ export class SubsonicMiddleware {
 				{ name: 'format', alignment: 'left' }
 			]);
 		}
-		router.use((req, res) => {
+		router.use((_req, res) => {
 			res.status(404).send('Subsonic Api Path not found');
 		});
 

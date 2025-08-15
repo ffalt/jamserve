@@ -4,14 +4,15 @@ import { Track } from './track.js';
 import { OrderHelper } from '../base/base.js';
 import { Folder } from '../folder/folder.js';
 import { FolderRepository } from '../folder/folder.repository.js';
-import { TrackFilterArgs, TrackOrderArgs } from './track.args.js';
+import { TrackFilterParameters, TrackOrderParameters } from './track.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, TrackOrderArgs> {
+export class TrackRepository extends BaseRepository<Track, TrackFilterParameters, TrackOrderParameters> {
 	objType = DBObjectType.track;
 
-	buildOrder(order?: TrackOrderArgs): Array<OrderItem> {
+	buildOrder(order?: TrackOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case TrackOrderFields.created: {
@@ -53,18 +54,18 @@ export class TrackRepository extends BaseRepository<Track, TrackFilterArgs, Trac
 		return [];
 	}
 
-	async buildFilter(filter?: TrackFilterArgs, _?: User): Promise<FindOptions<Track>> {
+	async buildFilter(filter?: TrackFilterParameters, _?: User): Promise<FindOptions<Track>> {
 		if (!filter) {
 			return {};
 		}
 		let folderIDs: Array<string> = [];
-		if (filter?.childOfID) {
+		if (filter.childOfID) {
 			const folderRepo = this.em.getRepository(Folder) as FolderRepository;
 			const folder = await folderRepo.oneOrFailByID(filter.childOfID);
 			folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder)];
 			folderIDs.push(filter.childOfID);
 		}
-		if (filter?.folderIDs) {
+		if (filter.folderIDs) {
 			folderIDs = [...folderIDs, ...filter.folderIDs];
 		}
 		const result = QHelper.buildQuery<Track>(

@@ -2,14 +2,15 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, EpisodeOrderFields } from '../../types/enums.js';
 import { OrderHelper } from '../base/base.js';
 import { Episode } from './episode.js';
-import { EpisodeFilterArgs, EpisodeOrderArgs } from './episode.args.js';
+import { EpisodeFilterParameters, EpisodeOrderParameters } from './episode.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs, EpisodeOrderArgs> {
+export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterParameters, EpisodeOrderParameters> {
 	objType = DBObjectType.episode;
 
-	buildOrder(order?: EpisodeOrderArgs): Array<OrderItem> {
+	buildOrder(order?: EpisodeOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case EpisodeOrderFields.created: {
@@ -32,7 +33,7 @@ export class EpisodeRepository extends BaseRepository<Episode, EpisodeFilterArgs
 		return [];
 	}
 
-	async buildFilter(filter?: EpisodeFilterArgs, _?: User): Promise<FindOptions<Episode>> {
+	async buildFilter(filter?: EpisodeFilterParameters, _?: User): Promise<FindOptions<Episode>> {
 		return filter ?
 			QHelper.buildQuery<Episode>(
 				[

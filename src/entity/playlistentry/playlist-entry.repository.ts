@@ -1,15 +1,16 @@
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, PlaylistEntryOrderFields } from '../../types/enums.js';
 import { PlaylistEntry } from './playlist-entry.js';
-import { PlaylistEntryFilterArgs, PlaylistEntryOrderArgs } from './playlist-entry.args.js';
+import { PlaylistEntryFilterParameters, PlaylistEntryOrderParameters } from './playlist-entry.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
 import { OrderHelper } from '../base/base.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, PlaylistEntryFilterArgs, PlaylistEntryOrderArgs> {
+export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, PlaylistEntryFilterParameters, PlaylistEntryOrderParameters> {
 	objType = DBObjectType.playlistentry;
 
-	buildOrder(order?: PlaylistEntryOrderArgs): Array<OrderItem> {
+	buildOrder(order?: PlaylistEntryOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case PlaylistEntryOrderFields.created: {
@@ -26,7 +27,7 @@ export class PlaylistEntryRepository extends BaseRepository<PlaylistEntry, Playl
 		return [];
 	}
 
-	async buildFilter(filter?: PlaylistEntryFilterArgs, __?: User): Promise<FindOptions<PlaylistEntry>> {
+	async buildFilter(filter?: PlaylistEntryFilterParameters, __?: User): Promise<FindOptions<PlaylistEntry>> {
 		if (!filter) {
 			return {};
 		}

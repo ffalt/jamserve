@@ -65,8 +65,8 @@ export abstract class TranscoderStream implements StreamData {
 				.on('end', () => {
 					resolve();
 				})
-				.on('error', (err: Error) => {
-					reject(err);
+				.on('error', (error: unknown) => {
+					reject(error);
 				})
 				.save(destination);
 		});

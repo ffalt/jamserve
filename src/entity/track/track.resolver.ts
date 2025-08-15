@@ -13,7 +13,7 @@ import { MediaTagRawQL, Tag, TagQL } from '../tag/tag.js';
 import { MediaTagRaw } from '../tag/tag.model.js';
 import { Series, SeriesQL } from '../series/series.js';
 import { Bookmark, BookmarkQL } from '../bookmark/bookmark.js';
-import { TracksArgsQL } from './track.args.js';
+import { TracksParametersQL } from './track.parameters.js';
 import { Genre, GenreQL } from '../genre/genre.js';
 
 @Resolver(TrackQL)
@@ -24,7 +24,7 @@ export class TrackResolver {
 	}
 
 	@Query(() => TrackPageQL)
-	async tracks(@Args() { page, filter, order, list, seed }: TracksArgsQL, @Ctx() { orm, user }: Context): Promise<TrackPageQL> {
+	async tracks(@Args() { page, filter, order, list, seed }: TracksParametersQL, @Ctx() { orm, user }: Context): Promise<TrackPageQL> {
 		if (list) {
 			return await orm.Track.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -103,7 +103,7 @@ export class TrackResolver {
 
 	@FieldResolver(() => MediaTagRawQL)
 	async rawTag(@GQLRoot() track: Track, @Ctx() { engine }: Context): Promise<MediaTagRaw> {
-		return (await engine.track.getRawTag(track)) || {};
+		return (await engine.track.getRawTag(track)) ?? {};
 	}
 
 	@FieldResolver(() => StateQL)

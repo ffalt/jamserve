@@ -28,7 +28,7 @@ export interface ENVConfig {
 		secure: boolean;
 		proxy: boolean;
 		secret: string;
-		allowedCookieDomains: Array<string>;
+		allowedCookieDomains?: Array<string>;
 		maxAge: number;
 	};
 	paths: {
@@ -51,17 +51,17 @@ export class ConfigService {
 		session: {
 			secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
 			proxy: process.env.JAM_SESSION_TRUST_PROXY === 'true',
-			secret: process.env.JAM_SESSION_SECRET || 'keyboard cat is sad because no secret has been set',
-			allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS || '').split(','),
+			secret: process.env.JAM_SESSION_SECRET ?? 'keyboard cat is sad because no secret has been set',
+			allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS ?? '').split(','),
 			maxAge: getMaxAge(process.env.JAM_SESSION_MAXAGE)
 		},
 		paths: {
-			data: process.env.JAM_DATA_PATH || './data/',
-			frontend: process.env.JAM_FRONTEND_PATH || './static/jamberry/'
+			data: process.env.JAM_DATA_PATH ?? './data/',
+			frontend: process.env.JAM_FRONTEND_PATH ?? './static/jamberry/'
 		},
 		db: {
-			dialect: (process.env.JAM_DB_DIALECT as Dialect) || 'sqlite',
-			name: process.env.JAM_DB_NAME || 'jam',
+			dialect: (process.env.JAM_DB_DIALECT as Dialect | undefined) ?? 'sqlite',
+			name: process.env.JAM_DB_NAME ?? 'jam',
 			user: process.env.JAM_DB_USER,
 			password: process.env.JAM_DB_PASSWORD,
 			socket: process.env.JAM_DB_SOCKET,
@@ -92,7 +92,7 @@ export class ConfigService {
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
 			this.firstStart = fse.readJSONSync(configFirstStartFile);
-		} catch (error) {
+		} catch (error: unknown) {
 			console.error('Error loading first start config', error);
 			this.firstStart = {
 				adminUser: undefined,

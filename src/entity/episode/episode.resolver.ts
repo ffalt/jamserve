@@ -7,7 +7,7 @@ import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { Tag, TagQL } from '../tag/tag.js';
 import { Podcast, PodcastQL } from '../podcast/podcast.js';
 import { Bookmark, BookmarkQL } from '../bookmark/bookmark.js';
-import { EpisodesArgsQL } from './episode.args.js';
+import { EpisodesParametersQL } from './episode.parameters.js';
 
 @Resolver(EpisodeQL)
 export class EpisodeResolver {
@@ -17,7 +17,7 @@ export class EpisodeResolver {
 	}
 
 	@Query(() => EpisodePageQL, { description: 'Search Episodes' })
-	async episodes(@Args() { page, filter, order, list, seed }: EpisodesArgsQL, @Ctx() { orm, user }: Context): Promise<EpisodePageQL> {
+	async episodes(@Args() { page, filter, order, list, seed }: EpisodesParametersQL, @Ctx() { orm, user }: Context): Promise<EpisodePageQL> {
 		if (list) {
 			return await orm.Episode.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -76,11 +76,11 @@ export class EpisodeResolver {
 
 	@FieldResolver(() => [EpisodeChapterQL])
 	chapters(@GQLRoot() episode: Episode): Array<EpisodeChapter> | undefined {
-		return episode.chaptersJSON ? JSON.parse(episode.chaptersJSON) : undefined;
+		return episode.chaptersJSON ? JSON.parse(episode.chaptersJSON) as Array<EpisodeChapter> : undefined;
 	}
 
 	@FieldResolver(() => [EpisodeEnclosureQL])
 	enclosures(@GQLRoot() episode: Episode): Array<EpisodeChapter> | undefined {
-		return episode.enclosuresJSON ? JSON.parse(episode.enclosuresJSON) : undefined;
+		return episode.enclosuresJSON ? JSON.parse(episode.enclosuresJSON) as Array<EpisodeChapter> : undefined;
 	}
 }

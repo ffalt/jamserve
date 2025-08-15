@@ -3,6 +3,8 @@ import { Table } from 'console-table-printer';
 import { createStream, Generator, Options, RotatingFileStream } from 'rotating-file-stream';
 import TransportStream from 'winston-transport';
 import { MESSAGE } from 'triple-beam';
+import { errorToString } from './error.js';
+import { Dictionary } from 'console-table-printer/dist/src/models/common.js';
 
 export interface WinstonRotatingFileOptions extends TransportStream.TransportStreamOptions {
 	filename: string | Generator;
@@ -22,8 +24,8 @@ export class WinstonRotatingFile extends TransportStream {
 		this.stream.end();
 	}
 
-	public log(info: any, done: () => void): any {
-		this.stream.write(info[MESSAGE] + '\n', done);
+	public log(info: Record<symbol, string>, done: () => void): any {
+		this.stream.write(`${info[MESSAGE]}\n`, done);
 	}
 }
 
@@ -62,27 +64,27 @@ export class Logger {
 		this.name = name;
 	}
 
-	private applyLog(level: string, format: string, ...params: Array<any>): void {
-		winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format, ...params].join(' ')}`);
+	private applyLog(level: string, format: string, ...parameters: Array<string>): void {
+		winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format, ...parameters].join(' ')}`);
 	}
 
-	debug(format: string, ...params: Array<any>): void {
-		this.applyLog('debug', format, params);
+	debug(format: string, ...parameters: Array<string>): void {
+		this.applyLog('debug', format, ...parameters);
 	}
 
-	info(format: string, ...params: Array<any>): void {
-		this.applyLog('info', format, params);
+	info(format: string, ...parameters: Array<string>): void {
+		this.applyLog('info', format, ...parameters);
 	}
 
-	warn(format: string, ...params: Array<any>): void {
-		this.applyLog('warn', format, params);
+	warn(format: string, ...parameters: Array<string>): void {
+		this.applyLog('warn', format, ...parameters);
 	}
 
-	error(format: string | Error, ...params: Array<any>): void {
-		this.applyLog('error', format.toString(), params);
+	error(format: unknown, ...parameters: Array<string>): void {
+		this.applyLog('error', errorToString(format), ...parameters);
 	}
 
-	table(items: Array<any>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
+	table(items: Array<Dictionary>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
 		if (winston.level === 'info') {
 			const p = new Table({ columns });
 			p.addRows(items);
@@ -90,8 +92,8 @@ export class Logger {
 		}
 	}
 
-	access(format: string, ...params: Array<any>): void {
-		this.applyLog('debug', format, params);
+	access(format: string, ...parameters: Array<string>): void {
+		this.applyLog('debug', format, ...parameters);
 	}
 }
 

@@ -1,19 +1,28 @@
 import { Podcast, PodcastDiscover, PodcastDiscoverPage, PodcastDiscoverTagPage, PodcastIndex, PodcastPage, PodcastUpdateStatus } from './podcast.model.js';
 import { UserRole } from '../../types/enums.js';
 import { Episode, EpisodePage } from '../episode/episode.model.js';
-import { IncludesPodcastArgs, IncludesPodcastChildrenArgs, PodcastCreateArgs, PodcastDiscoverArgs, PodcastDiscoverByTagArgs, PodcastFilterArgs, PodcastOrderArgs, PodcastRefreshArgs } from './podcast.args.js';
-import { EpisodeOrderArgs, IncludesEpisodeArgs } from '../episode/episode.args.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
+import {
+	IncludesPodcastParameters,
+	IncludesPodcastChildrenParameters,
+	PodcastCreateParameters,
+	PodcastDiscoverParameters,
+	PodcastDiscoverByTagParameters,
+	PodcastFilterParameters,
+	PodcastOrderParameters,
+	PodcastRefreshParameters
+} from './podcast.parameters.js';
+import { EpisodeOrderParameters, IncludesEpisodeParameters } from '../episode/episode.parameters.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { logger } from '../../utils/logger.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 const log = logger('PodcastController');
 
@@ -25,15 +34,15 @@ export class PodcastController {
 		{ description: 'Get a Podcast by Id', summary: 'Get Podcast' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Podcast Id', isID: true }) id: string,
-		@QueryParams() podcastArgs: IncludesPodcastArgs,
-		@QueryParams() podcastChildrenArgs: IncludesPodcastChildrenArgs,
-		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Podcast Id', isID: true }) id: string,
+		@QueryParameters() podcastParameters: IncludesPodcastParameters,
+		@QueryParameters() podcastChildrenParameters: IncludesPodcastChildrenParameters,
+		@QueryParameters() episodeParameters: IncludesEpisodeParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Podcast> {
 		return engine.transform.podcast(
 			orm, await orm.Podcast.oneOrFailByID(id),
-			podcastArgs, podcastChildrenArgs, episodeArgs, user
+			podcastParameters, podcastChildrenParameters, episodeParameters, user
 		);
 	}
 
@@ -42,7 +51,7 @@ export class PodcastController {
 		() => PodcastIndex,
 		{ description: 'Get the Navigation Index for Podcasts', summary: 'Get Index' }
 	)
-	async index(@QueryParams() filter: PodcastFilterArgs, @Ctx() { orm, engine, user }: Context): Promise<PodcastIndex> {
+	async index(@QueryParameters() filter: PodcastFilterParameters, @RestContext() { orm, engine, user }: Context): Promise<PodcastIndex> {
 		const result = await orm.Podcast.indexFilter(filter, user);
 		return engine.transform.Podcast.podcastIndex(orm, result);
 	}
@@ -53,23 +62,23 @@ export class PodcastController {
 		{ description: 'Search Podcasts' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() podcastArgs: IncludesPodcastArgs,
-		@QueryParams() podcastChildrenArgs: IncludesPodcastChildrenArgs,
-		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@QueryParams() filter: PodcastFilterArgs,
-		@QueryParams() order: PodcastOrderArgs,
-		@QueryParams() list: ListArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() podcastParameters: IncludesPodcastParameters,
+		@QueryParameters() podcastChildrenParameters: IncludesPodcastChildrenParameters,
+		@QueryParameters() episodeParameters: IncludesEpisodeParameters,
+		@QueryParameters() filter: PodcastFilterParameters,
+		@QueryParameters() order: PodcastOrderParameters,
+		@QueryParameters() list: ListParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<PodcastPage> {
 		if (list.list) {
 			return await orm.Podcast.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
+				o => engine.transform.podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user)
 			);
 		}
 		return await orm.Podcast.searchTransformFilter<Podcast>(
 			filter, [order], page, user,
-			o => engine.transform.podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user)
+			o => engine.transform.podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user)
 		);
 	}
 
@@ -79,16 +88,16 @@ export class PodcastController {
 		{ description: 'Get Episodes of Podcasts', summary: 'Get Episodes' }
 	)
 	async episodes(
-		@QueryParams() page: PageArgs,
-		@QueryParams() episodeArgs: IncludesEpisodeArgs,
-		@QueryParams() filter: PodcastFilterArgs,
-		@QueryParams() order: EpisodeOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() episodeParameters: IncludesEpisodeParameters,
+		@QueryParameters() filter: PodcastFilterParameters,
+		@QueryParameters() order: EpisodeOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<EpisodePage> {
 		const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
 		return await orm.Episode.searchTransformFilter<Episode>(
 			{ podcastIDs }, [order], page, user,
-			o => engine.transform.Episode.episodeBase(orm, o, episodeArgs, user)
+			o => engine.transform.Episode.episodeBase(orm, o, episodeParameters, user)
 		);
 	}
 
@@ -98,8 +107,8 @@ export class PodcastController {
 		{ description: 'Get a Podcast Status by Podcast Id', summary: 'Get Status' }
 	)
 	async status(
-		@QueryParam('id', { description: 'Podcast Id', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@QueryParameter('id', { description: 'Podcast Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<PodcastUpdateStatus> {
 		return engine.transform.Podcast.podcastStatus(await orm.Podcast.oneOrFailByID(id));
 	}
@@ -110,11 +119,14 @@ export class PodcastController {
 		{ description: 'Create a Podcast', roles: [UserRole.podcast], summary: 'Create Podcast' }
 	)
 	async create(
-		@BodyParams() args: PodcastCreateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameters() { url }: PodcastCreateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Podcast> {
-		const podcast = await engine.podcast.create(orm, args.url);
-		engine.podcast.refresh(orm, podcast).catch(error => log.error(error)); // do not wait
+		const podcast = await engine.podcast.create(orm, url);
+		engine.podcast.refresh(orm, podcast)
+			.catch((error: unknown) => {
+				log.error(error);
+			}); // do not wait
 		return engine.transform.podcast(orm, podcast, {}, {}, {}, user);
 	}
 
@@ -123,14 +135,20 @@ export class PodcastController {
 		{ description: 'Check Podcast Feeds for new Episodes', roles: [UserRole.podcast], summary: 'Refresh Podcasts' }
 	)
 	async refresh(
-		@BodyParams() args: PodcastRefreshArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() { id }: PodcastRefreshParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<void> {
-		if (args.id) {
-			const podcast = await orm.Podcast.oneOrFailByID(args.id);
-			engine.podcast.refresh(orm, podcast).catch(error => log.error(error)); // do not wait
+		if (id) {
+			const podcast = await orm.Podcast.oneOrFailByID(id);
+			engine.podcast.refresh(orm, podcast)
+				.catch((error: unknown) => {
+					log.error(error);
+				}); // do not wait
 		} else {
-			engine.podcast.refreshPodcasts(orm).catch(error => log.error(error)); // do not wait
+			engine.podcast.refreshPodcasts(orm)
+				.catch((error: unknown) => {
+					log.error(error);
+				}); // do not wait
 		}
 	}
 
@@ -139,8 +157,8 @@ export class PodcastController {
 		{ description: 'Remove a Podcast', roles: [UserRole.podcast], summary: 'Remove Podcast' }
 	)
 	async remove(
-		@BodyParam('id', { description: 'Podcast ID to remove', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@BodyParameter('id', { description: 'Podcast ID to remove', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<void> {
 		const podcast = await orm.Podcast.oneOrFailByID(id);
 		await engine.podcast.remove(orm, podcast);
@@ -151,7 +169,7 @@ export class PodcastController {
 		() => [PodcastDiscover],
 		{ description: 'Discover Podcasts via gpodder.net', summary: 'Discover Podcasts' }
 	)
-	async discover(@QueryParams() { query }: PodcastDiscoverArgs, @Ctx() { engine }: Context): Promise<Array<PodcastDiscover>> {
+	async discover(@QueryParameters() { query }: PodcastDiscoverParameters, @RestContext() { engine }: Context): Promise<Array<PodcastDiscover>> {
 		return await engine.podcast.discover(query);
 	}
 
@@ -160,7 +178,7 @@ export class PodcastController {
 		() => PodcastDiscoverTagPage,
 		{ description: 'Discover Podcast Tags via gpodder.net', summary: 'Discover Podcast Tags' }
 	)
-	async podcastsDiscoverTags(@QueryParams() page: PageArgs, @Ctx() { engine }: Context): Promise<PodcastDiscoverTagPage> {
+	async podcastsDiscoverTags(@QueryParameters() page: PageParameters, @RestContext() { engine }: Context): Promise<PodcastDiscoverTagPage> {
 		return await engine.podcast.discoverTags(page);
 	}
 
@@ -170,9 +188,9 @@ export class PodcastController {
 		{ description: 'Discover Podcasts by Tag via gpodder.net', summary: 'Discover Podcasts by Tag' }
 	)
 	async podcastsDiscoverByTag(
-		@QueryParams() { tag }: PodcastDiscoverByTagArgs,
-		@QueryParams() page: PageArgs,
-		@Ctx() { engine }: Context
+		@QueryParameters() { tag }: PodcastDiscoverByTagParameters,
+		@QueryParameters() page: PageParameters,
+		@RestContext() { engine }: Context
 	): Promise<PodcastDiscoverPage> {
 		return await engine.podcast.discoverByTag(tag, page);
 	}
@@ -182,7 +200,7 @@ export class PodcastController {
 		() => PodcastDiscoverTagPage,
 		{ description: 'Discover Top Podcasts via gpodder.net', summary: 'Discover Top Podcasts' }
 	)
-	async podcastsDiscoverTop(@QueryParams() page: PageArgs, @Ctx() { engine }: Context): Promise<PodcastDiscoverPage> {
+	async podcastsDiscoverTop(@QueryParameters() page: PageParameters, @RestContext() { engine }: Context): Promise<PodcastDiscoverPage> {
 		return await engine.podcast.discoverTop(page);
 	}
 }

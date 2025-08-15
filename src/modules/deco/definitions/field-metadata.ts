@@ -1,4 +1,4 @@
-import { ParamMetadata } from './param-metadata.js';
+import { ParameterMetadata } from './parameter-metadata.js';
 import { FieldOptions, TypeOptions, TypeValueThunk } from './types.js';
 
 export interface FieldMetadata {
@@ -9,7 +9,7 @@ export interface FieldMetadata {
 	typeOptions: FieldOptions & TypeOptions;
 	description: string | undefined;
 	deprecationReason: string | undefined;
-	params?: Array<ParamMetadata>;
+	params?: Array<ParameterMetadata>;
 	roles?: Array<string>;
 	simple?: boolean;
 }

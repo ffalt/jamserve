@@ -2,7 +2,7 @@ import { Session } from '../session/session.model.js';
 import passport from 'passport';
 import { generateJWT, jwtHash } from '../../utils/jwt.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { CredentialsArgs } from './auth.args.js';
+import { CredentialsParameters } from './auth.parameters.js';
 import { UserRole } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
 import { Context } from '../../modules/engine/rest/context.js';
@@ -10,11 +10,11 @@ import { User } from '../user/user.js';
 import { EngineService } from '../../modules/engine/services/engine.service.js';
 import express from 'express';
 import { SessionData } from '../../types/express.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
 import { unauthError } from '../../modules/deco/express/express-error.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 
 const log = logger('AuthController');
 
@@ -22,25 +22,30 @@ const log = logger('AuthController');
 export class AuthController {
 	private async loginUser(req: express.Request, res: express.Response, next: express.NextFunction): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
-			passport.authenticate('local', (err: Error, user: User) => {
-				if (err || !user) {
-					log.error(err);
+			const result: express.RequestHandler = passport.authenticate('local', (error?: unknown, user?: User) => {
+				if (error || !user) {
+					if (error) {
+						log.error(error);
+					}
 					log.error(`Login failed for [${req.ip}]`);
-					return reject(unauthError('Invalid Auth'));
+					reject(unauthError('Invalid Auth'));
+					return;
 				}
-				req.login(user, (err2: Error) => {
-					if (err2) {
-						log.error(err2);
+				req.login(user, (loginError?: unknown) => {
+					if (loginError) {
+						log.error(loginError);
 						log.error(`Login failed for [${req.ip}]`);
-						return reject(unauthError('Invalid Auth'));
+						reject(unauthError('Invalid Auth'));
+						return;
 					}
 					resolve(user);
 				});
-			})(req, res, next);
+			});
+			void result(req, res, next);
 		});
 	}
 
-	private async authenticate(credentials: CredentialsArgs, req: express.Request, res: express.Response, next: express.NextFunction, engine: EngineService): Promise<Session> {
+	private async authenticate(credentials: CredentialsParameters, req: express.Request, res: express.Response, next: express.NextFunction, engine: EngineService): Promise<Session> {
 		const user = await this.loginUser(req, res, next);
 		await engine.rateLimit.loginSlowDownReset(req);
 		return AuthController.buildSessionResult(req, credentials, user, engine);
@@ -48,8 +53,8 @@ export class AuthController {
 
 	@Post('/login', () => Session, { description: 'Start session or jwt access', summary: 'Login' })
 	async login(
-		@BodyParams() credentials: CredentialsArgs,
-		@Ctx() { engine, req, res, next }: Context
+		@BodyParameters() credentials: CredentialsParameters,
+		@RestContext() { engine, req, res, next }: Context
 	): Promise<Session> {
 		return new Promise<Session>((resolve, reject) => {
 			engine.rateLimit.loginSlowDown(req, res)
@@ -59,24 +64,25 @@ export class AuthController {
 							.then(session => {
 								resolve(session);
 							})
-							.catch(error => {
+							.catch((error: unknown) => {
 								reject(error);
 							});
 					}
 				})
-				.catch(error => {
+				.catch((error: unknown) => {
 					reject(error);
 				});
 		});
 	}
 
-	private static buildSessionResult(req: express.Request, credentials: CredentialsArgs, user: User, engine: EngineService): Session {
-		const client = req.body.client || 'Unknown Client';
+	private static buildSessionResult(req: express.Request, credentials: CredentialsParameters, user: User, engine: EngineService): Session {
+		const client: string = req.body?.client ?? 'Unknown Client';
 		const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (req.session) { // express session data obj
 			const session: SessionData = req.session as any;
 			session.client = client;
-			session.userAgent = req.headers['user-agent'] || client;
+			session.userAgent = req.headers['user-agent'] ?? client;
 			if (token) {
 				session.jwth = jwtHash(token);
 			}
@@ -99,7 +105,7 @@ export class AuthController {
 	}
 
 	@Post('/logout', { roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout' })
-	async logout(@Ctx() { req }: Context): Promise<void> {
+	async logout(@RestContext() { req }: Context): Promise<void> {
 		return new Promise<void>(resolve => {
 			req.logout(resolve);
 		});

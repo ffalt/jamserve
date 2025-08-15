@@ -1,23 +1,18 @@
 import { Reference } from './helpers/reference.js';
 import { Collection } from './helpers/collection.js';
 
-export declare type Constructor<T> = new (...args: Array<any>) => T;
-
-export declare type IPrimaryKeyValue = number | string | bigint | {
-	toHexString(): string;
-};
-export declare type IPrimaryKey<T extends IPrimaryKeyValue = IPrimaryKeyValue> = T;
+export declare type Constructor<T> = new (...arguments: Array<any>) => T;
 
 export declare const PrimaryKeyType: unique symbol;
-export declare type Primary<T> = T extends {
-	[PrimaryKeyType]: infer PK;
-} ? PK : T extends {
-		_id: infer PK;
-	} ? PK | string : T extends {
-		uuid: infer PK;
-	} ? PK : T extends {
-			id: infer PK;
-		} ? PK : never;
+export declare type Primary<T> = T extends { [PrimaryKeyType]: infer PK } ?
+	PK :
+	T extends { _id: infer PK } ?
+		PK | string :
+		T extends { uuid: infer PK } ?
+			PK :
+			T extends { id: infer PK } ?
+				PK :
+				never;
 
 export declare type DeepPartialEntity<T> = {
 	[P in keyof T]?: null | (T[P] extends Array<infer U> ? Array<DeepPartialEntity<U>> : T[P] extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartialEntity<U>> : T extends Date | RegExp ? T : DeepPartialEntity<T[P]> | PartialEntity<T[P]> | Primary<T[P]>);
@@ -52,9 +47,10 @@ export declare type AnyEntity<T = any, PK extends keyof T = keyof T> = {
 	[PrimaryKeyType]?: T[PK];
 };
 
-export declare type IDEntity<T = any> = AnyEntity<T> & {
+export declare type IDEntity<T extends {} = any> = AnyEntity<T> & {
 	id: string;
 };
+
 export declare type EntityClass<T extends AnyEntity<T>> = Function & {
 	prototype: T;
 };

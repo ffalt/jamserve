@@ -1,16 +1,16 @@
 import { Radio, RadioIndex, RadioPage } from './radio.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesRadioArgs, RadioFilterArgs, RadioMutateArgs, RadioOrderArgs } from './radio.args.js';
-import { PageArgs } from '../base/base.args.js';
+import { IncludesRadioParameters, RadioFilterParameters, RadioMutateParameters, RadioOrderParameters } from './radio.parameters.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
 
 @Controller('/radio', { tags: ['Radio'], roles: [UserRole.stream] })
 export class RadioController {
@@ -19,13 +19,13 @@ export class RadioController {
 		{ description: 'Get a Radio by Id', summary: 'Get Radio' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Radio Id', isID: true }) id: string,
-		@QueryParams() radioArgs: IncludesRadioArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Radio Id', isID: true }) id: string,
+		@QueryParameters() parameters: IncludesRadioParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Radio> {
 		return engine.transform.Radio.radio(
 			orm, await orm.Radio.oneOrFailByID(id),
-			radioArgs, user
+			parameters, user
 		);
 	}
 
@@ -35,8 +35,8 @@ export class RadioController {
 		{ description: 'Get the Navigation Index for Radios', summary: 'Get Index' }
 	)
 	async index(
-		@QueryParams() filter: RadioFilterArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() filter: RadioFilterParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<RadioIndex> {
 		const result = await orm.Radio.indexFilter(filter);
 		return engine.transform.Radio.radioIndex(orm, result);
@@ -48,15 +48,15 @@ export class RadioController {
 		{ description: 'Search Radios' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() radioArgs: IncludesRadioArgs,
-		@QueryParams() filter: RadioFilterArgs,
-		@QueryParams() order: RadioOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() parameters: IncludesRadioParameters,
+		@QueryParameters() filter: RadioFilterParameters,
+		@QueryParameters() order: RadioOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<RadioPage> {
 		return await orm.Radio.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.Radio.radio(orm, o, radioArgs, user)
+			o => engine.transform.Radio.radio(orm, o, parameters, user)
 		);
 	}
 
@@ -65,10 +65,10 @@ export class RadioController {
 		{ description: 'Create a Radio', roles: [UserRole.admin], summary: 'Create Radio' }
 	)
 	async create(
-		@BodyParams() args: RadioMutateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameters() parameters: RadioMutateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Radio> {
-		const radio = orm.Radio.create(args);
+		const radio = orm.Radio.create(parameters);
 		await orm.Radio.persistAndFlush(radio);
 		return await engine.transform.Radio.radio(orm, radio, {}, user);
 	}
@@ -78,15 +78,15 @@ export class RadioController {
 		{ description: 'Update a Radio', roles: [UserRole.admin], summary: 'Update Radio' }
 	)
 	async update(
-		@BodyParam('id', { description: 'Root Id', isID: true }) id: string,
-		@BodyParams() args: RadioMutateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@BodyParameters() parameters: RadioMutateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Radio> {
 		const radio = await orm.Radio.oneOrFailByID(id);
-		radio.disabled = !!args.disabled;
-		radio.homepage = args.homepage;
-		radio.name = args.name;
-		radio.url = args.url;
+		radio.disabled = !!parameters.disabled;
+		radio.homepage = parameters.homepage;
+		radio.name = parameters.name;
+		radio.url = parameters.url;
 		await orm.Radio.persistAndFlush(radio);
 		return await engine.transform.Radio.radio(orm, radio, {}, user);
 	}
@@ -96,8 +96,8 @@ export class RadioController {
 		{ description: 'Remove a Radio', roles: [UserRole.admin], summary: 'Remove Radio' }
 	)
 	async remove(
-		@BodyParam('id', { description: 'Root Id', isID: true }) id: string,
-		@Ctx() { orm }: Context
+		@BodyParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@RestContext() { orm }: Context
 	): Promise<void> {
 		const radio = await orm.Radio.oneOrFailByID(id);
 		await orm.Radio.removeAndFlush(radio);

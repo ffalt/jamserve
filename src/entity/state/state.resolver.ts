@@ -5,7 +5,7 @@ import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(StateQL)
 export class StateResolver {
-	@Query(() => StateQL, { description: `Get User State (fav/rate/etc) for Base Objects` })
+	@Query(() => StateQL, { description: 'Get User State (fav/rate/etc) for Base Objects' })
 	async state(
 		@Arg('id', () => ID!, { description: 'Object Id' }) id: string,
 		@Ctx() { orm, user }: Context

@@ -1,11 +1,11 @@
 import { SubsonicOKResponse, SubsonicResponseInternetRadioStations } from '../model/subsonic-rest-data.js';
 
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-params.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-parameters.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
@@ -19,7 +19,7 @@ export class SubsonicInternetRadioApi {
 		description: 'Returns all internet radio stations.',
 		tags: ['Radio']
 	})
-	async getInternetRadioStations(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
+	async getInternetRadioStations(@SubsonicContext() { orm }: Context): Promise<SubsonicResponseInternetRadioStations> {
 		const radios = await orm.Radio.findFilter({ disabled: false });
 		const internetRadioStation = [];
 		for (const radio of radios) {
@@ -37,7 +37,7 @@ export class SubsonicInternetRadioApi {
 		description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async createInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioCreate, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicOKResponse> {
+	async createInternetRadioStation(@SubsonicParameters() query: SubsonicParameterInternetRadioCreate, @SubsonicContext() { orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		streamUrl 	Yes 		The stream URL for the station.
@@ -61,7 +61,7 @@ export class SubsonicInternetRadioApi {
 		description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async updateInternetRadioStation(@SubsonicParams() query: SubsonicParameterInternetRadioUpdate, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicOKResponse> {
+	async updateInternetRadioStation(@SubsonicParameters() query: SubsonicParameterInternetRadioUpdate, @SubsonicContext() { orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.
@@ -73,7 +73,9 @@ export class SubsonicInternetRadioApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const radio = await orm.Radio.findOneOrFailByID(query.id);
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		radio.name = query.name ?? radio.name;
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		radio.url = query.streamUrl ?? radio.url;
 		radio.homepage = query.homepageUrl ?? radio.homepage;
 		await orm.Radio.persistAndFlush(radio);
@@ -89,7 +91,7 @@ export class SubsonicInternetRadioApi {
 		description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',
 		tags: ['Radio']
 	})
-	async deleteInternetRadioStation(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicOKResponse> {
+	async deleteInternetRadioStation(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID for the station.

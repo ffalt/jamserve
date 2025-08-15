@@ -4,7 +4,7 @@ import { User } from '../user/user.js';
 import { DBObjectType, JamObjectType } from '../../types/enums.js';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Track as ORMTrack } from './track.js';
-import { IncludesTrackArgs } from './track.args.js';
+import { IncludesTrackParameters } from './track.parameters.js';
 import { TrackBase } from './track.model.js';
 import { TrackService } from './track.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
@@ -17,11 +17,11 @@ export class TrackTransformService extends BaseTransformService {
 	@Inject
 	public Genre!: GenreTransformService;
 
-	async trackBases(orm: Orm, list: Array<ORMTrack>, trackArgs: IncludesTrackArgs, user: User): Promise<Array<TrackBase>> {
-		return await Promise.all(list.map(t => this.trackBase(orm, t, trackArgs, user)));
+	async trackBases(orm: Orm, list: Array<ORMTrack>, trackParameters: IncludesTrackParameters, user: User): Promise<Array<TrackBase>> {
+		return await Promise.all(list.map(t => this.trackBase(orm, t, trackParameters, user)));
 	}
 
-	async trackBase(orm: Orm, o: ORMTrack, trackArgs: IncludesTrackArgs, user: User): Promise<TrackBase> {
+	async trackBase(orm: Orm, o: ORMTrack, trackParameters: IncludesTrackParameters, user: User): Promise<TrackBase> {
 		const tag = await o.tag.get();
 		return {
 			id: o.id,
@@ -34,11 +34,11 @@ export class TrackTransformService extends BaseTransformService {
 			albumArtistID: o.albumArtist.id(),
 			albumID: o.album.id(),
 			seriesID: o.series.id(),
-			genres: trackArgs.trackIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
-			tag: trackArgs.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
-			media: trackArgs.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-			tagRaw: trackArgs.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
-			state: trackArgs.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
+			genres: trackParameters.trackIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
+			tag: trackParameters.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
+			media: trackParameters.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
+			tagRaw: trackParameters.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
+			state: trackParameters.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
 		};
 	}
 }

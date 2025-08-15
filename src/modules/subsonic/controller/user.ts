@@ -1,10 +1,10 @@
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 
 @SubsonicController()
@@ -18,7 +18,7 @@ export class SubsonicUserApi {
 		description: 'Get details about a given user, including which authorization roles it has.',
 		tags: ['Users']
 	})
-	async getUser(@SubsonicParams() query: SubsonicParameterUsername, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseUser> {
+	async getUser(@SubsonicParameters() query: SubsonicParameterUsername, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseUser> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user to retrieve. You can only retrieve your own user unless you have admin privileges.
@@ -45,7 +45,7 @@ export class SubsonicUserApi {
 		description: 'Get details about all users, including which authorization roles they have.',
 		tags: ['Users']
 	})
-	async getUsers(@SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseUsers> {
+	async getUsers(@SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseUsers> {
 		if (!user.roleAdmin) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
@@ -62,7 +62,7 @@ export class SubsonicUserApi {
 		description: 'Creates a new Subsonic user',
 		tags: ['Users']
 	})
-	async createUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
+	async createUser(@SubsonicParameters() _query: SubsonicParameterUpdateUser, @SubsonicContext() _context: Context): Promise<SubsonicOKResponse> {
 		/*
 				 Parameter 	Required 	Default 	Comment
 				 username 	Yes 		The name of the new user.
@@ -95,7 +95,7 @@ export class SubsonicUserApi {
 		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
 		tags: ['Users']
 	})
-	async changePassword(@SubsonicParams() _query: SubsonicParameterChangePassword, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
+	async changePassword(@SubsonicParameters() _query: SubsonicParameterChangePassword, @SubsonicContext() _context: Context): Promise<SubsonicOKResponse> {
 		/*
 			 Parameter 	Required 	Default 	Comment
 			 username 	Yes 		The name of the user which should change its password.
@@ -113,7 +113,7 @@ export class SubsonicUserApi {
 		description: 'Modifies an existing Subsonic user',
 		tags: ['Users']
 	})
-	async updateUser(@SubsonicParams() _query: SubsonicParameterUpdateUser, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
+	async updateUser(@SubsonicParameters() _query: SubsonicParameterUpdateUser, @SubsonicContext() _context: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The name of the user.
@@ -146,7 +146,7 @@ export class SubsonicUserApi {
 		description: 'Deletes an existing Subsonic user',
 		tags: ['Users']
 	})
-	async deleteUser(@SubsonicParams() _query: SubsonicParameterUsername, @SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
+	async deleteUser(@SubsonicParameters() _query: SubsonicParameterUsername, @SubsonicContext() _context: Context): Promise<SubsonicOKResponse> {
 		/*
 			 Parameter 	Required 	Default 	Comment
 			 username 	Yes 		The name of the user to delete.

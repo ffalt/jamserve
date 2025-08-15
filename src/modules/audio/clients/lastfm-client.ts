@@ -21,7 +21,7 @@ class LastFMClientBeautify {
 				break;
 			}
 			case '@attr': {
-				for (const subkey of Object.keys(sub)) {
+				for (const subkey of Object.keys(sub as Record<string, any>)) {
 					result[subkey] = sub[subkey];
 				}
 				break;
@@ -53,7 +53,7 @@ class LastFMClientBeautify {
 		}
 	}
 
-	private static walkBeautifyObject(o: any): any {
+	private static walkBeautifyObject(o: Record<string, any>): any {
 		const result: any = {};
 		for (const key of Object.keys(o)) {
 			const sub = LastFMClientBeautify.walk(o[key], o);
@@ -64,12 +64,14 @@ class LastFMClientBeautify {
 		return result;
 	}
 
-	private static walk(o: any, parent: any): any {
+	private static walk(o: unknown, parent: any): unknown {
 		if (o === null || o === undefined) {
 			return;
 		}
 		if (Array.isArray(o)) {
-			return o.map((sub: any) => LastFMClientBeautify.walk(sub, parent)).filter((sub: any) => sub !== undefined);
+			return o
+				.map((sub: Array<object | Array<any> | undefined | null>) => LastFMClientBeautify.walk(sub, parent))
+				.filter((sub: any) => sub !== undefined);
 		}
 		if (typeof o === 'object') {
 			return LastFMClientBeautify.walkBeautifyObject(o);
@@ -77,8 +79,8 @@ class LastFMClientBeautify {
 		return o;
 	}
 
-	static beautify(obj: any): any {
-		return LastFMClientBeautify.walk(obj, {});
+	static beautify<T>(obj: unknown): T {
+		return LastFMClientBeautify.walk(obj, {}) as T;
 	}
 }
 
@@ -96,28 +98,28 @@ export class LastFMClient extends WebserviceClient {
 			return {} as T;
 		}
 		try {
-			return await response.json() as any;
-		} catch (error) {
+			return await response.json() as T;
+		} catch (error: unknown) {
 			return Promise.reject(error);
 		}
 	}
 
-	private async get(api: string, params: Record<string, string>): Promise<LastFM.Result> {
-		log.info('requesting', api, JSON.stringify(params));
-		params.method = api;
-		const sortedParams: Record<string, string> = { method: api };
-		for (const key of Object.keys(params)) {
-			sortedParams[key] = params[key];
+	private async get(api: string, parameters: Record<string, string>): Promise<LastFM.Result> {
+		log.info('requesting', api, JSON.stringify(parameters));
+		parameters.method = api;
+		const sortedParameters: Record<string, string | number | undefined> = { method: api };
+		for (const key of Object.keys(parameters)) {
+			sortedParameters[key] = parameters[key];
 		}
-		sortedParams.api_key = this.options.key;
-		sortedParams.format = 'json';
+		sortedParameters.api_key = this.options.key;
+		sortedParameters.format = 'json';
 		try {
-			const data = await this.getJson<any, any>('https://ws.audioscrobbler.com/2.0/', sortedParams, true);
+			const data = await this.getJsonWithParameters<any, Record<string, string | number | undefined>>('https://ws.audioscrobbler.com/2.0/', sortedParameters, true);
 			if (data?.error) {
 				return {};
 			}
-			return LastFMClientBeautify.beautify(data) as LastFM.Result;
-		} catch (error: any) {
+			return LastFMClientBeautify.beautify(data as unknown) as LastFM.Result;
+		} catch (error: unknown) {
 			log.error(error);
 			return Promise.reject(error);
 		}

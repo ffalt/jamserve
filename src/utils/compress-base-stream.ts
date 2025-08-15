@@ -26,8 +26,8 @@ export abstract class BaseCompressStream implements StreamData {
 	pipe(stream: express.Response): void {
 		const format = 'zip';
 		const archive = archiver(this.format as archiver.Format, { zlib: { level: 0 } });
-		archive.on('error', err => {
-			throw err;
+		archive.on('error', error => {
+			throw error;
 		});
 		stream.contentType('zip');
 		stream.setHeader('Content-Disposition', `attachment; filename="${this.filename || 'download'}.${format}"`);
@@ -36,7 +36,10 @@ export abstract class BaseCompressStream implements StreamData {
 		});
 		archive.pipe(stream);
 		this.run(archive);
-		archive.finalize().catch(error => log.error(error));
+		archive.finalize()
+			.catch((error: unknown) => {
+				log.error(error);
+			});
 	}
 
 	protected abstract run(archive: archiver.Archiver): void;

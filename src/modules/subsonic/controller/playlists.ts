@@ -1,13 +1,13 @@
 import { Playlist } from '../../../entity/playlist/playlist.js';
 
 import { DBObjectType } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterID, SubsonicParameterPlaylistCreate, SubsonicParameterPlaylists, SubsonicParameterPlaylistUpdate } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse, SubsonicPlaylistWithSongs, SubsonicResponsePlaylist, SubsonicResponsePlaylists, SubsonicResponsePlaylistWithSongs } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 import { Track } from '../../../entity/track/track.js';
@@ -23,7 +23,7 @@ export class SubsonicPlaylistsApi {
 		description: 'Creates (or updates) a playlist.',
 		tags: ['Playlists']
 	})
-	async createPlaylist(@SubsonicParams() query: SubsonicParameterPlaylistCreate, @SubsonicCtx() ctx: Context): Promise<SubsonicResponsePlaylistWithSongs> {
+	async createPlaylist(@SubsonicParameters() query: SubsonicParameterPlaylistCreate, @SubsonicContext() context: Context): Promise<SubsonicResponsePlaylistWithSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes (if updating) 		The playlist ID.
@@ -41,14 +41,14 @@ export class SubsonicPlaylistsApi {
 				name: query.name,
 				songIdToAdd: query.songId
 			};
-			await this.updatePlaylist(updateQuery, ctx);
-			playlist = await ctx.orm.Playlist.findOneOrFailByID(playlistId);
+			await this.updatePlaylist(updateQuery, context);
+			playlist = await context.orm.Playlist.findOneOrFailByID(playlistId);
 		} else if (query.name) {
 			let mediaIDs: Array<any> = [];
 			if (query.songId !== undefined) {
 				mediaIDs = Array.isArray(query.songId) ? query.songId : [query.songId];
 			}
-			playlist = await ctx.engine.playlist.create(ctx.orm, { name: query.name, isPublic: false, mediaIDs }, ctx.user);
+			playlist = await context.engine.playlist.create(context.orm, { name: query.name, isPublic: false, mediaIDs }, context.user);
 		}
 		if (!playlist) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
@@ -61,8 +61,8 @@ export class SubsonicPlaylistsApi {
 				tracks.push(track);
 			}
 		}
-		const states = (await SubsonicHelper.loadStates(ctx.orm, tracks.map(t => t.id), DBObjectType.track, ctx.user.id));
-		states[playlist.id] = await ctx.orm.State.findOrCreate(playlist.id, DBObjectType.playlist, ctx.user.id);
+		const states = (await SubsonicHelper.loadStates(context.orm, tracks.map(t => t.id), DBObjectType.track, context.user.id));
+		states[playlist.id] = await context.orm.State.findOrCreate(playlist.id, DBObjectType.playlist, context.user.id);
 
 		return { playlist: await SubsonicFormatter.packPlaylistWithSongs(playlist, tracks, states) };
 	}
@@ -76,7 +76,7 @@ export class SubsonicPlaylistsApi {
 		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
 		tags: ['Playlists']
 	})
-	async updatePlaylist(@SubsonicParams() query: SubsonicParameterPlaylistUpdate, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async updatePlaylist(@SubsonicParameters() query: SubsonicParameterPlaylistUpdate, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 playlistId 	Yes 		The playlist ID.
@@ -91,7 +91,7 @@ export class SubsonicPlaylistsApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const entries = await playlist.entries.getItems();
-		let trackIDs = entries.map(e => e.track.id());
+		let trackIDs = entries.map(entry => entry.track.id());
 		let removeTracks: Array<any> = [];
 		if (query.songIndexToRemove !== undefined) {
 			removeTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
@@ -103,8 +103,8 @@ export class SubsonicPlaylistsApi {
 		}
 		const mediaIDs = trackIDs.filter(t => t !== undefined);
 		await engine.playlist.update(orm, {
-			name: query.name || playlist.name,
-			comment: query.comment || playlist.comment,
+			name: query.name ?? playlist.name,
+			comment: query.comment ?? playlist.comment,
 			isPublic: query.public ?? playlist.isPublic,
 			mediaIDs
 		}, playlist);
@@ -120,7 +120,7 @@ export class SubsonicPlaylistsApi {
 		description: 'Deletes a saved playlist.',
 		tags: ['Playlists']
 	})
-	async deletePlaylist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async deletePlaylist(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to delete, as obtained by getPlaylists.
@@ -142,7 +142,7 @@ export class SubsonicPlaylistsApi {
 		description: 'Returns all playlists a user is allowed to play.',
 		tags: ['Playlists']
 	})
-	async getPlaylists(@SubsonicParams() query: SubsonicParameterPlaylists, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
+	async getPlaylists(@SubsonicParameters() query: SubsonicParameterPlaylists, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicResponsePlaylists> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	no 		(Since 1.8.0) If specified, return playlists for this user rather than for the authenticated user. The authenticated user must have admin role if this parameter is used.
@@ -175,7 +175,7 @@ export class SubsonicPlaylistsApi {
 		description: 'Returns a listing of files in a saved playlist.',
 		tags: ['Playlists']
 	})
-	async getPlaylist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
+	async getPlaylist(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponsePlaylist> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	yes 		ID of the playlist to return, as obtained by getPlaylists.

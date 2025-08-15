@@ -1,15 +1,15 @@
 import { AudioFormatType, UserRole } from '../../types/enums.js';
-import { StreamParamArgs, StreamPathArgs } from './stream.args.js';
+import { StreamParameters, StreamPathParameters } from './stream.parameters.js';
 import { ApiStreamTypes } from '../../types/consts.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { PathParam } from '../../modules/rest/decorators/PathParam.js';
-import { PathParams } from '../../modules/rest/decorators/PathParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { PathParameter } from '../../modules/rest/decorators/path-parameter.js';
+import { PathParameters } from '../../modules/rest/decorators/path-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
 
 @Controller('/stream', { tags: ['Stream'], roles: [UserRole.stream] })
 export class StreamController {
@@ -35,19 +35,19 @@ export class StreamController {
 		}
 	)
 	async stream(
-		@PathParam('id', { description: 'Media Id', isID: true }) id: string,
-		@PathParams() streamArgs: StreamPathArgs,
-		@QueryParams() streamParamArgs: StreamParamArgs,
-		@Ctx() { orm, engine }: Context
+		@PathParameter('id', { description: 'Media Id', isID: true }) id: string,
+		@PathParameters() pathParameters: StreamPathParameters,
+		@QueryParameters() streamParameters: StreamParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInStreamTypes(id);
 		if (!result) {
 			return Promise.reject(notFoundError());
 		}
 		return engine.stream.streamDBObject(result.obj, result.objType, {
-			format: streamArgs.format,
-			maxBitRate: streamArgs.maxBitRate,
-			timeOffset: streamParamArgs.timeOffset
+			format: pathParameters.format,
+			maxBitRate: pathParameters.maxBitRate,
+			timeOffset: streamParameters.timeOffset
 		});
 	}
 }

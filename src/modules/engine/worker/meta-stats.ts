@@ -47,7 +47,7 @@ const typeByMusicbrainzString: Array<{ type: AlbumType; names: Array<string> }> 
 
 export class MatchNodeMetaStats {
 	private static getGenreAlbumType(genre: string): AlbumType {
-		return typeByGenreNames[genre.toLowerCase()] || AlbumType.unknown;
+		return typeByGenreNames[genre.toLowerCase()] ?? AlbumType.unknown;
 	}
 
 	private static getMusicbrainzAlbumType(mbAlbumType: string): AlbumType {
@@ -85,7 +85,7 @@ export class MatchNodeMetaStats {
 	private static async buildTrackSlugs(match: MatchTrack, builder: MetaStatBuilder): Promise<void> {
 		builder.statSlugValue('artist', match.artist);
 		builder.statSlugValue('artistSort', match.artistSort);
-		for (const genre of (match.genres || [])) {
+		for (const genre of (match.genres ?? [])) {
 			builder.statSlugValue('genre', genre);
 		}
 		builder.statSlugValue('series', match.series);
@@ -93,7 +93,7 @@ export class MatchNodeMetaStats {
 		builder.statNumber('year', match.year);
 		builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
 		builder.statSlugValue('mbAlbumType', match.mbAlbumType);
-		builder.statID('mbArtistID', match.artist == MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
+		builder.statID('mbArtistID', match.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
 		builder.statID('mbReleaseID', match.mbReleaseID);
 		builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
 	}

@@ -4,8 +4,9 @@ import { ClassMetadata } from './class-metadata.js';
 import { EnumMetadata } from './enum-metadata.js';
 import { ControllerClassMetadata } from './controller-metadata.js';
 import { FieldMetadata } from './field-metadata.js';
-import { ParamMetadata } from './param-metadata.js';
+import { ParameterMetadata } from './parameter-metadata.js';
 import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
+import { TypeValue } from './types.js';
 
 export class MetadataStorage {
 	initialized = false;
@@ -14,11 +15,11 @@ export class MetadataStorage {
 	posts: Array<MethodMetadata> = [];
 	resultTypes: Array<ResultClassMetadata> = [];
 	inputTypes: Array<ClassMetadata> = [];
-	argumentTypes: Array<ClassMetadata> = [];
+	parameterTypes: Array<ClassMetadata> = [];
 	enums: Array<EnumMetadata> = [];
 	controllerClasses: Array<ControllerClassMetadata> = [];
 	fields: Array<FieldMetadata> = [];
-	params: Array<ParamMetadata> = [];
+	parameters: Array<ParameterMetadata> = [];
 
 	constructor() {
 		ensureReflectMetadataExists();
@@ -28,7 +29,7 @@ export class MetadataStorage {
 		if (!this.initialized) {
 			this.buildClassMetadata(this.resultTypes);
 			this.buildClassMetadata(this.inputTypes);
-			this.buildClassMetadata(this.argumentTypes);
+			this.buildClassMetadata(this.parameterTypes);
 			this.buildControllersMetadata(this.all);
 			this.buildControllersMetadata(this.gets);
 			this.buildControllersMetadata(this.posts);
@@ -36,24 +37,32 @@ export class MetadataStorage {
 		}
 	}
 
+	enumInfo(type: TypeValue): EnumMetadata | undefined {
+		return this.enums.find(enumInfo => enumInfo.enumObj === type);
+	}
+
+	resultType(type: TypeValue): ResultClassMetadata | undefined {
+		return this.resultTypes.find(resultType => resultType.target === type);
+	}
+
 	private buildClassMetadata(definitions: Array<ClassMetadata>): void {
-		for (const def of definitions) {
-			if (!def.fields || def.fields.length === 0) {
-				const fields = this.fields.filter(field => field.target === def.target);
+		for (const definition of definitions) {
+			if (definition.fields.length === 0) {
+				const fields = this.fields.filter(field => field.target === definition.target);
 				for (const field of fields) {
-					field.params = this.params.filter(
-						param => param.target === field.target && field.name === param.methodName
+					field.params = this.parameters.filter(
+						parameter => parameter.target === field.target && field.name === parameter.methodName
 					);
 				}
-				def.fields = fields;
+				definition.fields = fields;
 			}
 		}
 	}
 
 	private buildControllersMetadata(definitions: Array<MethodMetadata>): void {
-		for (const def of definitions) {
-			def.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === def.target);
-			def.params = this.params.filter(param => param.target === def.target && def.methodName === param.methodName);
+		for (const definition of definitions) {
+			definition.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === definition.target);
+			definition.parameters = this.parameters.filter(parameter => parameter.target === definition.target && definition.methodName === parameter.methodName);
 		}
 	}
 }

@@ -2,18 +2,19 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Playlist } from './playlist.js';
 import { User } from '../user/user.js';
-import { PlaylistFilterArgs, PlaylistOrderArgs } from './playlist.args.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { PlaylistFilterParameters, PlaylistOrderParameters } from './playlist.parameters.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterArgs, PlaylistOrderArgs> {
+export class PlaylistRepository extends BaseRepository<Playlist, PlaylistFilterParameters, PlaylistOrderParameters> {
 	objType = DBObjectType.playlist;
 	indexProperty = 'name';
 
-	buildOrder(order?: PlaylistOrderArgs): Array<OrderItem> {
+	buildOrder(order?: PlaylistOrderParameters): Array<OrderItem> {
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: PlaylistFilterArgs, user?: User): Promise<FindOptions<Playlist>> {
+	async buildFilter(filter?: PlaylistFilterParameters, user?: User): Promise<FindOptions<Playlist>> {
 		return filter ?
 			QHelper.buildQuery<Playlist>(
 				[

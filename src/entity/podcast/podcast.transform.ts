@@ -2,7 +2,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Podcast as ORMPodcast } from './podcast.js';
-import { IncludesPodcastArgs } from './podcast.args.js';
+import { IncludesPodcastParameters } from './podcast.parameters.js';
 import { User } from '../user/user.js';
 import { PodcastBase, PodcastIndex, PodcastUpdateStatus } from './podcast.model.js';
 import { DBObjectType, PodcastStatus } from '../../types/enums.js';
@@ -14,7 +14,7 @@ export class PodcastTransformService extends BaseTransformService {
 	@Inject
 	public podcastService!: PodcastService;
 
-	async podcastBase(orm: Orm, o: ORMPodcast, podcastArgs: IncludesPodcastArgs, user: User): Promise<PodcastBase> {
+	async podcastBase(orm: Orm, o: ORMPodcast, podcastParameters: IncludesPodcastParameters, user: User): Promise<PodcastBase> {
 		return {
 			id: o.id,
 			name: o.name,
@@ -24,13 +24,13 @@ export class PodcastTransformService extends BaseTransformService {
 			lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
 			error: o.errorMessage,
 			description: o.description,
-			episodeIDs: podcastArgs.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
-			episodeCount: podcastArgs.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
-			state: podcastArgs.podcastIncState ? await this.state(orm, o.id, DBObjectType.podcast, user.id) : undefined
+			episodeIDs: podcastParameters.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
+			episodeCount: podcastParameters.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
+			state: podcastParameters.podcastIncState ? await this.state(orm, o.id, DBObjectType.podcast, user.id) : undefined
 		};
 	}
 
-	async podcastIndex(orm: Orm, result: IndexResult<IndexResultGroup<ORMPodcast>>): Promise<PodcastIndex> {
+	async podcastIndex(_orm: Orm, result: IndexResult<IndexResultGroup<ORMPodcast>>): Promise<PodcastIndex> {
 		return this.index(result, async item => {
 			return {
 				id: item.id,

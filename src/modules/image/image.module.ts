@@ -15,6 +15,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { ImageFormatType } from '../../types/enums.js';
 import { Jimp, loadFont, VerticalAlign, HorizontalAlign } from 'jimp';
 import { SANS_32_WHITE } from './image.font.js';
+import { BmFont } from '@jimp/plugin-print';
 
 export interface ImageInfo {
 	width: number;
@@ -24,7 +25,7 @@ export interface ImageInfo {
 	format: string;
 }
 
-type JimpFont = any;
+type JimpFont = BmFont<any>;
 
 const log = logger('Images');
 sharp.cache(false);
@@ -37,7 +38,7 @@ sharp.simd(false);
 @InRequestScope
 export class ImageModule {
 	private readonly format = 'png';
-	private font: JimpFont | undefined;
+	private font?: JimpFont;
 	private readonly cache: IDFolderCache<{ size?: number; format?: string }>;
 	private readonly imageCachePath: string;
 	@Inject
@@ -48,9 +49,9 @@ export class ImageModule {
 		this.cache = new IDFolderCache<{ size?: number; format?: string }>(
 			this.imageCachePath,
 			'thumb',
-			(params: { size?: number; format?: string }) => {
-				const sizePrefix = params.size === undefined ? '' : `-${params.size}`;
-				const fileFormat = params.format ?? this.format;
+			(parameters: { size?: number; format?: string }) => {
+				const sizePrefix = parameters.size === undefined ? '' : `-${parameters.size}`;
+				const fileFormat = parameters.format ?? this.format;
 				return `${sizePrefix}.${fileFormat}`;
 			}
 		);
@@ -58,14 +59,14 @@ export class ImageModule {
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
 		log.debug('Requesting image', imageUrl);
-		const imageext = path.extname(imageUrl).split('?')[0].trim().toLowerCase();
-		if (imageext.length === 0) {
+		const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
+		if (imageExtension.length === 0) {
 			return Promise.reject(new Error('Invalid Image URL'));
 		}
-		let filename = name + imageext;
+		let filename = name + imageExtension;
 		let nr = 2;
 		while (await fse.pathExists(path.join(filepath, filename))) {
-			filename = `${name}-${nr}${imageext}`;
+			filename = `${name}-${nr}${imageExtension}`;
 			nr++;
 		}
 		await downloadFile(imageUrl, path.join(filepath, filename));
@@ -76,11 +77,9 @@ export class ImageModule {
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
 		size = size ?? 320;
 		const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
-		if (!this.font) {
-			this.font = await loadFont(SANS_32_WHITE);
-		}
+		this.font ??= await loadFont(SANS_32_WHITE);
 		image.print({
-			font: this.font,
+			font: this.font!,
 			x: 10,
 			y: 10,
 			maxHeight: 340,
@@ -100,10 +99,9 @@ export class ImageModule {
 			const png_buffer = await image.getBuffer('image/png');
 			const buffer = await sharp(png_buffer).webp().toBuffer();
 			return { buffer: { buffer, contentType: mime } };
-		} else {
-			const buffer = await image.getBuffer(mime as 'image/png');
-			return { buffer: { buffer, contentType: mime } };
 		}
+		const buffer = await image.getBuffer(mime as 'image/png');
+		return { buffer: { buffer, contentType: mime } };
 	}
 
 	private async getImage(filename: string, size: number | undefined, name: string): Promise<ImageResult> {
@@ -144,8 +142,8 @@ export class ImageModule {
 		if (!format && size && !SupportedWriteImageFormat.includes(info.format)) {
 			format = ImageFormatType.jpeg;
 		}
-		const destFormat = format ?? info.format;
-		const contentType = mimeTypes.lookup(destFormat);
+		const destinationFormat = format ?? info.format;
+		const contentType = mimeTypes.lookup(destinationFormat);
 		if (!contentType) {
 			return Promise.reject(new Error(`Unknown Image Format Request: ${format}`));
 		}
@@ -154,17 +152,17 @@ export class ImageModule {
 				buffer: {
 					buffer: await sharp(buffer, { failOn: 'warning' })
 						.resize(size, size, { fit: sharp.fit.cover })
-						.toFormat(destFormat as keyof FormatEnum)
+						.toFormat(destinationFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
 				}
 			};
 		}
-		if (format && info.format !== destFormat) {
+		if (format && info.format !== destinationFormat) {
 			return {
 				buffer: {
 					buffer: await sharp(buffer, { failOn: 'warning' })
-						.toFormat(destFormat as keyof FormatEnum)
+						.toFormat(destinationFormat as keyof FormatEnum)
 						.toBuffer(),
 					contentType
 				}
@@ -238,10 +236,10 @@ export class ImageModule {
 		if (!exists) {
 			return Promise.reject(new Error('File not found'));
 		}
-		const tempFile = `${filename}.new${randomString(8)}.png`;
-		await this.resizeImagePNG(filename, tempFile, 300);
+		const temporaryFile = `${filename}.new${randomString(8)}.png`;
+		await this.resizeImagePNG(filename, temporaryFile, 300);
 		await fileDeleteIfExists(destination);
-		await fse.rename(tempFile, destination);
+		await fse.rename(temporaryFile, destination);
 	}
 
 	async generateAvatar(seed: string, destination: string): Promise<void> {
@@ -254,9 +252,9 @@ export class ImageModule {
 		try {
 			const metadata = await sharpy.metadata();
 			return {
-				width: metadata.width ?? 0,
-				height: metadata.height ?? 0,
-				format: metadata.format ?? '',
+				width: metadata.width,
+				height: metadata.height,
+				format: metadata.format,
 				colorDepth: metadata.density ?? 0,
 				colors: 0
 			};

@@ -1,7 +1,7 @@
 import { State } from './state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { User } from '../user/user.js';
-import seq from 'sequelize';
+import { Op } from 'sequelize';
 import { EntityManager, EntityRepository } from '../../modules/orm/index.js';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
@@ -12,10 +12,10 @@ export class StateHelper {
 		this.stateRepo = this.em.getRepository(State);
 	}
 
-	private async emptyState(destID: string, destType: DBObjectType, user: User): Promise<State> {
+	private async emptyState(destinationID: string, destinationType: DBObjectType, user: User): Promise<State> {
 		const state = this.stateRepo.create({
-			destID,
-			destType,
+			destID: destinationID,
+			destType: destinationType,
 			played: 0,
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -27,8 +27,8 @@ export class StateHelper {
 		return state;
 	}
 
-	async fav(destID: string, destType: DBObjectType, user: User, remove: boolean): Promise<State> {
-		const state = await this.findOrCreate(destID, destType, user);
+	async fav(destinationID: string, destinationType: DBObjectType, user: User, remove: boolean): Promise<State> {
+		const state = await this.findOrCreate(destinationID, destinationType, user);
 		if (remove) {
 			if (state.faved === undefined) {
 				return state;
@@ -47,33 +47,33 @@ export class StateHelper {
 		return state;
 	}
 
-	async rate(destID: string, destType: DBObjectType, user: User, rating: number): Promise<State> {
-		const state = await this.findOrCreate(destID, destType, user);
+	async rate(destinationID: string, destinationType: DBObjectType, user: User, rating: number): Promise<State> {
+		const state = await this.findOrCreate(destinationID, destinationType, user);
 		state.rated = (rating === 0) ? undefined : rating;
 		await this.stateRepo.persistAndFlush(state);
 		return state;
 	}
 
-	async findOrCreate(destID: string, destType: DBObjectType, user: User): Promise<State> {
-		const state = await this.stateRepo.findOne({ where: { user: user.id, destID, destType } });
-		return state || (await this.emptyState(destID, destType, user));
+	async findOrCreate(destinationID: string, destinationType: DBObjectType, user: User): Promise<State> {
+		const state = await this.stateRepo.findOne({ where: { user: user.id, destID: destinationID, destType: destinationType } });
+		return state ?? (await this.emptyState(destinationID, destinationType, user));
 	}
 
-	async getHighestRatedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
+	async getHighestRatedDestIDs(destinationType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: { user: userID, destType, rated: { [seq.Op.gte]: 1 } },
+			where: { user: userID, destType: destinationType, rated: { [Op.gte]: 1 } },
 			order: [['rated', 'DESC']]
 		});
 		return states.map(a => a.destID);
 	}
 
-	async getAvgHighestDestIDs(destType: DBObjectType): Promise<Array<string>> {
+	async getAvgHighestDestIDs(destinationType: DBObjectType): Promise<Array<string>> {
 		// TODO: calc avg in db
-		const states = await this.stateRepo.find({ where: { destType, rated: { [seq.Op.gte]: 1 } } });
+		const states = await this.stateRepo.find({ where: { destType: destinationType, rated: { [Op.gte]: 1 } } });
 		const ratings: Record<string, Array<number>> = {};
 		for (const state of states) {
 			if (state.rated !== undefined) {
-				ratings[state.destID] = ratings[state.destID] || [];
+				ratings[state.destID] = ratings[state.destID] ?? [];
 				ratings[state.destID].push(state.rated);
 			}
 		}
@@ -86,9 +86,9 @@ export class StateHelper {
 		return list.map(a => a.id);
 	}
 
-	async getFrequentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
+	async getFrequentlyPlayedDestIDs(destinationType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: { user: userID, destType, played: { [seq.Op.gte]: 1 } },
+			where: { user: userID, destType: destinationType, played: { [Op.gte]: 1 } },
 			order: [
 				['played', 'DESC'],
 				['lastPlayed', 'DESC']
@@ -97,25 +97,25 @@ export class StateHelper {
 		return states.map(a => a.destID);
 	}
 
-	async getFavedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
+	async getFavedDestIDs(destinationType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: { user: userID, destType, faved: { [seq.Op.ne]: null as unknown as undefined } },
+			where: { user: userID, destType: destinationType, faved: { [Op.ne]: null as unknown as undefined } },
 			order: [['faved', 'DESC']]
 		});
 		return states.map(a => a.destID);
 	}
 
-	async getRecentlyPlayedDestIDs(destType: DBObjectType, userID: string): Promise<Array<string>> {
+	async getRecentlyPlayedDestIDs(destinationType: DBObjectType, userID: string): Promise<Array<string>> {
 		const states = await this.stateRepo.find({
-			where: { user: userID, destType, played: { [seq.Op.gte]: 1 } },
+			where: { user: userID, destType: destinationType, played: { [Op.gte]: 1 } },
 			order: [['lastPlayed', 'DESC']]
 		});
 		return states.map(a => a.destID);
 	}
 
-	async reportPlaying(destID: string, destType: DBObjectType, user: User): Promise<State> {
-		const state = await this.findOrCreate(destID, destType, user);
-		state.played = (state.played || 0) + 1;
+	async reportPlaying(destinationID: string, destinationType: DBObjectType, user: User): Promise<State> {
+		const state = await this.findOrCreate(destinationID, destinationType, user);
+		state.played = (state.played ?? 0) + 1;
 		state.lastPlayed = new Date();
 		await this.stateRepo.persistAndFlush(state);
 		return state;

@@ -1,5 +1,6 @@
 import { Changes } from '../../worker/changes.js';
 import { WorkerRequestParameters } from '../worker/worker.types.js';
+import { errorStringCode } from '../../../../utils/error.js';
 
 export interface RootStatus {
 	lastScan: number;
@@ -42,16 +43,18 @@ export enum WorkerRequestMode {
 export class IoRequest<T extends WorkerRequestParameters> {
 	constructor(
 		public id: string, public mode: WorkerRequestMode,
-		public execute: (parameters: T) => Promise<Changes>, public parameters: T
+		public execute: (parameters: T) => Promise<Changes>,
+		public parameters: T
 	) {
 	}
 
 	async run(): Promise<Changes> {
 		try {
 			return await this.execute(this.parameters);
-		} catch (error: any) {
-			console.error(error.stack);
-			if (['EACCES', 'ENOENT'].includes(error.code)) {
+		} catch (error: unknown) {
+			console.error(error);
+			const code = errorStringCode(error);
+			if (code && ['EACCES', 'ENOENT'].includes(code)) {
 				return Promise.reject(new Error('Directory not found/no access/error in filesystem'));
 			}
 			return Promise.reject(error);

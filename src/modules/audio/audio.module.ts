@@ -15,7 +15,7 @@ import { TranscoderModule } from './transcoder/transcoder.module.js';
 import { WaveformModule } from './waveform/waveform.module.js';
 import { AudioFormatType, TagFormatType } from '../../types/enums.js';
 import { SettingsService } from '../../entity/settings/settings.service.js';
-import { RawTag } from './rawTag.js';
+import { RawTag } from './raw-tag.js';
 import { ConfigService } from '../engine/services/config.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { AdminSettingsExternal } from '../../entity/admin/admin.js';
@@ -77,7 +77,7 @@ export class AudioModule {
 	}
 
 	setSettings(externalServices: AdminSettingsExternal): void {
-		const enabled = externalServices?.enabled;
+		const enabled = externalServices.enabled;
 		this.musicbrainz.enabled = enabled;
 		this.acoustid.enabled = enabled;
 		this.lastFM.enabled = enabled;
@@ -97,11 +97,11 @@ export class AudioModule {
 		if (suffix === AudioFormatType.flac) {
 			return this.flac.read(filename);
 		}
-		const p = await probe(filename, []);
-		if (!p) {
+		const probeResult = await probe(filename, []);
+		if (!probeResult) {
 			return { format: TagFormatType.none };
 		}
-		return { ...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix as AudioFormatType) };
+		return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, suffix as AudioFormatType) };
 	}
 
 	async readRawTag(filename: string): Promise<RawTag | undefined> {
@@ -123,9 +123,9 @@ export class AudioModule {
 			} else if (suffix === AudioFormatType.flac) {
 				await this.flac.write(filename, tag);
 			} else {
-				return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
+				throw new Error(`Writing to format ${suffix} is currently not supported`);
 			}
-		} catch (error) {
+		} catch (error: unknown) {
 			return Promise.reject(error);
 		}
 	}

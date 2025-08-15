@@ -6,7 +6,7 @@ import { Track } from '../track/track.js';
 import { MetaDataService } from './metadata.service.js';
 import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
 import { PageResult } from '../base/base.js';
-import { PageArgs } from '../base/base.args.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export interface Song {
@@ -14,6 +14,18 @@ export interface Song {
 	artist: string;
 	mbid: string;
 	url: string;
+}
+
+async function findAsyncSequential<T>(
+	array: Array<T>,
+	predicate: (t: T) => Promise<boolean>
+): Promise<T | undefined> {
+	for (const t of array) {
+		if (await predicate(t)) {
+			return t;
+		}
+	}
+	return undefined;
 }
 
 export class MetadataServiceSimilarTracks {
@@ -34,7 +46,7 @@ export class MetadataServiceSimilarTracks {
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
 		const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
 		for (const sim of ids) {
-			const t = list.find(async tr => {
+			const t = await findAsyncSequential(list, async tr => {
 				const entry = await tr.tag.get();
 				return entry?.mbTrackID === sim.mbid;
 			});
@@ -76,8 +88,8 @@ export class MetadataServiceSimilarTracks {
 		return shuffle(tracks);
 	}
 
-	private async getSimilarArtistTracks(orm: Orm, similars: Array<LastFM.SimilarArtist>, page?: PageArgs): Promise<PageResult<Track>> {
-		if (!similars || similars.length === 0) {
+	private async getSimilarArtistTracks(orm: Orm, similars: Array<LastFM.SimilarArtist> = [], page?: PageParameters): Promise<PageResult<Track>> {
+		if (similars.length === 0) {
 			return { items: [], ...page, total: 0 };
 		}
 		const songs = await this.getSimilarSongs(orm, similars);
@@ -85,28 +97,28 @@ export class MetadataServiceSimilarTracks {
 		return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
 	}
 
-	async byArtist(orm: Orm, artist: Artist, page?: PageArgs): Promise<PageResult<Track>> {
+	async byArtist(orm: Orm, artist: Artist, page?: PageParameters): Promise<PageResult<Track>> {
 		const similar = await this.service.similarArtists.byArtistIdName(orm, artist.mbArtistID, artist.name);
 		return this.getSimilarArtistTracks(orm, similar, page);
 	}
 
-	async byFolder(orm: Orm, folder: Folder, page?: PageArgs): Promise<PageResult<Track>> {
+	async byFolder(orm: Orm, folder: Folder, page?: PageParameters): Promise<PageResult<Track>> {
 		const similar = await this.service.similarArtists.byArtistIdName(orm, folder.mbArtistID, folder.artist);
 		return this.getSimilarArtistTracks(orm, similar, page);
 	}
 
-	async byAlbum(orm: Orm, album: Album, page?: PageArgs): Promise<PageResult<Track>> {
+	async byAlbum(orm: Orm, album: Album, page?: PageParameters): Promise<PageResult<Track>> {
 		const artist = await album.artist.get();
 		const similar = await this.service.similarArtists.byArtistIdName(orm, album.mbArtistID, artist?.name);
 		return this.getSimilarArtistTracks(orm, similar, page);
 	}
 
-	async byTrack(orm: Orm, track: Track, page?: PageArgs): Promise<PageResult<Track>> {
+	async byTrack(orm: Orm, track: Track, page?: PageParameters): Promise<PageResult<Track>> {
 		let data: LastFM.Result | undefined;
 		const tag = await track.tag.get();
 		if (tag?.mbTrackID) {
 			data = await this.service.lastFMSimilarTracks(orm, tag.mbTrackID);
-		} else if (tag?.title && tag?.artist) {
+		} else if (tag?.title && tag.artist) {
 			data = await this.service.lastFMSimilarTracksSearch(orm, tag.title, tag.artist);
 		}
 		let ids: Array<string> = [];

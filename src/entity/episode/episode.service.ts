@@ -38,11 +38,9 @@ export class EpisodeService {
 	}
 
 	private async downloadEpisodeFile(episode: Episode): Promise<string> {
-		let url = '';
 		const enclosures: Array<EpisodeEnclosure> | undefined = episode.enclosuresJSON ? JSON.parse(episode.enclosuresJSON) : undefined;
-		if (enclosures && enclosures.length > 0) {
-			url = enclosures[0].url;
-		} else {
+		const url = enclosures?.at(0)?.url;
+		if (!url) {
 			throw new Error('No podcast episode url found');
 		}
 		let suffix = fileSuffix(url);
@@ -84,13 +82,13 @@ export class EpisodeService {
 				episode.fileSize = stat.size;
 				episode.duration = result.mediaDuration;
 				episode.path = filename;
-			} catch (error) {
+			} catch (error: unknown) {
 				episode.status = PodcastStatus.error;
-				episode.error = (error || '').toString();
+				episode.error = JSON.stringify(error);
 			}
 			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
-		} catch (error) {
+		} catch (error: unknown) {
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
 			return Promise.reject(error);
 		}

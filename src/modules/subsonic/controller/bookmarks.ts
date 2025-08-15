@@ -1,10 +1,10 @@
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-parameters.js';
 import { SubsonicBookmarks, SubsonicID, SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 import { Track } from '../../../entity/track/track.js';
@@ -21,7 +21,7 @@ export class SubsonicBookmarkApi {
 			description: 'Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.',
 			tags: ['Bookmarks']
 		})
-	async createBookmark(@SubsonicParams() query: SubsonicParameterBookmark, @SubsonicCtx() { engine, orm, user }: Context): Promise<void> {
+	async createBookmark(@SubsonicParameters() query: SubsonicParameterBookmark, @SubsonicContext() { engine, orm, user }: Context): Promise<void> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file to bookmark. If a bookmark already exists for this file it will be overwritten.
@@ -42,10 +42,11 @@ export class SubsonicBookmarkApi {
 			description: 'Returns all bookmarks for this user. A bookmark is a position within a certain media file.',
 			tags: ['Bookmarks']
 		})
-	async getBookmarks(@SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseBookmarks> {
+	async getBookmarks(@SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseBookmarks> {
 		const bookmarklist = await orm.Bookmark.findFilter({ userIDs: [user.id] });
-		const bookmarks: SubsonicBookmarks = {};
-		bookmarks.bookmark = await SubsonicHelper.prepareBookmarks(orm, bookmarklist, user);
+		const bookmarks: SubsonicBookmarks = {
+			bookmark: await SubsonicHelper.prepareBookmarks(orm, bookmarklist, user)
+		};
 		return { bookmarks };
 	}
 
@@ -55,7 +56,7 @@ export class SubsonicBookmarkApi {
 	 */
 	@SubsonicRoute('/deleteBookmark', () => SubsonicOKResponse,
 		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
-	async deleteBookmark(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+	async deleteBookmark(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		ID of the media file for which to delete the bookmark. Other users' bookmarks are not affected.
@@ -74,11 +75,8 @@ export class SubsonicBookmarkApi {
 	 */
 	@SubsonicRoute('/getPlayQueue', () => SubsonicResponsePlayQueue,
 		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
-	async getPlayQueue(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
+	async getPlayQueue(@SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
 		const playqueue = await engine.playQueue.get(orm, user);
-		if (!playqueue) {
-			return {} as any;
-		}
 		const entries = await playqueue.entries.getItems();
 		const tracks: Array<Track> = [];
 		for (const entry of entries) {
@@ -99,7 +97,7 @@ export class SubsonicBookmarkApi {
 	 */
 	@SubsonicRoute('/savePlayQueue', () => SubsonicOKResponse,
 		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
-	async savePlayQueue(@SubsonicParams() query: SubsonicParameterPlayQueue, @SubsonicCtx() { engine, orm, user, client }: Context): Promise<SubsonicOKResponse> {
+	async savePlayQueue(@SubsonicParameters() query: SubsonicParameterPlayQueue, @SubsonicContext() { engine, orm, user, client }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		ID of a song in the play queue. Use one id parameter for each song in the play queue.
@@ -114,7 +112,7 @@ export class SubsonicBookmarkApi {
 			mediaIDs,
 			currentID: query.current,
 			position: query.position
-		}, user, client || 'unknown');
+		}, user, client ?? 'unknown');
 		return {};
 	}
 }

@@ -1,13 +1,14 @@
+// eslint-disable-next-line unicorn/prevent-abbreviations
 import { spawnTool } from '../../../utils/tool.js';
 
-export interface MP3ValWarning {
+export interface MP3ValueWarning {
 	offset?: string;
 	msg: string;
 }
 
-export interface MP3ValResult {
+export interface MP3ValueResult {
 	fixed: boolean;
-	warnings: Array<MP3ValWarning>;
+	warnings: Array<MP3ValueWarning>;
 }
 
 /* example output
@@ -20,28 +21,28 @@ export interface MP3ValResult {
  Done!
  **/
 
-function parseMP3ValWarning(data: string): MP3ValWarning {
-	let s = data;
-	let i = s.indexOf('"');
-	s = s.slice(i);
-	i = s.indexOf('"');
-	s = s.slice(i).trim();
+function parseMP3ValueWarning(data: string): MP3ValueWarning {
+	let value = data;
+	let index = value.indexOf('"');
+	value = value.slice(index);
+	index = value.indexOf('"');
+	value = value.slice(index).trim();
 	let offset: string | undefined;
-	if (s.startsWith('(')) {
-		i = s.indexOf(')');
-		offset = s.slice(1, i - 1);
+	if (value.startsWith('(')) {
+		index = value.indexOf(')');
+		offset = value.slice(1, index - 1);
 	}
-	i = s.indexOf(':');
-	s = s.slice(i).trim();
-	return { offset, msg: s };
+	index = value.indexOf(':');
+	value = value.slice(index).trim();
+	return { offset, msg: value };
 }
 
-function parseMP3ValResult(data: string): MP3ValResult {
+function parseMP3ValueResult(data: string): MP3ValueResult {
 	const lines = data.split('\n');
-	const result: MP3ValResult = { fixed: false, warnings: [] };
+	const result: MP3ValueResult = { fixed: false, warnings: [] };
 	for (const line of lines) {
 		if (line.startsWith('WARNING:')) {
-			result.warnings.push(parseMP3ValWarning(line));
+			result.warnings.push(parseMP3ValueWarning(line));
 		} else if (line.startsWith('FIXED')) {
 			result.fixed = true;
 		}
@@ -49,7 +50,8 @@ function parseMP3ValResult(data: string): MP3ValResult {
 	return result;
 }
 
-export async function mp3val(filename: string, fix: boolean): Promise<MP3ValResult> {
+// eslint-disable-next-line unicorn/prevent-abbreviations
+export async function mp3val(filename: string, fix: boolean): Promise<MP3ValueResult> {
 	const cmds = ['-si'];
 	if (fix) {
 		cmds.push('-f');
@@ -58,5 +60,5 @@ export async function mp3val(filename: string, fix: boolean): Promise<MP3ValResu
 	if (result.errMsg) {
 		return Promise.reject(new Error(result.errMsg));
 	}
-	return parseMP3ValResult(result.result);
+	return parseMP3ValueResult(result.result);
 }

@@ -5,36 +5,38 @@ import { fileDeleteIfExists, fileSuffix } from '../../../utils/fs-utils.js';
 import { rewriteWriteFFmpeg } from '../tools/ffmpeg-rewrite.js';
 import { AudioFormatType } from '../../../types/enums.js';
 
-export async function rewriteAudio(param: string): Promise<void> {
-	const tempFile = `${param}.tmp`;
-	const backupFile = `${param}.bak`;
+export async function rewriteAudio(filename: string): Promise<void> {
+	const temporaryFile = `${filename}.tmp`;
+	const backupFile = `${filename}.bak`;
 	try {
-		const suffix = fileSuffix(param);
+		const suffix = fileSuffix(filename);
 		const id3v2 = new ID3v2();
 		let tag: IID3V2.Tag | undefined;
 		if (suffix === AudioFormatType.mp3) {
-			tag = await id3v2.read(param);
+			tag = await id3v2.read(filename);
 		}
-		await rewriteWriteFFmpeg(param, tempFile);
+		await rewriteWriteFFmpeg(filename, temporaryFile);
 		const exits = await fse.pathExists(backupFile);
-		await (exits ? fileDeleteIfExists(param) : fse.copy(param, backupFile));
+		await (exits ? fileDeleteIfExists(filename) : fse.copy(filename, backupFile));
 		if (tag) {
-			await id3v2.write(tempFile, tag, 4, 0, { keepBackup: false, paddingSize: 10 });
+			await id3v2.write(temporaryFile, tag, 4, 0, { keepBackup: false, paddingSize: 10 });
 		}
-		await fse.rename(tempFile, param);
-	} catch (error) {
-		await fileDeleteIfExists(tempFile);
+		await fse.rename(temporaryFile, filename);
+	} catch (error: unknown) {
+		await fileDeleteIfExists(temporaryFile);
 		return Promise.reject(error);
 	}
 }
 
 if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
-	caller.on('message', async (param: any) => {
-		if (typeof param !== 'string') {
+	caller.on('message', (parameters: unknown) => {
+		if (typeof parameters !== 'string') {
 			throw new TypeError('param must be a string.');
 		}
-		await rewriteAudio(param);
-		caller.postMessage(undefined);
+		void rewriteAudio(parameters)
+			.then(() => {
+				caller.postMessage(undefined);
+			});
 	});
 }

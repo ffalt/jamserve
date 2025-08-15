@@ -13,15 +13,15 @@ export class LiveTranscoderStream extends TranscoderStream {
 	}
 
 	pipe(stream: express.Response): void {
-		log.info('Start transcode streaming', this.format, this.maxBitRate);
+		log.info('Start transcode streaming', this.format, this.maxBitRate.toString());
 		stream.contentType(this.format);
 		const proc = TranscoderStream.getTranscodeProc(this.filename, this.format, this.maxBitRate);
 		proc
 			.on('end', () => {
 				log.debug('file has been transcoded successfully');
 			})
-			.on('error', (err: Error) => {
-				log.error(`an error happened while transcoding: ${err.message}`);
+			.on('error', (error: unknown) => {
+				log.error(error);
 			})
 			.writeToStream(stream, { end: true });
 	}

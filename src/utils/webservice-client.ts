@@ -1,6 +1,8 @@
 import { RateLimiter } from './limiter/rate-limiter.js';
 import fetch, { Response } from 'node-fetch';
 
+type WebserviceClientParameters = Record<string, string | number | undefined> | undefined;
+
 export class WebserviceClient {
 	enabled = false;
 	private readonly limiter: RateLimiter;
@@ -17,7 +19,7 @@ export class WebserviceClient {
 		}
 		try {
 			return await response.json() as T;
-		} catch (error) {
+		} catch (error: unknown) {
 			return Promise.reject(error);
 		}
 	}
@@ -33,21 +35,30 @@ export class WebserviceClient {
 		await limiter.removeTokens(1);
 	}
 
-	protected formatParams<P>(parameters: P): string {
-		const obj: any = { ...parameters };
-		for (const key of Object.keys(obj)) {
-			if (obj[key] === undefined) {
-				delete obj[key];
+	protected formatParams<P extends WebserviceClientParameters>(parameters: P): string {
+		const search = new URLSearchParams();
+
+		if (parameters) {
+			for (const [key, value] of Object.entries(parameters) as Array<[string, string | number | undefined]>) {
+				if (value !== undefined) {
+					search.append(key, value.toString());
+				}
 			}
 		}
-		return `?${new URLSearchParams(obj)}`;
+
+		const qs = search.toString();
+		return qs ? `?${qs}` : '';
 	}
 
-	protected async getJson<T, P>(url: string, parameters?: P, ignoreStatus?: boolean): Promise<T> {
+	protected async getJson<T>(url: string, ignoreStatus?: boolean): Promise<T> {
+		return this.getJsonWithParameters<T, undefined>(url, undefined, ignoreStatus);
+	}
+
+	protected async getJsonWithParameters<T, P extends WebserviceClientParameters>(url: string, parameters?: P, ignoreStatus?: boolean): Promise<T> {
 		this.checkDisabled();
 		await this.limit();
-		const params = parameters ? this.formatParams<P>(parameters) : '';
-		const response = await fetch(url + params, {
+		const urlParameters = parameters ? this.formatParams<P>(parameters) : '';
+		const response = await fetch(url + urlParameters, {
 			headers: { 'User-Agent': this.userAgent }
 			// timeout: 20000
 		});

@@ -3,11 +3,11 @@ import { Folder } from '../../../entity/folder/folder.js';
 import { randomItems } from '../../../utils/random.js';
 
 import { AlbumOrderFields, DBObjectType, FolderOrderFields, FolderType, FolderTypesAlbum, ListType } from '../../../types/enums.js';
-import { TrackFilterArgs } from '../../../entity/track/track.args.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { TrackFilterParameters } from '../../../entity/track/track.parameters.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterAlbumList, SubsonicParameterSongsByGenre, SubsonicParameterAlbumList2, SubsonicParameterRandomSong, SubsonicParameterMusicFolderID } from '../model/subsonic-rest-params.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterAlbumList, SubsonicParameterSongsByGenre, SubsonicParameterAlbumList2, SubsonicParameterRandomSong, SubsonicParameterMusicFolderID } from '../model/subsonic-rest-parameters.js';
 import {
 	SubsonicNowPlayingEntry, SubsonicResponseAlbumList,
 	SubsonicResponseAlbumList2,
@@ -17,8 +17,8 @@ import {
 	SubsonicStarred,
 	SubsonicStarred2
 } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 
@@ -33,11 +33,11 @@ export class SubsonicListsApi {
 		description: 'Returns what is currently being played by all users.',
 		tags: ['Lists']
 	})
-	async getNowPlaying(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseNowPlaying> {
+	async getNowPlaying(@SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseNowPlaying> {
 		const list = await engine.nowPlaying.getNowPlaying();
 		const result: Array<SubsonicNowPlayingEntry> = [];
 		for (const entry of list) {
-			const state = await orm.State.findOrCreate(entry.episode?.id || entry.track?.id || '',
+			const state = await orm.State.findOrCreate((entry.episode?.id ?? entry.track?.id) ?? '',
 				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
 			result.push(await SubsonicFormatter.packNowPlaying(entry, state));
 		}
@@ -53,7 +53,7 @@ export class SubsonicListsApi {
 		description: 'Returns random songs matching the given criteria.',
 		tags: ['Lists']
 	})
-	async getRandomSongs(@SubsonicParams() query: SubsonicParameterRandomSong, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseRandomSongs> {
+	async getRandomSongs(@SubsonicParameters() query: SubsonicParameterRandomSong, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseRandomSongs> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 size 	No 	10 	The maximum number of songs to return. Max 500.
@@ -62,8 +62,8 @@ export class SubsonicListsApi {
 		 toYear 	No 		Only return songs published before or in this year.
 		 musicFolderId 	No 		Only return songs in the music folder with the given ID. See getMusicFolders.
 		 */
-		const amount = Math.min(query.size || 10, 500);
-		const filter: TrackFilterArgs = {
+		const amount = Math.min(query.size ?? 10, 500);
+		const filter: TrackFilterParameters = {
 			genres: query.genre ? [query.genre] : undefined,
 			fromYear: query.fromYear,
 			toYear: query.toYear,
@@ -88,7 +88,7 @@ export class SubsonicListsApi {
 		description: 'Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.',
 		tags: ['Lists']
 	})
-	async getAlbumList(@SubsonicParams() query: SubsonicParameterAlbumList, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumList> {
+	async getAlbumList(@SubsonicParameters() query: SubsonicParameterAlbumList, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseAlbumList> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, highest, frequent, recent.
@@ -100,8 +100,8 @@ export class SubsonicListsApi {
 		 toYear 	Yes (if type is byYear) 		The last year in the range.
 		 genre 	Yes (if type is byGenre) 		The name of the genre, e.g., "Rock".
 		 */
-		const take = query.size || 20;
-		const skip = query.offset || 0;
+		const take = query.size ?? 20;
+		const skip = query.offset ?? 0;
 		let folders: Array<Folder> = [];
 		switch (query.type) {
 			case 'random': {
@@ -225,7 +225,7 @@ export class SubsonicListsApi {
 		description: 'Similar to getAlbumList, but organizes music according to ID3 tags.',
 		tags: ['Lists']
 	})
-	async getAlbumList2(@SubsonicParams() query: SubsonicParameterAlbumList2, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumList2> {
+	async getAlbumList2(@SubsonicParameters() query: SubsonicParameterAlbumList2, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseAlbumList2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 type 	Yes 		The list type. Must be one of the following: random, newest, frequent, recent, starred, alphabeticalByName or alphabeticalByArtist. Since 1.10.1 you can use byYear and byGenre to list albums in a given year range or genre.
@@ -236,8 +236,8 @@ export class SubsonicListsApi {
 		 genre 	Yes (if type is byGenre) 		The name of the genre, e.g., "Rock".
 		 musicFolderId 	No 		(Since 1.12.0) Only return albums in the music folder with the given ID. See getMusicFolders.
 		 */
-		const take = Math.min(query.size || 20, 500);
-		const skip = query.offset || 0;
+		const take = Math.min(query.size ?? 20, 500);
+		const skip = query.offset ?? 0;
 		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		let albums: Array<Album> = [];
 		switch (query.type) {
@@ -358,7 +358,7 @@ export class SubsonicListsApi {
 		description: 'Returns songs in a given genre.',
 		tags: ['Lists']
 	})
-	async getSongsByGenre(@SubsonicParams() query: SubsonicParameterSongsByGenre, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSongsByGenre> {
+	async getSongsByGenre(@SubsonicParameters() query: SubsonicParameterSongsByGenre, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseSongsByGenre> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 genre 	Yes 		The genre, as returned by getGenres.
@@ -366,13 +366,14 @@ export class SubsonicListsApi {
 		 offset 	No 	0 	The offset. Useful if you want to page through the songs in a genre.
 		 musicFolderId 	No 		(Since 1.12.0) Only return albums in the music folder with the given ID. See getMusicFolders
 		 */
-		const take = query.count || 10;
-		const skip = query.offset || 0;
+		const take = query.count ?? 10;
+		const skip = query.offset ?? 0;
 		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
 		const genres = query.genre ? [query.genre] : undefined;
 		const tracks = await orm.Track.findFilter({ rootIDs, genres }, undefined, { skip, take }, user);
-		const songsByGenre: SubsonicSongs = {};
-		songsByGenre.song = await SubsonicHelper.prepareTracks(orm, tracks, user);
+		const songsByGenre: SubsonicSongs = {
+			song: await SubsonicHelper.prepareTracks(orm, tracks, user)
+		};
 		return { songsByGenre };
 	}
 
@@ -385,7 +386,7 @@ export class SubsonicListsApi {
 		description: 'Returns starred songs, albums and artists.',
 		tags: ['Lists']
 	})
-	async getStarred(@SubsonicParams() query: SubsonicParameterMusicFolderID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseStarred> {
+	async getStarred(@SubsonicParameters() query: SubsonicParameterMusicFolderID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseStarred> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders.
@@ -416,7 +417,7 @@ export class SubsonicListsApi {
 		description: 'Similar to getStarred, but organizes music according to ID3 tags.',
 		tags: ['Lists']
 	})
-	async getStarred2(@SubsonicParams() query: SubsonicParameterMusicFolderID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseStarred2> {
+	async getStarred2(@SubsonicParameters() query: SubsonicParameterMusicFolderID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseStarred2> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		(Since 1.12.0) Only return results from the music folder with the given ID. See getMusicFolders

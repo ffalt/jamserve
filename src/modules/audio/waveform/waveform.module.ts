@@ -23,12 +23,12 @@ export class WaveformModule {
 		this.waveformCache = new IDFolderCache<{ width?: number; format: string }>(
 			waveformCachePath,
 			'waveform',
-			(params: { width?: number; format: string }) => {
+			(parameters: { width?: number; format: string }) => {
 				let suffix = '';
-				if (params.width !== undefined) {
-					suffix = `-${params.width}`;
+				if (parameters.width !== undefined) {
+					suffix = `-${parameters.width}`;
 				}
-				return `${suffix}.${params.format}`;
+				return `${suffix}.${parameters.format}`;
 			}
 		);
 	}

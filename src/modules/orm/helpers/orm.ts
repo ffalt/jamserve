@@ -1,8 +1,9 @@
 import { EntityCache, EntityManager } from './manager.js';
-import seq, { Sequelize } from 'sequelize';
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { Sequelize, DataTypes } from 'sequelize';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import { ORMConfig } from '../definitions/config.js';
 import { ModelBuilder } from '../builder/schema.js';
+import { ColumnDescription, QueryInterface } from 'sequelize/lib/dialects/abstract/query-interface';
 
 export class ORM {
 	public readonly cache = new EntityCache();
@@ -18,7 +19,7 @@ export class ORM {
 	}
 
 	async init(): Promise<void> {
-		const metadata = getMetadataStorage();
+		const metadata = metadataStorage();
 		metadata.build();
 		await this.testConnection();
 		await this.buildSchema();
@@ -28,35 +29,39 @@ export class ORM {
 		await this.sequelize.drop();
 	}
 
+	async findSchema(queryInterface: QueryInterface, name: string): Promise<Record<string, ColumnDescription | undefined> | undefined> {
+		return await queryInterface.describeTable(name);
+	}
+
 	async updateSchema(): Promise<void> {
 		const queryInterface = this.sequelize.getQueryInterface();
-		let table = await queryInterface.describeTable('State');
+		let table: Record<string, ColumnDescription | undefined> | undefined = await this.findSchema(queryInterface, 'State');
 		if (table?.played && table.played.type !== 'INTEGER') {
 			await queryInterface.removeColumn('State', 'played');
-			await queryInterface.addColumn('State', 'played', { type: seq.DataTypes.INTEGER, allowNull: true });
+			await queryInterface.addColumn('State', 'played', { type: DataTypes.INTEGER, allowNull: true });
 		}
-		table = await queryInterface.describeTable('Artist');
+		table = await this.findSchema(queryInterface, 'Artist');
 		if (table?.genres) {
 			await queryInterface.removeColumn('Artist', 'genres');
 		}
-		table = await queryInterface.describeTable('Folder');
+		table = await this.findSchema(queryInterface, 'Folder');
 		if (table?.genres) {
 			await queryInterface.removeColumn('Folder', 'genres');
 		}
-		table = await queryInterface.describeTable('Album');
+		table = await this.findSchema(queryInterface, 'Album');
 		if (table?.genres) {
 			await queryInterface.removeColumn('Album', 'genres');
 		}
-		table = await queryInterface.describeTable('User');
+		table = await this.findSchema(queryInterface, 'User');
 		if (table?.salt) {
 			await queryInterface.removeColumn('User', 'salt');
 		}
-		table = await queryInterface.describeTable('Tag');
+		table = await this.findSchema(queryInterface, 'Tag');
 		if (!table?.mediaBitDepth) {
-			await queryInterface.addColumn('Tag', 'mediaBitDepth', { type: seq.DataTypes.INTEGER, allowNull: true });
+			await queryInterface.addColumn('Tag', 'mediaBitDepth', { type: DataTypes.INTEGER, allowNull: true });
 		}
 		if (!table?.syncedlyrics) {
-			await queryInterface.addColumn('Tag', 'syncedlyrics', { type: seq.DataTypes.TEXT, allowNull: true });
+			await queryInterface.addColumn('Tag', 'syncedlyrics', { type: DataTypes.TEXT, allowNull: true });
 		}
 	}
 
@@ -70,12 +75,12 @@ export class ORM {
 	}
 
 	async buildSchema(): Promise<void> {
-		const schema = new ModelBuilder(this.sequelize, getMetadataStorage());
+		const schema = new ModelBuilder(this.sequelize, metadataStorage());
 		await schema.build();
 	}
 
 	manager(useCache: boolean): EntityManager {
-		return new EntityManager(this.sequelize, getMetadataStorage(), this.config, this, useCache);
+		return new EntityManager(this.sequelize, metadataStorage(), this.config, this, useCache);
 	}
 
 	clearCache(): void {

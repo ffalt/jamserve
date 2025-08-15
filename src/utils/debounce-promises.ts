@@ -1,15 +1,15 @@
 export class DebouncePromises<T> {
-	private readonly pendingPromises = new Map<string, Array<(error?: Error, result?: T) => void>>();
+	private readonly pendingPromises = new Map<string, Array<(error?: unknown, result?: T) => void>>();
 
-	private getPendingArray(id: string): Array<(error?: Error, result?: T) => void> {
-		return this.pendingPromises.get(id) || [];
+	private getPendingArray(id: string): Array<(error?: unknown, result?: T) => void> {
+		return this.pendingPromises.get(id) ?? [];
 	}
 
 	async append(id: string): Promise<T> {
 		return new Promise<T>((resolve, reject) => {
-			const run = (error?: Error, result?: T): void => {
+			const run = (error?: unknown, result?: T): void => {
 				if (error) {
-					reject(error);
+					reject(error as unknown);
 				} else if (result) {
 					resolve(result);
 				} else {
@@ -31,16 +31,16 @@ export class DebouncePromises<T> {
 	resolve(id: string, result: T): void {
 		const pending = this.getPendingArray(id);
 		this.pendingPromises.delete(id);
-		for (const cb of pending) {
-			cb(undefined, result);
+		for (const callback of pending) {
+			callback(undefined, result);
 		}
 	}
 
-	reject(id: string, error: Error): void {
+	reject(id: string, error: unknown): void {
 		const pending = this.getPendingArray(id);
 		this.pendingPromises.delete(id);
-		for (const cb of pending) {
-			cb(error);
+		for (const callback of pending) {
+			callback(error);
 		}
 	}
 }

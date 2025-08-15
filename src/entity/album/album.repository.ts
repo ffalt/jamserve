@@ -2,16 +2,16 @@ import { BaseRepository } from '../base/base.repository.js';
 import { AlbumOrderFields, DBObjectType } from '../../types/enums.js';
 import { Album } from './album.js';
 import { OrderHelper } from '../base/base.js';
-import { AlbumFilterArgs, AlbumOrderArgs } from './album.args.js';
+import { AlbumFilterParameters, AlbumOrderParameters } from './album.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
-import Sequelize from 'sequelize';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem, literal } from 'sequelize';
 
-export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, AlbumOrderArgs> {
+export class AlbumRepository extends BaseRepository<Album, AlbumFilterParameters, AlbumOrderParameters> {
 	objType = DBObjectType.album;
 	indexProperty = 'name';
 
-	buildOrder(order?: AlbumOrderArgs): Array<OrderItem> {
+	buildOrder(order?: AlbumOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case AlbumOrderFields.created: {
@@ -58,10 +58,10 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 	private seriesNrOrder(direction: string): Array<OrderItem> {
 		switch (this.em.dialect) {
 			case 'sqlite': {
-				return [[Sequelize.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+				return [[literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
 			}
 			case 'postgres': {
-				return [[Sequelize.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+				return [[literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
 			}
 			default: {
 				throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);
@@ -69,23 +69,24 @@ export class AlbumRepository extends BaseRepository<Album, AlbumFilterArgs, Albu
 		}
 	}
 
-	async buildFilter(filter?: AlbumFilterArgs, _?: User): Promise<FindOptions<Album>> {
+	async buildFilter(filter?: AlbumFilterParameters, _?: User): Promise<FindOptions<Album>> {
 		if (!filter) {
 			return {};
 		}
-		const result = QHelper.buildQuery<Album>([
-			{ id: filter.ids },
-			{ name: QHelper.like(filter.query, this.em.dialect) },
-			{ name: QHelper.eq(filter.name) },
-			{ mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs) },
-			{ mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs) },
-			{ mbArtistID: QHelper.neq(filter.notMbArtistID) },
-			{ albumType: QHelper.inOrEqual(filter.albumTypes) },
-			{ createdAt: QHelper.gte(filter.since) },
-			{ artist: QHelper.inOrEqual(filter.artistIDs) },
-			{ year: QHelper.lte(filter.toYear) },
-			{ year: QHelper.gte(filter.fromYear) }
-		]
+		const result = QHelper.buildQuery<Album>(
+			[
+				{ id: filter.ids },
+				{ name: QHelper.like(filter.query, this.em.dialect) },
+				{ name: QHelper.eq(filter.name) },
+				{ mbReleaseID: QHelper.inOrEqual(filter.mbReleaseIDs) },
+				{ mbArtistID: QHelper.inOrEqual(filter.mbArtistIDs) },
+				{ mbArtistID: QHelper.neq(filter.notMbArtistID) },
+				{ albumType: QHelper.inOrEqual(filter.albumTypes) },
+				{ createdAt: QHelper.gte(filter.since) },
+				{ artist: QHelper.inOrEqual(filter.artistIDs) },
+				{ year: QHelper.lte(filter.toYear) },
+				{ year: QHelper.gte(filter.fromYear) }
+			]
 		);
 		result.include = QHelper.includeQueries([
 			{ genres: [{ id: QHelper.inOrEqual(filter.genreIDs) }] },

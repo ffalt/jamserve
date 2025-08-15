@@ -1074,7 +1074,7 @@ const genreData = {
 	]
 };
 
-let GenresSlugs: Record<string, string>; // will be build on first use
+let GenresSlugs: Record<string, string> | undefined; // will be build on first use
 
 export const Genres: Array<string> = genreData.list;
 
@@ -1082,19 +1082,15 @@ function slugify(genre: string): string {
 	return genre.replaceAll(/[& \-.]/g, '').toLowerCase();
 }
 
-function buildGenreSlugs(): void {
-	if (!GenresSlugs) {
-		GenresSlugs = {};
-		for (const g of Genres) {
-			GenresSlugs[slugify(g)] = g;
-		}
-	}
+function buildGenreSlugs(): Record<string, string> {
+	GenresSlugs ??= Object.fromEntries(Genres.map(g => [slugify(g), g] as const));
+	return GenresSlugs;
 }
 
 function findByGenreSlug(part: string): string | undefined {
 	const slug = slugify(part);
-	buildGenreSlugs();
-	return GenresSlugs[slug];
+	const slugs = buildGenreSlugs();
+	return slugs[slug];
 }
 
 function cleanGenrePartSlug(part: string): Array<string> | undefined {
@@ -1116,13 +1112,17 @@ function cleanGenrePartSlug(part: string): Array<string> | undefined {
 function cleanGenrePart(part: string): Array<string> | undefined {
 	// test for (number)
 	const numpart = /\((\d+)\)/.exec(part);
-	let num: number | undefined;
+	let value: number | undefined;
 	if (numpart) {
-		num = Number(numpart[1]);
-		part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
+		const numpart0 = numpart.at(0);
+		const numpart1 = numpart.at(1);
+		if (numpart0 && numpart1) {
+			value = Number(numpart1);
+			part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart0.length);
+		}
 	}
-	if (part.length === 0 && (num !== undefined)) {
-		const s = genreData.id3v1[num];
+	if (part.length === 0 && (value !== undefined)) {
+		const s = genreData.id3v1[value];
 		if (s) {
 			part = s;
 		}

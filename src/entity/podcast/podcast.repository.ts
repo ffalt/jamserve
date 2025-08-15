@@ -3,14 +3,15 @@ import { DBObjectType, PodcastOrderFields } from '../../types/enums.js';
 import { Podcast } from './podcast.js';
 import { OrderHelper } from '../base/base.js';
 import { User } from '../user/user.js';
-import { PodcastFilterArgs, PodcastOrderArgs } from './podcast.args.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { PodcastFilterParameters, PodcastOrderParameters } from './podcast.parameters.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs, PodcastOrderArgs> {
+export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterParameters, PodcastOrderParameters> {
 	objType = DBObjectType.podcast;
 	indexProperty = 'name';
 
-	buildOrder(order?: PodcastOrderArgs): Array<OrderItem> {
+	buildOrder(order?: PodcastOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case PodcastOrderFields.created: {
@@ -30,7 +31,7 @@ export class PodcastRepository extends BaseRepository<Podcast, PodcastFilterArgs
 		return [];
 	}
 
-	async buildFilter(filter?: PodcastFilterArgs, _?: User): Promise<FindOptions<Podcast>> {
+	async buildFilter(filter?: PodcastFilterParameters, _?: User): Promise<FindOptions<Podcast>> {
 		if (!filter) {
 			return {};
 		}

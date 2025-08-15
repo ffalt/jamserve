@@ -1,7 +1,7 @@
 import { IoService } from '../io.service.js';
 import { AdminChangeQueueInfo, IoRequest, WorkerRequestMode } from './io.types.js';
 import { WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from '../worker/worker.types.js';
-import { RawTag } from '../../../audio/rawTag.js';
+import { RawTag } from '../../../audio/raw-tag.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { DelayedRequests } from './io.helpers.js';
 
@@ -20,8 +20,10 @@ export class IoCommandsTrack {
 			}
 			return this.owner.getRequestInfo(oldRequest);
 		}
-		return this.owner.newRequest<WorkerRequestRemoveTracks>(
-			WorkerRequestMode.removeTracks, p => this.owner.workerService.track.remove(p), { rootID, trackIDs: [id] }
+		return this.owner.newRequest(
+			WorkerRequestMode.removeTracks,
+			p => this.owner.workerService.track.remove(p),
+			{ rootID, trackIDs: [id] }
 		);
 	}
 
@@ -79,11 +81,14 @@ export class IoCommandsTrack {
 			delayedCmd.request.parameters.fixes.push({ trackID, fixID });
 		} else {
 			delayedCmd = this.delayedTrackFix.register(rootID,
-				new IoRequest<WorkerRequestFixTrack>(this.owner.generateRequestID(),
-					WorkerRequestMode.fixTrack, p => this.owner.workerService.track.fix(p), { rootID, fixes: [{ trackID, fixID }] })
+				new IoRequest(
+					this.owner.generateRequestID(),
+					WorkerRequestMode.fixTrack, p => this.owner.workerService.track.fix(p),
+					{ rootID, fixes: [{ trackID, fixID }] }
+				)
 			);
 		}
 		this.delayedTrackFix.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
-		return this.owner.getRequestInfo(delayedCmd.request);
+		return this.owner.getRequestInfo<WorkerRequestFixTrack>(delayedCmd.request);
 	}
 }

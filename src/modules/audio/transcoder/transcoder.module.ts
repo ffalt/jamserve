@@ -19,12 +19,12 @@ export class TranscoderModule {
 		this.transcodeCache = new IDFolderCache<{ maxBitRate?: number; format: string }>(
 			transcodeCachePath,
 			'transcode',
-			(params: { maxBitRate?: number; format: string }) => {
+			(parameters: { maxBitRate?: number; format: string }) => {
 				let suffix = '';
-				if (params.maxBitRate) {
-					suffix = `-${params.maxBitRate}`;
+				if (parameters.maxBitRate) {
+					suffix = `-${parameters.maxBitRate}`;
 				}
-				return `${suffix}.${params.format}`;
+				return `${suffix}.${parameters.format}`;
 			}
 		);
 	}

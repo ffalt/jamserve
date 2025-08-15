@@ -7,11 +7,11 @@ import { trackTagToRawTag } from '../../modules/audio/metadata.js';
 import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { RawTag } from '../../modules/audio/rawTag.js';
+import { RawTag } from '../../modules/audio/raw-tag.js';
 import { FolderService } from '../folder/folder.service.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import { basenameStripExt } from '../../utils/fs-utils.js';
+import { basenameStripExtension } from '../../utils/fs-utils.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 const log = logger('TrackService');
@@ -61,12 +61,12 @@ export class TrackService {
 					return await this.imageModule.getBuffer(track.id, buffer, size, format);
 				}
 			} catch {
-				log.error('TrackService', 'Extracting image from audio failed: ' + path.join(track.path, track.fileName));
+				log.error('TrackService', `Extracting image from audio failed: ${path.join(track.path, track.fileName)}`);
 			}
 		}
 		const folder = await track.folder.get();
 		if (folder) {
-			const name = basenameStripExt(track.fileName);
+			const name = basenameStripExtension(track.fileName);
 			const artworks = await folder.artworks.getItems();
 			const artwork = artworks.find(a => a.name.startsWith(name));
 			if (artwork) {
@@ -81,7 +81,7 @@ export class TrackService {
 		const result: Array<{ track: Track; health: Array<TrackHealthHint> }> = [];
 		await processQueue<Track>(3, tracks, async track => {
 			const health = await this.checker.run(track, !!media);
-			if (health && health.length > 0) {
+			if (health.length > 0) {
 				result.push({ track, health });
 			}
 		});

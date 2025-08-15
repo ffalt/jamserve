@@ -1,15 +1,16 @@
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, SessionOrderFields } from '../../types/enums.js';
 import { Session } from './session.js';
 import { User } from '../user/user.js';
-import { SessionFilterArgs, SessionOrderArgs } from './session.args.js';
+import { SessionFilterParameters, SessionOrderParameters } from './session.parameters.js';
 import { OrderHelper } from '../base/base.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class SessionRepository extends BaseRepository<Session, SessionFilterArgs, SessionOrderArgs> {
+export class SessionRepository extends BaseRepository<Session, SessionFilterParameters, SessionOrderParameters> {
 	objType = DBObjectType.session;
 
-	buildOrder(order?: SessionOrderArgs): Array<OrderItem> {
+	buildOrder(order?: SessionOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case SessionOrderFields.expires:
@@ -20,7 +21,7 @@ export class SessionRepository extends BaseRepository<Session, SessionFilterArgs
 		return [];
 	}
 
-	async buildFilter(filter?: SessionFilterArgs, user?: User): Promise<FindOptions<Session>> {
+	async buildFilter(filter?: SessionFilterParameters, user?: User): Promise<FindOptions<Session>> {
 		return filter ?
 			QHelper.buildQuery<Session>(
 				[

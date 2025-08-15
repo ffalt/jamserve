@@ -8,11 +8,13 @@ export async function analyzeMP3(filename: string): Promise<IMP3Analyzer.Report>
 
 if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
-	caller.on('message', async (param: any) => {
-		if (typeof param !== 'string') {
+	caller.on('message', (parameter: unknown) => {
+		if (typeof parameter !== 'string') {
 			throw new TypeError('param must be a string.');
 		}
-		const result = await analyzeMP3(param);
-		caller.postMessage(result);
+		void analyzeMP3(parameter)
+			.then(result => {
+				caller.postMessage(result);
+			});
 	});
 }

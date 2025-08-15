@@ -1,8 +1,8 @@
-import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
-@ObjParamsType()
+@ObjectParametersType()
 export class StatsFilter {
-	@ObjField({ nullable: true, description: 'filter stats by Root Id', isID: true })
+	@ObjectField({ nullable: true, description: 'filter stats by Root Id', isID: true })
 	rootID?: string;
 }

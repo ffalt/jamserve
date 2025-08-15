@@ -3,9 +3,9 @@ import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoo
 import { State, StateQL } from '../state/state.js';
 import { Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL } from './podcast.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL } from './podcast.args.js';
+import { PodcastDiscoverParametersQL, PodcastDiscoverByTagParametersQL, PodcastIndexParametersQL, PodcastsParametersQL } from './podcast.parameters.js';
 import { Episode, EpisodeQL } from '../episode/episode.js';
-import { PageArgsQL } from '../base/base.args.js';
+import { PageParametersQL } from '../base/base.parameters.js';
 
 @Resolver(PodcastQL)
 export class PodcastResolver {
@@ -15,7 +15,7 @@ export class PodcastResolver {
 	}
 
 	@Query(() => PodcastPageQL, { description: 'Search Podcasts' })
-	async podcasts(@Args() { page, filter, order, list, seed }: PodcastsArgsQL, @Ctx() { orm, user }: Context): Promise<PodcastPageQL> {
+	async podcasts(@Args() { page, filter, order, list, seed }: PodcastsParametersQL, @Ctx() { orm, user }: Context): Promise<PodcastPageQL> {
 		if (list) {
 			return await orm.Podcast.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -23,7 +23,7 @@ export class PodcastResolver {
 	}
 
 	@Query(() => PodcastIndexQL, { description: 'Get the Navigation Index for Podcasts' })
-	async podcastIndex(@Args() { filter }: PodcastIndexArgsQL, @Ctx() { orm, user }: Context): Promise<PodcastIndexQL> {
+	async podcastIndex(@Args() { filter }: PodcastIndexParametersQL, @Ctx() { orm, user }: Context): Promise<PodcastIndexQL> {
 		return await orm.Podcast.indexFilter(filter, user);
 	}
 
@@ -53,22 +53,22 @@ export class PodcastResolver {
 	}
 
 	@Query(() => [PodcastDiscoverQL], { description: 'Discover Podcasts via gpodder.net' })
-	async podcastsDiscover(@Args() { query }: PodcastDiscoverArgsQL, @Ctx() { engine }: Context): Promise<Array<PodcastDiscoverQL>> {
+	async podcastsDiscover(@Args() { query }: PodcastDiscoverParametersQL, @Ctx() { engine }: Context): Promise<Array<PodcastDiscoverQL>> {
 		return await engine.podcast.discover(query);
 	}
 
 	@Query(() => PodcastDiscoverTagPageQL, { description: 'Discover Podcast Tags via gpodder.net' })
-	async podcastsDiscoverTags(@Args() page: PageArgsQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverTagPageQL> {
+	async podcastsDiscoverTags(@Args() page: PageParametersQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverTagPageQL> {
 		return await engine.podcast.discoverTags(page);
 	}
 
 	@Query(() => PodcastDiscoverPageQL, { description: 'Discover Podcasts by Tag via gpodder.net' })
-	async podcastsDiscoverByTag(@Args() { tag }: PodcastDiscoverByTagArgsQL, @Args() page: PageArgsQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverPageQL> {
+	async podcastsDiscoverByTag(@Args() { tag }: PodcastDiscoverByTagParametersQL, @Args() page: PageParametersQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverPageQL> {
 		return await engine.podcast.discoverByTag(tag, page);
 	}
 
 	@Query(() => PodcastDiscoverPageQL, { description: 'Discover Top Podcasts via gpodder.net' })
-	async podcastsDiscoverTop(@Args() page: PageArgsQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverPageQL> {
+	async podcastsDiscoverTop(@Args() page: PageParametersQL, @Ctx() { engine }: Context): Promise<PodcastDiscoverPageQL> {
 		return await engine.podcast.discoverTop(page);
 	}
 }

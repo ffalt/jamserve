@@ -1,20 +1,20 @@
 import { Artwork, ArtworkPage } from './artwork.model.js';
 import { UserRole } from '../../types/enums.js';
-import { ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs } from './artwork.args.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
+import { ArtworkFilterParameters, ArtworkNewParameters, ArtworkNewUploadParameters, ArtworkOrderParameters, ArtworkRenameParameters, IncludesArtworkParameters, IncludesArtworkChildrenParameters } from './artwork.parameters.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
-import { IncludesFolderArgs } from '../folder/folder.args.js';
+import { IncludesFolderParameters } from '../folder/folder.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { Upload } from '../../modules/rest/decorators/Upload.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { Upload } from '../../modules/rest/decorators/upload.js';
 import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/artwork', { tags: ['Artwork'], roles: [UserRole.stream] })
 export class ArtworkController {
@@ -23,15 +23,15 @@ export class ArtworkController {
 		{ description: 'Get an Artwork by Id', summary: 'Get Artwork' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Artwork Id', isID: true }) id: string,
-		@QueryParams() artworkArgs: IncludesArtworkArgs,
-		@QueryParams() artworkChildrenArgs: IncludesArtworkChildrenArgs,
-		@QueryParams() folderArgs: IncludesFolderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Artwork Id', isID: true }) id: string,
+		@QueryParameters() artworkParameters: IncludesArtworkParameters,
+		@QueryParameters() artworkChildrenParameters: IncludesArtworkChildrenParameters,
+		@QueryParameters() folderParameters: IncludesFolderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Artwork> {
 		return engine.transform.artwork(
 			orm, await orm.Artwork.oneOrFailByID(id),
-			artworkArgs, artworkChildrenArgs, folderArgs, user
+			artworkParameters, artworkChildrenParameters, folderParameters, user
 		);
 	}
 
@@ -41,23 +41,23 @@ export class ArtworkController {
 		{ description: 'Search Artworks' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() artworkArgs: IncludesArtworkArgs,
-		@QueryParams() artworkChildrenArgs: IncludesArtworkChildrenArgs,
-		@QueryParams() folderArgs: IncludesFolderArgs,
-		@QueryParams() filter: ArtworkFilterArgs,
-		@QueryParams() order: ArtworkOrderArgs,
-		@QueryParams() list: ListArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() artworkParameters: IncludesArtworkParameters,
+		@QueryParameters() artworkChildrenParameters: IncludesArtworkChildrenParameters,
+		@QueryParameters() folderParameters: IncludesFolderParameters,
+		@QueryParameters() filter: ArtworkFilterParameters,
+		@QueryParameters() order: ArtworkOrderParameters,
+		@QueryParameters() list: ListParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtworkPage> {
 		if (list.list) {
 			return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user)
+				o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user)
 			);
 		}
 		return await orm.Artwork.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user)
+			o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user)
 		);
 	}
 
@@ -67,11 +67,11 @@ export class ArtworkController {
 		{ description: 'Create an Artwork', roles: [UserRole.admin], summary: 'Create Artwork' }
 	)
 	async createByUrl(
-		@BodyParams() args: ArtworkNewArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: ArtworkNewParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const folder = await orm.Folder.oneOrFailByID(args.folderID);
-		return await engine.artwork.createByUrl(folder, args.url, args.types);
+		const folder = await orm.Folder.oneOrFailByID(parameters.folderID);
+		return await engine.artwork.createByUrl(folder, parameters.url, parameters.types);
 	}
 
 	@Post(
@@ -80,12 +80,12 @@ export class ArtworkController {
 		{ description: 'Upload an Artwork', roles: [UserRole.admin], summary: 'Upload Artwork' }
 	)
 	async createByUpload(
-		@BodyParams() args: ArtworkNewUploadArgs,
+		@BodyParameters() parameters: ArtworkNewUploadParameters,
 		@Upload('image') file: UploadFile,
-		@Ctx() { orm, engine }: Context
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const folder = await orm.Folder.oneOrFailByID(args.folderID);
-		return await engine.artwork.createByFile(folder, file.name, args.types);
+		const folder = await orm.Folder.oneOrFailByID(parameters.folderID);
+		return await engine.artwork.createByFile(folder, file.name, parameters.types);
 	}
 
 	@Post(
@@ -94,9 +94,9 @@ export class ArtworkController {
 		{ description: 'Update an Artwork', roles: [UserRole.admin], summary: 'Update Artwork' }
 	)
 	async update(
-		@BodyParam('id', { description: 'Artwork Id', isID: true }) id: string,
+		@BodyParameter('id', { description: 'Artwork Id', isID: true }) id: string,
 		@Upload('image') file: UploadFile,
-		@Ctx() { orm, engine }: Context
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		const artwork = await orm.Artwork.oneOrFailByID(id);
 		return await engine.artwork.upload(artwork, file.name);
@@ -108,11 +108,11 @@ export class ArtworkController {
 		{ description: 'Rename an Artwork', roles: [UserRole.admin], summary: 'Rename Artwork' }
 	)
 	async rename(
-		@BodyParams() args: ArtworkRenameArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: ArtworkRenameParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const artwork = await orm.Artwork.oneOrFailByID(args.id);
-		return await engine.artwork.rename(artwork, args.newName);
+		const artwork = await orm.Artwork.oneOrFailByID(parameters.id);
+		return await engine.artwork.rename(artwork, parameters.newName);
 	}
 
 	@Post(
@@ -121,8 +121,8 @@ export class ArtworkController {
 		{ description: 'Remove an Artwork', roles: [UserRole.admin], summary: 'Remove Artwork' }
 	)
 	async remove(
-		@BodyParam('id', { description: 'Artwork Id', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@BodyParameter('id', { description: 'Artwork Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		const artwork = await orm.Artwork.oneOrFailByID(id);
 		return await engine.artwork.remove(artwork);

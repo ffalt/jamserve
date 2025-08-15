@@ -15,7 +15,7 @@ export class IDFolderCache<T> {
 	constructor(
 		public dataPath: string,
 		public filePrefix: string,
-		private readonly resolveParams: (params: T) => string
+		private readonly resolveParameters: (parameters: T) => string
 	) {
 	}
 
@@ -23,8 +23,8 @@ export class IDFolderCache<T> {
 		return `${this.filePrefix}-${id}`;
 	}
 
-	cacheFilename(id: string, params: T): string {
-		return `${this.prefixCacheFilename(id)}${this.resolveParams(params)}`;
+	cacheFilename(id: string, parameters: T): string {
+		return `${this.prefixCacheFilename(id)}${this.resolveParameters(parameters)}`;
 	}
 
 	async removeByIDs(ids: Array<string>): Promise<void> {
@@ -38,8 +38,8 @@ export class IDFolderCache<T> {
 		}
 	}
 
-	async getExisting(id: string, params: T): Promise<IDCacheResult | undefined> {
-		const cacheID = this.cacheFilename(id, params);
+	async getExisting(id: string, parameters: T): Promise<IDCacheResult | undefined> {
+		const cacheID = this.cacheFilename(id, parameters);
 		if (this.cacheDebounce.isPending(cacheID)) {
 			return this.cacheDebounce.append(cacheID);
 		}
@@ -51,8 +51,8 @@ export class IDFolderCache<T> {
 		return;
 	}
 
-	async get(id: string, params: T, build: (cacheFilename: string) => Promise<void>): Promise<IDCacheResult> {
-		const cacheID = this.cacheFilename(id, params);
+	async get(id: string, parameters: T, build: (cacheFilename: string) => Promise<void>): Promise<IDCacheResult> {
+		const cacheID = this.cacheFilename(id, parameters);
 		if (this.cacheDebounce.isPending(cacheID)) {
 			return this.cacheDebounce.append(cacheID);
 		}
@@ -66,8 +66,8 @@ export class IDFolderCache<T> {
 			const result: IDCacheResult = { file: { filename: cachefile, name: cacheID } };
 			this.cacheDebounce.resolve(cacheID, result);
 			return result;
-		} catch (error) {
-			this.cacheDebounce.reject(cacheID, error as Error);
+		} catch (error: unknown) {
+			this.cacheDebounce.reject(cacheID, error);
 			return Promise.reject(error);
 		}
 	}

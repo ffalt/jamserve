@@ -6,7 +6,7 @@ import { BookmarkBase } from './bookmark.model.js';
 
 @InRequestScope
 export class BookmarkTransformService extends BaseTransformService {
-	async bookmarkBase(orm: Orm, o: ORMBookmark): Promise<BookmarkBase> {
+	async bookmarkBase(_orm: Orm, o: ORMBookmark): Promise<BookmarkBase> {
 		return {
 			id: o.id,
 			trackID: o.track.id(),

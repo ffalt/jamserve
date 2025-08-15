@@ -1,6 +1,6 @@
-import { getMetadataStorage } from './getMetadataStorage.js';
+import { metadataStorage } from './metadata-storage.js';
 
 export function buildSubsonicMeta(): void {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	metadata.build();
 }

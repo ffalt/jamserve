@@ -1,35 +1,35 @@
 import { TrackBase } from '../track/track.model.js';
 import { EpisodeBase } from '../episode/episode.model.js';
 import { Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ResultType({ description: 'Now Playing Data' })
 export class NowPlaying {
-	@ObjField({ description: 'User Name', example: 'user' })
+	@ObjectField({ description: 'User Name', example: 'user' })
 	userName!: string;
 
-	@ObjField({ description: 'User Id', isID: true })
+	@ObjectField({ description: 'User Id', isID: true })
 	userID!: string;
 
-	@ObjField({ description: 'Minutes ago', example: 3 })
+	@ObjectField({ description: 'Minutes ago', example: 3 })
 	minutesAgo!: number;
 
-	@ObjField(() => TrackBase, { nullable: true, description: 'The played track' })
+	@ObjectField(() => TrackBase, { nullable: true, description: 'The played track' })
 	track?: TrackBase;
 
-	@ObjField({ nullable: true, description: 'The played track id' })
+	@ObjectField({ nullable: true, description: 'The played track id' })
 	trackID?: string;
 
-	@ObjField(() => EpisodeBase, { nullable: true, description: 'The played episode' })
+	@ObjectField(() => EpisodeBase, { nullable: true, description: 'The played episode' })
 	episode?: EpisodeBase;
 
-	@ObjField({ nullable: true, description: 'The played episode id' })
+	@ObjectField({ nullable: true, description: 'The played episode id' })
 	episodeID?: string;
 }
 
 @ResultType({ description: 'Now Playing Page' })
 export class NowPlayingPage extends Page {
-	@ObjField(() => NowPlaying, { description: 'List of Now Playing Data' })
+	@ObjectField(() => NowPlaying, { description: 'List of Now Playing Data' })
 	items!: Array<NowPlaying>;
 }

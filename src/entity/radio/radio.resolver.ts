@@ -3,7 +3,7 @@ import { State, StateQL } from '../state/state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Radio, RadioIndexQL, RadioPageQL, RadioQL } from './radio.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { RadioIndexArgs, RadiosArgs } from './radio.args.js';
+import { RadioIndexParameters, RadiosParameters } from './radio.parameters.js';
 
 @Resolver(RadioQL)
 export class RadioResolver {
@@ -13,7 +13,7 @@ export class RadioResolver {
 	}
 
 	@Query(() => RadioPageQL, { description: 'Search Radios' })
-	async radios(@Args() { page, filter, order, list, seed }: RadiosArgs, @Ctx() { orm, user }: Context): Promise<RadioPageQL> {
+	async radios(@Args() { page, filter, order, list, seed }: RadiosParameters, @Ctx() { orm, user }: Context): Promise<RadioPageQL> {
 		if (list) {
 			return await orm.Radio.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -21,7 +21,7 @@ export class RadioResolver {
 	}
 
 	@Query(() => RadioIndexQL, { description: 'Get the Navigation Index for Radios' })
-	async radioIndex(@Args() { filter }: RadioIndexArgs, @Ctx() { orm }: Context): Promise<RadioIndexQL> {
+	async radioIndex(@Args() { filter }: RadioIndexParameters, @Ctx() { orm }: Context): Promise<RadioIndexQL> {
 		return await orm.Radio.indexFilter(filter);
 	}
 

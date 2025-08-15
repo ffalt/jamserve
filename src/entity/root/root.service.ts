@@ -10,7 +10,8 @@ export class RootService {
 
 	async getImage(orm: Orm, root: Root, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const folders = await root.folders.getItems();
-		const folder = folders.sort((a, b) => b.level - a.level)[0];
+		const sorted = folders.sort((a, b) => b.level - a.level);
+		const folder = sorted.at(0);
 		if (folder) {
 			return this.folderService.getImage(orm, folder, size, format);
 		}

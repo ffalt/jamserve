@@ -1,20 +1,20 @@
-import { ReturnTypeFunc, SchemaNameOptions } from '../definitions/types.js';
+import { ReturnTypeFunction, SchemaNameOptions } from '../definitions/types.js';
 
-export interface TypeDecoratorParams<T> {
+export interface TypeDecoratorParameters<T> {
 	options: Partial<T>;
-	returnTypeFunc?: ReturnTypeFunc;
+	returnTypeFunc?: ReturnTypeFunction;
 }
 
-export function getTypeDecoratorParams<T extends object>(
-	returnTypeFuncOrOptions: ReturnTypeFunc | T | undefined,
+export function getTypeDecoratorParameters<T extends object>(
+	returnTypeFunctionOrOptions: ReturnTypeFunction | T | undefined,
 	maybeOptions: T | undefined
-): TypeDecoratorParams<T> {
-	return typeof returnTypeFuncOrOptions === 'function' ?
-		{ returnTypeFunc: returnTypeFuncOrOptions, options: maybeOptions ?? {} } :
-		{ options: returnTypeFuncOrOptions ?? {} };
+): TypeDecoratorParameters<T> {
+	return typeof returnTypeFunctionOrOptions === 'function' ?
+		{ returnTypeFunc: returnTypeFunctionOrOptions, options: maybeOptions ?? {} } :
+		{ options: returnTypeFunctionOrOptions ?? {} };
 }
 
-export function getNameDecoratorParams<T extends SchemaNameOptions>(
+export function getNameDecoratorParameters<T extends SchemaNameOptions>(
 	nameOrOptions: string | T | undefined,
 	maybeOptions: T | undefined
 ): { name?: string; options: T } {

@@ -1,25 +1,25 @@
 import { UserRole } from '../../types/enums.js';
 import { MetaDataResult } from './metadata.model.js';
 import {
-	AcousticBrainzLookupArgs,
-	AcoustidLookupArgs,
-	CoverArtArchiveImageArgs,
-	CoverArtArchiveLookupArgs,
-	LastFMLookupArgs,
-	LyricsOVHSearchArgs,
-	LrclibSearchArgs,
-	MusicBrainzLookupArgs,
-	MusicBrainzSearchArgs,
-	WikidataLookupArgs,
-	WikidataSummaryArgs,
-	WikipediaSummaryArgs
-} from './metadata.args.js';
+	AcousticBrainzLookupParameters,
+	AcoustidLookupParameters,
+	CoverArtArchiveImageParameters,
+	CoverArtArchiveLookupParameters,
+	LastFMLookupParameters,
+	LyricsOVHSearchParameters,
+	LrclibSearchParameters,
+	MusicBrainzLookupParameters,
+	MusicBrainzSearchParameters,
+	WikidataLookupParameters,
+	WikidataSummaryParameters,
+	WikipediaSummaryParameters
+} from './metadata.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
 import { ApiImageTypes } from '../../types/consts.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 @Controller('/metadata', { tags: ['Meta Data'], roles: [UserRole.stream] })
@@ -27,74 +27,74 @@ export class MetaDataController {
 	@Get('/lastfm/lookup', () => MetaDataResult,
 		{ description: 'Lookup LastFM data', summary: 'Lookup LastFM' })
 	async lastfmLookup(
-		@QueryParams() args: LastFMLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() parameters: LastFMLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.lastFMLookup(orm, args.type, args.mbID) };
+		return { data: await engine.metadata.lastFMLookup(orm, parameters.type, parameters.mbID) };
 	}
 
 	@Get('/lyricsovh/search', () => MetaDataResult,
 		{ description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' })
 	async lyricsovhSearch(
-		@QueryParams() args: LyricsOVHSearchArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() parameters: LyricsOVHSearchParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.lyricsOVH(orm, args.artist, args.title) };
+		return { data: await engine.metadata.lyricsOVH(orm, parameters.artist, parameters.title) };
 	}
 
 	@Get('/lrclib/get', () => MetaDataResult,
 		{ description: 'Get Lrclib.net data', summary: 'Get Lyrics on lrclib.net' })
 	async lcrlibSearch(
-		@QueryParams() args: LrclibSearchArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() parameters: LrclibSearchParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.lrclibGet(orm, args.artist, args.title, args.album, args.duration) };
+		return { data: await engine.metadata.lrclibGet(orm, parameters.artist, parameters.title, parameters.album, parameters.duration) };
 	}
 
 	@Get('/acoustid/lookup', () => MetaDataResult,
 		{ description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' })
 	async acoustidLookup(
-		@QueryParams() args: AcoustidLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { trackID, inc }: AcoustidLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		const track = await orm.Track.oneOrFailByID(args.trackID);
-		return { data: await engine.metadata.acoustidLookupTrack(track, args.inc) };
+		const track = await orm.Track.oneOrFailByID(trackID);
+		return { data: await engine.metadata.acoustidLookupTrack(track, inc) };
 	}
 
 	@Get('/musicbrainz/lookup', () => MetaDataResult,
 		{ description: 'Lookup MusicBrainz data', summary: 'Lookup MusicBrainz' })
 	async musicbrainzLookup(
-		@QueryParams() args: MusicBrainzLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() parameters: MusicBrainzLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.musicbrainzLookup(orm, args.type, args.mbID, args.inc) };
+		return { data: await engine.metadata.musicbrainzLookup(orm, parameters.type, parameters.mbID, parameters.inc) };
 	}
 
 	@Get('/musicbrainz/search', () => MetaDataResult,
 		{ description: 'Search MusicBrainz data', summary: 'Search MusicBrainz' })
 	async musicbrainzSearch(
-		@QueryParams() args: MusicBrainzSearchArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() parameters: MusicBrainzSearchParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.musicbrainzSearch(orm, args.type, { ...args, type: undefined }) };
+		return { data: await engine.metadata.musicbrainzSearch(orm, parameters.type, { ...parameters, type: undefined }) };
 	}
 
 	@Get('/acousticbrainz/lookup', () => MetaDataResult,
 		{ description: 'Lookup AcousticBrainz data', summary: 'Lookup AcousticBrainz' })
 	async acousticbrainzLookup(
-		@QueryParams() args: AcousticBrainzLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { mbID, nr }: AcousticBrainzLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.acousticbrainzLookup(orm, args.mbID, args.nr) };
+		return { data: await engine.metadata.acousticbrainzLookup(orm, mbID, nr) };
 	}
 
 	@Get('/coverartarchive/lookup', () => MetaDataResult,
 		{ description: 'Lookup CoverArtArchive data', summary: 'Lookup CoverArtArchive' })
 	async coverartarchiveLookup(
-		@QueryParams() args: CoverArtArchiveLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { type, mbID }: CoverArtArchiveLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.coverartarchiveLookup(orm, args.type, args.mbID) };
+		return { data: await engine.metadata.coverartarchiveLookup(orm, type, mbID) };
 	}
 
 	@Get('/coverartarchive/image', {
@@ -102,36 +102,36 @@ export class MetaDataController {
 		description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
 	})
 	async coverartarchiveImage(
-		@QueryParams() imageArgs: CoverArtArchiveImageArgs,
-		@Ctx() { engine }: Context
+		@QueryParameters() { url }: CoverArtArchiveImageParameters,
+		@RestContext() { engine }: Context
 	): Promise<ApiBinaryResult | undefined> {
-		return engine.metadata.coverartarchiveImage(imageArgs.url);
+		return engine.metadata.coverartarchiveImage(url);
 	}
 
 	@Get('/wikipedia/summary', () => MetaDataResult,
 		{ description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' })
 	async wikipediaSummarySearch(
-		@QueryParams() args: WikipediaSummaryArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { title, lang }: WikipediaSummaryParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.wikipediaSummary(orm, args.title, args.lang) };
+		return { data: await engine.metadata.wikipediaSummary(orm, title, lang) };
 	}
 
 	@Get('/wikidata/summary', () => MetaDataResult,
 		{ description: 'Search WikiData summary data', summary: 'Search Wikidata' })
 	async wikidataSummarySearch(
-		@QueryParams() args: WikidataSummaryArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { wikiDataID, lang }: WikidataSummaryParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.wikidataSummary(orm, args.wikiDataID, args.lang) };
+		return { data: await engine.metadata.wikidataSummary(orm, wikiDataID, lang) };
 	}
 
 	@Get('/wikidata/lookup', () => MetaDataResult,
 		{ description: 'Lookup WikiData summary data', summary: 'Lookup WikiData' })
 	async wikidataLookup(
-		@QueryParams() args: WikidataLookupArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() { wikiDataID }: WikidataLookupParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.wikidataLookup(orm, args.wikiDataID) };
+		return { data: await engine.metadata.wikidataLookup(orm, wikiDataID) };
 	}
 }

@@ -1,14 +1,15 @@
 import { CustomPathParameters } from '../../deco/definitions/types.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import express from 'express';
 import archiver from 'archiver';
 import path from 'node:path';
-import { RestParamMetadata, RestParamsMetadata } from '../../deco/definitions/param-metadata.js';
+import { RestParameterMetadata, RestParametersMetadata } from '../../deco/definitions/parameter-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
+import { capitalize } from '../../../utils/capitalize.js';
 
 export interface MustacheDataClientCallFunction {
 	name: string;
@@ -35,9 +36,9 @@ export interface Part {
 
 export type MustacheDataClientCallSections = Record<string, Array<MustacheDataClientCallFunction>>;
 
-export type GenerateRequestClientCallsFunction = (call: MethodMetadata, name: string, paramType: string, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>;
-export type GenerateBinaryClientCallsFunction = (call: MethodMetadata, name: string, paramType: string) => Array<MustacheDataClientCallFunction>;
-export type GenerateUploadClientCallsFunction = (call: MethodMetadata, name: string, paramType: string, upload: RestParamMetadata) => Array<MustacheDataClientCallFunction>;
+export type GenerateRequestClientCallsFunction = (call: MethodMetadata, name: string, parameterType: string, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>;
+export type GenerateBinaryClientCallsFunction = (call: MethodMetadata, name: string, parameterType: string) => Array<MustacheDataClientCallFunction>;
+export type GenerateUploadClientCallsFunction = (call: MethodMetadata, name: string, parameterType: string, upload: RestParameterMetadata) => Array<MustacheDataClientCallFunction>;
 
 function generateClientCalls(
 	call: MethodMetadata, method: 'post' | 'get',
@@ -46,15 +47,15 @@ function generateClientCalls(
 	generateUploadClientCalls: GenerateUploadClientCallsFunction
 ): Array<MustacheDataClientCallFunction> {
 	const name = call.methodName.replaceAll('/', '_');
-	const upload = call.params.find(o => o.kind === 'arg' && o.mode === 'file');
-	const paramType = getCallParamType(call);
+	const upload = call.parameters.find(o => o.kind === 'arg' && o.mode === 'file');
+	const parameterType = getCallParameterType(call);
 	if (upload) {
-		return generateUploadClientCalls(call, name, paramType, upload as RestParamMetadata);
+		return generateUploadClientCalls(call, name, parameterType, upload as RestParameterMetadata);
 	}
 	if (call.binary) {
-		return generateBinaryClientCalls(call, name, paramType);
+		return generateBinaryClientCalls(call, name, parameterType);
 	}
-	return generateRequestClientCalls(call, name, paramType, method);
+	return generateRequestClientCalls(call, name, parameterType, method);
 }
 
 export async function buildServiceParts(
@@ -63,7 +64,7 @@ export async function buildServiceParts(
 	generateUploadClientCalls: GenerateUploadClientCallsFunction,
 	buildPartService: (key: string, part: string, methods: Array<MustacheDataClientCallFunction>) => Promise<string>
 ): Promise<Array<Part>> {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	const sections: MustacheDataClientCallSections = {};
 	buildCallSections(metadata.gets, 'get', sections, (call, method) =>
 		generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls));
@@ -72,7 +73,7 @@ export async function buildServiceParts(
 	const keys = Object.keys(sections).filter(key => !['Auth', 'Base'].includes(key));
 	const parts: Array<Part> = [];
 	for (const key of keys) {
-		const part = key[0].toUpperCase() + key.slice(1);
+		const part = capitalize(key);
 		parts.push({ name: key.toLowerCase(), part, content: await buildPartService(key, part, sections[key]) });
 	}
 	return parts;
@@ -80,12 +81,12 @@ export async function buildServiceParts(
 
 export async function buildPartService(template: string, key: string, part: string, calls: Array<MustacheDataClientCallFunction>): Promise<string> {
 	const list = calls.map(call => {
-		return { ...call, name: call.name.replace(key + '_', ''), paramsType: wrapLong(call.paramsType) };
+		return { ...call, name: call.name.replace(`${key}_`, ''), paramsType: wrapLong(call.paramsType) };
 	});
 	const withHttpEvent = calls.some(c => c.resultType.includes('HttpEvent'));
 	const withJam = calls.some(c => c.resultType.includes('Jam.'));
-	const withJamParam = calls.some(c => c.paramsType.includes('JamParameter'));
-	return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam });
+	const withJamParameter = calls.some(c => c.paramsType.includes('JamParameter'));
+	return buildTemplate(template, { list, part, withHttpEvent, withJam, withJamParam: withJamParameter });
 }
 
 export function buildCallSections(
@@ -97,7 +98,7 @@ export function buildCallSections(
 	for (const call of calls) {
 		if (call.controllerClassMetadata) {
 			const tag = call.controllerClassMetadata.name.replace('Controller', '');
-			sections[tag] = [...(sections[tag] || []), ...generateClientCalls(call, method)];
+			sections[tag] = [...(sections[tag] ?? []), ...generateClientCalls(call, method)];
 		}
 	}
 }
@@ -117,14 +118,14 @@ export async function buildTemplate(template: string, data: unknown = {}): Promi
 export async function buildParts(template: string, serviceParts: Array<Part>): Promise<string> {
 	const list: Array<Part> = serviceParts
 		.sort((a, b) => a.name.localeCompare(b.name));
-	for (const [i, p] of list.entries()) {
-		p.isLast = i === list.length - 1;
+	for (const [index, entry] of list.entries()) {
+		entry.isLast = index === list.length - 1;
 	}
 	return buildTemplate(template, { list });
 }
 
 export function getResultType(call: MethodMetadata): string | undefined {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	let resultType: string | undefined;
 	if (call.getReturnType) {
 		const type = call.getReturnType();
@@ -142,80 +143,80 @@ export function getResultType(call: MethodMetadata): string | undefined {
 				break;
 			}
 			default: {
-				const enumInfo = metadata.enums.find(e => e.enumObj === type);
+				const enumInfo = metadata.enumInfo(type);
 				if (enumInfo) {
 					resultType = enumInfo.name;
 				} else {
-					const fObjectType = metadata.resultTypes.find(it => it.target === type);
-					resultType = fObjectType?.name ? ('Jam.' + fObjectType?.name) : 'any';
+					const fObjectType = metadata.resultType(type);
+					resultType = fObjectType?.name ? (`Jam.${fObjectType.name}`) : 'any';
 				}
 			}
 		}
 		if (call.returnTypeOptions?.array) {
-			resultType = 'Array<' + resultType + '>';
+			resultType = `Array<${resultType}>`;
 		}
 	}
 	return resultType;
 }
 
-function getCallParamArgType(param: RestParamMetadata, metadata: MetadataStorage) {
-	const type = param.getType();
+function getCallParameterArgumentType(parameter: RestParameterMetadata, metadata: MetadataStorage) {
+	const type = parameter.getType();
 	let typeString: string;
-	const optional = param.typeOptions.nullable ? '?' : '';
-	if (param.name === 'id') {
-		typeString = param.typeOptions.nullable ? 'JamParameters.MaybeID' : 'JamParameters.ID';
+	const optional = parameter.typeOptions.nullable ? '?' : '';
+	if (parameter.name === 'id') {
+		typeString = parameter.typeOptions.nullable ? 'JamParameters.MaybeID' : 'JamParameters.ID';
 	} else {
 		switch (type) {
 			case Boolean: {
-				typeString = `{${param.name}${optional}: boolean}`;
+				typeString = `{${parameter.name}${optional}: boolean}`;
 				break;
 			}
 			case Number: {
-				typeString = `{${param.name}${optional}: number}`;
+				typeString = `{${parameter.name}${optional}: number}`;
 				break;
 			}
 			case String: {
-				typeString = `{${param.name}${optional}: string}`;
+				typeString = `{${parameter.name}${optional}: string}`;
 				break;
 			}
 			default: {
-				const enumInfo = metadata.enums.find(e => e.enumObj === type);
+				const enumInfo = metadata.enumInfo(type);
 				if (enumInfo) {
-					typeString = `{${param.name}${optional}: ${enumInfo.name}`;
+					typeString = `{${parameter.name}${optional}: ${enumInfo.name}`;
 				} else {
-					const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-					typeString = fObjectType?.name ? ('JamParameter.' + fObjectType?.name) : 'any';
+					const fObjectType = metadata.parameterTypes.find(it => it.target === type);
+					typeString = fObjectType?.name ? (`JamParameter.${fObjectType.name}`) : 'any';
 				}
 			}
 		}
 	}
-	if (param.typeOptions.array) {
-		typeString = 'Array<' + typeString + '>';
-	}
-	return typeString;
-}
-
-function getCallParamArgsType(param: RestParamsMetadata, metadata: MetadataStorage) {
-	const type = param.getType();
-	const fObjectType = metadata.argumentTypes.find(it => it.target === type);
-	let typeString = fObjectType?.name ? `JamParameters.${fObjectType?.name}` : 'any';
-	if (param.typeOptions.array) {
+	if (parameter.typeOptions.array) {
 		typeString = `Array<${typeString}>`;
 	}
 	return typeString;
 }
 
-export function getCallParamType(call: MethodMetadata): string {
-	const metadata = getMetadataStorage();
+function getCallParameterArgumentsType(parameter: RestParametersMetadata, metadata: MetadataStorage) {
+	const type = parameter.getType();
+	const fObjectType = metadata.parameterTypes.find(it => it.target === type);
+	let typeString = fObjectType?.name ? `JamParameters.${fObjectType.name}` : 'any';
+	if (parameter.typeOptions.array) {
+		typeString = `Array<${typeString}>`;
+	}
+	return typeString;
+}
+
+export function getCallParameterType(call: MethodMetadata): string {
+	const metadata = metadataStorage();
 	const types: Array<string> = [];
-	if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
-		types.push('JamParameters.' + call.controllerClassMetadata?.name.replace('Controller', '') + call.methodName[0].toUpperCase() + call.methodName.slice(1) + 'Args');
+	if (call.parameters.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
+		types.push(`JamParameters.${call.controllerClassMetadata?.name.replace('Controller', '')}${capitalize(call.methodName)}Args`);
 	} else {
-		for (const param of call.params) {
-			if (param.kind === 'arg' && param.mode !== 'file') {
-				types.push(getCallParamArgType(param, metadata));
-			} else if (param.kind === 'args') {
-				types.push(getCallParamArgsType(param, metadata));
+		for (const parameter of call.parameters) {
+			if (parameter.kind === 'arg' && parameter.mode !== 'file') {
+				types.push(getCallParameterArgumentType(parameter, metadata));
+			} else if (parameter.kind === 'args') {
+				types.push(getCallParameterArgumentsType(parameter, metadata));
 			}
 		}
 	}
@@ -223,8 +224,8 @@ export function getCallParamType(call: MethodMetadata): string {
 }
 
 export function callDescription(call: MethodMetadata): string | undefined {
-	const roles = call.controllerClassMetadata?.roles || call.roles || [];
-	const result = (call.description ?? '') + (roles?.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
+	const roles = call.controllerClassMetadata?.roles ?? call.roles ?? [];
+	const result = (call.description ?? '') + (roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
 	return result.trim();
 }
 
@@ -232,7 +233,7 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 	const routeParts: Array<string> = [];
 	const validateNames: Array<string> = [];
 	for (const g of customPathParameters.groups) {
-		const hasOptionalAlias = !!(call.aliasRoutes || []).some(alias => (alias.hideParameters || []).includes(g.name));
+		const hasOptionalAlias = (call.aliasRoutes ?? []).some(alias => (alias.hideParameters ?? []).includes(g.name));
 		if (hasOptionalAlias) {
 			routeParts.push(`$\{params.${g.name} ? \`${g.prefix ?? ''}$\{params.${g.name}}\` : ''}`);
 		} else {
@@ -240,7 +241,8 @@ export function getCustomParameterTemplate(customPathParameters: CustomPathParam
 			routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);
 		}
 	}
-	const validateCode = `if (${validateNames.map(s => '!params.' + s).join(' && ')}) {\n\t\t\t${result};\n\t\t}`;
+	const condition = validateNames.map(s => `!params.${s}`).join(' && ');
+	const validateCode = `if (${condition}) {\n\t\t\t${result};\n\t\t}`;
 	return { paramRoute: `/${routeParts.join('')}`, validateCode };
 }
 
@@ -249,8 +251,8 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 		pipe: {
 			pipe: (res: express.Response): void => {
 				const archive = archiver('zip', { zlib: { level: 9 } });
-				archive.on('error', err => {
-					throw err;
+				archive.on('error', error => {
+					throw error;
 				});
 				res.contentType('zip');
 				res.type('application/zip');
@@ -263,7 +265,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				}
 				archive.pipe(res);
 				archive.finalize()
-					.catch(error => {
+					.catch((error: unknown) => {
 						console.error(error);
 					});
 			}

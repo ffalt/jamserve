@@ -2,15 +2,16 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, FolderOrderFields } from '../../types/enums.js';
 import { Folder } from './folder.js';
 import { OrderHelper } from '../base/base.js';
-import { FolderFilterArgs, FolderOrderArgs } from './folder.args.js';
+import { FolderFilterParameters, FolderOrderParameters } from './folder.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, FolderOrderArgs> {
+export class FolderRepository extends BaseRepository<Folder, FolderFilterParameters, FolderOrderParameters> {
 	objType = DBObjectType.folder;
 	indexProperty = 'name';
 
-	buildOrder(order?: FolderOrderArgs): Array<OrderItem> {
+	buildOrder(order?: FolderOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case FolderOrderFields.created: {
@@ -39,7 +40,7 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 		return [];
 	}
 
-	async buildFilter(filter?: FolderFilterArgs, _?: User): Promise<FindOptions<Folder>> {
+	async buildFilter(filter?: FolderFilterParameters, _?: User): Promise<FindOptions<Folder>> {
 		if (!filter) {
 			return {};
 		}
@@ -52,7 +53,7 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterArgs, F
 			}
 		}
 		if (filter.parentIDs) {
-			parentIDs = [...parentIDs, ...(filter?.parentIDs || [])];
+			parentIDs = [...parentIDs, ...filter.parentIDs];
 		}
 		const result = QHelper.buildQuery<Folder>(
 			[

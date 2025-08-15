@@ -5,14 +5,14 @@ import { FlacInfo } from './formats/flac/index.js';
 import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 import { MetaWriteableDataBlock } from './formats/flac/lib/block.writeable.js';
-import { ID3v2Frames, RawTag } from './rawTag.js';
+import { ID3v2Frames, RawTag } from './raw-tag.js';
 import { TrackTag } from './audio.format.js';
 
 function prepareFrame(frame: ID3v2Frames.Frame): void {
-	if (frame?.value && (frame as ID3v2Frames.Bin).value.bin) {
-		frame.value.bin = frame.value.bin.toString('base64');
+	if (frame.value && (frame as ID3v2Frames.Bin).value.bin) {
+		frame.value.bin = (frame.value.bin as Buffer).toString('base64');
 	}
-	if (frame?.subframes) {
+	if (frame.subframes) {
 		for (const subframe of frame.subframes) {
 			prepareFrame(subframe);
 		}
@@ -155,7 +155,7 @@ export function flacToRawTagPictures(builder: ID3V24TagBuilder, flacInfo: FlacIn
 }
 
 export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
-	if (!flacInfo?.comment?.tag) {
+	if (!flacInfo.comment?.tag) {
 		return;
 	}
 	const simple = flacInfo.comment.tag;
@@ -174,7 +174,7 @@ export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<RawTag | unde
 		frames: {}
 	};
 	for (const frame of id3v2tag.frames) {
-		const f = tag.frames[frame.id] || [];
+		const f = tag.frames[frame.id] ?? [];
 		f.push({ id: frame.id, value: frame.value });
 		tag.frames[frame.id] = f;
 	}
@@ -187,10 +187,10 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 		'TSIZ',
 		'APIC'
 	];
-	const simple = ID3v2.simplify(tag, DropFramesList) as any;
+	const simple = ID3v2.simplify(tag, DropFramesList);
 	const comments: Array<string> = [];
 	for (const key of Object.keys(simple)) {
-		comments.push(`${key}=${simple[key].toString()}`);
+		comments.push(`${key}=${String(simple[key])}`);
 	}
 	const result: Array<MetaWriteableDataBlock> = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
 	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;
@@ -218,13 +218,13 @@ export function trackTagToRawTag(tag: TrackTag): RawTag {
 }
 
 function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
-	if (frame?.value && (frame as ID3v2Frames.Bin).value.bin) {
+	if (frame.value && (frame as ID3v2Frames.Bin).value.bin) {
 		const bin = frame.value.bin;
 		if (typeof bin === 'string') {
 			frame.value.bin = Buffer.from(bin, 'base64');
 		}
 	}
-	if (frame?.subframes) {
+	if (frame.subframes) {
 		for (const subframe of frame.subframes) {
 			rawFrameToID3v2(subframe);
 		}
@@ -234,7 +234,7 @@ function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
 export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
 	const frames: Array<IID3V2.Frame> = [];
 	for (const id of Object.keys(tag.frames)) {
-		const f = tag.frames[id] || [];
+		const f = tag.frames[id] ?? [];
 		for (const frame of f) {
 			rawFrameToID3v2(frame);
 			frames.push(frame);

@@ -3,7 +3,7 @@ import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoo
 import { State, StateQL } from '../state/state.js';
 import { Series, SeriesIndexQL, SeriesPageQL, SeriesQL } from './series.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { SeriesArgsQL, SeriesIndexArgsQL } from './series.args.js';
+import { SeriesParametersQL, SeriesIndexParametersQL } from './series.parameters.js';
 import { Album, AlbumQL } from '../album/album.js';
 import { Track, TrackQL } from '../track/track.js';
 import { Folder, FolderQL } from '../folder/folder.js';
@@ -18,7 +18,7 @@ export class SeriesResolver {
 	}
 
 	@Query(() => SeriesPageQL, { description: 'Search Series' })
-	async serieses(@Args() { page, filter, order, list, seed }: SeriesArgsQL, @Ctx() { orm, user }: Context): Promise<SeriesPageQL> {
+	async serieses(@Args() { page, filter, order, list, seed }: SeriesParametersQL, @Ctx() { orm, user }: Context): Promise<SeriesPageQL> {
 		if (list) {
 			return await orm.Series.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -26,7 +26,7 @@ export class SeriesResolver {
 	}
 
 	@Query(() => SeriesIndexQL, { description: 'Get the Navigation Index for Series' })
-	async seriesIndex(@Args() { filter }: SeriesIndexArgsQL, @Ctx() { orm, user }: Context): Promise<SeriesIndexQL> {
+	async seriesIndex(@Args() { filter }: SeriesIndexParametersQL, @Ctx() { orm, user }: Context): Promise<SeriesIndexQL> {
 		return await orm.Series.indexFilter(filter, user);
 	}
 

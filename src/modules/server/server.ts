@@ -50,7 +50,7 @@ export class Server {
 
 	async init(): Promise<void> {
 		const app: express.Application = express();
-		log.debug(`registering express standard middleware`);
+		log.debug('registering express standard middleware');
 		app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 		app.use(bodyParser.json({ limit: '10mb' }));
 		app.use(bodyParser.json({ type: 'application/json', limit: '10mb' }));
@@ -74,23 +74,23 @@ export class Server {
 
 		app.use(useEngineMiddleware(this.engine));
 
-		log.debug(`registering subsonic api middleware`);
-		app.use(`/rest`, this.subsonic.middleware());
+		log.debug('registering subsonic api middleware');
+		app.use('/rest', this.subsonic.middleware());
 
 		app.use(useSessionMiddleware(this.configService, this.sessionService));
 		app.use(usePassPortMiddleWare(app, this.engine));
 		app.use(useAuthenticatedCors(this.configService));
 
-		log.debug(`registering jam api middleware`);
+		log.debug('registering jam api middleware');
 		app.use(`/jam/${JAMAPI_URL_VERSION}`, this.rest.middleware());
 
-		log.debug(`registering graphql middleware`);
+		log.debug('registering graphql middleware');
 		app.use('/graphql', await this.graphql.middleware(this.configService));
 
-		log.debug(`registering docs middleware`);
+		log.debug('registering docs middleware');
 		app.use('/docs', this.docs.middleware(this.configService));
 
-		log.debug(`registering frontend middleware`);
+		log.debug('registering frontend middleware');
 		app.use(staticMiddleware(this.configService));
 
 		this.app = app;
@@ -112,7 +112,7 @@ export class Server {
 		this.server.setTimeout(4 * 60_000); // 4 minutes
 		const domain = this.getDomain();
 		log.table([
-			{ Content: 'Frontend', URL: `${domain}` },
+			{ Content: 'Frontend', URL: domain },
 			{ Content: 'GraphQl Api', URL: `${domain}/graphql` },
 			{ Content: 'GraphQl Playground', URL: `${domain}/graphql/playground` },
 			{ Content: 'REST Api', URL: `${domain}/jam/${JAMAPI_URL_VERSION}/ping` },
@@ -132,9 +132,9 @@ export class Server {
 	async stop(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			if (this.server) {
-				this.server.close(err => {
-					if (err) {
-						reject(err);
+				this.server.close(error => {
+					if (error) {
+						reject(error);
 					} else {
 						resolve();
 					}

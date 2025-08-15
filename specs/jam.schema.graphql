@@ -1,38 +1,38 @@
 type Query {
   currentUser: UserQL!
   user(id: ID!): UserQL!
-  users(page: PageArgsQL, filter: UserFilterArgsQL, order: [UserOrderArgsQL!]): UserPageQL!
-  userIndex(filter: UserFilterArgsQL): UserIndexQL!
+  users(page: PageParametersQL, filter: UserFilterParametersQL, order: [UserOrderParametersQL!]): UserPageQL!
+  userIndex(filter: UserFilterParametersQL): UserIndexQL!
 
   """Get an Album by Id"""
   album(id: ID!): AlbumQL!
 
   """Search albums"""
-  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!], list: ListType, seed: String): AlbumPageQL!
+  albums(page: PageParametersQL, filter: AlbumFilterParametersQL, order: [AlbumOrderParametersQL!], list: ListType, seed: String): AlbumPageQL!
 
   """Get the Navigation Index for Albums"""
-  albumIndex(filter: AlbumFilterArgsQL): AlbumIndexQL!
+  albumIndex(filter: AlbumFilterParametersQL): AlbumIndexQL!
 
   """Get an Artist by Id"""
   artist(id: ID!): ArtistQL!
 
   """Search Artists"""
-  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!], list: ListType, seed: String): ArtistPageQL!
+  artists(page: PageParametersQL, filter: ArtistFilterParametersQL, order: [ArtistOrderParametersQL!], list: ListType, seed: String): ArtistPageQL!
 
   """Get the Navigation Index for Albums"""
-  artistIndex(filter: ArtistFilterArgsQL): ArtistIndexQL!
+  artistIndex(filter: ArtistFilterParametersQL): ArtistIndexQL!
 
   """Get an Artwork by Id"""
   artwork(id: ID!): ArtworkQL!
 
   """Search Artworks"""
-  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!], list: ListType, seed: String): ArtworkPageQL!
+  artworks(page: PageParametersQL, filter: ArtworkFilterParametersQL, order: [ArtworkOrderParametersQL!], list: ListType, seed: String): ArtworkPageQL!
 
   """Get a Bookmark by Id"""
   bookmark(id: ID!): BookmarkQL!
 
   """Search Bookmarks"""
-  bookmarks(page: PageArgsQL, filter: BookmarkFilterArgsQL, order: [BookmarkOrderArgsQL!]): BookmarkPageQL!
+  bookmarks(page: PageParametersQL, filter: BookmarkFilterParametersQL, order: [BookmarkOrderParametersQL!]): BookmarkPageQL!
 
   """Get Chat Messages"""
   chats(since: Int): [ChatQL!]!
@@ -41,35 +41,35 @@ type Query {
   episode(id: ID!): EpisodeQL!
 
   """Search Episodes"""
-  episodes(page: PageArgsQL, filter: EpisodeFilterArgsQL, order: [EpisodeOrderArgsQL!], list: ListType, seed: String): EpisodePageQL!
+  episodes(page: PageParametersQL, filter: EpisodeFilterParametersQL, order: [EpisodeOrderParametersQL!], list: ListType, seed: String): EpisodePageQL!
 
   """Get a Folder by Id"""
   folder(id: ID!): FolderQL!
 
   """Search Folders"""
-  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!], list: ListType, seed: String): FolderPageQL!
+  folders(page: PageParametersQL, filter: FolderFilterParametersQL, order: [FolderOrderParametersQL!], list: ListType, seed: String): FolderPageQL!
 
   """Get the Navigation Index for Folders"""
-  folderIndex(filter: FolderFilterArgsQL): FolderIndexQL!
+  folderIndex(filter: FolderFilterParametersQL): FolderIndexQL!
   waveform(id: ID!): WaveformQL!
 
   """Get an Genre by Id"""
   genre(id: ID!): GenreQL!
 
   """Search Genres"""
-  genres(page: PageArgsQL, filter: GenreFilterArgsQL, order: [GenreOrderArgsQL!], list: ListType, seed: String): GenrePageQL!
+  genres(page: PageParametersQL, filter: GenreFilterParametersQL, order: [GenreOrderParametersQL!], list: ListType, seed: String): GenrePageQL!
 
   """Get the Navigation Index for Genres"""
-  genreIndex(filter: GenreFilterArgsQL): GenreIndexQL!
+  genreIndex(filter: GenreFilterParametersQL): GenreIndexQL!
 
   """Get a Playlist by Id"""
   playlist(id: ID!): PlaylistQL!
 
   """Search Playlists"""
-  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!], list: ListType, seed: String): PlaylistPageQL!
+  playlists(page: PageParametersQL, filter: PlaylistFilterParametersQL, order: [PlaylistOrderParametersQL!], list: ListType, seed: String): PlaylistPageQL!
 
   """Get the Navigation Index for Playlists"""
-  playlistIndex(filter: PlaylistFilterArgsQL): PlaylistIndexQL!
+  playlistIndex(filter: PlaylistFilterParametersQL): PlaylistIndexQL!
 
   """Get a PlayQueue for the calling user"""
   playQueue: PlayQueueQL!
@@ -78,10 +78,10 @@ type Query {
   podcast(id: ID!): PodcastQL!
 
   """Search Podcasts"""
-  podcasts(page: PageArgsQL, filter: PodcastFilterArgsQL, order: [PodcastOrderArgsQL!], list: ListType, seed: String): PodcastPageQL!
+  podcasts(page: PageParametersQL, filter: PodcastFilterParametersQL, order: [PodcastOrderParametersQL!], list: ListType, seed: String): PodcastPageQL!
 
   """Get the Navigation Index for Podcasts"""
-  podcastIndex(filter: PodcastFilterArgsQL): PodcastIndexQL!
+  podcastIndex(filter: PodcastFilterParametersQL): PodcastIndexQL!
 
   """Discover Podcasts via gpodder.net"""
   podcastsDiscover(query: String!): [PodcastDiscoverQL!]!
@@ -118,25 +118,25 @@ type Query {
   radio(id: ID!): RadioQL!
 
   """Search Radios"""
-  radios(page: PageArgsQL, filter: RadioFilterArgsQL, order: [RadioOrderArgsQL!], list: ListType, seed: String): RadioPageQL!
+  radios(page: PageParametersQL, filter: RadioFilterParametersQL, order: [RadioOrderParametersQL!], list: ListType, seed: String): RadioPageQL!
 
   """Get the Navigation Index for Radios"""
-  radioIndex(filter: RadioFilterArgsQL): RadioIndexQL!
+  radioIndex(filter: RadioFilterParametersQL): RadioIndexQL!
 
   """Get a Root by Id"""
   root(id: ID!): RootQL!
 
   """Search Roots"""
-  roots(page: PageArgsQL, filter: RootFilterArgsQL, order: [RootOrderArgsQL!], list: ListType, seed: String): RootPageQL!
+  roots(page: PageParametersQL, filter: RootFilterParametersQL, order: [RootOrderParametersQL!], list: ListType, seed: String): RootPageQL!
 
   """Get a Series by Id"""
   series(id: ID!): SeriesQL!
 
   """Search Series"""
-  serieses(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!], list: ListType, seed: String): SeriesPageQL!
+  serieses(page: PageParametersQL, filter: SeriesFilterParametersQL, order: [SeriesOrderParametersQL!], list: ListType, seed: String): SeriesPageQL!
 
   """Get the Navigation Index for Series"""
-  seriesIndex(filter: SeriesFilterArgsQL): SeriesIndexQL!
+  seriesIndex(filter: SeriesFilterParametersQL): SeriesIndexQL!
 
   """Get the API Version"""
   version: String!
@@ -145,9 +145,9 @@ type Query {
   session: SessionQL!
 
   """Get a list of all sessions of the current user"""
-  sessions(page: PageArgsQL, filter: SessionFilterArgsQL, order: [SessionOrderArgsQL!]): SessionPageQL!
+  sessions(page: PageParametersQL, filter: SessionFilterParametersQL, order: [SessionOrderParametersQL!]): SessionPageQL!
   track(id: ID!): TrackQL!
-  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!], list: ListType, seed: String): TrackPageQL!
+  tracks(page: PageParametersQL, filter: TrackFilterParametersQL, order: [TrackOrderParametersQL!], list: ListType, seed: String): TrackPageQL!
   stats(rootID: ID): StatsQL!
 
   """Get User State (fav/rate/etc) for Base Objects"""
@@ -192,9 +192,9 @@ type UserQL {
   roles: [UserRole!]!
   favorites: UserFavoritesQL!
   stats: UserStatsQL!
-  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!]): PlaylistPageQL!
-  bookmarks(page: PageArgsQL, filter: BookmarkFilterArgsQL, order: [BookmarkOrderArgsQL!]): BookmarkPageQL!
-  sessions(page: PageArgsQL, filter: SessionFilterArgsQL, order: [SessionOrderArgsQL!]): SessionPageQL!
+  playlists(page: PageParametersQL, filter: PlaylistFilterParametersQL, order: [PlaylistOrderParametersQL!]): PlaylistPageQL!
+  bookmarks(page: PageParametersQL, filter: BookmarkFilterParametersQL, order: [BookmarkOrderParametersQL!]): BookmarkPageQL!
+  sessions(page: PageParametersQL, filter: SessionFilterParametersQL, order: [SessionOrderParametersQL!]): SessionPageQL!
 }
 
 """
@@ -314,9 +314,9 @@ type GenreQL {
   createdAt: DateTimeISO!
   updatedAt: DateTimeISO!
   name: String!
-  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): TrackPageQL!
-  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
-  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): ArtistPageQL!
+  tracks(page: PageParametersQL, filter: TrackFilterParametersQL, order: [TrackOrderParametersQL!]): TrackPageQL!
+  albums(page: PageParametersQL, filter: AlbumFilterParametersQL, order: [AlbumOrderParametersQL!]): AlbumPageQL!
+  artists(page: PageParametersQL, filter: ArtistFilterParametersQL, order: [ArtistOrderParametersQL!]): ArtistPageQL!
   folders: [FolderQL!]!
   series: [SeriesQL!]!
   trackCount: Int!
@@ -332,7 +332,7 @@ type TrackPageQL {
   skip: Int
 }
 
-input PageArgsQL {
+input PageParametersQL {
   """return items starting from offset position"""
   skip: Int = 0
 
@@ -340,7 +340,7 @@ input PageArgsQL {
   take: Int
 }
 
-input TrackFilterArgsQL {
+input TrackFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -361,7 +361,7 @@ input TrackFilterArgsQL {
   toYear: Int
 }
 
-input TrackOrderArgsQL {
+input TrackOrderParametersQL {
   orderDesc: Boolean
   orderBy: TrackOrderFields
 }
@@ -535,7 +535,7 @@ type RootStatusQL {
   error: String
 }
 
-input AlbumFilterArgsQL {
+input AlbumFilterParametersQL {
   query: String
   name: String
   slug: String
@@ -557,7 +557,7 @@ input AlbumFilterArgsQL {
   toYear: Int
 }
 
-input AlbumOrderArgsQL {
+input AlbumOrderParametersQL {
   orderDesc: Boolean
   orderBy: AlbumOrderFields
 }
@@ -581,7 +581,7 @@ type ArtistPageQL {
   skip: Int
 }
 
-input ArtistFilterArgsQL {
+input ArtistFilterParametersQL {
   query: String
   name: String
   slug: String
@@ -600,7 +600,7 @@ input ArtistFilterArgsQL {
   since: Int
 }
 
-input ArtistOrderArgsQL {
+input ArtistOrderParametersQL {
   orderDesc: Boolean
   orderBy: ArtistOrderFields
 }
@@ -796,15 +796,15 @@ enum UserRole {
 }
 
 type UserFavoritesQL {
-  albums(page: PageArgsQL, filter: AlbumFilterArgsQL, order: [AlbumOrderArgsQL!]): AlbumPageQL!
-  artists(page: PageArgsQL, filter: ArtistFilterArgsQL, order: [ArtistOrderArgsQL!]): ArtistPageQL!
-  series(page: PageArgsQL, filter: SeriesFilterArgsQL, order: [SeriesOrderArgsQL!]): SeriesPageQL!
-  podcasts(page: PageArgsQL, filter: PodcastFilterArgsQL, order: [PodcastOrderArgsQL!]): PodcastPageQL!
-  episodes(page: PageArgsQL, filter: EpisodeFilterArgsQL, order: [EpisodeOrderArgsQL!]): EpisodePageQL!
-  tracks(page: PageArgsQL, filter: TrackFilterArgsQL, order: [TrackOrderArgsQL!]): TrackPageQL!
-  folders(page: PageArgsQL, filter: FolderFilterArgsQL, order: [FolderOrderArgsQL!]): FolderPageQL!
-  playlists(page: PageArgsQL, filter: PlaylistFilterArgsQL, order: [PlaylistOrderArgsQL!]): PlaylistPageQL!
-  artworks(page: PageArgsQL, filter: ArtworkFilterArgsQL, order: [ArtworkOrderArgsQL!]): ArtistPageQL!
+  albums(page: PageParametersQL, filter: AlbumFilterParametersQL, order: [AlbumOrderParametersQL!]): AlbumPageQL!
+  artists(page: PageParametersQL, filter: ArtistFilterParametersQL, order: [ArtistOrderParametersQL!]): ArtistPageQL!
+  series(page: PageParametersQL, filter: SeriesFilterParametersQL, order: [SeriesOrderParametersQL!]): SeriesPageQL!
+  podcasts(page: PageParametersQL, filter: PodcastFilterParametersQL, order: [PodcastOrderParametersQL!]): PodcastPageQL!
+  episodes(page: PageParametersQL, filter: EpisodeFilterParametersQL, order: [EpisodeOrderParametersQL!]): EpisodePageQL!
+  tracks(page: PageParametersQL, filter: TrackFilterParametersQL, order: [TrackOrderParametersQL!]): TrackPageQL!
+  folders(page: PageParametersQL, filter: FolderFilterParametersQL, order: [FolderOrderParametersQL!]): FolderPageQL!
+  playlists(page: PageParametersQL, filter: PlaylistFilterParametersQL, order: [PlaylistOrderParametersQL!]): PlaylistPageQL!
+  artworks(page: PageParametersQL, filter: ArtworkFilterParametersQL, order: [ArtworkOrderParametersQL!]): ArtistPageQL!
 }
 
 type SeriesPageQL {
@@ -814,7 +814,7 @@ type SeriesPageQL {
   skip: Int
 }
 
-input SeriesFilterArgsQL {
+input SeriesFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -828,7 +828,7 @@ input SeriesFilterArgsQL {
   genreIDs: [ID!]
 }
 
-input SeriesOrderArgsQL {
+input SeriesOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }
@@ -847,7 +847,7 @@ type PodcastPageQL {
   skip: Int
 }
 
-input PodcastFilterArgsQL {
+input PodcastFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -864,7 +864,7 @@ input PodcastFilterArgsQL {
   categories: [String!]
 }
 
-input PodcastOrderArgsQL {
+input PodcastOrderParametersQL {
   orderDesc: Boolean
   orderBy: PodcastOrderFields
 }
@@ -884,7 +884,7 @@ type EpisodePageQL {
   skip: Int
 }
 
-input EpisodeFilterArgsQL {
+input EpisodeFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -895,7 +895,7 @@ input EpisodeFilterArgsQL {
   statuses: [PodcastStatus!]
 }
 
-input EpisodeOrderArgsQL {
+input EpisodeOrderParametersQL {
   orderDesc: Boolean
   orderBy: EpisodeOrderFields
 }
@@ -916,7 +916,7 @@ type FolderPageQL {
   skip: Int
 }
 
-input FolderFilterArgsQL {
+input FolderFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -946,7 +946,7 @@ input FolderFilterArgsQL {
   genreIDs: [ID!]
 }
 
-input FolderOrderArgsQL {
+input FolderOrderParametersQL {
   orderDesc: Boolean
   orderBy: FolderOrderFields
 }
@@ -995,7 +995,7 @@ type PlaylistEntryQL {
   episode: EpisodeQL
 }
 
-input PlaylistFilterArgsQL {
+input PlaylistFilterParametersQL {
   query: String
   name: String
   comment: String
@@ -1007,12 +1007,12 @@ input PlaylistFilterArgsQL {
   durationTo: Int
 }
 
-input PlaylistOrderArgsQL {
+input PlaylistOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }
 
-input ArtworkFilterArgsQL {
+input ArtworkFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -1029,7 +1029,7 @@ input ArtworkFilterArgsQL {
   heightTo: Int
 }
 
-input ArtworkOrderArgsQL {
+input ArtworkOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }
@@ -1072,7 +1072,7 @@ type BookmarkPageQL {
   skip: Int
 }
 
-input BookmarkFilterArgsQL {
+input BookmarkFilterParametersQL {
   query: String
   comment: String
   ids: [ID!]
@@ -1082,7 +1082,7 @@ input BookmarkFilterArgsQL {
   userIDs: [ID!]
 }
 
-input BookmarkOrderArgsQL {
+input BookmarkOrderParametersQL {
   orderDesc: Boolean
   orderBy: BookmarkOrderFields
 }
@@ -1118,7 +1118,7 @@ enum SessionMode {
   subsonic
 }
 
-input SessionFilterArgsQL {
+input SessionFilterParametersQL {
   ids: [ID!]
   since: Int
   client: String
@@ -1129,7 +1129,7 @@ input SessionFilterArgsQL {
   userIDs: [ID!]
 }
 
-input SessionOrderArgsQL {
+input SessionOrderParametersQL {
   orderDesc: Boolean
   orderBy: SessionOrderFields
 }
@@ -1146,7 +1146,7 @@ type UserPageQL {
   skip: Int
 }
 
-input UserFilterArgsQL {
+input UserFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -1155,7 +1155,7 @@ input UserFilterArgsQL {
   roles: [UserRole!]
 }
 
-input UserOrderArgsQL {
+input UserOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }
@@ -1227,7 +1227,7 @@ type GenrePageQL {
   skip: Int
 }
 
-input GenreFilterArgsQL {
+input GenreFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -1235,7 +1235,7 @@ input GenreFilterArgsQL {
   since: Int
 }
 
-input GenreOrderArgsQL {
+input GenreOrderParametersQL {
   orderDesc: Boolean
   orderBy: GenreOrderFields
 }
@@ -1325,7 +1325,7 @@ type RadioPageQL {
   skip: Int
 }
 
-input RadioFilterArgsQL {
+input RadioFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -1335,7 +1335,7 @@ input RadioFilterArgsQL {
   disabled: Boolean
 }
 
-input RadioOrderArgsQL {
+input RadioOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }
@@ -1356,7 +1356,7 @@ type RootPageQL {
   skip: Int
 }
 
-input RootFilterArgsQL {
+input RootFilterParametersQL {
   query: String
   name: String
   ids: [ID!]
@@ -1369,7 +1369,7 @@ input RootFilterArgsQL {
   seriesIDs: [ID!]
 }
 
-input RootOrderArgsQL {
+input RootOrderParametersQL {
   orderDesc: Boolean
   orderBy: DefaultOrderFields
 }

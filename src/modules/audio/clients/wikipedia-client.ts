@@ -77,8 +77,8 @@ export interface WikiPHPApiSummary {
 	warnings?: {
 		extracts?: Record<string, string>;
 	};
-	query: {
-		pages: Record<string, WikiPHPApiPage>;
+	query?: {
+		pages?: Record<string, WikiPHPApiPage | undefined>;
 	};
 }
 
@@ -90,8 +90,8 @@ export class WikipediaClient extends WebserviceClient {
 
 	async summary(title: string, lang: string | undefined): Promise<{ title: string; url: string; summary: string } | undefined> {
 		log.info('requesting summary', title);
-		const url = `https://${(lang || 'en')}.wikipedia.org/w/api.php`;
-		const data: WikiPHPApiSummary = await this.getJson<WikiPHPApiSummary,
+		const url = `https://${(lang ?? 'en')}.wikipedia.org/w/api.php`;
+		const data = await this.getJsonWithParameters<WikiPHPApiSummary | undefined,
 			{
 				action: string;
 				prop: string;
@@ -112,17 +112,17 @@ export class WikipediaClient extends WebserviceClient {
 			return;
 		}
 		const pages = data.query.pages;
-		const page = pages[Object.keys(pages)[0]];
+		const page = pages[Object.keys(pages).at(0) ?? -1];
 		if (!page) {
 			return;
 		}
-		return { title: page.title, summary: page.extract, url: `https://${(lang || 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
+		return { title: page.title, summary: page.extract, url: `https://${(lang ?? 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
 	}
 
 	async summary_rest(title: string, lang: string | undefined): Promise<string | undefined> {
 		log.info('requesting summary', title);
-		const url = `https://${(lang || 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-		const data: WikipediaSummary = await this.getJson<WikipediaSummary, { redirect: string }>(url, { redirect: 'true' });
+		const url = `https://${(lang ?? 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+		const data = await this.getJsonWithParameters<WikipediaSummary | undefined, { redirect: string }>(url, { redirect: 'true' });
 		if (!data) {
 			return;
 		}
@@ -133,7 +133,7 @@ export class WikipediaClient extends WebserviceClient {
 		log.info('requesting wikidata entity', id);
 		// &props=sitelinks|info
 		const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${(id)}`;
-		const data = await this.getJson<WikiData.Response, void>(url);
+		const data = await this.getJson<WikiData.Response | undefined>(url);
 		if (data?.entities) {
 			return data.entities[id];
 		}

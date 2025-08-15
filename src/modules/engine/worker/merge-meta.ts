@@ -82,14 +82,12 @@ export class MetaMerger {
 
 		if (trackInfo.tag.series) {
 			const series = await this.cache.findOrCreateSeries(trackInfo, albumArtist, album);
-			if (series) {
-				await series.roots.add(this.root);
-				await series.folders.add(trackInfo.folder);
-				await series.tracks.add(trackInfo.track);
-				await series.albums.add(album);
-				await trackInfo.track.series.set(series);
-				this.orm.Series.persistLater(series);
-			}
+			await series.roots.add(this.root);
+			await series.folders.add(trackInfo.folder);
+			await series.tracks.add(trackInfo.track);
+			await series.albums.add(album);
+			await trackInfo.track.series.set(series);
+			this.orm.Series.persistLater(series);
 		}
 
 		this.orm.Track.persistLater(trackInfo.track);
@@ -116,14 +114,14 @@ export class MetaMerger {
 
 	private async flush(section: string): Promise<void> {
 		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing ' + section + ' Meta to DB');
+			log.debug(`Syncing ${section} Meta to DB`);
 			await this.orm.em.flush();
 		}
 	}
 
 	private async flushIfNeeded(section: string): Promise<void> {
 		if (this.orm.em.changesCount() > 500) {
-			log.debug('Syncing ' + section + ' Meta to DB');
+			log.debug(`Syncing ${section} Meta to DB`);
 			await this.orm.em.flush();
 		}
 	}
@@ -136,7 +134,7 @@ export class MetaMerger {
 			folderCache.set(folder.id, folder);
 		}
 		const tag = await track.tag.get();
-		if (tag && folder) {
+		if (tag) {
 			const trackInfo: MetaMergeTrackInfo = { track, tag, folder };
 			await this.addMeta(trackInfo);
 		}
@@ -282,7 +280,7 @@ export class MetaMerger {
 			metaStatBuilder.statID('mbArtistID', folder.mbArtistID);
 			metaStatBuilder.statID('mbReleaseID', folder.mbReleaseID);
 		}
-		album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType) || AlbumType.unknown;
+		album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType | undefined) ?? AlbumType.unknown;
 		let duration = 0;
 		const genreMap = new Map<string, Genre>();
 		for (const track of tracks) {
@@ -292,7 +290,7 @@ export class MetaMerger {
 			metaStatBuilder.statNumber('year', tag?.year);
 			metaStatBuilder.statID('mbArtistID', tag?.mbArtistID);
 			metaStatBuilder.statID('mbReleaseID', tag?.mbReleaseID);
-			metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag?.album));
+			metaStatBuilder.statSlugValue('album', tag?.album && extractAlbumName(tag.album));
 			const genres = await track.genres.getItems();
 			for (const genre of genres) {
 				genreMap.set(genre.id, genre);

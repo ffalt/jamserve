@@ -1,0 +1,10 @@
+import { metadataStorage } from '../metadata/metadata-storage.js';
+import { FieldOptions, MethodAndPropertyDecorator, ReturnTypeFunction } from '../../deco/definitions/types.js';
+import { BaseObjField } from '../../deco/decorators/base-obj-field.js';
+
+export function SubsonicObjectField(): MethodAndPropertyDecorator;
+export function SubsonicObjectField(options: FieldOptions): MethodAndPropertyDecorator;
+export function SubsonicObjectField(returnTypeFunction?: ReturnTypeFunction, options?: FieldOptions): MethodAndPropertyDecorator;
+export function SubsonicObjectField(returnTypeFunctionOrOptions?: ReturnTypeFunction | FieldOptions, maybeOptions?: FieldOptions): MethodDecorator | PropertyDecorator {
+	return BaseObjField(metadataStorage(), returnTypeFunctionOrOptions, maybeOptions);
+}

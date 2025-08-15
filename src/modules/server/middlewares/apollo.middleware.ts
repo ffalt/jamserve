@@ -153,7 +153,7 @@ function formatValidationErrors(
 		}),
 		...(validationError.children &&
 			validationError.children.length > 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
-	};
+	} as IValidationError;
 }
 
 export class ValidationError extends GraphQLError {
@@ -222,6 +222,7 @@ export class ApolloMiddleware {
 					req, res,
 					orm: this.orm.fork(),
 					engine: this.engine,
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					sessionID: req.session?.id,
 					user: req.user
 				};

@@ -32,10 +32,10 @@ import {
 } from '../../../types/enums.js';
 import { registerEnumType } from '../../deco/helpers/enums.js';
 import { EnumMetadata } from '../../deco/definitions/enum-metadata.js';
-import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
+import { metadataStorage } from '../../rest/metadata/metadata-storage.js';
 
 export function registerRestEnums(): void {
-	const enums: Array<EnumMetadata> = getMetadataStorage().enums;
+	const enums: Array<EnumMetadata> = metadataStorage().enums;
 	registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' }, enums);
 	registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' }, enums);
 	registerEnumType(TrackOrderFields, { name: 'TrackOrderFields' }, enums);

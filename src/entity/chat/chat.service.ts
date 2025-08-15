@@ -30,18 +30,18 @@ export class ChatService {
 	}
 
 	async find(time: number): Promise<Chat | undefined> {
-		return this.messages.find(msg => msg.created.valueOf() === time);
+		return this.messages.find(message => message.created.valueOf() === time);
 	}
 
 	async remove(message: Chat): Promise<void> {
-		this.messages = this.messages.filter(msg => msg.created.valueOf() !== message.created.valueOf());
+		this.messages = this.messages.filter(entry => entry.created.valueOf() !== message.created.valueOf());
 	}
 
 	async get(since?: number): Promise<Array<Chat>> {
 		await this.cleanOld();
 		let list: Array<Chat> = this.messages;
 		if (since !== undefined && !Number.isNaN(since)) {
-			list = list.filter(msg => msg.created.valueOf() > since);
+			list = list.filter(message => message.created.valueOf() > since);
 		}
 		return list;
 	}

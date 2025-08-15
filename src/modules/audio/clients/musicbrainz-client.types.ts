@@ -1,4 +1,4 @@
-export const LookupBrowseTypes: Record<string, Array<string>> = {
+export const LookupBrowseTypes: Record<string, Array<string> | undefined> = {
 	'area': ['collection'],
 	'artist': ['area', 'collection', 'recording', 'release', 'release-group', 'work'],
 	'collection': ['area', 'artist', 'editor', 'event', 'label', 'place', 'recording', 'release', 'release-group', 'work'],
@@ -14,7 +14,7 @@ export const LookupBrowseTypes: Record<string, Array<string>> = {
 	'url': ['resource']
 };
 
-export const LookupIncludes: Record<string, Array<string>> = {
+export const LookupIncludes: Record<string, Array<string> | undefined> = {
 	'area': [],
 	'artist': ['recordings', 'releases', 'release-groups', 'works', 'aliases', 'artist-rels', 'url-rels', 'tags', 'ratings'],
 	'collection': ['user-collections'],
@@ -30,7 +30,7 @@ export const LookupIncludes: Record<string, Array<string>> = {
 	'url': []
 };
 
-export const enum LookupEntity {
+export enum LookupEntity {
 	area = 'area',
 	artist = 'artist',
 	collection = 'collection',

@@ -3,6 +3,7 @@ import { PropertyMetadata } from '../definitions/property-metadata.js';
 import { ManagedEntity } from '../definitions/managed-entity.js';
 import { Model, Transaction, FindOptions } from 'sequelize';
 import { OrderByOptions } from '../definitions/types.js';
+import { capitalize } from '../../../utils/capitalize.js';
 
 export class Collection<T extends IDEntity<T>> {
 	private field!: PropertyMetadata;
@@ -24,18 +25,19 @@ export class Collection<T extends IDEntity<T>> {
 		if (this.itemCount !== undefined) {
 			return this.itemCount;
 		}
-		const func = this.sourceFunc('count');
-		const result = await func();
+		const sourceFunction = this.getSourceFunction('count');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+		const result: number = await sourceFunction();
 		this.itemCount = result;
 		return result;
 	}
 
-	private sourceFunc(mode: string): Function {
+	private getSourceFunction(mode: string): Function {
 		const entity = this.owner as ManagedEntity;
-		const getFuncName = this.funcName(mode);
-		let func = entity._source[getFuncName];
-		func = func.bind(entity._source);
-		return func;
+		const functionName = this.getFuncName(mode);
+		let sourceFunction: Function = entity._source[functionName];
+		sourceFunction = sourceFunction.bind(entity._source);
+		return sourceFunction;
 	}
 
 	clear(): void {
@@ -54,10 +56,11 @@ export class Collection<T extends IDEntity<T>> {
 			return this.list;
 		}
 		const entity = this.owner as ManagedEntity;
-		const func = this.sourceFunc('get');
-		options = options || this.getOrderOptions();
-		const sources: Array<Model<T>> = await func(options);
-		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name ?? '', source as any));
+		const sourceFunction = this.getSourceFunction('get');
+		options = options ?? this.getOrderOptions();
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+		const sources: Array<Model<T>> = await sourceFunction(options);
+		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name ?? '', source));
 		if (this.changeSet) {
 			if (this.changeSet.set) {
 				list = this.changeSet.set as Array<any>;
@@ -67,7 +70,7 @@ export class Collection<T extends IDEntity<T>> {
 			}
 			const removed = this.changeSet.remove;
 			if (removed) {
-				list = list.filter(e => removed.find(p => p.id === e.id));
+				list = list.filter(item => removed.find(p => p.id === item.id));
 			}
 		}
 		this.list = list;
@@ -81,32 +84,35 @@ export class Collection<T extends IDEntity<T>> {
 		}
 	}
 
-	private funcName(mode: string, plural?: boolean): string {
-		return mode + this.field.name[0].toUpperCase() + this.field.name.slice(1) + 'ORM' + (plural ? 's' : '');
+	private getFuncName(mode: string, plural?: boolean): string {
+		return `${mode}${capitalize(this.field.name)}ORM${plural ? 's' : ''}`;
 	}
 
 	async flush(transaction?: Transaction): Promise<void> {
 		if (this.changeSet) {
 			if (this.changeSet.set) {
-				const func = this.sourceFunc('set');
-				await func(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), { transaction });
+				const sourceFunction = this.getSourceFunction('set');
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+				await sourceFunction(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			if (this.changeSet.add) {
-				const func = this.sourceFunc('add');
-				await func(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), { transaction });
+				const sourceFunction = this.getSourceFunction('add');
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+				await sourceFunction(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			if (this.changeSet.remove) {
-				const func = this.sourceFunc('remove');
-				await func(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), { transaction });
+				const sourceFunction = this.getSourceFunction('remove');
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+				await sourceFunction(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), { transaction });
 			}
 			this.changeSet = undefined;
 		}
 	}
 
 	async add(item: T): Promise<void> {
-		this.changeSet = this.changeSet || {};
-		this.changeSet.add = this.changeSet.add || [];
-		if (!this.changeSet.add.some(e => e.id === item.id)) {
+		this.changeSet = this.changeSet ?? {};
+		this.changeSet.add = this.changeSet.add ?? [];
+		if (!this.changeSet.add.some(entry => entry.id === item.id)) {
 			this.changeSet.add.push(item);
 			if (this.list) {
 				this.list.push(item);

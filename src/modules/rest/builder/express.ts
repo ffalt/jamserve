@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import multer from 'multer';
 import { ensureTrailingPathSeparator, fileDeleteIfExists } from '../../../utils/fs-utils.js';
 import finishedRequest from 'on-finished';
@@ -10,15 +10,15 @@ import { iterateControllers } from '../../deco/helpers/iterate-super.js';
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
 	const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	const method = new ExpressMethod();
 
 	const registerAutoClean = (req: express.Request, res: express.Response): void => {
-		finishedRequest(res, err => {
-			if (err && req.file?.path) {
+		finishedRequest(res, error => {
+			if (error && req.file?.path) {
 				fileDeleteIfExists(req.file.path)
-					.catch(error => {
-						console.error(error);
+					.catch((removeError: unknown) => {
+						console.error(removeError);
 					});
 			}
 		});
@@ -30,7 +30,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 			if (autoClean) {
 				registerAutoClean(req, res);
 			}
-			mu(req, res, next);
+			void mu(req, res, next);
 		};
 	};
 

@@ -1,13 +1,13 @@
 import { UserRole } from '../../types/enums.js';
 import { AdminChangeQueueInfo, AdminSettings } from './admin.js';
-import { AdminSettingsArgs } from './admin.args.js';
+import { AdminSettingsParameters } from './admin.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
 
 @Controller('/admin', { tags: ['Administration'], roles: [UserRole.admin] })
 export class AdminController {
@@ -16,7 +16,7 @@ export class AdminController {
 		() => AdminSettings,
 		{ description: 'Get the Server Admin Settings', summary: 'Get Settings' }
 	)
-	async settings(@Ctx() { engine }: Context): Promise<AdminSettings> {
+	async settings(@RestContext() { engine }: Context): Promise<AdminSettings> {
 		return engine.settings.get();
 	}
 
@@ -26,8 +26,8 @@ export class AdminController {
 		{ description: 'Get Queue Information for Admin Change Tasks', summary: 'Get Queue Info' }
 	)
 	async queueId(
-		@QueryParam('id', { description: 'Queue Task Id', isID: true }) id: string,
-		@Ctx() { engine }: Context
+		@QueryParameter('id', { description: 'Queue Task Id', isID: true }) id: string,
+		@RestContext() { engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		return engine.io.getAdminChangeQueueInfoStatus(id);
 	}
@@ -37,9 +37,9 @@ export class AdminController {
 		{ description: 'Update the Server Admin Settings', summary: 'Set Settings' }
 	)
 	async settingsUpdate(
-		@BodyParams() args: AdminSettingsArgs,
-		@Ctx() { engine, orm }: Context
+		@BodyParameters() parameters: AdminSettingsParameters,
+		@RestContext() { engine, orm }: Context
 	): Promise<void> {
-		await engine.settings.updateSettings(orm, args);
+		await engine.settings.updateSettings(orm, parameters);
 	}
 }

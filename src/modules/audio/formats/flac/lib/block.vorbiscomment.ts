@@ -19,19 +19,19 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 	parse(buffer: Buffer): void {
 		try {
 			let pos = 0;
-			const vendorLen = buffer.readUInt32LE(pos);
-			this.vendor = buffer.toString('utf8', pos + 4, pos + vendorLen + 4);
-			pos += vendorLen + 4;
+			const vendorLength = buffer.readUInt32LE(pos);
+			this.vendor = buffer.toString('utf8', pos + 4, pos + vendorLength + 4);
+			pos += vendorLength + 4;
 			let commentCount = buffer.readUInt32LE(pos);
 			pos += 4;
 			while (commentCount-- > 0) {
-				const commentLen = buffer.readUInt32LE(pos);
-				const comment = buffer.toString('utf8', pos + 4, pos + commentLen + 4);
+				const commentLength = buffer.readUInt32LE(pos);
+				const comment = buffer.toString('utf8', pos + 4, pos + commentLength + 4);
 				this.comments.push(comment);
-				pos += commentLen + 4;
+				pos += commentLength + 4;
 			}
 			this.hasData = true;
-		} catch (error) {
+		} catch (error: unknown) {
 			this.error = error;
 			this.hasData = false;
 		}
@@ -48,21 +48,21 @@ export class BlockVorbiscomment extends MetaWriteableDataBlock {
 		buffer.writeUInt32BE(header, pos);
 		pos += 4;
 
-		const vendorLen = Buffer.byteLength(this.vendor);
-		buffer.writeUInt32LE(vendorLen, pos);
+		const vendorLength = Buffer.byteLength(this.vendor);
+		buffer.writeUInt32LE(vendorLength, pos);
 		buffer.write(this.vendor, pos + 4);
-		pos += vendorLen + 4;
+		pos += vendorLength + 4;
 
 		const commentCount = this.comments.length;
 		buffer.writeUInt32LE(commentCount, pos);
 		pos += 4;
 
-		for (let i = 0; i < commentCount; i++) {
-			const comment = this.comments[i];
-			const commentLen = Buffer.byteLength(comment);
-			buffer.writeUInt32LE(commentLen, pos);
+		for (let index = 0; index < commentCount; index++) {
+			const comment = this.comments[index];
+			const commentLength = Buffer.byteLength(comment);
+			buffer.writeUInt32LE(commentLength, pos);
 			buffer.write(comment, pos + 4);
-			pos += commentLen + 4;
+			pos += commentLength + 4;
 		}
 
 		return buffer;

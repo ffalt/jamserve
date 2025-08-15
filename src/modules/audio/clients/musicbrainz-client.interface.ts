@@ -1,6 +1,6 @@
 export interface Request {
 	path: string;
-	query: Record<string, string | undefined>;
+	query: Record<string, string | undefined | null>;
 	retry: number;
 	offset?: number;
 	limit?: number;

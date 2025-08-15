@@ -1,5 +1,5 @@
 export * from './decorators/index.js';
-export * from './metadata/getMetadataStorage.js';
+export * from './metadata/metadata-storage.js';
 export * from './typings.js';
 export * from './definitions/orm-types.js';
 export * from './definitions/query.js';
@@ -9,4 +9,3 @@ export * from './helpers/manager.js';
 export * from './helpers/reference.js';
 export * from './helpers/orm.js';
 export * from './helpers/query.js';
-export { FindOptions, OrderItem, Order, WhereOptions } from 'sequelize';

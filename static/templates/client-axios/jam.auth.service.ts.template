@@ -41,7 +41,7 @@ export class JamAuthService {
 			} else {
 				this.user = undefined;
 			}
-		} catch (error) {
+		} catch (error: unknown) {
 			throw (error || new Error('Server error'));
 		}
 	}
@@ -74,7 +74,7 @@ export class JamAuthService {
 			};
 			await this.configuration.toStorage({ auth: this.auth, user: this.user });
 			await this.configuration.userChangeNotify(this.user);
-		} catch (error: any) {
+		} catch (error: unknown) {
 			console.error(error);
 			await this.clear();
 			if (error.error?.error) {

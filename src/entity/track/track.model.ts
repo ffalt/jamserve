@@ -1,12 +1,12 @@
 import { MediaBase } from '../tag/tag.model.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ResultType({ description: 'Track Base' })
 export class TrackBase extends MediaBase {
-	@ObjField({ description: 'Parent Folder Id', isID: true })
+	@ObjectField({ description: 'Parent Folder Id', isID: true })
 	parentID!: string;
 }
 
@@ -16,37 +16,37 @@ export class Track extends TrackBase {
 
 @ResultType({ description: 'Tracks Page' })
 export class TrackPage extends Page {
-	@ObjField(() => Track, { description: 'List of Tracks' })
+	@ObjectField(() => Track, { description: 'List of Tracks' })
 	items!: Array<Track>;
 }
 
 @ResultType({ description: 'Track Health' })
 export class TrackHealth {
-	@ObjField(() => TrackBase, { description: 'Track' })
+	@ObjectField(() => TrackBase, { description: 'Track' })
 	track!: TrackBase;
 
-	@ObjField(() => [TrackHealthHint], { description: 'List of Health Hints' })
+	@ObjectField(() => [TrackHealthHint], { description: 'List of Health Hints' })
 	health!: Array<TrackHealthHint>;
 }
 
 @ResultType({ description: 'Track Lyrics (via External Service or Audio Tag)' })
 export class TrackLyrics {
-	@ObjField({
+	@ObjectField({
 		nullable: true,
 		description: 'Lyrics',
 		example: 'I got a letter from the government\nThe other day\nI opened and read it\nIt said they were suckers\n They wanted me for their army or whatever\n Picture me given’ a damn, I said never.'
 	})
 	lyrics?: string;
 
-	@ObjField({
+	@ObjectField({
 		nullable: true,
 		description: 'Synced Lyrics'
 	})
 	syncedLyrics?: string;
 
-	@ObjField({ nullable: true, description: 'Language of the the lyrics' })
+	@ObjectField({ nullable: true, description: 'Language of the the lyrics' })
 	language?: string;
 
-	@ObjField({ nullable: true, description: 'Audio Tag or External Service' })
+	@ObjectField({ nullable: true, description: 'Audio Tag or External Service' })
 	source?: string;
 }

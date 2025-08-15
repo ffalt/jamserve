@@ -42,7 +42,7 @@ export declare namespace LastFM {
 		artist: string;
 		mbid: string;
 		url: string;
-		image: Array<Image>;
+		image?: Array<Image>;
 		listeners: string;
 		playcount: string;
 		tracks: Array<Track>;
@@ -62,7 +62,7 @@ export declare namespace LastFM {
 		streamable: string;
 		playcount: number;
 		listeners: number;
-		image: Array<Image>;
+		image?: Array<Image>;
 		artist: ArtistInfo;
 		rank: string;
 	}
@@ -89,11 +89,11 @@ export declare namespace LastFM {
 		name: string;
 		mbid: string;
 		url: string;
-		image: Array<Image>;
+		image?: Array<Image>;
 		streamable: string;
 		ontour: string;
 		stats?: Stats;
-		tags: Array<Tag>;
+		tags?: Array<Tag>;
 		bio?: Biography;
 		similar?: SimilarArtists;
 	}
@@ -102,7 +102,7 @@ export declare namespace LastFM {
 		name: string;
 		mbid: string;
 		url: string;
-		image: Array<Image>;
+		image?: Array<Image>;
 	}
 
 	export interface SimilarArtists {
@@ -125,5 +125,6 @@ export declare namespace LastFM {
 		artist?: Artist;
 		album?: Album;
 		track?: Track;
+		error?: string;
 	}
 }

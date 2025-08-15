@@ -2,7 +2,7 @@ import { OrmService } from '../../modules/engine/services/orm.service.js';
 import { Session } from './session.js';
 import { SessionMode } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import seq from 'sequelize';
+import { Op } from 'sequelize';
 import { SessionData } from '../../types/express.js';
 import { randomString } from '../../utils/random.js';
 
@@ -29,15 +29,13 @@ export class SessionService {
 	async set(sid: string, data: SessionData): Promise<void> {
 		const orm = this.ormService.fork();
 		let session = await this.getSession(sid);
-		if (!data.passport?.user) {
+		if (!data.passport.user) {
 			if (session) {
 				await orm.Session.removeAndFlush(session);
 			}
 			return;
 		}
-		if (!session) {
-			session = orm.Session.create({ sessionID: sid });
-		}
+		session ??= orm.Session.create({ sessionID: sid });
 		session.jwth = data.jwth;
 		session.agent = data.userAgent || '';
 		session.client = data.client || '';
@@ -46,13 +44,8 @@ export class SessionService {
 		if (session.user.id() !== data.passport.user) {
 			await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
 		}
-		let expires: Date | undefined;
-		if (typeof data.cookie.expires === 'boolean') {
-			expires = data.cookie.expires ? new Date() : undefined;
-		} else {
-			expires = data.cookie.expires ?? undefined;
-		}
-		session.expires = expires;
+		// eslint-disable-next-line @typescript-eslint/no-deprecated
+		session.expires = data.cookie.expires ?? undefined;
 		await orm.Session.persistAndFlush(session);
 	}
 
@@ -69,12 +62,12 @@ export class SessionService {
 			await this.remove(sessionID);
 			return;
 		}
-		return session || undefined;
+		return session ?? undefined;
 	}
 
 	async clearExpired(): Promise<void> {
 		const orm = this.ormService.fork();
-		await orm.Session.removeByQueryAndFlush({ where: { expires: { [seq.Op.lt]: Date.now() } } });
+		await orm.Session.removeByQueryAndFlush({ where: { expires: { [Op.lt]: Date.now() } } });
 	}
 
 	async byJwth(jwth: string): Promise<Session | undefined> {
@@ -162,18 +155,16 @@ export class SessionService {
 		};
 	}
 
-	async createSubsonic(userID: string): Promise<Session> {
+	async createSubsonic(userID: string): Promise<Session | undefined> {
 		const orm = this.ormService.fork();
 		let session = (await orm.Session.findOne({ where: { user: userID, mode: SessionMode.subsonic } }));
-		if (!session) {
-			session = orm.Session.create({
-				client: 'Subsonic Client',
-				mode: SessionMode.subsonic,
-				sessionID: `${userID}_subsonic`,
-				agent: 'Subsonic Client',
-				cookie: '{}'
-			});
-		}
+		session ??= orm.Session.create({
+			client: 'Subsonic Client',
+			mode: SessionMode.subsonic,
+			sessionID: `${userID}_subsonic`,
+			agent: 'Subsonic Client',
+			cookie: '{}'
+		});
 		const user = await orm.User.findOneOrFailByID(userID);
 		await session.user.set(user);
 		session.jwth = randomString(16);

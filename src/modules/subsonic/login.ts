@@ -32,25 +32,12 @@ import { SUBSONIC_VERSION } from './version.js';
 import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
 import { SubsonicError } from './model/subsonic-rest-data.js';
 
-export function hexEncode(n: string): string {
-	const i: Array<string> = [];
-	const r: Array<string> = [];
-	const u = '0123456789abcdef';
-	for (let t = 0; t < 256; t++) {
-		i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
-	}
-	for (let t = 0; t < n.length; t++) {
-		r[t] = i[n.codePointAt(t) as number];
-	}
-	return r.join('');
-}
-
 export function hexDecode(hex: string): string {
-	let str = '';
-	for (let i = 0; i < hex.length; i += 2) {
-		str += String.fromCodePoint(Number.parseInt(hex.slice(i, i + 2), 16));
+	let result = '';
+	for (let index = 0; index < hex.length; index += 2) {
+		result += String.fromCodePoint(Number.parseInt(hex.slice(index, index + 2), 16));
 	}
-	return str.trim();
+	return result.trim();
 }
 
 /**
@@ -68,18 +55,19 @@ function sendError(req: SubsonicParameterRequest, res: express.Response, error: 
 }
 
 async function validateCredentials(req: SubsonicParameterRequest): Promise<User> {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (req.user) {
 		return req.user;
 	}
 	if (req.parameters.password) {
-		let pass = req.parameters.password;
+		let pass = req.parameters.password as unknown;
 		if (typeof pass !== 'string') {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
 		}
 		if (pass.startsWith('enc:')) {
 			pass = hexDecode(pass.slice(4)).trim();
 		}
-		return req.engine.user.authSubsonicPassword(req.orm, req.parameters.username, pass);
+		return req.engine.user.authSubsonicPassword(req.orm, req.parameters.username, pass as string);
 	}
 	if (req.parameters.token && req.parameters.salt) {
 		return req.engine.user.authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
@@ -87,7 +75,8 @@ async function validateCredentials(req: SubsonicParameterRequest): Promise<User>
 	return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 }
 
-export function validateSubsonicParams(req: SubsonicRequest, res: express.Response): boolean {
+export function validateSubsonicParameters(req: SubsonicRequest, res: express.Response): boolean {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (!req.parameters?.client) {
 		sendError(req, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
 		return false;
@@ -113,18 +102,22 @@ export function validateSubsonicParams(req: SubsonicRequest, res: express.Respon
 }
 
 export async function subsonicLoginRateLimited(req: SubsonicRequest, res: express.Response, next: express.NextFunction): Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	req.client = req.parameters?.client;
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (req.user) {
-		return next();
+		next();
+		return;
 	}
 	const handled = await req.engine.rateLimit.loginSlowDown(req, res);
 	if (handled) {
 		return;
 	}
-	if (!validateSubsonicParams(req, res)) {
+	if (!validateSubsonicParameters(req, res)) {
 		return;
 	}
 	const user = await validateCredentials(req);
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (user) {
 		req.user = user;
 		next();
@@ -134,14 +127,15 @@ export async function subsonicLoginRateLimited(req: SubsonicRequest, res: expres
 
 export function SubsonicLoginMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
 	subsonicLoginRateLimited(req as SubsonicRequest, res, next)
-		.catch(error => {
-			return (new ApiResponder()).sendError(req, res, error);
+		.catch((error: unknown) => {
+			(new ApiResponder()).sendError(req, res, error);
 		});
 }
 
 export function SubsonicCheckAuthMiddleWare(req: express.Request, res: express.Response, next: express.NextFunction): void {
 	if (req.user) {
-		return next();
+		next();
+		return;
 	}
-	return (new ApiResponder()).sendError(req, res, SubsonicFormatter.ERRORS.UNAUTH);
+	(new ApiResponder()).sendError(req, res, SubsonicFormatter.ERRORS.UNAUTH);
 }

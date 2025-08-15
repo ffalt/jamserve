@@ -27,10 +27,10 @@ export class GraphqlMiddleware {
 
 		graphql.use(RateLimit(configService.rateLimits.graphlql));
 
-		log.debug(`registering graphql playground`);
+		log.debug('registering graphql playground');
 		graphql.use('/playground', await this.playground());
 
-		log.debug(`registering graphql api middleware`);
+		log.debug('registering graphql api middleware');
 		graphql.use('/', await this.apollo.middleware());
 		return graphql;
 	}

@@ -1,5 +1,5 @@
-import { WorkerRequestParameters } from '../worker/worker.types.js';
 import { IoRequest } from './io.types.js';
+import { WorkerRequestParameters } from '../worker/worker.types.js';
 
 interface DelayedRequest<T extends WorkerRequestParameters> {
 	request: IoRequest<T>;
@@ -11,9 +11,9 @@ export class DelayedRequests<T extends WorkerRequestParameters> {
 	requests = new Map<string, DelayedRequest<T>>();
 
 	findbyID(id: string): DelayedRequest<T> | undefined {
-		for (const d of this.requests) {
-			if (d[1].request.id === id) {
-				return d[1];
+		for (const req of this.requests.values()) {
+			if (req.request.id === id) {
+				return req;
 			}
 		}
 		return;

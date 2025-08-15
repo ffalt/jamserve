@@ -108,7 +108,7 @@ export class Orm {
 
 	private static async findInReposTypes(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
 		for (const repo of repos) {
-			const obj: Base = await repo.findOneByID(id);
+			const obj = await repo.findOneByID(id);
 			if (obj) {
 				return { obj, objType: repo.objType };
 			}
@@ -132,7 +132,7 @@ export class Orm {
 		return list;
 	}
 
-	byType(destType: DBObjectType): BaseRepository<any, any, any> | undefined {
+	byType(destinationType: DBObjectType): BaseRepository<any, any, any> | undefined {
 		return [
 			this.Album,
 			this.Artist,
@@ -155,7 +155,7 @@ export class Orm {
 			this.Tag,
 			this.Track,
 			this.User
-		].find(repo => repo.objType === destType);
+		].find(repo => repo.objType === destinationType);
 	}
 
 	public async findInRepos(id: string, repos: Array<BaseRepository<any, any, any>>): Promise<{ obj: Base; objType: DBObjectType } | undefined> {
@@ -234,7 +234,7 @@ export class OrmService {
 			password: config.env.db.password,
 			database: config.env.db.name,
 			host: config.env.db.socket ?? config.env.db.host,
-			port: config.env.db.port ? Number(config.env.db.port) : undefined
+			port: config.env.db.port ? Number(config.env.db.port as unknown) : undefined
 		};
 	}
 

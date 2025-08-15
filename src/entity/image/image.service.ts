@@ -77,9 +77,7 @@ export class ImageService {
 		if (!text && episode.path) {
 			text = path.basename(episode.path);
 		}
-		if (!text) {
-			text = episode.name;
-		}
+		text ??= episode.name;
 		if (!text) {
 			text = 'Podcast Episode';
 		}

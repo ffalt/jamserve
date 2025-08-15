@@ -8,7 +8,7 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
-export async function getFolderDisplayArtwork(orm: Orm, folder: Folder): Promise<Artwork | undefined> {
+export async function getFolderDisplayArtwork(_orm: Orm, folder: Folder): Promise<Artwork | undefined> {
 	const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
 	const items = await folder.artworks.getItems();
 	return items.find(a => a.types.includes(search));
@@ -47,7 +47,7 @@ export class FolderService {
 		for (const folder of folders) {
 			const parents = await this.collectFolderPath(await folder.parent.get());
 			const health = await this.checker.run(orm, folder, parents);
-			if (health && health.length > 0) {
+			if (health.length > 0) {
 				result.push({ folder, health });
 			}
 		}

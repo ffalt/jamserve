@@ -2,7 +2,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Folder as ORMFolder } from './folder.js';
-import { IncludesFolderArgs, IncludesFolderChildrenArgs } from './folder.args.js';
+import { IncludesFolderParameters, IncludesFolderChildrenParameters } from './folder.parameters.js';
 import { User } from '../user/user.js';
 import { FolderIndex } from './folder.model.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
@@ -21,8 +21,8 @@ export class FolderTransformService extends BaseTransformService {
 	@Inject
 	public Genre!: GenreTransformService;
 
-	async folderBases(orm: Orm, list: Array<ORMFolder>, folderArgs: IncludesFolderArgs, user: User): Promise<Array<FolderBase>> {
-		return await Promise.all(list.map(o => this.folderBase(orm, o, folderArgs, user)));
+	async folderBases(orm: Orm, list: Array<ORMFolder>, folderParameters: IncludesFolderParameters, user: User): Promise<Array<FolderBase>> {
+		return await Promise.all(list.map(o => this.folderBase(orm, o, folderParameters, user)));
 	}
 
 	async folderInfo(orm: Orm, o: ORMFolder): Promise<ExtendedInfo | undefined> {
@@ -35,7 +35,7 @@ export class FolderTransformService extends BaseTransformService {
 		return this.Genre.genreBases(orm, await o.genres.getItems(), {}, user);
 	}
 
-	async folderBase(orm: Orm, o: ORMFolder, folderArgs: IncludesFolderArgs, user: User): Promise<FolderBase> {
+	async folderBase(orm: Orm, o: ORMFolder, folderParameters: IncludesFolderParameters, user: User): Promise<FolderBase> {
 		return {
 			id: o.id,
 			name: o.name,
@@ -44,36 +44,36 @@ export class FolderTransformService extends BaseTransformService {
 			type: o.folderType,
 			level: o.level,
 			parentID: o.parent.id(),
-			genres: folderArgs.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
-			trackCount: folderArgs.folderIncTrackCount ? await o.tracks.count() : undefined,
-			folderCount: folderArgs.folderIncChildFolderCount ? await o.children.count() : undefined,
-			artworkCount: folderArgs.folderIncArtworkCount ? await o.children.count() : undefined,
-			tag: folderArgs.folderIncTag ? await this.folderTag(o) : undefined,
-			parents: folderArgs.folderIncParents ? await this.folderParents(orm, o) : undefined,
-			trackIDs: folderArgs.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
-			folderIDs: folderArgs.folderIncFolderIDs ? await o.children.getIDs() : undefined,
-			artworkIDs: folderArgs.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
-			info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
-			state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
+			genres: folderParameters.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
+			trackCount: folderParameters.folderIncTrackCount ? await o.tracks.count() : undefined,
+			folderCount: folderParameters.folderIncChildFolderCount ? await o.children.count() : undefined,
+			artworkCount: folderParameters.folderIncArtworkCount ? await o.children.count() : undefined,
+			tag: folderParameters.folderIncTag ? await this.folderTag(o) : undefined,
+			parents: folderParameters.folderIncParents ? await this.folderParents(orm, o) : undefined,
+			trackIDs: folderParameters.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
+			folderIDs: folderParameters.folderIncFolderIDs ? await o.children.getIDs() : undefined,
+			artworkIDs: folderParameters.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
+			info: folderParameters.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
+			state: folderParameters.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
 		};
 	}
 
-	async folderChildren(orm: Orm, o: ORMFolder, folderChildrenArgs: IncludesFolderChildrenArgs, user: User): Promise<Array<FolderBase>> {
-		const folderArgs: IncludesFolderArgs = {
-			folderIncTag: folderChildrenArgs.folderChildIncTag,
-			folderIncState: folderChildrenArgs.folderChildIncState,
-			folderIncChildFolderCount: folderChildrenArgs.folderChildIncChildFolderCount,
-			folderIncTrackCount: folderChildrenArgs.folderChildIncTrackCount,
-			folderIncArtworkCount: folderChildrenArgs.folderChildIncArtworkCount,
-			folderIncParents: folderChildrenArgs.folderChildIncParents,
-			folderIncInfo: folderChildrenArgs.folderChildIncInfo,
-			folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
-			folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
-			folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
-			folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs
+	async folderChildren(orm: Orm, o: ORMFolder, folderChildrenParameters: IncludesFolderChildrenParameters, user: User): Promise<Array<FolderBase>> {
+		const folderParameters: IncludesFolderParameters = {
+			folderIncTag: folderChildrenParameters.folderChildIncTag,
+			folderIncState: folderChildrenParameters.folderChildIncState,
+			folderIncChildFolderCount: folderChildrenParameters.folderChildIncChildFolderCount,
+			folderIncTrackCount: folderChildrenParameters.folderChildIncTrackCount,
+			folderIncArtworkCount: folderChildrenParameters.folderChildIncArtworkCount,
+			folderIncParents: folderChildrenParameters.folderChildIncParents,
+			folderIncInfo: folderChildrenParameters.folderChildIncInfo,
+			folderIncSimilar: folderChildrenParameters.folderChildIncSimilar,
+			folderIncArtworkIDs: folderChildrenParameters.folderChildIncArtworkIDs,
+			folderIncTrackIDs: folderChildrenParameters.folderChildIncTrackIDs,
+			folderIncFolderIDs: folderChildrenParameters.folderChildIncFolderIDs
 		};
 		const items = await o.children.getItems();
-		return await Promise.all(items.map(t => this.folderBase(orm, t, folderArgs, user)));
+		return await Promise.all(items.map(t => this.folderBase(orm, t, folderParameters, user)));
 	}
 
 	async folderIndex(_orm: Orm, result: IndexResult<IndexResultGroup<ORMFolder>>): Promise<FolderIndex> {

@@ -27,16 +27,16 @@ export class MetaDataBlockStreamInfo extends MetaDataBlock {
 			this.maxBlockSize = buffer.readUInt16BE(pos + 2);
 			this.minFrameSize = (buffer.readUInt8(pos + 4) << 16) | buffer.readUInt16BE(pos + 5);
 			this.maxFrameSize = (buffer.readUInt8(pos + 7) << 16) | buffer.readUInt16BE(pos + 8);
-			const tmp = buffer.readUInt32BE(pos + 10);
-			this.sampleRate = tmp >>> 12;
-			this.channels = (tmp >>> 9) & 0x07;
-			this.bitsPerSample = (tmp >>> 4) & 0x1F;
-			this.samples = +((tmp & 0x0F) << 4) + buffer.readUInt32BE(pos + 14);
+			const value = buffer.readUInt32BE(pos + 10);
+			this.sampleRate = value >>> 12;
+			this.channels = (value >>> 9) & 0x07;
+			this.bitsPerSample = (value >>> 4) & 0x1F;
+			this.samples = ((value & 0x0F) << 4) + buffer.readUInt32BE(pos + 14);
 			this.checksum = Buffer.alloc(16);
 			buffer.copy(this.checksum, 0, 18, 34);
 			this.duration = this.samples / this.sampleRate;
 			this.hasData = true;
-		} catch (error) {
+		} catch (error: unknown) {
 			this.error = error;
 			this.hasData = false;
 		}

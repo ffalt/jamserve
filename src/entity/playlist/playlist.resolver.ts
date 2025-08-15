@@ -4,7 +4,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
 import { PlaylistEntry, PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
-import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
+import { PlaylistIndexParameters, PlaylistsParameters } from './playlist.parameters.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 @Resolver(PlaylistQL)
@@ -19,7 +19,7 @@ export class PlaylistResolver {
 	}
 
 	@Query(() => PlaylistPageQL, { description: 'Search Playlists' })
-	async playlists(@Args() { page, filter, order, list, seed }: PlaylistsArgs, @Ctx() { orm, user }: Context): Promise<PlaylistPageQL> {
+	async playlists(@Args() { page, filter, order, list, seed }: PlaylistsParameters, @Ctx() { orm, user }: Context): Promise<PlaylistPageQL> {
 		if (list) {
 			return await orm.Playlist.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -27,7 +27,7 @@ export class PlaylistResolver {
 	}
 
 	@Query(() => PlaylistIndexQL, { description: 'Get the Navigation Index for Playlists' })
-	async playlistIndex(@Args() { filter }: PlaylistIndexArgs, @Ctx() { orm, user }: Context): Promise<PlaylistIndexQL> {
+	async playlistIndex(@Args() { filter }: PlaylistIndexParameters, @Ctx() { orm, user }: Context): Promise<PlaylistIndexQL> {
 		return await orm.Playlist.indexFilter(filter, user);
 	}
 

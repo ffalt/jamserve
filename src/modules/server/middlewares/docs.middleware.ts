@@ -32,13 +32,13 @@ export class DocsMiddleware {
 		const subsonicEntry = path.resolve('./static/api-docs/subsonic.html');
 		const jamEntry = path.resolve('./static/api-docs/jam.html');
 		const explorerJS = path.resolve('./static/api-docs/openapi-explorer.min.js');
-		api.get('/schema.graphql', (req, res) => {
+		api.get('/schema.graphql', (_req, res) => {
 			res.type('application/graphql').send(this.apollo.printSchema());
 		});
-		api.get('/openapi.json', (req, res) => {
+		api.get('/openapi.json', (_req, res) => {
 			res.type('application/json').send(this.getOpenApiSchema());
 		});
-		api.get('/subsonic-openapi.json', (req, res) => {
+		api.get('/subsonic-openapi.json', (_req, res) => {
 			res.type('application/json').send(this.getSubsonicOpenApiSchema());
 		});
 		api.get('/angular-client.zip', async (req, res) => {
@@ -47,9 +47,15 @@ export class DocsMiddleware {
 		api.get('/axios-client.zip', async (req, res) => {
 			(new ApiResponder()).sendBinary(req, res, await buildAxiosClientZip());
 		});
-		api.get('/subsonic/', (_req, res) => res.sendFile(subsonicEntry));
-		api.get('/', (_req, res) => res.sendFile(jamEntry));
-		api.get('/openapi-explorer.min.js', (_req, res) => res.sendFile(explorerJS));
+		api.get('/subsonic/', (_req, res) => {
+			res.sendFile(subsonicEntry);
+		});
+		api.get('/', (_req, res) => {
+			res.sendFile(jamEntry);
+		});
+		api.get('/openapi-explorer.min.js', (_req, res) => {
+			res.sendFile(explorerJS);
+		});
 		api.get('/subsonic.js', (req, res) => {
 			const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
 const explorer = document.getElementsByTagName('openapi-explorer')[0];  

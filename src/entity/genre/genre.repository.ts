@@ -2,15 +2,16 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, GenreOrderFields } from '../../types/enums.js';
 import { OrderHelper } from '../base/base.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
 import { Genre } from './genre.js';
-import { GenreFilterArgs, GenreOrderArgs } from './genre.args.js';
+import { GenreFilterParameters, GenreOrderParameters } from './genre.parameters.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, GenreOrderArgs> {
+export class GenreRepository extends BaseRepository<Genre, GenreFilterParameters, GenreOrderParameters> {
 	objType = DBObjectType.genre;
 	indexProperty = 'name';
 
-	buildOrder(order?: GenreOrderArgs): Array<OrderItem> {
+	buildOrder(order?: GenreOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case GenreOrderFields.created: {
@@ -27,7 +28,7 @@ export class GenreRepository extends BaseRepository<Genre, GenreFilterArgs, Genr
 		return [];
 	}
 
-	async buildFilter(filter?: GenreFilterArgs, _?: User): Promise<FindOptions<Genre>> {
+	async buildFilter(filter?: GenreFilterParameters, _?: User): Promise<FindOptions<Genre>> {
 		if (!filter) {
 			return {};
 		}

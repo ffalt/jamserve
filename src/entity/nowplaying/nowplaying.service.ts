@@ -37,7 +37,9 @@ export class NowPlayingService {
 			{ id: episode.id, type: DBObjectType.episode },
 			{ id: episode.podcast.idOrFail(), type: DBObjectType.podcast }
 		], user)
-			.catch(error => log.error(error)); // do not wait
+			.catch((error: unknown) => {
+				log.error(error);
+			}); // do not wait
 		return result;
 	}
 
@@ -53,7 +55,9 @@ export class NowPlayingService {
 			{ id: track.series.id(), type: DBObjectType.series },
 			{ id: track.root.id(), type: DBObjectType.root }
 		], user)
-			.catch(error => log.error(error)); // do not wait
+			.catch((error: unknown) => {
+				log.error(error);
+			}); // do not wait
 		return result;
 	}
 

@@ -1,25 +1,25 @@
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 import { FieldMetadata } from '../../deco/definitions/field-metadata.js';
 import { ClassMetadata } from '../../deco/definitions/class-metadata.js';
+import { capitalize } from '../../../utils/capitalize.js';
 
 const tab = '\t';
 const tabtab = '\t\t';
 
 export function buildTSEnums(): string {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n'
 	];
 	for (const enumInfo of metadata.enums) {
-		const enumObj = enumInfo.enumObj as any;
-		const entries: Array<string> = [];
-		for (const key of Object.keys(enumObj)) {
-			entries.push(`${tab + key} = '${enumObj[key]}'`);
-		}
-		sl.push('export enum ' + enumInfo.name + ' {\n' + entries.join(',\n') + '\n}\n');
+		const enumObj = enumInfo.enumObj as Record<string, string>;
+		const entries: Array<string> = Object.entries(enumObj).map(
+			([key, value]) => `${tab}${key} = '${value}'`
+		);
+		sl.push(`export enum ${enumInfo.name} {\n${entries.join(',\n')}\n}\n`);
 	}
 	return sl.join('\n');
 }
@@ -27,9 +27,9 @@ export function buildTSEnums(): string {
 function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array<string>, withDefault: boolean = false) {
 	const typeOptions = field.typeOptions;
 	let fieldType: string;
-	const jsDoc: Array<string> = [];
+	const jsDocument: Array<string> = [];
 	if (field.description) {
-		jsDoc.push(`${field.description}`);
+		jsDocument.push(field.description);
 	}
 	const fType = field.getType();
 	switch (fType) {
@@ -39,40 +39,41 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		}
 		case Number: {
 			fieldType = 'number';
-			jsDoc.push(`@TJS-type integer`);
+			jsDocument.push('@TJS-type integer');
 			if (typeOptions.min !== undefined) {
-				jsDoc.push(`@minimum ${typeOptions.min}`);
+				jsDocument.push(`@minimum ${typeOptions.min}`);
 			}
 			if (typeOptions.max !== undefined) {
-				jsDoc.push(`@maximum ${typeOptions.max}`);
+				jsDocument.push(`@maximum ${typeOptions.max}`);
 			}
 			break;
 		}
 		case Boolean: {
 			fieldType = 'boolean';
-			jsDoc.push(`@TJS-type boolean`);
+			jsDocument.push('@TJS-type boolean');
 			break;
 		}
 		default: {
-			const enumInfo = metadata.enums.find(e => e.enumObj === fType);
+			const enumInfo = metadata.enumInfo(fType);
 			if (enumInfo) {
-				fieldType = 'JamEnums.' + enumInfo.name;
+				fieldType = `JamEnums.${enumInfo.name}`;
 			} else {
-				const fObjectType = metadata.resultTypes.find(t => t.target === fType);
+				const fObjectType = metadata.resultType(fType);
 				fieldType = fObjectType?.name ?? 'any';
 			}
 		}
 	}
 	if (typeOptions.array) {
-		fieldType = 'Array<' + fieldType + '>';
+		fieldType = `Array<${fieldType}>`;
 	}
 	if (withDefault && typeOptions.defaultValue !== undefined) {
-		jsDoc.push(`@default ${typeOptions.defaultValue}`);
+		jsDocument.push(`@default ${typeOptions.defaultValue}`);
 	}
-	if (jsDoc.length === 1) {
-		sl.push(`${tabtab}/** ${jsDoc[0]} */`);
-	} else if (jsDoc.length > 1) {
-		sl.push(`${tabtab}/**\n${jsDoc.map(s => tabtab + ' * ' + s).join('\n')}\n${tabtab} */`);
+	if (jsDocument.length === 1) {
+		sl.push(`${tabtab}/** ${jsDocument.at(0) ?? ''} */`);
+	} else if (jsDocument.length > 1) {
+		const value = jsDocument.map(s => `${tabtab} * ${s}`).join('\n');
+		sl.push(`${tabtab}/**\n${value}\n${tabtab} */`);
 	}
 	sl.push(`${tabtab}${field.name}${typeOptions.nullable ? '?' : ''}: ${fieldType};`);
 }
@@ -97,7 +98,7 @@ function buildTSType(type: ClassMetadata, metadata: MetadataStorage, sl: Array<s
 }
 
 export function buildTSResultTypes(): string {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
@@ -109,25 +110,24 @@ export function buildTSResultTypes(): string {
 	for (const type of list) {
 		buildTSType(type, metadata, sl, false, metadata.resultTypes);
 	}
-	sl.push('}');
-	return sl.join('\n') + '\n';
+	sl.push('}', '');
+	return sl.join('\n');
 }
 
 function getCombinedType(call: MethodMetadata) {
-	if (call.params.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
+	if (call.parameters.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
 		const combineName = [
 			call.controllerClassMetadata?.name.replace('Controller', ''),
-			call.methodName[0].toUpperCase(),
-			call.methodName.slice(1),
+			capitalize(call.methodName),
 			'Args'
 		].join('');
 		const names: Array<string> = [];
-		for (const p of call.params) {
+		for (const p of call.parameters) {
 			if (p.kind === 'args') {
 				const type = p.getType();
-				const argumentType = getMetadataStorage().argumentTypes.find(it => it.target === type);
-				if (argumentType) {
-					names.push(argumentType.name);
+				const parameterType = metadataStorage().parameterTypes.find(it => it.target === type);
+				if (parameterType) {
+					names.push(parameterType.name);
 				} else {
 					names.push(`ERROR: Could not find argument type for ${p.methodName} ${p.propertyName}`);
 				}
@@ -136,7 +136,7 @@ function getCombinedType(call: MethodMetadata) {
 			} else if (p.kind === 'arg' && p.mode === 'file') {
 				// nope ignore
 			} else if (p.kind !== 'context') {
-				names.push('ERROR: support mixing kinds in combining parameters for ' + JSON.stringify(p));
+				names.push(`ERROR: support mixing kinds in combining parameters for ${JSON.stringify(p)}`);
 			}
 		}
 		return [`${tab}export type ${combineName} = ${names.join(' & ')};\n`];
@@ -145,17 +145,17 @@ function getCombinedType(call: MethodMetadata) {
 }
 
 export function buildTSParameterTypes(): string {
-	const metadata = getMetadataStorage();
+	const metadata = metadataStorage();
 	const sl: Array<string> = [
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
 		`import type * as JamEnums from './jam-enums';\n`,
 		'export declare namespace JamParameters {\n'
 	];
-	const list = metadata.argumentTypes
+	const list = metadata.parameterTypes
 		.sort((a, b) => a.name.localeCompare(b.name));
 	for (const type of list) {
-		buildTSType(type, metadata, sl, true, metadata.argumentTypes);
+		buildTSType(type, metadata, sl, true, metadata.parameterTypes);
 	}
 	sl.push(
 		`${tab}export interface ID {\n${tabtab}id: string;\n${tab}}\n`,
@@ -167,5 +167,6 @@ export function buildTSParameterTypes(): string {
 	for (const post of metadata.posts) {
 		sl.push(...getCombinedType(post));
 	}
-	return sl.join('\n') + '}\n';
+	const lines = sl.join('\n');
+	return `${lines}}\n`;
 }

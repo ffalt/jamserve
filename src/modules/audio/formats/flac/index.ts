@@ -54,7 +54,7 @@ export class Flac {
 				} else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
 				} else if (mdb.type === MDB_TYPE.PICTURE && (mdb as MetaDataBlockPicture).pictureData) {
-					result.pictures = result.pictures || [];
+					result.pictures = result.pictures ?? [];
 					result.pictures.push(Flac.formatMediaPicture(mdb as MetaDataBlockPicture));
 				}
 			});
@@ -64,15 +64,15 @@ export class Flac {
 			processor.on('done', () => {
 				resolve(result);
 			});
-			processor.on('error', (e: Error) => {
-				reject(e);
+			processor.on('error', (error: unknown) => {
+				reject(error);
 			});
-			reader.on('error', (e: Error) => {
-				reject(e);
+			reader.on('error', (error: unknown) => {
+				reject(error);
 			});
 			try {
 				reader.pipe(processor);
-			} catch (error) {
+			} catch (error: unknown) {
 				reject(error);
 			}
 		});
@@ -89,12 +89,12 @@ export class Flac {
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
-			processor.on('preprocess', mdb => {
+			processor.on('preprocess', (mdb: MetaDataBlock) => {
 				if (mdb.type === MDB_TYPE.VORBIS_COMMENT || mdb.type === MDB_TYPE.PICTURE || mdb.type === MDB_TYPE.PADDING) {
 					mdb.remove();
 				}
 				if (mdb.isLast) {
-					if (mdb.remove) {
+					if (mdb.removed) {
 						const lastBlock = flacBlocks.at(-1);
 						if (lastBlock) {
 							lastBlock.isLast = true;
@@ -106,14 +106,14 @@ export class Flac {
 					flacBlocks = [];
 				}
 			});
-			reader.on('error', (e: Error) => {
-				reject(e);
+			reader.on('error', (error: unknown) => {
+				reject(error);
 			});
-			processor.on('error', (e: Error) => {
-				reject(e);
+			processor.on('error', (error: unknown) => {
+				reject(error);
 			});
-			writer.on('error', (e: Error) => {
-				reject(e);
+			writer.on('error', (error: unknown) => {
+				reject(error);
 			});
 			writer.on('finish', () => {
 				resolve();
@@ -123,18 +123,18 @@ export class Flac {
 	}
 
 	async write(filename: string, flacBlocks: Array<MetaWriteableDataBlock>): Promise<void> {
-		const tmpFile = `${filename}.tmp`;
+		const temporaryFile = `${filename}.tmp`;
 		try {
-			await this.writeTo(filename, tmpFile, flacBlocks);
+			await this.writeTo(filename, temporaryFile, flacBlocks);
 			const exists = await fse.pathExists(filename);
 			if (exists) {
 				await fse.remove(filename);
 			}
-			await fse.move(tmpFile, filename);
-		} catch (error) {
-			const exists = await fse.pathExists(tmpFile);
+			await fse.move(temporaryFile, filename);
+		} catch (error: unknown) {
+			const exists = await fse.pathExists(temporaryFile);
 			if (exists) {
-				await fse.remove(tmpFile);
+				await fse.remove(temporaryFile);
 			}
 			return Promise.reject(error);
 		}
@@ -145,11 +145,11 @@ export class Flac {
 		for (const line of mdb.comments) {
 			const pos = line.indexOf('=');
 			const key = line.slice(0, pos).toUpperCase().replaceAll(' ', '_');
-			let i = 1;
+			let index = 1;
 			let suffix = '';
 			while (tag[key + suffix]) {
-				i++;
-				suffix = `|${i}`;
+				index++;
+				suffix = `|${index}`;
 			}
 			tag[key + suffix] = line.slice(pos + 1);
 		}

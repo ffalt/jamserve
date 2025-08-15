@@ -62,10 +62,11 @@ export class RootWorker extends BaseWorker {
 		let rootMatch: MergeNode | undefined;
 		for (const folder of folders) {
 			const parents = await this.getParents(folder);
-			if (parents[0]) {
+			const parent = parents.at(0);
+			if (parent) {
 				if (!rootMatch) {
-					const tracks = await RootWorker.buildMergeTracks(parents[0]);
-					rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
+					const tracks = await RootWorker.buildMergeTracks(parent);
+					rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
 				}
 				const pathToChild = [...parents.slice(1), folder];
 				await this.buildMergeNode(pathToChild, rootMatch);
@@ -79,7 +80,10 @@ export class RootWorker extends BaseWorker {
 	}
 
 	private async buildMergeNode(pathToChild: Array<Folder>, merge: MergeNode) {
-		const folder = pathToChild[0];
+		const folder = pathToChild.at(0);
+		if (!folder) {
+			return;
+		}
 		let node = merge.children.find(c => c.folder.id === folder.id);
 		if (!node) {
 			const tracks = await RootWorker.buildMergeTracks(folder);
@@ -143,8 +147,8 @@ export class RootWorker extends BaseWorker {
 	}
 
 	private logNode(node?: MergeNode): Array<string> {
-		let stat = [' '.repeat(node?.folder?.level ?? 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
-		for (const n of (node?.children || [])) {
+		let stat = [`${' '.repeat(node?.folder.level ?? 0)}${node?.changed ? '** ' : '|- '}${node?.folder.path}`];
+		for (const n of (node?.children ?? [])) {
 			stat = [...stat, ...this.logNode(n)];
 		}
 		return stat;

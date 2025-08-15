@@ -1,5 +1,5 @@
 export interface ControllerClassMetadata {
-	target: Function;
+	target: NewableFunction;
 	name: string;
 	abstract?: boolean;
 	description?: string;

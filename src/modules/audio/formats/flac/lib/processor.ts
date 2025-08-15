@@ -9,7 +9,7 @@ import { MetaDataBlockPicture } from './block.picture.js';
 import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
 import { BlockVorbiscomment } from './block.vorbiscomment.js';
 
-const enum STATE {
+enum STATE {
 	IDLE = 0,
 	MARKER = 1,
 	MDB_HEADER = 2,
@@ -18,7 +18,7 @@ const enum STATE {
 	SCAN_MARKER = 5
 }
 
-export const enum MDB_TYPE {
+export enum MDB_TYPE {
 	STREAMINFO = 0,
 	PADDING = 1,
 	APPLICATION = 2,
@@ -44,7 +44,7 @@ export class FlacProcessorStream extends Transform {
 	private buf?: Buffer;
 	private bufPos = 0;
 
-	private mdb: any;
+	private mdb?: MetaDataBlock;
 	private mdbLen = 0;
 	private mdbLast = false;
 	private mdbPush = false;
@@ -78,7 +78,7 @@ export class FlacProcessorStream extends Transform {
 		this.isFlac = false;
 		this.bufPos = 0;
 		this.buf = undefined;
-		this.mdb = null;
+		this.mdb = undefined;
 		callback();
 	}
 
@@ -97,10 +97,10 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private scan(chunk: Chunk): void {
-		for (let i = chunk.pos; i < chunk.length; i++) {
-			const slice = Buffer.from(chunk.buffer.subarray(i, i + 4)).toString('utf8', 0);
+		for (let index = chunk.pos; index < chunk.length; index++) {
+			const slice = Buffer.from(chunk.buffer.subarray(index, index + 4)).toString('utf8', 0);
 			if (slice === 'fLaC') {
-				this.scanSetFlac(chunk, i);
+				this.scanSetFlac(chunk, index);
 				return;
 			}
 		}
@@ -110,7 +110,7 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private safePushFull(chunk: Chunk, minCapacity: number, persist: boolean, validate: (slice: Buffer, isDone: boolean) => boolean): void {
-		let slice;
+		let slice: Buffer;
 		// Enough data available
 		if (persist) {
 			// Persist the entire block so it can be parsed
@@ -138,7 +138,7 @@ export class FlacProcessorStream extends Transform {
 		// Not enough data available
 		if (persist) {
 			// Copy/append incomplete block to backup buffer
-			this.buf = this.buf || Buffer.alloc(minCapacity);
+			this.buf = this.buf ?? Buffer.alloc(minCapacity);
 			chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
 		} else {
 			// Push incomplete block after validation
@@ -197,6 +197,9 @@ export class FlacProcessorStream extends Transform {
 
 	private processMDB(chunk: Chunk): void {
 		if (this.safePush(chunk, this.mdbLen, this.parseMetaDataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
+			if (!this.mdb) {
+				return;
+			}
 			if (this.mdb.isLast) {
 				// This MDB has the isLast flag set to true.
 				// Ignore all following MDBs.
@@ -282,6 +285,9 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private preProcess(slice: Buffer, header: number): boolean {
+		if (!this.mdb) {
+			return false;
+		}
 		if (this.mdbLastWritten) {
 			// A previous MDB had the isLast flag set to true.
 			// Ignore all following MDBs.
@@ -314,6 +320,9 @@ export class FlacProcessorStream extends Transform {
 	private validateMDB(slice: Buffer, isDone: boolean): boolean {
 		// Parse the MDB if parseMetaDataBlocks option is set to true
 		if (this.parseMetaDataBlocks && isDone) {
+			if (!this.mdb) {
+				return false;
+			}
 			this.mdb.parse(slice);
 		}
 		return this.mdbPush;

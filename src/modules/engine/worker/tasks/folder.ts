@@ -12,8 +12,8 @@ import { Orm } from '../../services/orm.service.js';
 
 @InRequestScope
 export class FolderWorker extends BaseWorker {
-	private static async validateFolderTask(destPath: string, destName: string): Promise<void> {
-		const newPath = path.join(destPath, destName);
+	private static async validateFolderTask(destinationPath: string, destinationName: string): Promise<void> {
+		const newPath = path.join(destinationPath, destinationName);
 		const exists = await fse.pathExists(newPath);
 		if (exists) {
 			return Promise.reject(new Error('Folder name already used in Destination'));
@@ -46,22 +46,22 @@ export class FolderWorker extends BaseWorker {
 		await folder.parent.set(newParent);
 		await folder.root.set(await newParent.root.getOrFail());
 		orm.Folder.persistLater(folder);
-		const dest = ensureTrailingPathSeparator(newPath);
+		const destination = ensureTrailingPathSeparator(newPath);
 		for (const sub of folders) {
-			sub.path = sub.path.replace(source, dest);
+			sub.path = sub.path.replace(source, destination);
 			sub.root = newParent.root;
 			changes.folders.updated.add(sub);
 			orm.Folder.persistLater(sub);
 			const tracks = await sub.tracks.getItems();
 			for (const track of tracks) {
-				track.path = track.path.replace(source, dest);
+				track.path = track.path.replace(source, destination);
 				track.root = newParent.root;
 				changes.tracks.updated.add(track);
 				orm.Track.persistLater(track);
 			}
 			const artworks = await sub.artworks.getItems();
 			for (const artwork of artworks) {
-				artwork.path = artwork.path.replace(source, dest);
+				artwork.path = artwork.path.replace(source, destination);
 				changes.artworks.updated.add(artwork);
 				orm.Artwork.persistLater(artwork);
 			}
@@ -139,20 +139,20 @@ export class FolderWorker extends BaseWorker {
 			return Promise.reject(new Error('Folder renaming failed'));
 		}
 		const folders = await orm.Folder.findAllDescendants(folder);
-		const dest = ensureTrailingPathSeparator(newPath);
+		const destination = ensureTrailingPathSeparator(newPath);
 		for (const item of folders) {
-			item.path = item.path.replace(oldPath, dest);
+			item.path = item.path.replace(oldPath, destination);
 			changes.folders.updated.add(item);
 			orm.Folder.persistLater(item);
 			const tracks = await item.tracks.getItems();
 			for (const track of tracks) {
-				track.path = track.path.replace(oldPath, dest);
+				track.path = track.path.replace(oldPath, destination);
 				changes.tracks.updated.add(track);
 				orm.Track.persistLater(track);
 			}
 			const artworks = await item.artworks.getItems();
 			for (const artwork of artworks) {
-				artwork.path = artwork.path.replace(oldPath, dest);
+				artwork.path = artwork.path.replace(oldPath, destination);
 				changes.artworks.updated.add(artwork);
 				orm.Artwork.persistLater(artwork);
 			}

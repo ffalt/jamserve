@@ -1,19 +1,19 @@
 import { Genre, GenreIndex, GenrePage } from './genre.model.js';
 import { TrackOrderFields, UserRole } from '../../types/enums.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
-import { GenreFilterArgs, GenreOrderArgs, IncludesGenreArgs } from './genre.args.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
+import { GenreFilterParameters, GenreOrderParameters, IncludesGenreParameters } from './genre.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
 import { TrackPage } from '../track/track.model.js';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { IncludesTrackParameters, TrackOrderParameters } from '../track/track.parameters.js';
+import { AlbumOrderParameters, IncludesAlbumParameters } from '../album/album.parameters.js';
 import { AlbumPage } from '../album/album.model.js';
-import { ArtistOrderArgs, IncludesArtistArgs } from '../artist/artist.args.js';
+import { ArtistOrderParameters, IncludesArtistParameters } from '../artist/artist.parameters.js';
 import { ArtistPage } from '../artist/artist.model.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 
 @Controller('/genre', { tags: ['Genres'], roles: [UserRole.stream] })
 export class GenreController {
@@ -22,11 +22,11 @@ export class GenreController {
 		{ description: 'Get a Genre by Id', summary: 'Get Genre' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Genre Id', isID: true }) id: string,
-		@QueryParams() genreArgs: IncludesGenreArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Genre Id', isID: true }) id: string,
+		@QueryParameters() parameters: IncludesGenreParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Genre> {
-		return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
+		return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), parameters, user);
 	}
 
 	@Get('/search',
@@ -34,21 +34,21 @@ export class GenreController {
 		{ description: 'Search Genres' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() genreArgs: IncludesGenreArgs,
-		@QueryParams() filter: GenreFilterArgs,
-		@QueryParams() list: ListArgs,
-		@QueryParams() order: GenreOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() parameters: IncludesGenreParameters,
+		@QueryParameters() filter: GenreFilterParameters,
+		@QueryParameters() list: ListParameters,
+		@QueryParameters() order: GenreOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<GenrePage> {
 		if (list.list) {
 			return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.Genre.genre(orm, o, genreArgs, user)
+				o => engine.transform.Genre.genre(orm, o, parameters, user)
 			);
 		}
 		return await orm.Genre.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.Genre.genre(orm, o, genreArgs, user)
+			o => engine.transform.Genre.genre(orm, o, parameters, user)
 		);
 	}
 
@@ -58,8 +58,8 @@ export class GenreController {
 		{ description: 'Get the Navigation Index for Genres', summary: 'Get Genre Index' }
 	)
 	async index(
-		@QueryParams() filter: GenreFilterArgs,
-		@Ctx() { orm, engine }: Context
+		@QueryParameters() filter: GenreFilterParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<GenreIndex> {
 		return await engine.transform.Genre.genreIndex(orm, await orm.Genre.indexFilter(filter));
 	}
@@ -70,17 +70,17 @@ export class GenreController {
 		{ description: 'Get Tracks of Genres', summary: 'Get Tracks' }
 	)
 	async tracks(
-		@QueryParams() page: PageArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@QueryParams() filter: GenreFilterArgs,
-		@QueryParams() order: TrackOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@QueryParameters() filter: GenreFilterParameters,
+		@QueryParameters() order: TrackOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-		const orders = [{ orderBy: order?.orderBy ?? TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
+		const orders = [{ orderBy: order.orderBy ?? TrackOrderFields.default, orderDesc: order.orderDesc ?? false }];
 		return await orm.Track.searchTransformFilter(
 			{ genreIDs }, orders, page, user,
-			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}
 
@@ -90,16 +90,16 @@ export class GenreController {
 		{ description: 'Get Albums of Genres', summary: 'Get Albums' }
 	)
 	async albums(
-		@QueryParams() page: PageArgs,
-		@QueryParams() albumArgs: IncludesAlbumArgs,
-		@QueryParams() filter: GenreFilterArgs,
-		@QueryParams() order: AlbumOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() albumParameters: IncludesAlbumParameters,
+		@QueryParameters() filter: GenreFilterParameters,
+		@QueryParameters() order: AlbumOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<AlbumPage> {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
 			{ genreIDs }, [order], page, user,
-			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
+			o => engine.transform.Album.albumBase(orm, o, albumParameters, user)
 		);
 	}
 
@@ -109,16 +109,16 @@ export class GenreController {
 		{ description: 'Get Artists of Genres', summary: 'Get Artists' }
 	)
 	async artists(
-		@QueryParams() page: PageArgs,
-		@QueryParams() artistArgs: IncludesArtistArgs,
-		@QueryParams() filter: GenreFilterArgs,
-		@QueryParams() order: ArtistOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() artistParameters: IncludesArtistParameters,
+		@QueryParameters() filter: GenreFilterParameters,
+		@QueryParameters() order: ArtistOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtistPage> {
 		const genreIDs = await orm.Genre.findIDsFilter(filter, user);
 		return await orm.Artist.searchTransformFilter(
 			{ genreIDs }, [order], page, user,
-			o => engine.transform.Artist.artistBase(orm, o, artistArgs, user)
+			o => engine.transform.Artist.artistBase(orm, o, artistParameters, user)
 		);
 	}
 }

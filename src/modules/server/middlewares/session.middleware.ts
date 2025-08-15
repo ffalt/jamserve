@@ -13,7 +13,7 @@ export function useSessionMiddleware(configService: ConfigService, sessionServic
 		proxy: configService.env.session.proxy,
 		saveUninitialized: false,
 		cookie: {
-			secure: !!configService.env.session.secure,
+			secure: !!(configService.env.session.secure as unknown),
 			path: '/',
 			maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : undefined
 		}

@@ -2,7 +2,7 @@ import express from 'express';
 import { User } from '../../entity/user/user.js';
 import { EngineRequest } from '../server/middlewares/engine.middleware.js';
 
-export interface SubsonicBaseParams {
+export interface SubsonicBaseParameters {
 	username: string;
 	password?: string;
 	token?: string;
@@ -13,7 +13,7 @@ export interface SubsonicBaseParams {
 	callback?: string;
 }
 
-function processParams(req: express.Request<any, any, any,
+function processParameters(req: express.Request<any, any, any,
 	{
 		u?: string;
 		p?: string;
@@ -23,7 +23,7 @@ function processParams(req: express.Request<any, any, any,
 		s?: string;
 		c?: string;
 		callback?: string;
-	}>): SubsonicBaseParams {
+	}>): SubsonicBaseParameters {
 	/*
 	Parameter 	Required 	Default 	Comment
 	u 	Yes 		The username.
@@ -34,33 +34,33 @@ function processParams(req: express.Request<any, any, any,
 	c 	Yes 		A unique string identifying the client application.
 	f 	No 	xml 	Request data to be returned in this format. Supported values are "xml", "json" (since 1.4.0) and "jsonp" (since 1.6.0). If using jsonp, specify name of javascript callback function using a callback parameter.
 	 */
-	const params: SubsonicBaseParams = {
-		username: req.query.u || '',
+	const parameters: SubsonicBaseParameters = {
+		username: req.query.u ?? '',
 		password: req.query.p,
-		format: req.query.f || 'xml',
-		version: req.query.v || '',
+		format: req.query.f ?? 'xml',
+		version: req.query.v ?? '',
 		token: req.query.t,
 		salt: req.query.s,
-		client: req.query.c || '',
+		client: req.query.c ?? '',
 		callback: req.query.callback
 	};
-	delete req.query.t;
-	delete req.query.u;
-	delete req.query.p;
-	delete req.query.f;
-	delete req.query.v;
-	delete req.query.c;
-	delete req.query.s;
-	delete req.query.callback;
-	return params;
+	req.query.t = undefined;
+	req.query.u = undefined;
+	req.query.p = undefined;
+	req.query.f = undefined;
+	req.query.v = undefined;
+	req.query.c = undefined;
+	req.query.s = undefined;
+	req.query.callback = undefined;
+	return parameters;
 }
 
 export interface SubsonicParameterRequest extends EngineRequest {
 	user: User;
-	parameters: SubsonicBaseParams;
+	parameters: SubsonicBaseParameters;
 }
 
 export function SubsonicParameterMiddleWare(req: express.Request, _res: express.Response, next: express.NextFunction): void {
-	(req as SubsonicParameterRequest).parameters = processParams(req);
+	(req as SubsonicParameterRequest).parameters = processParameters(req);
 	next();
 }

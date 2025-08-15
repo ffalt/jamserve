@@ -1,13 +1,13 @@
 import { ImageFormatType, UserRole } from '../../types/enums.js';
 import { ApiImageTypes } from '../../types/consts.js';
-import { ImageArgs } from './image.args.js';
+import { ImageParameters } from './image.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
-import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { PathParameters } from '../../modules/rest/decorators/path-parameters.js';
 
 @Controller('/image', { tags: ['Image'], roles: [UserRole.stream] })
 export class ImageController {
@@ -33,13 +33,13 @@ export class ImageController {
 		}
 	)
 	async image(
-		@PathParams() imageArgs: ImageArgs,
-		@Ctx() { orm, engine }: Context
+		@PathParameters() parameters: ImageParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<ApiBinaryResult | undefined> {
-		const result = await orm.findInImageTypes(imageArgs.id);
+		const result = await orm.findInImageTypes(parameters.id);
 		if (!result) {
 			return Promise.reject(notFoundError());
 		}
-		return await engine.image.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
+		return await engine.image.getObjImage(orm, result.obj, result.objType, parameters.size, parameters.format);
 	}
 }

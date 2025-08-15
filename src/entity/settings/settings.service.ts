@@ -45,20 +45,16 @@ export class SettingsService {
 
 	async loadSettings(orm: Orm): Promise<void> {
 		const settingsStore = await SettingsService.getSettings(orm);
-		if (settingsStore) {
-			this.settings = JSON.parse(settingsStore.data);
-		}
+		this.settings = JSON.parse(settingsStore.data);
 	}
 
 	private static async getSettings(orm: Orm): Promise<Settings> {
 		let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });
-		if (!settingsStore) {
-			settingsStore = orm.Settings.create({
-				section: 'jamserve',
-				data: JSON.stringify(defaultEngineSettings),
-				version: JAMSERVE_VERSION
-			});
-		}
+		settingsStore ??= orm.Settings.create({
+			section: 'jamserve',
+			data: JSON.stringify(defaultEngineSettings),
+			version: JAMSERVE_VERSION
+		});
 		return settingsStore;
 	}
 

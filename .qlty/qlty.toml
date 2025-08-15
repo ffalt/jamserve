@@ -71,16 +71,16 @@ name = "actionlint"
 name = "checkov"
 
 [[plugin]]
-name = "eslint"
-version = "9.33.0"
-package_file = "package.json"
-package_filters = ["eslint", "jest"]
-
-[[plugin]]
 name = "osv-scanner"
 
 [[plugin]]
 name = "radarlint-js"
+
+[[plugin]]
+name = "eslint"
+version = "9.32.0"
+package_file = "package.json"
+package_filters = ["eslint", "jest"]
 
 [[plugin]]
 name = "ripgrep"
@@ -100,6 +100,9 @@ name = "trufflehog"
 name = "markdownlint"
 mode = "comment"
 
+[[plugin]]
+name = "biome"
+
 [[triage]]
 # disable openapi hints for now
 match.rules = [
@@ -112,9 +115,25 @@ set.ignored = true
 
 [[triage]]
 match.rules = [
-  "markdownlint:MD013", # Line length
-  "markdownlint:MD024", # Multiple headings with the same content
   "ripgrep:TODO", # Complete the task associated to this "TODO" comment.
+  "markdownlint:MD013", # Line length
+  "markdownlint:MD024" # Multiple headings with the same content
+]
+set.ignored = true
+
+[[triage]]
+match.rules = [
+  "biome:fmt", # formatting
+  "biome:lint/suspicious/noEmptyInterface", #  An empty interface is equivalent to {}.
+  "biome:lint/style/noInferrableTypes", # This type annotation is trivially inferred from its initialization.
+  "biome:lint/style/useImportType", # All these imports are only used as types. (not compatible with legacy decorators)
+  "biome:lint/style/useEnumInitializers", # This enum declaration contains members that are implicitly initialized.
+  "biome:lint/suspicious/noExplicitAny", # Unexpected any. Specify a different type.
+  "biome:parse", # Decorators are not valid here.
+  "biome:lint/style/noParameterAssign", # Reassigning a function parameter is confusing.
+  "biome:lint/style/noNonNullAssertion", # Forbidden non-null assertion.
+  "biome:lint/complexity/noStaticOnlyClass", # Avoid classes that contain only static members.
+  "biome:lint/complexity/noBannedTypes", # Don't use 'Function' as a type.
   "radarlint-js:typescript:S6671", # Expected the Promise rejection reason to be an Error.
   "radarlint-js:typescript:S2301", # Provide multiple methods instead of using "boolean" to determine which action to take.
   "radarlint-js:typescript:S4043", # Move this array "sort" operation to a separate statement or replace it with "toSorted" (Not available in ES2020)
@@ -124,13 +143,18 @@ match.rules = [
   "radarlint-js:typescript:S4325", # This assertion is unnecessary since it does not change the type of the expression. (False positives in GraphQL @Arg('id', () => ID!))
   "radarlint-js:typescript:S6564", # Remove this redundant type alias
   "radarlint-js:typescript:S3626", # Remove this redundant jump.
-  "radarlint-js:typescript:S1135" # Complete the task associated to this "TODO" comment.
+  "radarlint-js:typescript:S1135", # Complete the task associated to this "TODO" comment.
+  "radarlint-js:typescript:S3735", # Remove this use of the "void" operator.
+  "radarlint-js:typescript:S6551" # 'value' will use Object's default stringification format ('[object Object]') when stringified.
 ]
 set.ignored = true
 
 [[triage]]
 match.file_patterns = ["*.test.ts"]
 match.rules = [
+  "biome:lint/complexity/noUselessConstructor", # This constructor is unnecessary.
+  "biome:lint/complexity/useLiteralKeys", # The computed expression can be simplified without the use of a string literal.
+  "biome:lint/style/noParameterAssign", # Reassigning a function parameter is confusing.
   "radarlint-js:typescript:S1186", # Unexpected empty function
   "radarlint-js:typescript:S3776",
   "radarlint-js:typescript:S2004"

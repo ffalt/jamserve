@@ -7,7 +7,7 @@ import { FileTyp, FolderType } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
 import { Track } from '../../../entity/track/track.js';
 import path from 'node:path';
-import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
+import { basenameStripExtension, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
 import { AudioModule } from '../../audio/audio.module.js';
 import { Orm } from '../services/orm.service.js';
 import { Artwork } from '../../../entity/artwork/artwork.js';
@@ -84,9 +84,9 @@ export class WorkerScan {
 		const name = path.basename(file.path);
 		const info = await this.imageModule.getImageInfo(file.path);
 		artwork.types = artWorkImageNameToType(name);
-		artwork.format = info?.format;
-		artwork.height = info?.height;
-		artwork.width = info?.width;
+		artwork.format = info.format;
+		artwork.height = info.height;
+		artwork.width = info.width;
 		artwork.statCreated = file.ctime;
 		artwork.statModified = file.mtime;
 		artwork.fileSize = file.size;
@@ -140,7 +140,7 @@ export class WorkerScan {
 	private async buildTrack(file: ScanFile, parent: Folder): Promise<MatchTrack> {
 		log.info('New Track', file.path);
 		const track = this.orm.Track.create({
-			name: basenameStripExt(file.path),
+			name: basenameStripExtension(file.path),
 			fileName: path.basename(file.path),
 			path: ensureTrailingPathSeparator(path.dirname(file.path))
 		});
@@ -275,7 +275,7 @@ export class WorkerScan {
 
 	private async scanArtwork(artwork: Artwork, scanArtworks: Array<ScanFile>, foundScanArtworks: Array<ScanFile>, result: MatchNode): Promise<void> {
 		const filename = path.join(artwork.path, artwork.name);
-		const scanArtwork = scanArtworks.find(t => t.path == filename);
+		const scanArtwork = scanArtworks.find(t => t.path === filename);
 		if (!scanArtwork) {
 			log.info('Artwork has been removed', filename);
 			result.changed = true;
@@ -310,7 +310,7 @@ export class WorkerScan {
 
 	private async scanTrack(track: Track, scanTracks: Array<ScanFile>, foundScanTracks: Array<ScanFile>, result: MatchNode) {
 		const filename = path.join(track.path, track.fileName);
-		const scanTrack = scanTracks.find(t => t.path == filename);
+		const scanTrack = scanTracks.find(t => t.path === filename);
 		if (!scanTrack) {
 			log.info('Track has been removed', filename);
 			result.changed = true;

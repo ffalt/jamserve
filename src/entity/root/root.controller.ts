@@ -1,17 +1,17 @@
 import { Root, RootPage, RootUpdateStatus } from './root.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesRootArgs, RootFilterArgs, RootMutateArgs, RootOrderArgs, RootRefreshArgs } from './root.args.js';
+import { IncludesRootParameters, RootFilterParameters, RootMutateParameters, RootOrderParameters, RootRefreshParameters } from './root.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
-import { PageArgs } from '../base/base.args.js';
+import { PageParameters } from '../base/base.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
+import { Post } from '../../modules/rest/decorators/post.js';
 
 @Controller('/root', { tags: ['Root'], roles: [UserRole.stream] })
 export class RootController {
@@ -20,13 +20,13 @@ export class RootController {
 		{ description: 'Get a Root by Id', summary: 'Get Root' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Root Id', isID: true }) id: string,
-		@QueryParams() rootArgs: IncludesRootArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@QueryParameters() parameters: IncludesRootParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Root> {
 		return engine.transform.Root.root(
 			orm, await orm.Root.oneOrFailByID(id),
-			rootArgs, user
+			parameters, user
 		);
 	}
 
@@ -36,15 +36,15 @@ export class RootController {
 		{ description: 'Search Roots' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() rootArgs: IncludesRootArgs,
-		@QueryParams() filter: RootFilterArgs,
-		@QueryParams() order: RootOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() parameters: IncludesRootParameters,
+		@QueryParameters() filter: RootFilterParameters,
+		@QueryParameters() order: RootOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<RootPage> {
 		return await orm.Root.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.Root.root(orm, o, rootArgs, user)
+			o => engine.transform.Root.root(orm, o, parameters, user)
 		);
 	}
 
@@ -54,8 +54,8 @@ export class RootController {
 		{ description: 'Get root status by id' }
 	)
 	async status(
-		@QueryParam('id', { description: 'Root Id', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@QueryParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<RootUpdateStatus> {
 		return engine.transform.Root.rootStatus(await orm.Root.oneOrFailByID(id));
 	}
@@ -66,10 +66,10 @@ export class RootController {
 		{ description: 'Create a root', roles: [UserRole.admin] }
 	)
 	async create(
-		@BodyParams() args: RootMutateArgs,
-		@Ctx() { engine }: Context
+		@BodyParameters() { name, path, strategy }: RootMutateParameters,
+		@RestContext() { engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await engine.io.root.create(args.name, args.path, args.strategy);
+		return await engine.io.root.create(name, path, strategy);
 	}
 
 	@Post(
@@ -78,11 +78,11 @@ export class RootController {
 		{ description: 'Update a root', roles: [UserRole.admin] }
 	)
 	async update(
-		@BodyParam('id', { description: 'Root Id', isID: true }) id: string,
-		@BodyParams() args: RootMutateArgs,
-		@Ctx() { engine }: Context
+		@BodyParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@BodyParameters() { name, path, strategy }: RootMutateParameters,
+		@RestContext() { engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		return await engine.io.root.update(id, args.name, args.path, args.strategy);
+		return await engine.io.root.update(id, name, path, strategy);
 	}
 
 	@Post(
@@ -91,8 +91,8 @@ export class RootController {
 		{ description: 'Remove a root', roles: [UserRole.admin] }
 	)
 	async remove(
-		@BodyParam('id', { description: 'Root Id', isID: true }) id: string,
-		@Ctx() { engine }: Context
+		@BodyParameter('id', { description: 'Root Id', isID: true }) id: string,
+		@RestContext() { engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		return await engine.io.root.delete(id);
 	}
@@ -103,15 +103,14 @@ export class RootController {
 		{ description: 'Check & update a root folder for file system changes', roles: [UserRole.admin] }
 	)
 	async refresh(
-		@BodyParams() args: RootRefreshArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() { id }: RootRefreshParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		if (args.id) {
-			return await engine.io.root.refresh(args.id);
-		} else {
-			const result = await engine.io.root.refreshAll(orm);
-			return result.at(-1) || { id: '' };
+		if (id) {
+			return await engine.io.root.refresh(id);
 		}
+		const result = await engine.io.root.refreshAll(orm);
+		return result.at(-1) ?? { id: '' };
 	}
 
 	@Post(
@@ -120,14 +119,13 @@ export class RootController {
 		{ description: 'Rebuild all metadata (Artists/Albums/...) for a root folder', roles: [UserRole.admin] }
 	)
 	async refreshMeta(
-		@BodyParams() args: RootRefreshArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() { id }: RootRefreshParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		if (args.id) {
-			return await engine.io.root.refreshMeta(args.id);
-		} else {
-			const result = await engine.io.root.refreshAll(orm);
-			return result.at(-1) || { id: '' };
+		if (id) {
+			return await engine.io.root.refreshMeta(id);
 		}
+		const result = await engine.io.root.refreshAll(orm);
+		return result.at(-1) ?? { id: '' };
 	}
 }

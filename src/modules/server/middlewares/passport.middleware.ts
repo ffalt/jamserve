@@ -6,7 +6,7 @@ import { EngineService } from '../../engine/services/engine.service.js';
 import { User } from '../../../entity/user/user.js';
 import { EngineRequest } from './engine.middleware.js';
 import { logger } from '../../../utils/logger.js';
-import { jwtHash } from '../../../utils/jwt.js';
+import { jwtHash, JWTPayload } from '../../../utils/jwt.js';
 
 const log = logger('Passport');
 
@@ -18,44 +18,49 @@ export interface UserRequest extends EngineRequest {
 	params: any;
 }
 
-function passPortAuth(name: string, next: express.NextFunction, req: UserRequest, jwth: string, res: express.Response<any, Record<string, any>>) {
-	passport.authenticate(name, { session: false }, (err: Error, user: User, info: any) => {
-		if (err) {
-			log.error(err);
-			return next();
+function passPortAuth(name: string, next: express.NextFunction, req: UserRequest, jwth: string, res: express.Response) {
+	const result: express.RequestHandler = passport.authenticate(name, { session: false }, (error?: unknown, user?: User, info?: Error | { client: string }) => {
+		if (error) {
+			log.error(error);
+			next();
+			return;
 		}
 		if (info instanceof Error || !user) {
-			return next();
+			next();
+			return;
 		}
 		req.engine.session.isRevoked(jwth)
 			.then(revoked => {
 				if (!revoked) {
 					req.jwt = !!user;
 					req.jwth = jwth;
-					req.client = info.client;
+					req.client = info?.client ?? 'unknown';
 					req.user = user;
 				}
 				next();
 				req.engine.rateLimit.loginSlowDownReset(req)
-					.catch(error => {
+					.catch((error: unknown) => {
 						throw error;
 					});
 			})
-			.catch(error => {
+			.catch((error: unknown) => {
 				throw error;
 			});
-	})(req, res, next);
+	});
+	void result(req, res, next);
 }
 
 export function usePassPortMiddleWare(router: express.Router, engine: EngineService): express.RequestHandler {
 	router.use(passport.initialize());
 	router.use(passport.session());
-	passport.serializeUser((user, done) => {
-		done(undefined, user?.id || '_invalid_');
+	passport.serializeUser((user: User | undefined, done) => {
+		done(undefined, user?.id ?? '_invalid_');
 	});
 	passport.deserializeUser((id: string, done) => {
 		engine.user.findByID(engine.orm.fork(), id)
-			.then(user => done(undefined, user))
+			.then(user => {
+				done(undefined, user);
+			})
 			.catch(done);
 	});
 
@@ -63,13 +68,17 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		{ usernameField: 'username', passwordField: 'password' },
 		(username, password, done) => {
 			engine.user.auth(engine.orm.fork(), username, password)
-				.then(user => done(undefined, user || false))
+				.then((user: User | undefined) => {
+					done(undefined, user ?? false);
+				})
 				.catch(done);
 		}
 	));
-	const resolvePayload = (jwtPayload: any, done: passportJWT.VerifiedCallback): void => {
+	const resolvePayload = (jwtPayload: JWTPayload, done: passportJWT.VerifiedCallback): void => {
 		engine.user.authJWT(engine.orm.fork(), jwtPayload)
-			.then(user => done(undefined, user || false, jwtPayload))
+			.then(user => {
+				done(undefined, user ?? false, jwtPayload);
+			})
 			.catch(done);
 	};
 	passport.use('jwt-header', new passportJWT.Strategy({
@@ -82,8 +91,10 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 	}, resolvePayload));
 
 	function jwtAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (req.user) {
-			return next();
+			next();
+			return;
 		}
 		let name = '';
 		let token: string | undefined = req.header('Authorization');
@@ -98,14 +109,15 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		}
 		if (!token || !name) {
 			// no or not valid auth token, go to next login method (request will fail eventually if req.user is not set)
-			return next();
+			next();
+			return;
 		}
 		const jwth = jwtHash(token);
 		req.engine.rateLimit.loginSlowDown(req, res)
 			.then(() => {
 				passPortAuth(name, next, req, jwth, res);
 			})
-			.catch(error => {
+			.catch((error: unknown) => {
 				throw error;
 			});
 	}

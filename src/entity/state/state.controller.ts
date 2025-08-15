@@ -1,15 +1,15 @@
 import { UserRole } from '../../types/enums.js';
 import { State, States } from './state.model.js';
-import { FavArgs, RateArgs, StatesArgs } from './state.args.js';
+import { FavParameters, RateParameters, StatesParameters } from './state.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
 
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 
@@ -21,8 +21,8 @@ export class StateController {
 		{ description: `Get User State (fav/rate/etc) ${description}`, summary: 'Get State' }
 	)
 	async state(
-		@QueryParam('id', { description: 'Object Id', isID: true }) id: string,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Object Id', isID: true }) id: string,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<State | undefined> {
 		const result = await orm.findInStateTypes(id);
 		if (!result) {
@@ -37,11 +37,11 @@ export class StateController {
 		{ description: `Get User States (fav/rate/etc) ${description}`, summary: 'Get States' }
 	)
 	async states(
-		@QueryParams() args: StatesArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() parameters: StatesParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<States> {
 		const states: States = { states: [] };
-		for (const id of args.ids) {
+		for (const id of parameters.ids) {
 			const result = await orm.findInStateTypes(id);
 			if (result) {
 				states.states.push({ id, state: await engine.transform.Base.state(orm, id, result.objType, user.id) });
@@ -56,10 +56,10 @@ export class StateController {
 		{ description: `Set/Unset Favorite ${description}`, summary: 'Fav' }
 	)
 	async fav(
-		@BodyParams() args: FavArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameters() parameters: FavParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<State> {
-		return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
+		return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, parameters.id, parameters.remove, user));
 	}
 
 	@Post(
@@ -68,9 +68,9 @@ export class StateController {
 		{ description: `Rate ${description}`, summary: 'Rate' }
 	)
 	async rate(
-		@BodyParams() args: RateArgs,
-		@Ctx() { orm, engine, user }: Context
+		@BodyParameters() parameters: RateParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<State> {
-		return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
+		return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, parameters.id, parameters.rating, user));
 	}
 }

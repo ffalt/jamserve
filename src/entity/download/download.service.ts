@@ -15,7 +15,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { Artwork } from '../artwork/artwork.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { invalidParamError, unauthError } from '../../modules/deco/express/express-error.js';
+import { invalidParameterError, unauthError } from '../../modules/deco/express/express-error.js';
 
 @InRequestScope
 export class DownloadService {
@@ -58,7 +58,7 @@ export class DownloadService {
 
 	private async downloadPodcast(podcast: Podcast, format: string | undefined): Promise<ApiBinaryResult> {
 		const episodes = await podcast.episodes.getItems();
-		const fileList: Array<string> = episodes.filter(e => !!e.path).map(e => e.path as string);
+		const fileList: Array<string> = episodes.filter(episode => !!episode.path).map(episode => episode.path!);
 		return { pipe: new CompressListStream(fileList, podcast.id, format) };
 	}
 
@@ -115,6 +115,6 @@ export class DownloadService {
 			}
 			default:
 		}
-		return Promise.reject(invalidParamError('type', 'Invalid Download Type'));
+		return Promise.reject(invalidParameterError('type', 'Invalid Download Type'));
 	}
 }

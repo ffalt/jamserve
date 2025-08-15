@@ -6,7 +6,7 @@ import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js
 import { Flac } from './flac/index.js';
 import { MetaWriteableDataBlock } from './flac/lib/block.writeable.js';
 import { TagFormatType } from '../../../types/enums.js';
-import { RawTag } from '../rawTag.js';
+import { RawTag } from '../raw-tag.js';
 
 export class AudioModuleFLAC {
 	constructor(private readonly imageModule: ImageModule) {
@@ -21,7 +21,7 @@ export class AudioModuleFLAC {
 				...FORMAT.packFlacMediaInfoJamServeMedia(result.media),
 				...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
 			};
-		} catch (error) {
+		} catch (error: unknown) {
 			console.error(error);
 			return { format: TagFormatType.none };
 		}
@@ -30,7 +30,7 @@ export class AudioModuleFLAC {
 	async readRaw(filename: string): Promise<RawTag | undefined> {
 		const flac = new Flac();
 		const result = await flac.read(filename);
-		if (!result?.comment) {
+		if (!result.comment) {
 			return Promise.reject(new Error('No Flac Vorbis Comment found'));
 		}
 		return flacToRawTag(result);
@@ -50,10 +50,10 @@ export class AudioModuleFLAC {
 	async extractTagImage(filename: string): Promise<Buffer | undefined> {
 		const flac = new Flac();
 		const tag = await flac.read(filename);
-		if (tag?.pictures) {
+		if (tag.pictures) {
 			let pic = tag.pictures.find(p => p.pictureType === 3 /* ID3v2 picture type "cover front" used in FLAC */);
-			if (!pic) {
-				pic = tag.pictures[0];
+			if (!pic && tag.pictures.length > 0) {
+				pic = tag.pictures.at(0);
 			}
 			if (pic) {
 				return pic.pictureData;

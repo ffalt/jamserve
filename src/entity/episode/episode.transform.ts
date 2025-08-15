@@ -2,7 +2,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure } from './episode.js';
-import { IncludesEpisodeArgs } from './episode.args.js';
+import { IncludesEpisodeParameters } from './episode.parameters.js';
 import { User } from '../user/user.js';
 import { EpisodeBase, EpisodeUpdateStatus } from './episode.model.js';
 import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums.js';
@@ -17,7 +17,7 @@ export class EpisodeTransformService extends BaseTransformService {
 	@Inject
 	public audioModule!: AudioModule;
 
-	async episodeBase(orm: Orm, o: ORMEpisode, episodeArgs: IncludesEpisodeArgs, user: User): Promise<EpisodeBase> {
+	async episodeBase(orm: Orm, o: ORMEpisode, episodeParameters: IncludesEpisodeParameters, user: User): Promise<EpisodeBase> {
 		const chapters: Array<EpisodeChapter> | undefined = o.chaptersJSON ? JSON.parse(o.chaptersJSON) : undefined;
 		const enclosures: Array<EpisodeEnclosure> | undefined = o.enclosuresJSON ? JSON.parse(o.enclosuresJSON) : undefined;
 		const podcast = await o.podcast.getOrFail();
@@ -31,7 +31,7 @@ export class EpisodeTransformService extends BaseTransformService {
 			author: o.author,
 			error: o.error,
 			chapters,
-			url: enclosures ? enclosures[0].url : undefined,
+			url: enclosures?.at(0)?.url,
 			link: o.link,
 			guid: o.guid,
 			podcastID: podcast.id,
@@ -39,10 +39,10 @@ export class EpisodeTransformService extends BaseTransformService {
 			status: this.episodeService.isDownloading(o.id) ? PodcastStatus.downloading : o.status,
 			created: o.createdAt.valueOf(),
 			duration: tag?.mediaDuration ?? o.duration ?? 0,
-			tag: episodeArgs.episodeIncTag ? await this.mediaTag(orm, tag) : undefined,
-			media: episodeArgs.episodeIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-			tagRaw: episodeArgs.episodeIncRawTag && o.path ? await this.audioModule.readRawTag(o.path) : undefined,
-			state: episodeArgs.episodeIncState ? await this.state(orm, o.id, DBObjectType.episode, user.id) : undefined
+			tag: episodeParameters.episodeIncTag ? await this.mediaTag(orm, tag) : undefined,
+			media: episodeParameters.episodeIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
+			tagRaw: episodeParameters.episodeIncRawTag && o.path ? await this.audioModule.readRawTag(o.path) : undefined,
+			state: episodeParameters.episodeIncState ? await this.state(orm, o.id, DBObjectType.episode, user.id) : undefined
 		};
 	}
 

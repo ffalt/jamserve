@@ -54,7 +54,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			buffer.copy(this.pictureData, 0, pos + 4, pictureDataLength);
 
 			this.hasData = true;
-		} catch (error) {
+		} catch (error: unknown) {
 			this.error = error;
 			this.hasData = false;
 		}
@@ -76,15 +76,15 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			buffer.writeUInt32BE(this.pictureType, pos);
 			pos += 4;
 
-			const mimeTypeLen = Buffer.byteLength(this.mimeType);
-			buffer.writeUInt32BE(mimeTypeLen, pos);
+			const mimeTypeLength = Buffer.byteLength(this.mimeType);
+			buffer.writeUInt32BE(mimeTypeLength, pos);
 			buffer.write(this.mimeType, pos + 4);
-			pos += mimeTypeLen + 4;
+			pos += mimeTypeLength + 4;
 
-			const descriptionLen = Buffer.byteLength(this.description);
-			buffer.writeUInt32BE(descriptionLen, pos);
+			const descriptionLength = Buffer.byteLength(this.description);
+			buffer.writeUInt32BE(descriptionLength, pos);
 			buffer.write(this.description, pos + 4);
-			pos += descriptionLen + 4;
+			pos += descriptionLength + 4;
 
 			buffer.writeUInt32BE(this.width, pos);
 			buffer.writeUInt32BE(this.height, pos + 4);
@@ -101,7 +101,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 	getSize(): number {
 		return Buffer.byteLength(this.mimeType) + 4 +
 			Buffer.byteLength(this.description) + 4 +
-			+16 +
+			16 +
 			(this.pictureData?.length ?? 0) + 4;
 	}
 }

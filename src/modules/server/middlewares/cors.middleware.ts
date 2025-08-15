@@ -3,20 +3,20 @@ import express from 'express';
 import { ConfigService } from '../../engine/services/config.service.js';
 
 export function useAuthenticatedCors(configService: ConfigService): express.RequestHandler {
-	const origins = configService.env.session.allowedCookieDomains || [];
+	const origins = configService.env.session.allowedCookieDomains ?? [];
 
 	const corsOptionsDelegate = (req: express.Request, callback: (error: Error | null, options: cors.CorsOptions) => void): void => {
 		const corsOptions: cors.CorsOptions = {
 			preflightContinue: false,
 			credentials: true,
 			allowedHeaders: ['Content-Type', 'Authorization'],
-			origin(origin, cb): void {
+			origin(origin, originCallback): void {
 				if (!origin || origins.includes(origin)) {
-					cb(null, true);
+					originCallback(null, true);
 				} else if (req.method === 'OPTIONS' || req.query.jwt) {
-					cb(null, true);
+					originCallback(null, true);
 				} else {
-					cb(new Error('Not allowed by CORS'));
+					originCallback(new Error('Not allowed by CORS'));
 				}
 			},
 			methods: ['GET', 'POST']

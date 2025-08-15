@@ -1,15 +1,15 @@
 import { UserRoles } from '../user/user.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ResultType()
 export class SessionUser {
-	@ObjField({ description: 'User ID', isID: true })
+	@ObjectField({ description: 'User ID', isID: true })
 	id!: string;
 
-	@ObjField({ description: 'User Name', example: 'admin' })
+	@ObjectField({ description: 'User Name', example: 'admin' })
 	name!: string;
 
-	@ObjField(() => UserRoles, { description: 'User Roles' })
+	@ObjectField(() => UserRoles, { description: 'User Roles' })
 	roles!: UserRoles;
 }

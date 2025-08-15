@@ -6,7 +6,7 @@ import { parseAgent } from './session.utils.js';
 
 @InRequestScope
 export class SessionTransformService {
-	userSession(orm: Orm, o: ORMSession): UserSession {
+	userSession(_orm: Orm, o: ORMSession): UserSession {
 		const ua = parseAgent(o);
 		return {
 			id: o.id,

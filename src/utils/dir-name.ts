@@ -5,13 +5,13 @@ export function splitDirectoryName(name: string): { title: string; year?: number
 	const result: { title: string; year?: number } = { title: path.basename(name).trim() };
 	// year title | year - title | (year) title | [year] title
 	const parts = result.title.split(' ');
-	const s = parts[0].replaceAll(/[^\w\s]/gi, '');
+	const s = (parts.at(0) ?? '').replaceAll(/[^\w\s]/gi, '');
 	if (s.length === 4) {
 		const y = Number(s);
 		if (!Number.isNaN(y)) {
 			result.year = y;
 			parts.shift();
-			if (parts[0] === '-') {
+			if (parts.at(0) === '-') {
 				parts.shift();
 			}
 			result.title = parts.join(' ');

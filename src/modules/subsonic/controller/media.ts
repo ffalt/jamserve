@@ -9,18 +9,18 @@ import {
 	SubsonicParameterLyricsByID,
 	SubsonicParameterStream,
 	SubsonicParameterUsername
-} from '../model/subsonic-rest-params.js';
+} from '../model/subsonic-rest-parameters.js';
 import { logger } from '../../../utils/logger.js';
 
 import { DBObjectType } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import { SubsonicResponseLyrics, SubsonicResponseLyricsList, SubsonicStructuredLyrics } from '../model/subsonic-rest-data.js';
 import { ApiImageTypes, ApiStreamTypes } from '../../../types/consts.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { StreamOptions } from '../../../entity/stream/stream.service.js';
 import path from 'node:path';
@@ -39,7 +39,7 @@ export class SubsonicMediaRetrievalApi {
 		tags: ['Media Retrieval'],
 		binary: ApiStreamTypes
 	})
-	async stream(@SubsonicParams() query: SubsonicParameterStream, @SubsonicCtx() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
+	async stream(@SubsonicParameters() query: SubsonicParameterStream, @SubsonicContext() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to stream. Obtained by calls to getMusicDirectory.
@@ -54,20 +54,26 @@ export class SubsonicMediaRetrievalApi {
 		if (!o?.obj) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
-		const opts: StreamOptions = {
+		const options: StreamOptions = {
 			maxBitRate: query.maxBitRate !== undefined && query.maxBitRate > 0 ? query.maxBitRate : undefined,
 			format: query.format,
 			timeOffset: query.timeOffset !== undefined && query.timeOffset > 0 ? query.timeOffset : undefined
 		};
 		switch (o.objType) {
 			case DBObjectType.track: {
-				const res = await engine.stream.streamTrack(o.obj as Track, opts);
-				engine.nowPlaying.reportTrack(orm, o.obj as Track, user).catch(error => log.error(error)); // do not wait
-				return res;
+				const result = await engine.stream.streamTrack(o.obj as Track, options);
+				engine.nowPlaying.reportTrack(orm, o.obj as Track, user)
+					.catch((error: unknown) => {
+						log.error(error);
+					}); // do not wait
+				return result;
 			}
 			case DBObjectType.episode: {
-				const result = await engine.stream.streamEpisode(o.obj as Episode, opts);
-				engine.nowPlaying.reportEpisode(orm, o.obj as Episode, user).catch(error => log.error(error)); // do not wait
+				const result = await engine.stream.streamEpisode(o.obj as Episode, options);
+				engine.nowPlaying.reportEpisode(orm, o.obj as Episode, user)
+					.catch((error: unknown) => {
+						log.error(error);
+					}); // do not wait
 				return result;
 			}
 			default:
@@ -85,7 +91,7 @@ export class SubsonicMediaRetrievalApi {
 		tags: ['Media Retrieval'],
 		binary: ApiStreamTypes
 	})
-	async download(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
+	async download(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, engine, user }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the file to download. Obtained by calls to getMusicDirectory.
@@ -109,7 +115,7 @@ export class SubsonicMediaRetrievalApi {
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
 	})
-	async getLyricsBySongId(@SubsonicParams() query: SubsonicParameterLyricsByID, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseLyricsList> {
+	async getLyricsBySongId(@SubsonicParameters() query: SubsonicParameterLyricsByID, @SubsonicContext() { engine, orm }: Context): Promise<SubsonicResponseLyricsList> {
 		const track = await orm.Track.findOneOrFailByID(query.id);
 		const tag = await track.tag.get();
 		const structuredLyrics: Array<SubsonicStructuredLyrics> = [];
@@ -137,13 +143,13 @@ export class SubsonicMediaRetrievalApi {
 				structuredLyrics.push(l);
 			}
 		}
-		if (tag?.artist && tag?.title) {
+		if (tag?.artist && tag.title) {
 			const trackLyrics = await engine.metadata.lyricsLrcLibByTrackTag(orm, track, tag);
-			if (trackLyrics?.syncedLyrics && !hasSynced) {
+			if (trackLyrics.syncedLyrics && !hasSynced) {
 				structuredLyrics.push(splitLyrics(trackLyrics.syncedLyrics));
 				hasUnssynced = true;
 			}
-			if (trackLyrics?.lyrics && !hasUnssynced) {
+			if (trackLyrics.lyrics && !hasUnssynced) {
 				structuredLyrics.push(splitLyrics(trackLyrics.lyrics));
 			}
 			if (!hasSynced && !hasUnssynced) {
@@ -165,7 +171,7 @@ export class SubsonicMediaRetrievalApi {
 		description: 'Searches for and returns lyrics for a given song.',
 		tags: ['Media Retrieval']
 	})
-	async getLyrics(@SubsonicParams() query: SubsonicParameterLyrics, @SubsonicCtx() { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
+	async getLyrics(@SubsonicParameters() query: SubsonicParameterLyrics, @SubsonicContext() { orm, engine }: Context): Promise<SubsonicResponseLyrics> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 artist 	No 		The artist name.
@@ -191,7 +197,7 @@ export class SubsonicMediaRetrievalApi {
 		tags: ['Media Retrieval'],
 		binary: ApiImageTypes
 	})
-	async getCoverArt(@SubsonicParams() query: SubsonicParameterCoverArt, @SubsonicCtx() { orm, engine }: Context): Promise<ApiBinaryResult> {
+	async getCoverArt(@SubsonicParameters() query: SubsonicParameterCoverArt, @SubsonicContext() { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of a song, album or artist.
@@ -214,7 +220,7 @@ export class SubsonicMediaRetrievalApi {
 		tags: ['Media Retrieval'],
 		binary: ApiImageTypes
 	})
-	async getAvatar(@SubsonicParams() query: SubsonicParameterUsername, @SubsonicCtx() { orm, engine }: Context): Promise<ApiBinaryResult> {
+	async getAvatar(@SubsonicParameters() query: SubsonicParameterUsername, @SubsonicContext() { orm, engine }: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 username 	Yes 		The user in question.
@@ -236,7 +242,7 @@ export class SubsonicMediaRetrievalApi {
 		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
 		tags: ['Media Retrieval']
 	})
-	async getCaptions(@SubsonicParams() _query: SubsonicParameterCaptions, @SubsonicCtx() _ctx: Context): Promise<ApiBinaryResult> {
+	async getCaptions(@SubsonicParameters() _query: SubsonicParameterCaptions, @SubsonicContext() _context: Context): Promise<ApiBinaryResult> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The ID of the video.
@@ -256,7 +262,7 @@ export class SubsonicMediaRetrievalApi {
 		tags: ['Media Retrieval'],
 		binary: ['application/vnd.apple.mpegurl']
 	})
-	async hls(@SubsonicParams() _query: SubsonicParameterHLS, @SubsonicCtx() _ctx: Context): Promise<ApiBinaryResult> {
+	async hls(@SubsonicParameters() _query: SubsonicParameterHLS, @SubsonicContext() _context: Context): Promise<ApiBinaryResult> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the media file to stream.

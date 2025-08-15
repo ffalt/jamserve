@@ -1,28 +1,28 @@
 import { Field, ObjectType } from 'type-graphql';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ObjectType()
 @ResultType({ description: 'Track/Folder/Artist/Album Info Data' })
 export class ExtendedInfo {
 	@Field(() => String)
-	@ObjField({ description: 'Description', example: 'Very long Meta Information' })
+	@ObjectField({ description: 'Description', example: 'Very long Meta Information' })
 	description!: string;
 
 	@Field(() => String)
-	@ObjField({ description: 'Source of the Description', example: 'https://mediaservice.example.com' })
+	@ObjectField({ description: 'Source of the Description', example: 'https://mediaservice.example.com' })
 	source!: string;
 
 	@Field(() => String)
-	@ObjField({ description: 'License of the Description', example: 'CC0' })
+	@ObjectField({ description: 'License of the Description', example: 'CC0' })
 	license!: string;
 
 	@Field(() => String)
-	@ObjField({ description: 'Url of the Description', example: 'https://mediaservice.example.com/info/id/12345' })
+	@ObjectField({ description: 'Url of the Description', example: 'https://mediaservice.example.com/info/id/12345' })
 	url!: string;
 
 	@Field(() => String)
-	@ObjField({ description: 'Url of the License', example: 'https://creativecommons.org/share-your-work/public-domain/cc0/' })
+	@ObjectField({ description: 'Url of the License', example: 'https://creativecommons.org/share-your-work/public-domain/cc0/' })
 	licenseUrl!: string;
 }
 
@@ -34,7 +34,7 @@ export class ExtendedInfoQL extends ExtendedInfo {
 @ResultType({ description: 'Extended Info Result' })
 export class ExtendedInfoResult {
 	@Field(() => ExtendedInfoQL, { nullable: true })
-	@ObjField(() => ExtendedInfo, { nullable: true, description: 'Extended Info' })
+	@ObjectField(() => ExtendedInfo, { nullable: true, description: 'Extended Info' })
 	info?: ExtendedInfo;
 }
 
@@ -44,6 +44,6 @@ export class ExtendedInfoResultQL extends ExtendedInfoResult {
 
 @ResultType({ description: 'Metadata Result' })
 export class MetaDataResult {
-	@ObjField(() => Object, { nullable: true, description: 'MetaData' })
+	@ObjectField(() => Object, { nullable: true, description: 'MetaData' })
 	data?: any;
 }

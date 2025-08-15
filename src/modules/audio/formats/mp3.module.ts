@@ -6,7 +6,7 @@ import { AudioScanResult } from '../audio.module.js';
 import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
 import path from 'node:path';
 import { TagFormatType } from '../../../types/enums.js';
-import { RawTag } from '../rawTag.js';
+import { RawTag } from '../raw-tag.js';
 import { analyzeMP3 } from '../tasks/task-analyze-mp3.js';
 import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
 import { fixMP3 } from '../tasks/task-fix-mp3.js';
@@ -26,18 +26,15 @@ export const taskAnalyzeMp3 = path.join(taskPath, 'task-analyze-mp3.js');
 const log = logger('Audio:MP3');
 
 export class AudioModuleMP3 {
-	private analyzeMp3Pool?: StaticPool<any, any>;
-	private rewriteAudioPool?: StaticPool<any, any>;
-	private removeID3v1Pool?: StaticPool<any, any>;
-	private fixMP3Pool?: StaticPool<any, any>;
+	private analyzeMp3Pool?: StaticPool<(filename: string) => IMP3Analyzer.Report>;
+	private rewriteAudioPool?: StaticPool<(filename: string) => void>;
+	private removeID3v1Pool?: StaticPool<(filename: string) => void>;
+	private fixMP3Pool?: StaticPool<(filename: string) => void>;
 
 	async read(filename: string): Promise<AudioScanResult> {
 		const mp3 = new MP3();
 		try {
-			const result = await mp3.read(filename, { mpegQuick: true, mpeg: true, id3v2: true });
-			if (!result) {
-				return { format: TagFormatType.none };
-			}
+			const result = await mp3.read(filename, { mpegQuick: true, mpeg: true, id3v2: true, id3v1: false });
 			if (result.id3v2) {
 				return {
 					format: TagFormatType.none,
@@ -80,11 +77,7 @@ export class AudioModuleMP3 {
 			await removeID3v1(filename);
 			return;
 		}
-		if (!this.removeID3v1Pool) {
-			this.removeID3v1Pool = new StaticPool({
-				size: 3, task: taskRemoveID3v1
-			});
-		}
+		this.removeID3v1Pool ??= new StaticPool({ size: 3, task: taskRemoveID3v1 });
 		log.debug('remove ID3v1 Tag', filename);
 		await this.removeID3v1Pool.exec(filename);
 	}
@@ -93,11 +86,7 @@ export class AudioModuleMP3 {
 		if (!USE_TASKS) {
 			return fixMP3(filename);
 		}
-		if (!this.fixMP3Pool) {
-			this.fixMP3Pool = new StaticPool({
-				size: 3, task: taskFixMp3
-			});
-		}
+		this.fixMP3Pool ??= new StaticPool({ size: 3, task: taskFixMp3 });
 		log.debug('fix Audio', filename);
 		await this.fixMP3Pool.exec(filename);
 	}
@@ -106,11 +95,7 @@ export class AudioModuleMP3 {
 		if (!USE_TASKS) {
 			return rewriteAudio(filename);
 		}
-		if (!this.rewriteAudioPool) {
-			this.rewriteAudioPool = new StaticPool({
-				size: 3, task: taskRewriteMp3
-			});
-		}
+		this.rewriteAudioPool ??= new StaticPool({ size: 3, task: taskRewriteMp3 });
 		log.debug('rewrite', filename);
 		await this.rewriteAudioPool.exec(filename);
 	}
@@ -119,13 +104,9 @@ export class AudioModuleMP3 {
 		if (!USE_TASKS) {
 			return analyzeMP3(filename);
 		}
-		if (!this.analyzeMp3Pool) {
-			this.analyzeMp3Pool = new StaticPool({
-				size: 3, task: taskAnalyzeMp3
-			});
-		}
+		this.analyzeMp3Pool ??= new StaticPool({ size: 3, task: taskAnalyzeMp3 });
 		log.debug('analyze', filename);
-		return this.analyzeMp3Pool.exec(filename);
+		return await this.analyzeMp3Pool.exec(filename);
 	}
 
 	async extractTagImage(filename: string): Promise<Buffer | undefined> {
@@ -135,8 +116,8 @@ export class AudioModuleMP3 {
 		if (tag) {
 			const frames = tag.frames.filter(f => ['APIC', 'PIC'].includes(f.id)) as Array<IID3V2.Frames.PicFrame>;
 			let frame = frames.find(f => f.value.pictureType === 3 /* ID3v2 picture type "cover front" */);
-			if (!frame) {
-				frame = frames[0];
+			if (!frame && frames.length > 0) {
+				frame = frames.at(0);
 			}
 			if (frame) {
 				return (frame.value).bin;
@@ -185,7 +166,7 @@ export class AudioModuleMP3 {
 		if (tag) {
 			const frames = tag.frames.filter(f => ['SLT'].includes(f.id)) as Array<IID3V2.Frames.SynchronisedLyricsFrame>;
 			if (frames.length > 0) {
-				const frame = frames.find(f => f.value?.contentType === 1);
+				const frame = frames.find(f => f.value.contentType === 1);
 				if (frame) {
 					return {
 						language: frame.value.language,

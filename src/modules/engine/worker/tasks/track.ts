@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import path from 'node:path';
 import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
-import { RawTag } from '../../../audio/rawTag.js';
+import { RawTag } from '../../../audio/raw-tag.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { processQueue } from '../../../../utils/queue.js';
 import { Root } from '../../../../entity/root/root.js';
@@ -34,13 +34,13 @@ export class TrackUpdater {
 		await track.tag.set(tag);
 		const genres = await this.findOrCreateGenres(tag);
 		const ids = await track.genres.getIDs();
-		const removedGenreIDs = ids.filter(id => !genres.some(g => g.id == id));
+		const removedGenreIDs = ids.filter(id => !genres.some(g => g.id === id));
 		this.changes.genres.updated.appendIDs(removedGenreIDs);
 		await track.genres.set(genres);
 	}
 
 	async findOrCreateGenres(tag: TrackTag): Promise<Array<Genre>> {
-		const names = tag.genres || [];
+		const names = tag.genres ?? [];
 		const genres = [];
 		for (const name of names) {
 			genres.push(await this.findOrCreateGenre(name));

@@ -2,15 +2,16 @@ import { BaseRepository } from '../base/base.repository.js';
 import { ArtistOrderFields, DBObjectType } from '../../types/enums.js';
 import { Artist } from './artist.js';
 import { OrderHelper } from '../base/base.js';
-import { ArtistFilterArgs, ArtistOrderArgs } from './artist.args.js';
+import { ArtistFilterParameters, ArtistOrderParameters } from './artist.parameters.js';
 import { User } from '../user/user.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, ArtistOrderArgs> {
+export class ArtistRepository extends BaseRepository<Artist, ArtistFilterParameters, ArtistOrderParameters> {
 	objType = DBObjectType.artist;
 	indexProperty = 'nameSort';
 
-	buildOrder(order?: ArtistOrderArgs): Array<OrderItem> {
+	buildOrder(order?: ArtistOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case ArtistOrderFields.created: {
@@ -30,7 +31,7 @@ export class ArtistRepository extends BaseRepository<Artist, ArtistFilterArgs, A
 		return [];
 	}
 
-	async buildFilter(filter?: ArtistFilterArgs, _?: User): Promise<FindOptions<Artist>> {
+	async buildFilter(filter?: ArtistFilterParameters, _?: User): Promise<FindOptions<Artist>> {
 		if (!filter) {
 			return {};
 		}

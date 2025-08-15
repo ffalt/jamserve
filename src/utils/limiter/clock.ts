@@ -3,16 +3,18 @@
 function hrtime(previousTimestamp?: [number, number]): [number, number] {
 	const clocktime = Date.now() * 1e-3;
 	let seconds = Math.floor(clocktime);
-	let nanoseconds = Math.floor((clocktime % 1) * 1e9);
-	if (previousTimestamp != undefined) {
-		seconds = seconds - previousTimestamp[0];
-		nanoseconds = nanoseconds - previousTimestamp[1];
-		if (nanoseconds < 0) {
+	let nanoSeconds = Math.floor((clocktime % 1) * 1e9);
+	const previousSeconds = previousTimestamp?.at(0);
+	const previousNanoSeconds = previousTimestamp?.at(1);
+	if (previousSeconds !== undefined && previousNanoSeconds !== undefined) {
+		seconds = seconds - previousSeconds;
+		nanoSeconds = nanoSeconds - previousNanoSeconds;
+		if (nanoSeconds < 0) {
 			seconds--;
-			nanoseconds += 1e9;
+			nanoSeconds += 1e9;
 		}
 	}
-	return [seconds, nanoseconds];
+	return [seconds, nanoSeconds];
 }
 
 // The current timestamp in whole milliseconds

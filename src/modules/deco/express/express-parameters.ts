@@ -1,171 +1,169 @@
 import { ClassMetadata } from '../definitions/class-metadata.js';
 import { FieldOptions, TypeOptions, TypeValue } from '../definitions/types.js';
-import { ParamMetadata, RestParamMetadata, RestParamsMetadata } from '../definitions/param-metadata.js';
+import { ParameterMetadata, RestParameterMetadata, RestParametersMetadata } from '../definitions/parameter-metadata.js';
 import { FieldMetadata } from '../definitions/field-metadata.js';
 import { EnumMetadata } from '../definitions/enum-metadata.js';
 import { getEnumReverseValuesMap } from '../helpers/enums.js';
-import { genericError, invalidParamError, missingParamError } from './express-error.js';
+import { genericError, invalidParameterError, missingParameterError } from './express-error.js';
 import { RestContext } from './context.js';
 import { getDefaultValue } from '../helpers/default-value.js';
 import { UploadFile } from '../definitions/upload-file.js';
 import { MetadataStorage } from '../definitions/metadata-storage.js';
-import { iterateArguments } from '../helpers/iterate-super.js';
+import { iterateParameters } from '../helpers/iterate-super.js';
 
 export class ExpressParameters {
-	private static validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): boolean {
+	private static validateBoolean(value: unknown, typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata): boolean {
 		if (typeOptions.array) {
-			throw invalidParamError(param.name);
+			throw invalidParameterError(parameter.name);
 		}
 		if (typeof value !== 'boolean') {
 			if (value === 'true') {
 				return true;
-			} else if (value === 'false') {
-				return false;
-			} else {
-				throw invalidParamError(param.name);
 			}
+			if (value === 'false') {
+				return false;
+			}
+			throw invalidParameterError(parameter.name);
 		}
 		return value;
 	}
 
-	private static validateNumberPart(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number {
+	private static validateNumberPart(value: unknown, typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata): number {
 		if (value === '') {
-			throw invalidParamError(param.name, `Parameter value is not a number`);
+			throw invalidParameterError(parameter.name, 'Parameter value is not a number');
 		}
-		const val = Number(value);
-		if (Number.isNaN(val)) {
-			throw invalidParamError(param.name, `Parameter value is not a number`);
+		const result = Number(value);
+		if (Number.isNaN(result)) {
+			throw invalidParameterError(parameter.name, 'Parameter value is not a number');
 		}
-		if (val % 1 !== 0) {
-			throw invalidParamError(param.name, `Parameter value is not an integer`);
+		if (result % 1 !== 0) {
+			throw invalidParameterError(parameter.name, 'Parameter value is not an integer');
 		}
-		if (typeOptions.min !== undefined && val < typeOptions.min) {
-			throw invalidParamError(param.name, `Parameter value too small`);
+		if (typeOptions.min !== undefined && result < typeOptions.min) {
+			throw invalidParameterError(parameter.name, 'Parameter value too small');
 		}
-		if (typeOptions.max !== undefined && val > typeOptions.max) {
-			throw invalidParamError(param.name, `Parameter value too high`);
+		if (typeOptions.max !== undefined && result > typeOptions.max) {
+			throw invalidParameterError(parameter.name, 'Parameter value too high');
 		}
-		return val;
+		return result;
 	}
 
-	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): number | Array<number> {
+	private static validateNumber(value: unknown, typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata): number | Array<number> {
 		if (typeOptions.array) {
 			const array: Array<unknown> = Array.isArray(value) ? value : [value];
-			return array.map(v => ExpressParameters.validateNumberPart(v, typeOptions, param));
+			return array.map(v => ExpressParameters.validateNumberPart(v, typeOptions, parameter));
 		}
-		return ExpressParameters.validateNumberPart(value, typeOptions, param);
+		return ExpressParameters.validateNumberPart(value, typeOptions, parameter);
 	}
 
-	private validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata): string | Array<string> | undefined {
+	private validateString(value: unknown, typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata): string | Array<string> | undefined {
 		if (typeOptions.array) {
 			let array: Array<string> = [];
 			if (value && Array.isArray(value)) {
 				array = value;
-			} else if (value) {
-				// qlty-ignore: radarlint-js:typescript:S6551
-				const s = `${value}`;
+			} else if (value !== undefined && value !== null) {
+				// eslint-disable-next-line @typescript-eslint/no-base-to-string
+				const s = value.toString();
 				if (s.length === 0) {
-					throw invalidParamError(param.name);
+					throw invalidParameterError(parameter.name);
 				}
 				array = [s];
 			}
 			return array.map(String).filter((v: string) => {
 				if (v.length === 0 && !typeOptions.nullable) {
-					throw invalidParamError(param.name);
+					throw invalidParameterError(parameter.name);
 				}
 				return v.length > 0;
 			});
-		} else {
-			const val = String(value);
-			if (val.length === 0) {
-				if (typeOptions.nullable) {
-					return;
-				}
-				throw invalidParamError(param.name);
-			}
-			return val;
 		}
+		const result = String(value);
+		if (result.length === 0) {
+			if (typeOptions.nullable) {
+				return;
+			}
+			throw invalidParameterError(parameter.name);
+		}
+		return result;
 	}
 
-	private validateEnum(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata, enumInfo: EnumMetadata): string | Array<string> {
+	private validateEnum(value: unknown, typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata, enumInfo: EnumMetadata): string | Array<string> {
 		const enumObj: any = enumInfo.enumObj;
 		const enumValues = getEnumReverseValuesMap(enumObj);
 		if (typeOptions.array) {
-			let array = Array.isArray(value) ? value : [value];
-			array = (array || []).map(String).filter(s => s.length > 0);
-			for (const val of array) {
-				if (!enumValues[val]) {
-					throw invalidParamError(param.name, `Enum value not valid`);
+			const array = Array.isArray(value) ? value : [value];
+			const result = array.map(String).filter(s => s.length > 0);
+			for (const arrayValue of result) {
+				if (!enumValues[arrayValue]) {
+					throw invalidParameterError(parameter.name, 'Enum value not valid');
 				}
-			}
-			return array;
-		} else {
-			const val = String(value);
-			if (!enumValues[val]) {
-				throw invalidParamError(param.name, `Enum value not valid`);
-			}
-			return val;
-		}
-	}
-
-	private validateObjOrFail(value: unknown, typeOptions: FieldOptions & TypeOptions, param: RestParamMetadata | FieldMetadata, type: TypeValue, metadata: MetadataStorage): any {
-		if (typeof value !== 'object') {
-			throw new TypeError(`Internal: Invalid Parameter Object Type for field '${param.name}'`);
-		}
-		const argumentType = metadata.argumentTypes.find(it => it.target === type);
-		if (argumentType) {
-			const result = new (argumentType.target as any)();
-			for (const field of argumentType.fields) {
-				result[field.name] = this.validateParameter(field, value, true, metadata);
 			}
 			return result;
 		}
-		if (param.typeOptions.generic) {
-			return value;
+		const result = String(value);
+		if (!enumValues[result]) {
+			throw invalidParameterError(parameter.name, 'Enum value not valid');
 		}
-		throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${param.name}'`);
+		return result;
 	}
 
-	private validateParameter(param: RestParamMetadata | FieldMetadata, data: any, isField: boolean, metadata: MetadataStorage): any {
+	private validateObjOrFail(value: unknown, _typeOptions: FieldOptions & TypeOptions, parameter: RestParameterMetadata | FieldMetadata, type: TypeValue, metadata: MetadataStorage): any {
+		if (typeof value !== 'object') {
+			throw new TypeError(`Internal: Invalid Parameter Object Type for field '${parameter.name}'`);
+		}
+		const parameterType = metadata.parameterTypes.find(it => it.target === type);
+		if (parameterType) {
+			const result = new (parameterType.target as new () => Record<string, unknown>)();
+			for (const field of parameterType.fields) {
+				result[field.name] = this.validateParameterBase(field, value, true, metadata);
+			}
+			return result;
+		}
+		if (parameter.typeOptions.generic) {
+			return value;
+		}
+		throw new Error(`Internal: Unknown Parameter Type, did you forget to register an enum? '${parameter.name}'`);
+	}
+
+	private validateParameterBase(parameter: RestParameterMetadata | FieldMetadata, data: any, isField: boolean, metadata: MetadataStorage): any {
 		if (isField) {
-			const argumentInstance = new (param.target as any)();
-			param.typeOptions.defaultValue = getDefaultValue(
+			const argumentInstance = new (parameter.target as new () => Record<string, unknown>)();
+			parameter.typeOptions.defaultValue = getDefaultValue(
 				argumentInstance,
-				param.typeOptions,
-				param.name
+				parameter.typeOptions,
+				parameter.name
 			);
 		}
-		let value = data[param.name];
+		let value = data[parameter.name];
 		if (value === undefined) {
-			value = param.typeOptions.defaultValue;
+			value = parameter.typeOptions.defaultValue;
 		}
-		const typeOptions: FieldOptions & TypeOptions = param.typeOptions;
+		const typeOptions: FieldOptions & TypeOptions = parameter.typeOptions;
 		const isNull = (value === undefined || value === null);
 		if (!typeOptions.nullable && isNull) {
-			throw missingParamError(param.name);
+			throw missingParameterError(parameter.name);
 		}
 		if (isNull) {
 			return;
 		}
-		const type = param.getType();
+		const type = parameter.getType();
 		switch (type) {
 			case Boolean: {
-				value = ExpressParameters.validateBoolean(value, typeOptions, param);
+				value = ExpressParameters.validateBoolean(value, typeOptions, parameter);
 				break;
 			}
 			case Number: {
-				value = ExpressParameters.validateNumber(value, typeOptions, param);
+				value = ExpressParameters.validateNumber(value, typeOptions, parameter);
 				break;
 			}
 			case String: {
-				value = this.validateString(value, typeOptions, param);
+				value = this.validateString(value, typeOptions, parameter);
 				break;
 			}
 			default: {
-				const enumInfo = metadata.enums.find(e => e.enumObj === type);
+				const enumInfo = metadata.enumInfo(type);
 				value = enumInfo ?
-					this.validateEnum(value, typeOptions, param, enumInfo) :
-					this.validateObjOrFail(value, typeOptions, param, type, metadata);
+					this.validateEnum(value, typeOptions, parameter, enumInfo) :
+					this.validateObjOrFail(value, typeOptions, parameter, type, metadata);
 			}
 		}
 		return value;
@@ -198,52 +196,52 @@ export class ExpressParameters {
 		return {};
 	}
 
-	private prepareParameterSingle(param: RestParamMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): any {
-		const result = ExpressParameters.getData(param.mode, context);
-		if (param.mode === 'file') {
+	private prepareParameterSingle(parameter: RestParameterMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): any {
+		const result = ExpressParameters.getData(parameter.mode, context);
+		if (parameter.mode === 'file') {
 			if (!result) {
-				throw missingParamError(param.name);
+				throw missingParameterError(parameter.name);
 			}
 			return result;
 		}
-		return this.validateParameter(param, result, false, metadata);
+		return this.validateParameterBase(parameter, result, false, metadata);
 	}
 
-	private mapArgFields(argumentType: ClassMetadata, data: any, args: Record<string, string>, metadata: MetadataStorage): void {
-		for (const field of argumentType.fields) {
-			args[field.name] = this.validateParameter(field, data, true, metadata);
+	private mapArgFields(parameterType: ClassMetadata, data: any, parameterMap: Record<string, string>, metadata: MetadataStorage): void {
+		for (const field of parameterType.fields) {
+			parameterMap[field.name] = this.validateParameterBase(field, data, true, metadata);
 		}
 	}
 
-	private prepareParameterObj(param: RestParamsMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): Record<string, string> {
-		const type = param.getType();
-		const argumentType = metadata.argumentTypes.find(it => it.target === type);
-		if (!argumentType) {
+	private prepareParameterObj(restParametersMetadata: RestParametersMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): Record<string, string> {
+		const type = restParametersMetadata.getType();
+		const parameterType = metadata.parameterTypes.find(it => it.target === type);
+		if (!parameterType) {
 			throw genericError(
-				`The value used as a type of '@QueryParams' for '${param.propertyName}' of '${param.target.name}.${param.methodName}' ` +
-				`is not a class decorated with '@ObjParamsType' decorator!`
+				`The value used as a type of '@QueryParams' for '${restParametersMetadata.propertyName}' of '${restParametersMetadata.target.name}.${
+					restParametersMetadata.methodName}' is not a class decorated with '@ObjParamsType' decorator!`
 			);
 		}
-		const args: Record<string, string> = {};
-		const data: any = ExpressParameters.getData(param.mode, context);
-		iterateArguments(metadata.argumentTypes, argumentType, argument => {
-			this.mapArgFields(argument, data, args, metadata);
+		const parameterMap: Record<string, string> = {};
+		const data: any = ExpressParameters.getData(restParametersMetadata.mode, context);
+		iterateParameters(metadata.parameterTypes, parameterType, argument => {
+			this.mapArgFields(argument, data, parameterMap, metadata);
 		});
-		return args;
+		return parameterMap;
 	}
 
-	validateArgument(param: ParamMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): any {
-		switch (param.kind) {
+	validateParameter(parameter: ParameterMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): any {
+		switch (parameter.kind) {
 			case 'context': {
-				return param.propertyName ? (context as any)[param.propertyName] : context;
+				return parameter.propertyName ? (context as any)[parameter.propertyName] : context;
 			}
 			case 'arg': {
-				return this.prepareParameterSingle(param, context, metadata);
+				return this.prepareParameterSingle(parameter, context, metadata);
 			}
 			case 'args': {
-				return this.prepareParameterObj(param, context, metadata);
+				return this.prepareParameterObj(parameter, context, metadata);
 			}
 		}
-		throw genericError(`Internal: not implemented ${param.methodName} ${param.kind}`);
+		throw genericError(`Internal: not implemented ${parameter.methodName} ${parameter.kind}`);
 	}
 }

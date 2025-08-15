@@ -7,7 +7,7 @@ const log = logger('GPodderClient');
 
 export interface GpodderClientConfig {
 	'mygpo': { baseurl: string };
-	'mygpo-feedservice': { baseurl: string };
+	'mygpo-feedservice'?: { baseurl: string };
 	'update_timeout': number;
 	'valid_until': number; // custom - not in response
 }
@@ -31,10 +31,10 @@ export class GpodderClient extends WebserviceClient {
 		if (this.clientConfig && this.clientConfig.valid_until > now) {
 			return this.clientConfig;
 		}
-		const url = `https://gpodder.net/clientconfig.json`;
+		const url = 'https://gpodder.net/clientconfig.json';
 		log.info('requesting', url);
-		const data = await this.getJson<GpodderClientConfig, void>(url);
-		const isValid = data?.mygpo?.baseurl && data?.['mygpo-feedservice']?.baseurl && !Number.isNaN(data?.update_timeout);
+		const data = await this.getJson<GpodderClientConfig | undefined>(url);
+		const isValid = data?.mygpo.baseurl && data['mygpo-feedservice']?.baseurl && !Number.isNaN(data.update_timeout);
 		if (!isValid) {
 			throw new Error('Gpodder API has changed & can not be used with this server version');
 		}
@@ -46,7 +46,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}toplist/${amount}.json`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast> | undefined>(url)) ?? [];
 		return data.map(d => this.transform(d));
 	}
 
@@ -54,7 +54,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}api/2/tags/${amount}.json`;
 		log.info('requesting', url);
-		return ((await this.getJson<Array<GpodderTag>, void>(url)) || [])
+		return ((await this.getJson<Array<GpodderTag> | undefined>(url)) ?? [])
 			.filter(d => !!d.tag);
 	}
 
@@ -62,7 +62,7 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}api/2/tag/${encodeURIComponent(tag)}/${amount}.json`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast> | undefined>(url)) ?? [];
 		return data.map(d => this.transform(d));
 	}
 
@@ -70,18 +70,18 @@ export class GpodderClient extends WebserviceClient {
 		const config = await this.validateClientConfig();
 		const url = `${config.mygpo.baseurl}search.json?q=${encodeURIComponent(name)}`;
 		log.info('requesting', url);
-		const data = (await this.getJson<Array<GpodderPodcast>, void>(url)) || [];
+		const data = (await this.getJson<Array<GpodderPodcast> | undefined>(url)) ?? [];
 		return data.map(d => this.transform(d));
 	}
 
-	private static ensureHTTPS(url: string): string {
+	private static ensureHTTPS(url?: string): string {
 		if (url?.toLowerCase().startsWith('http:')) {
-			return 'https:' + url.slice(5);
-		} else if (url?.toLowerCase().startsWith('https:')) {
-			return url;
-		} else {
-			return '';
+			return `https:${url.slice(5)}`;
 		}
+		if (url?.toLowerCase().startsWith('https:')) {
+			return url;
+		}
+		return '';
 	}
 
 	private transform(d: GpodderPodcast): GpodderPodcast {

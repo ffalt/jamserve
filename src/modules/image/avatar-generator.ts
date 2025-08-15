@@ -27,8 +27,8 @@ export const defaultAvatarSettings: AvatarGenearatorSettings = {
 	imageExtension: '.png'
 };
 
-type PartsMap = Record<AvatarPart, Array<string>>;
-type VariantsMap = Record<string, PartsMap>;
+type PartsMap = Record<AvatarPart, Array<string> | undefined>;
+type VariantsMap = Record<string, PartsMap | undefined>;
 
 export class AvatarGenerator {
 	private readonly _variants: VariantsMap;
@@ -43,11 +43,6 @@ export class AvatarGenerator {
 		this._parts = cfg.parts;
 	}
 
-	//
-	// get variants(): Array<string> {
-	// 	return Object.keys(this._variants);
-	// }
-
 	private static BuildVariantsMap({ parts, partsLocation, imageExtension }: AvatarGenearatorSettings): VariantsMap {
 		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
 		const discriminators = fs
@@ -56,28 +51,26 @@ export class AvatarGenerator {
 				fs.statSync(path.join(partsLocation, partsDir)).isDirectory()
 			);
 
-		return discriminators.reduce(
-			(variants, discriminator) => {
-				const dir = path.join(partsLocation, discriminator);
-				variants[discriminator] = fs.readdirSync(dir)
-					.reduce(
-						(ps: PartsMap, fileName: string) => {
-							const match = fileRegex.exec(fileName);
-							if (match) {
-								const part = match[1] as AvatarPart;
-								if (!ps[part]) {
-									ps[part] = [];
-								}
-								ps[part][Number(match[2])] = path.join(dir, fileName);
-							}
-							return ps;
-						},
-						{} as PartsMap
-					);
-				return variants;
-			},
-			{} as VariantsMap
-		);
+		const variants: VariantsMap = {};
+		for (const discriminator of discriminators) {
+			const dir = path.join(partsLocation, discriminator);
+			const partsMap = {} as PartsMap;
+			const files = fs.readdirSync(dir);
+			for (const fileName of files) {
+				const match = fileRegex.exec(fileName);
+				if (match) {
+					const match1 = match.at(1);
+					const match2 = match.at(2);
+					if (match1 && match2) {
+						const part = match1 as AvatarPart;
+						partsMap[part] ??= [];
+						partsMap[part][Number(match2)] = path.join(dir, fileName);
+					}
+				}
+			}
+			variants[discriminator] = partsMap;
+		}
+		return variants;
 	}
 
 	private getParts(id: string, variant: string): Array<string> {
@@ -101,13 +94,11 @@ export class AvatarGenerator {
 
 	public async generate(id: string, variant: string): Promise<sharp.Sharp> {
 		const parts = this.getParts(id, variant);
-		if (parts.length === 0) {
+		const part = parts.at(0);
+		if (!part) {
 			throw new Error(`variant '${variant}'does not contain any parts`);
 		}
-		const { width, height } = await sharp(parts[0]).metadata();
-		if (width === undefined || height === undefined) {
-			throw new Error(`Invalid part file found`);
-		}
+		const { width, height } = await sharp(part).metadata();
 		const options = {
 			raw: {
 				width,

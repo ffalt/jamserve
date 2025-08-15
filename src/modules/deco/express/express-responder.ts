@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'node:path';
-import { ApiError } from './express-error.js';
 
 export interface StreamData {
 	pipe(stream: express.Response): void;
@@ -18,20 +17,20 @@ export interface ApiBinaryResult {
 }
 
 export abstract class ApiBaseResponder {
-	sendString(req: express.Request, res: express.Response, data: string): void {
+	sendString(_req: express.Request, res: express.Response, data: string): void {
 		res.set('Content-Type', 'text/plain').status(200).send(data);
 	}
 
-	sendJSON(req: express.Request, res: express.Response, data: unknown): void {
+	sendJSON(_req: express.Request, res: express.Response, data: unknown): void {
 		res.status(200).json(data);
 	}
 
-	sendJSONP(req: express.Request, res: express.Response, callback: string, data: any): void {
+	sendJSONP(_req: express.Request, res: express.Response, callback: string, data: any): void {
 		res.writeHead(200, { 'Content-Type': 'application/javascript' });
 		res.end(`${callback}(${JSON.stringify(data)});`);
 	}
 
-	sendXML(req: express.Request, res: express.Response, data: string): void {
+	sendXML(_req: express.Request, res: express.Response, data: string): void {
 		res.set('Content-Type', 'application/xml');
 		res.status(200).send(data);
 	}
@@ -59,5 +58,5 @@ export abstract class ApiBaseResponder {
 
 	abstract sendOK(req: express.Request, res: express.Response): void;
 
-	abstract sendError(req: express.Request, res: express.Response, err: string | Error | ApiError): void;
+	abstract sendError(req: express.Request, res: express.Response, error: unknown): void;
 }

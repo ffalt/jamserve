@@ -1,13 +1,13 @@
 import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver } from 'type-graphql';
 import { Genre, GenreIndexQL, GenrePageQL, GenreQL } from './genre.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { GenreIndexArgsQL, GenresArgsQL } from './genre.args.js';
+import { GenreIndexParametersQL, GenresParametersQL } from './genre.parameters.js';
 import { AlbumPageQL } from '../album/album.js';
 import { TrackPageQL } from '../track/track.js';
 import { ArtistPageQL } from '../artist/artist.js';
-import { TrackPageArgsQL } from '../track/track.args.js';
-import { AlbumPageArgsQL } from '../album/album.args.js';
-import { ArtistPageArgsQL } from '../artist/artist.args.js';
+import { TrackPageParametersQL } from '../track/track.parameters.js';
+import { AlbumPageParametersQL } from '../album/album.parameters.js';
+import { ArtistPageParametersQL } from '../artist/artist.parameters.js';
 
 @Resolver(GenreQL)
 export class GenreResolver {
@@ -17,7 +17,7 @@ export class GenreResolver {
 	}
 
 	@Query(() => GenrePageQL, { description: 'Search Genres' })
-	async genres(@Args() { filter, page, order, list, seed }: GenresArgsQL, @Ctx() { user, orm }: Context): Promise<GenrePageQL> {
+	async genres(@Args() { filter, page, order, list, seed }: GenresParametersQL, @Ctx() { user, orm }: Context): Promise<GenrePageQL> {
 		if (list) {
 			return await orm.Genre.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -25,7 +25,7 @@ export class GenreResolver {
 	}
 
 	@Query(() => GenreIndexQL, { description: 'Get the Navigation Index for Genres' })
-	async genreIndex(@Args() { filter }: GenreIndexArgsQL, @Ctx() { orm }: Context): Promise<GenreIndexQL> {
+	async genreIndex(@Args() { filter }: GenreIndexParametersQL, @Ctx() { orm }: Context): Promise<GenreIndexQL> {
 		return await orm.Genre.indexFilter(filter);
 	}
 
@@ -50,17 +50,17 @@ export class GenreResolver {
 	}
 
 	@FieldResolver(() => TrackPageQL)
-	async tracks(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: TrackPageArgsQL): Promise<TrackPageQL> {
+	async tracks(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: TrackPageParametersQL): Promise<TrackPageQL> {
 		return orm.Track.searchFilter({ ...filter, genreIDs: [genre.id] }, order, page, user);
 	}
 
 	@FieldResolver(() => AlbumPageQL)
-	async albums(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: AlbumPageArgsQL): Promise<AlbumPageQL> {
+	async albums(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: AlbumPageParametersQL): Promise<AlbumPageQL> {
 		return orm.Album.searchFilter({ ...filter, genreIDs: [genre.id] }, order, page, user);
 	}
 
 	@FieldResolver(() => ArtistPageQL)
-	async artists(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: ArtistPageArgsQL): Promise<ArtistPageQL> {
+	async artists(@GQLRoot() genre: Genre, @Ctx() { orm, user }: Context, @Args() { filter, order, page }: ArtistPageParametersQL): Promise<ArtistPageQL> {
 		return orm.Artist.searchFilter({ ...filter, genreIDs: [genre.id] }, order, page, user);
 	}
 }

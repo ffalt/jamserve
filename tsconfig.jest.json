@@ -1,25 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
+    "rootDir": ".",
     "module": "esnext",
-    "rootDir": "./"
+    "moduleResolution": "node16",
+    "types": ["node", "jest"]
   },
   "include": [
-    "*.js",
-    "src/**/*.test.ts",
-    "src/**/*",
-    "config/*.js"
-  ],
-  "exclude": [
-    "bin",
-    "data",
-    "dist",
-    "temp",
-    "specs",
-    "local",
-    "static",
-    ".git",
-    ".idea"
+    "deploy.ts",
+    "test/**/*.ts",
+    "**/*.test.ts",
+    "**/*.d.ts"
   ]
 }

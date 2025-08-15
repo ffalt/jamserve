@@ -5,7 +5,7 @@ import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
-import { PlayQueueSetArgs } from './playqueue.args.js';
+import { PlayQueueSetParameters } from './playqueue.parameters.js';
 import { PlayQueue } from './playqueue.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 
@@ -34,14 +34,14 @@ export class PlayQueueService {
 		return queue;
 	}
 
-	async set(orm: Orm, args: PlayQueueSetArgs, user: User, client: string): Promise<void> {
+	async set(orm: Orm, { mediaIDs }: PlayQueueSetParameters, user: User, client: string): Promise<void> {
 		let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
 		if (!queue) {
 			queue = orm.PlayQueue.create({});
 			await queue.user.set(user);
 		}
 		queue.changedBy = client;
-		const ids = args.mediaIDs || [];
+		const ids = mediaIDs ?? [];
 		const mediaList = [];
 		for (const id of ids) {
 			const media = await orm.findInStreamTypes(id);
@@ -56,9 +56,7 @@ export class PlayQueueService {
 		let position = 1;
 		for (const media of mediaList) {
 			let entry = oldEntries.pop();
-			if (!entry) {
-				entry = orm.PlayQueueEntry.create({ playlist: queue, position });
-			}
+			entry ??= orm.PlayQueueEntry.create({ playlist: queue, position });
 			entry.position = position;
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
 			await entry.episode.set(media.objType === DBObjectType.episode ? media.obj as Episode : undefined);

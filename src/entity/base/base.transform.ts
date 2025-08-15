@@ -26,7 +26,7 @@ export class BaseTransformService {
 		};
 	}
 
-	async stateBase(orm: Orm, o: ORMState): Promise<State> {
+	async stateBase(_orm: Orm, o: ORMState): Promise<State> {
 		return {
 			played: o.played,
 			lastPlayed: o.lastPlayed ? o.lastPlayed.valueOf() : undefined,
@@ -50,7 +50,7 @@ export class BaseTransformService {
 		};
 	}
 
-	async mediaTag(orm: Orm, o?: ORMTag): Promise<MediaTag> {
+	async mediaTag(_orm: Orm, o?: ORMTag): Promise<MediaTag> {
 		if (!o) {
 			return {};
 		}

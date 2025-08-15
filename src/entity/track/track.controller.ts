@@ -1,18 +1,18 @@
 import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesTrackArgs, MediaHealthArgs, RawTagUpdateArgs, TrackFilterArgs, TrackFixArgs, TrackMoveArgs, TrackOrderArgs, TrackRenameArgs } from './track.args.js';
+import { IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/track', { tags: ['Track'], roles: [UserRole.stream] })
 export class TrackController {
@@ -22,13 +22,13 @@ export class TrackController {
 		{ description: 'Get a Track by Id', summary: 'Get Track' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Track Id', isID: true }) id: string,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Track Id', isID: true }) id: string,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Track> {
 		return engine.transform.track(
 			orm, await orm.Track.oneOrFailByID(id),
-			trackArgs, user
+			trackParameters, user
 		);
 	}
 
@@ -38,21 +38,21 @@ export class TrackController {
 		{ description: 'Search Tracks' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@QueryParams() filter: TrackFilterArgs,
-		@QueryParams() order: TrackOrderArgs,
-		@QueryParams() list: ListArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@QueryParameters() filter: TrackFilterParameters,
+		@QueryParameters() order: TrackOrderParameters,
+		@QueryParameters() list: ListParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		if (list.list) {
 			return await orm.Track.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.track(orm, o, trackArgs, user)
+				o => engine.transform.track(orm, o, trackParameters, user)
 			);
 		}
 		return await orm.Track.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.track(orm, o, trackArgs, user)
+			o => engine.transform.track(orm, o, trackParameters, user)
 		);
 	}
 
@@ -62,14 +62,14 @@ export class TrackController {
 		{ description: 'Get similar Tracks by Track Id (External Service)', summary: 'Get similar Tracks' }
 	)
 	async similar(
-		@QueryParam('id', { description: 'Track Id', isID: true }) id: string,
-		@QueryParams() page: PageArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Track Id', isID: true }) id: string,
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const track = await orm.Track.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byTrack(orm, track, page);
-		return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
+		return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackParameters, user) };
 	}
 
 	@Get(
@@ -78,8 +78,8 @@ export class TrackController {
 		{ description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }
 	)
 	async lyrics(
-		@QueryParam('id', { description: 'Track Id', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@QueryParameter('id', { description: 'Track Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<TrackLyrics> {
 		const track = await orm.Track.oneOrFailByID(id);
 		return await engine.metadata.lyricsByTrack(orm, track);
@@ -91,13 +91,13 @@ export class TrackController {
 		{ description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }
 	)
 	async rawTagGet(
-		@QueryParams() filter: TrackFilterArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() filter: TrackFilterParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Array<MediaIDTagRaw>> {
 		const tracks = await orm.Track.findFilter(filter, [], {}, user);
 		const result: Array<MediaIDTagRaw> = [];
 		for (const track of tracks) {
-			const raw = (await engine.track.getRawTag(track)) || {};
+			const raw = (await engine.track.getRawTag(track)) ?? {};
 			result.push({ id: track.id, ...raw });
 		}
 		return result;
@@ -109,17 +109,17 @@ export class TrackController {
 		{ description: 'List of Tracks with Health Issues', roles: [UserRole.admin], summary: 'Get Health' }
 	)
 	async health(
-		@QueryParams() mediaHealthArgs: MediaHealthArgs,
-		@QueryParams() filter: TrackFilterArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() healthParameters: MediaHealthParameters,
+		@QueryParameters() filter: TrackFilterParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Array<TrackHealth>> {
 		const tracks = await orm.Track.findFilter(filter, [], {}, user);
-		const list = await engine.track.health(tracks, mediaHealthArgs.healthMedia);
+		const list = await engine.track.health(tracks, healthParameters.healthMedia);
 		const result: Array<TrackHealth> = [];
 		for (const item of list) {
 			result.push({
-				track: await engine.transform.Track.trackBase(orm, item.track, trackArgs, user),
+				track: await engine.transform.Track.trackBase(orm, item.track, trackParameters, user),
 				health: item.health
 			});
 		}
@@ -132,11 +132,11 @@ export class TrackController {
 		{ description: 'Rename a track', roles: [UserRole.admin], summary: 'Rename Track' }
 	)
 	async rename(
-		@BodyParams() args: TrackRenameArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: TrackRenameParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.track.rename(args.id, args.name, track.root.idOrFail());
+		const track = await orm.Track.oneOrFailByID(parameters.id);
+		return await engine.io.track.rename(parameters.id, parameters.name, track.root.idOrFail());
 	}
 
 	@Post(
@@ -145,11 +145,11 @@ export class TrackController {
 		{ description: 'Move Tracks', roles: [UserRole.admin] }
 	)
 	async move(
-		@BodyParams() args: TrackMoveArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: TrackMoveParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const folder = await orm.Folder.oneOrFailByID(args.folderID);
-		return await engine.io.track.move(args.ids, args.folderID, folder.root.idOrFail());
+		const folder = await orm.Folder.oneOrFailByID(parameters.folderID);
+		return await engine.io.track.move(parameters.ids, parameters.folderID, folder.root.idOrFail());
 	}
 
 	@Post(
@@ -158,8 +158,8 @@ export class TrackController {
 		{ description: 'Remove a Track', roles: [UserRole.admin], summary: 'Remove Track' }
 	)
 	async remove(
-		@BodyParam('id') id: string,
-		@Ctx() { orm, engine }: Context
+		@BodyParameter('id') id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		const track = await orm.Track.oneOrFailByID(id);
 		return await engine.io.track.remove(id, track.root.idOrFail());
@@ -171,11 +171,11 @@ export class TrackController {
 		{ description: 'Fix Track by Health Hint Id', roles: [UserRole.admin], summary: 'Fix Track' }
 	)
 	async fix(
-		@BodyParams() args: TrackFixArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: TrackFixParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.track.fix(args.id, args.fixID, track.root.idOrFail());
+		const track = await orm.Track.oneOrFailByID(parameters.id);
+		return await engine.io.track.fix(parameters.id, parameters.fixID, track.root.idOrFail());
 	}
 
 	@Post(
@@ -184,10 +184,10 @@ export class TrackController {
 		{ description: 'Write a Raw Rag to a Track by Track Id', roles: [UserRole.admin], summary: 'Set Raw Tag' }
 	)
 	async rawTagSet(
-		@BodyParams() args: RawTagUpdateArgs,
-		@Ctx() { orm, engine }: Context
+		@BodyParameters() parameters: RawTagUpdateParameters,
+		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
-		const track = await orm.Track.oneOrFailByID(args.id);
-		return await engine.io.track.writeTags(args.id, args.tag, track.root.idOrFail());
+		const track = await orm.Track.oneOrFailByID(parameters.id);
+		return await engine.io.track.writeTags(parameters.id, parameters.tag, track.root.idOrFail());
 	}
 }

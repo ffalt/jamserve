@@ -40,30 +40,32 @@ export class Feed {
 		return moment.duration(s).as('milliseconds');
 	}
 
-	static parseItunesDurationSeconds(s: string): number {
-		const num = Number(s);
-		if (!s.includes(':') && !Number.isNaN(num)) {
-			return num;
+	static parseItunesDurationSeconds(value: string): number {
+		const number = Number(value);
+		if (!value.includes(':') && !Number.isNaN(number)) {
+			return number;
 		}
-		if (s.length === 5) {
-			s = `00:${s}`;
+		if (value.length === 5) {
+			value = `00:${value}`;
 		}
-		return moment.duration(s).as('seconds');
+		return moment.duration(value).as('seconds');
 	}
 
-	static getParams(str: string): Record<string, string> {
-		return str.split(';').reduce(
-			(para: Record<string, string>, param: string) => {
-				const parts = param.split('=').map(part => part.trim());
-				if (parts.length === 2) {
-					para[parts[0]] = parts[1];
-				}
-				return para;
-			}, {});
+	static getParams(value: string): Record<string, string> {
+		const parameters: Record<string, string> = {};
+		for (const parameter of value.split(';')) {
+			const parts = parameter.split('=').map(part => part.trim());
+			const part0 = parts.at(0);
+			const part1 = parts.at(1);
+			if (part0 && part1) {
+				parameters[part0] = part1;
+			}
+		}
+		return parameters;
 	}
 
-	static maybeDecompress(res: NodeJS.ReadableStream, encoding: string, done: (err?: Error) => void): NodeJS.ReadableStream {
-		let decompress;
+	static maybeDecompress(stream: NodeJS.ReadableStream, encoding: string, done: (error?: unknown) => void): NodeJS.ReadableStream {
+		let decompress: zlib.Inflate | zlib.Gunzip | undefined;
 		if ((/\bdeflate\b/).test(encoding)) {
 			decompress = zlib.createInflate();
 			decompress.on('error', done);
@@ -71,10 +73,10 @@ export class Feed {
 			decompress = zlib.createGunzip();
 			decompress.on('error', done);
 		}
-		return decompress ? res.pipe(decompress) : res;
+		return decompress ? stream.pipe(decompress) : stream;
 	}
 
-	static maybeTranslate(res: NodeJS.ReadableStream, charset: string, done: (err?: Error) => void): NodeJS.ReadableStream {
+	static maybeTranslate(stream: NodeJS.ReadableStream, charset: string, done: (error?: unknown) => void): NodeJS.ReadableStream {
 		// Use iconv if its not utf8 already.
 		if (charset && !/utf-*8/i.test(charset)) {
 			try {
@@ -82,17 +84,17 @@ export class Feed {
 				iv.on('error', done);
 				// If we're using iconv, stream will be the output of iconv
 				// otherwise it will remain the output of request
-				res = res.pipe(iv);
-			} catch (error) {
-				res.emit('error', error);
+				stream = stream.pipe(iv);
+			} catch (error: unknown) {
+				stream.emit('error', error);
 			}
 		}
-		return res;
+		return stream;
 	}
 
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
-		const res = await fetch(url, {
+		const result = await fetch(url, {
 			// timeout: 10000,
 			headers: {
 				// Some feeds do not respond without user-agent and accept headers.
@@ -100,12 +102,12 @@ export class Feed {
 				'accept': 'text/html,application/xhtml+xml'
 			}
 		});
-		if (res.ok && res.status === 200) {
+		if (result.ok && result.status === 200) {
 			let feed: Record<string, any>;
 			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
-				const done = (err?: Error): void => {
-					if (err) {
-						reject(err);
+				const done = (error?: unknown): void => {
+					if (error) {
+						reject(error as unknown);
 					} else {
 						resolve({ feed, posts });
 					}
@@ -114,22 +116,22 @@ export class Feed {
 				feedParser.on('readable', function streamResponse(): void {
 					const response = feedParser;
 					feed = response.meta;
-					let item = response.read();
+					let item = response.read() as FeedParser.Item | undefined;
 					while (item) {
 						posts.push(item);
-						item = response.read();
+						item = response.read() as FeedParser.Item | undefined;
 					}
 				});
 				feedParser.on('error', done);
 				feedParser.on('end', done);
-				if (!res.body) {
-					return done(new Error('Bad feed stream'));
+				if (!result.body) {
+					done(new Error('Bad feed stream'));
+					return;
 				}
-				res.body.pipe(feedParser);
+				result.body.pipe(feedParser);
 			});
-		} else {
-			throw new Error(`Bad status code ${res.status} ${res.statusText ?? ''}`.trimEnd());
 		}
+		throw new Error(`Bad status code ${result.status} ${result.statusText}`.trimEnd());
 	}
 
 	public async get(podcast: Podcast): Promise<{ tag: PodcastTag; episodes: Array<EpisodeData> }> {
@@ -144,7 +146,7 @@ export class Feed {
 			image: data.feed.image?.url,
 			categories: data.feed.categories
 		};
-		if (data.feed?.['itunes:summary']?.['#']) {
+		if (data.feed['itunes:summary']?.['#']) {
 			tag.description = data.feed['itunes:summary']['#'];
 		}
 		const episodes: Array<EpisodeData> = data.posts.map(post => {
@@ -153,15 +155,15 @@ export class Feed {
 			const anypost = post as any;
 			let duration: number | undefined;
 			if (anypost?.['itunes:duration']?.['#']) {
-				duration = Feed.parseItunesDurationSeconds(anypost['itunes:duration']['#']);
+				duration = Feed.parseItunesDurationSeconds(anypost['itunes:duration']['#'] as string);
 			}
 			const pscChaps: any = anypost['psc:chapters'];
 			if (pscChaps) {
-				const pscChap: Array<any> = pscChaps['psc:chapter'];
+				const pscChap: Array<any> | undefined = pscChaps['psc:chapter'];
 				if (pscChap) {
 					chapters = pscChap.map(item => {
 						const entry = item['@'];
-						return { start: Feed.parseDurationMilliseconds(entry.start), title: entry.title };
+						return { start: Feed.parseDurationMilliseconds(entry.start as string), title: entry.title };
 					}).sort((a, b) => a.start - b.start);
 				}
 			}
@@ -170,8 +172,8 @@ export class Feed {
 				link: post.link,
 				guid: post.guid || post.link,
 				summary: post.summary,
-				enclosures: (post.enclosures || []).map(e => {
-					return { ...e, length: e.length === undefined ? undefined : Number(e.length) };
+				enclosures: post.enclosures.map(enclosure => {
+					return { ...enclosure, length: enclosure.length === undefined ? undefined : Number(enclosure.length) };
 				}),
 				date: post.date ?? undefined,
 				name: post.title,

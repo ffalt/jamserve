@@ -1,5 +1,6 @@
 import fse from 'fs-extra';
 import { parentPort } from 'node:worker_threads';
+// eslint-disable-next-line unicorn/prevent-abbreviations
 import { mp3val } from '../tools/mp3val.js';
 
 export async function fixMP3(filename: string): Promise<void> {
@@ -13,11 +14,13 @@ export async function fixMP3(filename: string): Promise<void> {
 
 if (parentPort && process.env.JAM_USE_TASKS) {
 	const caller = parentPort;
-	caller.on('message', async (param: any) => {
-		if (typeof param !== 'string') {
+	caller.on('message', (parameter: unknown) => {
+		if (typeof parameter !== 'string') {
 			throw new TypeError('param must be a string.');
 		}
-		await fixMP3(param);
-		caller.postMessage(undefined);
+		void fixMP3(parameter)
+			.then(() => {
+				caller.postMessage(undefined);
+			});
 	});
 }

@@ -2,7 +2,7 @@ import { getMilliseconds, wait } from './clock.js';
 
 export type Interval = number | 'second' | 'sec' | 'minute' | 'min' | 'hour' | 'hr' | 'day';
 
-export interface TokenBucketOpts {
+export interface TokenBucketOptions {
 	bucketSize: number;
 	tokensPerInterval: number;
 	interval: Interval;
@@ -31,7 +31,7 @@ export class TokenBucket {
 	content: number;
 	lastDrip: number;
 
-	constructor({ bucketSize, tokensPerInterval, interval, parentBucket }: TokenBucketOpts) {
+	constructor({ bucketSize, tokensPerInterval, interval, parentBucket }: TokenBucketOptions) {
 		this.bucketSize = bucketSize;
 		this.tokensPerInterval = tokensPerInterval;
 
@@ -57,7 +57,7 @@ export class TokenBucket {
 					break;
 				}
 				default: {
-					throw new Error('Invalid interval ' + interval);
+					throw new Error(`Invalid interval ${interval}`);
 				}
 			}
 		} else {
@@ -100,24 +100,23 @@ export class TokenBucket {
 		// If we don't have enough tokens in this bucket, come back later
 		if (count > this.content) return comeBackLater();
 
-		if (this.parentBucket == undefined) {
+		if (this.parentBucket === undefined) {
 			// Remove the requested tokens from this bucket
 			this.content -= count;
 			return this.content;
-		} else {
-			// Remove the requested from the parent bucket first
-			const remainingTokens = await this.parentBucket.removeTokens(count);
-
-			// Check that we still have enough tokens in this bucket
-			if (count > this.content) return comeBackLater();
-
-			// Tokens were removed from the parent bucket, now remove them from
-			// this bucket. Note that we look at the current bucket and parent
-			// bucket's remaining tokens and return the smaller of the two values
-			this.content -= count;
-
-			return Math.min(remainingTokens, this.content);
 		}
+		// Remove the requested from the parent bucket first
+		const remainingTokens = await this.parentBucket.removeTokens(count);
+
+		// Check that we still have enough tokens in this bucket
+		if (count > this.content) return comeBackLater();
+
+		// Tokens were removed from the parent bucket, now remove them from
+		// this bucket. Note that we look at the current bucket and parent
+		// bucket's remaining tokens and return the smaller of the two values
+		this.content -= count;
+
+		return Math.min(remainingTokens, this.content);
 	}
 
 	/**
@@ -155,9 +154,9 @@ export class TokenBucket {
 	 */
 	drip(): boolean {
 		if (this.tokensPerInterval === 0) {
-			const prevContent = this.content;
+			const previous = this.content;
 			this.content = this.bucketSize;
-			return this.content > prevContent;
+			return this.content > previous;
 		}
 
 		const now = getMilliseconds();
@@ -165,8 +164,8 @@ export class TokenBucket {
 		this.lastDrip = now;
 
 		const dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
-		const prevContent = this.content;
+		const previousContent = this.content;
 		this.content = Math.min(this.content + dripAmount, this.bucketSize);
-		return Math.floor(this.content) > Math.floor(prevContent);
+		return Math.floor(this.content) > Math.floor(previousContent);
 	}
 }

@@ -36,14 +36,14 @@ export class JamHttpService {
 					withCredentials: options.withCredentials,
 					observe: 'response'
 				})
-					.subscribe(res => {
-						if (!res?.body) {
+					.subscribe(result => {
+						if (!result?.body) {
 							return reject(new Error('Invalid Binary Server Response'));
 						}
-						resolve({buffer: res.body, contentType: res.headers.get('content-type') || 'invalid'});
+						resolve({buffer: result.body, contentType: result.headers.get('content-type') || 'invalid'});
 					});
 			});
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}
@@ -56,7 +56,7 @@ export class JamHttpService {
 					withCredentials: options.withCredentials, responseType: options.responseType as 'json'
 				}
 			)) as Promise<T>;
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}
@@ -66,7 +66,7 @@ export class JamHttpService {
 			return await firstValueFrom(this.client.post<T>(url, body,
 				{params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials}
 			)) as Promise<T>;
-		} catch (error) {
+		} catch (error: unknown) {
 			return handleError(error);
 		}
 	}

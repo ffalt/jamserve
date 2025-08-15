@@ -1,11 +1,11 @@
-import { SubsonicParameterJukebox } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterJukebox } from '../model/subsonic-rest-parameters.js';
 
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { Context } from '../../engine/rest/context.js';
 import { SubsonicOKResponse, SubsonicOpenSubsonicResponse, SubsonicResponseJukeboxStatus, SubsonicResponseLicense, SubsonicResponseScanStatus } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { logger } from '../../../utils/logger.js';
 
@@ -22,7 +22,7 @@ export class SubsonicSystemApi {
 		description: 'Get details about the software license.',
 		tags: ['System']
 	})
-	async getLicense(@SubsonicCtx() _ctx: Context): Promise<SubsonicResponseLicense> {
+	async getLicense(@SubsonicContext() _context: Context): Promise<SubsonicResponseLicense> {
 		return { license: { valid: true, email: 'example@@example.com' } };
 	}
 
@@ -35,7 +35,7 @@ export class SubsonicSystemApi {
 		description: 'Used to test connectivity with the server.',
 		tags: ['System']
 	})
-	async ping(@SubsonicCtx() _ctx: Context): Promise<SubsonicOKResponse> {
+	async ping(@SubsonicContext() _context: Context): Promise<SubsonicOKResponse> {
 		return {};
 	}
 
@@ -47,7 +47,7 @@ export class SubsonicSystemApi {
 		description: 'List the OpenSubsonic extensions supported by this server.',
 		tags: ['System']
 	})
-	async getOpenSubsonicExtensions(@SubsonicCtx() _ctx: Context): Promise<SubsonicOpenSubsonicResponse> {
+	async getOpenSubsonicExtensions(@SubsonicContext() _context: Context): Promise<SubsonicOpenSubsonicResponse> {
 		return {
 			openSubsonicExtensions: [
 				{ name: 'songLyrics', versions: [1] }, // https://opensubsonic.netlify.app/docs/extensions/songlyrics/
@@ -66,7 +66,7 @@ export class SubsonicSystemApi {
 		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
 		tags: ['System']
 	})
-	async jukeboxControl(@SubsonicParams() _query: SubsonicParameterJukebox, @SubsonicCtx() { user }: Context): Promise<SubsonicResponseJukeboxStatus> {
+	async jukeboxControl(@SubsonicParameters() _query: SubsonicParameterJukebox, @SubsonicContext() { user }: Context): Promise<SubsonicResponseJukeboxStatus> {
 		if (!user.roleAdmin) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
@@ -90,7 +90,7 @@ export class SubsonicSystemApi {
 		description: 'Returns the current status for media library scanning.',
 		tags: ['System']
 	})
-	async getScanStatus(@SubsonicCtx() { engine }: Context): Promise<SubsonicResponseScanStatus> {
+	async getScanStatus(@SubsonicContext() { engine }: Context): Promise<SubsonicResponseScanStatus> {
 		return { scanStatus: { scanning: engine.io.scanning } };
 	}
 
@@ -103,12 +103,15 @@ export class SubsonicSystemApi {
 		description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',
 		tags: ['System']
 	})
-	async startScan(@SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
+	async startScan(@SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
 		if (!user.roleAdmin) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		if (!engine.io.scanning) {
-			engine.io.root.refreshAllMeta(orm).catch(error => log.error(error)); // do not wait;
+			engine.io.root.refreshAllMeta(orm)
+				.catch((error: unknown) => {
+					log.error(error);
+				}); // do not wait;
 		}
 		return {};
 	}

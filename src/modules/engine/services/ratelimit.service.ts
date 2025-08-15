@@ -25,32 +25,32 @@ export class RateLimitService {
 	});
 
 	async loginSlowDown(req: express.Request, res: express.Response): Promise<boolean> {
-		const key = req.ip as string;
+		const key = req.ip!;
 		try {
-			const resConsume = await this.loginLimiter.consume(key);
-			if (resConsume.remainingPoints <= 0) {
-				const resPenalty = await this.limiterConsecutiveOutOfLimits.penalty(key);
-				await this.loginLimiter.block(key, 60 * getFibonacciBlockDurationMinutes(resPenalty.consumedPoints));
+			const responseConsume = await this.loginLimiter.consume(key);
+			if (responseConsume.remainingPoints <= 0) {
+				const responsePenalty = await this.limiterConsecutiveOutOfLimits.penalty(key);
+				await this.loginLimiter.block(key, 60 * getFibonacciBlockDurationMinutes(responsePenalty.consumedPoints));
 			}
 			res.set('X-RateLimit-Limit', `${this.loginLimiterOption.points}`);
-			res.set('X-RateLimit-Remaining', `${resConsume.remainingPoints}`);
+			res.set('X-RateLimit-Remaining', `${responseConsume.remainingPoints}`);
 			return false;
-		} catch (error) {
+		} catch (error: unknown) {
 			if (error instanceof Error) {
 				throw error;
-			} else if (error && typeof error === 'object' && Object.hasOwn(error, 'msBeforeNext')) {
+			}
+			if (error && typeof error === 'object' && Object.hasOwn(error, 'msBeforeNext')) {
 				const seconds = Math.round((error as any).msBeforeNext / 1000) || 1;
 				res.set('Retry-After', `${seconds}`);
 				res.status(429).send(`Too Many Requests, try again in ${seconds} seconds`);
 				return true;
-			} else {
-				throw error;
 			}
+			throw error;
 		}
 	}
 
 	async loginSlowDownReset(req: express.Request): Promise<void> {
-		const key = req.ip as string;
+		const key = req.ip!;
 		await this.limiterConsecutiveOutOfLimits.delete(key);
 		await this.loginLimiter.delete(key);
 	}

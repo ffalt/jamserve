@@ -81,7 +81,7 @@ export class WorkerMergeScan {
 		}
 		if (metaStat.trackCount > 0) {
 			// has tracks
-			return this.getTrackFolderType(node, metaStat, strategy);
+			return WorkerMergeScan.getTrackFolderType(node, metaStat, strategy);
 		}
 		if (node.children.length === 0) {
 			// no tracks, no children folder
@@ -94,7 +94,7 @@ export class WorkerMergeScan {
 		if (node.children.length === 1) {
 			return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
 		}
-		if (!metaStat.hasMultipleArtists && !!node.children.some(d => d.folder.folderType === FolderType.artist)) {
+		if (!metaStat.hasMultipleArtists && node.children.some(d => d.folder.folderType === FolderType.artist)) {
 			// choose artist folder, if it's not an pure album (without artist folders in children nodes)
 			return FolderType.artist;
 		}
@@ -174,7 +174,7 @@ export class WorkerMergeScan {
 		folder.year = (year !== undefined && year > 0) ? year : metaStat.year;
 		folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
 
-		const genreNames = metaStat.genres || [];
+		const genreNames = metaStat.genres ?? [];
 		let genres: Array<Genre> = [];
 		if (genreNames.length > 0) {
 			genres = await this.orm.Genre.find({ where: { name: QHelper.inOrEqual(genreNames) } });

@@ -5,9 +5,9 @@ export const bannedTypes: Array<Function> = [Promise, Array, Object, Function];
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
 export declare type TypeValue = ClassType | Function | object | symbol;
-export declare type TypeValueThunk = (type?: void) => TypeValue | string;
-export declare type ReturnTypeFuncValue = TypeValue | RecursiveArray<TypeValue> | string | undefined;
-export declare type ReturnTypeFunc = (returns?: void) => ReturnTypeFuncValue;
+export declare type TypeValueThunk = (type?: unknown) => TypeValue | string;
+export declare type ReturnTypeFunctionValue = TypeValue | RecursiveArray<TypeValue> | string | undefined;
+export declare type ReturnTypeFunction = (returns?: unknown) => ReturnTypeFunctionValue;
 
 export interface DecoratorTypeOptions {
 	nullable?: boolean;
@@ -39,10 +39,10 @@ export interface OwnerOptions {
 	owner?: boolean;
 }
 
-export declare type MappedByFunc<T> = (e: T) => any;
+export declare type MappedByFunction<T> = (item: T) => any;
 
 export interface MappedByOptions<T> {
-	mappedBy?: MappedByFunc<T>;
+	mappedBy?: MappedByFunction<T>;
 }
 
 export interface PrimaryOptions {
@@ -57,7 +57,7 @@ export interface CascadeOptions {
 	onDelete?: 'cascade';
 }
 
-export declare type MethodAndPropDecorator = PropertyDecorator & MethodDecorator;
+export declare type MethodAndPropertyDecorator = PropertyDecorator & MethodDecorator;
 export declare type BasicOptions = DecoratorTypeOptions;
 export declare type AdvancedOptions = BasicOptions & SchemaNameOptions;
 export declare type FieldOptions = AdvancedOptions & { autoIncrement?: boolean };

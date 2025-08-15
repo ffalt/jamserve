@@ -8,17 +8,20 @@ export async function downloadFile(url: string, filename: string): Promise<void>
 		throw new Error(`Unexpected Response ${response.statusText || response.status}`);
 	}
 	return new Promise((resolve, reject) => {
-		const dest = fs.createWriteStream(filename);
+		const destination = fs.createWriteStream(filename);
 		if (!response.body) {
-			return reject(new Error('Bad file stream'));
+			reject(new Error('Bad file stream'));
+			return;
 		}
-		response.body.pipe(dest);
-		dest.on('close', () => resolve());
-		dest.on('error', (e: Error) => {
+		response.body.pipe(destination);
+		destination.on('close', () => {
+			resolve();
+		});
+		destination.on('error', (error: unknown) => {
 			fileDeleteIfExists(filename).then(() => {
-				reject(e);
-			}).catch(_ => {
-				reject(e);
+				reject(error);
+			}).catch(() => {
+				reject(error);
 			});
 		});
 	});

@@ -16,13 +16,13 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 
 	protected async parseResult<T>(response: Response): Promise<T | undefined> {
 		if (response.status === 404) {
-			return Promise.resolve({ images: [] } as any);
+			return Promise.resolve({ images: [] } as T);
 		}
 		return super.parseResult<T>(response);
 	}
 
-	protected async processError(e: Error, req: JSONRequest): Promise<CoverArtArchive.Response> {
-		if (e instanceof SyntaxError) {
+	protected async processError(error: unknown, req: JSONRequest): Promise<CoverArtArchive.Response> {
+		if (error instanceof SyntaxError) {
 			// coverartarchive response may be code 200 with html on empty data
 			// <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 			// <title>404 Not Found</title>
@@ -31,7 +31,7 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			// */
 			return { images: [] };
 		}
-		return super.processError(e, req);
+		return super.processError(error, req);
 	}
 
 	async releaseImages(mbid: string): Promise<CoverArtArchive.Response> {

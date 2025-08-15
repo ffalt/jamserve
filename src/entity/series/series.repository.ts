@@ -2,18 +2,19 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Series } from './series.js';
 import { User } from '../user/user.js';
-import { SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
-import { FindOptions, OrderItem, QHelper } from '../../modules/orm/index.js';
+import { SeriesFilterParameters, SeriesOrderParameters } from './series.parameters.js';
+import { QHelper } from '../../modules/orm/index.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class SeriesRepository extends BaseRepository<Series, SeriesFilterArgs, SeriesOrderArgs> {
+export class SeriesRepository extends BaseRepository<Series, SeriesFilterParameters, SeriesOrderParameters> {
 	objType = DBObjectType.series;
 	indexProperty = 'name';
 
-	buildOrder(order?: SeriesOrderArgs): Array<OrderItem> {
+	buildOrder(order?: SeriesOrderParameters): Array<OrderItem> {
 		return this.buildDefaultOrder(order);
 	}
 
-	async buildFilter(filter?: SeriesFilterArgs, _?: User): Promise<FindOptions<Series>> {
+	async buildFilter(filter?: SeriesFilterParameters, _?: User): Promise<FindOptions<Series>> {
 		if (!filter) {
 			return {};
 		}

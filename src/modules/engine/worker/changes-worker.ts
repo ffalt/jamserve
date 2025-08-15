@@ -44,7 +44,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 		const imageIDs = imageCleanIds.ids();
 		if (imageIDs.length > 0) {
-			log.debug('Cleaning Image Cache IDs:', imageIDs.length);
+			log.debug('Cleaning Image Cache IDs:', imageIDs.length.toString());
 			await this.imageModule.clearImageCacheByIDs(imageIDs);
 		}
 
@@ -54,7 +54,7 @@ export class ChangesWorker extends BaseWorker {
 
 		const trackIDs = trackCleanIds.ids();
 		if (trackIDs.length > 0) {
-			log.debug('Cleaning Audio Cache IDs:', trackIDs.length);
+			log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
 			await this.audioModule.clearCacheByIDs(trackIDs);
 		}
 	}
@@ -87,9 +87,9 @@ export class ChangesWorker extends BaseWorker {
 							await this.store.playlistStore.replace(playlist);
 			*/
 		}
-		const stateDestIDs = stateCleanIds.ids();
-		if (stateDestIDs.length > 0) {
-			const states = await orm.State.findIDs({ where: { destID: stateDestIDs } });
+		const stateDestinationIDs = stateCleanIds.ids();
+		if (stateDestinationIDs.length > 0) {
+			const states = await orm.State.findIDs({ where: { destID: stateDestinationIDs } });
 			await orm.State.removeLaterByIDs(states);
 		}
 		if (orm.em.hasChanges()) {
@@ -116,14 +116,14 @@ export class ChangesWorker extends BaseWorker {
 	private logChanges(changes: Changes): void {
 		function logChange(name: string, list: IdSet<any>): void {
 			if (list.size > 0) {
-				log.info(name, list.size);
+				log.info(name, list.size.toString());
 			}
 		}
 
 		function logChangeSet(name: string, set: ChangeSet<any>): void {
-			logChange('Added ' + name, set.added);
-			logChange('Updated ' + name, set.updated);
-			logChange('Removed ' + name, set.removed);
+			logChange(`Added ${name}`, set.added);
+			logChange(`Updated ${name}`, set.updated);
+			logChange(`Removed ${name}`, set.removed);
 		}
 
 		const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');

@@ -118,7 +118,7 @@ export class Validator {
 	}
 
 	async validateORM(orm: Orm): Promise<void> {
-		log.info(`Validating DB`);
+		log.info('Validating DB');
 		await this.validateAlbums(orm);
 		await this.validateArtists(orm);
 		await this.validateSeries(orm);

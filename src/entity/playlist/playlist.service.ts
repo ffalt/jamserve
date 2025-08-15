@@ -2,7 +2,7 @@ import { Track } from '../track/track.js';
 import { Playlist } from './playlist.js';
 import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import { PlaylistMutateArgs } from './playlist.args.js';
+import { PlaylistMutateParameters } from './playlist.parameters.js';
 import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Episode } from '../episode/episode.js';
@@ -25,17 +25,17 @@ export class PlaylistService {
 		return 0;
 	}
 
-	async create(orm: Orm, args: PlaylistMutateArgs, user: User): Promise<Playlist> {
+	async create(orm: Orm, parameters: PlaylistMutateParameters, user: User): Promise<Playlist> {
 		const playlist: Playlist = orm.Playlist.create({
-			name: args.name,
-			comment: args.comment,
-			isPublic: args.isPublic,
+			name: parameters.name,
+			comment: parameters.comment,
+			isPublic: parameters.isPublic,
 			changed: Date.now(),
 			duration: 0
 		});
 		await playlist.user.set(user);
 		await orm.Playlist.persistAndFlush(playlist);
-		const ids = args.mediaIDs || [];
+		const ids = parameters.mediaIDs ?? [];
 		if (ids.length === 0) {
 			return playlist;
 		}
@@ -60,7 +60,7 @@ export class PlaylistService {
 		return playlist;
 	}
 
-	private async updateEntries(orm: Orm, ids: Array<string>, args: PlaylistMutateArgs, playlist: Playlist): Promise<number> {
+	private async updateEntries(orm: Orm, ids: Array<string>, _parameters: PlaylistMutateParameters, playlist: Playlist): Promise<number> {
 		const mediaList = await orm.findListInStreamTypes(ids);
 		const entries = await playlist.entries.getItems();
 		const oldEntries = entries.sort((a, b) => b.position - a.position);
@@ -68,9 +68,7 @@ export class PlaylistService {
 		let position = 1;
 		for (const media of mediaList) {
 			let entry = oldEntries.pop();
-			if (!entry) {
-				entry = orm.PlaylistEntry.create({ position });
-			}
+			entry ??= orm.PlaylistEntry.create({ position });
 			entry.position = position;
 			await entry.playlist.set(playlist);
 			await entry.track.set(media.objType === DBObjectType.track ? media.obj as Track : undefined);
@@ -83,11 +81,11 @@ export class PlaylistService {
 		return duration;
 	}
 
-	async update(orm: Orm, args: PlaylistMutateArgs, playlist: Playlist): Promise<void> {
-		playlist.name = args.name ?? playlist.name;
-		playlist.isPublic = args.isPublic ?? playlist.isPublic;
-		playlist.comment = args.comment ?? playlist.comment;
-		playlist.duration = await this.updateEntries(orm, args.mediaIDs || [], args, playlist);
+	async update(orm: Orm, parameters: PlaylistMutateParameters, playlist: Playlist): Promise<void> {
+		playlist.name = parameters.name ?? playlist.name;
+		playlist.isPublic = parameters.isPublic ?? playlist.isPublic;
+		playlist.comment = parameters.comment ?? playlist.comment;
+		playlist.duration = await this.updateEntries(orm, parameters.mediaIDs ?? [], parameters, playlist);
 		orm.Playlist.persistLater(playlist);
 		await orm.em.flush();
 	}

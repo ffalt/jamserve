@@ -8,7 +8,7 @@ import { Artist, ArtistQL } from '../artist/artist.js';
 import { Album, AlbumQL } from '../album/album.js';
 import { Track, TrackQL } from '../track/track.js';
 import { Artwork, ArtworkQL } from '../artwork/artwork.js';
-import { FolderIndexArgs, FoldersArgsQL } from './folder.args.js';
+import { FolderIndexParameters, FoldersParametersQL } from './folder.parameters.js';
 import { Genre, GenreQL } from '../genre/genre.js';
 
 @Resolver(FolderQL)
@@ -19,7 +19,7 @@ export class FolderResolver {
 	}
 
 	@Query(() => FolderPageQL, { description: 'Search Folders' })
-	async folders(@Args() { page, filter, order, list, seed }: FoldersArgsQL, @Ctx() { orm, user }: Context): Promise<FolderPageQL> {
+	async folders(@Args() { page, filter, order, list, seed }: FoldersParametersQL, @Ctx() { orm, user }: Context): Promise<FolderPageQL> {
 		if (list) {
 			return await orm.Folder.findListFilter(list, seed, filter, order, page, user);
 		}
@@ -27,7 +27,7 @@ export class FolderResolver {
 	}
 
 	@Query(() => FolderIndexQL, { description: 'Get the Navigation Index for Folders' })
-	async folderIndex(@Args() { filter }: FolderIndexArgs, @Ctx() { orm, user }: Context): Promise<FolderIndexQL> {
+	async folderIndex(@Args() { filter }: FolderIndexParameters, @Ctx() { orm, user }: Context): Promise<FolderIndexQL> {
 		return await orm.Folder.indexFilter(filter, user);
 	}
 
@@ -118,6 +118,6 @@ export class FolderResolver {
 
 	@FieldResolver(() => String)
 	title(@GQLRoot() folder: Folder): string {
-		return folder.title || folder.name;
+		return folder.title ?? folder.name;
 	}
 }

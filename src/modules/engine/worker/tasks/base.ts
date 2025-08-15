@@ -1,4 +1,4 @@
-import { containsFolderSystemChars, fileExt, replaceFolderSystemChars } from '../../../../utils/fs-utils.js';
+import { containsFolderSystemChars, fileExtention, replaceFolderSystemChars } from '../../../../utils/fs-utils.js';
 import path from 'node:path';
 import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
@@ -18,14 +18,14 @@ export class BaseWorker {
 			return Promise.reject(new Error('Invalid Name'));
 		}
 		const name = replaceFolderSystemChars(newName, '').trim();
-		const ext = fileExt(name);
-		const basename = path.basename(name, ext);
+		const extension = fileExtention(name);
+		const basename = path.basename(name, extension);
 		if (basename.length === 0) {
 			return Promise.reject(new Error('Invalid Name'));
 		}
-		const ext2 = fileExt(oldName);
-		if (ext !== ext2) {
-			return Promise.reject(new Error(`Changing File extension not supported "${ext2}"=>"${ext}"`));
+		const extension2 = fileExtention(oldName);
+		if (extension !== extension2) {
+			return Promise.reject(new Error(`Changing File extension not supported "${extension2}"=>"${extension}"`));
 		}
 		const newPath = path.join(dir, name);
 		const exists = await fse.pathExists(newPath);

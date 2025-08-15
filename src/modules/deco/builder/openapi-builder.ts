@@ -3,21 +3,21 @@ import { Errors } from '../express/express-error.js';
 import { MetadataStorage } from '../definitions/metadata-storage.js';
 import {
 	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, ParameterObject, ReferenceObject,
-	ResponsesObject, RequestBodyObject, SchemaObject, PathItemObject
+	ResponsesObject, RequestBodyObject, SchemaObject
 } from './openapi-helpers.js';
-import { OpenApiRefBuilder } from './openapi-refs.js';
+import { OpenApiReferenceBuilder } from './openapi-reference-builder.js';
 import { ClassType } from 'type-graphql';
 
 type ErrorResponseType = ClassType<any> | Function | object | symbol;
 
 export abstract class BaseOpenApiBuilder {
-	refsBuilder: OpenApiRefBuilder;
+	refsBuilder: OpenApiReferenceBuilder;
 
 	constructor(public metadata: MetadataStorage) {
-		this.refsBuilder = new OpenApiRefBuilder(this.metadata);
+		this.refsBuilder = new OpenApiReferenceBuilder(this.metadata);
 	}
 
-	protected fillErrorResponses(method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
+	protected fillErrorResponses(_method: MethodMetadata, parameters: Array<ParameterObject>, roles: Array<string>, responses: ResponsesObject): void {
 		if (parameters.length > 0) {
 			responses['422'] = { description: Errors.invalidParameter };
 			if (parameters.some(p => p.required)) {
@@ -25,7 +25,7 @@ export abstract class BaseOpenApiBuilder {
 			}
 		}
 		if (parameters.some(p => {
-			return (p.schema as ReferenceObject)?.$ref === SCHEMA_ID || (((p.schema as SchemaObject)?.items || {}) as ReferenceObject).$ref === SCHEMA_ID;
+			return (p.schema as ReferenceObject | undefined)?.$ref === SCHEMA_ID || (((p.schema as SchemaObject | undefined)?.items ?? {}) as ReferenceObject).$ref === SCHEMA_ID;
 		})) {
 			responses['404'] = { description: Errors.itemNotFound };
 		}
@@ -76,7 +76,7 @@ export abstract class BaseOpenApiBuilder {
 
 	protected fillStringResponse(method: MethodMetadata, responses: ResponsesObject): void {
 		const content: ContentObject = {};
-		const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
+		const mimeTypes = (method.responseStringMimeTypes ?? ['text/plain']);
 		for (const mime of mimeTypes) content[mime] = { schema: { type: 'string' } };
 		responses['200'] = { description: 'string data', content };
 	}
@@ -88,41 +88,25 @@ export abstract class BaseOpenApiBuilder {
 	}
 
 	protected buildRequestBody(method: MethodMetadata, schemas: Schemas): RequestBodyObject | undefined {
-		const params = method.params;
-		const refs: Array<SchemaObject | ReferenceObject> = [];
+		const parameters = method.parameters;
+		const references: Array<SchemaObject | ReferenceObject> = [];
 		let isJson = true;
-		for (const param of params) {
-			if (param.kind === 'args' && param.mode === 'body') {
-				refs.push({ $ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas) });
-			} else if (param.kind === 'arg' && param.mode === 'body') {
-				const schema = this.refsBuilder.buildParameterSchema(param, schemas);
-				refs.push({ properties: { [param.name]: schema }, description: param.description, required: [param.name] });
-			} else if (param.kind === 'arg' && param.mode === 'file') {
+		for (const parameter of parameters) {
+			if (parameter.kind === 'args' && parameter.mode === 'body') {
+				references.push({ $ref: this.refsBuilder.getParamRef(parameter.getType(), parameter.methodName, schemas) });
+			} else if (parameter.kind === 'arg' && parameter.mode === 'body') {
+				const schema = this.refsBuilder.buildParameterSchema(parameter, schemas);
+				references.push({ properties: { [parameter.name]: schema }, description: parameter.description, required: [parameter.name] });
+			} else if (parameter.kind === 'arg' && parameter.mode === 'file') {
 				isJson = false;
-				refs.push(this.refsBuilder.buildUploadSchema(param, schemas));
+				references.push(this.refsBuilder.buildUploadSchema(parameter, schemas));
 			}
 		}
-		if (refs.length > 0) {
+		if (references.length > 0) {
 			return {
 				required: true,
-				content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: refs.length === 1 ? refs[0] : { allOf: refs } } }
+				content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: references.length === 1 ? references.at(0) : { allOf: references } } }
 			};
-		}
-		return;
-	}
-
-	protected static getTags(p: PathItemObject): Array<string> | undefined {
-		if (p.get) {
-			return p.get.tags;
-		}
-		if (p.post) {
-			return p.post.tags;
-		}
-		if (p.put) {
-			return p.put.tags;
-		}
-		if (p.patch) {
-			return p.patch.tags;
 		}
 		return;
 	}
@@ -131,7 +115,7 @@ export abstract class BaseOpenApiBuilder {
 
 	build(openapi: OpenAPIObject, schemas: Schemas): OpenAPIObject {
 		this.buildPaths(schemas, openapi);
-		openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
+		openapi.components = { schemas: schemas as Record<string, SchemaObject | ReferenceObject>, securitySchemes: openapi.components?.securitySchemes };
 		return openapi;
 	}
 }

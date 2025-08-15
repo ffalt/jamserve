@@ -4,17 +4,17 @@ import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { TrackPage } from '../track/track.model.js';
 import { AlbumPage } from '../album/album.model.js';
 import { SeriesPage } from '../series/series.model.js';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
-import { IncludesSeriesArgs, SeriesFilterArgs, SeriesOrderArgs } from '../series/series.args.js';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
-import { ArtistFilterArgs, ArtistOrderArgs, IncludesArtistArgs, IncludesArtistChildrenArgs } from './artist.args.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
+import { AlbumOrderParameters, IncludesAlbumParameters } from '../album/album.parameters.js';
+import { IncludesSeriesParameters, SeriesFilterParameters, SeriesOrderParameters } from '../series/series.parameters.js';
+import { IncludesTrackParameters, TrackOrderParameters } from '../track/track.parameters.js';
+import { ArtistFilterParameters, ArtistOrderParameters, IncludesArtistParameters, IncludesArtistChildrenParameters } from './artist.parameters.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 
 @Controller('/artist', { tags: ['Artist'], roles: [UserRole.stream] })
 export class ArtistController {
@@ -23,17 +23,17 @@ export class ArtistController {
 		{ description: 'Get an Artist by Id', summary: 'Get Artist' }
 	)
 	async id(
-		@QueryParam('id', { description: 'Artist Id', isID: true }) id: string,
-		@QueryParams() artistArgs: IncludesArtistArgs,
-		@QueryParams() artistChildrenArgs: IncludesArtistChildrenArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@QueryParams() albumArgs: IncludesAlbumArgs,
-		@QueryParams() seriesArgs: IncludesSeriesArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Artist Id', isID: true }) id: string,
+		@QueryParameters() artistParameters: IncludesArtistParameters,
+		@QueryParameters() artistChildrenParameters: IncludesArtistChildrenParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@QueryParameters() albumParameters: IncludesAlbumParameters,
+		@QueryParameters() seriesParameters: IncludesSeriesParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<Artist> {
 		return engine.transform.artist(
 			orm, await orm.Artist.oneOrFailByID(id),
-			artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user
+			artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user
 		);
 	}
 
@@ -43,8 +43,8 @@ export class ArtistController {
 		{ description: 'Get the Navigation Index for Albums', summary: 'Get Index' }
 	)
 	async index(
-		@QueryParams() filter: ArtistFilterArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() filter: ArtistFilterParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtistIndex> {
 		const result = await orm.Artist.indexFilter(filter, user, engine.settings.settings.index.ignoreArticles);
 		return await engine.transform.Artist.artistIndex(orm, result);
@@ -56,25 +56,25 @@ export class ArtistController {
 		{ description: 'Search Artists' }
 	)
 	async search(
-		@QueryParams() page: PageArgs,
-		@QueryParams() artistArgs: IncludesArtistArgs,
-		@QueryParams() artistChildrenArgs: IncludesArtistChildrenArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@QueryParams() albumArgs: IncludesAlbumArgs,
-		@QueryParams() seriesArgs: IncludesSeriesArgs,
-		@QueryParams() filter: ArtistFilterArgs,
-		@QueryParams() order: ArtistOrderArgs,
-		@QueryParams() list: ListArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() artistParameters: IncludesArtistParameters,
+		@QueryParameters() artistChildrenParameters: IncludesArtistChildrenParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@QueryParameters() albumParameters: IncludesAlbumParameters,
+		@QueryParameters() seriesParameters: IncludesSeriesParameters,
+		@QueryParameters() filter: ArtistFilterParameters,
+		@QueryParameters() order: ArtistOrderParameters,
+		@QueryParameters() list: ListParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtistPage> {
 		if (list.list) {
 			return await orm.Artist.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
+				o => engine.transform.artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user)
 			);
 		}
 		return await orm.Artist.searchTransformFilter(
 			filter, [order], page, user,
-			o => engine.transform.artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user)
+			o => engine.transform.artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user)
 		);
 	}
 
@@ -84,8 +84,8 @@ export class ArtistController {
 		{ description: 'Get Meta Data Info of an Artist by Id (External Service)', summary: 'Get Info' }
 	)
 	async info(
-		@QueryParam('id', { description: 'Artist Id', isID: true }) id: string,
-		@Ctx() { orm, engine }: Context
+		@QueryParameter('id', { description: 'Artist Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
 	): Promise<ExtendedInfoResult> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		return { info: await engine.metadata.extInfo.byArtist(orm, artist) };
@@ -97,14 +97,14 @@ export class ArtistController {
 		{ description: 'Get similar Artists of an Artist by Id (External Service)', summary: 'Get similar Artists' }
 	)
 	async similar(
-		@QueryParam('id', { description: 'Artist Id', isID: true }) id: string,
-		@QueryParams() page: PageArgs,
-		@QueryParams() artistArgs: IncludesArtistArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Artist Id', isID: true }) id: string,
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() artistParameters: IncludesArtistParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtistPage> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		const result = await engine.metadata.similarArtists.byArtist(orm, artist, page);
-		return { ...result, items: await engine.transform.Artist.artistBases(orm, result.items, artistArgs, user) };
+		return { ...result, items: await engine.transform.Artist.artistBases(orm, result.items, artistParameters, user) };
 	}
 
 	@Get(
@@ -113,14 +113,14 @@ export class ArtistController {
 		{ description: 'Get similar Tracks of an Artist by Id (External Service)', summary: 'Get similar Tracks' }
 	)
 	async similarTracks(
-		@QueryParam('id', { description: 'Artist Id', isID: true }) id: string,
-		@QueryParams() page: PageArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameter('id', { description: 'Artist Id', isID: true }) id: string,
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const artist = await orm.Artist.oneOrFailByID(id);
 		const result = await engine.metadata.similarTracks.byArtist(orm, artist, page);
-		return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackArgs, user) };
+		return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackParameters, user) };
 	}
 
 	@Get(
@@ -129,16 +129,16 @@ export class ArtistController {
 		{ description: 'Get Tracks of Artists', summary: 'Get Tracks' }
 	)
 	async tracks(
-		@QueryParams() page: PageArgs,
-		@QueryParams() trackArgs: IncludesTrackArgs,
-		@QueryParams() filter: ArtistFilterArgs,
-		@QueryParams() order: TrackOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() trackParameters: IncludesTrackParameters,
+		@QueryParameters() filter: ArtistFilterParameters,
+		@QueryParameters() order: TrackOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
 			{ artistIDs }, [order], page, user,
-			o => engine.transform.Track.trackBase(orm, o, trackArgs, user)
+			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}
 
@@ -148,16 +148,16 @@ export class ArtistController {
 		{ description: 'Get Albums of Artists', summary: 'Get Albums' }
 	)
 	async albums(
-		@QueryParams() page: PageArgs,
-		@QueryParams() albumArgs: IncludesAlbumArgs,
-		@QueryParams() filter: ArtistFilterArgs,
-		@QueryParams() order: AlbumOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() albumParameters: IncludesAlbumParameters,
+		@QueryParameters() filter: ArtistFilterParameters,
+		@QueryParameters() order: AlbumOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<AlbumPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
 			{ artistIDs }, [order], page, user,
-			o => engine.transform.Album.albumBase(orm, o, albumArgs, user)
+			o => engine.transform.Album.albumBase(orm, o, albumParameters, user)
 		);
 	}
 
@@ -167,16 +167,16 @@ export class ArtistController {
 		{ description: 'Get Series of Artists', summary: 'Get Series' }
 	)
 	async series(
-		@QueryParams() page: PageArgs,
-		@QueryParams() seriesArgs: IncludesSeriesArgs,
-		@QueryParams() filter: SeriesFilterArgs,
-		@QueryParams() order: SeriesOrderArgs,
-		@Ctx() { orm, engine, user }: Context
+		@QueryParameters() page: PageParameters,
+		@QueryParameters() seriesParameters: IncludesSeriesParameters,
+		@QueryParameters() filter: SeriesFilterParameters,
+		@QueryParameters() order: SeriesOrderParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<SeriesPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Series.searchTransformFilter(
 			{ artistIDs }, [order], page, user,
-			o => engine.transform.Series.seriesBase(orm, o, seriesArgs, user)
+			o => engine.transform.Series.seriesBase(orm, o, seriesParameters, user)
 		);
 	}
 }

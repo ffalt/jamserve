@@ -1,12 +1,12 @@
 import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { User, User as ORMUser } from './user.js';
-import { IncludesUserArgs } from './user.args.js';
+import { IncludesUserParameters } from './user.parameters.js';
 import { User as RESTUser } from './user.model.js';
 
 @InRequestScope
 export class UserTransformService {
-	async user(orm: Orm, o: ORMUser, userArgs: IncludesUserArgs, currentUser: User): Promise<RESTUser> {
+	async user(_orm: Orm, o: ORMUser, _parameters: IncludesUserParameters, currentUser?: User): Promise<RESTUser> {
 		return {
 			id: o.id,
 			name: o.name,

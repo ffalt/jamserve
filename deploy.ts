@@ -5,7 +5,7 @@ export async function spawnNPM(): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		exec('npm i -q', {
 			cwd: './deploy'
-		}, function (error, stdout, _stderr) {
+		}, (error, stdout, _stderr) => {
 			console.log(stdout);
 			if (error) {
 				reject(error);
@@ -56,7 +56,7 @@ start()
 	.then(() => {
 		process.exit(0);
 	})
-	.catch(error => {
+	.catch((error: unknown) => {
 		console.log(error);
 		process.exit(1);
 	});

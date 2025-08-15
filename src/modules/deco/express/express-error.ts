@@ -23,34 +23,34 @@ export const Errors = {
 	unauthorized: 'Unauthorized'
 };
 
-export function missingParamError(param: string): ApiError {
-	return new ApiError(`${Errors.missingParameter}: ${param}`, 400);
+export function missingParameterError(parameter: string): ApiError {
+	return new ApiError(`${Errors.missingParameter}: ${parameter}`, 400);
 }
 
-export function invalidParamError(param: string, msg?: string): ApiError {
-	let message = `${Errors.invalidParameter}: ${param}`;
-	if (msg) {
-		message += ` - ${msg}`;
+export function invalidParameterError(parameter: string, message?: string): ApiError {
+	let value = `${Errors.invalidParameter}: ${parameter}`;
+	if (message) {
+		value += ` - ${message}`;
 	}
-	return new ApiError(message, 422);
+	return new ApiError(value, 422);
 }
 
-export function notFoundError(msg?: string): ApiError {
-	let message = Errors.itemNotFound;
-	if (msg) {
-		message += `: ${msg}`;
+export function notFoundError(message?: string): ApiError {
+	let value = Errors.itemNotFound;
+	if (message) {
+		value += `: ${message}`;
 	}
-	return new ApiError(message, 404);
+	return new ApiError(value, 404);
 }
 
-export function unauthError(msg?: string): ApiError {
-	let message = Errors.unauthorized;
-	if (msg) {
-		message += `: ${msg}`;
+export function unauthError(message?: string): ApiError {
+	let value = Errors.unauthorized;
+	if (message) {
+		value += `: ${message}`;
 	}
-	return new ApiError(message, 401);
+	return new ApiError(value, 401);
 }
 
-export function genericError(msg?: string): ApiError {
-	return new ApiError(msg || 'Guru Meditation', 500);
+export function genericError(message?: string): ApiError {
+	return new ApiError(message ?? 'Guru Meditation', 500);
 }

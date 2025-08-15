@@ -6,9 +6,9 @@ export const bannedTypes: Array<Function> = [Promise, Array, Object, Function];
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
 export declare type TypeValue = ClassType | Function | object | symbol;
-export declare type TypeValueThunk = (type?: void) => TypeValue;
-export declare type ReturnTypeFuncValue = TypeValue | RecursiveArray<TypeValue> | undefined;
-export declare type ReturnTypeFunc = (returns?: void) => ReturnTypeFuncValue;
+export declare type TypeValueThunk = (type?: unknown) => TypeValue;
+export declare type ReturnTypeFunctionValue = TypeValue | RecursiveArray<TypeValue> | undefined;
+export declare type ReturnTypeFunction = (returns?: unknown) => ReturnTypeFunctionValue;
 
 export interface DecoratorTypeOptions {
 	nullable?: boolean | NullableListOptions;
@@ -28,7 +28,7 @@ export interface DescriptionOptions {
 	description?: string;
 	summary?: string;
 	tags?: Array<string>;
-	example?: any;
+	example?: string | number | boolean | Date | Array<any>;
 }
 
 export interface RateLimitOptions {
@@ -104,7 +104,7 @@ export interface CustomPathParameterOptions {
 	aliasRoutes?: Array<CustomPathParameterAliasRouteOptions>;
 }
 
-export declare type MethodAndPropDecorator = PropertyDecorator & MethodDecorator;
+export declare type MethodAndPropertyDecorator = PropertyDecorator & MethodDecorator;
 export declare type BasicOptions = DecoratorTypeOptions & DescriptionOptions;
 export declare type AdvancedOptions = BasicOptions & DeprecationOptions & SchemaNameOptions;
 export declare type MethodOptions = AdvancedOptions & DescriptionOptions & AuthOptions & BinaryOptions & CustomPathParameterOptions;

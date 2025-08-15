@@ -1,14 +1,14 @@
 import { Podcast } from '../../../entity/podcast/podcast.js';
-import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-parameters.js';
 import { logger } from '../../../utils/logger.js';
 
 import { EpisodeOrderFields, PodcastStatus } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { SubsonicNewestPodcasts, SubsonicOKResponse, SubsonicPodcastChannel, SubsonicPodcasts, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 
@@ -26,7 +26,7 @@ export class SubsonicPodcastApi {
 		description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
 		tags: ['Podcasts']
 	})
-	async getPodcasts(@SubsonicParams() query: SubsonicParameterPodcastChannels, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
+	async getPodcasts(@SubsonicParameters() query: SubsonicParameterPodcastChannels, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicResponsePodcasts> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 includeEpisodes 	No 	true 	(Since 1.9.0) Whether to include Podcast episodes in the returned result.
@@ -66,16 +66,17 @@ export class SubsonicPodcastApi {
 		description: 'Returns the most recently published Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async getNewestPodcasts(@SubsonicParams() query: SubsonicParameterPodcastEpisodesNewest, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
+	async getNewestPodcasts(@SubsonicParameters() query: SubsonicParameterPodcastEpisodesNewest, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicResponseNewestPodcasts> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		count 	No 	20 	The maximum number of episodes to return.
 		 */
 		const episodes = await orm.Episode.findFilter({},
-			[{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count || 20, skip: query.offset || 0 },
+			[{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count ?? 20, skip: query.offset ?? 0 },
 			user);
-		const newestPodcasts: SubsonicNewestPodcasts = {};
-		newestPodcasts.episode = await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user);
+		const newestPodcasts: SubsonicNewestPodcasts = {
+			episode: await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user)
+		};
 		return { newestPodcasts };
 	}
 
@@ -88,7 +89,7 @@ export class SubsonicPodcastApi {
 		description: 'Adds a new Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async createPodcastChannel(@SubsonicParams() query: SubsonicParameterPodcastChannel, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async createPodcastChannel(@SubsonicParameters() query: SubsonicParameterPodcastChannel, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 url 	Yes 		The URL of the Podcast to add.
@@ -109,7 +110,7 @@ export class SubsonicPodcastApi {
 		description: 'Deletes a Podcast channel.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastChannel(@SubsonicParams() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async deletePodcastChannel(@SubsonicParameters() query: SubsonicParameterID, { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast channel to delete.
@@ -118,7 +119,10 @@ export class SubsonicPodcastApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
 		const podcast = await orm.Podcast.findOneOrFailByID(query.id);
-		engine.podcast.remove(orm, podcast).catch(error => log.error(error));
+		engine.podcast.remove(orm, podcast)
+			.catch((error: unknown) => {
+				log.error(error);
+			});
 		return {};
 	}
 
@@ -131,11 +135,14 @@ export class SubsonicPodcastApi {
 		description: 'Requests the server to check for new Podcast episodes.',
 		tags: ['Podcasts']
 	})
-	async refreshPodcasts(@SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async refreshPodcasts(@SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		if (!user.rolePodcast) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
 		}
-		engine.podcast.refreshPodcasts(orm).catch(error => log.error(error)); // do not wait
+		engine.podcast.refreshPodcasts(orm)
+			.catch((error: unknown) => {
+				log.error(error);
+			}); // do not wait
 		return {};
 	}
 
@@ -148,7 +155,7 @@ export class SubsonicPodcastApi {
 		description: 'Request the server to start downloading a given Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async downloadPodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async downloadPodcastEpisode(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to download.
@@ -158,7 +165,10 @@ export class SubsonicPodcastApi {
 		}
 		const episode = await orm.Episode.findOneOrFailByID(query.id);
 		if (!episode.path) {
-			engine.episode.downloadEpisode(orm, episode).catch(error => log.error(error)); // do not wait
+			engine.episode.downloadEpisode(orm, episode)
+				.catch((error: unknown) => {
+					log.error(error);
+				}); // do not wait
 		}
 		return {};
 	}
@@ -172,7 +182,7 @@ export class SubsonicPodcastApi {
 		description: 'Deletes a Podcast episode.',
 		tags: ['Podcasts']
 	})
-	async deletePodcastEpisode(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
+	async deletePodcastEpisode(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, engine, user }: Context): Promise<SubsonicOKResponse> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The ID of the Podcast episode to delete.

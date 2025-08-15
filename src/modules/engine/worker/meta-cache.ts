@@ -73,7 +73,7 @@ export class MetaMergerCache {
 				changes.series.updated.add(series);
 			}
 		}
-		return series || undefined;
+		return series ?? undefined;
 	}
 
 	async findOrCreateSeries(trackInfo: MetaMergeTrackInfo, artist: Artist, album: Album): Promise<Series> {
@@ -120,7 +120,7 @@ export class MetaMergerCache {
 				return album;
 			}
 		}
-		return (await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } })) || undefined;
+		return (await this.orm.Album.findOne({ where: { slug: getAlbumSlug(trackInfo), artist: artist.id } })) ?? undefined;
 	}
 
 	private async findAlbumInCache(trackInfo: MetaMergeTrackInfo, artist: Artist): Promise<Album | undefined> {
@@ -155,7 +155,7 @@ export class MetaMergerCache {
 			this.albumCache.push({ album, artist: await album.artist.getOrFail(), series: series?.name });
 			this.changes.albums.updated.add(album);
 		}
-		return album || undefined;
+		return album ?? undefined;
 	}
 
 	async findOrCreateAlbum(trackInfo: MetaMergeTrackInfo, artist: Artist): Promise<Album> {
@@ -184,8 +184,8 @@ export class MetaMergerCache {
 				return artist;
 			}
 		}
-		const slug = slugify((albumArtist ? (trackInfo.tag.albumArtist ?? trackInfo.tag.artist) : trackInfo.tag.artist) || cUnknownArtist);
-		return (await this.orm.Artist.findOne({ where: { slug } })) || undefined;
+		const slug = slugify((albumArtist ? (trackInfo.tag.albumArtist ?? trackInfo.tag.artist) : trackInfo.tag.artist) ?? cUnknownArtist);
+		return (await this.orm.Artist.findOne({ where: { slug } })) ?? undefined;
 	}
 
 	private async findArtistInCache(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
@@ -223,7 +223,7 @@ export class MetaMergerCache {
 			this.artistCache.push({ artist, slugs: [artist.slug] });
 			this.changes.artists.updated.add(artist);
 		}
-		return artist || undefined;
+		return artist ?? undefined;
 	}
 
 	private async findCompilationArtist(): Promise<Artist | undefined> {
@@ -236,7 +236,7 @@ export class MetaMergerCache {
 			this.changes.artists.updated.add(artist);
 			this.artistCache.push({ artist, slugs: [artist.slug] });
 		}
-		return artist || undefined;
+		return artist ?? undefined;
 	}
 
 	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
@@ -273,7 +273,8 @@ export class MetaMergerCache {
 			this.artistCache.push({ artist, slugs: [artist.slug] });
 			this.orm.Artist.persistLater(artist);
 			return artist;
-		} else if (!this.changes.artists.added.has(artist)) {
+		}
+		if (!this.changes.artists.added.has(artist)) {
 			this.changes.artists.updated.add(artist);
 		}
 		return artist;

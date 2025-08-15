@@ -15,7 +15,8 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 	}
 
 	private static expired(data: SessionData): boolean {
-		return (data.cookie.expires || 0).valueOf() < Date.now();
+		// eslint-disable-next-line @typescript-eslint/no-deprecated
+		return (data.cookie.expires ?? 0).valueOf() < Date.now();
 	}
 
 	private async _get(sid: string): Promise<SessionData | undefined> {
@@ -35,46 +36,53 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 		return;
 	}
 
-	get: (sid: string, callback: (err: Error | null | undefined, data?: SessionData | undefined) => void) => void = (sid, callback) => {
+	get: (sid: string, callback: (error?: unknown, data?: SessionData) => void) => void = (sid, callback) => {
 		this._get(sid)
-			.then(data => callback(undefined, data))
+			.then(data => {
+				callback(undefined, data);
+			})
 			.catch(callback);
 	};
 
-	set: (sid: string, data: SessionData, callback?: (err?: Error | null | undefined | void) => void) => void = (sid, data, callback) => {
+	set: (sid: string, data: SessionData, callback?: (error?: unknown) => void) => void = (sid, data, callback) => {
 		this.cache.set(sid, data);
-		this.sessionService.set(sid, data)
+		void this.sessionService.set(sid, data)
 			.then(callback)
 			.catch(callback);
 	};
 
-	destroy: (sid: string, callback?: (err?: any) => void) => void = (sid, callback) => {
-		this.sessionService.remove(sid)
+	destroy: (sid: string, callback?: (error?: unknown) => void) => void = (sid, callback) => {
+		void this.sessionService.remove(sid)
 			.then(callback)
 			.catch(callback);
 	};
 
-	all: (callback: (err: any, obj?: Record<string, SessionData> | null) => void) => void = callback => {
+	all: (callback: (error?: unknown, obj?: Record<string, SessionData> | null) => void) => void = callback => {
 		this.sessionService.all()
 			.then(data => {
-				const result: Record<string, SessionData> = {};
-				for (const item of data) {
-					result[item.sessionID] = item;
-				}
+				const result = Object.fromEntries(
+					data.map(item => [item.sessionID, item] as const)
+				) as Record<string, SessionData>;
 				callback(undefined, result);
 			})
-			.catch(error => callback(error));
+			.catch((error: unknown) => {
+				callback(error);
+			});
 	};
 
-	length: (callback: (err: any, length: number) => void) => void = callback => {
+	length: (callback: (error?: unknown, length?: number) => void) => void = callback => {
 		this.sessionService.count()
-			.then(data => callback(undefined, data))
-			.catch(error => callback(error, 0));
+			.then(data => {
+				callback(undefined, data);
+			})
+			.catch((error: unknown) => {
+				callback(error, 0);
+			});
 	};
 
-	clear: (callback?: (err?: any) => void) => void = callback => {
+	clear: (callback?: (error?: unknown) => void) => void = callback => {
 		this.cache.clear();
-		this.sessionService.clear()
+		void this.sessionService.clear()
 			.then(callback)
 			.catch(callback);
 	};

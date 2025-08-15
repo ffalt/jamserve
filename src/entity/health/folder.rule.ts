@@ -14,7 +14,7 @@ interface FolderRuleInfo {
 	run(orm: Orm, folder: Folder, parents: Array<Folder>): Promise<RuleResult | undefined>;
 }
 
-function isAlbumTopMostFolder(orm: Orm, folder: Folder, parents: Array<Folder>): boolean {
+function isAlbumTopMostFolder(_orm: Orm, folder: Folder, parents: Array<Folder>): boolean {
 	if (folder.folderType === FolderType.multialbum) {
 		const parent = parents.at(-1);
 		if (parent && parent.folderType === FolderType.multialbum) {
@@ -200,7 +200,7 @@ const folderRules: Array<FolderRuleInfo> = [
 		run: async (orm, folder, parents): Promise<RuleResult | undefined> => {
 			if (isAlbumTopMostFolder(orm, folder, parents)) {
 				const artwork = await getFolderDisplayArtwork(orm, folder);
-				if (artwork?.height && artwork?.width && (artwork.height < 300 || artwork.width < 300)) {
+				if (artwork?.height && artwork.width && (artwork.height < 300 || artwork.width < 300)) {
 					return { details: [{ reason: 'Image is too small', actual: `${artwork.width} x ${artwork.height}`, expected: '>=300 x >=300' }] };
 				}
 			}
@@ -233,7 +233,7 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.artistNameConform,
 		name: 'Artist folder name is not conform',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
+		run: async (_orm, folder): Promise<RuleResult | undefined> => {
 			if (folder.folderType === FolderType.artist && folder.artist) {
 				const nameSlug = path.basename(folder.path).trim().replaceAll(/[_:!?/ ]/g, '').toLowerCase();
 				const artistName = replaceFolderSystemChars(folder.artist, '_');

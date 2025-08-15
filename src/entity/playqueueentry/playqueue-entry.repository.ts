@@ -1,15 +1,15 @@
-import { FindOptions, OrderItem } from '../../modules/orm/index.js';
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, PlayQueueEntryOrderFields } from '../../types/enums.js';
 import { PlayQueueEntry } from './playqueue-entry.js';
 import { User } from '../user/user.js';
-import { PlayQueueEntryOrderArgs } from './playqueue-entry.args.js';
+import { PlayQueueEntryOrderParameters } from './playqueue-entry.parameters.js';
 import { OrderHelper } from '../base/base.js';
+import { FindOptions, OrderItem } from 'sequelize';
 
-export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, void, PlayQueueEntryOrderArgs> {
+export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, void, PlayQueueEntryOrderParameters> {
 	objType = DBObjectType.playqueueentry;
 
-	buildOrder(order?: PlayQueueEntryOrderArgs): Array<OrderItem> {
+	buildOrder(order?: PlayQueueEntryOrderParameters): Array<OrderItem> {
 		const direction = OrderHelper.direction(order);
 		switch (order?.orderBy) {
 			case PlayQueueEntryOrderFields.created: {
@@ -26,7 +26,7 @@ export class PlayQueueEntryRepository extends BaseRepository<PlayQueueEntry, voi
 		return [];
 	}
 
-	async buildFilter(_?: void, __?: User): Promise<FindOptions<PlayQueueEntry>> {
+	async buildFilter(_?: unknown, __?: User): Promise<FindOptions<PlayQueueEntry>> {
 		return {};
 	}
 }

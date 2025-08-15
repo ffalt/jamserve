@@ -25,7 +25,7 @@ export class Reference<T extends IDEntity<T>> {
 		}
 		if (!this.initialized) {
 			const entity = this.owner as ManagedEntity;
-			const id = entity._source.get(this.field.name);
+			const id: string | undefined = entity._source.get(this.field.name);
 			if (id && this.field.linkedEntity) {
 				this.obj = await entity._em.findOneOrFailByID<T>(this.field.linkedEntity.name, id);
 			}
@@ -52,7 +52,7 @@ export class Reference<T extends IDEntity<T>> {
 			return this.obj.id;
 		}
 		const entity = this.owner as ManagedEntity;
-		return entity._source.get(this.field.name);
+		return entity._source.get(this.field.name) as string | undefined;
 	}
 
 	idOrFail(): string {

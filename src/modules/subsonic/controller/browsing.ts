@@ -5,10 +5,10 @@ import { Track } from '../../../entity/track/track.js';
 
 import { AlbumOrderFields, DBObjectType, LastFMLookupType, TrackOrderFields } from '../../../types/enums.js';
 import { PageResult } from '../../../entity/base/base.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
 import { Context } from '../../engine/rest/context.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-params.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-parameters.js';
 import {
 	SubsonicAlbumWithSongsID3, SubsonicArtist, SubsonicArtistID3,
 	SubsonicArtistWithAlbumsID3,
@@ -29,8 +29,8 @@ import {
 	SubsonicResponseSong,
 	SubsonicResponseTopSongs, SubsonicResponseVideoInfo, SubsonicResponseVideos
 } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 import { LastFM } from '../../audio/clients/lastfm-rest-data.js';
@@ -46,7 +46,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtist(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
+	async getArtist(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseArtistWithAlbumsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The artist ID.
@@ -73,7 +73,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getAlbum(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
+	async getAlbum(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseAlbumWithSongsID3> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album ID.
@@ -97,24 +97,24 @@ export class SubsonicBrowsingApi {
 		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo> {
+	async getArtistInfo(@SubsonicParameters() query: SubsonicParameterArtistInfo, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
 		count 	No 	20 	Max number of similar artists to return.
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		 */
-		const limitCount = query.count || 20;
+		const limitCount = query.count ?? 20;
 		const includeNotPresent = query.includeNotPresent ?? false;
 
 		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtist>> => {
-			const similar = info.similar?.artist || [];
+			const similar = info.similar?.artist ?? [];
 			if (similar.length === 0) {
 				return [];
 			}
 			const result: Array<SubsonicArtist> = [];
 			for (const sim of similar) {
-				if (result.length == limitCount) {
+				if (result.length === limitCount) {
 					break;
 				}
 				const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
@@ -122,11 +122,12 @@ export class SubsonicBrowsingApi {
 					const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
 					result.push(await SubsonicFormatter.packArtist(artist, state));
 				} else if (includeNotPresent) {
+					const image = sim.image && sim.image.length > 0 ? sim.image.at(0) : undefined;
 					result.push({
 						id: '-1', // report an invalid id (as does subsonic/airsonic)
 						name: sim.name,
 						musicBrainzId: sim.mbid,
-						artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+						artistImageUrl: image?.url,
 						albumCount: 0
 					});
 				}
@@ -135,19 +136,17 @@ export class SubsonicBrowsingApi {
 		};
 
 		const folder = await orm.Folder.findOneOrFailByID(query.id);
-		if (folder) {
-			if (folder.mbArtistID) {
-				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
+		if (folder.mbArtistID) {
+			const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
+			if (lastfm?.artist) {
+				return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
+			}
+		} else if (folder.artist) {
+			const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
+			if (al?.artist) {
+				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 				if (lastfm?.artist) {
 					return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-				}
-			} else if (folder.artist) {
-				const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
-				if (al?.artist) {
-					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-					if (lastfm?.artist) {
-						return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-					}
 				}
 			}
 		}
@@ -163,7 +162,7 @@ export class SubsonicBrowsingApi {
 		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtistInfo2(@SubsonicParams() query: SubsonicParameterArtistInfo, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo2> {
+	async getArtistInfo2(@SubsonicParameters() query: SubsonicParameterArtistInfo, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseArtistInfo2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
@@ -171,16 +170,16 @@ export class SubsonicBrowsingApi {
 		includeNotPresent 	No 	false 	Whether to return artists that are not present in the media library.
 		*/
 		const includeNotPresent = query.includeNotPresent ?? false;
-		const limitCount = query.count || 20;
+		const limitCount = query.count ?? 20;
 
 		const limitLastFMSimilarArtists = async (info: LastFM.Artist): Promise<Array<SubsonicArtistID3>> => {
-			const similar = info.similar?.artist || [];
+			const similar = info.similar?.artist ?? [];
 			if (similar.length === 0) {
 				return [];
 			}
 			const result: Array<SubsonicArtistID3> = [];
 			for (const sim of similar) {
-				if (result.length == limitCount) {
+				if (result.length === limitCount) {
 					break;
 				}
 				const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
@@ -188,11 +187,12 @@ export class SubsonicBrowsingApi {
 					const state = await orm.State.findOrCreate(artist.id, DBObjectType.artist, user.id);
 					result.push(await SubsonicFormatter.packArtist(artist, state));
 				} else if (includeNotPresent) {
+					const image = sim.image && sim.image.length > 0 ? sim.image.at(0) : undefined;
 					result.push({
 						id: '-1', // report an invalid id (as does subsonic/airsonic)
 						name: sim.name,
 						musicBrainzId: sim.mbid,
-						artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+						artistImageUrl: image?.url,
 						albumCount: 0
 					});
 				}
@@ -201,19 +201,17 @@ export class SubsonicBrowsingApi {
 		};
 
 		const artist = await orm.Artist.findOneOrFailByID(query.id);
-		if (artist) {
-			if (artist.mbArtistID) {
-				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
+		if (artist.mbArtistID) {
+			const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
+			if (lastfm?.artist) {
+				return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
+			}
+		} else if (artist.name) {
+			const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
+			if (al?.artist) {
+				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
 				if (lastfm?.artist) {
 					return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-				}
-			} else if (artist.name) {
-				const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
-				if (al?.artist) {
-					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-					if (lastfm?.artist) {
-						return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-					}
 				}
 			}
 		}
@@ -229,25 +227,23 @@ export class SubsonicBrowsingApi {
 		description: 'Returns album notes, image URLs etc, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getAlbumInfo(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The album or song ID.
 		 */
 		const folder = await orm.Folder.findOneOrFailByID(query.id);
-		if (folder) {
-			if (folder.mbReleaseID) {
-				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
+		if (folder.mbReleaseID) {
+			const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
+			if (lastfm?.album) {
+				return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+			}
+		} else if (folder.album && folder.artist) {
+			const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
+			if (al?.album) {
+				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 				if (lastfm?.album) {
 					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-				}
-			} else if (folder.album && folder.artist) {
-				const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
-				if (al?.album) {
-					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-					if (lastfm?.album) {
-						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-					}
 				}
 			}
 		}
@@ -263,26 +259,24 @@ export class SubsonicBrowsingApi {
 		description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getAlbumInfo2(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
+	async getAlbumInfo2(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { engine, orm }: Context): Promise<SubsonicResponseAlbumInfo> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The album ID.
 		 */
 		const album = await orm.Album.findOneOrFailByID(query.id);
-		if (album) {
-			if (album.mbReleaseID) {
-				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
+		if (album.mbReleaseID) {
+			const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
+			if (lastfm?.album) {
+				return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
+			}
+		} else if (album.name && album.artist.id()) {
+			const artist = await album.artist.getOrFail();
+			const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, artist.name);
+			if (al?.album) {
+				const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
 				if (lastfm?.album) {
 					return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-				}
-			} else if (album.name && album.artist.id()) {
-				const artist = await album.artist.getOrFail();
-				const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, artist.name);
-				if (al?.album) {
-					const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-					if (lastfm?.album) {
-						return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-					}
 				}
 			}
 		}
@@ -298,7 +292,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns an indexed structure of all artists.',
 		tags: ['Browsing']
 	})
-	async getIndexes(@SubsonicParams() query: SubsonicParameterIndexes, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
+	async getIndexes(@SubsonicParameters() query: SubsonicParameterIndexes, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseIndexes> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -320,7 +314,7 @@ export class SubsonicBrowsingApi {
 		return {
 			indexes: {
 				lastModified: folderIndex.lastModified,
-				ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
+				ignoredArticles: engine.settings.settings.index.ignoreArticles.join(' '),
 				index: await SubsonicFormatter.packFolderIndex(folderIndex, states)
 				// shortcut?: Artist[]; use unknown, there is no api to add/remove shortcuts
 				// child?: Child[]; use unknown
@@ -337,7 +331,7 @@ export class SubsonicBrowsingApi {
 		description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getArtists(@SubsonicParams() query: SubsonicParameterMusicFolderID, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
+	async getArtists(@SubsonicParameters() query: SubsonicParameterMusicFolderID, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseArtistsID3> {
 		/*
          Parameter 	Required 	Default 	Comment
 		 musicFolderId 	No 		If specified, only return artists in the music folder with the given ID. See getMusicFolders.
@@ -353,7 +347,7 @@ export class SubsonicBrowsingApi {
 		const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.artist, user.id);
 		return {
 			artists: {
-				ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
+				ignoredArticles: engine.settings.settings.index.ignoreArticles.join(' '),
 				index: await SubsonicFormatter.packArtistIndex(artistIndex, states)
 			}
 		};
@@ -368,7 +362,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
 		tags: ['Browsing']
 	})
-	async getMusicDirectory(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseDirectory> {
+	async getMusicDirectory(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseDirectory> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		A string which uniquely identifies the music folder. Obtained by calls to getIndexes or getMusicDirectory.
@@ -396,7 +390,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns all configured top-level music folders.',
 		tags: ['Browsing']
 	})
-	async getMusicFolders(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseMusicFolders> {
+	async getMusicFolders(@SubsonicContext() { orm }: Context): Promise<SubsonicResponseMusicFolders> {
 		const list = await orm.Root.all();
 		const musicFolder: Array<SubsonicMusicFolder> = [];
 		for (const r of list) {
@@ -414,7 +408,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns all genres.',
 		tags: ['Browsing']
 	})
-	async getGenres(@SubsonicCtx() { orm }: Context): Promise<SubsonicResponseGenres> {
+	async getGenres(@SubsonicContext() { orm }: Context): Promise<SubsonicResponseGenres> {
 		const genres = await orm.Genre.all();
 		const list: Array<SubsonicGenre> = [];
 		for (const genre of genres) {
@@ -441,7 +435,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
 		tags: ['Browsing']
 	})
-	async getSimilarSongs(@SubsonicParams() query: SubsonicParameterSimilarSongs, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
+	async getSimilarSongs(@SubsonicParameters() query: SubsonicParameterSimilarSongs, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist, album or song ID.
@@ -452,7 +446,7 @@ export class SubsonicBrowsingApi {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
 		}
 		let tracks: PageResult<Track> | undefined;
-		const page = { take: query.count || 50, skip: 0 };
+		const page = { take: query.count ?? 50, skip: 0 };
 		switch (result.objType) {
 			case DBObjectType.track: {
 				tracks = await engine.metadata.similarTracks.byTrack(orm, result.obj as Track, page);
@@ -485,16 +479,16 @@ export class SubsonicBrowsingApi {
 		description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
 		tags: ['Browsing']
 	})
-	async getSimilarSongs2(@SubsonicParams() query: SubsonicParameterSimilarSongs, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
+	async getSimilarSongs2(@SubsonicParameters() query: SubsonicParameterSimilarSongs, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseSimilarSongs2> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The artist ID.
 		count 	No 	50 	Max number of songs to return.
 		 */
 		const artist = await orm.Artist.findOneOrFailByID(query.id);
-		const page = { take: query.count || 50, skip: 0 };
+		const page = { take: query.count ?? 50, skip: 0 };
 		const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
-		const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
+		const childs = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
 		return { similarSongs2: SubsonicFormatter.packSimilarSongs(childs) };
 	}
 
@@ -507,7 +501,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns details for a song.',
 		tags: ['Browsing']
 	})
-	async getSong(@SubsonicParams() query: SubsonicParameterID, @SubsonicCtx() { orm, user }: Context): Promise<SubsonicResponseSong> {
+	async getSong(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { orm, user }: Context): Promise<SubsonicResponseSong> {
 		/*
 		 Parameter 	Required 	Default 	Comment
 		 id 	Yes 		The song ID.
@@ -526,15 +520,15 @@ export class SubsonicBrowsingApi {
 		description: 'Returns top songs for the given artist, using data from last.fm.',
 		tags: ['Browsing']
 	})
-	async getTopSongs(@SubsonicParams() query: SubsonicParameterTopSongs, @SubsonicCtx() { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
+	async getTopSongs(@SubsonicParameters() query: SubsonicParameterTopSongs, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponseTopSongs> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		artist 	Yes 		The artist name.
 		count 	No 	50 	Max number of songs to return.
 		*/
-		const page = { take: query.count || 50, skip: 0 };
+		const page = { take: query.count ?? 50, skip: 0 };
 		const tracks = await engine.metadata.topTracks.byArtistName(orm, query.artist, page);
-		const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
+		const childs = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
 		return { topSongs: { song: childs } };
 	}
 
@@ -547,7 +541,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns all video files.',
 		tags: ['Browsing']
 	})
-	async getVideos(@SubsonicCtx() _ctx: Context): Promise<SubsonicResponseVideos> {
+	async getVideos(@SubsonicContext() _context: Context): Promise<SubsonicResponseVideos> {
 		return { videos: {} };
 	}
 
@@ -560,7 +554,7 @@ export class SubsonicBrowsingApi {
 		description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',
 		tags: ['Browsing']
 	})
-	async getVideoInfo(@SubsonicParams() _query: SubsonicParameterID, @SubsonicCtx() _ctx: Context): Promise<SubsonicResponseVideoInfo> {
+	async getVideoInfo(@SubsonicParameters() _query: SubsonicParameterID, @SubsonicContext() _context: Context): Promise<SubsonicResponseVideoInfo> {
 		/* .
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		The video ID.

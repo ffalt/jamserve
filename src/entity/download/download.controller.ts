@@ -1,12 +1,12 @@
 import { DownloadFormatType, UserRole } from '../../types/enums.js';
 import { ApiDownloadTypes } from '../../types/consts.js';
-import { DownloadArgs } from './download.args.js';
+import { DownloadParameters } from './download.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { PathParam } from '../../modules/rest/decorators/PathParam.js';
-import { PathParams } from '../../modules/rest/decorators/PathParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { PathParameter } from '../../modules/rest/decorators/path-parameter.js';
+import { PathParameters } from '../../modules/rest/decorators/path-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 
@@ -33,14 +33,14 @@ export class DownloadController {
 		}
 	)
 	async download(
-		@PathParam('id', { description: 'Object Id', isID: true }) id: string,
-		@PathParams() downloadArgs: DownloadArgs,
-		@Ctx() { orm, engine, user }: Context
+		@PathParameter('id', { description: 'Object Id', isID: true }) id: string,
+		@PathParameters() parameters: DownloadParameters,
+		@RestContext() { orm, engine, user }: Context
 	): Promise<ApiBinaryResult | undefined> {
 		const result = await orm.findInDownloadTypes(id);
 		if (!result) {
 			return Promise.reject(notFoundError());
 		}
-		return await engine.download.getObjDownload(result.obj, result.objType, downloadArgs.format, user);
+		return await engine.download.getObjDownload(result.obj, result.objType, parameters.format, user);
 	}
 }

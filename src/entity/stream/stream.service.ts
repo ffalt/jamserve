@@ -9,7 +9,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { genericError, invalidParamError } from '../../modules/deco/express/express-error.js';
+import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 
 export interface StreamOptions {
 	maxBitRate?: number;
@@ -22,7 +22,7 @@ export class StreamService {
 	@Inject
 	private readonly audioModule!: AudioModule;
 
-	async streamFile(filename: string, id: string, sourceFormat?: string, opts?: StreamOptions): Promise<ApiBinaryResult> {
+	async streamFile(filename: string, id: string, sourceFormat?: string, options?: StreamOptions): Promise<ApiBinaryResult> {
 		let stats: fse.Stats | undefined;
 		try {
 			stats = await fse.stat(filename);
@@ -32,41 +32,41 @@ export class StreamService {
 		if (!stats) {
 			return Promise.reject(genericError('File not found'));
 		}
-		let destFormat = opts?.format || AudioFormatType.mp3;
-		if (destFormat.startsWith('.')) {
-			destFormat = destFormat.slice(1);
+		let destinationFormat = options?.format ?? AudioFormatType.mp3;
+		if (destinationFormat.startsWith('.')) {
+			destinationFormat = destinationFormat.slice(1);
 		}
-		const bitRate = opts?.maxBitRate || 0;
+		const bitRate = options?.maxBitRate ?? 0;
 		// TOOD: support time opts?.timeOffset
-		if (destFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat || fileSuffix(filename), destFormat, bitRate)) {
-			return this.audioModule.transcoder.get(filename, id, destFormat, bitRate);
+		if (destinationFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat ?? fileSuffix(filename), destinationFormat, bitRate)) {
+			return this.audioModule.transcoder.get(filename, id, destinationFormat, bitRate);
 		}
-		return { file: { filename, name: `${id}.${destFormat}` } };
+		return { file: { filename, name: `${id}.${destinationFormat}` } };
 	}
 
-	async streamTrack(track: Track, opts?: StreamOptions): Promise<ApiBinaryResult> {
+	async streamTrack(track: Track, options?: StreamOptions): Promise<ApiBinaryResult> {
 		const tag = await track.tag.get();
-		return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, opts);
+		return await this.streamFile(path.join(track.path, track.fileName), track.id, tag?.mediaFormat, options);
 	}
 
-	async streamEpisode(episode: Episode, opts?: StreamOptions): Promise<ApiBinaryResult> {
+	async streamEpisode(episode: Episode, options?: StreamOptions): Promise<ApiBinaryResult> {
 		const tag = await episode.tag.get();
 		if (episode.path && tag?.mediaFormat) {
-			return this.streamFile(episode.path, episode.id, tag?.mediaFormat, opts);
+			return this.streamFile(episode.path, episode.id, tag.mediaFormat, options);
 		}
 		return Promise.reject(genericError('Podcast episode not ready'));
 	}
 
-	async streamDBObject(o: Base, type: DBObjectType, opts?: StreamOptions): Promise<ApiBinaryResult> {
+	async streamDBObject(o: Base, type: DBObjectType, options?: StreamOptions): Promise<ApiBinaryResult> {
 		switch (type) {
 			case DBObjectType.track: {
-				return this.streamTrack(o as Track, opts);
+				return this.streamTrack(o as Track, options);
 			}
 			case DBObjectType.episode: {
-				return this.streamEpisode(o as Episode, opts);
+				return this.streamEpisode(o as Episode, options);
 			}
 			default:
 		}
-		return Promise.reject(invalidParamError('Invalid Object Type for Streaming'));
+		return Promise.reject(invalidParameterError('Invalid Object Type for Streaming'));
 	}
 }

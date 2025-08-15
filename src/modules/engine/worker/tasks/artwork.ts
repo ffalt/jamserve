@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'node:path';
-import { basenameStripExt, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
+import { basenameStripExtension, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
 import { Changes } from '../changes.js';
 import { Artwork } from '../../../../entity/artwork/artwork.js';
 import { artWorkImageNameToType } from '../../../../utils/artwork-type.js';
@@ -23,22 +23,22 @@ export const FolderTypeImageName: Record<string, string> = {
 @InRequestScope
 export class ArtworkWorker extends BaseWorker {
 	private async updateArtworkImageFile(artwork: Artwork): Promise<void> {
-		const destFile = path.join(artwork.path, artwork.name);
-		const stat = await fse.stat(destFile);
-		const info = await this.imageModule.getImageInfo(destFile);
+		const destinationFile = path.join(artwork.path, artwork.name);
+		const stat = await fse.stat(destinationFile);
+		const info = await this.imageModule.getImageInfo(destinationFile);
 		artwork.types = artWorkImageNameToType(artwork.name);
 		artwork.statCreated = stat.ctime;
 		artwork.statModified = stat.mtime;
 		artwork.fileSize = stat.size;
-		artwork.format = info?.format;
-		artwork.height = info?.height;
-		artwork.width = info?.width;
+		artwork.format = info.format;
+		artwork.height = info.height;
+		artwork.width = info.width;
 	}
 
 	async rename(orm: Orm, artworkID: string, newName: string, changes: Changes): Promise<void> {
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(new Error(`Artwork not found`));
+			return Promise.reject(new Error('Artwork not found'));
 		}
 		artwork.name = await this.renameFile(artwork.path, artwork.name, newName);
 		await this.updateArtworkImageFile(artwork);
@@ -65,13 +65,13 @@ export class ArtworkWorker extends BaseWorker {
 		if (!suffix || suffix.length === 0 || suffix === 'invalid') {
 			return Promise.reject(new Error('Image Format invalid/not known'));
 		}
-		let dest = `${name}.${suffix}`;
+		let destination = `${name}.${suffix}`;
 		let nr = 2;
-		while (await fse.pathExists(path.join(folder.path, dest))) {
-			dest = `${name}-${nr}.${suffix}`;
+		while (await fse.pathExists(path.join(folder.path, destination))) {
+			destination = `${name}-${nr}.${suffix}`;
 			nr++;
 		}
-		return dest;
+		return destination;
 	}
 
 	async create(orm: Orm, folderID: string, artworkFilename: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
@@ -80,17 +80,17 @@ export class ArtworkWorker extends BaseWorker {
 		}
 		const folder = await orm.Folder.findOneByID(folderID);
 		if (!folder) {
-			return Promise.reject(new Error(`Folder not found`));
+			return Promise.reject(new Error('Folder not found'));
 		}
-		const dest = await this.getArtworkFilenameUnique(folder, artworkFilename, types);
-		const destFile = path.join(folder.path, dest);
+		const destination = await this.getArtworkFilenameUnique(folder, artworkFilename, types);
+		const destinationFile = path.join(folder.path, destination);
 		try {
-			await fse.copy(artworkFilename, destFile);
+			await fse.copy(artworkFilename, destinationFile);
 		} catch {
-			return Promise.reject(new Error(`Importing artwork failed`));
+			return Promise.reject(new Error('Importing artwork failed'));
 		}
 		const artwork = orm.Artwork.create({
-			name: dest,
+			name: destination,
 			path: folder.path,
 			types
 		});
@@ -107,9 +107,9 @@ export class ArtworkWorker extends BaseWorker {
 		}
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(new Error(`Artwork not found`));
+			return Promise.reject(new Error('Artwork not found'));
 		}
-		const name = basenameStripExt(artwork.name);
+		const name = basenameStripExtension(artwork.name);
 		const info = await this.imageModule.getImageInfo(artworkFilename);
 		const suffix = info.format;
 		if (!suffix || suffix.length === 0 || suffix === 'invalid') {
@@ -120,7 +120,7 @@ export class ArtworkWorker extends BaseWorker {
 		try {
 			await fse.copy(artworkFilename, path.join(artwork.path, artwork.name));
 		} catch {
-			return Promise.reject(new Error(`Importing artwork failed`));
+			return Promise.reject(new Error('Importing artwork failed'));
 		}
 		await this.updateArtworkImageFile(artwork);
 		changes.artworks.updated.add(artwork);
@@ -142,7 +142,7 @@ export class ArtworkWorker extends BaseWorker {
 	async remove(orm: Orm, root: Root, artworkID: string, changes: Changes): Promise<void> {
 		const artwork = await orm.Artwork.findOneByID(artworkID);
 		if (!artwork) {
-			return Promise.reject(new Error(`Artwork not found`));
+			return Promise.reject(new Error('Artwork not found'));
 		}
 		await this.moveToTrash(root, artwork.path, artwork.name);
 		changes.artworks.removed.add(artwork);
