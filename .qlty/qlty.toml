@@ -72,7 +72,7 @@ name = "checkov"
 
 [[plugin]]
 name = "eslint"
-version = "9.30.0"
+version = "9.33.0"
 package_file = "package.json"
 package_filters = ["eslint", "jest"]
 
