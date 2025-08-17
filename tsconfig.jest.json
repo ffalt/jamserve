@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
-    "module": "esnext",
+    "module": "es2020",
     "moduleResolution": "node16",
     "types": ["node", "jest"]
   },
