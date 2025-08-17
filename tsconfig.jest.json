@@ -2,11 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
+    "module": "es2020",
+    "moduleResolution": "node16",
     "types": ["node", "jest"]
   },
   "include": [
     "deploy.ts",
-    "src/**/*.ts",
     "test/**/*.ts",
     "**/*.test.ts",
     "**/*.d.ts"
