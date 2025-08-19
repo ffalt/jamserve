@@ -63,11 +63,11 @@ export class WebserviceClient {
 			// timeout: 20000
 		});
 		if (!ignoreStatus && response.status !== 200) {
-			return Promise.reject(new Error('Invalid Result'));
+			return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));
 		}
 		const result = await this.parseResult<T>(response);
 		if (result === undefined) {
-			return Promise.reject(new Error('Invalid Result'));
+			return Promise.reject(new Error(`Invalid Result from ${url}`));
 		}
 		return result;
 	}

@@ -127,7 +127,6 @@ export async function buildAxiosClientZip(): Promise<ApiBinaryResult> {
 		'lastfm-rest-data.ts',
 		'musicbrainz-rest-data.ts',
 		'lyricsovh-rest-data.ts',
-		'id3v2-frames.ts',
 		'wikidata-rest-data.ts',
 		'jam-auth.ts'
 	];

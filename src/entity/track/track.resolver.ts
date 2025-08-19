@@ -103,7 +103,7 @@ export class TrackResolver {
 
 	@FieldResolver(() => MediaTagRawQL)
 	async rawTag(@GQLRoot() track: Track, @Ctx() { engine }: Context): Promise<MediaTagRaw> {
-		return (await engine.track.getRawTag(track)) ?? {};
+		return (await engine.track.getRawTag(track)) ?? { version: 0, frames: {} };
 	}
 
 	@FieldResolver(() => StateQL)

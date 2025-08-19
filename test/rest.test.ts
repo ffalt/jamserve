@@ -171,7 +171,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 				await mockCall(call, 401);
 			}
 		});
-		it.each(roles)(`should reject all calls without role %s`, async role => {
+		it.each(roles)('should reject all calls without role %s', async role => {
 			const validRejectMocks = mocks.filter(call => call.roles.length > 0 && !call.roles.includes(role));
 			expect(validRejectMocks.length).toBeGreaterThan(0);
 			for (const call of validRejectMocks) {

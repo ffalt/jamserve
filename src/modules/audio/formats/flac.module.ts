@@ -6,7 +6,7 @@ import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js
 import { Flac } from './flac/index.js';
 import { MetaWriteableDataBlock } from './flac/lib/block.writeable.js';
 import { TagFormatType } from '../../../types/enums.js';
-import { RawTag } from '../raw-tag.js';
+import { MediaTagRaw } from '../../../entity/tag/tag.model.js';
 
 export class AudioModuleFLAC {
 	constructor(private readonly imageModule: ImageModule) {
@@ -27,7 +27,7 @@ export class AudioModuleFLAC {
 		}
 	}
 
-	async readRaw(filename: string): Promise<RawTag | undefined> {
+	async readRaw(filename: string): Promise<MediaTagRaw | undefined> {
 		const flac = new Flac();
 		const result = await flac.read(filename);
 		if (!result.comment) {
@@ -36,7 +36,7 @@ export class AudioModuleFLAC {
 		return flacToRawTag(result);
 	}
 
-	async write(filename: string, tag: RawTag): Promise<void> {
+	async write(filename: string, tag: MediaTagRaw): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
 		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
 		const flac = new Flac();

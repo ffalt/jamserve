@@ -6,12 +6,12 @@ import { AudioScanResult } from '../audio.module.js';
 import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
 import path from 'node:path';
 import { TagFormatType } from '../../../types/enums.js';
-import { RawTag } from '../raw-tag.js';
 import { analyzeMP3 } from '../tasks/task-analyze-mp3.js';
 import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
 import { fixMP3 } from '../tasks/task-fix-mp3.js';
 import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
 import { fileURLToPath } from 'node:url';
+import { MediaTagRaw } from '../../../entity/tag/tag.model.js';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;
 
@@ -57,7 +57,7 @@ export class AudioModuleMP3 {
 		}
 	}
 
-	async readRaw(filename: string): Promise<RawTag | undefined> {
+	async readRaw(filename: string): Promise<MediaTagRaw | undefined> {
 		const id3v2 = new ID3v2();
 		const result = await id3v2.read(filename);
 		if (!result?.head) {
@@ -66,7 +66,7 @@ export class AudioModuleMP3 {
 		return id3v2ToRawTag(result);
 	}
 
-	async write(filename: string, tag: RawTag): Promise<void> {
+	async write(filename: string, tag: MediaTagRaw): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
 		const id3v2 = new ID3v2();
 		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, { keepBackup: false, paddingSize: 10 });

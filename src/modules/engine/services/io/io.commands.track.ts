@@ -1,9 +1,9 @@
 import { IoService } from '../io.service.js';
 import { AdminChangeQueueInfo, IoRequest, WorkerRequestMode } from './io.types.js';
 import { WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from '../worker/worker.types.js';
-import { RawTag } from '../../../audio/raw-tag.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { DelayedRequests } from './io.helpers.js';
+import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
 
 export class IoCommandsTrack {
 	readonly delayedTrackTagWrite = new DelayedRequests<WorkerRequestWriteTrackTags>();
@@ -51,7 +51,7 @@ export class IoCommandsTrack {
 		);
 	}
 
-	async writeTags(trackID: string, tag: RawTag, rootID: string): Promise<AdminChangeQueueInfo> {
+	async writeTags(trackID: string, tag: MediaTagRaw, rootID: string): Promise<AdminChangeQueueInfo> {
 		const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.writeTrackTags);
 		if (oldRequest) {
 			(oldRequest.parameters as WorkerRequestWriteTrackTags).tags.push({ trackID, tag });

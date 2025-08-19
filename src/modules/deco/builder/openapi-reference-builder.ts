@@ -49,9 +49,9 @@ export class OpenApiReferenceBuilder {
 		return;
 	}
 
-	private mapExample(typeOptions: FieldOptions & TypeOptions, schemas: Schemas): string | undefined {
+	private mapExample(typeOptions: FieldOptions & TypeOptions, schemas: Schemas): unknown {
 		if (!typeOptions.isID) {
-			return typeOptions.example === undefined ? undefined : typeOptions.example.toString();
+			return typeOptions.example ?? undefined;
 		}
 		const idSchemaType = (schemas.ID as SchemaObject).type;
 		return idSchemaType === 'integer' ? exampleIDInt : exampleID;

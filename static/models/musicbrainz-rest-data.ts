@@ -101,7 +101,7 @@ export declare namespace MusicBrainz {
 	export interface ArtistBase {
 		id: string;
 		name: string;
-		sortName: string;
+		sortName?: string;
 		disambiguation: string;
 		aliases: Array<Alias>;
 	}
@@ -181,7 +181,7 @@ export declare namespace MusicBrainz {
 
 	export interface Label {
 		catalogNumber: string;
-		label: {
+		label?: {
 			id: string;
 			name: string;
 			disambiguation?: string;

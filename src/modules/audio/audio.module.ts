@@ -15,12 +15,12 @@ import { TranscoderModule } from './transcoder/transcoder.module.js';
 import { WaveformModule } from './waveform/waveform.module.js';
 import { AudioFormatType, TagFormatType } from '../../types/enums.js';
 import { SettingsService } from '../../entity/settings/settings.service.js';
-import { RawTag } from './raw-tag.js';
 import { ConfigService } from '../engine/services/config.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { AdminSettingsExternal } from '../../entity/admin/admin.js';
 import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
+import { MediaTagRaw } from '../../entity/tag/tag.model.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
@@ -104,7 +104,7 @@ export class AudioModule {
 		return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, suffix as AudioFormatType) };
 	}
 
-	async readRawTag(filename: string): Promise<RawTag | undefined> {
+	async readRawTag(filename: string): Promise<MediaTagRaw | undefined> {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
 			return this.mp3.readRaw(filename);
@@ -115,7 +115,7 @@ export class AudioModule {
 		return;
 	}
 
-	async writeRawTag(filename: string, tag: RawTag): Promise<void> {
+	async writeRawTag(filename: string, tag: MediaTagRaw): Promise<void> {
 		const suffix = fileSuffix(filename);
 		try {
 			if (suffix === AudioFormatType.mp3) {

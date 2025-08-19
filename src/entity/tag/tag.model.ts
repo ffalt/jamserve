@@ -4,14 +4,15 @@ import { JamObjectType } from '../../types/enums.js';
 import { GenreBase } from '../genre/genre.model.js';
 import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { MediaTagRawFrames } from './raw.model.js';
 
 @ResultType({ description: 'Media Raw Tag' })
 export class MediaTagRaw {
-	@ObjectField({ nullable: true, description: 'Tag Version' })
-	version?: number;
+	@ObjectField({ description: 'Tag Version' })
+	version!: number;
 
-	@ObjectField(() => Object, { nullable: true, description: 'Tag Frames' })
-	frames?: any;
+	@ObjectField(() => MediaTagRawFrames, { description: 'Tag Frames' })
+	frames!: MediaTagRawFrames;
 }
 
 @ResultType({ description: 'Media Raw Tag' })

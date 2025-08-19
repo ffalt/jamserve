@@ -135,7 +135,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AdminSettingsArgs"
+								"$ref": "#/components/schemas/AdminSettingsParameters"
 							}
 						}
 					}
@@ -5388,7 +5388,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ArtworkNewArgs"
+								"$ref": "#/components/schemas/ArtworkNewParameters"
 							}
 						}
 					}
@@ -5464,7 +5464,7 @@
 										"description": "Binary Part"
 									},
 									{
-										"$ref": "#/components/schemas/ArtworkNewUploadArgs"
+										"$ref": "#/components/schemas/ArtworkNewUploadParameters"
 									}
 								]
 							}
@@ -5600,7 +5600,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ArtworkRenameArgs"
+								"$ref": "#/components/schemas/ArtworkRenameParameters"
 							}
 						}
 					}
@@ -5704,7 +5704,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CredentialsArgs"
+								"$ref": "#/components/schemas/CredentialsParameters"
 							}
 						}
 					}
@@ -6403,7 +6403,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/BookmarkCreateArgs"
+								"$ref": "#/components/schemas/BookmarkCreateParameters"
 							}
 						}
 					}
@@ -6606,7 +6606,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ChatCreateArgs"
+								"$ref": "#/components/schemas/ChatCreateParameters"
 							}
 						}
 					}
@@ -6647,7 +6647,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ChatRemoveArgs"
+								"$ref": "#/components/schemas/ChatRemoveParameters"
 							}
 						}
 					}
@@ -11787,7 +11787,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FolderCreateArgs"
+								"$ref": "#/components/schemas/FolderCreateParameters"
 							}
 						}
 					}
@@ -11835,7 +11835,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FolderRenameArgs"
+								"$ref": "#/components/schemas/FolderRenameParameters"
 							}
 						}
 					}
@@ -11883,7 +11883,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FolderMoveArgs"
+								"$ref": "#/components/schemas/FolderMoveParameters"
 							}
 						}
 					}
@@ -13467,7 +13467,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetaDataTrackLyricsResult"
 								}
 							}
 						}
@@ -15537,7 +15537,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/PlaylistMutateArgs"
+								"$ref": "#/components/schemas/PlaylistMutateParameters"
 							}
 						}
 					}
@@ -15587,7 +15587,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/PlaylistMutateArgs"
+										"$ref": "#/components/schemas/PlaylistMutateParameters"
 									},
 									{
 										"properties": {
@@ -15871,7 +15871,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/PlayQueueSetArgs"
+								"$ref": "#/components/schemas/PlayQueueSetParameters"
 							}
 						}
 					}
@@ -17329,7 +17329,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/PodcastCreateArgs"
+								"$ref": "#/components/schemas/PodcastCreateParameters"
 							}
 						}
 					}
@@ -17377,7 +17377,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/PodcastRefreshArgs"
+								"$ref": "#/components/schemas/PodcastRefreshParameters"
 							}
 						}
 					}
@@ -17844,7 +17844,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RadioMutateArgs"
+								"$ref": "#/components/schemas/RadioMutateParameters"
 							}
 						}
 					}
@@ -17887,7 +17887,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/RadioMutateArgs"
+										"$ref": "#/components/schemas/RadioMutateParameters"
 									},
 									{
 										"properties": {
@@ -18323,7 +18323,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RootMutateArgs"
+								"$ref": "#/components/schemas/RootMutateParameters"
 							}
 						}
 					}
@@ -18373,7 +18373,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/RootMutateArgs"
+										"$ref": "#/components/schemas/RootMutateParameters"
 									},
 									{
 										"properties": {
@@ -18490,7 +18490,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RootRefreshArgs"
+								"$ref": "#/components/schemas/RootRefreshParameters"
 							}
 						}
 					}
@@ -18538,7 +18538,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RootRefreshArgs"
+								"$ref": "#/components/schemas/RootRefreshParameters"
 							}
 						}
 					}
@@ -20383,7 +20383,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FavArgs"
+								"$ref": "#/components/schemas/FavParameters"
 							}
 						}
 					}
@@ -20431,7 +20431,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RateArgs"
+								"$ref": "#/components/schemas/RateParameters"
 							}
 						}
 					}
@@ -22325,7 +22325,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TrackRenameArgs"
+								"$ref": "#/components/schemas/TrackRenameParameters"
 							}
 						}
 					}
@@ -22373,7 +22373,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TrackMoveArgs"
+								"$ref": "#/components/schemas/TrackMoveParameters"
 							}
 						}
 					}
@@ -22476,7 +22476,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TrackFixArgs"
+								"$ref": "#/components/schemas/TrackFixParameters"
 							}
 						}
 					}
@@ -22524,7 +22524,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RawTagUpdateArgs"
+								"$ref": "#/components/schemas/RawTagUpdateParameters"
 							}
 						}
 					}
@@ -22793,7 +22793,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserMutateArgs"
+								"$ref": "#/components/schemas/UserMutateParameters"
 							}
 						}
 					}
@@ -22843,7 +22843,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserMutateArgs"
+										"$ref": "#/components/schemas/UserMutateParameters"
 									},
 									{
 										"properties": {
@@ -22955,7 +22955,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserPasswordUpdateArgs"
+										"$ref": "#/components/schemas/UserPasswordUpdateParameters"
 									},
 									{
 										"properties": {
@@ -23011,7 +23011,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserEmailUpdateArgs"
+										"$ref": "#/components/schemas/UserEmailUpdateParameters"
 									},
 									{
 										"properties": {
@@ -23067,7 +23067,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserGenerateImageArgs"
+										"$ref": "#/components/schemas/UserGenerateImageParameters"
 									},
 									{
 										"properties": {
@@ -23202,7 +23202,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserGenerateSusonicTokenArgs"
+										"$ref": "#/components/schemas/UserGenerateSubsonicTokenParameters"
 									},
 									{
 										"properties": {
@@ -23751,7 +23751,7 @@
 					"id"
 				]
 			},
-			"AdminSettingsArgs": {
+			"AdminSettingsParameters": {
 				"allOf": [
 					{
 						"$ref": "#/components/schemas/AdminSettings"
@@ -23864,6 +23864,1984 @@
 					}
 				}
 			},
+			"MediaTagRawAudioEncryption": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"previewStart": {
+						"type": "integer"
+					},
+					"previewLength": {
+						"type": "integer"
+					},
+					"bin": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"previewStart",
+					"previewLength",
+					"bin"
+				]
+			},
+			"MediaTagRawFrameAudioEncryption": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawAudioEncryption"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawFrame": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"MediaTagRawPic": {
+				"type": "object",
+				"properties": {
+					"description": {
+						"type": "string"
+					},
+					"pictureType": {
+						"type": "integer"
+					},
+					"url": {
+						"type": "string"
+					},
+					"bin": {
+						"type": "string"
+					},
+					"mimeType": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"description",
+					"pictureType"
+				]
+			},
+			"MediaTagRawFramePic": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawPic"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawBin": {
+				"type": "object",
+				"properties": {
+					"bin": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"bin"
+				]
+			},
+			"MediaTagRawFrameBin": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawBin"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawChapter": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"start": {
+						"type": "integer"
+					},
+					"end": {
+						"type": "integer"
+					},
+					"offset": {
+						"type": "integer"
+					},
+					"offsetEnd": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"id",
+					"start",
+					"end",
+					"offset",
+					"offsetEnd"
+				]
+			},
+			"MediaTagRawFrameChapter": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawChapter"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawText": {
+				"type": "object",
+				"properties": {
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"text"
+				]
+			},
+			"MediaTagRawFrameText": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawText"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawNumber": {
+				"type": "object",
+				"properties": {
+					"num": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"num"
+				]
+			},
+			"MediaTagRawFrameNumber": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawNumber"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawLangDescText": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"language": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"language",
+					"text"
+				]
+			},
+			"MediaTagRawFrameLangDescText": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawLangDescText"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawChapterToc": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"ordered": {
+						"type": "boolean"
+					},
+					"topLevel": {
+						"type": "boolean"
+					},
+					"children": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"ordered",
+					"topLevel",
+					"children"
+				]
+			},
+			"MediaTagRawFrameChapterToc": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawChapterToc"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawEventTimingCodesEvent": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "integer"
+					},
+					"timestamp": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"type",
+					"timestamp"
+				]
+			},
+			"MediaTagRawFrameEventTimingCodesEvent": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawEventTimingCodesEvent"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawEventTimingCodes": {
+				"type": "object",
+				"properties": {
+					"format": {
+						"type": "integer"
+					},
+					"events": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameEventTimingCodesEvent"
+						}
+					}
+				},
+				"required": [
+					"format",
+					"events"
+				]
+			},
+			"MediaTagRawFrameEventTimingCodes": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawEventTimingCodes"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawGEOB": {
+				"type": "object",
+				"properties": {
+					"filename": {
+						"type": "string"
+					},
+					"mimeType": {
+						"type": "string"
+					},
+					"contentDescription": {
+						"type": "string"
+					},
+					"bin": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"filename",
+					"mimeType",
+					"contentDescription",
+					"bin"
+				]
+			},
+			"MediaTagRawFrameGEOB": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawGEOB"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawTextList": {
+				"type": "object",
+				"properties": {
+					"list": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"list"
+				]
+			},
+			"MediaTagRawFrameTextList": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawTextList"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawLink": {
+				"type": "object",
+				"properties": {
+					"url": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"additional": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"url",
+					"id",
+					"additional"
+				]
+			},
+			"MediaTagRawFrameLink": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawLink"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawPopularimeter": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"rating": {
+						"type": "integer"
+					},
+					"count": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"email",
+					"rating",
+					"count"
+				]
+			},
+			"MediaTagRawFramePopularimeter": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawPopularimeter"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawIdBin": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"bin": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"bin"
+				]
+			},
+			"MediaTagRawFrameIdBin": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawIdBin"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawReplayGainAdjustment": {
+				"type": "object",
+				"properties": {
+					"peak": {
+						"type": "integer"
+					},
+					"radioAdjustment": {
+						"type": "integer"
+					},
+					"audiophileAdjustment": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"peak",
+					"radioAdjustment",
+					"audiophileAdjustment"
+				]
+			},
+			"MediaTagRawFrameReplayGainAdjustment": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawReplayGainAdjustment"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawRVA": {
+				"type": "object",
+				"properties": {
+					"right": {
+						"type": "integer"
+					},
+					"left": {
+						"type": "integer"
+					},
+					"peakRight": {
+						"type": "integer"
+					},
+					"peakLeft": {
+						"type": "integer"
+					},
+					"rightBack": {
+						"type": "integer"
+					},
+					"leftBack": {
+						"type": "integer"
+					},
+					"peakRightBack": {
+						"type": "integer"
+					},
+					"peakLeftBack": {
+						"type": "integer"
+					},
+					"center": {
+						"type": "integer"
+					},
+					"peakCenter": {
+						"type": "integer"
+					},
+					"bass": {
+						"type": "integer"
+					},
+					"peakBass": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"right",
+					"left"
+				]
+			},
+			"MediaTagRawFrameRVA": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawRVA"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawRVA2Channel": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "integer"
+					},
+					"adjustment": {
+						"type": "integer"
+					},
+					"peak": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"type",
+					"adjustment"
+				]
+			},
+			"MediaTagRawFrameRVA2Channel": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawRVA2Channel"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawRVA2": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"channels": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameRVA2Channel"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"channels"
+				]
+			},
+			"MediaTagRawFrameRVA2": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawRVA2"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawSynchronisedLyricsEvent": {
+				"type": "object",
+				"properties": {
+					"text": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"text",
+					"timestamp"
+				]
+			},
+			"MediaTagRawFrameSynchronisedLyricsEvent": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawSynchronisedLyricsEvent"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawSynchronisedLyrics": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"language": {
+						"type": "string"
+					},
+					"timestampFormat": {
+						"type": "integer"
+					},
+					"contentType": {
+						"type": "integer"
+					},
+					"events": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameSynchronisedLyricsEvent"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"language",
+					"timestampFormat",
+					"contentType",
+					"events"
+				]
+			},
+			"MediaTagRawFrameSynchronisedLyrics": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawSynchronisedLyrics"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawBool": {
+				"type": "object",
+				"properties": {
+					"bool": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"bool"
+				]
+			},
+			"MediaTagRawFrameBool": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawBool"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawIdText": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"text"
+				]
+			},
+			"MediaTagRawFrameIdText": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawIdText"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
+			"MediaTagRawFrames": {
+				"type": "object",
+				"properties": {
+					"AENC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameAudioEncryption"
+						}
+					},
+					"APIC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFramePic"
+						}
+					},
+					"ASPI": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"BUF": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"CDM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"CHAP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameChapter"
+						}
+					},
+					"CM1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"CNT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameNumber"
+						}
+					},
+					"COM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLangDescText"
+						}
+					},
+					"COMM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLangDescText"
+						}
+					},
+					"COMR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"CRA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameAudioEncryption"
+						}
+					},
+					"CRM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"CTOC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameChapterToc"
+						}
+					},
+					"ENCR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"EQU": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"EQUA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"ETC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameEventTimingCodes"
+						}
+					},
+					"ETCO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameEventTimingCodes"
+						}
+					},
+					"GEO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameGEOB"
+						}
+					},
+					"GEOB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameGEOB"
+						}
+					},
+					"GRID": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"GRP1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"IPL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameTextList"
+						}
+					},
+					"IPLS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameTextList"
+						}
+					},
+					"LINK": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLink"
+						}
+					},
+					"LNK": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLink"
+						}
+					},
+					"MCDI": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"MLL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"MLLT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"MVNM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"MVIN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"NCO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"NCON": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"OWNE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"PCNT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameNumber"
+						}
+					},
+					"PCS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameNumber"
+						}
+					},
+					"PCST": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameNumber"
+						}
+					},
+					"PIC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFramePic"
+						}
+					},
+					"POP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFramePopularimeter"
+						}
+					},
+					"POPM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFramePopularimeter"
+						}
+					},
+					"POSS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"PRI": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdBin"
+						}
+					},
+					"PRIV": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdBin"
+						}
+					},
+					"RBUF": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"REV": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"RGAD": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameReplayGainAdjustment"
+						}
+					},
+					"RVA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameRVA"
+						}
+					},
+					"RVA2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameRVA2"
+						}
+					},
+					"RVAD": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameRVA"
+						}
+					},
+					"RVRB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"SEEK": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"SIGN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"SLT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameSynchronisedLyricsEvent"
+						}
+					},
+					"STC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"SYLT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameSynchronisedLyrics"
+						}
+					},
+					"SYTC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"TAL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TALB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TBP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TBPM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCMP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBool"
+						}
+					},
+					"TCO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCOM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCON": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCOP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TCP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBool"
+						}
+					},
+					"TCR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDAT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDES": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDLY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDOR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDEN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDRC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDRL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDTG": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TDY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TEN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TENC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TEXT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TFLT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TGID": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TID": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TIM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TIME": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TIPL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameTextList"
+						}
+					},
+					"TIT1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TIT2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TIT3": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TKE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TKEY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TKWD": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"TLA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TLAN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TLE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TLEN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TMCL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameTextList"
+						}
+					},
+					"TMED": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TMOO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TMT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOAL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOF": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOFN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOL": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOLY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOPE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TORY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TOWN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TP1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TP2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TP3": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TP4": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPE1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPE2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPE3": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPE4": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPOS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPRO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TPUB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRCK": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRD": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRDA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRK": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRSN": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TRSO": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TS2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSI": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSIZ": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSO2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSOA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSOC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSOP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSOT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSST": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSRC": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TSSE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TST": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TT1": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TT2": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TT3": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TXT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TXX": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
+						}
+					},
+					"TXXX": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
+						}
+					},
+					"TYE": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"TYER": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"UFI": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
+						}
+					},
+					"UFID": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
+						}
+					},
+					"ULT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLangDescText"
+						}
+					},
+					"USER": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"USLT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameLangDescText"
+						}
+					},
+					"WAF": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WAR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WAS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WCM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WCOM": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WCOP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WCP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WFD": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WFED": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WOAF": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WOAR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WOAS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WORS": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WPAY": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WPB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WPUB": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"WXX": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
+						}
+					},
+					"WXXX": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"XDOR": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"XHD3": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+						}
+					},
+					"XSOA": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"XSOP": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					},
+					"XSOT": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
+						}
+					}
+				}
+			},
 			"MediaTagRaw": {
 				"type": "object",
 				"properties": {
@@ -23872,9 +25850,13 @@
 						"description": "Tag Version"
 					},
 					"frames": {
-						"$ref": "#/components/schemas/JSON"
+						"$ref": "#/components/schemas/MediaTagRawFrames"
 					}
-				}
+				},
+				"required": [
+					"version",
+					"frames"
+				]
 			},
 			"MediaInfo": {
 				"type": "object",
@@ -24292,6 +26274,17 @@
 					"groups"
 				]
 			},
+			"ListType": {
+				"type": "string",
+				"enum": [
+					"random",
+					"highest",
+					"avghighest",
+					"frequent",
+					"faved",
+					"recent"
+				]
+			},
 			"AlbumOrderFields": {
 				"type": "string",
 				"enum": [
@@ -24304,17 +26297,6 @@
 					"seriesNr",
 					"duration",
 					"albumType"
-				]
-			},
-			"ListType": {
-				"type": "string",
-				"enum": [
-					"random",
-					"highest",
-					"avghighest",
-					"frequent",
-					"faved",
-					"recent"
 				]
 			},
 			"AlbumPage": {
@@ -24889,10 +26871,10 @@
 					}
 				]
 			},
-			"ArtworkNewArgs": {
+			"ArtworkNewParameters": {
 				"allOf": [
 					{
-						"$ref": "#/components/schemas/ArtworkNewUploadArgs"
+						"$ref": "#/components/schemas/ArtworkNewUploadParameters"
 					},
 					{
 						"properties": {
@@ -24907,7 +26889,7 @@
 					}
 				]
 			},
-			"ArtworkNewUploadArgs": {
+			"ArtworkNewUploadParameters": {
 				"type": "object",
 				"properties": {
 					"folderID": {
@@ -24925,7 +26907,7 @@
 					"types"
 				]
 			},
-			"ArtworkRenameArgs": {
+			"ArtworkRenameParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -24942,7 +26924,7 @@
 					"newName"
 				]
 			},
-			"CredentialsArgs": {
+			"CredentialsParameters": {
 				"type": "object",
 				"properties": {
 					"password": {
@@ -25288,7 +27270,7 @@
 					}
 				]
 			},
-			"BookmarkCreateArgs": {
+			"BookmarkCreateParameters": {
 				"type": "object",
 				"properties": {
 					"mediaID": {
@@ -25337,7 +27319,7 @@
 					"message"
 				]
 			},
-			"ChatCreateArgs": {
+			"ChatCreateParameters": {
 				"type": "object",
 				"properties": {
 					"message": {
@@ -25349,7 +27331,7 @@
 					"message"
 				]
 			},
-			"ChatRemoveArgs": {
+			"ChatRemoveParameters": {
 				"type": "object",
 				"properties": {
 					"time": {
@@ -25645,7 +27627,7 @@
 					"health"
 				]
 			},
-			"FolderCreateArgs": {
+			"FolderCreateParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -25661,7 +27643,7 @@
 					"name"
 				]
 			},
-			"FolderRenameArgs": {
+			"FolderRenameParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -25677,7 +27659,7 @@
 					"name"
 				]
 			},
-			"FolderMoveArgs": {
+			"FolderMoveParameters": {
 				"type": "object",
 				"properties": {
 					"ids": {
@@ -25864,6 +27846,35 @@
 				"properties": {
 					"data": {
 						"$ref": "#/components/schemas/JSON"
+					}
+				}
+			},
+			"TrackLyrics": {
+				"type": "object",
+				"properties": {
+					"lyrics": {
+						"type": "string",
+						"description": "Lyrics"
+					},
+					"syncedLyrics": {
+						"type": "string",
+						"description": "Synced Lyrics"
+					},
+					"language": {
+						"type": "string",
+						"description": "Language of the the lyrics"
+					},
+					"source": {
+						"type": "string",
+						"description": "Audio Tag or External Service"
+					}
+				}
+			},
+			"MetaDataTrackLyricsResult": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"$ref": "#/components/schemas/TrackLyrics"
 					}
 				}
 			},
@@ -26138,7 +28149,7 @@
 					}
 				]
 			},
-			"PlaylistMutateArgs": {
+			"PlaylistMutateParameters": {
 				"type": "object",
 				"properties": {
 					"name": {
@@ -26234,7 +28245,7 @@
 					"changedBy"
 				]
 			},
-			"PlayQueueSetArgs": {
+			"PlayQueueSetParameters": {
 				"type": "object",
 				"properties": {
 					"mediaIDs": {
@@ -26512,7 +28523,7 @@
 					}
 				]
 			},
-			"PodcastCreateArgs": {
+			"PodcastCreateParameters": {
 				"type": "object",
 				"properties": {
 					"url": {
@@ -26524,7 +28535,7 @@
 					"url"
 				]
 			},
-			"PodcastRefreshArgs": {
+			"PodcastRefreshParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -26643,7 +28654,7 @@
 					}
 				]
 			},
-			"RadioMutateArgs": {
+			"RadioMutateParameters": {
 				"type": "object",
 				"properties": {
 					"name": {
@@ -26743,7 +28754,7 @@
 					}
 				]
 			},
-			"RootMutateArgs": {
+			"RootMutateParameters": {
 				"type": "object",
 				"properties": {
 					"name": {
@@ -26764,7 +28775,7 @@
 					"strategy"
 				]
 			},
-			"RootRefreshArgs": {
+			"RootRefreshParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -26912,7 +28923,7 @@
 					"states"
 				]
 			},
-			"FavArgs": {
+			"FavParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -26929,7 +28940,7 @@
 					"remove"
 				]
 			},
-			"RateArgs": {
+			"RateParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -27154,27 +29165,6 @@
 					"wav"
 				]
 			},
-			"TrackLyrics": {
-				"type": "object",
-				"properties": {
-					"lyrics": {
-						"type": "string",
-						"description": "Lyrics"
-					},
-					"syncedLyrics": {
-						"type": "string",
-						"description": "Synced Lyrics"
-					},
-					"language": {
-						"type": "string",
-						"description": "Language of the the lyrics"
-					},
-					"source": {
-						"type": "string",
-						"description": "Audio Tag or External Service"
-					}
-				}
-			},
 			"MediaIDTagRaw": {
 				"allOf": [
 					{
@@ -27242,7 +29232,7 @@
 					"health"
 				]
 			},
-			"TrackRenameArgs": {
+			"TrackRenameParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -27257,7 +29247,7 @@
 					"name"
 				]
 			},
-			"TrackMoveArgs": {
+			"TrackMoveParameters": {
 				"type": "object",
 				"properties": {
 					"ids": {
@@ -27275,7 +29265,7 @@
 					"folderID"
 				]
 			},
-			"TrackFixArgs": {
+			"TrackFixParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
@@ -27290,7 +29280,7 @@
 					"fixID"
 				]
 			},
-			"MediaTagRawUpdateArgs": {
+			"MediaTagRawUpdateParameters": {
 				"type": "object",
 				"properties": {
 					"version": {
@@ -27306,14 +29296,14 @@
 					"frames"
 				]
 			},
-			"RawTagUpdateArgs": {
+			"RawTagUpdateParameters": {
 				"type": "object",
 				"properties": {
 					"id": {
 						"$ref": "#/components/schemas/ID"
 					},
 					"tag": {
-						"$ref": "#/components/schemas/MediaTagRawUpdateArgs"
+						"$ref": "#/components/schemas/MediaTagRawUpdateParameters"
 					}
 				},
 				"required": [
@@ -27371,7 +29361,7 @@
 					}
 				]
 			},
-			"UserMutateArgs": {
+			"UserMutateParameters": {
 				"type": "object",
 				"properties": {
 					"password": {
@@ -27417,7 +29407,7 @@
 					"roleUpload"
 				]
 			},
-			"UserPasswordUpdateArgs": {
+			"UserPasswordUpdateParameters": {
 				"type": "object",
 				"properties": {
 					"password": {
@@ -27434,7 +29424,7 @@
 					"newPassword"
 				]
 			},
-			"UserEmailUpdateArgs": {
+			"UserEmailUpdateParameters": {
 				"type": "object",
 				"properties": {
 					"password": {
@@ -27451,7 +29441,7 @@
 					"email"
 				]
 			},
-			"UserGenerateImageArgs": {
+			"UserGenerateImageParameters": {
 				"type": "object",
 				"properties": {
 					"seed": {
@@ -27460,7 +29450,7 @@
 					}
 				}
 			},
-			"UserGenerateSusonicTokenArgs": {
+			"UserGenerateSubsonicTokenParameters": {
 				"type": "object",
 				"properties": {
 					"password": {

@@ -4,7 +4,6 @@
 export * from './model/jam-rest-data';
 export * from './model/jam-rest-params';
 export * from './model/jam-enums';
-export * from './model/id3v2-frames';
 export * from './model/lastfm-rest-data';
 export * from './model/musicbrainz-rest-data';
 export * from './model/acoustid-rest-data';

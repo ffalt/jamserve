@@ -59,7 +59,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 				fieldType = `JamEnums.${enumInfo.name}`;
 			} else {
 				const fObjectType = metadata.resultType(fType);
-				fieldType = fObjectType?.name ?? 'any';
+				fieldType = fObjectType?.name ?? 'unknown';
 			}
 		}
 	}

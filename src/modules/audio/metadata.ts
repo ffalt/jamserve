@@ -5,12 +5,13 @@ import { FlacInfo } from './formats/flac/index.js';
 import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 import { MetaWriteableDataBlock } from './formats/flac/lib/block.writeable.js';
-import { ID3v2Frames, RawTag } from './raw-tag.js';
 import { TrackTag } from './audio.format.js';
+import { MediaTagRaw } from '../../entity/tag/tag.model.js';
+import { MediaTagRawFrame, MediaTagRawFrameBin } from '../../entity/tag/raw.model.js';
 
-function prepareFrame(frame: ID3v2Frames.Frame): void {
-	if (frame.value && (frame as ID3v2Frames.Bin).value.bin) {
-		frame.value.bin = (frame.value.bin as Buffer).toString('base64');
+function prepareFrame(frame: IID3V2.Frame): void {
+	if ((frame.value as any).bin) {
+		(frame.value as any).bin = ((frame.value as any).bin as Buffer).toString('base64');
 	}
 	if (frame.subframes) {
 		for (const subframe of frame.subframes) {
@@ -19,13 +20,10 @@ function prepareFrame(frame: ID3v2Frames.Frame): void {
 	}
 }
 
-export function prepareResponseTag(tag: RawTag): void {
+export function prepareResponseTag(tag: MediaTagRaw): void {
 	for (const key of Object.keys(tag.frames)) {
-		const frames = tag.frames[key];
-		if (frames) {
-			for (const frame of frames) {
-				prepareFrame(frame);
-			}
+		for (const frame of tag.frames[key] ?? []) {
+			prepareFrame(frame as IID3V2.Frame);
 		}
 	}
 }
@@ -154,7 +152,7 @@ export function flacToRawTagPictures(builder: ID3V24TagBuilder, flacInfo: FlacIn
 	}
 }
 
-export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefined> {
+export async function flacToRawTag(flacInfo: FlacInfo): Promise<MediaTagRaw | undefined> {
 	if (!flacInfo.comment?.tag) {
 		return;
 	}
@@ -168,13 +166,13 @@ export async function flacToRawTag(flacInfo: FlacInfo): Promise<RawTag | undefin
 	return tag;
 }
 
-export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<RawTag | undefined> {
-	const tag: RawTag = {
+export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<MediaTagRaw | undefined> {
+	const tag: MediaTagRaw = {
 		version: id3v2tag.head ? id3v2tag.head.ver : 4,
 		frames: {}
 	};
 	for (const frame of id3v2tag.frames) {
-		const f = tag.frames[frame.id] ?? [];
+		const f: Array<MediaTagRawFrame> = tag.frames[frame.id] ?? [];
 		f.push({ id: frame.id, value: frame.value });
 		tag.frames[frame.id] = f;
 	}
@@ -205,7 +203,7 @@ export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageMod
 	return result;
 }
 
-export function trackTagToRawTag(tag: TrackTag): RawTag {
+export function trackTagToRawTag(tag: TrackTag): MediaTagRaw {
 	const builder = new ID3V24TagBuilder('utf8');
 	builder.artist(tag.artist)
 		.album(tag.album)
@@ -217,11 +215,11 @@ export function trackTagToRawTag(tag: TrackTag): RawTag {
 	return { version: 4, frames: builder.rawBuilder.build() };
 }
 
-function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
-	if (frame.value && (frame as ID3v2Frames.Bin).value.bin) {
-		const bin = frame.value.bin;
+function rawFrameToID3v2(frame: MediaTagRawFrame): void {
+	if (frame.value && (frame as MediaTagRawFrameBin).value.bin) {
+		const bin = (frame as MediaTagRawFrameBin).value.bin as any;
 		if (typeof bin === 'string') {
-			frame.value.bin = Buffer.from(bin, 'base64');
+			(frame as IID3V2.Frames.IdBinFrame).value.bin = Buffer.from(bin, 'base64');
 		}
 	}
 	if (frame.subframes) {
@@ -231,11 +229,10 @@ function rawFrameToID3v2(frame: ID3v2Frames.Frame): void {
 	}
 }
 
-export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
-	const frames: Array<IID3V2.Frame> = [];
+export function rawTagToID3v2(tag: MediaTagRaw): IID3V2.Tag {
+	const frames: Array<MediaTagRawFrame> = [];
 	for (const id of Object.keys(tag.frames)) {
-		const f = tag.frames[id] ?? [];
-		for (const frame of f) {
+		for (const frame of tag.frames[id] ?? []) {
 			rawFrameToID3v2(frame);
 			frames.push(frame);
 		}
@@ -250,6 +247,6 @@ export function rawTagToID3v2(tag: RawTag): IID3V2.Tag {
 		},
 		start: 0,
 		end: 0,
-		frames
+		frames: frames as Array<IID3V2.Frame>
 	};
 }

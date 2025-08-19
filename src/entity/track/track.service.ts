@@ -7,12 +7,12 @@ import { trackTagToRawTag } from '../../modules/audio/metadata.js';
 import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import { RawTag } from '../../modules/audio/raw-tag.js';
 import { FolderService } from '../folder/folder.service.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { basenameStripExtension } from '../../utils/fs-utils.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { MediaTagRaw } from '../tag/tag.model.js';
 
 const log = logger('TrackService');
 
@@ -32,7 +32,7 @@ export class TrackService {
 		this.checker = new TrackRulesChecker(this.audioModule);
 	}
 
-	async getRawTag(track: Track): Promise<RawTag | undefined> {
+	async getRawTag(track: Track): Promise<MediaTagRaw | undefined> {
 		try {
 			const result = await this.audioModule.readRawTag(path.join(track.path, track.fileName));
 			if (!result) {

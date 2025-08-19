@@ -1,6 +1,7 @@
 import { Field, ObjectType } from 'type-graphql';
 import { ResultType } from '../../modules/rest/decorators/result-type.js';
 import { ObjectField } from '../../modules/rest/decorators/object-field.js';
+import { TrackLyrics } from '../track/track.model.js';
 
 @ObjectType()
 @ResultType({ description: 'Track/Folder/Artist/Album Info Data' })
@@ -46,4 +47,10 @@ export class ExtendedInfoResultQL extends ExtendedInfoResult {
 export class MetaDataResult {
 	@ObjectField(() => Object, { nullable: true, description: 'MetaData' })
 	data?: any;
+}
+
+@ResultType({ description: 'Metadata TrackLyrics Result' })
+export class MetaDataTrackLyricsResult {
+	@ObjectField(() => TrackLyrics, { nullable: true, description: 'MetaData' })
+	data?: TrackLyrics;
 }
