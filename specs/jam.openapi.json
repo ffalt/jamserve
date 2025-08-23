@@ -23202,7 +23202,7 @@
 							"schema": {
 								"allOf": [
 									{
-										"$ref": "#/components/schemas/UserGenerateSubsonicTokenParameters"
+										"$ref": "#/components/schemas/UserSubsonicTokenGenerateParameters"
 									},
 									{
 										"properties": {
@@ -23909,10 +23909,20 @@
 				"properties": {
 					"id": {
 						"type": "string"
+					},
+					"value": {
+						"$ref": "#/components/schemas/JSON"
+					},
+					"subframes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/JSON"
+						}
 					}
 				},
 				"required": [
-					"id"
+					"id",
+					"value"
 				]
 			},
 			"MediaTagRawPic": {
@@ -27020,8 +27030,7 @@
 					}
 				},
 				"required": [
-					"version",
-					"allowedCookieDomains"
+					"version"
 				]
 			},
 			"AutoCompleteEntry": {
@@ -29450,7 +29459,7 @@
 					}
 				}
 			},
-			"UserGenerateSubsonicTokenParameters": {
+			"UserSubsonicTokenGenerateParameters": {
 				"type": "object",
 				"properties": {
 					"password": {
