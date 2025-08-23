@@ -2,7 +2,7 @@ import { SubsonicToken, User, UserPage } from './user.model.js';
 import { User as ORMUser } from './user.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesUserParameters, UserEmailUpdateParameters, UserFilterParameters, UserGenerateImageParameters, UserGenerateSubsonicTokenParameters, UserMutateParameters, UserOrderParameters, UserPasswordUpdateParameters } from './user.parameters.js';
+import { IncludesUserParameters, UserEmailUpdateParameters, UserFilterParameters, UserGenerateImageParameters, UserSubsonicTokenGenerateParameters, UserMutateParameters, UserOrderParameters, UserPasswordUpdateParameters } from './user.parameters.js';
 import { randomString } from '../../utils/random.js';
 import { PageParameters } from '../base/base.parameters.js';
 import { Context } from '../../modules/engine/rest/context.js';
@@ -161,7 +161,7 @@ export class UserController {
 	)
 	async generateSubsonicToken(
 		@BodyParameter('id', { description: 'User Id', isID: true }) id: string,
-		@BodyParameters() parameters: UserGenerateSubsonicTokenParameters,
+		@BodyParameters() parameters: UserSubsonicTokenGenerateParameters,
 		@RestContext() { orm, engine, user }: Context
 	): Promise<SubsonicToken> {
 		const u = await this.checkUserAccess(orm, engine, id, parameters.password, user);

@@ -14,5 +14,6 @@ export * from './model/lyricsovh-rest-data';
 export * from './jam.service';
 export * from './jam.base.service';
 export * from './jam.auth.service';
+export * from './jam.http.service';
 export * from './jam.configuration';
 export * from './jam.module';

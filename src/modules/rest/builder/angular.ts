@@ -6,11 +6,12 @@ import { buildTSEnums, buildTSParameterTypes, buildTSResultTypes } from './types
 import { buildParts, buildPartService, buildServiceParts, buildTemplate, callDescription, getClientZip, getCustomParameterTemplate, getResultType, MustacheDataClientCallFunction, Part } from './clients.js';
 
 function generateUploadClientCalls(call: MethodMetadata, name: string, parameterType: string, upload: RestParameterMetadata): Array<MustacheDataClientCallFunction> {
+	const resultType = getResultType(call);
 	return [{
 		name,
 		paramsType: '',
 		paramName: `params: ${parameterType}, file: File`,
-		resultType: 'Observable<HttpEvent<any>>',
+		resultType: `Observable<HttpEvent<${resultType ?? 'any'}>>`,
 		baseFuncResultType: '',
 		baseFunc: 'upload',
 		tick: '\'',
@@ -86,13 +87,13 @@ function generateRequestClientCalls(call: MethodMetadata, name: string, paramete
 	}
 	return [{
 		name,
-		paramName: parameterType ? 'params' : '',
+		paramName: parameterType ? 'parameters' : '',
 		paramsType: parameterType ?? '',
 		resultType: resultType ?? 'void',
 		baseFuncResultType: resultType === 'string' ? '' : (resultType ?? ''),
 		tick: call.customPathParameters ? '`' : '\'',
 		baseFunc: baseFunction,
-		baseFuncParameters: parameterType ? 'params' : '{}',
+		baseFuncParameters: parameterType ? 'parameters' : '{}',
 		apiPath: (call.controllerClassMetadata?.route ?? '') + (call.route ?? ''),
 		description: callDescription(call)
 	}];

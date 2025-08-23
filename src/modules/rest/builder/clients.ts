@@ -210,7 +210,7 @@ export function getCallParameterType(call: MethodMetadata): string {
 	const metadata = metadataStorage();
 	const types: Array<string> = [];
 	if (call.parameters.filter(p => ['args', 'arg'].includes(p.kind)).length > 1) {
-		types.push(`JamParameters.${call.controllerClassMetadata?.name.replace('Controller', '')}${capitalize(call.methodName)}Args`);
+		types.push(`JamParameters.${call.controllerClassMetadata?.name.replace('Controller', '')}${capitalize(call.methodName)}Parameters`);
 	} else {
 		for (const parameter of call.parameters) {
 			if (parameter.kind === 'arg' && parameter.mode !== 'file') {

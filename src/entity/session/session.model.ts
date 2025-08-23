@@ -9,7 +9,7 @@ export class Session {
 	@ObjectField({ description: 'Api Version', example: JAMAPI_VERSION })
 	version!: string;
 
-	@ObjectField(() => [String], { description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] })
+	@ObjectField(() => [String], { nullable: true, description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] })
 	allowedCookieDomains?: Array<string>;
 
 	@ObjectField({ nullable: true, description: 'JSON Web Token', example: examples.token })

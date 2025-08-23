@@ -1,24 +1,26 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {HttpClient, type HttpEvent, type HttpHeaders, type HttpParams, HttpRequest, type HttpSentEvent} from '@angular/common/http';
-import {Injectable, inject} from '@angular/core';
-import {firstValueFrom, type Observable} from 'rxjs';
+import { HttpClient, HttpErrorResponse, type HttpEvent, type HttpHeaders, type HttpParams, HttpRequest } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { firstValueFrom, type Observable } from 'rxjs';
+
+export type HTTPResponseType = 'arraybuffer' | 'text' | 'json';
 
 export interface HTTPOptions {
 	headers?: HttpHeaders;
 	params?: HttpParams;
 	reportProgress?: boolean;
 	withCredentials?: boolean;
-	responseType?: 'arraybuffer' | 'text' | 'json';
+	responseType?: HTTPResponseType;
 }
 
-async function handleError(error: any): Promise<any> {
+function handleError(error: unknown): never {
 	console.error(error);
-	if (error.status === 0) {
-		return Promise.reject(new Error('Could not reach server'));
+	if (error instanceof HttpErrorResponse && error.status === 0) {
+		throw new Error('Could not reach server');
 	}
-	return Promise.reject(error);
+	throw error;
 }
 
 @Injectable()
@@ -27,7 +29,7 @@ export class JamHttpService {
 
 	async raw(url: string, options: HTTPOptions): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		try {
-			return new Promise<{ buffer: ArrayBuffer; contentType: string }>((resolve, reject) => {
+			return await new Promise<{ buffer: ArrayBuffer; contentType: string }>((resolve, reject) => {
 				this.client.get<ArrayBuffer>(url, {
 					headers: options.headers,
 					params: options.params,
@@ -37,14 +39,15 @@ export class JamHttpService {
 					observe: 'response'
 				})
 					.subscribe(result => {
-						if (!result?.body) {
-							return reject(new Error('Invalid Binary Server Response'));
+						if (!result.body) {
+							reject(new Error('Invalid Binary Server Response'));
+							return;
 						}
-						resolve({buffer: result.body, contentType: result.headers.get('content-type') || 'invalid'});
+						resolve({ buffer: result.body, contentType: result.headers.get('content-type') ?? 'invalid' });
 					});
 			});
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
@@ -55,24 +58,24 @@ export class JamHttpService {
 					params: options.params, headers: options.headers, reportProgress: options.reportProgress,
 					withCredentials: options.withCredentials, responseType: options.responseType as 'json'
 				}
-			)) as Promise<T>;
+			));
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
 	async post<T>(url: string, body: any, options: HTTPOptions): Promise<T> {
 		try {
 			return await firstValueFrom(this.client.post<T>(url, body,
-				{params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials}
-			)) as Promise<T>;
+				{ params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials }
+			));
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
-	postObserve(url: string, body: any, options: HTTPOptions): Observable<HttpEvent<HttpSentEvent>> {
-		return this.client.request(new HttpRequest('POST', url, body, {
+	postObserve<T>(url: string, body: any, options: HTTPOptions): Observable<HttpEvent<T>> {
+		return this.client.request<T>(new HttpRequest('POST', url, body, {
 			params: options.params,
 			headers: options.headers,
 			reportProgress: options.reportProgress,

@@ -100,6 +100,7 @@ function buildTSType(type: ClassMetadata, metadata: MetadataStorage, sl: Array<s
 export function buildTSResultTypes(): string {
 	const metadata = metadataStorage();
 	const sl: Array<string> = [
+		'/* eslint-disable max-lines */',
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
 		`import type * as JamEnums from './jam-enums';\n`,
@@ -119,7 +120,7 @@ function getCombinedType(call: MethodMetadata) {
 		const combineName = [
 			call.controllerClassMetadata?.name.replace('Controller', ''),
 			capitalize(call.methodName),
-			'Args'
+			'Parameters'
 		].join('');
 		const names: Array<string> = [];
 		for (const p of call.parameters) {
@@ -147,6 +148,7 @@ function getCombinedType(call: MethodMetadata) {
 export function buildTSParameterTypes(): string {
 	const metadata = metadataStorage();
 	const sl: Array<string> = [
+		'/* eslint-disable max-len */',
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
 		`import type * as JamEnums from './jam-enums';\n`,

@@ -1,107 +1,109 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {type HttpEvent, HttpParams, type HttpSentEvent} from '@angular/common/http';
-import {Injectable, inject} from '@angular/core';
-import type {Observable} from 'rxjs';
+import { type HttpEvent, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import type { Observable } from 'rxjs';
 
-import {JamAuthService} from './jam.auth.service';
-import {JamHttpService} from './jam.http.service';
+import { JamAuthService } from './jam.auth.service';
+import { type HTTPResponseType, JamHttpService } from './jam.http.service';
+
+type GenericParameters = Record<string, string | Array<string> | undefined>;
 
 @Injectable()
 export class JamBaseService {
 	private readonly http = inject(JamHttpService);
 	private readonly authService = inject(JamAuthService);
 
-	buildRequest(view: string, params: any, forDOM: boolean): { url: string; parameters: HttpParams } {
-		const buildParams = params || {};
+	buildRequest(view: string, params: GenericParameters = {}, forDOM: boolean = true): { url: string; parameters: HttpParams } {
 		if (forDOM && this.authService.auth?.token) {
-			buildParams.bearer = this.authService.auth.token;
+			params.bearer = this.authService.auth.token;
 		}
 		let result = new HttpParams();
-		for (const key of Object.keys(buildParams)) {
-			if (buildParams[key] !== undefined) {
-				if (Array.isArray(buildParams[key])) {
-					for (const sub of buildParams[key]) {
+		for (const key of Object.keys(params)) {
+			if (params[key] !== undefined) {
+				if (Array.isArray(params[key])) {
+					for (const sub of params[key]) {
 						result = result.append(key, sub);
 					}
 				} else {
-					result = result.append(key, buildParams[key]);
+					result = result.append(key, params[key]);
 				}
 			}
 		}
-		return {url: `${this.authService.auth?.server}${JamAuthService.apiPrefix}${view}`, parameters: result};
+		return { url: `${this.authService.auth?.server}${JamAuthService.apiPrefix}${view}`, parameters: result };
 	}
 
-	buildUrl(view: string, params: any, forDOM: boolean): string {
-		const {url, parameters} = this.buildRequest(view, params, forDOM);
+	buildUrl(view: string, params: unknown, forDOM: boolean): string {
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters, forDOM);
 		const flat = parameters.toString();
 		return url + (flat ? `?${flat}` : '');
 	}
 
-	async raw(view: string, params: any): Promise<{ buffer: ArrayBuffer; contentType: string }> {
-		const {url, parameters} = this.buildRequest(view, params, false);
-		return this.http.raw(url, {...this.authService.getHTTPOptions(), params: parameters});
+	async raw(view: string, params?: unknown): Promise<{ buffer: ArrayBuffer; contentType: string }> {
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters, false);
+		return this.http.raw(url, { ...this.authService.getHTTPOptions(), params: parameters });
 	}
 
-	async get<T>(view: string, params: any, responseType?: any): Promise<T> {
-		const {url, parameters} = this.buildRequest(view, params, false);
-		return this.http.get(url, {...this.authService.getHTTPOptions(), responseType, params: parameters});
+	async get<T>(view: string, params: unknown, responseType?: HTTPResponseType): Promise<T> {
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters, false);
+		return this.http.get(url, { ...this.authService.getHTTPOptions(), responseType, params: parameters });
 	}
 
-	async post<T>(view: string, params: any, body: any): Promise<T> {
+	async post<T>(view: string, params: unknown, body: any): Promise<T> {
 		return this.http.post<T>(this.buildUrl(view, params, false), body, this.authService.getHTTPOptions());
 	}
 
-	async requestString(path: string, params: any): Promise<string> {
+	async requestString(path: string, params: unknown): Promise<string> {
 		if (!this.authService.isLoggedIn()) {
 			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.get<string>(path, params, 'text');
 	}
 
-	async requestData<T>(path: string, params: any): Promise<T> {
+	async requestData<T>(path: string, params: unknown): Promise<T> {
 		if (!this.authService.isLoggedIn()) {
 			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.get<T>(path, params);
 	}
 
-	async requestPostData<T>(path: string, params: any): Promise<T> {
+	async requestPostData<T>(path: string, params: unknown): Promise<T> {
 		if (!this.authService.isLoggedIn()) {
 			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.post<T>(path, {}, params);
 	}
 
-	async requestPostDataOK(path: string, params: any): Promise<void> {
+	async requestPostDataOK(path: string, params: unknown): Promise<void> {
 		await this.requestPostData(path, params);
 	}
 
-	async requestOK(path: string, params: any): Promise<void> {
+	async requestOK(path: string, params: unknown): Promise<void> {
 		await this.requestData(path, params);
 	}
 
-	buildRequestUrl(view: string, params?: any, forDom: boolean = true): string {
+	buildRequestUrl(view: string, params?: unknown, forDom: boolean = true): string {
 		return this.buildUrl(view, params, forDom);
 	}
 
-	async binary(path: string, params?: any): Promise<{ buffer: ArrayBuffer; contentType: string }> {
+	async binary(path: string, params?: unknown): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		if (!this.authService.isLoggedIn()) {
 			return Promise.reject(new Error('Not logged in'));
 		}
 		return this.raw(path, params);
 	}
 
-	upload(path: string, params: any, name: string, file: File): Observable<HttpEvent<HttpSentEvent>> {
+	upload<T>(path: string, params: unknown, name: string, file: File): Observable<HttpEvent<T>> {
 		const formData = new FormData();
-		for (const key of Object.keys(params)) {
-			formData.append(key, params[key]);
+		const data = params as Record<string, string>;
+		for (const key of Object.keys(data)) {
+			formData.append(key, data[key]);
 		}
 		formData.append(name, file);
 		const url = this.buildUrl(path, {}, false);
 		const options = this.authService.getHTTPOptions();
 		options.reportProgress = true;
-		return this.http.postObserve(url, formData, options);
+		return this.http.postObserve<T>(url, formData, options);
 	}
 }

@@ -1,13 +1,13 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {Injectable, inject} from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import {JamAuthService} from './jam.auth.service';
-import {JamBaseService} from './jam.base.service';
+import { JamAuthService } from './jam.auth.service';
+import { JamBaseService } from './jam.base.service';
 
 {{#list}}
-import {Jam{{part}}Service} from './services/jam.{{{name}}}.service';
+import { Jam{{part}}Service } from './services/jam.{{{name}}}.service';
 {{/list}}
 
 @Injectable()

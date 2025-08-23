@@ -43,7 +43,7 @@ export class UserPasswordUpdateParameters {
 }
 
 @ObjectParametersType()
-export class UserGenerateSubsonicTokenParameters {
+export class UserSubsonicTokenGenerateParameters {
 	@ObjectField({ description: 'Password of calling user (or admin) is required to generate/update the Subsonic token' })
 	password!: string;
 }
