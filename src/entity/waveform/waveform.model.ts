@@ -6,8 +6,8 @@ export class WaveFormData {
 	@ObjectField({ description: 'The version number of the waveform data format', min: 1 })
 	version!: number;
 
-	@ObjectField({ nullable: true, description: 'The number of waveform channels present (version 2 only)', min: 0 })
-	channels?: number;
+	@ObjectField({ description: 'The number of waveform channels present', min: 0 })
+	channels!: number;
 
 	@ObjectField({ description: 'Sample rate of original audio file (Hz)', min: 0 })
 	sample_rate!: number;

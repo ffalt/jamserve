@@ -1,7 +1,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
 export interface HttpHeaders {
 	Authorization?: string;
@@ -9,17 +9,17 @@ export interface HttpHeaders {
 
 export interface HTTPOptions {
 	headers?: HttpHeaders;
-	params?: any;
+	params?: unknown;
 	reportProgress?: boolean;
 	withCredentials?: boolean;
 }
 
-async function handleError(error: any): Promise<any> {
+function handleError(error: unknown): never {
 	console.error(error);
-	if (error.status === 0) {
-		return Promise.reject(new Error('Could not reach server'));
+	if (error instanceof AxiosError && error.status === 0) {
+		throw new Error('Could not reach server');
 	}
-	return Promise.reject(error);
+	throw error;
 }
 
 export class JamHttpService {
@@ -31,19 +31,19 @@ export class JamHttpService {
 				responseType: 'arraybuffer' as const,
 				withCredentials: options.withCredentials
 			};
-			const result = await axios.get(url, axiosOptions);
-			return { buffer: result.data, contentType: result.headers['content-type'] ?? '' };
+			const result = await axios.get<ArrayBuffer>(url, axiosOptions);
+			return { buffer: result.data, contentType: (result.headers['content-type'] as string) ?? '' };
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
 	async get<T>(url: string, options: HTTPOptions): Promise<T> {
 		try {
 			const result = await axios.get(url, { params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials });
-			return result.data;
+			return result.data as T;
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
@@ -58,9 +58,9 @@ export class JamHttpService {
 					withCredentials: options.withCredentials
 				}
 			);
-			return result.data;
+			return result.data as T;
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 
@@ -76,9 +76,9 @@ export class JamHttpService {
 					withCredentials: options.withCredentials
 				}
 			);
-			return result.data;
+			return result.data as T;
 		} catch (error: unknown) {
-			return handleError(error);
+			handleError(error);
 		}
 	}
 }

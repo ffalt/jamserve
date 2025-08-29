@@ -58,6 +58,8 @@ import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/dis
 import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
 import type { ValidationError as ClassValidatorValidationError } from 'class-validator';
+import { GraphQLDateTimeISO } from 'graphql-scalars';
+import { GraphQLScalarType } from 'graphql';
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
@@ -122,6 +124,11 @@ export const customAuthChecker: AuthChecker<Context> =
 		return true;
 	};
 
+const AliasedGraphQLDateTimeISO = new GraphQLScalarType({
+	...GraphQLDateTimeISO.toConfig(),
+	name: 'DateTimeISO'
+});
+
 export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 	registerEnums();
 	return await buildSchema({
@@ -133,7 +140,8 @@ export async function buildGraphQlSchema(): Promise<GraphQLSchema> {
 			SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
 		],
 		validate: { forbidUnknownValues: false },
-		authChecker: customAuthChecker
+		authChecker: customAuthChecker,
+		scalarsMap: [{ type: Date, scalar: AliasedGraphQLDateTimeISO }]
 	});
 }
 

@@ -42,7 +42,7 @@ export class JamAuthService {
 				this.user = undefined;
 			}
 		} catch (error: unknown) {
-			throw (error || new Error('Server error'));
+			throw (error ?? new Error('Server error'));
 		}
 	}
 
@@ -77,13 +77,24 @@ export class JamAuthService {
 		} catch (error: unknown) {
 			console.error(error);
 			await this.clear();
-			if (error.error?.error) {
-				throw new Error(error.error.error);
+			if (typeof error === 'string') {
+				return Promise.reject(new Error(error));
 			}
-			if (error.statusText) {
-				throw new Error(error.statusText);
+			if (
+				error !== null &&
+				typeof error === 'object' &&
+				('error' in error) &&
+				error.error !== null &&
+				typeof error.error === 'object' &&
+				('error' in error.error) &&
+				typeof error.error.error === 'string'
+			) {
+				return Promise.reject(new Error(error.error.error));
 			}
-			throw new Error('Server Error');
+			if (error instanceof Error && error.message) {
+				return Promise.reject(new Error(error.message));
+			}
+			return Promise.reject(new Error('Server Error'));
 		}
 	}
 

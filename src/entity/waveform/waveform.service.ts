@@ -18,7 +18,7 @@ export interface WaveFormData {
 	/** The version number of the waveform data format. */
 	version: number;
 	/** The number of waveform channels present (version 2 only). */
-	channels?: number;
+	channels: number;
 	/** Sample rate of original audio file (Hz). */
 	sample_rate: number;
 	/** Number of audio samples per waveform minimum/maximum pair. */
