@@ -8,7 +8,7 @@ export function extractParameters(function_: Function): Array<string> {
 	const pattern = /(?:function\s*)?(?:\w+\s*)?\(([^)]*)\)/;
 	const matched = pattern.exec(functionString);
 
-	return matched?.[1]?.split(',')
+	return matched?.at(1)?.split(',')
 		.map(parameter => parameter.replace(/=.*$/, '').trim()) // remove default values
 		.filter(Boolean) ?? []; // filter empty strings
 }
