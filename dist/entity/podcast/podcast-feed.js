@@ -2,69 +2,72 @@ import FeedParser from 'feedparser';
 import iconv from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
-import zlib from 'zlib';
+import zlib from 'node:zlib';
 export class Feed {
     static parseDurationMilliseconds(s) {
         return moment.duration(s).as('milliseconds');
     }
-    static parseItunesDurationSeconds(s) {
-        const num = Number(s);
-        if (!s.includes(':') && !isNaN(num)) {
-            return num;
+    static parseItunesDurationSeconds(value) {
+        const number = Number(value);
+        if (!value.includes(':') && !Number.isNaN(number)) {
+            return number;
         }
-        if (s.length === 5) {
-            s = `00:${s}`;
+        if (value.length === 5) {
+            value = `00:${value}`;
         }
-        return moment.duration(s).as('seconds');
+        return moment.duration(value).as('seconds');
     }
-    static getParams(str) {
-        return str.split(';').reduce((para, param) => {
-            const parts = param.split('=').map(part => part.trim());
-            if (parts.length === 2) {
-                para[parts[0]] = parts[1];
+    static getParams(value) {
+        const parameters = {};
+        for (const parameter of value.split(';')) {
+            const parts = parameter.split('=').map(part => part.trim());
+            const part0 = parts.at(0);
+            const part1 = parts.at(1);
+            if (part0 && part1) {
+                parameters[part0] = part1;
             }
-            return para;
-        }, {});
+        }
+        return parameters;
     }
-    static maybeDecompress(res, encoding, done) {
+    static maybeDecompress(stream, encoding, done) {
         let decompress;
-        if (encoding.match(/\bdeflate\b/)) {
+        if ((/\bdeflate\b/).test(encoding)) {
             decompress = zlib.createInflate();
             decompress.on('error', done);
         }
-        else if (encoding.match(/\bgzip\b/)) {
+        else if ((/\bgzip\b/).test(encoding)) {
             decompress = zlib.createGunzip();
             decompress.on('error', done);
         }
-        return decompress ? res.pipe(decompress) : res;
+        return decompress ? stream.pipe(decompress) : stream;
     }
-    static maybeTranslate(res, charset, done) {
+    static maybeTranslate(stream, charset, done) {
         if (charset && !/utf-*8/i.test(charset)) {
             try {
                 const iv = iconv.decodeStream(charset);
                 iv.on('error', done);
-                res = res.pipe(iv);
+                stream = stream.pipe(iv);
             }
-            catch (err) {
-                res.emit('error', err);
+            catch (error) {
+                stream.emit('error', error);
             }
         }
-        return res;
+        return stream;
     }
     async fetch(url) {
         const posts = [];
-        const res = await fetch(url, {
+        const result = await fetch(url, {
             headers: {
                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
                 'accept': 'text/html,application/xhtml+xml'
             }
         });
-        if (res.ok && res.status === 200) {
+        if (result.ok && result.status === 200) {
             let feed;
             return new Promise((resolve, reject) => {
-                const done = (err) => {
-                    if (err) {
-                        reject(err);
+                const done = (error) => {
+                    if (error) {
+                        reject(error);
                     }
                     else {
                         resolve({ feed, posts });
@@ -82,15 +85,14 @@ export class Feed {
                 });
                 feedParser.on('error', done);
                 feedParser.on('end', done);
-                if (!res.body) {
-                    return done(Error('Bad feed stream'));
+                if (!result.body) {
+                    done(new Error('Bad feed stream'));
+                    return;
                 }
-                res.body.pipe(feedParser);
+                result.body.pipe(feedParser);
             });
         }
-        else {
-            throw new Error(`Bad status code ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`);
-        }
+        throw new Error(`Bad status code ${result.status} ${result.statusText}`.trimEnd());
     }
     async get(podcast) {
         const data = await this.fetch(podcast.url);
@@ -101,17 +103,17 @@ export class Feed {
             author: data.feed.author,
             generator: data.feed.generator,
             language: data.feed.language,
-            image: data.feed.image && data.feed.image.url ? data.feed.image.url : undefined,
+            image: data.feed.image?.url,
             categories: data.feed.categories
         };
-        if (data.feed['itunes:summary'] && data.feed['itunes:summary']['#']) {
+        if (data.feed['itunes:summary']?.['#']) {
             tag.description = data.feed['itunes:summary']['#'];
         }
         const episodes = data.posts.map(post => {
             let chapters = [];
             const anypost = post;
             let duration;
-            if (anypost['itunes:duration'] && anypost['itunes:duration']['#']) {
+            if (anypost?.['itunes:duration']?.['#']) {
                 duration = Feed.parseItunesDurationSeconds(anypost['itunes:duration']['#']);
             }
             const pscChaps = anypost['psc:chapters'];
@@ -129,10 +131,10 @@ export class Feed {
                 link: post.link,
                 guid: post.guid || post.link,
                 summary: post.summary,
-                enclosures: (post.enclosures || []).map(e => {
-                    return { ...e, length: e.length ? Number(e.length) : undefined };
+                enclosures: post.enclosures.map(enclosure => {
+                    return { ...enclosure, length: enclosure.length === undefined ? undefined : Number(enclosure.length) };
                 }),
-                date: post.date ? post.date : undefined,
+                date: post.date ?? undefined,
                 name: post.title,
                 duration,
                 chapters

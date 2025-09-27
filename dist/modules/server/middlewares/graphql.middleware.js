@@ -12,7 +12,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { ApolloMiddleware } from './apollo.middleware.js';
-import path from 'path';
+import path from 'node:path';
 import RateLimit from 'express-rate-limit';
 const log = logger('Graphql');
 let GraphqlMiddleware = class GraphqlMiddleware {
@@ -24,9 +24,9 @@ let GraphqlMiddleware = class GraphqlMiddleware {
     async middleware(configService) {
         const graphql = express.Router();
         graphql.use(RateLimit(configService.rateLimits.graphlql));
-        log.debug(`registering graphql playground`);
+        log.debug('registering graphql playground');
         graphql.use('/playground', await this.playground());
-        log.debug(`registering graphql api middleware`);
+        log.debug('registering graphql api middleware');
         graphql.use('/', await this.apollo.middleware());
         return graphql;
     }

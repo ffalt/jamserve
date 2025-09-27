@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { BaseCompressStream } from './compress-base-stream.js';
 export class CompressListStream extends BaseCompressStream {
     constructor(list, filename, format) {
@@ -7,9 +7,9 @@ export class CompressListStream extends BaseCompressStream {
         this.list = list;
     }
     run(archive) {
-        this.list.forEach(file => {
+        for (const file of this.list) {
             archive.file(file, { name: path.basename(file) });
-        });
+        }
     }
 }
 //# sourceMappingURL=compress-list-stream.js.map

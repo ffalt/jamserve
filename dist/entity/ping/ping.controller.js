@@ -9,8 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Ping } from './ping.model.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
 let PingController = class PingController {
     ping() {
         return { version: JAMAPI_VERSION };

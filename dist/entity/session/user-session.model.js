@@ -9,36 +9,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { SessionMode } from '../../types/enums.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let UserSession = class UserSession {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], UserSession.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Session Client', example: 'Jamberry v1' }),
+    ObjectField({ description: 'Session Client', example: 'Jamberry v1' }),
     __metadata("design:type", String)
 ], UserSession.prototype, "client", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Session Expiration', example: examples.timestamp }),
+    ObjectField({ nullable: true, description: 'Session Expiration', example: examples.timestamp }),
     __metadata("design:type", Number)
 ], UserSession.prototype, "expires", void 0);
 __decorate([
-    ObjField(() => SessionMode, { description: 'Session Mode', example: SessionMode.browser }),
+    ObjectField(() => SessionMode, { description: 'Session Mode', example: SessionMode.browser }),
     __metadata("design:type", String)
 ], UserSession.prototype, "mode", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Session Platform', example: 'Amiga 500' }),
+    ObjectField({ nullable: true, description: 'Session Platform', example: 'Amiga 500' }),
     __metadata("design:type", String)
 ], UserSession.prototype, "platform", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Session OS', example: 'Atari' }),
+    ObjectField({ nullable: true, description: 'Session OS', example: 'Atari' }),
     __metadata("design:type", String)
 ], UserSession.prototype, "os", void 0);
 __decorate([
-    ObjField({ description: 'Session User Agent', example: 'Amiga-AWeb/3.4.167SE”' }),
+    ObjectField({ description: 'Session User Agent', example: 'Amiga-AWeb/3.4.167SE”' }),
     __metadata("design:type", String)
 ], UserSession.prototype, "agent", void 0);
 UserSession = __decorate([

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import fetch from 'node-fetch';
 import { fileDeleteIfExists } from './fs-utils.js';
 export async function downloadFile(url, filename) {
@@ -7,17 +7,20 @@ export async function downloadFile(url, filename) {
         throw new Error(`Unexpected Response ${response.statusText || response.status}`);
     }
     return new Promise((resolve, reject) => {
-        const dest = fs.createWriteStream(filename);
+        const destination = fs.createWriteStream(filename);
         if (!response.body) {
-            return reject(new Error('Bad file stream'));
+            reject(new Error('Bad file stream'));
+            return;
         }
-        response.body.pipe(dest);
-        dest.on('close', () => resolve());
-        dest.on('error', e => {
+        response.body.pipe(destination);
+        destination.on('close', () => {
+            resolve();
+        });
+        destination.on('error', (error) => {
             fileDeleteIfExists(filename).then(() => {
-                reject(e);
-            }).catch(_ => {
-                reject(e);
+                reject(error);
+            }).catch(() => {
+                reject(error);
             });
         });
     });

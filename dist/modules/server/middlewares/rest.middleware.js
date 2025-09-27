@@ -16,7 +16,7 @@ import { ConfigService } from '../../engine/services/config.service.js';
 import { registerRestEnums } from '../../engine/rest/enum-registration.js';
 import { buildRestMeta } from '../../rest/metadata/builder.js';
 import { restRouter } from '../../rest/builder/express.js';
-import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
+import { metadataStorage } from '../../rest/metadata/metadata-storage.js';
 import { ApiResponder } from '../../rest/response.js';
 const log = logger('REST');
 registerRestEnums();
@@ -25,7 +25,7 @@ let RestMiddleware = class RestMiddleware {
         const api = express.Router();
         RestControllers();
         buildRestMeta();
-        const metadata = getMetadataStorage();
+        const metadata = metadataStorage();
         const options = {
             enums: metadata.enums,
             resultTypes: metadata.resultTypes,
@@ -61,7 +61,7 @@ let RestMiddleware = class RestMiddleware {
                 { name: 'format', alignment: 'left' }
             ]);
         }
-        api.use((req, res) => {
+        api.use((_req, res) => {
             res.status(404).send('Api Path not found');
         });
         return api;

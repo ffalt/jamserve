@@ -10,25 +10,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicParameterID, SubsonicParameterShare } from '../model/subsonic-rest-params.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicParameterID, SubsonicParameterShare } from '../model/subsonic-rest-parameters.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseShares } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 let SubsonicSharingApi = class SubsonicSharingApi {
-    async getShares(_ctx) {
+    async getShares(_context) {
         return { shares: {} };
     }
-    async createShare(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+    async createShare(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
     }
-    async updateShare(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+    async updateShare(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
     }
-    async deleteShare(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_SHARING);
+    async deleteShare(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_SHARING));
     }
 };
 __decorate([
@@ -37,7 +37,7 @@ __decorate([
         description: 'Returns information about shared media this user is allowed to manage.',
         tags: ['Sharing']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -48,8 +48,8 @@ __decorate([
         description: 'Creates a public URL that can be used by anyone to stream music or video from the Subsonic server.',
         tags: ['Sharing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterShare, Object]),
     __metadata("design:returntype", Promise)
@@ -60,8 +60,8 @@ __decorate([
         description: 'Updates the description and/or expiration date for an existing share.',
         tags: ['Sharing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterShare, Object]),
     __metadata("design:returntype", Promise)
@@ -72,8 +72,8 @@ __decorate([
         description: 'Deletes an existing share.',
         tags: ['Sharing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)

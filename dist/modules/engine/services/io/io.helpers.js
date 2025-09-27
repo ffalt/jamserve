@@ -3,9 +3,9 @@ export class DelayedRequests {
         this.requests = new Map();
     }
     findbyID(id) {
-        for (const d of this.requests) {
-            if (d[1].request.id === id) {
-                return d[1];
+        for (const req of this.requests.values()) {
+            if (req.request.id === id) {
+                return req;
             }
         }
         return;

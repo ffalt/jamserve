@@ -7,40 +7,46 @@ export class MetadataStorage {
         this.posts = [];
         this.resultTypes = [];
         this.inputTypes = [];
-        this.argumentTypes = [];
+        this.parameterTypes = [];
         this.enums = [];
         this.controllerClasses = [];
         this.fields = [];
-        this.params = [];
+        this.parameters = [];
         ensureReflectMetadataExists();
     }
     build() {
         if (!this.initialized) {
             this.buildClassMetadata(this.resultTypes);
             this.buildClassMetadata(this.inputTypes);
-            this.buildClassMetadata(this.argumentTypes);
+            this.buildClassMetadata(this.parameterTypes);
             this.buildControllersMetadata(this.all);
             this.buildControllersMetadata(this.gets);
             this.buildControllersMetadata(this.posts);
             this.initialized = true;
         }
     }
+    enumInfo(type) {
+        return this.enums.find(enumInfo => enumInfo.enumObj === type);
+    }
+    resultType(type) {
+        return this.resultTypes.find(resultType => resultType.target === type);
+    }
     buildClassMetadata(definitions) {
-        definitions.forEach(def => {
-            if (!def.fields || def.fields.length === 0) {
-                const fields = this.fields.filter(field => field.target === def.target);
-                fields.forEach(field => {
-                    field.params = this.params.filter(param => param.target === field.target && field.name === param.methodName);
-                });
-                def.fields = fields;
+        for (const definition of definitions) {
+            if (definition.fields.length === 0) {
+                const fields = this.fields.filter(field => field.target === definition.target);
+                for (const field of fields) {
+                    field.params = this.parameters.filter(parameter => parameter.target === field.target && field.name === parameter.methodName);
+                }
+                definition.fields = fields;
             }
-        });
+        }
     }
     buildControllersMetadata(definitions) {
-        definitions.forEach(def => {
-            def.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === def.target);
-            def.params = this.params.filter(param => param.target === def.target && def.methodName === param.methodName);
-        });
+        for (const definition of definitions) {
+            definition.controllerClassMetadata = this.controllerClasses.find(resolver => resolver.target === definition.target);
+            definition.parameters = this.parameters.filter(parameter => parameter.target === definition.target && definition.methodName === parameter.methodName);
+        }
     }
 }
 //# sourceMappingURL=metadata-storage.js.map

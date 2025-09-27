@@ -11,12 +11,12 @@ export class LrclibClient extends WebserviceClient {
         }
         return super.parseResult(response);
     }
-    async get(params) {
-        log.info('requesting', JSON.stringify(params));
-        return await this.getJson('https://lrclib.net/api/get', params, true);
+    async get(parameters) {
+        log.info('requesting', JSON.stringify(parameters));
+        return await this.getJsonWithParameters('https://lrclib.net/api/get', parameters, true);
     }
-    async find(params) {
-        const data = await this.get(params);
+    async find(parameters) {
+        const data = await this.get(parameters);
         if (!data || !(data.plainLyrics || data.syncedLyrics)) {
             return {};
         }

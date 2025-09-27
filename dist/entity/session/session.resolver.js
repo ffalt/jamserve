@@ -13,7 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
 import { SessionPageQL, SessionQL } from './session.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { SessionsArgs } from './session.args.js';
+import { SessionsParameters } from './session.parameters.js';
 let SessionResolver = class SessionResolver {
     async version() {
         return JAMAPI_VERSION;
@@ -46,7 +46,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [SessionsArgs, Object]),
+    __metadata("design:paramtypes", [SessionsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SessionResolver.prototype, "sessions", null);
 __decorate([

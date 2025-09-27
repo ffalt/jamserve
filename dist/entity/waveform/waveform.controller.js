@@ -12,22 +12,22 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole, WaveformFormatType } from '../../types/enums.js';
 import fse from 'fs-extra';
-import { WaveformArgs, WaveformSVGArgs } from './waveform.args.js';
+import { WaveformParameters, WaveformSVGParameters } from './waveform.parameters.js';
 import { WaveFormData } from './waveform.model.js';
 import { ApiWaveformTypes } from '../../types/consts.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { GenericError, NotFoundError } from '../../modules/deco/express/express-error.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { PathParam } from '../../modules/rest/decorators/PathParam.js';
-import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { genericError, notFoundError } from '../../modules/deco/express/express-error.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { PathParameter } from '../../modules/rest/decorators/path-parameter.js';
+import { PathParameters } from '../../modules/rest/decorators/path-parameters.js';
 let WaveformController = class WaveformController {
     async json(id, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.json);
         if (bin.json) {
@@ -37,36 +37,38 @@ let WaveformController = class WaveformController {
             return JSON.parse(bin.buffer.buffer.toString());
         }
         if (bin.file) {
-            return JSON.parse((await fse.readFile(bin.file.filename)).toString());
+            const file = await fse.readFile(bin.file.filename);
+            return JSON.parse(file.toString());
         }
-        return Promise.reject(GenericError('Error on Waveform generation'));
+        return Promise.reject(genericError('Error on Waveform generation'));
     }
-    async svg(args, { orm, engine }) {
-        const result = await orm.findInWaveformTypes(args.id);
+    async svg(parameters, { orm, engine }) {
+        const result = await orm.findInWaveformTypes(parameters.id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
-        const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.svg, args.width);
+        const bin = await engine.waveform.getWaveform(result.obj, result.objType, WaveformFormatType.svg, parameters.width);
         if (bin.buffer) {
             return bin.buffer.buffer.toString();
         }
         if (bin.file) {
-            return (await fse.readFile(bin.file.filename)).toString();
+            const file = await fse.readFile(bin.file.filename);
+            return file.toString();
         }
-        return Promise.reject(GenericError('Error on Waveform generation'));
+        return Promise.reject(genericError('Error on Waveform generation'));
     }
-    async waveform(id, waveformArgs, { orm, engine }) {
+    async waveform(id, waveformParameters, { orm, engine }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
-        return engine.waveform.getWaveform(result.obj, result.objType, waveformArgs.format, waveformArgs.width);
+        return engine.waveform.getWaveform(result.obj, result.objType, waveformParameters.format, waveformParameters.width);
     }
 };
 __decorate([
     Get('/json', () => WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }),
-    __param(0, QueryParam('id', { description: 'Object Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Object Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
@@ -76,10 +78,10 @@ __decorate([
         description: 'Get Peaks Waveform Data as SVG [Episode, Track]', summary: 'Get SVG',
         responseStringMimeTypes: ['image/svg+xml']
     }),
-    __param(0, QueryParams()),
-    __param(1, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [WaveformSVGArgs, Object]),
+    __metadata("design:paramtypes", [WaveformSVGParameters, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "svg", null);
 __decorate([
@@ -99,11 +101,11 @@ __decorate([
             { route: '/{id}', name: 'by Id', hideParameters: ['width', 'format'] }
         ]
     }),
-    __param(0, PathParam('id', { description: 'Media Id', isID: true })),
-    __param(1, PathParams()),
-    __param(2, Ctx()),
+    __param(0, PathParameter('id', { description: 'Media Id', isID: true })),
+    __param(1, PathParameters()),
+    __param(2, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, WaveformArgs, Object]),
+    __metadata("design:paramtypes", [String, WaveformParameters, Object]),
     __metadata("design:returntype", Promise)
 ], WaveformController.prototype, "waveform", null);
 WaveformController = __decorate([

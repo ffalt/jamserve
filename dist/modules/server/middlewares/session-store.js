@@ -6,39 +6,44 @@ export class ExpressSessionStore extends Store {
         this.cache = new Map();
         this.get = (sid, callback) => {
             this._get(sid)
-                .then(data => callback(null, data))
+                .then(data => {
+                callback(undefined, data);
+            })
                 .catch(callback);
         };
         this.set = (sid, data, callback) => {
             this.cache.set(sid, data);
-            this.sessionService.set(sid, data)
+            void this.sessionService.set(sid, data)
                 .then(callback)
                 .catch(callback);
         };
         this.destroy = (sid, callback) => {
-            this.sessionService.remove(sid)
+            void this.sessionService.remove(sid)
                 .then(callback)
                 .catch(callback);
         };
         this.all = callback => {
             this.sessionService.all()
                 .then(data => {
-                const result = {};
-                for (const item of data) {
-                    result[item.sessionID] = item;
-                }
-                callback(null, result);
+                const result = Object.fromEntries(data.map(item => [item.sessionID, item]));
+                callback(undefined, result);
             })
-                .catch(e => callback(e, undefined));
+                .catch((error) => {
+                callback(error);
+            });
         };
         this.length = callback => {
             this.sessionService.count()
-                .then(data => callback(null, data))
-                .catch(e => callback(e, 0));
+                .then(data => {
+                callback(undefined, data);
+            })
+                .catch((error) => {
+                callback(error, 0);
+            });
         };
         this.clear = callback => {
             this.cache.clear();
-            this.sessionService.clear()
+            void this.sessionService.clear()
                 .then(callback)
                 .catch(callback);
         };
@@ -48,7 +53,7 @@ export class ExpressSessionStore extends Store {
         this.cache.clear();
     }
     static expired(data) {
-        return (data.cookie.expires || 0).valueOf() < Date.now();
+        return (data.cookie.expires ?? 0).valueOf() < Date.now();
     }
     async _get(sid) {
         const result = this.cache.get(sid);

@@ -2,9 +2,9 @@ import bcrypt from 'bcrypt';
 export async function bcryptPassword(password) {
     return new Promise((resolve, reject) => {
         const saltRounds = 10;
-        bcrypt.hash(password, saltRounds, (err, hashAndSalt) => {
-            if (err) {
-                reject(err);
+        bcrypt.hash(password, saltRounds, (error, hashAndSalt) => {
+            if (error) {
+                reject(error);
             }
             else {
                 resolve(hashAndSalt);
@@ -14,12 +14,12 @@ export async function bcryptPassword(password) {
 }
 export async function bcryptComparePassword(password, hashAndSalt) {
     return new Promise((resolve, reject) => {
-        bcrypt.compare(password, hashAndSalt, (err, res) => {
-            if (err) {
-                reject(err);
+        bcrypt.compare(password, hashAndSalt, (error, result) => {
+            if (error) {
+                reject(error);
             }
             else {
-                resolve(res);
+                resolve(result);
             }
         });
     });

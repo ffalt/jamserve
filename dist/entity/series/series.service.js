@@ -13,18 +13,18 @@ import { FolderType } from '../../types/enums.js';
 let SeriesService = class SeriesService {
     async getImage(orm, series, size, format) {
         const folders = await series.folders.getItems();
-        let p = folders[0];
-        while (p) {
-            if (p.folderType === FolderType.artist) {
+        let folder = folders.at(0);
+        while (folder) {
+            if (folder.folderType === FolderType.artist) {
                 break;
             }
-            p = await p.parent.get();
+            folder = await folder.parent.get();
         }
-        if (p) {
-            return this.folderService.getImage(orm, p, size, format);
+        if (folder) {
+            return this.folderService.getImage(orm, folder, size, format);
         }
-        for (const folder of folders) {
-            const result = this.folderService.getImage(orm, folder, size, format);
+        for (const entry of folders) {
+            const result = await this.folderService.getImage(orm, entry, size, format);
             if (result) {
                 return result;
             }

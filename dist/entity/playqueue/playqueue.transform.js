@@ -7,8 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 let PlayQueueTransformService = class PlayQueueTransformService extends BaseTransformService {
-    async playQueueBase(orm, o, playQueueArgs, user) {
+    async playQueueBase(_orm, o, playQueueParameters, user) {
         const u = o.user.id() === user.id ? user : await o.user.getOrFail();
+        let entriesIDs;
+        if (playQueueParameters.playQueueEntriesIDs) {
+            const entries = await o.entries.getItems();
+            entriesIDs = entries.map(t => (t.track.id()) ?? (t.episode.id()));
+        }
         return {
             changed: o.updatedAt.valueOf(),
             changedBy: o.changedBy,
@@ -18,7 +23,7 @@ let PlayQueueTransformService = class PlayQueueTransformService extends BaseTran
             userID: u.id,
             userName: u.name,
             entriesCount: await o.entries.count(),
-            entriesIDs: playQueueArgs.playQueueEntriesIDs ? (await o.entries.getItems()).map(t => (t.track.id()) || (t.episode.id())) : undefined
+            entriesIDs
         };
     }
 };

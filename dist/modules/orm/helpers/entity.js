@@ -2,45 +2,42 @@ import { Reference } from './reference.js';
 import { Collection } from './collection.js';
 function transformValueForDB(value, field) {
     if (field.typeOptions.array) {
-        const list = value || [];
+        const list = value ?? [];
         if (list.length === 0) {
             return '';
         }
-        return `|${value.join('|')}|`;
+        return `|${list.join('|')}|`;
     }
     return value;
 }
 function transformValueForUse(value, field) {
     if (field.typeOptions.array) {
-        const val = `${(value || '')}`;
-        return val.split('|').filter(s => s.length > 0);
+        const arrayValue = `${(value ?? '')}`;
+        return arrayValue.split('|').filter(s => s.length > 0);
     }
     return value === null ? undefined : value;
 }
 export function mapManagedToSource(instance) {
+    var _a, _b;
     const source = instance._source;
-    instance._meta.fields.forEach(field => {
+    for (const field of instance._meta.fields) {
         if (!field.isRelation) {
             source.set(field.name, transformValueForDB(instance[field.name], field));
         }
-    });
-    if (!instance._source.createdAt) {
-        instance._source.createdAt = instance.createdAt;
     }
-    if (!instance._source.updatedAt) {
-        instance._source.updatedAt = instance.updatedAt;
-    }
+    (_a = instance._source).createdAt ?? (_a.createdAt = instance.createdAt);
+    (_b = instance._source).updatedAt ?? (_b.updatedAt = instance.updatedAt);
 }
 export function cleanManagedEntityRelations(instance) {
     for (const field of instance._meta.fields) {
         if (field.isRelation) {
-            const refOrCollection = instance[field.name];
-            if (refOrCollection instanceof Reference) {
-                const ref = refOrCollection;
-                ref.clear();
+            const referenceOrCollection = instance[field.name];
+            if (referenceOrCollection instanceof Reference) {
+                const reference = referenceOrCollection;
+                reference.clear();
             }
-            else if (refOrCollection instanceof Collection) {
-                const collection = refOrCollection;
+            else if (referenceOrCollection instanceof Collection) {
+                const collection = referenceOrCollection;
                 collection.clear();
             }
         }
@@ -49,9 +46,9 @@ export function cleanManagedEntityRelations(instance) {
 export async function saveManagedEntityRelations(instance, transaction) {
     for (const field of instance._meta.fields) {
         if (field.isRelation) {
-            const refOrCollection = instance[field.name];
-            if (refOrCollection instanceof Collection) {
-                const collection = refOrCollection;
+            const referenceOrCollection = instance[field.name];
+            if (referenceOrCollection instanceof Collection) {
+                const collection = referenceOrCollection;
                 await collection.flush(transaction);
             }
         }
@@ -62,24 +59,24 @@ export function createManagedEntity(meta, source, em) {
     Object.defineProperty(entity, '_em', { enumerable: false, value: em, writable: false });
     Object.defineProperty(entity, '_source', { enumerable: false, value: source, writable: false });
     Object.defineProperty(entity, '_meta', { enumerable: false, value: meta, writable: false });
-    meta.fields.forEach(field => {
+    for (const field of meta.fields) {
         if (field.isRelation) {
-            const refOrCollection = entity[field.name];
-            if (refOrCollection instanceof Reference) {
-                const ref = refOrCollection;
-                ref.manage(field);
+            const referenceOrCollection = entity[field.name];
+            if (referenceOrCollection instanceof Reference) {
+                const reference = referenceOrCollection;
+                reference.manage(field);
             }
-            else if (refOrCollection instanceof Collection) {
-                const collection = refOrCollection;
+            else if (referenceOrCollection instanceof Collection) {
+                const collection = referenceOrCollection;
                 collection.manage(field);
             }
         }
         else {
             entity[field.name] = transformValueForUse(source.get(field.name), field);
         }
-    });
-    entity['createdAt'] = source.get('createdAt');
-    entity['updatedAt'] = source.get('updatedAt');
+    }
+    entity.createdAt = source.get('createdAt');
+    entity.updatedAt = source.get('updatedAt');
     return entity;
 }
 //# sourceMappingURL=entity.js.map

@@ -14,15 +14,17 @@ export class MetaStatBuilder {
             .sort((a, b) => a.count - b.count);
     }
     static getMostUsedTagValue(list, multi) {
-        if (list.length === 0) {
-            return undefined;
-        }
-        if (list.length === 1) {
-            return list[0].val;
-        }
         list = list.sort((a, b) => b.count - a.count);
-        if (list[0].count - list[1].count > 4) {
-            return list[0].val;
+        const item0 = list.at(0);
+        if (!item0) {
+            return;
+        }
+        const item1 = list.at(1);
+        if (!item1) {
+            return item0.val;
+        }
+        if (item0.count - item1.count > 4) {
+            return item0.val;
         }
         if (list.length > 3 && multi !== undefined) {
             return multi;
@@ -31,56 +33,62 @@ export class MetaStatBuilder {
         if (cleaned.length > 1 && multi !== undefined) {
             return multi;
         }
-        if (cleaned.length > 0) {
-            return cleaned[0].val;
+        const cleaned0 = cleaned.at(0);
+        if (cleaned0) {
+            return cleaned0.val;
         }
         if (multi !== undefined) {
             return multi;
         }
-        return list[0].val;
+        return item0.val;
     }
-    statID(name, val) {
-        if (val && val.trim().length > 0) {
-            const slug = val.split(' ')[0].trim();
-            this.stats[name] = this.stats[name] || {};
-            this.stats[name][slug] = this.stats[name][val] || { count: 0, val: slug };
-            this.stats[name][slug].count += 1;
+    statID(name, value) {
+        if (value && value.trim().length > 0) {
+            let slug = value.split(' ').at(0) ?? value;
+            slug = slug.trim();
+            this.stats[name] = this.stats[name] ?? {};
+            const stat = this.stats[name];
+            stat[slug] = stat[value] ?? { count: 0, val: slug };
+            stat[slug].count += 1;
         }
     }
-    statNumber(name, val) {
-        if (val !== undefined && val !== null) {
-            const slug = val.toString();
-            this.stats[name] = this.stats[name] || {};
-            this.stats[name][slug] = this.stats[name][slug] || { count: 0, val };
-            this.stats[name][slug].count += 1;
+    statNumber(name, value) {
+        if (value !== undefined && value !== null) {
+            const slug = value.toString();
+            this.stats[name] = this.stats[name] ?? {};
+            const stat = this.stats[name];
+            stat[slug] = stat[slug] ?? { count: 0, val: value };
+            stat[slug].count += 1;
         }
     }
-    statSlugValue(name, val) {
-        if (val && val.trim().length > 0) {
-            const slug = slugify(val);
-            this.stats[name] = this.stats[name] || {};
-            this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: val.trim() };
-            this.stats[name][slug].count += 1;
+    statSlugValue(name, value) {
+        if (value && value.trim().length > 0) {
+            const slug = slugify(value);
+            this.stats[name] = this.stats[name] ?? {};
+            const stat = this.stats[name];
+            stat[slug] = stat[slug] ?? { count: 0, val: value.trim() };
+            stat[slug].count += 1;
         }
     }
     statTrackCount(name, trackTotal, disc) {
         if (trackTotal !== undefined) {
-            const slug = `${(disc !== undefined ? disc : 1)}-${trackTotal}`;
-            this.stats[name] = this.stats[name] || {};
-            this.stats[name][slug] = this.stats[name][slug] || { count: 0, val: trackTotal };
-            this.stats[name][slug].count += 1;
+            const slug = `${(disc ?? 1)}-${trackTotal}`;
+            this.stats[name] = this.stats[name] ?? {};
+            const stat = this.stats[name];
+            stat[slug] = stat[slug] ?? { count: 0, val: trackTotal };
+            stat[slug].count += 1;
         }
     }
     asList(name) {
-        return MetaStatBuilder.convert2list(this.stats[name] || {});
+        return MetaStatBuilder.convert2list(this.stats[name] ?? {});
     }
     asStringList(name) {
-        return MetaStatBuilder.convert2list(this.stats[name] || {})
+        return MetaStatBuilder.convert2list(this.stats[name] ?? {})
             .sort((a, b) => a.count - b.count)
-            .map(entry => entry.val);
+            .map(entry => entry.val.toString());
     }
     asNumberList(name) {
-        return MetaStatBuilder.convert2Numlist(this.stats[name] || {});
+        return MetaStatBuilder.convert2Numlist(this.stats[name] ?? {});
     }
     mostUsed(name, multi) {
         const list = this.asList(name);

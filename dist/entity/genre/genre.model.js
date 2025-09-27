@@ -8,8 +8,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Base, Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let GenreBase = class GenreBase extends Base {
 };
 GenreBase = __decorate([
@@ -19,19 +19,19 @@ export { GenreBase };
 let Genre = class Genre extends GenreBase {
 };
 __decorate([
-    ObjField({ description: 'Album Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "albumCount", void 0);
 __decorate([
-    ObjField({ description: 'Track Count', min: 0, example: 55 }),
+    ObjectField({ description: 'Track Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "trackCount", void 0);
 __decorate([
-    ObjField({ description: 'Artist Count', min: 0, example: 55 }),
+    ObjectField({ description: 'Artist Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "artistCount", void 0);
 __decorate([
-    ObjField({ description: 'Folder Count', min: 0, example: 55 }),
+    ObjectField({ description: 'Folder Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], Genre.prototype, "folderCount", void 0);
 Genre = __decorate([
@@ -41,7 +41,7 @@ export { Genre };
 let GenrePage = class GenrePage extends Page {
 };
 __decorate([
-    ObjField(() => Genre, { description: 'List of Genre' }),
+    ObjectField(() => Genre, { description: 'List of Genre' }),
     __metadata("design:type", Array)
 ], GenrePage.prototype, "items", void 0);
 GenrePage = __decorate([
@@ -51,27 +51,27 @@ export { GenrePage };
 let GenreIndexEntry = class GenreIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], GenreIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome' }),
+    ObjectField({ description: 'Name', example: 'Awesome' }),
     __metadata("design:type", String)
 ], GenreIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'Track Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Track Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "trackCount", void 0);
 __decorate([
-    ObjField({ description: 'Artist Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Artist Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "artistCount", void 0);
 __decorate([
-    ObjField({ description: 'Album Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "albumCount", void 0);
 __decorate([
-    ObjField({ description: 'Folder Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Folder Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], GenreIndexEntry.prototype, "folderCount", void 0);
 GenreIndexEntry = __decorate([
@@ -81,11 +81,11 @@ export { GenreIndexEntry };
 let GenreIndexGroup = class GenreIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Genre Group Name', example: 'A' }),
+    ObjectField({ description: 'Genre Group Name', example: 'A' }),
     __metadata("design:type", String)
 ], GenreIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [GenreIndexEntry]),
+    ObjectField(() => [GenreIndexEntry]),
     __metadata("design:type", Array)
 ], GenreIndexGroup.prototype, "items", void 0);
 GenreIndexGroup = __decorate([
@@ -95,11 +95,11 @@ export { GenreIndexGroup };
 let GenreIndex = class GenreIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], GenreIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [GenreIndexGroup], { description: 'Genre Index Groups' }),
+    ObjectField(() => [GenreIndexGroup], { description: 'Genre Index Groups' }),
     __metadata("design:type", Array)
 ], GenreIndex.prototype, "groups", void 0);
 GenreIndex = __decorate([

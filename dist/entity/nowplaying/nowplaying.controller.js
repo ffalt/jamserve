@@ -12,19 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole } from '../../types/enums.js';
 import { NowPlaying } from './nowplaying.model.js';
-import { IncludesNowPlayingArgs } from './nowplaying.args.js';
-import { IncludesTrackArgs } from '../track/track.args.js';
-import { IncludesEpisodeArgs } from '../episode/episode.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { IncludesNowPlayingParameters } from './nowplaying.parameters.js';
+import { IncludesTrackParameters } from '../track/track.parameters.js';
+import { IncludesEpisodeParameters } from '../episode/episode.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 let NowPlayingController = class NowPlayingController {
-    async list(nowPlayingArgs, trackArgs, episodeArgs, { orm, engine, user }) {
+    async list(nowPlayingParameters, trackParameters, episodeParameters, { orm, engine, user }) {
         const result = await engine.nowPlaying.getNowPlaying();
-        return await Promise.all(result.map(o => engine.transform.nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user)));
+        return await Promise.all(result.map(o => engine.transform.nowPlaying(orm, o, nowPlayingParameters, trackParameters, episodeParameters, user)));
     }
     async scrobble(id, { orm, engine, user }) {
         await engine.nowPlaying.scrobble(orm, id, user);
@@ -32,20 +32,20 @@ let NowPlayingController = class NowPlayingController {
 };
 __decorate([
     Get('/list', () => [NowPlaying], { description: 'Get a List of media [Track, Episode] played currently by Users', summary: 'Get Now Playing' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [IncludesNowPlayingArgs,
-        IncludesTrackArgs,
-        IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [IncludesNowPlayingParameters,
+        IncludesTrackParameters,
+        IncludesEpisodeParameters, Object]),
     __metadata("design:returntype", Promise)
 ], NowPlayingController.prototype, "list", null);
 __decorate([
     Post('/scrobble', { description: 'Report playing (scrobble) a media file [Track, Episode]', summary: 'Scrobble' }),
-    __param(0, BodyParam('id', { description: 'Media Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, BodyParameter('id', { description: 'Media Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)

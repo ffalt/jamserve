@@ -1,0 +1,1 @@
+{"version":3,"file":"admin.parameters.js","sourceRoot":"","sources":["../../../src/entity/admin/admin.parameters.ts"],"names":[],"mappings":";;;;;;AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,YAAY,CAAC;AAC3C,OAAO,EAAE,oBAAoB,EAAE,MAAM,yDAAyD,CAAC;AAGxF,IAAM,uBAAuB,GAA7B,MAAM,uBAAwB,SAAQ,aAAa;CACzD,CAAA;AADY,uBAAuB;IADnC,oBAAoB,EAAE;GACV,uBAAuB,CACnC"}

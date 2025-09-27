@@ -1,4 +1,12 @@
 import { shuffle } from '../../utils/random.js';
+async function findAsyncSequential(array, predicate) {
+    for (const t of array) {
+        if (await predicate(t)) {
+            return t;
+        }
+    }
+    return undefined;
+}
 export class MetadataServiceSimilarTracks {
     constructor(service) {
         this.service = service;
@@ -6,24 +14,27 @@ export class MetadataServiceSimilarTracks {
     async findSongTrackIDs(orm, songs) {
         const ids = [];
         const vals = [];
-        songs.forEach(sim => {
+        for (const sim of songs) {
             if (sim.mbid) {
                 ids.push(sim);
             }
             else {
                 vals.push(sim);
             }
-        });
+        }
         const result = new Set();
         const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
         const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
         for (const sim of ids) {
-            const t = await list.find(async (tr) => (await tr.tag.get())?.mbTrackID === sim.mbid);
-            if (!t) {
-                vals.push(sim);
+            const t = await findAsyncSequential(list, async (tr) => {
+                const entry = await tr.tag.get();
+                return entry?.mbTrackID === sim.mbid;
+            });
+            if (t) {
+                result.add(t.id);
             }
             else {
-                result.add(t.id);
+                vals.push(sim);
             }
         }
         for (const sim of vals) {
@@ -45,21 +56,21 @@ export class MetadataServiceSimilarTracks {
                 data = await this.service.lastFMTopTracksArtist(orm, artist.name);
             }
             if (data?.toptracks?.track) {
-                tracks = tracks.concat(data.toptracks.track.map(song => {
-                    return {
-                        name: song.name,
-                        artist: song.artist.name,
-                        mbid: song.mbid,
-                        url: song.url
-                    };
-                }));
+                tracks = [...tracks, ...data.toptracks.track.map(song => {
+                        return {
+                            name: song.name,
+                            artist: song.artist.name,
+                            mbid: song.mbid,
+                            url: song.url
+                        };
+                    })];
             }
         }
         return shuffle(tracks);
     }
-    async getSimilarArtistTracks(orm, similars, page) {
-        if (!similars || similars.length === 0) {
-            return { items: [], ...(page || {}), total: 0 };
+    async getSimilarArtistTracks(orm, similars = [], page) {
+        if (similars.length === 0) {
+            return { items: [], ...page, total: 0 };
         }
         const songs = await this.getSimilarSongs(orm, similars);
         const ids = await this.findSongTrackIDs(orm, songs);
@@ -84,11 +95,11 @@ export class MetadataServiceSimilarTracks {
         if (tag?.mbTrackID) {
             data = await this.service.lastFMSimilarTracks(orm, tag.mbTrackID);
         }
-        else if (tag?.title && tag?.artist) {
+        else if (tag?.title && tag.artist) {
             data = await this.service.lastFMSimilarTracksSearch(orm, tag.title, tag.artist);
         }
         let ids = [];
-        if (data && data.similartracks && data.similartracks.track) {
+        if (data?.similartracks?.track) {
             const songs = data.similartracks.track.map(t => {
                 return {
                     name: t.name,

@@ -9,24 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Base, Page } from '../base/base.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Radio = class Radio extends Base {
 };
 __decorate([
-    ObjField({ description: 'URL', example: 'https://radio.example.com/stream.m3u' }),
+    ObjectField({ description: 'URL', example: 'https://radio.example.com/stream.m3u' }),
     __metadata("design:type", String)
 ], Radio.prototype, "url", void 0);
 __decorate([
-    ObjField({ description: 'Homepage', example: 'https://radio.example.com' }),
+    ObjectField({ description: 'Homepage', example: 'https://radio.example.com' }),
     __metadata("design:type", String)
 ], Radio.prototype, "homepage", void 0);
 __decorate([
-    ObjField({ description: 'Changed Timestamp', example: examples.timestamp }),
+    ObjectField({ description: 'Changed Timestamp', example: examples.timestamp }),
     __metadata("design:type", Number)
 ], Radio.prototype, "changed", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Disabled', example: false }),
+    ObjectField({ nullable: true, description: 'Disabled', example: false }),
     __metadata("design:type", Boolean)
 ], Radio.prototype, "disabled", void 0);
 Radio = __decorate([
@@ -36,7 +36,7 @@ export { Radio };
 let RadioPage = class RadioPage extends Page {
 };
 __decorate([
-    ObjField(() => Radio, { description: 'List of Radio' }),
+    ObjectField(() => Radio, { description: 'List of Radio' }),
     __metadata("design:type", Array)
 ], RadioPage.prototype, "items", void 0);
 RadioPage = __decorate([
@@ -46,15 +46,15 @@ export { RadioPage };
 let RadioIndexEntry = class RadioIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], RadioIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome Webradio' }),
+    ObjectField({ description: 'Name', example: 'Awesome Webradio' }),
     __metadata("design:type", String)
 ], RadioIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'URL', example: 'https://radio.example.com/stream.m3u' }),
+    ObjectField({ description: 'URL', example: 'https://radio.example.com/stream.m3u' }),
     __metadata("design:type", String)
 ], RadioIndexEntry.prototype, "url", void 0);
 RadioIndexEntry = __decorate([
@@ -64,11 +64,11 @@ export { RadioIndexEntry };
 let RadioIndexGroup = class RadioIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Radio Group Name', example: 'P' }),
+    ObjectField({ description: 'Radio Group Name', example: 'P' }),
     __metadata("design:type", String)
 ], RadioIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [RadioIndexEntry]),
+    ObjectField(() => [RadioIndexEntry]),
     __metadata("design:type", Array)
 ], RadioIndexGroup.prototype, "items", void 0);
 RadioIndexGroup = __decorate([
@@ -78,11 +78,11 @@ export { RadioIndexGroup };
 let RadioIndex = class RadioIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], RadioIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [RadioIndexGroup], { description: 'Radio Index Groups' }),
+    ObjectField(() => [RadioIndexGroup], { description: 'Radio Index Groups' }),
     __metadata("design:type", Array)
 ], RadioIndex.prototype, "groups", void 0);
 RadioIndex = __decorate([

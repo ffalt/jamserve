@@ -10,51 +10,60 @@ class LastFMClientBeautify {
     }
     static buildSubValue(key, sub, result) {
         switch (key) {
-            case '#text':
+            case '#text': {
                 result.url = sub;
                 break;
-            case '@attr':
-                Object.keys(sub).forEach(subkey => {
+            }
+            case '@attr': {
+                for (const subkey of Object.keys(sub)) {
                     result[subkey] = sub[subkey];
-                });
+                }
                 break;
-            case 'tags':
+            }
+            case 'tags': {
                 result[key] = LastFMClientBeautify.ensureList('tag', sub);
                 break;
-            case 'streamable':
+            }
+            case 'streamable': {
                 result[key] = { sample: sub['#text'], fulltrack: sub.fulltrack };
                 break;
+            }
             case 'image': {
                 const images = Array.isArray(sub) ? sub : [sub];
                 result[key] = images.filter(img => img.url && img.url.length > 0);
                 break;
             }
-            case 'tracks':
+            case 'tracks': {
                 result[key] = LastFMClientBeautify.ensureList('track', sub);
                 break;
-            case 'links':
+            }
+            case 'links': {
                 result[key] = LastFMClientBeautify.ensureList('link', sub);
                 break;
-            default:
+            }
+            default: {
                 result[key] = sub;
+            }
         }
     }
     static walkBeautifyObject(o) {
         const result = {};
-        Object.keys(o).forEach(key => {
+        for (const key of Object.keys(o)) {
             const sub = LastFMClientBeautify.walk(o[key], o);
             if (sub !== undefined) {
                 LastFMClientBeautify.buildSubValue(key, sub, result);
             }
-        });
+        }
         return result;
     }
     static walk(o, parent) {
         if (o === null || o === undefined) {
-            return undefined;
+            return;
         }
         if (Array.isArray(o)) {
-            return o.map((sub) => LastFMClientBeautify.walk(sub, parent)).filter((sub) => sub !== undefined);
+            return o
+                .map((sub) => LastFMClientBeautify.walk(sub, parent))
+                .filter((sub) => sub !== undefined);
         }
         if (typeof o === 'object') {
             return LastFMClientBeautify.walkBeautifyObject(o);
@@ -77,80 +86,98 @@ export class LastFMClient extends WebserviceClient {
         try {
             return await response.json();
         }
-        catch (err) {
-            return Promise.reject(err);
+        catch (error) {
+            return Promise.reject(error);
         }
     }
-    async get(api, params) {
-        log.info('requesting', api, JSON.stringify(params));
-        params.method = api;
-        const sortedParams = { method: api };
-        Object.keys(params).forEach(key => {
-            sortedParams[key] = params[key];
-        });
-        sortedParams.api_key = this.options.key;
-        sortedParams.format = 'json';
+    async get(api, parameters) {
+        log.info('requesting', api, JSON.stringify(parameters));
+        parameters.method = api;
+        const sortedParameters = { method: api };
+        for (const key of Object.keys(parameters)) {
+            sortedParameters[key] = parameters[key];
+        }
+        sortedParameters.api_key = this.options.key;
+        sortedParameters.format = 'json';
         try {
-            const data = await this.getJson('https://ws.audioscrobbler.com/2.0/', sortedParams, true);
+            const data = await this.getJsonWithParameters('https://ws.audioscrobbler.com/2.0/', sortedParameters, true);
             if (data?.error) {
                 return {};
             }
             return LastFMClientBeautify.beautify(data);
         }
-        catch (e) {
-            log.error(e);
-            return Promise.reject(e);
+        catch (error) {
+            log.error(error);
+            return Promise.reject(error);
         }
     }
     async artist(artist) {
-        return (await this.get('artist.getInfo', { artist })).artist;
+        const data = await this.get('artist.getInfo', { artist });
+        return data.artist;
     }
     async artistID(mbid) {
-        return (await this.get('artist.getInfo', { mbid })).artist;
+        const data = await this.get('artist.getInfo', { mbid });
+        return data.artist;
     }
     async trackID(mbid) {
-        return (await this.get('track.getInfo', { mbid })).track;
+        const data = await this.get('track.getInfo', { mbid });
+        return data.track;
     }
     async track(name, artist) {
-        return (await this.get('track.getInfo', { artist, name })).track;
+        const data = await this.get('track.getInfo', { artist, name });
+        return data.track;
     }
     async album(album, artist) {
-        return (await this.get('album.getInfo', { artist, album })).album;
+        const data = await this.get('album.getInfo', { artist, album });
+        return data.album;
     }
     async albumID(mbid) {
-        return (await this.get('album.getInfo', { mbid })).album;
+        const data = await this.get('album.getInfo', { mbid });
+        return data.album;
     }
     async albumIDTopTags(mbid) {
-        return (await this.get('album.getTopTags', { mbid })).toptracks;
+        const data = await this.get('album.getTopTags', { mbid });
+        return data.toptracks;
     }
     async similarTrack(track, artist) {
-        return (await this.get('track.getSimilar', { track, artist })).similartracks;
+        const data = await this.get('track.getSimilar', { track, artist });
+        return data.similartracks;
     }
     async similarTrackID(mbid) {
-        return (await this.get('track.getSimilar', { mbid })).similartracks;
+        const data = await this.get('track.getSimilar', { mbid });
+        return data.similartracks;
     }
     async topArtistSongs(artist) {
-        return (await this.get('artist.getTopTracks', { artist })).toptracks;
+        const data = await this.get('artist.getTopTracks', { artist });
+        return data.toptracks;
     }
     async topArtistSongsID(mbid) {
-        return (await this.get('artist.getTopTracks', { mbid })).toptracks;
+        const data = await this.get('artist.getTopTracks', { mbid });
+        return data.toptracks;
     }
     async lookup(type, id) {
         switch (type) {
-            case 'album':
+            case 'album': {
                 return { album: await this.albumID(id) };
-            case 'artist':
+            }
+            case 'artist': {
                 return { artist: await this.artistID(id) };
-            case 'track':
+            }
+            case 'track': {
                 return { track: await this.trackID(id) };
-            case 'artist-toptracks':
+            }
+            case 'artist-toptracks': {
                 return { toptracks: await this.topArtistSongsID(id) };
-            case 'track-similar':
+            }
+            case 'track-similar': {
                 return { similartracks: await this.similarTrackID(id) };
-            case 'album-toptracks':
+            }
+            case 'album-toptracks': {
                 return { toptracks: await this.albumIDTopTags(id) };
-            default:
-                return Promise.reject(Error('Invalid LastFM lookup type parameter'));
+            }
+            default: {
+                return Promise.reject(new Error('Invalid LastFM lookup type parameter'));
+            }
         }
     }
 }

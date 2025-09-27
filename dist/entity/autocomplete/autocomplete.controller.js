@@ -12,11 +12,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { AutoComplete } from './autocomplete.model.js';
 import { UserRole } from '../../types/enums.js';
-import { AutoCompleteFilterArgs } from './autocomplete.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { AutoCompleteFilterParameters } from './autocomplete.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 let AutocompleteController = class AutocompleteController {
     async autocomplete(filter, { orm, user }) {
         const result = {};
@@ -26,7 +26,7 @@ let AutocompleteController = class AutocompleteController {
             result.tracks = [];
             for (const track of list) {
                 const tag = await track.tag.get();
-                result.tracks.push({ id: track.id, name: tag?.title || track.name || '' });
+                result.tracks.push({ id: track.id, name: tag?.title ?? track.name });
             }
         }
         if (filter.album !== undefined && filter.album > 0) {
@@ -47,7 +47,7 @@ let AutocompleteController = class AutocompleteController {
         }
         if (filter.podcast !== undefined && filter.podcast > 0) {
             const list = await orm.Podcast.findFilter({ query }, [], { take: filter.podcast }, user);
-            result.podcasts = list.map(o => ({ id: o.id, name: o.title || '' }));
+            result.podcasts = list.map(o => ({ id: o.id, name: o.title ?? '' }));
         }
         if (filter.episode !== undefined && filter.episode > 0) {
             const list = await orm.Episode.findFilter({ query }, [], { take: filter.episode }, user);
@@ -62,10 +62,10 @@ let AutocompleteController = class AutocompleteController {
 };
 __decorate([
     Get(() => AutoComplete, { description: 'Get compact Search Results for Autocomplete Features', summary: 'Get Autocomplete' }),
-    __param(0, QueryParams()),
-    __param(1, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [AutoCompleteFilterArgs, Object]),
+    __metadata("design:paramtypes", [AutoCompleteFilterParameters, Object]),
     __metadata("design:returntype", Promise)
 ], AutocompleteController.prototype, "autocomplete", null);
 AutocompleteController = __decorate([

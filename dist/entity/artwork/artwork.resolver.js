@@ -13,7 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } from 'type-graphql';
 import { Artwork, ArtworkPageQL, ArtworkQL } from './artwork.js';
 import { FolderQL } from '../folder/folder.js';
-import { ArtworksArgsQL } from './artwork.args.js';
+import { ArtworksParametersQL } from './artwork.parameters.js';
 let ArtworkResolver = class ArtworkResolver {
     async artwork(id, { orm }) {
         return await orm.Artwork.oneOrFailByID(id);
@@ -41,7 +41,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ArtworksArgsQL, Object]),
+    __metadata("design:paramtypes", [ArtworksParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkResolver.prototype, "artworks", null);
 __decorate([

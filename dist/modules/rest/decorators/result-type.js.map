@@ -1,0 +1,1 @@
+{"version":3,"file":"result-type.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/result-type.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAClE,OAAO,EAAE,cAAc,EAAqB,MAAM,2CAA2C,CAAC;AAK9F,MAAM,UAAU,UAAU,CAAC,aAA0C,EAAE,YAAgC;IACtG,OAAO,cAAc,CAAC,eAAe,EAAE,EAAE,aAAa,EAAE,YAAY,CAAC,CAAC;AACvE,CAAC"}

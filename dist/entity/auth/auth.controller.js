@@ -15,33 +15,38 @@ import { Session } from '../session/session.model.js';
 import passport from 'passport';
 import { generateJWT, jwtHash } from '../../utils/jwt.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { CredentialsArgs } from './auth.args.js';
+import { CredentialsParameters } from './auth.parameters.js';
 import { UserRole } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { UnauthError } from '../../modules/deco/express/express-error.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { unauthError } from '../../modules/deco/express/express-error.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 const log = logger('AuthController');
 let AuthController = AuthController_1 = class AuthController {
     async loginUser(req, res, next) {
         return new Promise((resolve, reject) => {
-            passport.authenticate('local', (err, user) => {
-                if (err || !user) {
-                    log.error(err);
+            const result = passport.authenticate('local', (error, user) => {
+                if (error || !user) {
+                    if (error) {
+                        log.error(error);
+                    }
                     log.error(`Login failed for [${req.ip}]`);
-                    return reject(UnauthError('Invalid Auth'));
+                    reject(unauthError('Invalid Auth'));
+                    return;
                 }
-                req.login(user, (err2) => {
-                    if (err2) {
-                        log.error(err2);
+                req.login(user, (loginError) => {
+                    if (loginError) {
+                        log.error(loginError);
                         log.error(`Login failed for [${req.ip}]`);
-                        return reject(UnauthError('Invalid Auth'));
+                        reject(unauthError('Invalid Auth'));
+                        return;
                     }
                     resolve(user);
                 });
-            })(req, res, next);
+            });
+            void result(req, res, next);
         });
     }
     async authenticate(credentials, req, res, next, engine) {
@@ -58,25 +63,23 @@ let AuthController = AuthController_1 = class AuthController {
                         .then(session => {
                         resolve(session);
                     })
-                        .catch(e => {
-                        reject(e);
+                        .catch((error) => {
+                        reject(error);
                     });
                 }
             })
-                .catch(e => {
-                reject(e);
+                .catch((error) => {
+                reject(error);
             });
         });
     }
     static buildSessionResult(req, credentials, user, engine) {
-        const client = req.body.client || 'Unknown Client';
-        const token = credentials.jwt ?
-            generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) :
-            undefined;
+        const client = req.body?.client ?? 'Unknown Client';
+        const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
         if (req.session) {
             const session = req.session;
             session.client = client;
-            session.userAgent = req.headers['user-agent'] || client;
+            session.userAgent = req.headers['user-agent'] ?? client;
             if (token) {
                 session.jwth = jwtHash(token);
             }
@@ -105,15 +108,15 @@ let AuthController = AuthController_1 = class AuthController {
 };
 __decorate([
     Post('/login', () => Session, { description: 'Start session or jwt access', summary: 'Login' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [CredentialsArgs, Object]),
+    __metadata("design:paramtypes", [CredentialsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
     Post('/logout', { roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout' }),
-    __param(0, Ctx()),
+    __param(0, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)

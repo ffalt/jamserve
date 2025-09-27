@@ -9,9 +9,9 @@ export class AcoustidClient extends WebserviceClient {
         this.options = options;
     }
     async get(fp, includes) {
-        includes = includes || this.options.meta || META_DEFAULT;
+        includes = includes ?? this.options.meta ?? META_DEFAULT;
         log.info('requesting by fingerprint', includes);
-        const data = await this.getJson('https://api.acoustid.org/v2/lookup', {
+        const data = await this.getJsonWithParameters('https://api.acoustid.org/v2/lookup', {
             format: 'json',
             meta: includes,
             client: this.options.key,
@@ -19,13 +19,13 @@ export class AcoustidClient extends WebserviceClient {
             fingerprint: fp.fingerprint
         });
         if (data.status !== 'ok') {
-            return Promise.reject(Error(data.status));
+            return Promise.reject(new Error(data.status));
         }
         return data.results;
     }
     async acoustid(file, includes) {
         this.checkDisabled();
-        const result = await fpcalc(file, this.options.fpcalc || {});
+        const result = await fpcalc(file, this.options.fpcalc ?? {});
         return this.get(result, includes);
     }
 }

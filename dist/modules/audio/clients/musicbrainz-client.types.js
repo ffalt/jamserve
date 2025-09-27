@@ -28,4 +28,20 @@ export const LookupIncludes = {
     'work': [],
     'url': []
 };
+export var LookupEntity;
+(function (LookupEntity) {
+    LookupEntity["area"] = "area";
+    LookupEntity["artist"] = "artist";
+    LookupEntity["collection"] = "collection";
+    LookupEntity["event"] = "event";
+    LookupEntity["instrument"] = "instrument";
+    LookupEntity["label"] = "label";
+    LookupEntity["place"] = "place";
+    LookupEntity["recording"] = "recording";
+    LookupEntity["release"] = "release";
+    LookupEntity["releaseGroup"] = "release-group";
+    LookupEntity["series"] = "series";
+    LookupEntity["work"] = "work";
+    LookupEntity["url"] = "url";
+})(LookupEntity || (LookupEntity = {}));
 //# sourceMappingURL=musicbrainz-client.types.js.map

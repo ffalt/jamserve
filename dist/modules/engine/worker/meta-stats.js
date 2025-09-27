@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
 import { MetaStatBuilder } from '../../../utils/stats-builder.js';
 import { extractAlbumName } from '../../../utils/album-name.js';
@@ -22,7 +22,7 @@ const typeByMusicbrainzString = [
 ];
 export class MatchNodeMetaStats {
     static getGenreAlbumType(genre) {
-        return typeByGenreNames[genre.toLowerCase()] || AlbumType.unknown;
+        return typeByGenreNames[genre.toLowerCase()] ?? AlbumType.unknown;
     }
     static getMusicbrainzAlbumType(mbAlbumType) {
         const t = mbAlbumType.toLowerCase();
@@ -37,22 +37,27 @@ export class MatchNodeMetaStats {
     }
     static getStrategyAlbumType(strategy, hasMultipleArtists) {
         switch (strategy) {
-            case RootScanStrategy.auto:
+            case RootScanStrategy.auto: {
                 return hasMultipleArtists ? AlbumType.compilation : AlbumType.album;
-            case RootScanStrategy.artistalbum:
+            }
+            case RootScanStrategy.artistalbum: {
                 return AlbumType.album;
-            case RootScanStrategy.compilation:
+            }
+            case RootScanStrategy.compilation: {
                 return AlbumType.compilation;
-            case RootScanStrategy.audiobook:
+            }
+            case RootScanStrategy.audiobook: {
                 return AlbumType.audiobook;
-            default:
+            }
+            default: {
                 return AlbumType.unknown;
+            }
         }
     }
     static async buildTrackSlugs(match, builder) {
         builder.statSlugValue('artist', match.artist);
         builder.statSlugValue('artistSort', match.artistSort);
-        for (const genre of (match.genres || [])) {
+        for (const genre of (match.genres ?? [])) {
             builder.statSlugValue('genre', genre);
         }
         builder.statSlugValue('series', match.series);
@@ -60,7 +65,7 @@ export class MatchNodeMetaStats {
         builder.statNumber('year', match.year);
         builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
         builder.statSlugValue('mbAlbumType', match.mbAlbumType);
-        builder.statID('mbArtistID', match.artist == MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
+        builder.statID('mbArtistID', match.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
         builder.statID('mbReleaseID', match.mbReleaseID);
         builder.statID('mbReleaseGroupID', match.mbReleaseGroupID);
     }
@@ -95,7 +100,7 @@ export class MatchNodeMetaStats {
     static async buildSubFoldersSlugs(dir, builder) {
         for (const child of dir.children) {
             if (child.folder.folderType !== FolderType.extras) {
-                await MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
+                MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
             }
         }
     }

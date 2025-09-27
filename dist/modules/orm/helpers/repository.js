@@ -6,9 +6,6 @@ export class EntityRepository {
     buildOrderByFindOptions(_order) {
         return;
     }
-    persist(entity, flush = false) {
-        return this.em.persist(this.entityName, entity, flush);
-    }
     async persistAndFlush(entity) {
         await this.em.persistAndFlush(this.entityName, entity);
     }
@@ -47,9 +44,6 @@ export class EntityRepository {
     }
     async removeByQueryAndFlush(options) {
         return this.em.removeByQueryAndFlush(this.entityName, options);
-    }
-    remove(entity, flush) {
-        return this.em.remove(this.entityName, entity, flush);
     }
     async removeAndFlush(entity) {
         await this.em.removeAndFlush(this.entityName, entity);

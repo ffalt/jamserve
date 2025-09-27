@@ -14,7 +14,7 @@ import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot } f
 import { StateQL } from '../state/state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Radio, RadioIndexQL, RadioPageQL, RadioQL } from './radio.js';
-import { RadioIndexArgs, RadiosArgs } from './radio.args.js';
+import { RadioIndexParameters, RadiosParameters } from './radio.parameters.js';
 let RadioResolver = class RadioResolver {
     async radio(id, { orm }) {
         return await orm.Radio.oneOrFailByID(id);
@@ -45,7 +45,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RadiosArgs, Object]),
+    __metadata("design:paramtypes", [RadiosParameters, Object]),
     __metadata("design:returntype", Promise)
 ], RadioResolver.prototype, "radios", null);
 __decorate([
@@ -53,7 +53,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RadioIndexArgs, Object]),
+    __metadata("design:paramtypes", [RadioIndexParameters, Object]),
     __metadata("design:returntype", Promise)
 ], RadioResolver.prototype, "radioIndex", null);
 __decorate([

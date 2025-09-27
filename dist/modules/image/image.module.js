@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var ImageModule_1;
 import fse from 'fs-extra';
 import mimeTypes from 'mime-types';
-import path from 'path';
+import path from 'node:path';
 import sharp from 'sharp';
 import { downloadFile } from '../../utils/download.js';
 import { SupportedWriteImageFormat } from '../../utils/filetype.js';
@@ -31,20 +31,22 @@ let ImageModule = ImageModule_1 = class ImageModule {
     constructor() {
         this.format = 'png';
         this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
-        this.cache = new IDFolderCache(this.imageCachePath, 'thumb', (params) => {
-            return `${params.size !== undefined ? `-${params.size}` : ''}.${params.format || this.format}`;
+        this.cache = new IDFolderCache(this.imageCachePath, 'thumb', (parameters) => {
+            const sizePrefix = parameters.size === undefined ? '' : `-${parameters.size}`;
+            const fileFormat = parameters.format ?? this.format;
+            return `${sizePrefix}.${fileFormat}`;
         });
     }
     async storeImage(filepath, name, imageUrl) {
         log.debug('Requesting image', imageUrl);
-        const imageext = path.extname(imageUrl).split('?')[0].trim().toLowerCase();
-        if (imageext.length === 0) {
-            return Promise.reject(Error('Invalid Image URL'));
+        const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
+        if (imageExtension.length === 0) {
+            return Promise.reject(new Error('Invalid Image URL'));
         }
-        let filename = name + imageext;
+        let filename = name + imageExtension;
         let nr = 2;
         while (await fse.pathExists(path.join(filepath, filename))) {
-            filename = `${name}-${nr}${imageext}`;
+            filename = `${name}-${nr}${imageExtension}`;
             nr++;
         }
         await downloadFile(imageUrl, path.join(filepath, filename));
@@ -52,11 +54,9 @@ let ImageModule = ImageModule_1 = class ImageModule {
         return filename;
     }
     async paint(text, size, format) {
-        size = size || 320;
+        size = size ?? 320;
         const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
-        if (!this.font) {
-            this.font = await loadFont(SANS_32_WHITE);
-        }
+        this.font ?? (this.font = await loadFont(SANS_32_WHITE));
         image.print({
             font: this.font,
             x: 10,
@@ -70,19 +70,17 @@ let ImageModule = ImageModule_1 = class ImageModule {
             }
         });
         image.resize({ w: size, h: size });
-        const mime = mimeTypes.lookup(format ? format : this.format);
+        const mime = mimeTypes.lookup(format ?? this.format);
         if (!mime) {
-            return Promise.reject('Unknown Image Format Request');
+            return Promise.reject(new Error('Unknown Image Format Request'));
         }
         if (mime === 'image/webp') {
             const png_buffer = await image.getBuffer('image/png');
             const buffer = await sharp(png_buffer).webp().toBuffer();
             return { buffer: { buffer, contentType: mime } };
         }
-        else {
-            const buffer = await image.getBuffer(mime);
-            return { buffer: { buffer, contentType: mime } };
-        }
+        const buffer = await image.getBuffer(mime);
+        return { buffer: { buffer, contentType: mime } };
     }
     async getImage(filename, size, name) {
         if (!size) {
@@ -98,12 +96,12 @@ let ImageModule = ImageModule_1 = class ImageModule {
         const fileFormat = fileSuffix(filename);
         const exists = await fse.pathExists(filename);
         if (!exists) {
-            return Promise.reject(Error('File not found'));
+            return Promise.reject(new Error('File not found'));
         }
         if (size || (fileFormat !== format)) {
             const mime = mimeTypes.lookup(format);
             if (!mime) {
-                return Promise.reject(`Unknown Image Format Request: ${format} ${filename}`);
+                return Promise.reject(new Error(`Unknown Image Format Request: ${format} ${filename}`));
             }
             const sharpy = sharp(filename, { failOn: 'none' });
             if (size) {
@@ -120,27 +118,27 @@ let ImageModule = ImageModule_1 = class ImageModule {
         if (!format && size && !SupportedWriteImageFormat.includes(info.format)) {
             format = ImageFormatType.jpeg;
         }
-        const destFormat = format || info.format;
-        const contentType = mimeTypes.lookup(destFormat);
+        const destinationFormat = format ?? info.format;
+        const contentType = mimeTypes.lookup(destinationFormat);
         if (!contentType) {
-            return Promise.reject(`Unknown Image Format Request: ${format}`);
+            return Promise.reject(new Error(`Unknown Image Format Request: ${format}`));
         }
         if (size) {
             return {
                 buffer: {
-                    buffer: await sharp(buffer, { failOnError: false })
+                    buffer: await sharp(buffer, { failOn: 'warning' })
                         .resize(size, size, { fit: sharp.fit.cover })
-                        .toFormat(destFormat)
+                        .toFormat(destinationFormat)
                         .toBuffer(),
                     contentType
                 }
             };
         }
-        if (format && info.format !== destFormat) {
+        if (format && info.format !== destinationFormat) {
             return {
                 buffer: {
-                    buffer: await sharp(buffer, { failOnError: false })
-                        .toFormat(destFormat)
+                    buffer: await sharp(buffer, { failOn: 'warning' })
+                        .toFormat(destinationFormat)
                         .toBuffer(),
                     contentType
                 }
@@ -155,7 +153,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
     }
     async getBuffer(id, buffer, size, format) {
         if (format && !SupportedWriteImageFormat.includes(format)) {
-            return Promise.reject(Error('Invalid Format'));
+            return Promise.reject(new Error('Invalid Format'));
         }
         return this.cache.get(id, { size, format }, async (cachefile) => {
             const result = await this.getImageBufferAs(buffer, format, size);
@@ -164,16 +162,16 @@ let ImageModule = ImageModule_1 = class ImageModule {
                 await fse.writeFile(cachefile, result.buffer.buffer);
             }
             else {
-                return Promise.reject(Error('Error while writing image cache file'));
+                return Promise.reject(new Error('Error while writing image cache file'));
             }
         });
     }
     async get(id, filename, size, format) {
         if (!filename) {
-            return Promise.reject(Error('Invalid Path'));
+            return Promise.reject(new Error('Invalid Path'));
         }
         if (format && !SupportedWriteImageFormat.includes(format)) {
-            return Promise.reject(Error('Invalid Format'));
+            return Promise.reject(new Error('Invalid Format'));
         }
         if (format && format === this.format) {
             format = undefined;
@@ -193,7 +191,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
         return this.getImage(filename, size, `${id}.${this.format}`);
     }
     async resizeImagePNG(filename, destination, size) {
-        await sharp(filename, { failOnError: false })
+        await sharp(filename, { failOn: 'warning' })
             .resize(size, size, { fit: sharp.fit.cover })
             .png()
             .toFile(destination);
@@ -203,16 +201,16 @@ let ImageModule = ImageModule_1 = class ImageModule {
     }
     async createAvatar(filename, destination) {
         if ((!filename)) {
-            return Promise.reject(Error('Invalid Path'));
+            return Promise.reject(new Error('Invalid Path'));
         }
         const exists = await fse.pathExists(filename);
         if (!exists) {
-            return Promise.reject(Error('File not found'));
+            return Promise.reject(new Error('File not found'));
         }
-        const tempFile = `${filename}.new${randomString(8)}.png`;
-        await this.resizeImagePNG(filename, tempFile, 300);
+        const temporaryFile = `${filename}.new${randomString(8)}.png`;
+        await this.resizeImagePNG(filename, temporaryFile, 300);
         await fileDeleteIfExists(destination);
-        await fse.rename(tempFile, destination);
+        await fse.rename(temporaryFile, destination);
     }
     async generateAvatar(seed, destination) {
         const avatarGenerator = new AvatarGen();
@@ -223,10 +221,10 @@ let ImageModule = ImageModule_1 = class ImageModule {
         try {
             const metadata = await sharpy.metadata();
             return {
-                width: metadata.width || 0,
-                height: metadata.height || 0,
-                format: metadata.format || '',
-                colorDepth: metadata.density || 0,
+                width: metadata.width,
+                height: metadata.height,
+                format: metadata.format,
+                colorDepth: metadata.density ?? 0,
                 colors: 0
             };
         }
@@ -235,10 +233,10 @@ let ImageModule = ImageModule_1 = class ImageModule {
         }
     }
     async getImageInfo(filename) {
-        return ImageModule_1.formatImageInfo(sharp(filename, { failOnError: false }));
+        return ImageModule_1.formatImageInfo(sharp(filename, { failOn: 'warning' }));
     }
     async getImageInfoBuffer(bin) {
-        return ImageModule_1.formatImageInfo(sharp(bin, { failOnError: false }));
+        return ImageModule_1.formatImageInfo(sharp(bin, { failOn: 'warning' }));
     }
 };
 __decorate([

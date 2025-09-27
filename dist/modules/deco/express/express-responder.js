@@ -1,16 +1,16 @@
-import path from 'path';
+import path from 'node:path';
 export class ApiBaseResponder {
-    sendString(req, res, data) {
+    sendString(_req, res, data) {
         res.set('Content-Type', 'text/plain').status(200).send(data);
     }
-    sendJSON(req, res, data) {
+    sendJSON(_req, res, data) {
         res.status(200).json(data);
     }
-    sendJSONP(req, res, callback, data) {
+    sendJSONP(_req, res, callback, data) {
         res.writeHead(200, { 'Content-Type': 'application/javascript' });
         res.end(`${callback}(${JSON.stringify(data)});`);
     }
-    sendXML(req, res, data) {
+    sendXML(_req, res, data) {
         res.set('Content-Type', 'application/xml');
         res.status(200).send(data);
     }

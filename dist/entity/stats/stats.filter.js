@@ -7,16 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let StatsFilter = class StatsFilter {
 };
 __decorate([
-    ObjField({ nullable: true, description: 'filter stats by Root Id', isID: true }),
+    ObjectField({ nullable: true, description: 'filter stats by Root Id', isID: true }),
     __metadata("design:type", String)
 ], StatsFilter.prototype, "rootID", void 0);
 StatsFilter = __decorate([
-    ObjParamsType()
+    ObjectParametersType()
 ], StatsFilter);
 export { StatsFilter };
 //# sourceMappingURL=stats.filter.js.map

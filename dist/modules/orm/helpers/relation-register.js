@@ -1,7 +1,7 @@
-import { findType } from './findType.js';
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { findType } from './find-type.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
-export function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
+export function registerRelation(prototype, propertyKey, returnTypeFunction, opt) {
     if (typeof propertyKey === 'symbol') {
         throw new SymbolKeysNotSupportedError();
     }
@@ -9,10 +9,10 @@ export function registerRelation(prototype, propertyKey, returnTypeFunc, opt) {
         metadataKey: 'design:type',
         prototype,
         propertyKey,
-        returnTypeFunc,
+        returnTypeFunc: returnTypeFunction,
         typeOptions: opt
     });
-    getMetadataStorage().fields.push({
+    metadataStorage().fields.push({
         name: propertyKey,
         getType,
         typeOptions,

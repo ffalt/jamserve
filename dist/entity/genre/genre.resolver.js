@@ -12,13 +12,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver } from 'type-graphql';
 import { Genre, GenreIndexQL, GenrePageQL, GenreQL } from './genre.js';
-import { GenreIndexArgsQL, GenresArgsQL } from './genre.args.js';
+import { GenreIndexParametersQL, GenresParametersQL } from './genre.parameters.js';
 import { AlbumPageQL } from '../album/album.js';
 import { TrackPageQL } from '../track/track.js';
 import { ArtistPageQL } from '../artist/artist.js';
-import { TrackPageArgsQL } from '../track/track.args.js';
-import { AlbumPageArgsQL } from '../album/album.args.js';
-import { ArtistPageArgsQL } from '../artist/artist.args.js';
+import { TrackPageParametersQL } from '../track/track.parameters.js';
+import { AlbumPageParametersQL } from '../album/album.parameters.js';
+import { ArtistPageParametersQL } from '../artist/artist.parameters.js';
 let GenreResolver = class GenreResolver {
     async genre(id, { orm }) {
         return await orm.Genre.oneOrFailByID(id);
@@ -67,7 +67,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [GenresArgsQL, Object]),
+    __metadata("design:paramtypes", [GenresParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "genres", null);
 __decorate([
@@ -75,7 +75,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [GenreIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [GenreIndexParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "genreIndex", null);
 __decorate([
@@ -112,7 +112,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Genre, Object, TrackPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, TrackPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "tracks", null);
 __decorate([
@@ -121,7 +121,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Genre, Object, AlbumPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, AlbumPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "albums", null);
 __decorate([
@@ -130,7 +130,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Genre, Object, ArtistPageArgsQL]),
+    __metadata("design:paramtypes", [Genre, Object, ArtistPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], GenreResolver.prototype, "artists", null);
 GenreResolver = __decorate([

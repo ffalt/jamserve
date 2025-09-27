@@ -8,7 +8,7 @@ import { InRequestScope } from 'typescript-ioc';
 let BaseTransformService = class BaseTransformService {
     async index(result, mapItem) {
         return {
-            lastModified: new Date().valueOf(),
+            lastModified: Date.now(),
             groups: await Promise.all(result.groups.map(async (group) => {
                 return {
                     name: group.name,
@@ -19,7 +19,7 @@ let BaseTransformService = class BaseTransformService {
             }))
         };
     }
-    async stateBase(orm, o) {
+    async stateBase(_orm, o) {
         return {
             played: o.played,
             lastPlayed: o.lastPlayed ? o.lastPlayed.valueOf() : undefined,
@@ -40,7 +40,7 @@ let BaseTransformService = class BaseTransformService {
             size: fileSize
         };
     }
-    async mediaTag(orm, o) {
+    async mediaTag(_orm, o) {
         if (!o) {
             return {};
         }

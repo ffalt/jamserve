@@ -13,10 +13,10 @@ import { BaseTransformService } from '../base/base.transform.js';
 import { TrackService } from './track.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let TrackTransformService = class TrackTransformService extends BaseTransformService {
-    async trackBases(orm, list, trackArgs, user) {
-        return await Promise.all(list.map(t => this.trackBase(orm, t, trackArgs, user)));
+    async trackBases(orm, list, trackParameters, user) {
+        return await Promise.all(list.map(t => this.trackBase(orm, t, trackParameters, user)));
     }
-    async trackBase(orm, o, trackArgs, user) {
+    async trackBase(orm, o, trackParameters, user) {
         const tag = await o.tag.get();
         return {
             id: o.id,
@@ -29,11 +29,11 @@ let TrackTransformService = class TrackTransformService extends BaseTransformSer
             albumArtistID: o.albumArtist.id(),
             albumID: o.album.id(),
             seriesID: o.series.id(),
-            genres: trackArgs.trackIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
-            tag: trackArgs.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
-            media: trackArgs.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
-            tagRaw: trackArgs.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
-            state: trackArgs.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
+            genres: trackParameters.trackIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
+            tag: trackParameters.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
+            media: trackParameters.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,
+            tagRaw: trackParameters.trackIncRawTag ? await this.trackService.getRawTag(o) : undefined,
+            state: trackParameters.trackIncState ? await this.state(orm, o.id, DBObjectType.track, user.id) : undefined
         };
     }
 };

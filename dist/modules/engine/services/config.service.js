@@ -9,33 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ThirdPartyConfig } from '../../../config/thirdparty.config.js';
 import { InRequestScope } from 'typescript-ioc';
-import path from 'path';
+import path from 'node:path';
 import { getMaxAge } from '../../../utils/max-age.js';
 import fse from 'fs-extra';
 let ConfigService = class ConfigService {
     constructor() {
         this.env = {
-            domain: process.env.JAM_DOMAIN || 'http://localhost',
-            host: process.env.JAM_HOST || '127.0.0.1',
-            port: Number(process.env.JAM_PORT) || 4040,
+            domain: process.env.JAM_DOMAIN ?? 'http://localhost',
+            host: process.env.JAM_HOST ?? '127.0.0.1',
+            port: Number(process.env.JAM_PORT ?? 4040),
             jwt: {
-                secret: process.env.JAM_JWT_SECRET || 'keyboard cat is sad because no secret has been set',
+                secret: process.env.JAM_JWT_SECRET ?? 'keyboard cat is sad because no secret has been set',
                 maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
             },
             session: {
                 secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
                 proxy: process.env.JAM_SESSION_TRUST_PROXY === 'true',
-                secret: process.env.JAM_SESSION_SECRET || 'keyboard cat is sad because no secret has been set',
-                allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS || '').split(','),
+                secret: process.env.JAM_SESSION_SECRET ?? 'keyboard cat is sad because no secret has been set',
+                allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS ?? '').split(','),
                 maxAge: getMaxAge(process.env.JAM_SESSION_MAXAGE)
             },
             paths: {
-                data: process.env.JAM_DATA_PATH || './data/',
-                frontend: process.env.JAM_FRONTEND_PATH || './static/jamberry/'
+                data: process.env.JAM_DATA_PATH ?? './data/',
+                frontend: process.env.JAM_FRONTEND_PATH ?? './static/jamberry/'
             },
             db: {
-                dialect: process.env.JAM_DB_DIALECT || 'sqlite',
-                name: process.env.JAM_DB_NAME || 'jam',
+                dialect: process.env.JAM_DB_DIALECT ?? 'sqlite',
+                name: process.env.JAM_DB_NAME ?? 'jam',
                 user: process.env.JAM_DB_USER,
                 password: process.env.JAM_DB_PASSWORD,
                 socket: process.env.JAM_DB_SOCKET,
@@ -63,8 +63,8 @@ let ConfigService = class ConfigService {
         try {
             this.firstStart = fse.readJSONSync(configFirstStartFile);
         }
-        catch (e) {
-            console.error('Error loading first start config', e);
+        catch (error) {
+            console.error('Error loading first start config', error);
             this.firstStart = {
                 adminUser: undefined,
                 roots: []

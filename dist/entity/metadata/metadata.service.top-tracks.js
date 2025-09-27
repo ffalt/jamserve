@@ -4,7 +4,7 @@ export class MetadataServiceTopTracks {
     }
     async byArtistName(orm, artist, page) {
         const result = await this.service.lastFMTopTracksArtist(orm, artist);
-        if (result && result.toptracks && result.toptracks.track) {
+        if (result?.toptracks?.track) {
             const songs = result.toptracks.track.map(t => {
                 return {
                     name: t.name,
@@ -16,7 +16,7 @@ export class MetadataServiceTopTracks {
             const ids = await this.service.similarTracks.findSongTrackIDs(orm, songs);
             return orm.Track.search({ where: { id: ids }, limit: page?.take, offset: page?.skip });
         }
-        return { items: [], ...(page || {}), total: 0 };
+        return { items: [], ...page, total: 0 };
     }
 }
 //# sourceMappingURL=metadata.service.top-tracks.js.map

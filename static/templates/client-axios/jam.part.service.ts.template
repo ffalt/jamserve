@@ -1,20 +1,19 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {JamBaseService} from '../jam.base.service';
+import { JamBaseService } from '../jam.base.service';
 {{#withJam}}
-import {Jam} from '../model/jam-rest-data';
+import type { Jam } from '../model/jam-rest-data';
 {{/withJam}}
 {{#withJamParam}}
-import {JamParameters} from '../model/jam-rest-params';
+import type { JamParameters } from '../model/jam-rest-params';
 {{/withJamParam}}
 
 export class Jam{{part}}Service {
-
-	constructor(private base: JamBaseService) {
+	constructor(private readonly base: JamBaseService) {
 	}
-
 	{{#list}}
+
 	{{#description}}
 	/**
 	 * {{{description}}}
@@ -26,6 +25,5 @@ export class Jam{{part}}Service {
     	{{/validate}}
 		return this.base.{{{baseFunc}}}{{#baseFuncResultType}}<{{{baseFuncResultType}}}>{{/baseFuncResultType}}({{#apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{^apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{{apiPath}}}{{#apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{^apiPathTemplate}}{{{tick}}}{{/apiPathTemplate}}{{#baseFuncParameters}}, {{{baseFuncParameters}}}{{/baseFuncParameters}});
 	}
-
 	{{/list}}
 }

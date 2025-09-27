@@ -19,7 +19,7 @@ import { TrackQL } from '../track/track.js';
 import { RootQL } from '../root/root.js';
 import { FolderQL } from '../folder/folder.js';
 import { SeriesQL } from '../series/series.js';
-import { AlbumIndexArgsQL, AlbumsArgsQL } from './album.args.js';
+import { AlbumIndexParametersQL, AlbumsParametersQL } from './album.parameters.js';
 import { GenreQL } from '../genre/genre.js';
 let AlbumResolver = class AlbumResolver {
     async album(id, { orm }) {
@@ -78,7 +78,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [AlbumsArgsQL, Object]),
+    __metadata("design:paramtypes", [AlbumsParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "albums", null);
 __decorate([
@@ -86,7 +86,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [AlbumIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [AlbumIndexParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], AlbumResolver.prototype, "albumIndex", null);
 __decorate([

@@ -1,0 +1,1 @@
+{"version":3,"file":"object-field.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/object-field.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAElE,OAAO,EAAE,YAAY,EAAE,MAAM,yCAAyC,CAAC;AAKvE,MAAM,UAAU,WAAW,CAAC,2BAA+D,EAAE,YAA2B;IACvH,OAAO,YAAY,CAAC,eAAe,EAAE,EAAE,2BAA2B,EAAE,YAAY,CAAC,CAAC;AACnF,CAAC"}

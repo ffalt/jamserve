@@ -8,9 +8,13 @@ import { InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
 let PlaylistTransformService = class PlaylistTransformService extends BaseTransformService {
-    async playlistBase(orm, o, playlistArgs, user) {
+    async playlistBase(orm, o, playlistParameters, user) {
         const u = await o.user.getOrFail();
-        const entries = playlistArgs.playlistIncEntriesIDs || playlistArgs.playlistIncEntries ? await o.entries.getItems() : [];
+        const entries = playlistParameters.playlistIncEntriesIDs || playlistParameters.playlistIncEntries ? await o.entries.getItems() : [];
+        let entriesIDs = undefined;
+        if (playlistParameters.playlistIncEntriesIDs) {
+            entriesIDs = entries.map(t => (t.track.id()) ?? (t.episode.id())).filter(id => id !== undefined);
+        }
         return {
             id: o.id,
             name: o.name,
@@ -22,11 +26,11 @@ let PlaylistTransformService = class PlaylistTransformService extends BaseTransf
             userID: u.id,
             userName: u.name,
             entriesCount: await o.entries.count(),
-            entriesIDs: playlistArgs.playlistIncEntriesIDs ? entries.map(t => (t.track.id()) || (t.episode.id())) : undefined,
-            state: playlistArgs.playlistIncState ? await this.state(orm, o.id, DBObjectType.playlist, user.id) : undefined
+            entriesIDs,
+            state: playlistParameters.playlistIncState ? await this.state(orm, o.id, DBObjectType.playlist, user.id) : undefined
         };
     }
-    async playlistIndex(orm, result) {
+    async playlistIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

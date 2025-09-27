@@ -1,5 +1,5 @@
 export * from './decorators/index.js';
-export * from './metadata/getMetadataStorage.js';
+export * from './metadata/metadata-storage.js';
 export * from './typings.js';
 export * from './definitions/orm-types.js';
 export * from './definitions/query.js';

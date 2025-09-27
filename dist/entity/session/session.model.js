@@ -10,24 +10,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { SessionUser } from './session-user.model.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Session = class Session {
 };
 __decorate([
-    ObjField({ description: 'Api Version', example: JAMAPI_VERSION }),
+    ObjectField({ description: 'Api Version', example: JAMAPI_VERSION }),
     __metadata("design:type", String)
 ], Session.prototype, "version", void 0);
 __decorate([
-    ObjField(() => [String], { description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] }),
+    ObjectField(() => [String], { nullable: true, description: 'Allowed Cookie Domains for CORS', example: ['localhost:4040'] }),
     __metadata("design:type", Array)
 ], Session.prototype, "allowedCookieDomains", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'JSON Web Token', example: examples.token }),
+    ObjectField({ nullable: true, description: 'JSON Web Token', example: examples.token }),
     __metadata("design:type", String)
 ], Session.prototype, "jwt", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'User of this session' }),
+    ObjectField({ nullable: true, description: 'User of this session' }),
     __metadata("design:type", SessionUser)
 ], Session.prototype, "user", void 0);
 Session = __decorate([

@@ -28,16 +28,16 @@ let ChatService = class ChatService {
         this.messages = this.messages.filter(c => d < c.created.valueOf());
     }
     async find(time) {
-        return this.messages.find(msg => msg.created.valueOf() === time);
+        return this.messages.find(message => message.created.valueOf() === time);
     }
     async remove(message) {
-        this.messages = this.messages.filter(msg => msg.created.valueOf() !== message.created.valueOf());
+        this.messages = this.messages.filter(entry => entry.created.valueOf() !== message.created.valueOf());
     }
     async get(since) {
         await this.cleanOld();
         let list = this.messages;
-        if (since !== undefined && !isNaN(since)) {
-            list = list.filter(msg => msg.created.valueOf() > since);
+        if (since !== undefined && !Number.isNaN(since)) {
+            list = list.filter(message => message.created.valueOf() > since);
         }
         return list;
     }

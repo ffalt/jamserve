@@ -1,3 +1,3 @@
-export * from './RateLimiter.js';
-export * from './TokenBucket.js';
+export * from './rate-limiter.js';
+export * from './token-bucket.js';
 //# sourceMappingURL=index.js.map

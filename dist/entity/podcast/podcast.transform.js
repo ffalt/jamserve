@@ -12,7 +12,7 @@ import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType, PodcastStatus } from '../../types/enums.js';
 import { PodcastService } from './podcast.service.js';
 let PodcastTransformService = class PodcastTransformService extends BaseTransformService {
-    async podcastBase(orm, o, podcastArgs, user) {
+    async podcastBase(orm, o, podcastParameters, user) {
         return {
             id: o.id,
             name: o.name,
@@ -22,12 +22,12 @@ let PodcastTransformService = class PodcastTransformService extends BaseTransfor
             lastCheck: o.lastCheck ? o.lastCheck.valueOf() : undefined,
             error: o.errorMessage,
             description: o.description,
-            episodeIDs: podcastArgs.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
-            episodeCount: podcastArgs.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
-            state: podcastArgs.podcastIncState ? await this.state(orm, o.id, DBObjectType.podcast, user.id) : undefined
+            episodeIDs: podcastParameters.podcastIncEpisodeIDs ? await o.episodes.getIDs() : undefined,
+            episodeCount: podcastParameters.podcastIncEpisodeCount ? await o.episodes.count() : undefined,
+            state: podcastParameters.podcastIncState ? await this.state(orm, o.id, DBObjectType.podcast, user.id) : undefined
         };
     }
-    async podcastIndex(orm, result) {
+    async podcastIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

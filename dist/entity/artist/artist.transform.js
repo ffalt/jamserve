@@ -13,28 +13,28 @@ import { DBObjectType } from '../../types/enums.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let ArtistTransformService = class ArtistTransformService extends BaseTransformService {
-    async artistBases(orm, list, artistArgs, user) {
-        return await Promise.all(list.map(t => this.artistBase(orm, t, artistArgs, user)));
+    async artistBases(orm, list, artistParameters, user) {
+        return await Promise.all(list.map(t => this.artistBase(orm, t, artistParameters, user)));
     }
-    async artistBase(orm, o, artistArgs, user) {
+    async artistBase(orm, o, artistParameters, user) {
         return {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            albumCount: artistArgs.artistIncAlbumCount ? await o.albums.count() : undefined,
-            trackCount: artistArgs.artistIncTrackCount ? await o.tracks.count() : undefined,
-            seriesCount: artistArgs.artistIncSeriesCount ? await o.series.count() : undefined,
+            albumCount: artistParameters.artistIncAlbumCount ? await o.albums.count() : undefined,
+            trackCount: artistParameters.artistIncTrackCount ? await o.tracks.count() : undefined,
+            seriesCount: artistParameters.artistIncSeriesCount ? await o.series.count() : undefined,
             mbArtistID: o.mbArtistID,
-            genres: artistArgs.artistIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
+            genres: artistParameters.artistIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
             albumTypes: o.albumTypes,
-            state: artistArgs.artistIncState ? await this.state(orm, o.id, DBObjectType.artist, user.id) : undefined,
-            trackIDs: artistArgs.artistIncTrackIDs ? await o.tracks.getIDs() : undefined,
-            albumIDs: artistArgs.artistIncAlbumIDs ? await o.albums.getIDs() : undefined,
-            seriesIDs: artistArgs.artistIncSeriesIDs ? await o.series.getIDs() : undefined,
-            info: artistArgs.artistIncInfo ? await this.metaData.extInfo.byArtist(orm, o) : undefined
+            state: artistParameters.artistIncState ? await this.state(orm, o.id, DBObjectType.artist, user.id) : undefined,
+            trackIDs: artistParameters.artistIncTrackIDs ? await o.tracks.getIDs() : undefined,
+            albumIDs: artistParameters.artistIncAlbumIDs ? await o.albums.getIDs() : undefined,
+            seriesIDs: artistParameters.artistIncSeriesIDs ? await o.series.getIDs() : undefined,
+            info: artistParameters.artistIncInfo ? await this.metaData.extInfo.byArtist(orm, o) : undefined
         };
     }
-    async artistIndex(orm, result) {
+    async artistIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

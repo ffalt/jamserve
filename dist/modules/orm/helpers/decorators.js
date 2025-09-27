@@ -1,27 +1,11 @@
-export function getTypeDecoratorParams(returnTypeFuncOrOptions, maybeOptions) {
-    if (typeof returnTypeFuncOrOptions === 'function') {
-        return {
-            returnTypeFunc: returnTypeFuncOrOptions,
-            options: maybeOptions || {}
-        };
-    }
-    else {
-        return {
-            options: returnTypeFuncOrOptions || {}
-        };
-    }
+export function getTypeDecoratorParameters(returnTypeFunctionOrOptions, maybeOptions) {
+    return typeof returnTypeFunctionOrOptions === 'function' ?
+        { returnTypeFunc: returnTypeFunctionOrOptions, options: maybeOptions ?? {} } :
+        { options: returnTypeFunctionOrOptions ?? {} };
 }
-export function getNameDecoratorParams(nameOrOptions, maybeOptions) {
-    if (typeof nameOrOptions === 'string') {
-        return {
-            name: nameOrOptions,
-            options: maybeOptions || {}
-        };
-    }
-    else {
-        return {
-            options: nameOrOptions || {}
-        };
-    }
+export function getNameDecoratorParameters(nameOrOptions, maybeOptions) {
+    return typeof nameOrOptions === 'string' ?
+        { name: nameOrOptions, options: maybeOptions ?? {} } :
+        { options: nameOrOptions ?? {} };
 }
 //# sourceMappingURL=decorators.js.map

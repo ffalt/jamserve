@@ -1,25 +1,13 @@
 import { ApiResponder } from './response.js';
 import semver from 'semver';
 import { SUBSONIC_VERSION } from './version.js';
-import { SubsonicFormatter } from './formatter.js';
-export function hexEncode(n) {
-    const i = [];
-    const r = [];
-    const u = '0123456789abcdef';
-    for (let t = 0; t < 256; t++) {
-        i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
-    }
-    for (let t = 0; t < n.length; t++) {
-        r[t] = i[n.charCodeAt(t)];
-    }
-    return r.join('');
-}
+import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
 export function hexDecode(hex) {
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    let result = '';
+    for (let index = 0; index < hex.length; index += 2) {
+        result += String.fromCodePoint(Number.parseInt(hex.slice(index, index + 2), 16));
     }
-    return str.trim();
+    return result.trim();
 }
 function sendError(req, res, error) {
     (new ApiResponder()).sendError(req, res, error);
@@ -31,7 +19,7 @@ async function validateCredentials(req) {
     if (req.parameters.password) {
         let pass = req.parameters.password;
         if (typeof pass !== 'string') {
-            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
         }
         if (pass.startsWith('enc:')) {
             pass = hexDecode(pass.slice(4)).trim();
@@ -41,10 +29,10 @@ async function validateCredentials(req) {
     if (req.parameters.token && req.parameters.salt) {
         return req.engine.user.authSubsonicToken(req.orm, req.parameters.username, req.parameters.token, req.parameters.salt);
     }
-    return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+    return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 }
-export function validateSubsonicParams(req, res) {
-    if (!req.parameters || !req.parameters.client) {
+export function validateSubsonicParameters(req, res) {
+    if (!req.parameters?.client) {
         sendError(req, res, SubsonicFormatter.ERRORS.PARAM_MISSING);
         return false;
     }
@@ -70,13 +58,14 @@ export function validateSubsonicParams(req, res) {
 export async function subsonicLoginRateLimited(req, res, next) {
     req.client = req.parameters?.client;
     if (req.user) {
-        return next();
+        next();
+        return;
     }
     const handled = await req.engine.rateLimit.loginSlowDown(req, res);
     if (handled) {
         return;
     }
-    if (!validateSubsonicParams(req, res)) {
+    if (!validateSubsonicParameters(req, res)) {
         return;
     }
     const user = await validateCredentials(req);
@@ -88,14 +77,15 @@ export async function subsonicLoginRateLimited(req, res, next) {
 }
 export function SubsonicLoginMiddleWare(req, res, next) {
     subsonicLoginRateLimited(req, res, next)
-        .catch(e => {
-        return (new ApiResponder()).sendError(req, res, e);
+        .catch((error) => {
+        (new ApiResponder()).sendError(req, res, error);
     });
 }
 export function SubsonicCheckAuthMiddleWare(req, res, next) {
     if (req.user) {
-        return next();
+        next();
+        return;
     }
-    return (new ApiResponder()).sendError(req, res, SubsonicFormatter.ERRORS.UNAUTH);
+    (new ApiResponder()).sendError(req, res, SubsonicFormatter.ERRORS.UNAUTH);
 }
 //# sourceMappingURL=login.js.map

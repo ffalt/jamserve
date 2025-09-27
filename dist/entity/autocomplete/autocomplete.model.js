@@ -7,16 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let AutoCompleteEntry = class AutoCompleteEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], AutoCompleteEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome' }),
+    ObjectField({ description: 'Name', example: 'Awesome' }),
     __metadata("design:type", String)
 ], AutoCompleteEntry.prototype, "name", void 0);
 AutoCompleteEntry = __decorate([
@@ -26,35 +26,35 @@ export { AutoCompleteEntry };
 let AutoComplete = class AutoComplete {
 };
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Tracks' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Tracks' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "tracks", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Artists' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Artists' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "artists", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Albums' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Albums' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "albums", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Folder' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Folder' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "folders", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Playlist' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Playlist' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "playlists", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Podcasts' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Podcasts' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "podcasts", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Episode' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Episode' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "episodes", void 0);
 __decorate([
-    ObjField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Series' }),
+    ObjectField(() => AutoCompleteEntry, { nullable: true, description: 'Autocomplete Series' }),
     __metadata("design:type", Array)
 ], AutoComplete.prototype, "series", void 0);
 AutoComplete = __decorate([

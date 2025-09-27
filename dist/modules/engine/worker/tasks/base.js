@@ -7,8 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { containsFolderSystemChars, fileExt, replaceFolderSystemChars } from '../../../../utils/fs-utils.js';
-import path from 'path';
+import { containsFolderSystemChars, fileExtention, replaceFolderSystemChars } from '../../../../utils/fs-utils.js';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
 import { AudioModule } from '../../../audio/audio.module.js';
@@ -16,28 +16,28 @@ import { Inject } from 'typescript-ioc';
 export class BaseWorker {
     async renameFile(dir, oldName, newName) {
         if (containsFolderSystemChars(newName)) {
-            return Promise.reject(Error('Invalid Name'));
+            return Promise.reject(new Error('Invalid Name'));
         }
         const name = replaceFolderSystemChars(newName, '').trim();
-        const ext = fileExt(name);
-        const basename = path.basename(name, ext);
+        const extension = fileExtention(name);
+        const basename = path.basename(name, extension);
         if (basename.length === 0) {
-            return Promise.reject(Error('Invalid Name'));
+            return Promise.reject(new Error('Invalid Name'));
         }
-        const ext2 = fileExt(oldName);
-        if (ext !== ext2) {
-            return Promise.reject(Error(`Changing File extension not supported "${ext2}"=>"${ext}"`));
+        const extension2 = fileExtention(oldName);
+        if (extension !== extension2) {
+            return Promise.reject(new Error(`Changing File extension not supported "${extension2}"=>"${extension}"`));
         }
         const newPath = path.join(dir, name);
         const exists = await fse.pathExists(newPath);
         if (exists) {
-            return Promise.reject(Error('File name already used in Destination'));
+            return Promise.reject(new Error('File name already used in Destination'));
         }
         try {
             await fse.rename(path.join(dir, oldName), newPath);
         }
         catch {
-            return Promise.reject(Error('File renaming failed'));
+            return Promise.reject(new Error('File renaming failed'));
         }
         return name;
     }
@@ -46,7 +46,7 @@ export class BaseWorker {
             await fse.move(path.join(dir, name), path.join(root.path, '.trash', `${Date.now()}_${name}`));
         }
         catch {
-            return Promise.reject(Error('Moving to Trash failed'));
+            return Promise.reject(new Error('Moving to Trash failed'));
         }
     }
 }

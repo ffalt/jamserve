@@ -11,7 +11,7 @@ var SessionService_1;
 import { OrmService } from '../../modules/engine/services/orm.service.js';
 import { SessionMode } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import seq from 'sequelize';
+import { Op } from 'sequelize';
 import { randomString } from '../../utils/random.js';
 let SessionService = SessionService_1 = class SessionService {
     constructor() {
@@ -27,15 +27,13 @@ let SessionService = SessionService_1 = class SessionService {
     async set(sid, data) {
         const orm = this.ormService.fork();
         let session = await this.getSession(sid);
-        if (!data.passport || !data.passport.user) {
+        if (!data.passport.user) {
             if (session) {
                 await orm.Session.removeAndFlush(session);
             }
             return;
         }
-        if (!session) {
-            session = orm.Session.create({ sessionID: sid });
-        }
+        session ?? (session = orm.Session.create({ sessionID: sid }));
         session.jwth = data.jwth;
         session.agent = data.userAgent || '';
         session.client = data.client || '';
@@ -44,9 +42,7 @@ let SessionService = SessionService_1 = class SessionService {
         if (session.user.id() !== data.passport.user) {
             await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
         }
-        session.expires = typeof data.cookie.expires === 'boolean' ?
-            (data.cookie.expires ? new Date() : undefined) :
-            (data.cookie.expires === null ? undefined : data.cookie.expires);
+        session.expires = data.cookie.expires ?? undefined;
         await orm.Session.persistAndFlush(session);
     }
     async all() {
@@ -61,11 +57,11 @@ let SessionService = SessionService_1 = class SessionService {
             await this.remove(sessionID);
             return;
         }
-        return session || undefined;
+        return session ?? undefined;
     }
     async clearExpired() {
         const orm = this.ormService.fork();
-        await orm.Session.removeByQueryAndFlush({ where: { expires: { [seq.Op.lt]: Date.now() } } });
+        await orm.Session.removeByQueryAndFlush({ where: { expires: { [Op.lt]: Date.now() } } });
     }
     async byJwth(jwth) {
         const orm = this.ormService.fork();
@@ -142,19 +138,17 @@ let SessionService = SessionService_1 = class SessionService {
     async createSubsonic(userID) {
         const orm = this.ormService.fork();
         let session = (await orm.Session.findOne({ where: { user: userID, mode: SessionMode.subsonic } }));
-        if (!session) {
-            session = orm.Session.create({
-                client: 'Subsonic Client',
-                mode: SessionMode.subsonic,
-                sessionID: `${userID}_subsonic`,
-                agent: 'Subsonic Client',
-                cookie: '{}'
-            });
-        }
+        session ?? (session = orm.Session.create({
+            client: 'Subsonic Client',
+            mode: SessionMode.subsonic,
+            sessionID: `${userID}_subsonic`,
+            agent: 'Subsonic Client',
+            cookie: '{}'
+        }));
         const user = await orm.User.findOneOrFailByID(userID);
         await session.user.set(user);
         session.jwth = randomString(16);
-        await orm.Session.persist(session, true);
+        await orm.Session.persistAndFlush(session);
         return session;
     }
 };

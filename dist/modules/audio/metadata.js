@@ -3,21 +3,21 @@ import moment from 'moment';
 import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 function prepareFrame(frame) {
-    if (frame && frame.value && frame.value.bin) {
-        const binValue = frame.value;
-        binValue.bin = binValue.bin.toString('base64');
+    if (frame.value.bin) {
+        frame.value.bin = frame.value.bin.toString('base64');
     }
-    if (frame && frame.subframes) {
-        frame.subframes.forEach(prepareFrame);
+    if (frame.subframes) {
+        for (const subframe of frame.subframes) {
+            prepareFrame(subframe);
+        }
     }
 }
 export function prepareResponseTag(tag) {
-    Object.keys(tag.frames).forEach(key => {
-        const frames = tag.frames[key];
-        if (frames) {
-            frames.forEach(prepareFrame);
+    for (const key of Object.keys(tag.frames)) {
+        for (const frame of tag.frames[key] ?? []) {
+            prepareFrame(frame);
         }
-    });
+    }
 }
 export function flacToRawTagBase(builder, simple) {
     builder
@@ -117,7 +117,7 @@ export function flacToRawTagBase(builder, simple) {
 export function flacToRawTagChapters(builder, simple) {
     const pad = '000';
     let nr = 1;
-    let id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
+    let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
     while (simple[id]) {
         const chapterTime = moment(simple[id]).valueOf() || 0;
         const chapterID = simple[`${id}ID`] || id;
@@ -127,7 +127,7 @@ export function flacToRawTagChapters(builder, simple) {
         subframeBuilder.title(chapterName).website(chapterURL);
         builder.chapter(chapterID, chapterTime, chapterTime, 0, 0, subframeBuilder.buildFrames());
         nr++;
-        id = `CHAPTER${pad.substring(0, pad.length - nr.toString().length)}${nr.toString()}`;
+        id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
     }
 }
 export function flacToRawTagPictures(builder, flacInfo) {
@@ -138,7 +138,7 @@ export function flacToRawTagPictures(builder, flacInfo) {
     }
 }
 export async function flacToRawTag(flacInfo) {
-    if (!flacInfo || !flacInfo.comment || !flacInfo.comment.tag) {
+    if (!flacInfo.comment?.tag) {
         return;
     }
     const simple = flacInfo.comment.tag;
@@ -155,11 +155,11 @@ export async function id3v2ToRawTag(id3v2tag) {
         version: id3v2tag.head ? id3v2tag.head.ver : 4,
         frames: {}
     };
-    id3v2tag.frames.forEach(frame => {
-        const f = tag.frames[frame.id] || [];
+    for (const frame of id3v2tag.frames) {
+        const f = tag.frames[frame.id] ?? [];
         f.push({ id: frame.id, value: frame.value });
         tag.frames[frame.id] = f;
-    });
+    }
     prepareResponseTag(tag);
     return tag;
 }
@@ -170,9 +170,9 @@ export async function id3v2ToFlacMetaData(tag, imageModule) {
     ];
     const simple = ID3v2.simplify(tag, DropFramesList);
     const comments = [];
-    Object.keys(simple).forEach(key => {
-        comments.push(`${key}=${simple[key].toString()}`);
-    });
+    for (const key of Object.keys(simple)) {
+        comments.push(`${key}=${String(simple[key])}`);
+    }
     const result = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
     const pics = tag.frames.filter(frame => frame.id === 'APIC');
     for (const pic of pics) {
@@ -196,26 +196,26 @@ export function trackTagToRawTag(tag) {
     return { version: 4, frames: builder.rawBuilder.build() };
 }
 function rawFrameToID3v2(frame) {
-    if (frame && frame.value && frame.value.bin) {
+    if (frame.value && frame.value.bin) {
         const bin = frame.value.bin;
         if (typeof bin === 'string') {
             frame.value.bin = Buffer.from(bin, 'base64');
         }
     }
-    if (frame && frame.subframes) {
-        frame.subframes.forEach(rawFrameToID3v2);
+    if (frame.subframes) {
+        for (const subframe of frame.subframes) {
+            rawFrameToID3v2(subframe);
+        }
     }
 }
 export function rawTagToID3v2(tag) {
     const frames = [];
-    Object.keys(tag.frames).map(id => {
-        const f = tag.frames[id] || [];
-        f.forEach(frame => {
+    for (const id of Object.keys(tag.frames)) {
+        for (const frame of tag.frames[id] ?? []) {
             rawFrameToID3v2(frame);
             frames.push(frame);
-        });
-        return;
-    });
+        }
+    }
     return {
         id: ITagID.ID3v2,
         head: {
@@ -226,7 +226,7 @@ export function rawTagToID3v2(tag) {
         },
         start: 0,
         end: 0,
-        frames
+        frames: frames
     };
 }
 //# sourceMappingURL=metadata.js.map

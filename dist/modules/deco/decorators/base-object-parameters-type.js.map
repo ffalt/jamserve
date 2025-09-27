@@ -1,0 +1,1 @@
+{"version":3,"file":"base-object-parameters-type.js","sourceRoot":"","sources":["../../../../src/modules/deco/decorators/base-object-parameters-type.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,wBAAwB,CAAC,QAAyB;IACjE,OAAO,MAAM,CAAC,EAAE;QACf,QAAQ,CAAC,cAAc,CAAC,IAAI,CAAC;YAC5B,IAAI,EAAE,MAAM,CAAC,IAAI;YACjB,MAAM;YACN,MAAM,EAAE,EAAE;SACV,CAAC,CAAC;IACJ,CAAC,CAAC;AACH,CAAC"}

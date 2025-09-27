@@ -14,9 +14,9 @@ import { DBObjectType, PodcastStatus } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { StateQL } from '../state/state.js';
 import { Podcast, PodcastDiscoverPageQL, PodcastDiscoverQL, PodcastDiscoverTagPageQL, PodcastIndexQL, PodcastPageQL, PodcastQL } from './podcast.js';
-import { PodcastDiscoverArgsQL, PodcastDiscoverByTagArgsQL, PodcastIndexArgsQL, PodcastsArgsQL } from './podcast.args.js';
+import { PodcastDiscoverParametersQL, PodcastDiscoverByTagParametersQL, PodcastIndexParametersQL, PodcastsParametersQL } from './podcast.parameters.js';
 import { EpisodeQL } from '../episode/episode.js';
-import { PageArgsQL } from '../base/base.args.js';
+import { PageParametersQL } from '../base/base.parameters.js';
 let PodcastResolver = class PodcastResolver {
     async podcast(id, { orm }) {
         return await orm.Podcast.oneOrFailByID(id);
@@ -71,7 +71,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PodcastsArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastsParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcasts", null);
 __decorate([
@@ -79,7 +79,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PodcastIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastIndexParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastIndex", null);
 __decorate([
@@ -124,7 +124,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PodcastDiscoverArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscover", null);
 __decorate([
@@ -132,7 +132,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PageParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverTags", null);
 __decorate([
@@ -141,7 +141,7 @@ __decorate([
     __param(1, Args()),
     __param(2, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PodcastDiscoverByTagArgsQL, PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PodcastDiscoverByTagParametersQL, PageParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverByTag", null);
 __decorate([
@@ -149,7 +149,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgsQL, Object]),
+    __metadata("design:paramtypes", [PageParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], PodcastResolver.prototype, "podcastsDiscoverTop", null);
 PodcastResolver = __decorate([

@@ -9,13 +9,16 @@ export class PlayQueueEntryRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case PlayQueueEntryOrderFields.created:
+            case PlayQueueEntryOrderFields.created: {
                 return [['createdAt', direction]];
-            case PlayQueueEntryOrderFields.updated:
+            }
+            case PlayQueueEntryOrderFields.updated: {
                 return [['updatedAt', direction]];
+            }
             case PlayQueueEntryOrderFields.default:
-            case PlayQueueEntryOrderFields.position:
+            case PlayQueueEntryOrderFields.position: {
                 return [['position', direction]];
+            }
         }
         return [];
     }

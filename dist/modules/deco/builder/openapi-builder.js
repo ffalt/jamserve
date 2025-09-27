@@ -1,20 +1,20 @@
 import { Errors } from '../express/express-error.js';
 import { SCHEMA_ID } from './openapi-helpers.js';
-import { OpenApiRefBuilder } from './openapi-refs.js';
+import { OpenApiReferenceBuilder } from './openapi-reference-builder.js';
 export class BaseOpenApiBuilder {
     constructor(metadata) {
         this.metadata = metadata;
-        this.refsBuilder = new OpenApiRefBuilder(this.metadata);
+        this.refsBuilder = new OpenApiReferenceBuilder(this.metadata);
     }
-    fillErrorResponses(method, parameters, roles, responses) {
+    fillErrorResponses(_method, parameters, roles, responses) {
         if (parameters.length > 0) {
             responses['422'] = { description: Errors.invalidParameter };
-            if (parameters.find(p => p.required)) {
+            if (parameters.some(p => p.required)) {
                 responses['400'] = { description: Errors.missingParameter };
             }
         }
-        if (parameters.find(p => {
-            return p.schema?.$ref === SCHEMA_ID || (p.schema?.items || {}).$ref === SCHEMA_ID;
+        if (parameters.some(p => {
+            return p.schema?.$ref === SCHEMA_ID || (p.schema?.items ?? {}).$ref === SCHEMA_ID;
         })) {
             responses['404'] = { description: Errors.itemNotFound };
         }
@@ -27,7 +27,7 @@ export class BaseOpenApiBuilder {
         if (method.binary) {
             this.fillBinaryResponses(method.binary, responses);
         }
-        else if (method.getReturnType && method.getReturnType()) {
+        else if (method.getReturnType?.()) {
             const type = method.getReturnType();
             if (type === String) {
                 this.fillStringResponse(method, responses);
@@ -62,58 +62,45 @@ export class BaseOpenApiBuilder {
     }
     fillStringResponse(method, responses) {
         const content = {};
-        const mimeTypes = (method.responseStringMimeTypes || ['text/plain']);
-        mimeTypes.forEach(mime => content[mime] = { schema: { type: 'string' } });
+        const mimeTypes = (method.responseStringMimeTypes ?? ['text/plain']);
+        for (const mime of mimeTypes)
+            content[mime] = { schema: { type: 'string' } };
         responses['200'] = { description: 'string data', content };
     }
     fillBinaryResponses(binary, responses) {
         const content = {};
-        binary.forEach(mime => content[mime] = { schema: { type: 'string', format: 'binary' } });
+        for (const mime of binary)
+            content[mime] = { schema: { type: 'string', format: 'binary' } };
         responses['200'] = { description: 'binary data', content };
     }
     buildRequestBody(method, schemas) {
-        const params = method.params;
-        const refs = [];
+        const parameters = method.parameters;
+        const references = [];
         let isJson = true;
-        for (const param of params) {
-            if (param.kind === 'args' && param.mode === 'body') {
-                refs.push({ $ref: this.refsBuilder.getParamRef(param.getType(), param.methodName, schemas) });
+        for (const parameter of parameters) {
+            if (parameter.kind === 'args' && parameter.mode === 'body') {
+                references.push({ $ref: this.refsBuilder.getParamRef(parameter.getType(), parameter.methodName, schemas) });
             }
-            else if (param.kind === 'arg' && param.mode === 'body') {
-                const schema = this.refsBuilder.buildParameterSchema(param, schemas);
-                refs.push({ properties: { [param.name]: schema }, description: param.description, required: [param.name] });
+            else if (parameter.kind === 'arg' && parameter.mode === 'body') {
+                const schema = this.refsBuilder.buildParameterSchema(parameter, schemas);
+                references.push({ properties: { [parameter.name]: schema }, description: parameter.description, required: [parameter.name] });
             }
-            else if (param.kind === 'arg' && param.mode === 'file') {
+            else if (parameter.kind === 'arg' && parameter.mode === 'file') {
                 isJson = false;
-                refs.push(this.refsBuilder.buildUploadSchema(param, schemas));
+                references.push(this.refsBuilder.buildUploadSchema(parameter, schemas));
             }
         }
-        if (refs.length > 0) {
+        if (references.length > 0) {
             return {
                 required: true,
-                content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: refs.length === 1 ? refs[0] : { allOf: refs } } }
+                content: { [isJson ? 'application/json' : 'multipart/form-data']: { schema: references.length === 1 ? references.at(0) : { allOf: references } } }
             };
         }
         return;
     }
-    static getTags(p) {
-        if (p.get) {
-            return p.get.tags;
-        }
-        if (p.post) {
-            return p.post.tags;
-        }
-        if (p.put) {
-            return p.put.tags;
-        }
-        if (p.patch) {
-            return p.patch.tags;
-        }
-        return undefined;
-    }
     build(openapi, schemas) {
         this.buildPaths(schemas, openapi);
-        openapi.components = { schemas, securitySchemes: openapi.components?.securitySchemes };
+        openapi.components = { schemas: schemas, securitySchemes: openapi.components?.securitySchemes };
         return openapi;
     }
 }

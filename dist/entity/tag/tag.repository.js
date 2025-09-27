@@ -1,13 +1,13 @@
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
-import { basenameStripExt } from '../../utils/fs-utils.js';
+import { basenameStripExtension } from '../../utils/fs-utils.js';
 export class TagRepository extends BaseRepository {
     constructor() {
         super(...arguments);
         this.objType = DBObjectType.tag;
     }
     createByScan(data, filename) {
-        return this.create({ ...data, title: data.title || basenameStripExt(filename), chapters: data.chapters ? JSON.stringify(data.chapters) : undefined });
+        return this.create({ ...data, title: data.title ?? basenameStripExtension(filename), chapters: data.chapters ? JSON.stringify(data.chapters) : undefined });
     }
     buildOrder(_) {
         return [];

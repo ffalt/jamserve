@@ -8,12 +8,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Ping = class Ping {
 };
 __decorate([
-    ObjField({ description: 'Jam Api Version', example: JAMAPI_VERSION }),
+    ObjectField({ description: 'Jam Api Version', example: JAMAPI_VERSION }),
     __metadata("design:type", String)
 ], Ping.prototype, "version", void 0);
 Ping = __decorate([

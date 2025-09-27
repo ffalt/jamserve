@@ -23,7 +23,7 @@ export class FORMAT {
         if (!data.streams) {
             return {};
         }
-        const stream = data.streams.filter(s => s.codec_type === 'audio')[0];
+        const stream = data.streams.find(s => s.codec_type === 'audio');
         if (!stream) {
             return {};
         }
@@ -54,7 +54,7 @@ export class FORMAT {
     static parseNum(s) {
         if (s !== undefined) {
             const n = Number(s.trim());
-            if (isNaN(n)) {
+            if (Number.isNaN(n)) {
                 return;
             }
             return n;
@@ -68,7 +68,7 @@ export class FORMAT {
         s = s.slice(0, 4).trim();
         if (s.length === 4) {
             const n = Number(s);
-            if (isNaN(n)) {
+            if (Number.isNaN(n)) {
                 return;
             }
             return n;
@@ -76,13 +76,13 @@ export class FORMAT {
         return;
     }
     static packProbeJamServeTag(data) {
-        if (!data || !data.format || !data.format.tags) {
+        if (!data.format.tags || Object.keys(data.format.tags).length === 0) {
             return { format: TagFormatType.none };
         }
         const simple = {};
-        Object.keys(data.format.tags).forEach(key => {
-            simple[key.toUpperCase().replace(/ /g, '_')] = FORMAT.cleanText(data.format.tags[key]);
-        });
+        for (const key of Object.keys(data.format.tags)) {
+            simple[key.toUpperCase().replaceAll(' ', '_')] = FORMAT.cleanText(data.format.tags[key]);
+        }
         return {
             format: TagFormatType.ffmpeg,
             artist: simple.ARTIST,
@@ -96,10 +96,10 @@ export class FORMAT {
             series: simple.GROUPING,
             genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
             albumArtist: simple.ALBUM_ARTIST,
-            albumSort: simple.ALBUM_SORT || simple.ALBUM_SORT_ORDER,
-            albumArtistSort: simple.ALBUM_ARTIST_SORT || simple.ALBUM_ARTIST_SORT_ORDER,
-            artistSort: simple.ARTIST_SORT || simple.ARTIST_SORT_ORDER,
-            titleSort: simple.TITLE_SORT || simple.TITLE_SORT_ORDER,
+            albumSort: simple.ALBUM_SORT ?? simple.ALBUM_SORT_ORDER,
+            albumArtistSort: simple.ALBUM_ARTIST_SORT ?? simple.ALBUM_ARTIST_SORT_ORDER,
+            artistSort: simple.ARTIST_SORT ?? simple.ARTIST_SORT_ORDER,
+            titleSort: simple.TITLE_SORT ?? simple.TITLE_SORT_ORDER,
             mbTrackID: simple.TRACKID,
             mbAlbumType: simple.ALBUMTYPE,
             mbAlbumArtistID: simple.ALBUMARTISTID,
@@ -114,7 +114,7 @@ export class FORMAT {
     }
     static packID3v1JamServeTag(data) {
         if (!data) {
-            return undefined;
+            return;
         }
         const simple = data.value;
         const genre = (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined;
@@ -130,7 +130,7 @@ export class FORMAT {
     }
     static packID3v2JamServeTag(data) {
         if (!data) {
-            return undefined;
+            return;
         }
         const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
         const pics = data.frames.filter(f => f.id === 'APIC');
@@ -153,7 +153,7 @@ export class FORMAT {
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,
-            year: FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE) || FORMAT.parseYear(simple.RELEASETIME),
+            year: FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE) ?? FORMAT.parseYear(simple.RELEASETIME),
             mbTrackID: simple.MUSICBRAINZ_TRACKID,
             mbAlbumType: simple.RELEASETYPE,
             mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
@@ -168,11 +168,11 @@ export class FORMAT {
         };
     }
     static cleanText(s) {
-        return s !== undefined ? s.replace(/ {2}/g, ' ').trim() : undefined;
+        return s === undefined ? undefined : s.replaceAll(/ {2}/g, ' ').trim();
     }
     static packFlacVorbisCommentJamServeTag(comment, pictures) {
-        if (!comment || !comment.tag) {
-            return undefined;
+        if (!comment?.tag) {
+            return;
         }
         const simple = comment.tag;
         return {
@@ -185,12 +185,12 @@ export class FORMAT {
             artistSort: simple.ARTISTSORT,
             genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
             disc: FORMAT.parseNum(simple.DISCNUMBER),
-            discTotal: FORMAT.parseNum(simple.DISCTOTAL) || FORMAT.parseNum(simple.TOTALDISCS),
+            discTotal: FORMAT.parseNum(simple.DISCTOTAL) ?? FORMAT.parseNum(simple.TOTALDISCS),
             title: simple.TITLE,
             titleSort: simple.TITLESORT,
-            trackNr: FORMAT.parseNum(simple.TRACKNUMBER) || FORMAT.parseNum(simple.TRACK),
-            trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) || FORMAT.parseNum(simple.TOTALTRACKS),
-            year: FORMAT.parseYear(simple.ORIGINALYEAR) || FORMAT.parseYear(simple.ORIGINALDATE) || FORMAT.parseYear(simple.DATE),
+            trackNr: FORMAT.parseNum(simple.TRACKNUMBER) ?? FORMAT.parseNum(simple.TRACK),
+            trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) ?? FORMAT.parseNum(simple.TOTALTRACKS),
+            year: FORMAT.parseYear(simple.ORIGINALYEAR) ?? FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE),
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,

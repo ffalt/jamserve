@@ -17,16 +17,16 @@ export class AudioModuleFLAC {
                 ...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
             };
         }
-        catch (e) {
-            console.error(e);
+        catch (error) {
+            console.error(error);
             return { format: TagFormatType.none };
         }
     }
     async readRaw(filename) {
         const flac = new Flac();
         const result = await flac.read(filename);
-        if (!result || !result.comment) {
-            return Promise.reject(Error('No Flac Vorbis Comment found'));
+        if (!result.comment) {
+            return Promise.reject(new Error('No Flac Vorbis Comment found'));
         }
         return flacToRawTag(result);
     }
@@ -43,10 +43,10 @@ export class AudioModuleFLAC {
     async extractTagImage(filename) {
         const flac = new Flac();
         const tag = await flac.read(filename);
-        if (tag && tag.pictures) {
+        if (tag.pictures) {
             let pic = tag.pictures.find(p => p.pictureType === 3);
-            if (!pic) {
-                pic = tag.pictures[0];
+            if (!pic && tag.pictures.length > 0) {
+                pic = tag.pictures.at(0);
             }
             if (pic) {
                 return pic.pictureData;

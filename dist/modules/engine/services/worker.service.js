@@ -11,9 +11,6 @@ import { ArtworkWorker } from '../worker/tasks/artwork.js';
 import { FolderWorker } from '../worker/tasks/folder.js';
 import { RootWorker } from '../worker/tasks/root.js';
 import { TrackWorker } from '../worker/tasks/track.js';
-import { SettingsService } from '../../../entity/settings/settings.service.js';
-import { AudioModule } from '../../audio/audio.module.js';
-import { ImageModule } from '../../image/image.module.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { WorkerCommandsFolder } from './worker/worker.commands.folder.js';
 import { WorkerCommandsArtwork } from './worker/worker.commands.artwork.js';
@@ -48,18 +45,6 @@ __decorate([
     Inject,
     __metadata("design:type", ChangesWorker)
 ], WorkerService.prototype, "changes", void 0);
-__decorate([
-    Inject,
-    __metadata("design:type", AudioModule)
-], WorkerService.prototype, "audioModule", void 0);
-__decorate([
-    Inject,
-    __metadata("design:type", ImageModule)
-], WorkerService.prototype, "imageModule", void 0);
-__decorate([
-    Inject,
-    __metadata("design:type", SettingsService)
-], WorkerService.prototype, "settingsService", void 0);
 WorkerService = __decorate([
     InRequestScope
 ], WorkerService);

@@ -13,17 +13,17 @@ import { DBObjectType } from '../../types/enums.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let AlbumTransformService = class AlbumTransformService extends BaseTransformService {
-    async albumBases(orm, list, albumArgs, user) {
-        return await Promise.all(list.map(t => this.albumBase(orm, t, albumArgs, user)));
+    async albumBases(orm, list, albumParameters, user) {
+        return await Promise.all(list.map(t => this.albumBase(orm, t, albumParameters, user)));
     }
-    async albumBase(orm, o, albumArgs, user) {
+    async albumBase(orm, o, albumParameters, user) {
         const artist = await o.artist.getOrFail();
         const series = await o.series.get();
         return {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            genres: albumArgs.albumIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
+            genres: albumParameters.albumIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
             year: o.year,
             mbArtistID: o.mbArtistID,
             mbReleaseID: o.mbReleaseID,
@@ -34,20 +34,20 @@ let AlbumTransformService = class AlbumTransformService extends BaseTransformSer
             series: series?.name,
             seriesID: series?.id,
             seriesNr: o.seriesNr,
-            state: albumArgs.albumIncState ? await this.state(orm, o.id, DBObjectType.album, user.id) : undefined,
-            trackCount: albumArgs.albumIncTrackCount ? await o.tracks.count() : undefined,
-            trackIDs: albumArgs.albumIncTrackIDs ? await o.tracks.getIDs() : undefined,
-            info: albumArgs.albumIncInfo ? await this.metaData.extInfo.byAlbum(orm, o) : undefined
+            state: albumParameters.albumIncState ? await this.state(orm, o.id, DBObjectType.album, user.id) : undefined,
+            trackCount: albumParameters.albumIncTrackCount ? await o.tracks.count() : undefined,
+            trackIDs: albumParameters.albumIncTrackIDs ? await o.tracks.getIDs() : undefined,
+            info: albumParameters.albumIncInfo ? await this.metaData.extInfo.byAlbum(orm, o) : undefined
         };
     }
-    async albumIndex(orm, result) {
+    async albumIndex(_orm, result) {
         return this.index(result, async (item) => {
             const artist = await item.artist.get();
             return {
                 id: item.id,
                 name: item.name,
-                artist: artist?.name || '[INVALID ARTIST]',
-                artistID: artist?.id || (await item.artist.id()) || 'INVALID_ARTIST_ID',
+                artist: artist?.name ?? '[INVALID ARTIST]',
+                artistID: artist?.id ?? item.artist.id() ?? 'INVALID_ARTIST_ID',
                 trackCount: await item.tracks.count()
             };
         });

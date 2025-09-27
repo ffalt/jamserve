@@ -11,8 +11,9 @@ export class SessionRepository extends BaseRepository {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
             case SessionOrderFields.expires:
-            case SessionOrderFields.default:
+            case SessionOrderFields.default: {
                 return [['expires', direction]];
+            }
         }
         return [];
     }

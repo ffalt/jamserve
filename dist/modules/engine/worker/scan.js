@@ -1,8 +1,8 @@
 import { logger } from '../../../utils/logger.js';
 import { FileTyp, FolderType } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
-import path from 'path';
-import { basenameStripExt, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
+import path from 'node:path';
+import { basenameStripExtension, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
 import { artWorkImageNameToType } from '../../../utils/artwork-type.js';
 import moment from 'moment';
 import { TrackUpdater } from './tasks/track.js';
@@ -29,7 +29,6 @@ export class WorkerScan {
     constructor(orm, rootID, audioModule, imageModule, changes) {
         this.orm = orm;
         this.rootID = rootID;
-        this.audioModule = audioModule;
         this.imageModule = imageModule;
         this.changes = changes;
         this.trackUpdater = new TrackUpdater(orm, audioModule, changes);
@@ -38,9 +37,9 @@ export class WorkerScan {
         const name = path.basename(file.path);
         const info = await this.imageModule.getImageInfo(file.path);
         artwork.types = artWorkImageNameToType(name);
-        artwork.format = info?.format;
-        artwork.height = info?.height;
-        artwork.width = info?.width;
+        artwork.format = info.format;
+        artwork.height = info.height;
+        artwork.width = info.width;
         artwork.statCreated = file.ctime;
         artwork.statModified = file.mtime;
         artwork.fileSize = file.size;
@@ -63,8 +62,8 @@ export class WorkerScan {
     static async buildTrackMatch(track) {
         const tag = await track.tag.get();
         return {
-            artist: tag?.albumArtist || tag?.artist,
-            artistSort: tag?.albumArtistSort || tag?.artistSort,
+            artist: tag?.albumArtist ?? tag?.artist,
+            artistSort: tag?.albumArtistSort ?? tag?.artistSort,
             genres: tag?.genres,
             album: tag?.album,
             series: tag?.series,
@@ -75,7 +74,7 @@ export class WorkerScan {
             track: tag?.trackNr,
             mbArtistID: tag?.mbArtistID,
             mbReleaseID: tag?.mbReleaseID,
-            mbAlbumType: `${tag?.mbAlbumType || ''}/${tag?.mbAlbumStatus || ''}`
+            mbAlbumType: `${tag?.mbAlbumType ?? ''}/${tag?.mbAlbumStatus ?? ''}`
         };
     }
     async setTrackValues(file, track) {
@@ -89,7 +88,7 @@ export class WorkerScan {
     async buildTrack(file, parent) {
         log.info('New Track', file.path);
         const track = this.orm.Track.create({
-            name: basenameStripExt(file.path),
+            name: basenameStripExtension(file.path),
             fileName: path.basename(file.path),
             path: ensureTrailingPathSeparator(path.dirname(file.path))
         });
@@ -116,7 +115,7 @@ export class WorkerScan {
             level: dir.level,
             path: dir.path,
             name,
-            title: name !== title ? title : undefined,
+            title: name === title ? undefined : title,
             year,
             folderType: FolderType.unknown,
             statCreated: dir.ctime,
@@ -188,7 +187,7 @@ export class WorkerScan {
         for (const subDir of dir.directories) {
             if (subDir.path !== folder.path) {
                 const subFolder = folders.find(f => f.path === subDir.path);
-                result.children.push(!subFolder ? await this.buildNode(subDir, folder) : await this.scanNode(subDir, subFolder));
+                result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
             }
         }
         for (const child of folders) {
@@ -215,7 +214,7 @@ export class WorkerScan {
     }
     async scanArtwork(artwork, scanArtworks, foundScanArtworks, result) {
         const filename = path.join(artwork.path, artwork.name);
-        const scanArtwork = scanArtworks.find(t => t.path == filename);
+        const scanArtwork = scanArtworks.find(t => t.path === filename);
         if (!scanArtwork) {
             log.info('Artwork has been removed', filename);
             result.changed = true;
@@ -246,7 +245,7 @@ export class WorkerScan {
     }
     async scanTrack(track, scanTracks, foundScanTracks, result) {
         const filename = path.join(track.path, track.fileName);
-        const scanTrack = scanTracks.find(t => t.path == filename);
+        const scanTrack = scanTracks.find(t => t.path === filename);
         if (!scanTrack) {
             log.info('Track has been removed', filename);
             result.changed = true;
@@ -277,7 +276,7 @@ export class WorkerScan {
                 await this.removeFolder(oldParent);
             }
         }
-        const rootMatch = !parent ? await this.buildNode(dir) : await this.scanNode(dir, parent);
+        const rootMatch = parent ? await this.scanNode(dir, parent) : await this.buildNode(dir);
         if (this.orm.em.hasChanges()) {
             log.debug('Syncing Track/Artwork Changes to DB');
             await this.orm.em.flush();

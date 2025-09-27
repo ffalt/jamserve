@@ -12,40 +12,40 @@ import { AlbumType } from '../../types/enums.js';
 import { TrackBase } from '../track/track.model.js';
 import { AlbumBase } from '../album/album.model.js';
 import { ExtendedInfo } from '../metadata/metadata.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let SeriesBase = class SeriesBase extends Base {
 };
 __decorate([
-    ObjField({ description: 'Series Artist Name', example: 'Lemony Snicket' }),
+    ObjectField({ description: 'Series Artist Name', example: 'Lemony Snicket' }),
     __metadata("design:type", String)
 ], SeriesBase.prototype, "artist", void 0);
 __decorate([
-    ObjField({ description: 'Series Artist Id', isID: true }),
+    ObjectField({ description: 'Series Artist Id', isID: true }),
     __metadata("design:type", String)
 ], SeriesBase.prototype, "artistID", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Album Count', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], SeriesBase.prototype, "albumCount", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Track Count', min: 0, example: 55 }),
+    ObjectField({ nullable: true, description: 'Track Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], SeriesBase.prototype, "trackCount", void 0);
 __decorate([
-    ObjField(() => [AlbumType], { description: 'Album Types', example: [AlbumType.series] }),
+    ObjectField(() => [AlbumType], { description: 'Album Types', example: [AlbumType.series] }),
     __metadata("design:type", Array)
 ], SeriesBase.prototype, "albumTypes", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'Track Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'Track Ids', isID: true }),
     __metadata("design:type", Array)
 ], SeriesBase.prototype, "trackIDs", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'Album Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'Album Ids', isID: true }),
     __metadata("design:type", Array)
 ], SeriesBase.prototype, "albumIDs", void 0);
 __decorate([
-    ObjField(() => ExtendedInfo, { nullable: true, description: 'Metadata for the Series (via External Service)' }),
+    ObjectField(() => ExtendedInfo, { nullable: true, description: 'Metadata for the Series (via External Service)' }),
     __metadata("design:type", ExtendedInfo)
 ], SeriesBase.prototype, "info", void 0);
 SeriesBase = __decorate([
@@ -55,11 +55,11 @@ export { SeriesBase };
 let Series = class Series extends SeriesBase {
 };
 __decorate([
-    ObjField(() => TrackBase, { nullable: true, description: 'List of Tracks' }),
+    ObjectField(() => TrackBase, { nullable: true, description: 'List of Tracks' }),
     __metadata("design:type", Array)
 ], Series.prototype, "tracks", void 0);
 __decorate([
-    ObjField(() => AlbumBase, { nullable: true, description: 'List of Albums' }),
+    ObjectField(() => AlbumBase, { nullable: true, description: 'List of Albums' }),
     __metadata("design:type", Array)
 ], Series.prototype, "albums", void 0);
 Series = __decorate([
@@ -69,7 +69,7 @@ export { Series };
 let SeriesPage = class SeriesPage extends Page {
 };
 __decorate([
-    ObjField(() => Series, { description: 'List of Series' }),
+    ObjectField(() => Series, { description: 'List of Series' }),
     __metadata("design:type", Array)
 ], SeriesPage.prototype, "items", void 0);
 SeriesPage = __decorate([
@@ -79,19 +79,19 @@ export { SeriesPage };
 let SeriesIndexEntry = class SeriesIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], SeriesIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'A Series of Unfortunate Events' }),
+    ObjectField({ description: 'Name', example: 'A Series of Unfortunate Events' }),
     __metadata("design:type", String)
 ], SeriesIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'Album Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Album Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], SeriesIndexEntry.prototype, "albumCount", void 0);
 __decorate([
-    ObjField({ description: 'Track Count', min: 0, example: 55 }),
+    ObjectField({ description: 'Track Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], SeriesIndexEntry.prototype, "trackCount", void 0);
 SeriesIndexEntry = __decorate([
@@ -101,11 +101,11 @@ export { SeriesIndexEntry };
 let SeriesIndexGroup = class SeriesIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Series Group Name', example: 'A' }),
+    ObjectField({ description: 'Series Group Name', example: 'A' }),
     __metadata("design:type", String)
 ], SeriesIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [SeriesIndexEntry]),
+    ObjectField(() => [SeriesIndexEntry]),
     __metadata("design:type", Array)
 ], SeriesIndexGroup.prototype, "items", void 0);
 SeriesIndexGroup = __decorate([
@@ -115,11 +115,11 @@ export { SeriesIndexGroup };
 let SeriesIndex = class SeriesIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], SeriesIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [SeriesIndexGroup], { description: 'Series Index Groups' }),
+    ObjectField(() => [SeriesIndexGroup], { description: 'Series Index Groups' }),
     __metadata("design:type", Array)
 ], SeriesIndex.prototype, "groups", void 0);
 SeriesIndex = __decorate([

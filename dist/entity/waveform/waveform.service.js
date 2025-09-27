@@ -7,76 +7,73 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { DBObjectType, WaveformFormatType } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { logger } from '../../utils/logger.js';
-import { GenericError, InvalidParamError } from '../../modules/deco/express/express-error.js';
+import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 const log = logger('Waveform');
 export const WaveformDefaultFormat = WaveformFormatType.svg;
 let WaveformService = class WaveformService {
     async getWaveform(obj, objType, format, width) {
-        format = (format || WaveformDefaultFormat);
+        format = (format ?? WaveformDefaultFormat);
         switch (objType) {
-            case DBObjectType.track:
+            case DBObjectType.track: {
                 return this.getTrackWaveform(obj, format, width);
-            case DBObjectType.episode:
+            }
+            case DBObjectType.episode: {
                 return this.getEpisodeWaveform(obj, format, width);
+            }
             default:
         }
-        return Promise.reject(InvalidParamError('Invalid Object Type for Waveform generation'));
+        return Promise.reject(invalidParameterError('Invalid Object Type for Waveform generation'));
     }
     async getWaveformSVG(obj, objType, width) {
         const result = await this.getWaveform(obj, objType, WaveformFormatType.svg, width);
-        if (result) {
-            if (result.buffer) {
-                return result.buffer.buffer.toString();
-            }
-            if (result.file) {
-                try {
-                    return (await fse.readFile(result.file.filename)).toString();
-                }
-                catch (e) {
-                    log.error(e);
-                    return Promise.reject(GenericError('Invalid waveform result'));
-                }
-            }
-            return Promise.reject(GenericError('Invalid svg waveform result'));
+        if (result.buffer) {
+            return result.buffer.buffer.toString();
         }
-        return;
+        if (result.file) {
+            try {
+                const file = await fse.readFile(result.file.filename);
+                return file.toString();
+            }
+            catch (error) {
+                log.error(error);
+                return Promise.reject(genericError('Invalid waveform result'));
+            }
+        }
+        return Promise.reject(genericError('Invalid svg waveform result'));
     }
     async getWaveformJSON(obj, objType) {
         const result = await this.getWaveform(obj, objType, WaveformFormatType.json);
-        if (result) {
-            if (result.json) {
-                return result.json;
-            }
-            if (result.buffer) {
-                return JSON.parse(result.buffer.buffer.toString());
-            }
-            if (result.file) {
-                try {
-                    return await fse.readJSON(result.file.filename);
-                }
-                catch (e) {
-                    log.error(e);
-                    return Promise.reject(GenericError('Invalid json waveform result'));
-                }
-            }
-            return Promise.reject(GenericError('Invalid waveform result'));
+        if (result.json) {
+            return result.json;
         }
-        return;
+        if (result.buffer) {
+            return JSON.parse(result.buffer.buffer.toString());
+        }
+        if (result.file) {
+            try {
+                return await fse.readJSON(result.file.filename);
+            }
+            catch (error) {
+                log.error(error);
+                return Promise.reject(genericError('Invalid json waveform result'));
+            }
+        }
+        return Promise.reject(genericError('Invalid waveform result'));
     }
     async getTrackWaveform(track, format, width) {
         return this.audioModule.waveform.get(track.id, path.join(track.path, track.fileName), format, width);
     }
     async getEpisodeWaveform(episode, format, width) {
-        if (episode.path && episode.path) {
+        if (episode.id && episode.path) {
             return this.audioModule.waveform.get(episode.id, episode.path, format, width);
         }
-        return Promise.reject(GenericError('Podcast episode not ready'));
+        return Promise.reject(genericError('Podcast episode not ready'));
     }
 };
 __decorate([

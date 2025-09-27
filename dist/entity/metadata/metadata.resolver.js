@@ -16,12 +16,9 @@ import { FolderType } from '../../types/enums.js';
 let MetadataResolver = class MetadataResolver {
     async folderInfo(id, { orm, engine }) {
         const folder = await orm.Folder.oneOrFailByID(id);
-        if (folder.folderType === FolderType.artist) {
-            return { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) };
-        }
-        else {
-            return { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) };
-        }
+        return folder.folderType === FolderType.artist ?
+            { info: await engine.metadata.extInfo.byFolderArtist(orm, folder) } :
+            { info: await engine.metadata.extInfo.byFolderAlbum(orm, folder) };
     }
     async artistInfo(id, { orm, engine }) {
         const artist = await orm.Artist.oneOrFailByID(id);

@@ -1,0 +1,1 @@
+{"version":3,"file":"stats.parameters.js","sourceRoot":"","sources":["../../../src/entity/stats/stats.parameters.ts"],"names":[],"mappings":";;;;;;;;;AAAA,OAAO,EAAE,QAAQ,EAAE,KAAK,EAAE,EAAE,EAAE,MAAM,cAAc,CAAC;AAG5C,IAAM,eAAe,GAArB,MAAM,eAAe;CAG3B,CAAA;AADA;IADC,KAAK,CAAC,GAAG,EAAE,CAAC,EAAE,EAAE,EAAE,QAAQ,EAAE,IAAI,EAAE,CAAC;;+CACpB;AAFJ,eAAe;IAD3B,QAAQ,EAAE;GACE,eAAe,CAG3B"}

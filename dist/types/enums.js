@@ -165,6 +165,7 @@ export var WaveformFormatType;
     WaveformFormatType["json"] = "json";
     WaveformFormatType["dat"] = "dat";
 })(WaveformFormatType || (WaveformFormatType = {}));
+export const WaveformFormatTypes = [WaveformFormatType.svg, WaveformFormatType.json, WaveformFormatType.dat];
 export var ListType;
 (function (ListType) {
     ListType["random"] = "random";

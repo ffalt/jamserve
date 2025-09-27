@@ -12,24 +12,24 @@ import { TrackBase } from '../track/track.model.js';
 import { Artwork } from '../artwork/artwork.model.js';
 import { FolderHealthHint } from '../health/health.model.js';
 import { FolderBase } from './folder-base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Folder = class Folder extends FolderBase {
 };
 __decorate([
-    ObjField(() => [TrackBase], { nullable: true, description: 'List of Tracks' }),
+    ObjectField(() => [TrackBase], { nullable: true, description: 'List of Tracks' }),
     __metadata("design:type", Array)
 ], Folder.prototype, "tracks", void 0);
 __decorate([
-    ObjField(() => [FolderBase], { nullable: true, description: 'List of Folders' }),
+    ObjectField(() => [FolderBase], { nullable: true, description: 'List of Folders' }),
     __metadata("design:type", Array)
 ], Folder.prototype, "folders", void 0);
 __decorate([
-    ObjField(() => [Artwork], { nullable: true, description: 'List of Artwork Images' }),
+    ObjectField(() => [Artwork], { nullable: true, description: 'List of Artwork Images' }),
     __metadata("design:type", Array)
 ], Folder.prototype, "artworks", void 0);
 __decorate([
-    ObjField(() => [FolderBase], { nullable: true, description: 'List of similar Folders (via Exteernal Service)' }),
+    ObjectField(() => [FolderBase], { nullable: true, description: 'List of similar Folders (via Exteernal Service)' }),
     __metadata("design:type", Array)
 ], Folder.prototype, "similar", void 0);
 Folder = __decorate([
@@ -39,7 +39,7 @@ export { Folder };
 let FolderPage = class FolderPage extends Page {
 };
 __decorate([
-    ObjField(() => [Folder], { description: 'List of Folders' }),
+    ObjectField(() => [Folder], { description: 'List of Folders' }),
     __metadata("design:type", Array)
 ], FolderPage.prototype, "items", void 0);
 FolderPage = __decorate([
@@ -49,15 +49,15 @@ export { FolderPage };
 let FolderIndexEntry = class FolderIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], FolderIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'The Mars Volta' }),
+    ObjectField({ description: 'Name', example: 'The Mars Volta' }),
     __metadata("design:type", String)
 ], FolderIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'Track Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Track Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderIndexEntry.prototype, "trackCount", void 0);
 FolderIndexEntry = __decorate([
@@ -67,11 +67,11 @@ export { FolderIndexEntry };
 let FolderIndexGroup = class FolderIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Folder Group Name', example: 'M' }),
+    ObjectField({ description: 'Folder Group Name', example: 'M' }),
     __metadata("design:type", String)
 ], FolderIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [FolderIndexEntry]),
+    ObjectField(() => [FolderIndexEntry]),
     __metadata("design:type", Array)
 ], FolderIndexGroup.prototype, "items", void 0);
 FolderIndexGroup = __decorate([
@@ -81,11 +81,11 @@ export { FolderIndexGroup };
 let FolderIndex = class FolderIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], FolderIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [FolderIndexGroup], { description: 'Folder Index Groups' }),
+    ObjectField(() => [FolderIndexGroup], { description: 'Folder Index Groups' }),
     __metadata("design:type", Array)
 ], FolderIndex.prototype, "groups", void 0);
 FolderIndex = __decorate([
@@ -95,11 +95,11 @@ export { FolderIndex };
 let FolderHealth = class FolderHealth {
 };
 __decorate([
-    ObjField(() => Folder, { description: 'Folder' }),
+    ObjectField(() => Folder, { description: 'Folder' }),
     __metadata("design:type", Folder)
 ], FolderHealth.prototype, "folder", void 0);
 __decorate([
-    ObjField(() => [FolderHealthHint], { description: 'List of Health Hints' }),
+    ObjectField(() => [FolderHealthHint], { description: 'List of Health Hints' }),
     __metadata("design:type", Array)
 ], FolderHealth.prototype, "health", void 0);
 FolderHealth = __decorate([

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var EngineService_1;
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { SettingsService } from '../../../entity/settings/settings.service.js';
 import { IoService } from './io.service.js';
@@ -65,11 +65,13 @@ let EngineService = EngineService_1 = class EngineService {
             log.info(`Updating from version ${version || '-'}`);
         }
         if (forceRescan || this.settings.settings.library.scanAtStart) {
-            log.info(`Starting rescan`);
-            this.io.root.startUpRefresh(orm, forceRescan).then(() => {
+            log.info('Starting rescan');
+            this.io.root.startUpRefresh(orm, forceRescan)
+                .then(() => {
                 return forceRescan ? this.settings.saveSettings(orm) : undefined;
-            }).catch(e => {
-                log.error('Error on startup scanning', e);
+            })
+                .catch((error) => {
+                log.error(error, 'Error on startup scanning');
             });
         }
     }
@@ -81,20 +83,20 @@ let EngineService = EngineService_1 = class EngineService {
         }
     }
     async init() {
-        log.debug(`check data paths`);
+        log.debug('check data paths');
         await this.checkDataPaths();
-        log.debug(`init orm`);
+        log.debug('init orm');
         await this.orm.init(this.config);
     }
     async start() {
-        log.debug(`start orm`);
+        log.debug('start orm');
         await this.orm.start();
         const orm = this.orm.fork();
-        log.debug(`load settings`);
+        log.debug('load settings');
         await this.settings.loadSettings(orm);
-        log.debug(`check first start`);
+        log.debug('check first start');
         await this.checkFirstStart(orm);
-        log.debug(`check for rescan`);
+        log.debug('check for rescan');
         await this.checkRescan(orm);
     }
     async stop() {
@@ -108,7 +110,7 @@ let EngineService = EngineService_1 = class EngineService {
             const root = orm.Root.create({
                 name: first.name,
                 path: first.path,
-                strategy: first.strategy || RootScanStrategy.auto
+                strategy: first.strategy ?? RootScanStrategy.auto
             });
             await orm.Root.persistAndFlush(root);
         }

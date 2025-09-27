@@ -1,4 +1,4 @@
-import { RateLimiter } from './limiter/RateLimiter.js';
+import { RateLimiter } from './limiter/rate-limiter.js';
 import fetch from 'node-fetch';
 export class WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent) {
@@ -8,13 +8,13 @@ export class WebserviceClient {
     }
     async parseResult(response) {
         if (response.status === 404) {
-            return Promise.reject(Error(`${response.status} ${response.statusText || ''}`));
+            return Promise.reject(new Error(`${response.status} ${response.statusText || ''}`));
         }
         try {
             return await response.json();
         }
-        catch (err) {
-            return Promise.reject(err);
+        catch (error) {
+            return Promise.reject(error);
         }
     }
     checkDisabled() {
@@ -27,27 +27,33 @@ export class WebserviceClient {
         await limiter.removeTokens(1);
     }
     formatParams(parameters) {
-        const obj = { ...parameters };
-        Object.keys(obj).forEach(key => {
-            if (obj[key] === undefined) {
-                delete obj[key];
+        const search = new URLSearchParams();
+        if (parameters) {
+            for (const [key, value] of Object.entries(parameters)) {
+                if (value !== undefined) {
+                    search.append(key, value.toString());
+                }
             }
-        });
-        return `?${new URLSearchParams(obj)}`;
+        }
+        const qs = search.toString();
+        return qs ? `?${qs}` : '';
     }
-    async getJson(url, parameters, ignoreStatus) {
+    async getJson(url, ignoreStatus) {
+        return this.getJsonWithParameters(url, undefined, ignoreStatus);
+    }
+    async getJsonWithParameters(url, parameters, ignoreStatus) {
         this.checkDisabled();
         await this.limit();
-        const params = parameters ? this.formatParams(parameters) : '';
-        const response = await fetch(url + params, {
+        const urlParameters = parameters ? this.formatParams(parameters) : '';
+        const response = await fetch(url + urlParameters, {
             headers: { 'User-Agent': this.userAgent }
         });
         if (!ignoreStatus && response.status !== 200) {
-            return Promise.reject(new Error('Invalid Result'));
+            return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));
         }
         const result = await this.parseResult(response);
         if (result === undefined) {
-            return Promise.reject(new Error('Invalid Result'));
+            return Promise.reject(new Error(`Invalid Result from ${url}`));
         }
         return result;
     }

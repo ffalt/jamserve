@@ -19,7 +19,7 @@ import { ArtistQL } from '../artist/artist.js';
 import { AlbumQL } from '../album/album.js';
 import { TrackQL } from '../track/track.js';
 import { ArtworkQL } from '../artwork/artwork.js';
-import { FolderIndexArgs, FoldersArgsQL } from './folder.args.js';
+import { FolderIndexParameters, FoldersParametersQL } from './folder.parameters.js';
 import { GenreQL } from '../genre/genre.js';
 let FolderResolver = class FolderResolver {
     async folder(id, { orm }) {
@@ -86,7 +86,7 @@ let FolderResolver = class FolderResolver {
         return new Date(timestamp);
     }
     title(folder) {
-        return folder.title || folder.name;
+        return folder.title ?? folder.name;
     }
 };
 __decorate([
@@ -102,7 +102,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [FoldersArgsQL, Object]),
+    __metadata("design:paramtypes", [FoldersParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "folders", null);
 __decorate([
@@ -110,7 +110,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [FolderIndexArgs, Object]),
+    __metadata("design:paramtypes", [FolderIndexParameters, Object]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "folderIndex", null);
 __decorate([

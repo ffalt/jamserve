@@ -11,36 +11,36 @@ import { examples } from '../../modules/engine/rest/example.consts.js';
 import { PodcastStatus } from '../../types/enums.js';
 import { Base, Page } from '../base/base.model.js';
 import { EpisodeBase } from '../episode/episode.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let PodcastBase = class PodcastBase extends Base {
 };
 __decorate([
-    ObjField({ description: 'Podcast Feed URL', example: 'https://podcast.example.com/feed.xml' }),
+    ObjectField({ description: 'Podcast Feed URL', example: 'https://podcast.example.com/feed.xml' }),
     __metadata("design:type", String)
 ], PodcastBase.prototype, "url", void 0);
 __decorate([
-    ObjField(() => PodcastStatus, { description: 'Podcast Status', example: PodcastStatus.downloading }),
+    ObjectField(() => PodcastStatus, { description: 'Podcast Status', example: PodcastStatus.downloading }),
     __metadata("design:type", String)
 ], PodcastBase.prototype, "status", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Last Check Timestamp', example: examples.timestamp }),
+    ObjectField({ nullable: true, description: 'Last Check Timestamp', example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PodcastBase.prototype, "lastCheck", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Podcast Download Error (if any)', example: 'URL not found' }),
+    ObjectField({ nullable: true, description: 'Podcast Download Error (if any)', example: 'URL not found' }),
     __metadata("design:type", String)
 ], PodcastBase.prototype, "error", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Podcast Summary', example: 'Best Podcast ever!' }),
+    ObjectField({ nullable: true, description: 'Podcast Summary', example: 'Best Podcast ever!' }),
     __metadata("design:type", String)
 ], PodcastBase.prototype, "description", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'List of Episode Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Episode Ids', isID: true }),
     __metadata("design:type", Array)
 ], PodcastBase.prototype, "episodeIDs", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Number of Episode', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Number of Episode', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], PodcastBase.prototype, "episodeCount", void 0);
 PodcastBase = __decorate([
@@ -50,7 +50,7 @@ export { PodcastBase };
 let Podcast = class Podcast extends PodcastBase {
 };
 __decorate([
-    ObjField(() => [EpisodeBase], { nullable: true, description: 'List of Episodes' }),
+    ObjectField(() => [EpisodeBase], { nullable: true, description: 'List of Episodes' }),
     __metadata("design:type", Array)
 ], Podcast.prototype, "episodes", void 0);
 Podcast = __decorate([
@@ -60,7 +60,7 @@ export { Podcast };
 let PodcastPage = class PodcastPage extends Page {
 };
 __decorate([
-    ObjField(() => Podcast, { description: 'List of Podcasts' }),
+    ObjectField(() => Podcast, { description: 'List of Podcasts' }),
     __metadata("design:type", Array)
 ], PodcastPage.prototype, "items", void 0);
 PodcastPage = __decorate([
@@ -70,15 +70,15 @@ export { PodcastPage };
 let PodcastUpdateStatus = class PodcastUpdateStatus {
 };
 __decorate([
-    ObjField(() => PodcastStatus, { description: 'Podcast Status', example: PodcastStatus.downloading }),
+    ObjectField(() => PodcastStatus, { description: 'Podcast Status', example: PodcastStatus.downloading }),
     __metadata("design:type", String)
 ], PodcastUpdateStatus.prototype, "status", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Feed Download Error (if any)', example: 'Not a feed' }),
+    ObjectField({ nullable: true, description: 'Feed Download Error (if any)', example: 'Not a feed' }),
     __metadata("design:type", String)
 ], PodcastUpdateStatus.prototype, "error", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Last Check Timestamp', example: examples.timestamp }),
+    ObjectField({ nullable: true, description: 'Last Check Timestamp', example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PodcastUpdateStatus.prototype, "lastCheck", void 0);
 PodcastUpdateStatus = __decorate([
@@ -88,15 +88,15 @@ export { PodcastUpdateStatus };
 let PodcastIndexEntry = class PodcastIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], PodcastIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Mars Volta' }),
+    ObjectField({ description: 'Name', example: 'Mars Volta' }),
     __metadata("design:type", String)
 ], PodcastIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'Episode Count', min: 0, example: 55 }),
+    ObjectField({ description: 'Episode Count', min: 0, example: 55 }),
     __metadata("design:type", Number)
 ], PodcastIndexEntry.prototype, "episodeCount", void 0);
 PodcastIndexEntry = __decorate([
@@ -106,11 +106,11 @@ export { PodcastIndexEntry };
 let PodcastIndexGroup = class PodcastIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Podcast Group Name', example: 'P' }),
+    ObjectField({ description: 'Podcast Group Name', example: 'P' }),
     __metadata("design:type", String)
 ], PodcastIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [PodcastIndexEntry]),
+    ObjectField(() => [PodcastIndexEntry]),
     __metadata("design:type", Array)
 ], PodcastIndexGroup.prototype, "items", void 0);
 PodcastIndexGroup = __decorate([
@@ -120,11 +120,11 @@ export { PodcastIndexGroup };
 let PodcastIndex = class PodcastIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], PodcastIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [PodcastIndexGroup], { description: 'Podcast Index Groups' }),
+    ObjectField(() => [PodcastIndexGroup], { description: 'Podcast Index Groups' }),
     __metadata("design:type", Array)
 ], PodcastIndex.prototype, "groups", void 0);
 PodcastIndex = __decorate([
@@ -134,43 +134,43 @@ export { PodcastIndex };
 let PodcastDiscover = class PodcastDiscover {
 };
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "url", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "title", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "author", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "description", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", Number)
 ], PodcastDiscover.prototype, "subscribers", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", Number)
 ], PodcastDiscover.prototype, "subscribers_last_week", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "logo_url", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "scaled_logo_url", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "website", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscover.prototype, "mygpo_link", void 0);
 PodcastDiscover = __decorate([
@@ -180,7 +180,7 @@ export { PodcastDiscover };
 let PodcastDiscoverPage = class PodcastDiscoverPage extends Page {
 };
 __decorate([
-    ObjField(() => PodcastDiscover, { description: 'List of Podcasts' }),
+    ObjectField(() => PodcastDiscover, { description: 'List of Podcasts' }),
     __metadata("design:type", Array)
 ], PodcastDiscoverPage.prototype, "items", void 0);
 PodcastDiscoverPage = __decorate([
@@ -190,15 +190,15 @@ export { PodcastDiscoverPage };
 let PodcastDiscoverTag = class PodcastDiscoverTag {
 };
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscoverTag.prototype, "title", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", String)
 ], PodcastDiscoverTag.prototype, "tag", void 0);
 __decorate([
-    ObjField(),
+    ObjectField(),
     __metadata("design:type", Number)
 ], PodcastDiscoverTag.prototype, "usage", void 0);
 PodcastDiscoverTag = __decorate([
@@ -208,7 +208,7 @@ export { PodcastDiscoverTag };
 let PodcastDiscoverTagPage = class PodcastDiscoverTagPage extends Page {
 };
 __decorate([
-    ObjField(() => PodcastDiscoverTag, { description: 'List of Podcast Tags' }),
+    ObjectField(() => PodcastDiscoverTag, { description: 'List of Podcast Tags' }),
     __metadata("design:type", Array)
 ], PodcastDiscoverTagPage.prototype, "items", void 0);
 PodcastDiscoverTagPage = __decorate([

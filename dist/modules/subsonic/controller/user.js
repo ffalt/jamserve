@@ -10,45 +10,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterChangePassword, SubsonicParameterUpdateUser, SubsonicParameterUsername } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseUser, SubsonicResponseUsers } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 let SubsonicUserApi = class SubsonicUserApi {
     async getUser(query, { orm, user }) {
         if ((!query.username) || (user.name === query.username)) {
             return { user: SubsonicFormatter.packUser(user) };
         }
         if (!user.roleAdmin) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const u = await orm.User.findOne({ where: { name: query.username } });
         if (!u) {
-            return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
         }
         return { user: SubsonicFormatter.packUser(u) };
     }
     async getUsers({ orm, user }) {
         if (!user.roleAdmin) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const users = await orm.User.all();
-        return { users: { user: users.map(SubsonicFormatter.packUser) } };
+        return { users: { user: users.map(element => SubsonicFormatter.packUser(element)) } };
     }
-    async createUser(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+    async createUser(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
     }
-    async changePassword(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+    async changePassword(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
     }
-    async updateUser(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+    async updateUser(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
     }
-    async deleteUser(_query, _ctx) {
-        return Promise.reject(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT);
+    async deleteUser(_query, _context) {
+        return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NO_USER_MANAGEMENT));
     }
 };
 __decorate([
@@ -57,8 +57,8 @@ __decorate([
         description: 'Get details about a given user, including which authorization roles it has.',
         tags: ['Users']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterUsername, Object]),
     __metadata("design:returntype", Promise)
@@ -69,7 +69,7 @@ __decorate([
         description: 'Get details about all users, including which authorization roles they have.',
         tags: ['Users']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -80,8 +80,8 @@ __decorate([
         description: 'Creates a new Subsonic user',
         tags: ['Users']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterUpdateUser, Object]),
     __metadata("design:returntype", Promise)
@@ -92,8 +92,8 @@ __decorate([
         description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
         tags: ['Users']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterChangePassword, Object]),
     __metadata("design:returntype", Promise)
@@ -104,8 +104,8 @@ __decorate([
         description: 'Modifies an existing Subsonic user',
         tags: ['Users']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterUpdateUser, Object]),
     __metadata("design:returntype", Promise)
@@ -116,8 +116,8 @@ __decorate([
         description: 'Deletes an existing Subsonic user',
         tags: ['Users']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterUsername, Object]),
     __metadata("design:returntype", Promise)

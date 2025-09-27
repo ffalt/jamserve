@@ -11,15 +11,19 @@ export class PodcastRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case PodcastOrderFields.created:
+            case PodcastOrderFields.created: {
                 return [['createdAt', direction]];
-            case PodcastOrderFields.updated:
+            }
+            case PodcastOrderFields.updated: {
                 return [['updatedAt', direction]];
-            case PodcastOrderFields.lastCheck:
+            }
+            case PodcastOrderFields.lastCheck: {
                 return [['lastCheck', direction]];
+            }
             case PodcastOrderFields.default:
-            case PodcastOrderFields.name:
+            case PodcastOrderFields.name: {
                 return [['name', direction]];
+            }
         }
         return [];
     }

@@ -2,8 +2,6 @@ export class MetaDataBlock {
     constructor(isLast, type) {
         this.isLast = isLast;
         this.type = type;
-        this.hasData = false;
-        this.removed = false;
         this.error = null;
         this.hasData = false;
         this.removed = false;

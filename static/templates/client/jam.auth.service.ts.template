@@ -1,11 +1,11 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {Injectable, inject} from '@angular/core';
-import {JamConfiguration} from './jam.configuration';
-import {HTTPOptions, JamHttpService} from './jam.http.service';
-import {Jam} from './model/jam-rest-data';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { JamConfiguration } from './jam.configuration';
+import { type HTTPOptions, JamHttpService } from './jam.http.service';
+import type { Jam } from './model/jam-rest-data';
 
 export interface Auth {
 	server: string;
@@ -39,7 +39,7 @@ export class JamAuthService {
 
 	async check(): Promise<void> {
 		this.checked = true;
-		if (!this.auth || this.auth.server === undefined) {
+		if (!this.auth?.server) {
 			return;
 		}
 		try {
@@ -47,12 +47,12 @@ export class JamAuthService {
 			if (data.user) {
 				this.user = data.user;
 				this.auth.version = data.version;
-				await this.configuration.toStorage({auth: this.auth, user: this.user});
+				await this.configuration.toStorage({ auth: this.auth, user: this.user });
 			} else {
 				this.user = undefined;
 			}
-		} catch (e: any) {
-			return Promise.reject(e || Error('Server error'));
+		} catch (error: unknown) {
+			return Promise.reject(error ?? new Error('Server error'));
 		}
 	}
 
@@ -60,8 +60,8 @@ export class JamAuthService {
 		if (this.configuration.forceSessionUsage) {
 			return true;
 		}
-		const data = await this.http.get<Jam.Session>(`${server}${JamAuthService.apiPrefix}/session`, {withCredentials: false});
-		return (data.allowedCookieDomains || []).includes(this.configuration.domain());
+		const data = await this.http.get<Jam.Session>(`${server}${JamAuthService.apiPrefix}/session`, { withCredentials: false });
+		return (data.allowedCookieDomains ?? []).includes(this.configuration.domain());
 	}
 
 	async login(server: string, username: string, password: string, storePassword?: boolean): Promise<void> {
@@ -72,7 +72,7 @@ export class JamAuthService {
 				username,
 				password,
 				jwt: !canUseSession
-			}, {withCredentials: canUseSession});
+			}, { withCredentials: canUseSession });
 			if (!data.user) {
 				throw new Error('Invalid login response');
 			}
@@ -81,36 +81,50 @@ export class JamAuthService {
 				server,
 				username: data.user.name,
 				session: canUseSession,
-				token: !canUseSession ? data.jwt : undefined,
+				token: canUseSession ? undefined : data.jwt,
 				version: data.version,
 				password: storePassword ? password : undefined
 			};
-			await this.configuration.toStorage({auth: this.auth, user: this.user});
+			await this.configuration.toStorage({ auth: this.auth, user: this.user });
 			await this.configuration.userChangeNotify(this.user);
-		} catch (e: any) {
+		} catch (error: unknown) {
 			await this.clear();
-			if (e.error && e.error.error) {
-				return Promise.reject(Error(e.error.error));
+			if (typeof error === 'string') {
+				return Promise.reject(new Error(error));
 			}
-			if (e instanceof HttpErrorResponse) {
-				return Promise.reject(Error(e.statusText));
+			if (
+				error !== null &&
+				typeof error === 'object' &&
+				('error' in error) &&
+				error.error !== null &&
+				typeof error.error === 'object' &&
+				('error' in error.error) &&
+				typeof error.error.error === 'string'
+			) {
+				return Promise.reject(new Error(error.error.error));
 			}
-			return Promise.reject(Error('Server Error'));
+			if (error instanceof HttpErrorResponse) {
+				return Promise.reject(new Error(error.statusText));
+			}
+			if (error instanceof Error && error.message) {
+				return Promise.reject(new Error(error.message));
+			}
+			return Promise.reject(new Error('Server Error'));
 		}
 	}
 
 	getHTTPHeaders(): HttpHeaders | undefined {
-		if (this.auth && this.auth.token) {
-			return new HttpHeaders({Authorization: `Bearer ${this.auth.token}`});
+		if (this.auth?.token) {
+			return new HttpHeaders({ Authorization: `Bearer ${this.auth.token}` });
 		}
-		return undefined;
+		return;
 	}
 
 	getHTTPOptions(): HTTPOptions {
-		if (this.auth && this.auth.token) {
-			return {withCredentials: false, headers: this.getHTTPHeaders()};
+		if (this.auth?.token) {
+			return { withCredentials: false, headers: this.getHTTPHeaders() };
 		}
-		return {withCredentials: true};
+		return { withCredentials: true };
 	}
 
 	async logout(): Promise<void> {

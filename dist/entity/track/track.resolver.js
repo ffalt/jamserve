@@ -22,7 +22,7 @@ import { RootQL } from '../root/root.js';
 import { MediaTagRawQL, TagQL } from '../tag/tag.js';
 import { SeriesQL } from '../series/series.js';
 import { BookmarkQL } from '../bookmark/bookmark.js';
-import { TracksArgsQL } from './track.args.js';
+import { TracksParametersQL } from './track.parameters.js';
 import { GenreQL } from '../genre/genre.js';
 let TrackResolver = class TrackResolver {
     async track(id, { orm }) {
@@ -77,7 +77,7 @@ let TrackResolver = class TrackResolver {
         return await engine.metadata.lyricsByTrack(orm, track);
     }
     async rawTag(track, { engine }) {
-        return (await engine.track.getRawTag(track)) || {};
+        return (await engine.track.getRawTag(track)) ?? { version: 0, frames: {} };
     }
     async state(track, { orm, user }) {
         return await orm.State.findOrCreate(track.id, DBObjectType.track, user.id);
@@ -96,7 +96,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [TracksArgsQL, Object]),
+    __metadata("design:paramtypes", [TracksParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "tracks", null);
 __decorate([

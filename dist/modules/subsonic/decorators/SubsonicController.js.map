@@ -1,1 +1,0 @@
-{"version":3,"file":"SubsonicController.js","sourceRoot":"","sources":["../../../../src/modules/subsonic/decorators/SubsonicController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AAEvE,OAAO,EAAE,cAAc,EAAE,MAAM,qCAAqC,CAAC;AAErE,MAAM,UAAU,kBAAkB,CAAC,OAA2B;IAC7D,OAAO,cAAc,CAAC,kBAAkB,EAAE,EAAE,EAAE,EAAE,OAAO,CAAC,CAAC;AAC1D,CAAC"}

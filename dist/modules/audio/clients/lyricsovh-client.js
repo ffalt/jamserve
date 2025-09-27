@@ -14,17 +14,17 @@ export class LyricsOVHClient extends WebserviceClient {
     async search(artistName, songName) {
         const url = `https://api.lyrics.ovh/v1/${LyricsOVHClient.cleanString(artistName)}/${LyricsOVHClient.cleanString(songName)}`;
         log.info('requesting', url);
-        const data = await this.getJson(url, undefined, true);
-        if (!data || !data.lyrics) {
-            return;
+        const data = await this.getJson(url, true);
+        if (data?.lyrics) {
+            return { lyrics: data.lyrics, source: url };
         }
-        return { lyrics: data.lyrics, source: url };
+        return;
     }
     static cleanString(s) {
         return encodeURIComponent(s
-            .replace(/[’´`]/g, '\'')
-            .replace(/[():]/g, ' ')
-            .replace(/[‐]/g, '-')
+            .replaceAll(/[’´`]/g, '\'')
+            .replaceAll(/[():]/g, ' ')
+            .replaceAll('‐', '-')
             .normalize()
             .trim());
     }

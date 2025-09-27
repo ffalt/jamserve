@@ -1,4 +1,4 @@
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 import { SUBSONIC_VERSION } from '../version.js';
 import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 const security = [
@@ -8,14 +8,14 @@ const security = [
 class OpenApiBuilder extends BaseOpenApiBuilder {
     buildOpenApiMethod(method, schemas, isPost, alias) {
         const parameters = this.refsBuilder.buildParameters(method, undefined, schemas, alias);
-        const path = `${alias?.route || method.route || ''}`;
-        const roles = method.roles || [];
+        const path = alias?.route ?? method.route ?? '';
+        const roles = method.roles ?? [];
         const o = {
-            operationId: `${method.methodName}${alias?.route || ''}`,
-            summary: `${method.summary || method.description} ${alias?.name || ''}`.trim(),
+            operationId: `${method.methodName}${alias?.route ?? ''}`,
+            summary: `${method.summary ?? method.description} ${alias?.name ?? ''}`.trim(),
             description: method.description,
             deprecated: method.deprecationReason ? true : undefined,
-            tags: method.tags || ['Unsorted'],
+            tags: method.tags ?? ['Unsorted'],
             parameters,
             requestBody: isPost ? this.buildRequestBody(method, schemas) : undefined,
             responses: this.buildResponses(method, parameters, roles, schemas),
@@ -31,13 +31,13 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
         const methods = this.metadata.all;
         for (const method of methods) {
             const isPost = false;
-            const mode = isPost ? 'post' : 'get';
+            const mode = 'post';
             const { path, o } = this.buildOpenApiMethod(method, schemas, isPost);
-            paths[path] = paths[path] || {};
+            paths[path] = paths[path] ?? {};
             paths[path][mode] = o;
-            for (const alias of (method.aliasRoutes || [])) {
+            for (const alias of (method.aliasRoutes ?? [])) {
                 const aliasMethod = this.buildOpenApiMethod(method, schemas, isPost, alias);
-                paths[aliasMethod.path] = paths[aliasMethod.path] || {};
+                paths[aliasMethod.path] = paths[aliasMethod.path] ?? {};
                 paths[aliasMethod.path][mode] = aliasMethod.o;
             }
         }
@@ -100,7 +100,7 @@ function buildOpenApiBase(version) {
     };
 }
 export function buildSubsonicOpenApi() {
-    const builder = new OpenApiBuilder(getMetadataStorage());
+    const builder = new OpenApiBuilder(metadataStorage());
     const openapi = buildOpenApiBase(SUBSONIC_VERSION);
     const schemas = {
         ID: { type: 'integer' },

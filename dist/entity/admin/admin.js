@@ -9,9 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { Min } from 'class-validator';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjParamsType } from '../../modules/rest/decorators/ObjParamsType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 const AdminSettingsChatMaxAgeDesc = {
     _: 'Admin Chat Maximum Age Settings',
     value: 'Value of Maximum Age',
@@ -20,20 +20,20 @@ const AdminSettingsChatMaxAgeDesc = {
 let AdminSettingsChatMaxAge = class AdminSettingsChatMaxAge {
 };
 __decorate([
-    ObjField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 }),
+    ObjectField({ description: AdminSettingsChatMaxAgeDesc.value, min: 0, example: 1 }),
     Field(() => Int, { description: AdminSettingsChatMaxAgeDesc.value }),
     Min(0),
     __metadata("design:type", Number)
 ], AdminSettingsChatMaxAge.prototype, "value", void 0);
 __decorate([
-    ObjField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' }),
+    ObjectField({ description: AdminSettingsChatMaxAgeDesc.unit, example: 'day' }),
     Field(() => String, { description: AdminSettingsChatMaxAgeDesc.unit }),
     __metadata("design:type", String)
 ], AdminSettingsChatMaxAge.prototype, "unit", void 0);
 AdminSettingsChatMaxAge = __decorate([
     ResultType({ description: AdminSettingsChatMaxAgeDesc._ }),
     ObjectType({ description: AdminSettingsChatMaxAgeDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettingsChatMaxAge);
 export { AdminSettingsChatMaxAge };
 let AdminSettingsChatMaxAgeQL = class AdminSettingsChatMaxAgeQL extends AdminSettingsChatMaxAge {
@@ -51,19 +51,19 @@ let AdminSettingsChat = class AdminSettingsChat {
 };
 __decorate([
     Field(() => Int, { description: AdminSettingsChatDesc.maxMessages }),
-    ObjField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 }),
+    ObjectField({ description: AdminSettingsChatDesc.maxMessages, min: 0, example: 50 }),
     Min(0),
     __metadata("design:type", Number)
 ], AdminSettingsChat.prototype, "maxMessages", void 0);
 __decorate([
     Field(() => AdminSettingsChatMaxAgeQL, { description: AdminSettingsChatDesc.maxAge }),
-    ObjField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge }),
+    ObjectField(() => AdminSettingsChatMaxAge, { description: AdminSettingsChatDesc.maxAge }),
     __metadata("design:type", AdminSettingsChatMaxAge)
 ], AdminSettingsChat.prototype, "maxAge", void 0);
 AdminSettingsChat = __decorate([
     ResultType({ description: AdminSettingsChatDesc._ }),
     ObjectType({ description: AdminSettingsChatDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettingsChat);
 export { AdminSettingsChat };
 let AdminSettingsChatQL = class AdminSettingsChatQL extends AdminSettingsChat {
@@ -79,14 +79,14 @@ const AdminSettingsIndexDesc = {
 let AdminSettingsIndex = class AdminSettingsIndex {
 };
 __decorate([
-    ObjField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] }),
+    ObjectField(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles, example: ['the', 'les', 'die'] }),
     Field(() => [String], { description: AdminSettingsIndexDesc.ignoreArticles }),
     __metadata("design:type", Array)
 ], AdminSettingsIndex.prototype, "ignoreArticles", void 0);
 AdminSettingsIndex = __decorate([
     ResultType({ description: AdminSettingsIndexDesc._ }),
     ObjectType({ description: AdminSettingsIndexDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettingsIndex);
 export { AdminSettingsIndex };
 let AdminSettingsIndexQL = class AdminSettingsIndexQL extends AdminSettingsIndex {
@@ -102,14 +102,14 @@ const AdminSettingsLibraryDesc = {
 let AdminSettingsLibrary = class AdminSettingsLibrary {
 };
 __decorate([
-    ObjField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true }),
+    ObjectField(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart, example: true }),
     Field(() => Boolean, { description: AdminSettingsLibraryDesc.scanAtStart }),
     __metadata("design:type", Boolean)
 ], AdminSettingsLibrary.prototype, "scanAtStart", void 0);
 AdminSettingsLibrary = __decorate([
     ResultType({ description: AdminSettingsLibraryDesc._ }),
     ObjectType({ description: AdminSettingsLibraryDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettingsLibrary);
 export { AdminSettingsLibrary };
 let AdminSettingsLibraryQL = class AdminSettingsLibraryQL extends AdminSettingsLibrary {
@@ -125,14 +125,14 @@ const AdminSettingsExternalDesc = {
 let AdminSettingsExternal = class AdminSettingsExternal {
 };
 __decorate([
-    ObjField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true }),
+    ObjectField(() => Boolean, { description: AdminSettingsExternalDesc.enabled, example: true }),
     Field(() => Boolean, { description: AdminSettingsExternalDesc.enabled }),
     __metadata("design:type", Boolean)
 ], AdminSettingsExternal.prototype, "enabled", void 0);
 AdminSettingsExternal = __decorate([
     ResultType({ description: AdminSettingsExternalDesc._ }),
     ObjectType({ description: AdminSettingsExternalDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettingsExternal);
 export { AdminSettingsExternal };
 let AdminSettingsExternalQL = class AdminSettingsExternalQL extends AdminSettingsExternal {
@@ -147,29 +147,29 @@ const AdminSettingsDesc = {
 let AdminSettings = class AdminSettings {
 };
 __decorate([
-    ObjField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ }),
+    ObjectField(() => AdminSettingsChat, { description: AdminSettingsChatDesc._ }),
     Field(() => AdminSettingsChatQL),
     __metadata("design:type", AdminSettingsChat)
 ], AdminSettings.prototype, "chat", void 0);
 __decorate([
-    ObjField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ }),
+    ObjectField(() => AdminSettingsIndex, { description: AdminSettingsIndexDesc._ }),
     Field(() => AdminSettingsIndexQL),
     __metadata("design:type", AdminSettingsIndex)
 ], AdminSettings.prototype, "index", void 0);
 __decorate([
-    ObjField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ }),
+    ObjectField(() => AdminSettingsLibrary, { description: AdminSettingsLibraryDesc._ }),
     Field(() => AdminSettingsLibraryQL),
     __metadata("design:type", AdminSettingsLibrary)
 ], AdminSettings.prototype, "library", void 0);
 __decorate([
-    ObjField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ }),
+    ObjectField(() => AdminSettingsExternal, { description: AdminSettingsExternalDesc._ }),
     Field(() => AdminSettingsExternalQL),
     __metadata("design:type", AdminSettingsExternal)
 ], AdminSettings.prototype, "externalServices", void 0);
 AdminSettings = __decorate([
     ResultType({ description: AdminSettingsDesc._ }),
     ObjectType({ description: AdminSettingsDesc._ }),
-    ObjParamsType()
+    ObjectParametersType()
 ], AdminSettings);
 export { AdminSettings };
 let AdminSettingsQL = class AdminSettingsQL extends AdminSettings {
@@ -188,22 +188,22 @@ const AdminChangeQueueInfoDesc = {
 let AdminChangeQueueInfo = class AdminChangeQueueInfo {
 };
 __decorate([
-    ObjField({ description: AdminChangeQueueInfoDesc.id, isID: true }),
+    ObjectField({ description: AdminChangeQueueInfoDesc.id, isID: true }),
     Field(() => ID, { description: AdminChangeQueueInfoDesc.id }),
     __metadata("design:type", String)
 ], AdminChangeQueueInfo.prototype, "id", void 0);
 __decorate([
-    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 }),
+    ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 }),
     Field(() => Int, { description: AdminChangeQueueInfoDesc.position }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "position", void 0);
 __decorate([
-    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' }),
+    ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' }),
     Field(() => String, { description: AdminChangeQueueInfoDesc.error }),
     __metadata("design:type", String)
 ], AdminChangeQueueInfo.prototype, "error", void 0);
 __decorate([
-    ObjField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true }),
+    ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true }),
     Field(() => Int, { description: AdminChangeQueueInfoDesc.done }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "done", void 0);

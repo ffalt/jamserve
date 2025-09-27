@@ -1,0 +1,1 @@
+{"version":3,"file":"object-parameters-type.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/object-parameters-type.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAClE,OAAO,EAAE,wBAAwB,EAAE,MAAM,sDAAsD,CAAC;AAEhG,MAAM,UAAU,oBAAoB;IACnC,OAAO,wBAAwB,CAAC,eAAe,EAAE,CAAC,CAAC;AACpD,CAAC"}

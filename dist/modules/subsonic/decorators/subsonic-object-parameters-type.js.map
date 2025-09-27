@@ -1,0 +1,1 @@
+{"version":3,"file":"subsonic-object-parameters-type.js","sourceRoot":"","sources":["../../../../src/modules/subsonic/decorators/subsonic-object-parameters-type.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAClE,OAAO,EAAE,wBAAwB,EAAE,MAAM,sDAAsD,CAAC;AAEhG,MAAM,UAAU,4BAA4B;IAC3C,OAAO,wBAAwB,CAAC,eAAe,EAAE,CAAC,CAAC;AACpD,CAAC"}

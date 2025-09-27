@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import which from 'which';
 export const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
 const cache = {};

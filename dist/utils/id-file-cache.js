@@ -1,33 +1,31 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { DebouncePromises } from './debounce-promises.js';
 export class IDFolderCache {
-    constructor(dataPath, filePrefix, resolveParams) {
+    constructor(dataPath, filePrefix, resolveParameters) {
         this.dataPath = dataPath;
         this.filePrefix = filePrefix;
-        this.resolveParams = resolveParams;
+        this.resolveParameters = resolveParameters;
         this.cacheDebounce = new DebouncePromises();
     }
     prefixCacheFilename(id) {
         return `${this.filePrefix}-${id}`;
     }
-    cacheFilename(id, params) {
-        return `${this.prefixCacheFilename(id)}${this.resolveParams(params)}`;
+    cacheFilename(id, parameters) {
+        return `${this.prefixCacheFilename(id)}${this.resolveParameters(parameters)}`;
     }
     async removeByIDs(ids) {
         const searches = ids.filter(id => id.length > 0).map(id => this.prefixCacheFilename(id));
         if (searches.length > 0) {
             let list = await fse.readdir(this.dataPath);
-            list = list.filter(name => {
-                return searches.findIndex(s => name.startsWith(s)) >= 0;
-            });
+            list = list.filter(name => searches.some(s => name.startsWith(s)));
             for (const filename of list) {
                 await fse.unlink(path.resolve(this.dataPath, filename));
             }
         }
     }
-    async getExisting(id, params) {
-        const cacheID = this.cacheFilename(id, params);
+    async getExisting(id, parameters) {
+        const cacheID = this.cacheFilename(id, parameters);
         if (this.cacheDebounce.isPending(cacheID)) {
             return this.cacheDebounce.append(cacheID);
         }
@@ -38,8 +36,8 @@ export class IDFolderCache {
         }
         return;
     }
-    async get(id, params, build) {
-        const cacheID = this.cacheFilename(id, params);
+    async get(id, parameters, build) {
+        const cacheID = this.cacheFilename(id, parameters);
         if (this.cacheDebounce.isPending(cacheID)) {
             return this.cacheDebounce.append(cacheID);
         }
@@ -54,9 +52,9 @@ export class IDFolderCache {
             this.cacheDebounce.resolve(cacheID, result);
             return result;
         }
-        catch (e) {
-            this.cacheDebounce.reject(cacheID, e);
-            return Promise.reject(e);
+        catch (error) {
+            this.cacheDebounce.reject(cacheID, error);
+            return Promise.reject(error);
         }
     }
 }

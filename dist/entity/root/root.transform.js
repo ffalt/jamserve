@@ -11,7 +11,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { IoService } from '../../modules/engine/services/io.service.js';
 let RootTransformService = class RootTransformService extends BaseTransformService {
-    async root(orm, o, rootArgs, user) {
+    async root(_orm, o, _parameters, user) {
         return {
             id: o.id,
             name: o.name,

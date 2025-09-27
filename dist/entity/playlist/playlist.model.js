@@ -10,44 +10,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Base, Page } from '../base/base.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { MediaBase } from '../tag/tag.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let PlaylistBase = class PlaylistBase extends Base {
 };
 __decorate([
-    ObjField({ description: 'Owner User Id', isID: true }),
+    ObjectField({ description: 'Owner User Id', isID: true }),
     __metadata("design:type", String)
 ], PlaylistBase.prototype, "userID", void 0);
 __decorate([
-    ObjField({ description: 'Owner User Name', isID: true }),
+    ObjectField({ description: 'Owner User Name', isID: true }),
     __metadata("design:type", String)
 ], PlaylistBase.prototype, "userName", void 0);
 __decorate([
-    ObjField({ description: 'Playlist is public?', example: false }),
+    ObjectField({ description: 'Playlist is public?', example: false }),
     __metadata("design:type", Boolean)
 ], PlaylistBase.prototype, "isPublic", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Comment', example: 'Awesome!' }),
+    ObjectField({ nullable: true, description: 'Comment', example: 'Awesome!' }),
     __metadata("design:type", String)
 ], PlaylistBase.prototype, "comment", void 0);
 __decorate([
-    ObjField({ description: 'Playlist Created Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Playlist Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PlaylistBase.prototype, "created", void 0);
 __decorate([
-    ObjField({ description: 'Playlist Changed Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Playlist Changed Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PlaylistBase.prototype, "changed", void 0);
 __decorate([
-    ObjField({ description: 'Playlist duration', min: 0, example: 12345 }),
+    ObjectField({ description: 'Playlist duration', min: 0, example: 12345 }),
     __metadata("design:type", Number)
 ], PlaylistBase.prototype, "duration", void 0);
 __decorate([
-    ObjField({ description: 'Number of Entries', min: 0, example: 5 }),
+    ObjectField({ description: 'Number of Entries', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], PlaylistBase.prototype, "entriesCount", void 0);
 __decorate([
-    ObjField(() => [String], { description: 'List of Media Base IDs', isID: true }),
+    ObjectField(() => [String], { description: 'List of Media Base IDs', isID: true }),
     __metadata("design:type", Array)
 ], PlaylistBase.prototype, "entriesIDs", void 0);
 PlaylistBase = __decorate([
@@ -57,7 +57,7 @@ export { PlaylistBase };
 let Playlist = class Playlist extends PlaylistBase {
 };
 __decorate([
-    ObjField(() => [MediaBase], { nullable: true, description: 'List of Media Base Entries' }),
+    ObjectField(() => [MediaBase], { nullable: true, description: 'List of Media Base Entries' }),
     __metadata("design:type", Array)
 ], Playlist.prototype, "entries", void 0);
 Playlist = __decorate([
@@ -67,7 +67,7 @@ export { Playlist };
 let PlaylistPage = class PlaylistPage extends Page {
 };
 __decorate([
-    ObjField(() => Playlist, { description: 'List of Playlists' }),
+    ObjectField(() => Playlist, { description: 'List of Playlists' }),
     __metadata("design:type", Array)
 ], PlaylistPage.prototype, "items", void 0);
 PlaylistPage = __decorate([
@@ -77,15 +77,15 @@ export { PlaylistPage };
 let PlaylistIndexEntry = class PlaylistIndexEntry {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], PlaylistIndexEntry.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome Playlist' }),
+    ObjectField({ description: 'Name', example: 'Awesome Playlist' }),
     __metadata("design:type", String)
 ], PlaylistIndexEntry.prototype, "name", void 0);
 __decorate([
-    ObjField({ description: 'Entry Count', min: 0, example: 5 }),
+    ObjectField({ description: 'Entry Count', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], PlaylistIndexEntry.prototype, "entryCount", void 0);
 PlaylistIndexEntry = __decorate([
@@ -95,11 +95,11 @@ export { PlaylistIndexEntry };
 let PlaylistIndexGroup = class PlaylistIndexGroup {
 };
 __decorate([
-    ObjField({ description: 'Playlist Group Name', example: 'A' }),
+    ObjectField({ description: 'Playlist Group Name', example: 'A' }),
     __metadata("design:type", String)
 ], PlaylistIndexGroup.prototype, "name", void 0);
 __decorate([
-    ObjField(() => [PlaylistIndexEntry]),
+    ObjectField(() => [PlaylistIndexEntry]),
     __metadata("design:type", Array)
 ], PlaylistIndexGroup.prototype, "items", void 0);
 PlaylistIndexGroup = __decorate([
@@ -109,11 +109,11 @@ export { PlaylistIndexGroup };
 let PlaylistIndex = class PlaylistIndex {
 };
 __decorate([
-    ObjField({ description: 'Last Change Timestamp' }),
+    ObjectField({ description: 'Last Change Timestamp' }),
     __metadata("design:type", Number)
 ], PlaylistIndex.prototype, "lastModified", void 0);
 __decorate([
-    ObjField(() => [PlaylistIndexGroup], { description: 'Playlist Index Groups' }),
+    ObjectField(() => [PlaylistIndexGroup], { description: 'Playlist Index Groups' }),
     __metadata("design:type", Array)
 ], PlaylistIndex.prototype, "groups", void 0);
 PlaylistIndex = __decorate([

@@ -29,25 +29,26 @@ let RateLimitService = class RateLimitService {
     async loginSlowDown(req, res) {
         const key = req.ip;
         try {
-            const resConsume = await this.loginLimiter.consume(key);
-            if (resConsume.remainingPoints <= 0) {
-                const resPenalty = await this.limiterConsecutiveOutOfLimits.penalty(key);
-                await this.loginLimiter.block(key, 60 * getFibonacciBlockDurationMinutes(resPenalty.consumedPoints));
+            const responseConsume = await this.loginLimiter.consume(key);
+            if (responseConsume.remainingPoints <= 0) {
+                const responsePenalty = await this.limiterConsecutiveOutOfLimits.penalty(key);
+                await this.loginLimiter.block(key, 60 * getFibonacciBlockDurationMinutes(responsePenalty.consumedPoints));
             }
             res.set('X-RateLimit-Limit', `${this.loginLimiterOption.points}`);
-            res.set('X-RateLimit-Remaining', `${resConsume.remainingPoints}`);
+            res.set('X-RateLimit-Remaining', `${responseConsume.remainingPoints}`);
             return false;
         }
-        catch (rlRejected) {
-            if (rlRejected instanceof Error) {
-                throw rlRejected;
+        catch (error) {
+            if (error instanceof Error) {
+                throw error;
             }
-            else {
-                const seconds = Math.round(rlRejected.msBeforeNext / 1000) || 1;
+            if (error && typeof error === 'object' && Object.hasOwn(error, 'msBeforeNext')) {
+                const seconds = Math.round(error.msBeforeNext / 1000) || 1;
                 res.set('Retry-After', `${seconds}`);
                 res.status(429).send(`Too Many Requests, try again in ${seconds} seconds`);
                 return true;
             }
+            throw error;
         }
     }
     async loginSlowDownReset(req) {

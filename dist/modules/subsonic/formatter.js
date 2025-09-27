@@ -1,19 +1,18 @@
 import moment from 'moment';
-import path from 'path';
+import path from 'node:path';
 import { fileSuffix } from '../../utils/fs-utils.js';
 import mimeTypes from 'mime-types';
 import { AlbumType, AudioFormatType, PodcastStatus } from '../../types/enums.js';
 import { JAMSERVE_VERSION } from '../../version.js';
-export class SubsonicFormatter {
-    static defaultProperties() {
-        return {
-            status: 'ok',
-            version: '1.16.0',
-            type: 'jam',
-            serverVersion: JAMSERVE_VERSION,
-            openSubsonic: true
-        };
+export class SubsonicApiError extends Error {
+    constructor(options) {
+        super(options.message);
+        this.code = options.code || 500;
+        this.message = options.message;
+        this.name = this.constructor.name;
     }
+}
+export class SubsonicFormatter {
     static packFail(code, txt) {
         const codeStrings = {
             0: 'A generic error.',
@@ -26,21 +25,21 @@ export class SubsonicFormatter {
         };
         return {
             'subsonic-response': {
-                ...SubsonicFormatter.defaultProperties(), status: 'failed', error: {
+                ...SubsonicFormatter.defaultProperties, status: 'failed', error: {
                     code,
-                    message: txt || codeStrings[code]
+                    message: txt ?? codeStrings[code]
                 }
             }
         };
     }
     static packResponse(o) {
         return {
-            'subsonic-response': { ...SubsonicFormatter.defaultProperties(), ...o }
+            'subsonic-response': { ...SubsonicFormatter.defaultProperties, ...o }
         };
     }
     static packOK() {
         return {
-            'subsonic-response': SubsonicFormatter.defaultProperties()
+            'subsonic-response': SubsonicFormatter.defaultProperties
         };
     }
     static formatSubSonicDate(date) {
@@ -78,8 +77,8 @@ export class SubsonicFormatter {
         return {
             id: entry.id,
             name: entry.name,
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined
         };
     }
     static async packFolderIndex(index, states) {
@@ -87,12 +86,12 @@ export class SubsonicFormatter {
             return [];
         }
         const indexes = [];
-        for (const i of index.groups) {
+        for (const group of index.groups) {
             const artist = [];
-            for (const e of i.items) {
-                artist.push(await SubsonicFormatter.packFolderIndexArtist(e, states[e.id]));
+            for (const item of group.items) {
+                artist.push(await SubsonicFormatter.packFolderIndexArtist(item, states[item.id]));
             }
-            indexes.push({ name: i.name, artist });
+            indexes.push({ name: group.name, artist });
         }
         return indexes;
     }
@@ -117,15 +116,15 @@ export class SubsonicFormatter {
             id: folder.id,
             parent: folder.parent.id(),
             name: path.basename(folder.path),
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved)
         };
     }
     static async packFolderArtist(folder, state) {
         return {
             id: folder.id,
-            name: folder.title || folder.artist || '',
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined
+            name: (folder.title ?? folder.artist) ?? '',
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined
         };
     }
     static async packAlbum(album, state) {
@@ -141,29 +140,29 @@ export class SubsonicFormatter {
             duration: SubsonicFormatter.packDuration(album.duration),
             year: album.year,
             genre: await SubsonicFormatter.packGenres(genres),
-            created: SubsonicFormatter.formatSubSonicDate(album.createdAt),
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
+            created: SubsonicFormatter.formatSubSonicDate(album.createdAt) ?? '',
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            played: SubsonicFormatter.formatSubSonicDate(state?.lastPlayed),
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
             musicBrainzId: album.mbReleaseID,
-            genres: genres.length ? genres.map(g => ({ name: g.name })) : undefined,
+            genres: genres.length > 0 ? genres.map(g => ({ name: g.name })) : undefined,
             isCompilation: album.albumType === AlbumType.compilation
         };
     }
     static packDuration(duration) {
-        if (!duration || duration <= 0 || isNaN(duration)) {
+        if (!duration || duration <= 0 || Number.isNaN(duration)) {
             return -1;
         }
         return Math.trunc(duration / 1000);
     }
     static packBitrate(bitrate) {
-        return bitrate !== undefined ? Math.round(bitrate / 1000) : undefined;
+        return bitrate === undefined ? undefined : Math.round(bitrate / 1000);
     }
     static async packGenreCollection(genres) {
         return genres && (await genres.count()) > 0 ? await SubsonicFormatter.packGenres(await genres.getItems()) : undefined;
     }
     static async packGenres(genres) {
-        return genres && genres?.length > 0 ? genres.map(g => g.name).join(' / ') : undefined;
+        return genres && genres.length > 0 ? genres.map(g => g.name).join(' / ') : undefined;
     }
     static async packArtist(artist, state) {
         return {
@@ -171,24 +170,29 @@ export class SubsonicFormatter {
             name: artist.name,
             coverArt: artist.id,
             albumCount: await artist.albums.count(),
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
             musicBrainzId: artist.mbArtistID,
             sortName: artist.nameSort
         };
     }
     static packImageInfo(info, result) {
-        (info.image || []).forEach(i => {
-            if (i.size === 'small') {
-                result.smallImageUrl = i.url;
+        for (const image of (info?.image ?? [])) {
+            switch (image.size) {
+                case 'small': {
+                    result.smallImageUrl = image.url;
+                    break;
+                }
+                case 'medium': {
+                    result.mediumImageUrl = image.url;
+                    break;
+                }
+                case 'large': {
+                    result.largeImageUrl = image.url;
+                    break;
+                }
             }
-            else if (i.size === 'medium') {
-                result.mediumImageUrl = i.url;
-            }
-            else if (i.size === 'large') {
-                result.largeImageUrl = i.url;
-            }
-        });
+        }
     }
     static packAlbumInfo(info) {
         const result = {
@@ -214,7 +218,7 @@ export class SubsonicFormatter {
             biography: info.bio ? info.bio.content : undefined,
             musicBrainzId: info.mbid,
             lastFmUrl: info.url,
-            similarArtist: similar || []
+            similarArtist: similar ?? []
         };
         SubsonicFormatter.packImageInfo(info, result);
         return result;
@@ -225,12 +229,12 @@ export class SubsonicFormatter {
         const result = {
             id: track.id,
             parent: track.folder.id(),
-            title: tag?.title || track.name,
+            title: tag?.title ?? track.name,
             album: tag?.album,
             artist: tag?.artist,
             isDir: false,
             coverArt: track.id,
-            genre: (tag?.genres || []).join(' / '),
+            genre: (tag?.genres ?? []).join(' / '),
             year: tag?.year,
             created: SubsonicFormatter.formatSubSonicDate(track.statCreated),
             duration: SubsonicFormatter.packDuration(tag?.mediaDuration),
@@ -244,14 +248,14 @@ export class SubsonicFormatter {
             albumId: track.album.id(),
             artistId: track.artist.id(),
             type: 'music',
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            playCount: state?.played && state?.played > 0 ? state.played : 0,
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            playCount: state?.played && state.played > 0 ? state.played : 0,
             bitDepth: tag?.mediaBitDepth,
             samplingRate: tag?.mediaSampleRate,
             channelCount: tag?.mediaChannels,
             mediaType: 'song',
-            played: state && state.lastPlayed ? SubsonicFormatter.formatSubSonicDate(state.lastPlayed) : undefined,
+            played: SubsonicFormatter.formatSubSonicDate(state?.lastPlayed),
             sortName: tag?.titleSort,
             musicBrainzId: tag?.mbTrackID,
             genres: tag?.genres?.length ? tag.genres.map(g => ({ name: g })) : undefined
@@ -288,18 +292,18 @@ export class SubsonicFormatter {
             id: folder.id,
             parent: folder.parent.id(),
             isDir: true,
-            title: folder.title || path.basename(folder.path),
+            title: folder.title ?? path.basename(folder.path),
             album: folder.album,
             artist: folder.artist,
             year: folder.year,
             genre: await SubsonicFormatter.packGenreCollection(folder.genres),
             coverArt: folder.id,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
-            playCount: state?.played && state?.played > 0 ? state.played : 0,
-            albumId: ((await folder.albums.getIDs()) || [])[0],
-            artistId: ((await folder.artists.getIDs()) || [])[0],
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
+            playCount: state?.played && state.played > 0 ? state.played : 0,
+            albumId: (await folder.albums.getIDs()).at(0),
+            artistId: (await folder.artists.getIDs()).at(0),
             created: SubsonicFormatter.formatSubSonicDate(folder.createdAt),
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved)
         };
     }
     static async packPodcast(podcast, status) {
@@ -321,21 +325,21 @@ export class SubsonicFormatter {
             coverArt: episode.id,
             channelId: episode.podcast.idOrFail(),
             description: episode.summary,
-            publishDate: episode.date !== undefined ? SubsonicFormatter.formatSubSonicDate(episode.date) : undefined,
+            publishDate: SubsonicFormatter.formatSubSonicDate(episode.date),
             title: episode.name,
-            status: status ? status : episode.status,
+            status: status ?? episode.status,
             id: episode.id,
             parent: episode.podcast.id(),
             artist: tag ? tag.artist : episode.author,
             album: tag?.album,
             track: tag?.trackNr,
             year: tag?.year,
-            genre: (tag?.genres || []).join(' / '),
+            genre: (tag?.genres ?? []).join(' / '),
             discNumber: tag?.disc,
             type: 'podcast',
-            playCount: state?.played && state?.played > 0 ? state.played : 0,
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
+            playCount: state?.played && state.played > 0 ? state.played : 0,
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
             isVideo: false,
             isDir: false,
             size: episode.fileSize ? Math.trunc(episode.fileSize / 10) : undefined,
@@ -361,14 +365,14 @@ export class SubsonicFormatter {
         return {
             id: playlist.id,
             name: playlist.name,
-            comment: playlist.comment || '',
+            comment: playlist.comment ?? '',
             public: playlist.isPublic,
             duration: SubsonicFormatter.packDuration(playlist.duration),
-            created: SubsonicFormatter.formatSubSonicDate(playlist.createdAt),
-            changed: SubsonicFormatter.formatSubSonicDate(playlist.updatedAt),
+            created: SubsonicFormatter.formatSubSonicDate(playlist.createdAt) ?? '',
+            changed: SubsonicFormatter.formatSubSonicDate(playlist.updatedAt) ?? '',
             coverArt: playlist.coverArt,
-            starred: state && state.faved ? SubsonicFormatter.formatSubSonicDate(state.faved) : undefined,
-            userRating: state?.rated && state?.rated > 0 ? state.rated : undefined,
+            starred: SubsonicFormatter.formatSubSonicDate(state?.faved),
+            userRating: state?.rated && state.rated > 0 ? state.rated : undefined,
             allowedUser: [],
             songCount: await playlist.entries.count(),
             owner: playlist.user.id()
@@ -389,16 +393,11 @@ export class SubsonicFormatter {
             username,
             position: bookmark.position,
             comment: bookmark.comment,
-            created: SubsonicFormatter.formatSubSonicDate(bookmark.createdAt),
-            changed: SubsonicFormatter.formatSubSonicDate(bookmark.updatedAt)
+            created: SubsonicFormatter.formatSubSonicDate(bookmark.createdAt) ?? '',
+            changed: SubsonicFormatter.formatSubSonicDate(bookmark.updatedAt) ?? ''
         };
     }
     static packSimilarSongs(childs) {
-        return {
-            song: childs
-        };
-    }
-    static packSimilarSongs2(childs) {
         return {
             song: childs
         };
@@ -409,7 +408,7 @@ export class SubsonicFormatter {
             current: playqueue.current,
             position: playqueue.position,
             username: user.name,
-            changed: SubsonicFormatter.formatSubSonicDate(playqueue.updatedAt) || '',
+            changed: SubsonicFormatter.formatSubSonicDate(playqueue.updatedAt) ?? '',
             changedBy: ''
         };
     }
@@ -447,15 +446,22 @@ SubsonicFormatter.FAIL = {
     NOTFOUND: 70
 };
 SubsonicFormatter.ERRORS = {
-    LOGIN_FAILED: { code: SubsonicFormatter.FAIL.CREDENTIALS, fail: 'Wrong username or password.' },
-    PARAM_MISSING: { code: SubsonicFormatter.FAIL.PARAMETER, fail: 'Required parameter is missing.' },
-    PARAM_INVALID: { code: SubsonicFormatter.FAIL.PARAMETER, fail: 'Required parameter is invalid.' },
-    SERVER_OLD: { code: SubsonicFormatter.FAIL.SERVER_OLD, fail: 'Incompatible Subsonic REST protocol version. Server must upgrade.' },
-    CLIENT_OLD: { code: SubsonicFormatter.FAIL.CLIENT_OLD, fail: 'Incompatible Subsonic REST protocol version. Client must upgrade.' },
-    NOT_FOUND: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: `The requested data was not found.` },
-    UNAUTH: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Not authorised' },
-    NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'Sharing is disabled via Subsonic API.' },
-    NO_USER_MANAGEMENT: { code: SubsonicFormatter.FAIL.UNAUTH, fail: 'User manangement is disabled via Subsonic API.' },
-    NOT_IMPLEMENTED: { code: SubsonicFormatter.FAIL.NOTFOUND, fail: 'Not implemented' }
+    LOGIN_FAILED: { code: SubsonicFormatter.FAIL.CREDENTIALS, message: 'Wrong username or password.' },
+    PARAM_MISSING: { code: SubsonicFormatter.FAIL.PARAMETER, message: 'Required parameter is missing.' },
+    PARAM_INVALID: { code: SubsonicFormatter.FAIL.PARAMETER, message: 'Required parameter is invalid.' },
+    SERVER_OLD: { code: SubsonicFormatter.FAIL.SERVER_OLD, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.' },
+    CLIENT_OLD: { code: SubsonicFormatter.FAIL.CLIENT_OLD, message: 'Incompatible Subsonic REST protocol version. Client must upgrade.' },
+    NOT_FOUND: { code: SubsonicFormatter.FAIL.NOTFOUND, message: 'The requested data was not found.' },
+    UNAUTH: { code: SubsonicFormatter.FAIL.UNAUTH, message: 'Not authorised' },
+    NO_SHARING: { code: SubsonicFormatter.FAIL.UNAUTH, message: 'Sharing is disabled via Subsonic API.' },
+    NO_USER_MANAGEMENT: { code: SubsonicFormatter.FAIL.UNAUTH, message: 'User manangement is disabled via Subsonic API.' },
+    NOT_IMPLEMENTED: { code: SubsonicFormatter.FAIL.NOTFOUND, message: 'Not implemented' }
+};
+SubsonicFormatter.defaultProperties = {
+    status: 'ok',
+    version: '1.16.0',
+    type: 'jam',
+    serverVersion: JAMSERVE_VERSION,
+    openSubsonic: true
 };
 //# sourceMappingURL=formatter.js.map

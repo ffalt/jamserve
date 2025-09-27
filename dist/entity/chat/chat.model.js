@@ -8,24 +8,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Chat = class Chat {
 };
 __decorate([
-    ObjField({ description: 'User Name', example: 'Awesome User' }),
+    ObjectField({ description: 'User Name', example: 'Awesome User' }),
     __metadata("design:type", String)
 ], Chat.prototype, "userName", void 0);
 __decorate([
-    ObjField({ description: 'User Id', isID: true }),
+    ObjectField({ description: 'User Id', isID: true }),
     __metadata("design:type", String)
 ], Chat.prototype, "userID", void 0);
 __decorate([
-    ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], Chat.prototype, "created", void 0);
 __decorate([
-    ObjField({ description: 'Chat Message', example: 'Hello!' }),
+    ObjectField({ description: 'Chat Message', example: 'Hello!' }),
     __metadata("design:type", String)
 ], Chat.prototype, "message", void 0);
 Chat = __decorate([

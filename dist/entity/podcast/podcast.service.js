@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { pathDeleteIfExists } from '../../utils/fs-utils.js';
@@ -20,6 +20,7 @@ import { Feed } from './podcast-feed.js';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { EpisodeService } from '../episode/episode.service.js';
 import { paginate } from '../base/base.utils.js';
+import { errorToString } from '../../utils/error.js';
 const log = logger('PodcastService');
 let PodcastService = class PodcastService {
     constructor() {
@@ -48,13 +49,13 @@ let PodcastService = class PodcastService {
         await this.imageModule.clearImageCacheByIDs([podcast.id]);
     }
     async mergeEpisodes(orm, podcast, episodes) {
-        if ((!episodes) || (!episodes.length)) {
+        if (episodes.length === 0) {
             return [];
         }
         const newEpisodes = [];
         const oldEpisodes = await podcast.episodes.getItems();
         for (const epi of episodes) {
-            let episode = oldEpisodes.find(e => e.guid === epi.guid);
+            let episode = oldEpisodes.find(entry => entry.guid === epi.guid);
             if (!episode) {
                 episode = orm.Episode.create({
                     ...epi,
@@ -65,13 +66,13 @@ let PodcastService = class PodcastService {
                 newEpisodes.push(episode);
             }
             await episode.podcast.set(podcast);
-            episode.duration = epi.duration !== undefined ? epi.duration * 1000 : undefined;
+            episode.duration = epi.duration === undefined ? undefined : epi.duration * 1000;
             episode.chaptersJSON = epi.chapters && epi.chapters.length > 0 ? JSON.stringify(epi.chapters) : undefined;
             episode.enclosuresJSON = epi.enclosures && epi.enclosures.length > 0 ? JSON.stringify(epi.enclosures) : undefined;
-            episode.date = epi.date ? epi.date : episode.date;
+            episode.date = epi.date ?? episode.date;
             episode.summary = epi.summary;
-            episode.name = epi.name || episode.name;
-            episode.guid = epi.guid || epi.link;
+            episode.name = epi.name ?? episode.name;
+            episode.guid = epi.guid ?? epi.link;
             episode.author = epi.author;
             orm.Episode.persistLater(episode);
         }
@@ -79,14 +80,14 @@ let PodcastService = class PodcastService {
         return newEpisodes;
     }
     async updatePodcast(orm, podcast, tag, episodes) {
-        podcast.name = tag.title || podcast.name;
+        podcast.name = tag.title ?? podcast.name;
         podcast.author = tag.author;
         podcast.description = tag.description;
         podcast.title = tag.title;
         podcast.link = tag.link;
         podcast.generator = tag.generator;
         podcast.language = tag.language;
-        podcast.categories = tag.categories || [];
+        podcast.categories = tag.categories ?? [];
         if (podcast.image) {
             const imageFile = path.resolve(this.podcastsPath, podcast.id, podcast.image);
             if (!(await fse.pathExists(imageFile))) {
@@ -100,9 +101,9 @@ let PodcastService = class PodcastService {
             try {
                 podcast.image = await this.imageModule.storeImage(podcastPath, 'cover', tag.image);
             }
-            catch (e) {
+            catch (error) {
                 podcast.image = undefined;
-                log.info('Downloading Podcast image failed', e);
+                log.info('Downloading Podcast image failed', errorToString(error));
             }
         }
         const newEpisodes = await this.mergeEpisodes(orm, podcast, episodes);
@@ -118,27 +119,21 @@ let PodcastService = class PodcastService {
             const feed = new Feed();
             try {
                 const result = await feed.get(podcast);
-                if (result) {
-                    await this.updatePodcast(orm, podcast, result.tag, result.episodes);
-                    podcast.status = PodcastStatus.completed;
-                }
-                else {
-                    podcast.status = PodcastStatus.error;
-                    podcast.errorMessage = 'No Podcast Feed Data';
-                }
+                await this.updatePodcast(orm, podcast, result.tag, result.episodes);
+                podcast.status = PodcastStatus.completed;
             }
-            catch (e) {
-                log.info('Refreshing Podcast failed', e);
+            catch (error) {
+                log.info('Refreshing Podcast failed', errorToString(error));
                 podcast.status = PodcastStatus.error;
-                podcast.errorMessage = (e || '').toString();
+                podcast.errorMessage = errorToString(error);
             }
             podcast.lastCheck = new Date();
             await orm.Podcast.persistAndFlush(podcast);
             this.podcastRefreshDebounce.resolve(podcast.id, undefined);
         }
-        catch (e) {
+        catch (error) {
             this.podcastRefreshDebounce.resolve(podcast.id, undefined);
-            return Promise.reject(e);
+            return Promise.reject(error);
         }
     }
     async refreshPodcasts(orm) {
@@ -149,7 +144,7 @@ let PodcastService = class PodcastService {
         }
         log.info('Refreshed');
     }
-    async getImage(orm, podcast, size, format) {
+    async getImage(_orm, podcast, size, format) {
         if (podcast.image) {
             return this.imageModule.get(podcast.id, path.join(this.podcastsPath, podcast.id, podcast.image), size, format);
         }

@@ -1,22 +1,20 @@
 import cors from 'cors';
 export function useAuthenticatedCors(configService) {
-    const origins = configService.env.session.allowedCookieDomains || [];
+    const origins = configService.env.session.allowedCookieDomains ?? [];
     const corsOptionsDelegate = (req, callback) => {
         const corsOptions = {
             preflightContinue: false,
             credentials: true,
             allowedHeaders: ['Content-Type', 'Authorization'],
-            origin(origin, cb) {
+            origin(origin, originCallback) {
                 if (!origin || origins.includes(origin)) {
-                    cb(null, true);
+                    originCallback(null, true);
+                }
+                else if (req.method === 'OPTIONS' || req.query.jwt) {
+                    originCallback(null, true);
                 }
                 else {
-                    if (req.method === 'OPTIONS' || req.query.jwt) {
-                        cb(null, true);
-                    }
-                    else {
-                        cb(new Error('Not allowed by CORS'));
-                    }
+                    originCallback(new Error('Not allowed by CORS'));
                 }
             },
             methods: ['GET', 'POST']

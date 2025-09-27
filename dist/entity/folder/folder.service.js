@@ -8,13 +8,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { ArtworkImageType, FolderType } from '../../types/enums.js';
-import path from 'path';
+import path from 'node:path';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
-export async function getFolderDisplayArtwork(orm, folder) {
+export async function getFolderDisplayArtwork(_orm, folder) {
     const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
-    return (await folder.artworks.getItems()).find(a => a.types.includes(search));
+    const items = await folder.artworks.getItems();
+    return items.find(a => a.types.includes(search));
 }
 let FolderService = class FolderService {
     constructor() {
@@ -45,7 +46,7 @@ let FolderService = class FolderService {
         for (const folder of folders) {
             const parents = await this.collectFolderPath(await folder.parent.get());
             const health = await this.checker.run(orm, folder, parents);
-            if (health && health.length > 0) {
+            if (health.length > 0) {
                 result.push({ folder, health });
             }
         }

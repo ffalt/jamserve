@@ -3,16 +3,16 @@ import { StaticPool } from 'node-worker-threads-pool';
 import { logger } from '../../../utils/logger.js';
 import { FORMAT } from '../audio.format.js';
 import { id3v2ToRawTag, rawTagToID3v2 } from '../metadata.js';
-import path, { dirname } from 'path';
+import path from 'node:path';
 import { TagFormatType } from '../../../types/enums.js';
 import { analyzeMP3 } from '../tasks/task-analyze-mp3.js';
 import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
 import { fixMP3 } from '../tasks/task-fix-mp3.js';
 import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 const USE_TASKS = process.env.JAM_USE_TASKS;
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 const taskPath = path.join(__dirname, '..', 'tasks');
 export const taskRewriteMp3 = path.join(taskPath, 'task-rewrite-mp3.js');
 export const taskFixMp3 = path.join(taskPath, 'task-fix-mp3.js');
@@ -23,10 +23,7 @@ export class AudioModuleMP3 {
     async read(filename) {
         const mp3 = new MP3();
         try {
-            const result = await mp3.read(filename, { mpegQuick: true, mpeg: true, id3v2: true });
-            if (!result) {
-                return { format: TagFormatType.none };
-            }
+            const result = await mp3.read(filename, { mpegQuick: true, mpeg: true, id3v2: true, id3v1: false });
             if (result.id3v2) {
                 return {
                     format: TagFormatType.none,
@@ -52,8 +49,8 @@ export class AudioModuleMP3 {
     async readRaw(filename) {
         const id3v2 = new ID3v2();
         const result = await id3v2.read(filename);
-        if (!result || !result.head) {
-            return Promise.reject(Error('No ID3v2 Tag found'));
+        if (!result?.head) {
+            return Promise.reject(new Error('No ID3v2 Tag found'));
         }
         return id3v2ToRawTag(result);
     }
@@ -67,11 +64,7 @@ export class AudioModuleMP3 {
             await removeID3v1(filename);
             return;
         }
-        if (!this.removeID3v1Pool) {
-            this.removeID3v1Pool = new StaticPool({
-                size: 3, task: taskRemoveID3v1
-            });
-        }
+        this.removeID3v1Pool ?? (this.removeID3v1Pool = new StaticPool({ size: 3, task: taskRemoveID3v1 }));
         log.debug('remove ID3v1 Tag', filename);
         await this.removeID3v1Pool.exec(filename);
     }
@@ -79,11 +72,7 @@ export class AudioModuleMP3 {
         if (!USE_TASKS) {
             return fixMP3(filename);
         }
-        if (!this.fixMP3Pool) {
-            this.fixMP3Pool = new StaticPool({
-                size: 3, task: taskFixMp3
-            });
-        }
+        this.fixMP3Pool ?? (this.fixMP3Pool = new StaticPool({ size: 3, task: taskFixMp3 }));
         log.debug('fix Audio', filename);
         await this.fixMP3Pool.exec(filename);
     }
@@ -91,11 +80,7 @@ export class AudioModuleMP3 {
         if (!USE_TASKS) {
             return rewriteAudio(filename);
         }
-        if (!this.rewriteAudioPool) {
-            this.rewriteAudioPool = new StaticPool({
-                size: 3, task: taskRewriteMp3
-            });
-        }
+        this.rewriteAudioPool ?? (this.rewriteAudioPool = new StaticPool({ size: 3, task: taskRewriteMp3 }));
         log.debug('rewrite', filename);
         await this.rewriteAudioPool.exec(filename);
     }
@@ -103,13 +88,9 @@ export class AudioModuleMP3 {
         if (!USE_TASKS) {
             return analyzeMP3(filename);
         }
-        if (!this.analyzeMp3Pool) {
-            this.analyzeMp3Pool = new StaticPool({
-                size: 3, task: taskAnalyzeMp3
-            });
-        }
+        this.analyzeMp3Pool ?? (this.analyzeMp3Pool = new StaticPool({ size: 3, task: taskAnalyzeMp3 }));
         log.debug('analyze', filename);
-        return this.analyzeMp3Pool.exec(filename);
+        return await this.analyzeMp3Pool.exec(filename);
     }
     async extractTagImage(filename) {
         log.debug('extractTagImage', filename);
@@ -118,8 +99,8 @@ export class AudioModuleMP3 {
         if (tag) {
             const frames = tag.frames.filter(f => ['APIC', 'PIC'].includes(f.id));
             let frame = frames.find(f => f.value.pictureType === 3);
-            if (!frame) {
-                frame = frames[0];
+            if (!frame && frames.length > 0) {
+                frame = frames.at(0);
             }
             if (frame) {
                 return (frame.value).bin;
@@ -127,27 +108,51 @@ export class AudioModuleMP3 {
         }
         return;
     }
+    resolveTimeStampFormat(timestampFormat) {
+        if (timestampFormat === 1) {
+            return 'MPEG frames';
+        }
+        return 'milliseconds';
+    }
+    resolveContentType(contentType) {
+        switch (contentType) {
+            case 1: {
+                return 'lyrics';
+            }
+            case 2: {
+                return 'text transcription';
+            }
+            case 3: {
+                return 'part name';
+            }
+            case 4: {
+                return 'events';
+            }
+            case 5: {
+                return 'chord';
+            }
+            case 6: {
+                return 'trivia';
+            }
+            default: {
+                return 'other';
+            }
+        }
+    }
+    ;
     async extractTagSyncedLyrics(filename) {
         log.debug('extractTagSyncedLyrics', filename);
         const id3v2 = new ID3v2();
         const tag = await id3v2.read(filename);
-        const resolveTimeStampFormat = (timestampFormat) => {
-            switch (timestampFormat) {
-                case 1:
-                    return 'MPEG frames';
-                default:
-                    return 'milliseconds';
-            }
-        };
         if (tag) {
             const frames = tag.frames.filter(f => ['SLT'].includes(f.id));
             if (frames.length > 0) {
-                const frame = frames.find(f => f.value?.contentType === 1);
+                const frame = frames.find(f => f.value.contentType === 1);
                 if (frame) {
                     return {
                         language: frame.value.language,
-                        contentType: 'lyrics',
-                        timestampFormat: resolveTimeStampFormat(frame.value.timestampFormat),
+                        contentType: this.resolveContentType(frame.value.contentType),
+                        timestampFormat: this.resolveTimeStampFormat(frame.value.timestampFormat),
                         events: frame.value.events
                     };
                 }

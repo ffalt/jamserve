@@ -12,19 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { ImageFormatType, UserRole } from '../../types/enums.js';
 import { ApiImageTypes } from '../../types/consts.js';
-import { ImageArgs } from './image.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
-import { PathParams } from '../../modules/rest/decorators/PathParams.js';
+import { ImageParameters } from './image.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
+import { PathParameters } from '../../modules/rest/decorators/path-parameters.js';
 let ImageController = class ImageController {
-    async image(imageArgs, { orm, engine }) {
-        const result = await orm.findInImageTypes(imageArgs.id);
+    async image(parameters, { orm, engine }) {
+        const result = await orm.findInImageTypes(parameters.id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
-        return await engine.image.getObjImage(orm, result.obj, result.objType, imageArgs.size, imageArgs.format);
+        return await engine.image.getObjImage(orm, result.obj, result.objType, parameters.size, parameters.format);
     }
 };
 __decorate([
@@ -46,10 +46,10 @@ __decorate([
             { route: '/{id}', name: 'by Id', hideParameters: ['size', 'format'] }
         ]
     }),
-    __param(0, PathParams()),
-    __param(1, Ctx()),
+    __param(0, PathParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ImageArgs, Object]),
+    __metadata("design:paramtypes", [ImageParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ImageController.prototype, "image", null);
 ImageController = __decorate([

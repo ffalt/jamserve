@@ -12,10 +12,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Args, Ctx, Query, Resolver } from 'type-graphql';
 import { StatsQL } from './stats.js';
-import { StatsArgs } from './stats.args.js';
+import { StatsParameters } from './stats.parameters.js';
 let StatsResolver = class StatsResolver {
-    async stats(args, { engine, orm }) {
-        return await engine.stats.getStats(orm, args?.rootID);
+    async stats(parameters, { engine, orm }) {
+        return await engine.stats.getStats(orm, parameters.rootID);
     }
 };
 __decorate([
@@ -23,7 +23,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [StatsArgs, Object]),
+    __metadata("design:paramtypes", [StatsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], StatsResolver.prototype, "stats", null);
 StatsResolver = __decorate([

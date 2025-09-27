@@ -1,7 +1,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import axios, {AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
 export interface HttpHeaders {
 	Authorization?: string;
@@ -9,43 +9,41 @@ export interface HttpHeaders {
 
 export interface HTTPOptions {
 	headers?: HttpHeaders;
-	params?: any;
+	params?: unknown;
 	reportProgress?: boolean;
 	withCredentials?: boolean;
 }
 
-async function handleError(e: any): Promise<any> {
-	console.error(e);
-	if (e.status === 0) {
-		return Promise.reject(Error('Could not reach server'));
+function handleError(error: unknown): never {
+	console.error(error);
+	if (error instanceof AxiosError && error.status === 0) {
+		throw new Error('Could not reach server');
 	}
-	return Promise.reject(e);
+	throw error;
 }
 
 export class JamHttpService {
-
-	async raw(url: string, options: HTTPOptions): Promise<{buffer: ArrayBuffer; contentType: string}> {
+	async raw(url: string, options: HTTPOptions): Promise<{ buffer: ArrayBuffer; contentType: string }> {
 		try {
-			const opts:AxiosRequestConfig<any> = {
+			const axiosOptions: AxiosRequestConfig = {
 				headers: options.headers as AxiosRequestHeaders,
 				params: options.params,
-				// reportProgress: options.reportProgress,
 				responseType: 'arraybuffer' as const,
 				withCredentials: options.withCredentials
 			};
-			const result = await axios.get(url, opts);
-			return {buffer: result.data, contentType: result.headers['content-type'] || ''};
-		} catch (e: any) {
-			return handleError(e);
+			const result = await axios.get<ArrayBuffer>(url, axiosOptions);
+			return { buffer: result.data, contentType: (result.headers['content-type'] as string) ?? '' };
+		} catch (error: unknown) {
+			handleError(error);
 		}
 	}
 
 	async get<T>(url: string, options: HTTPOptions): Promise<T> {
 		try {
-			const result = await axios.get(url, {params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials});
-			return result.data;
-		} catch (e: any) {
-			return handleError(e);
+			const result = await axios.get(url, { params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials });
+			return result.data as T;
+		} catch (error: unknown) {
+			handleError(error);
 		}
 	}
 
@@ -54,11 +52,15 @@ export class JamHttpService {
 			const result = await axios.post(
 				url,
 				body,
-				{params: options.params, headers: options.headers as AxiosRequestHeaders, withCredentials: options.withCredentials}
+				{
+					params: options.params,
+					headers: options.headers as AxiosRequestHeaders,
+					withCredentials: options.withCredentials
+				}
 			);
-			return result.data;
-		} catch (e: any) {
-			return handleError(e);
+			return result.data as T;
+		} catch (error: unknown) {
+			handleError(error);
 		}
 	}
 
@@ -74,10 +76,9 @@ export class JamHttpService {
 					withCredentials: options.withCredentials
 				}
 			);
-			return result.data;
-		} catch (e: any) {
-			return handleError(e);
+			return result.data as T;
+		} catch (error: unknown) {
+			handleError(error);
 		}
 	}
-
 }

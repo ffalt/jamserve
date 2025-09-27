@@ -7,36 +7,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let WaveFormData = class WaveFormData {
 };
 __decorate([
-    ObjField({ description: 'The version number of the waveform data format', min: 1 }),
+    ObjectField({ description: 'The version number of the waveform data format', min: 1 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "version", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'The number of waveform channels present (version 2 only)', min: 0 }),
+    ObjectField({ description: 'The number of waveform channels present', min: 0 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "channels", void 0);
 __decorate([
-    ObjField({ description: 'Sample rate of original audio file (Hz)', min: 0 }),
+    ObjectField({ description: 'Sample rate of original audio file (Hz)', min: 0 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "sample_rate", void 0);
 __decorate([
-    ObjField({ description: 'Number of audio samples per waveform minimum/maximum pair', min: 0 }),
+    ObjectField({ description: 'Number of audio samples per waveform minimum/maximum pair', min: 0 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "samples_per_pixel", void 0);
 __decorate([
-    ObjField({ description: 'Resolution of waveform data. May be either 8 or 16', min: 0 }),
+    ObjectField({ description: 'Resolution of waveform data. May be either 8 or 16', min: 0 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "bits", void 0);
 __decorate([
-    ObjField({ description: 'Length of waveform data (number of minimum and maximum value pairs per channel)', min: 0 }),
+    ObjectField({ description: 'Length of waveform data (number of minimum and maximum value pairs per channel)', min: 0 }),
     __metadata("design:type", Number)
 ], WaveFormData.prototype, "length", void 0);
 __decorate([
-    ObjField(() => [Number], { description: 'Array of minimum and maximum waveform data points, interleaved. Depending on bits, each value may be in the range -128 to +127 or -32768 to +32727' }),
+    ObjectField(() => [Number], { description: 'Array of minimum and maximum waveform data points, interleaved. Depending on bits, each value may be in the range -128 to +127 or -32768 to +32727' }),
     __metadata("design:type", Array)
 ], WaveFormData.prototype, "data", void 0);
 WaveFormData = __decorate([

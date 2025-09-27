@@ -14,7 +14,7 @@ import { Root as GQLRoot, Arg, Args, Ctx, FieldResolver, ID, Query, Resolver } f
 import { Bookmark, BookmarkPageQL, BookmarkQL } from './bookmark.js';
 import { TrackQL } from '../track/track.js';
 import { EpisodeQL } from '../episode/episode.js';
-import { BookmarksArgs } from './bookmark.args.js';
+import { BookmarksParameters } from './bookmark.parameters.js';
 let BookmarkResolver = class BookmarkResolver {
     async bookmark(id, { orm, user }) {
         return await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id: id } } : { where: { id: id, user: user.id } });
@@ -42,7 +42,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [BookmarksArgs, Object]),
+    __metadata("design:paramtypes", [BookmarksParameters, Object]),
     __metadata("design:returntype", Promise)
 ], BookmarkResolver.prototype, "bookmarks", null);
 __decorate([

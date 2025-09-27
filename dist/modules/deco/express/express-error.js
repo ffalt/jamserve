@@ -2,7 +2,6 @@ export class ApiError extends Error {
     constructor(message, failCode) {
         super(message);
         this.name = this.constructor.name;
-        Error.captureStackTrace(this, this.constructor);
         this.failCode = failCode || 500;
     }
 }
@@ -13,19 +12,31 @@ export const Errors = {
     internalError: 'Guru Meditation',
     unauthorized: 'Unauthorized'
 };
-export function MissingParamError(param) {
-    return new ApiError(`${Errors.missingParameter}: ${param}`, 400);
+export function missingParameterError(parameter) {
+    return new ApiError(`${Errors.missingParameter}: ${parameter}`, 400);
 }
-export function InvalidParamError(param, msg) {
-    return new ApiError(`${Errors.invalidParameter}: ${param}${msg ? ` - ${msg}` : ''}`, 422);
+export function invalidParameterError(parameter, message) {
+    let value = `${Errors.invalidParameter}: ${parameter}`;
+    if (message) {
+        value += ` - ${message}`;
+    }
+    return new ApiError(value, 422);
 }
-export function NotFoundError(msg) {
-    return new ApiError(`${Errors.itemNotFound}${msg ? `: ${msg}` : ''}`, 404);
+export function notFoundError(message) {
+    let value = Errors.itemNotFound;
+    if (message) {
+        value += `: ${message}`;
+    }
+    return new ApiError(value, 404);
 }
-export function UnauthError(msg) {
-    return new ApiError(`${Errors.unauthorized}${msg ? `: ${msg}` : ''}`, 401);
+export function unauthError(message) {
+    let value = Errors.unauthorized;
+    if (message) {
+        value += `: ${message}`;
+    }
+    return new ApiError(value, 401);
 }
-export function GenericError(msg) {
-    return new ApiError(msg || 'Guru Meditation', 500);
+export function genericError(message) {
+    return new ApiError(message ?? 'Guru Meditation', 500);
 }
 //# sourceMappingURL=express-error.js.map

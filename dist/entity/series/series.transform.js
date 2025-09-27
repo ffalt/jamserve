@@ -12,10 +12,10 @@ import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 let SeriesTransformService = class SeriesTransformService extends BaseTransformService {
-    async seriesBases(orm, list, seriesArgs, user) {
-        return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesArgs, user)));
+    async seriesBases(orm, list, seriesParameters, user) {
+        return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesParameters, user)));
     }
-    async seriesBase(orm, o, seriesArgs, user) {
+    async seriesBase(orm, o, seriesParameters, user) {
         const artist = await o.artist.getOrFail();
         return {
             id: o.id,
@@ -24,15 +24,15 @@ let SeriesTransformService = class SeriesTransformService extends BaseTransformS
             artist: artist.name,
             artistID: artist.id,
             albumTypes: o.albumTypes,
-            albumCount: seriesArgs.seriesIncAlbumCount ? await o.albums.count() : undefined,
-            trackCount: seriesArgs.seriesIncTrackCount ? await o.tracks.count() : undefined,
-            trackIDs: seriesArgs.seriesIncTrackIDs ? await o.tracks.getIDs() : undefined,
-            albumIDs: seriesArgs.seriesIncAlbumIDs ? await o.albums.getIDs() : undefined,
-            info: seriesArgs.seriesIncInfo ? await this.metaData.extInfo.bySeries(orm, o) : undefined,
-            state: seriesArgs.seriesIncState ? await this.state(orm, o.id, DBObjectType.series, user.id) : undefined
+            albumCount: seriesParameters.seriesIncAlbumCount ? await o.albums.count() : undefined,
+            trackCount: seriesParameters.seriesIncTrackCount ? await o.tracks.count() : undefined,
+            trackIDs: seriesParameters.seriesIncTrackIDs ? await o.tracks.getIDs() : undefined,
+            albumIDs: seriesParameters.seriesIncAlbumIDs ? await o.albums.getIDs() : undefined,
+            info: seriesParameters.seriesIncInfo ? await this.metaData.extInfo.bySeries(orm, o) : undefined,
+            state: seriesParameters.seriesIncState ? await this.state(orm, o.id, DBObjectType.series, user.id) : undefined
         };
     }
-    async seriesIndex(orm, result) {
+    async seriesIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

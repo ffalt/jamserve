@@ -14,11 +14,11 @@ import { Session } from './session.model.js';
 import { JAMAPI_VERSION } from '../../modules/engine/rest/version.js';
 import { UserSession } from './user-session.model.js';
 import { UserRole } from '../../types/enums.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 let SessionController = class SessionController {
     session({ engine, user }) {
         let sessionUser;
@@ -50,22 +50,22 @@ let SessionController = class SessionController {
 };
 __decorate([
     Get(() => Session, { description: 'Check the Login State', summary: 'Check Session' }),
-    __param(0, Ctx()),
+    __param(0, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Session)
 ], SessionController.prototype, "session", null);
 __decorate([
     Get('/list', () => [UserSession], { roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions' }),
-    __param(0, Ctx()),
+    __param(0, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SessionController.prototype, "list", null);
 __decorate([
     Post('/remove', { roles: [UserRole.stream], description: 'Remove a user session', summary: 'Remove Session' }),
-    __param(0, BodyParam('id', { description: 'User Session Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, BodyParameter('id', { description: 'User Session Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)

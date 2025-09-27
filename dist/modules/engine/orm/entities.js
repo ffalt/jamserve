@@ -46,8 +46,7 @@ export const ORMEntities = [
     Track,
     User
 ];
-const empty = ORMEntities.findIndex(e => e === undefined);
-if (empty >= 0) {
+if (ORMEntities.some((entry) => entry === undefined)) {
     console.error(ORMEntities);
     throw new Error('Entity missing, probably because of a circular reference');
 }

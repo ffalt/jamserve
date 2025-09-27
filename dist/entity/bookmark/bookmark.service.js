@@ -6,23 +6,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums.js';
-import seq from 'sequelize';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { Op } from 'sequelize';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let BookmarkService = class BookmarkService {
-    async create(orm, destID, user, position, comment) {
-        let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [seq.Op.or]: [{ episode: destID }, { track: destID }] } });
-        if (!bookmark) {
-            const result = await orm.findInStreamTypes(destID);
+    async create(orm, destinationID, user, position, comment) {
+        let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [Op.or]: [{ episode: destinationID }, { track: destinationID }] } });
+        if (bookmark) {
+            bookmark.comment = comment;
+        }
+        else {
+            const result = await orm.findInStreamTypes(destinationID);
             if (!result) {
-                return Promise.reject(NotFoundError());
+                return Promise.reject(notFoundError());
             }
             bookmark = orm.Bookmark.create({ position, comment });
             await bookmark.episode.set(result.objType === DBObjectType.episode ? result.obj : undefined);
             await bookmark.track.set(result.objType === DBObjectType.track ? result.obj : undefined);
             await bookmark.user.set(user);
-        }
-        else {
-            bookmark.comment = comment;
         }
         await orm.Bookmark.persistAndFlush(bookmark);
         return bookmark;
@@ -30,13 +30,13 @@ let BookmarkService = class BookmarkService {
     async remove(orm, bookmarkID, userID) {
         await orm.Bookmark.removeByQueryAndFlush({ where: { id: bookmarkID, user: userID } });
     }
-    async removeByDest(orm, destID, userID) {
+    async removeByDest(orm, destinationID, userID) {
         await orm.Bookmark.removeByQueryAndFlush({
             where: {
                 user: userID,
-                [seq.Op.or]: [
-                    { episode: destID },
-                    { track: destID }
+                [Op.or]: [
+                    { episode: destinationID },
+                    { track: destinationID }
                 ]
             }
         });

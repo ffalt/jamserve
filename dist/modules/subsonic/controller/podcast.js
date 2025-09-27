@@ -10,15 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-params.js';
+import { SubsonicParameterID, SubsonicParameterPodcastChannel, SubsonicParameterPodcastChannels, SubsonicParameterPodcastEpisodesNewest } from '../model/subsonic-rest-parameters.js';
 import { logger } from '../../../utils/logger.js';
 import { EpisodeOrderFields, PodcastStatus } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseNewestPodcasts, SubsonicResponsePodcasts } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 const log = logger('SubsonicApi');
 let SubsonicPodcastApi = class SubsonicPodcastApi {
@@ -47,46 +47,56 @@ let SubsonicPodcastApi = class SubsonicPodcastApi {
         return { podcasts };
     }
     async getNewestPodcasts(query, { orm, engine, user }) {
-        const episodes = await orm.Episode.findFilter({}, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count || 20, skip: query.offset || 0 }, user);
-        const newestPodcasts = {};
-        newestPodcasts.episode = await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user);
+        const episodes = await orm.Episode.findFilter({}, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count ?? 20, skip: query.offset ?? 0 }, user);
+        const newestPodcasts = {
+            episode: await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user)
+        };
         return { newestPodcasts };
     }
     async createPodcastChannel(query, { orm, engine, user }) {
         if (!user.rolePodcast) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         await engine.podcast.create(orm, query.url);
         return {};
     }
     async deletePodcastChannel(query, { orm, engine, user }) {
         if (!user.rolePodcast) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const podcast = await orm.Podcast.findOneOrFailByID(query.id);
-        engine.podcast.remove(orm, podcast).catch(e => log.error(e));
+        engine.podcast.remove(orm, podcast)
+            .catch((error) => {
+            log.error(error);
+        });
         return {};
     }
     async refreshPodcasts({ orm, engine, user }) {
         if (!user.rolePodcast) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
-        engine.podcast.refreshPodcasts(orm).catch(e => log.error(e));
+        engine.podcast.refreshPodcasts(orm)
+            .catch((error) => {
+            log.error(error);
+        });
         return {};
     }
     async downloadPodcastEpisode(query, { orm, engine, user }) {
         if (!user.rolePodcast) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const episode = await orm.Episode.findOneOrFailByID(query.id);
         if (!episode.path) {
-            engine.episode.downloadEpisode(orm, episode).catch(e => log.error(e));
+            engine.episode.downloadEpisode(orm, episode)
+                .catch((error) => {
+                log.error(error);
+            });
         }
         return {};
     }
     async deletePodcastEpisode(query, { orm, engine, user }) {
         if (!user.rolePodcast) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const episode = await orm.Episode.findOneOrFailByID(query.id);
         await engine.episode.deleteEpisode(orm, episode);
@@ -99,8 +109,8 @@ __decorate([
         description: 'Returns all Podcast channels the server subscribes to, and (optionally) their episodes.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterPodcastChannels, Object]),
     __metadata("design:returntype", Promise)
@@ -111,8 +121,8 @@ __decorate([
         description: 'Returns the most recently published Podcast episodes.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterPodcastEpisodesNewest, Object]),
     __metadata("design:returntype", Promise)
@@ -123,8 +133,8 @@ __decorate([
         description: 'Adds a new Podcast channel.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterPodcastChannel, Object]),
     __metadata("design:returntype", Promise)
@@ -135,7 +145,7 @@ __decorate([
         description: 'Deletes a Podcast channel.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
+    __param(0, SubsonicParameters()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -146,7 +156,7 @@ __decorate([
         description: 'Requests the server to check for new Podcast episodes.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -157,8 +167,8 @@ __decorate([
         description: 'Request the server to start downloading a given Podcast episode.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -169,8 +179,8 @@ __decorate([
         description: 'Deletes a Podcast episode.',
         tags: ['Podcasts']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)

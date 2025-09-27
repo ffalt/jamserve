@@ -10,36 +10,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { TrackBase } from '../track/track.model.js';
 import { EpisodeBase } from '../episode/episode.model.js';
 import { Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let NowPlaying = class NowPlaying {
 };
 __decorate([
-    ObjField({ description: 'User Name', example: 'user' }),
+    ObjectField({ description: 'User Name', example: 'user' }),
     __metadata("design:type", String)
 ], NowPlaying.prototype, "userName", void 0);
 __decorate([
-    ObjField({ description: 'User Id', isID: true }),
+    ObjectField({ description: 'User Id', isID: true }),
     __metadata("design:type", String)
 ], NowPlaying.prototype, "userID", void 0);
 __decorate([
-    ObjField({ description: 'Minutes ago', example: 3 }),
+    ObjectField({ description: 'Minutes ago', example: 3 }),
     __metadata("design:type", Number)
 ], NowPlaying.prototype, "minutesAgo", void 0);
 __decorate([
-    ObjField(() => TrackBase, { nullable: true, description: 'The played track' }),
+    ObjectField(() => TrackBase, { nullable: true, description: 'The played track' }),
     __metadata("design:type", TrackBase)
 ], NowPlaying.prototype, "track", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'The played track id' }),
+    ObjectField({ nullable: true, description: 'The played track id' }),
     __metadata("design:type", String)
 ], NowPlaying.prototype, "trackID", void 0);
 __decorate([
-    ObjField(() => EpisodeBase, { nullable: true, description: 'The played episode' }),
+    ObjectField(() => EpisodeBase, { nullable: true, description: 'The played episode' }),
     __metadata("design:type", EpisodeBase)
 ], NowPlaying.prototype, "episode", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'The played episode id' }),
+    ObjectField({ nullable: true, description: 'The played episode id' }),
     __metadata("design:type", String)
 ], NowPlaying.prototype, "episodeID", void 0);
 NowPlaying = __decorate([
@@ -49,7 +49,7 @@ export { NowPlaying };
 let NowPlayingPage = class NowPlayingPage extends Page {
 };
 __decorate([
-    ObjField(() => NowPlaying, { description: 'List of Now Playing Data' }),
+    ObjectField(() => NowPlaying, { description: 'List of Now Playing Data' }),
     __metadata("design:type", Array)
 ], NowPlayingPage.prototype, "items", void 0);
 NowPlayingPage = __decorate([

@@ -15,14 +15,14 @@ export class ArtworkRepository extends BaseRepository {
             return {};
         }
         let folderIDs = [];
-        if (filter?.childOfID) {
+        if (filter.childOfID) {
             const folderRepo = this.em.getRepository(Folder);
             const folder = await folderRepo.oneOrFailByID(filter.childOfID);
-            folderIDs = folderIDs.concat(await folderRepo.findAllDescendantsIds(folder));
+            folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder)];
             folderIDs.push(filter.childOfID);
         }
-        if (filter?.folderIDs) {
-            folderIDs = folderIDs.concat(filter.folderIDs);
+        if (filter.folderIDs) {
+            folderIDs = [...folderIDs, ...filter.folderIDs];
         }
         return QHelper.buildQuery([
             { id: filter.ids },

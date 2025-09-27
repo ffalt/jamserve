@@ -1,5 +1,6 @@
 import { logger } from './logger.js';
 import { WebserviceClient } from './webservice-client.js';
+import { errorStatusCode } from './error.js';
 const log = logger('WebserviceJSONClient');
 export class WebserviceJSONClient extends WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent, options) {
@@ -16,34 +17,34 @@ export class WebserviceJSONClient extends WebserviceClient {
         this.options = { ...defaultOptions, ...options };
     }
     reqToHost(_req) {
-        const port = this.options.port !== 80 ? `:${this.options.port}` : '';
+        const port = this.options.port === 80 ? '' : `:${this.options.port}`;
         return `${this.options.host}${port}`;
     }
     reqToUrl(req) {
         const q = Object.keys(req.query)
             .filter(key => (req.query[key] !== undefined && req.query[key] !== null))
             .map(key => `${key}=${req.query[key]}`);
-        const params = q.length > 0 ? `?${q.join('&')}` : '';
-        return `${this.reqToHost(req)}${req.path}${params}`;
+        const parameters = q.length > 0 ? `?${q.join('&')}` : '';
+        return `${this.reqToHost(req)}${req.path}${parameters}`;
     }
     async retry(error, req) {
-        if (this.options.retryOn && req.retry < (this.options.retryCount || 0)) {
+        if (this.options.retryOn && req.retry < (this.options.retryCount ?? 0)) {
             req.retry++;
             log.info(`rate limit hit, retrying in ${this.options.retryDelay}ms`);
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     this.get(req).then(resolve).catch(reject);
-                }, this.options.retryDelay || 3000);
+                }, this.options.retryDelay ?? 3000);
             });
         }
         return Promise.reject(error);
     }
-    async processError(e, req) {
-        const statusCode = e.statusCode;
+    async processError(error, req) {
+        const statusCode = errorStatusCode(error);
         if (statusCode === 502 || statusCode === 503) {
-            return this.retry(e, req);
+            return this.retry(error, req);
         }
-        return Promise.reject(e);
+        return Promise.reject(error);
     }
     isRateLimitError(body) {
         return !!body?.error?.includes('allowable rate limit');
@@ -54,12 +55,12 @@ export class WebserviceJSONClient extends WebserviceClient {
         try {
             const data = await this.getJson(url);
             if (this.isRateLimitError(data)) {
-                return this.retry(Error(data.error), req);
+                return await this.retry(new Error(data.error), req);
             }
             return data;
         }
-        catch (e) {
-            return this.processError(e, req);
+        catch (error) {
+            return this.processError(error, req);
         }
     }
 }

@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Root as GQLRoot, Args, Ctx, FieldResolver, Query, Resolver } from 'type-graphql';
 import { ChatQL } from './chat.js';
-import { ChatFilterArgs } from './chat.args.js';
+import { ChatFilterParameters } from './chat.parameters.js';
 let ChatResolver = class ChatResolver {
     async chats({ since }, { engine }) {
         return engine.chat.get(since);
@@ -26,7 +26,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ChatFilterArgs, Object]),
+    __metadata("design:paramtypes", [ChatFilterParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ChatResolver.prototype, "chats", null);
 __decorate([

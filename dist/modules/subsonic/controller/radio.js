@@ -11,15 +11,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { SubsonicOKResponse, SubsonicResponseInternetRadioStations } from '../model/subsonic-rest-data.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-params.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterID, SubsonicParameterInternetRadioCreate, SubsonicParameterInternetRadioUpdate } from '../model/subsonic-rest-parameters.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 let SubsonicInternetRadioApi = class SubsonicInternetRadioApi {
     async getInternetRadioStations({ orm }) {
-        const radios = (await orm.Radio.all()).filter(radio => !radio.disabled);
+        const radios = await orm.Radio.findFilter({ disabled: false });
         const internetRadioStation = [];
         for (const radio of radios) {
             internetRadioStation.push(await SubsonicFormatter.packRadio(radio));
@@ -28,7 +28,7 @@ let SubsonicInternetRadioApi = class SubsonicInternetRadioApi {
     }
     async createInternetRadioStation(query, { orm, user }) {
         if (!user.roleAdmin) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const radio = orm.Radio.create({ name: query.name, url: query.streamUrl, homepage: query.homepageUrl, disabled: false });
         await orm.Radio.persistAndFlush(radio);
@@ -36,18 +36,18 @@ let SubsonicInternetRadioApi = class SubsonicInternetRadioApi {
     }
     async updateInternetRadioStation(query, { orm, user }) {
         if (!user.roleAdmin) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const radio = await orm.Radio.findOneOrFailByID(query.id);
-        radio.name = query.name === undefined ? radio.name : query.name;
-        radio.url = query.streamUrl === undefined ? radio.url : query.streamUrl;
-        radio.homepage = query.homepageUrl === undefined ? radio.homepage : query.homepageUrl;
+        radio.name = query.name ?? radio.name;
+        radio.url = query.streamUrl ?? radio.url;
+        radio.homepage = query.homepageUrl ?? radio.homepage;
         await orm.Radio.persistAndFlush(radio);
         return {};
     }
     async deleteInternetRadioStation(query, { orm, user }) {
         if (!user.roleAdmin) {
-            return Promise.reject(SubsonicFormatter.ERRORS.UNAUTH);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.UNAUTH));
         }
         const radio = await orm.Radio.findOneOrFailByID(query.id);
         await orm.Radio.removeAndFlush(radio);
@@ -60,7 +60,7 @@ __decorate([
         description: 'Returns all internet radio stations.',
         tags: ['Radio']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -71,8 +71,8 @@ __decorate([
         description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
         tags: ['Radio']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterInternetRadioCreate, Object]),
     __metadata("design:returntype", Promise)
@@ -83,8 +83,8 @@ __decorate([
         description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
         tags: ['Radio']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterInternetRadioUpdate, Object]),
     __metadata("design:returntype", Promise)
@@ -95,8 +95,8 @@ __decorate([
         description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',
         tags: ['Radio']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)

@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Arg, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { Waveform, WaveformQL } from './waveform.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let WaveformResolver = class WaveformResolver {
     async waveform(id, { orm }) {
         const result = await orm.findInWaveformTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         return result;
     }
@@ -25,7 +25,7 @@ let WaveformResolver = class WaveformResolver {
         return JSON.stringify(await engine.waveform.getWaveformJSON(waveform.obj, waveform.objType));
     }
     async svg(waveform, width, { engine }) {
-        return (await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width)) || '';
+        return await engine.waveform.getWaveformSVG(waveform.obj, waveform.objType, width);
     }
 };
 __decorate([

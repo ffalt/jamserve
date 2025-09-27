@@ -1,6 +1,6 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import fse from 'fs-extra';
-import { FlacProcessorStream } from './lib/processor.js';
+import { FlacProcessorStream, MDB_TYPE } from './lib/processor.js';
 export class Flac {
     async read(filename) {
         const result = {};
@@ -8,17 +8,15 @@ export class Flac {
             const reader = fs.createReadStream(filename);
             const processor = new FlacProcessorStream(true, true);
             processor.on('postprocess', (mdb) => {
-                if (mdb.type === 0) {
+                if (mdb.type === MDB_TYPE.STREAMINFO) {
                     result.media = Flac.formatMediaBlock(mdb);
                 }
-                else if (mdb.type === 4) {
+                else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
                     result.comment = this.formatMediaComment(mdb);
                 }
-                else if (mdb.type === 6) {
-                    if (mdb.pictureData) {
-                        result.pictures = result.pictures || [];
-                        result.pictures.push(Flac.formatMediaPicture(mdb));
-                    }
+                else if (mdb.type === MDB_TYPE.PICTURE && mdb.pictureData) {
+                    result.pictures = result.pictures ?? [];
+                    result.pictures.push(Flac.formatMediaPicture(mdb));
                 }
             });
             processor.on('id3', (buffer) => {
@@ -27,38 +25,41 @@ export class Flac {
             processor.on('done', () => {
                 resolve(result);
             });
-            processor.on('error', (e) => {
-                reject(e);
+            processor.on('error', (error) => {
+                reject(error);
             });
-            reader.on('error', (e) => {
-                reject(e);
+            reader.on('error', (error) => {
+                reject(error);
             });
             try {
                 reader.pipe(processor);
             }
-            catch (e) {
-                reject(e);
+            catch (error) {
+                reject(error);
             }
         });
     }
     async writeTo(filename, destination, flacBlocks) {
         if (flacBlocks.length === 0) {
-            return Promise.reject(Error('Must write minimum 1 MetaDataBlock'));
+            return Promise.reject(new Error('Must write minimum 1 MetaDataBlock'));
         }
-        flacBlocks.forEach(flacBlock => {
+        for (const flacBlock of flacBlocks) {
             flacBlock.isLast = false;
-        });
+        }
         const reader = fs.createReadStream(filename);
         const writer = fs.createWriteStream(destination);
         const processor = new FlacProcessorStream(false, false);
         return new Promise((resolve, reject) => {
-            processor.on('preprocess', mdb => {
-                if (mdb.type === 4 || mdb.type === 6 || mdb.type === 1) {
+            processor.on('preprocess', (mdb) => {
+                if (mdb.type === MDB_TYPE.VORBIS_COMMENT || mdb.type === MDB_TYPE.PICTURE || mdb.type === MDB_TYPE.PADDING) {
                     mdb.remove();
                 }
                 if (mdb.isLast) {
-                    if (mdb.remove) {
-                        flacBlocks[flacBlocks.length - 1].isLast = true;
+                    if (mdb.removed) {
+                        const lastBlock = flacBlocks.at(-1);
+                        if (lastBlock) {
+                            lastBlock.isLast = true;
+                        }
                     }
                     for (const block of flacBlocks) {
                         processor.push(block.publish());
@@ -66,14 +67,14 @@ export class Flac {
                     flacBlocks = [];
                 }
             });
-            reader.on('error', (e) => {
-                reject(e);
+            reader.on('error', (error) => {
+                reject(error);
             });
-            processor.on('error', (e) => {
-                reject(e);
+            processor.on('error', (error) => {
+                reject(error);
             });
-            writer.on('error', (e) => {
-                reject(e);
+            writer.on('error', (error) => {
+                reject(error);
             });
             writer.on('finish', () => {
                 resolve();
@@ -82,36 +83,36 @@ export class Flac {
         });
     }
     async write(filename, flacBlocks) {
-        const tmpFile = `${filename}.tmp`;
+        const temporaryFile = `${filename}.tmp`;
         try {
-            await this.writeTo(filename, tmpFile, flacBlocks);
+            await this.writeTo(filename, temporaryFile, flacBlocks);
             const exists = await fse.pathExists(filename);
             if (exists) {
                 await fse.remove(filename);
             }
-            await fse.move(tmpFile, filename);
+            await fse.move(temporaryFile, filename);
         }
-        catch (e) {
-            const exists = await fse.pathExists(tmpFile);
+        catch (error) {
+            const exists = await fse.pathExists(temporaryFile);
             if (exists) {
-                await fse.remove(tmpFile);
+                await fse.remove(temporaryFile);
             }
-            return Promise.reject(e);
+            return Promise.reject(error);
         }
     }
     formatMediaComment(mdb) {
         const tag = {};
-        mdb.comments.forEach(line => {
+        for (const line of mdb.comments) {
             const pos = line.indexOf('=');
-            const key = line.slice(0, pos).toUpperCase().replace(/ /g, '_');
-            let i = 1;
+            const key = line.slice(0, pos).toUpperCase().replaceAll(' ', '_');
+            let index = 1;
             let suffix = '';
             while (tag[key + suffix]) {
-                i++;
-                suffix = `|${i}`;
+                index++;
+                suffix = `|${index}`;
             }
             tag[key + suffix] = line.slice(pos + 1);
-        });
+        }
         return { vendor: mdb.vendor, tag };
     }
     static formatMediaBlock(mdb) {
@@ -136,7 +137,7 @@ export class Flac {
             height: mdb.height,
             bitsPerPixel: mdb.bitsPerPixel,
             colors: mdb.colors,
-            pictureData: mdb.pictureData
+            pictureData: mdb.pictureData ?? Buffer.alloc(0)
         };
     }
 }

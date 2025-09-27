@@ -8,11 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ImageService_1;
-import path from 'path';
+import path from 'node:path';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
-import { AudioModule } from '../../modules/audio/audio.module.js';
 import { PodcastService } from '../podcast/podcast.service.js';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
@@ -42,9 +41,7 @@ let ImageService = ImageService_1 = class ImageService {
         if (!text && episode.path) {
             text = path.basename(episode.path);
         }
-        if (!text) {
-            text = episode.name;
-        }
+        text ?? (text = episode.name);
         if (!text) {
             text = 'Podcast Episode';
         }
@@ -52,58 +49,78 @@ let ImageService = ImageService_1 = class ImageService {
     }
     static async getCoverArtTextTrack(track) {
         const tag = await track.tag.get();
-        return tag && tag.title ? tag.title : path.basename(track.path);
+        return tag?.title ?? path.basename(track.path);
     }
     static getCoverArtTextPodcast(podcast) {
-        return podcast.title || podcast.url;
+        return podcast.title ?? podcast.url;
     }
     static async getCoverArtText(o, type) {
         switch (type) {
-            case DBObjectType.track:
+            case DBObjectType.track: {
                 return await ImageService_1.getCoverArtTextTrack(o);
-            case DBObjectType.folder:
+            }
+            case DBObjectType.folder: {
                 return ImageService_1.getCoverArtTextFolder(o);
-            case DBObjectType.episode:
+            }
+            case DBObjectType.episode: {
                 return await ImageService_1.getCoverArtTextEpisode(o);
-            case DBObjectType.podcast:
+            }
+            case DBObjectType.podcast: {
                 return ImageService_1.getCoverArtTextPodcast(o);
-            case DBObjectType.playlist:
+            }
+            case DBObjectType.playlist: {
                 return o.name;
-            case DBObjectType.series:
+            }
+            case DBObjectType.series: {
                 return o.name;
-            case DBObjectType.album:
+            }
+            case DBObjectType.album: {
                 return o.name;
-            case DBObjectType.artist:
+            }
+            case DBObjectType.artist: {
                 return o.name;
-            case DBObjectType.user:
+            }
+            case DBObjectType.user: {
                 return o.name;
-            case DBObjectType.root:
+            }
+            case DBObjectType.root: {
                 return o.name;
+            }
         }
         return type;
     }
     async getObjImageByType(orm, o, type, size, format) {
         switch (type) {
-            case DBObjectType.track:
+            case DBObjectType.track: {
                 return this.trackService.getImage(orm, o, size, format);
-            case DBObjectType.folder:
+            }
+            case DBObjectType.folder: {
                 return this.folderService.getImage(orm, o, size, format);
-            case DBObjectType.artist:
+            }
+            case DBObjectType.artist: {
                 return this.artistService.getImage(orm, o, size, format);
-            case DBObjectType.album:
+            }
+            case DBObjectType.album: {
                 return this.albumService.getImage(orm, o, size, format);
-            case DBObjectType.user:
+            }
+            case DBObjectType.user: {
                 return this.userService.getImage(orm, o, size, format);
-            case DBObjectType.podcast:
+            }
+            case DBObjectType.podcast: {
                 return this.podcastService.getImage(orm, o, size, format);
-            case DBObjectType.episode:
+            }
+            case DBObjectType.episode: {
                 return this.podcastService.getEpisodeImage(orm, o, size, format);
-            case DBObjectType.series:
+            }
+            case DBObjectType.series: {
                 return this.seriesService.getImage(orm, o, size, format);
-            case DBObjectType.artwork:
+            }
+            case DBObjectType.artwork: {
                 return this.artworkService.getImage(orm, o, size, format);
-            case DBObjectType.root:
+            }
+            case DBObjectType.root: {
                 return this.rootService.getImage(orm, o, size, format);
+            }
         }
         return;
     }
@@ -112,17 +129,13 @@ let ImageService = ImageService_1 = class ImageService {
     }
     async paintImage(obj, type, size, format) {
         const s = await ImageService_1.getCoverArtText(obj, type);
-        return this.imageModule.paint(s, size || 128, format);
+        return this.imageModule.paint(s, size ?? 128, format);
     }
 };
 __decorate([
     Inject,
     __metadata("design:type", ImageModule)
 ], ImageService.prototype, "imageModule", void 0);
-__decorate([
-    Inject,
-    __metadata("design:type", AudioModule)
-], ImageService.prototype, "audioModule", void 0);
 __decorate([
     Inject,
     __metadata("design:type", PodcastService)

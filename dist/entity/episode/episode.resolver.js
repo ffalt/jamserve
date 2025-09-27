@@ -18,7 +18,7 @@ import { Episode, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL
 import { TagQL } from '../tag/tag.js';
 import { PodcastQL } from '../podcast/podcast.js';
 import { BookmarkQL } from '../bookmark/bookmark.js';
-import { EpisodesArgsQL } from './episode.args.js';
+import { EpisodesParametersQL } from './episode.parameters.js';
 let EpisodeResolver = class EpisodeResolver {
     async episode(id, { orm }) {
         return await orm.Episode.oneOrFailByID(id);
@@ -79,7 +79,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [EpisodesArgsQL, Object]),
+    __metadata("design:paramtypes", [EpisodesParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "episodes", null);
 __decorate([

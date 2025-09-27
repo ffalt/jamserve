@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { MediaBase } from '../tag/tag.model.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let TrackBase = class TrackBase extends MediaBase {
 };
 __decorate([
-    ObjField({ description: 'Parent Folder Id', isID: true }),
+    ObjectField({ description: 'Parent Folder Id', isID: true }),
     __metadata("design:type", String)
 ], TrackBase.prototype, "parentID", void 0);
 TrackBase = __decorate([
@@ -31,7 +31,7 @@ export { Track };
 let TrackPage = class TrackPage extends Page {
 };
 __decorate([
-    ObjField(() => Track, { description: 'List of Tracks' }),
+    ObjectField(() => Track, { description: 'List of Tracks' }),
     __metadata("design:type", Array)
 ], TrackPage.prototype, "items", void 0);
 TrackPage = __decorate([
@@ -41,11 +41,11 @@ export { TrackPage };
 let TrackHealth = class TrackHealth {
 };
 __decorate([
-    ObjField(() => TrackBase, { description: 'Track' }),
+    ObjectField(() => TrackBase, { description: 'Track' }),
     __metadata("design:type", TrackBase)
 ], TrackHealth.prototype, "track", void 0);
 __decorate([
-    ObjField(() => [TrackHealthHint], { description: 'List of Health Hints' }),
+    ObjectField(() => [TrackHealthHint], { description: 'List of Health Hints' }),
     __metadata("design:type", Array)
 ], TrackHealth.prototype, "health", void 0);
 TrackHealth = __decorate([
@@ -55,7 +55,7 @@ export { TrackHealth };
 let TrackLyrics = class TrackLyrics {
 };
 __decorate([
-    ObjField({
+    ObjectField({
         nullable: true,
         description: 'Lyrics',
         example: 'I got a letter from the government\nThe other day\nI opened and read it\nIt said they were suckers\n They wanted me for their army or whatever\n Picture me given’ a damn, I said never.'
@@ -63,14 +63,18 @@ __decorate([
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "lyrics", void 0);
 __decorate([
-    ObjField({
+    ObjectField({
         nullable: true,
         description: 'Synced Lyrics'
     }),
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "syncedLyrics", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Audio Tag or External Service' }),
+    ObjectField({ nullable: true, description: 'Language of the the lyrics' }),
+    __metadata("design:type", String)
+], TrackLyrics.prototype, "language", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Audio Tag or External Service' }),
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "source", void 0);
 TrackLyrics = __decorate([

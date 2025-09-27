@@ -1077,66 +1077,67 @@ const genreData = {
 let GenresSlugs;
 export const Genres = genreData.list;
 function slugify(genre) {
-    return genre.replace(/[& \-.]/g, '').toLowerCase();
+    return genre.replaceAll(/[& \-.]/g, '').toLowerCase();
 }
 function buildGenreSlugs() {
-    if (!GenresSlugs) {
-        GenresSlugs = {};
-        Genres.forEach(g => GenresSlugs[slugify(g)] = g);
-    }
+    GenresSlugs ?? (GenresSlugs = Object.fromEntries(Genres.map(g => [slugify(g), g])));
+    return GenresSlugs;
 }
-export function getKnownGenre(genre) {
-    const slug = slugify(genre);
-    buildGenreSlugs();
-    return GenresSlugs[slug];
+function findByGenreSlug(part) {
+    const slug = slugify(part);
+    const slugs = buildGenreSlugs();
+    return slugs[slug];
+}
+function cleanGenrePartSlug(part) {
+    const result = findByGenreSlug(part);
+    if (result) {
+        return [result];
+    }
+    if (!part.includes(' & ')) {
+        return [part];
+    }
+    const subParts = part.split('&');
+    let results = [];
+    for (const sub of subParts) {
+        results = [...results, ...cleanGenre(sub)];
+    }
+    return results;
+}
+function cleanGenrePart(part) {
+    const numpart = /\((\d+)\)/.exec(part);
+    let value;
+    if (numpart) {
+        const numpart0 = numpart.at(0);
+        const numpart1 = numpart.at(1);
+        if (numpart0 && numpart1) {
+            value = Number(numpart1);
+            part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart0.length);
+        }
+    }
+    if (part.length === 0 && (value !== undefined)) {
+        const s = genreData.id3v1[value];
+        if (s) {
+            part = s;
+        }
+    }
+    if (part.length > 0) {
+        return cleanGenrePartSlug(part);
+    }
+    return;
 }
 export function cleanGenre(genre) {
     const results = [];
     const parts = genre.split('/');
-    parts.forEach(part => {
-        part = part.trim();
-        const numpart = /\((\d+)\)/.exec(part);
-        let num;
-        if (numpart) {
-            num = parseInt(numpart[1], 10);
-            part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart[0].length);
-        }
-        if (part.length === 0 && (num !== undefined)) {
-            const s = genreData.id3v1[num];
-            if (s) {
-                part = s;
-            }
-        }
-        if (part.length > 0) {
-            const slug = slugify(part);
-            let result;
-            buildGenreSlugs();
-            if (GenresSlugs && GenresSlugs[slug]) {
-                result = GenresSlugs[slug];
-            }
-            if (!result && part.includes(' & ')) {
-                const subParts = part.split('&');
-                subParts.forEach(sub => {
-                    const subs = cleanGenre(sub);
-                    for (const s of subs) {
-                        if (!results.includes(s)) {
-                            results.push(s);
-                        }
-                    }
-                });
-            }
-            else if (result) {
-                if (!results.includes(result)) {
-                    results.push(result);
-                }
-            }
-            else {
-                if (!results.includes(part)) {
-                    results.push(part);
+    for (const part of parts) {
+        const result = cleanGenrePart(part.trim());
+        if (result) {
+            for (const cleaned of result) {
+                if (!results.includes(cleaned)) {
+                    results.push(cleaned);
                 }
             }
         }
-    });
+    }
     return results;
 }
 //# sourceMappingURL=genres.js.map

@@ -41,6 +41,8 @@ import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
+import { GraphQLDateTimeISO } from 'graphql-scalars';
+import { GraphQLScalarType } from 'graphql';
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });
@@ -67,24 +69,29 @@ function registerEnums() {
 }
 function checkRole(role, context) {
     switch (role) {
-        case UserRole.admin:
+        case UserRole.admin: {
             if (!context.user.roleAdmin)
                 return false;
             break;
-        case UserRole.podcast:
+        }
+        case UserRole.podcast: {
             if (!context.user.rolePodcast)
                 return false;
             break;
-        case UserRole.upload:
+        }
+        case UserRole.upload: {
             if (!context.user.roleUpload)
                 return false;
             break;
-        case UserRole.stream:
+        }
+        case UserRole.stream: {
             if (!context.user.roleStream)
                 return false;
             break;
-        default:
+        }
+        default: {
             return false;
+        }
     }
     return true;
 }
@@ -96,6 +103,10 @@ export const customAuthChecker = ({ context }, roles) => {
     }
     return true;
 };
+const AliasedGraphQLDateTimeISO = new GraphQLScalarType({
+    ...GraphQLDateTimeISO.toConfig(),
+    name: 'DateTimeISO'
+});
 export async function buildGraphQlSchema() {
     registerEnums();
     return await buildSchema({
@@ -107,7 +118,8 @@ export async function buildGraphQlSchema() {
             SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
         ],
         validate: { forbidUnknownValues: false },
-        authChecker: customAuthChecker
+        authChecker: customAuthChecker,
+        scalarsMap: [{ type: Date, scalar: AliasedGraphQLDateTimeISO }]
     });
 }
 function formatValidationErrors(validationError) {
@@ -118,7 +130,7 @@ function formatValidationErrors(validationError) {
             constraints: validationError.constraints
         }),
         ...(validationError.children &&
-            validationError.children.length !== 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
+            validationError.children.length > 0 && { children: validationError.children.map(child => formatValidationErrors(child)) })
     };
 }
 export class ValidationError extends GraphQLError {
@@ -151,9 +163,9 @@ let ApolloMiddleware = class ApolloMiddleware {
                             async willSendResponse(requestContext) {
                                 const { errors } = requestContext;
                                 if (errors) {
-                                    errors.forEach((err) => {
-                                        console.error(err);
-                                    });
+                                    for (const error of errors) {
+                                        console.error(error);
+                                    }
                                 }
                             }
                         };

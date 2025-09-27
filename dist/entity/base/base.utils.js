@@ -1,11 +1,10 @@
-export function paginate(list, page) {
-    if (!page) {
-        page = {};
+export function paginate(list, page = {}) {
+    const total = list.length;
+    const take = page.take;
+    if (take === undefined || take < 0) {
+        return { items: list, total, ...page };
     }
-    if (page.take === undefined || page.take < 0) {
-        return { items: list, total: list.length, ...page };
-    }
-    page.skip = page.skip || 0;
-    return { items: list.slice(page.skip, page.skip + page.take), total: list.length, ...page };
+    const skip = page.skip ?? 0;
+    return { items: list.slice(skip, skip + take), total, ...page, skip };
 }
 //# sourceMappingURL=base.utils.js.map

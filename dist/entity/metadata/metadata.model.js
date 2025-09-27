@@ -8,33 +8,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Field, ObjectType } from 'type-graphql';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
+import { TrackLyrics } from '../track/track.model.js';
 let ExtendedInfo = class ExtendedInfo {
 };
 __decorate([
     Field(() => String),
-    ObjField({ description: 'Description', example: 'Very long Meta Information' }),
+    ObjectField({ description: 'Description', example: 'Very long Meta Information' }),
     __metadata("design:type", String)
 ], ExtendedInfo.prototype, "description", void 0);
 __decorate([
     Field(() => String),
-    ObjField({ description: 'Source of the Description', example: 'https://mediaservice.example.com' }),
+    ObjectField({ description: 'Source of the Description', example: 'https://mediaservice.example.com' }),
     __metadata("design:type", String)
 ], ExtendedInfo.prototype, "source", void 0);
 __decorate([
     Field(() => String),
-    ObjField({ description: 'License of the Description', example: 'CC0' }),
+    ObjectField({ description: 'License of the Description', example: 'CC0' }),
     __metadata("design:type", String)
 ], ExtendedInfo.prototype, "license", void 0);
 __decorate([
     Field(() => String),
-    ObjField({ description: 'Url of the Description', example: 'https://mediaservice.example.com/info/id/12345' }),
+    ObjectField({ description: 'Url of the Description', example: 'https://mediaservice.example.com/info/id/12345' }),
     __metadata("design:type", String)
 ], ExtendedInfo.prototype, "url", void 0);
 __decorate([
     Field(() => String),
-    ObjField({ description: 'Url of the License', example: 'https://creativecommons.org/share-your-work/public-domain/cc0/' }),
+    ObjectField({ description: 'Url of the License', example: 'https://creativecommons.org/share-your-work/public-domain/cc0/' }),
     __metadata("design:type", String)
 ], ExtendedInfo.prototype, "licenseUrl", void 0);
 ExtendedInfo = __decorate([
@@ -52,7 +53,7 @@ let ExtendedInfoResult = class ExtendedInfoResult {
 };
 __decorate([
     Field(() => ExtendedInfoQL, { nullable: true }),
-    ObjField(() => ExtendedInfo, { nullable: true, description: 'Extended Info' }),
+    ObjectField(() => ExtendedInfo, { nullable: true, description: 'Extended Info' }),
     __metadata("design:type", ExtendedInfo)
 ], ExtendedInfoResult.prototype, "info", void 0);
 ExtendedInfoResult = __decorate([
@@ -69,11 +70,21 @@ export { ExtendedInfoResultQL };
 let MetaDataResult = class MetaDataResult {
 };
 __decorate([
-    ObjField(() => Object, { nullable: true, description: 'MetaData' }),
+    ObjectField(() => Object, { nullable: true, description: 'MetaData' }),
     __metadata("design:type", Object)
 ], MetaDataResult.prototype, "data", void 0);
 MetaDataResult = __decorate([
     ResultType({ description: 'Metadata Result' })
 ], MetaDataResult);
 export { MetaDataResult };
+let MetaDataTrackLyricsResult = class MetaDataTrackLyricsResult {
+};
+__decorate([
+    ObjectField(() => TrackLyrics, { nullable: true, description: 'MetaData' }),
+    __metadata("design:type", TrackLyrics)
+], MetaDataTrackLyricsResult.prototype, "data", void 0);
+MetaDataTrackLyricsResult = __decorate([
+    ResultType({ description: 'Metadata TrackLyrics Result' })
+], MetaDataTrackLyricsResult);
+export { MetaDataTrackLyricsResult };
 //# sourceMappingURL=metadata.model.js.map

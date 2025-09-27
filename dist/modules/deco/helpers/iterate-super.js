@@ -9,13 +9,13 @@ export function iterateControllers(controllerClasses, ctrl, onControl) {
         superClass = Object.getPrototypeOf(superClass);
     }
 }
-export function iterateArguments(argumentTypes, argument, onArgument) {
-    onArgument(argument);
+export function iterateParameters(parameterTypes, argument, onParameter) {
+    onParameter(argument);
     let superClass = Object.getPrototypeOf(argument.target);
     while (superClass.prototype !== undefined) {
-        const superArgumentType = argumentTypes.find(it => it.target === superClass);
-        if (superArgumentType) {
-            onArgument(superArgumentType);
+        const superParameterType = parameterTypes.find(it => it.target === superClass);
+        if (superParameterType) {
+            onParameter(superParameterType);
         }
         superClass = Object.getPrototypeOf(superClass);
     }

@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { logger } from '../../utils/logger.js';
@@ -16,7 +16,7 @@ import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { FolderService } from '../folder/folder.service.js';
-import { basenameStripExt } from '../../utils/fs-utils.js';
+import { basenameStripExtension } from '../../utils/fs-utils.js';
 const log = logger('TrackService');
 let TrackService = class TrackService {
     constructor() {
@@ -52,12 +52,12 @@ let TrackService = class TrackService {
                 }
             }
             catch {
-                log.error('TrackService', 'Extracting image from audio failed: ' + path.join(track.path, track.fileName));
+                log.error('TrackService', `Extracting image from audio failed: ${path.join(track.path, track.fileName)}`);
             }
         }
         const folder = await track.folder.get();
         if (folder) {
-            const name = basenameStripExt(track.fileName);
+            const name = basenameStripExtension(track.fileName);
             const artworks = await folder.artworks.getItems();
             const artwork = artworks.find(a => a.name.startsWith(name));
             if (artwork) {
@@ -71,7 +71,7 @@ let TrackService = class TrackService {
         const result = [];
         await processQueue(3, tracks, async (track) => {
             const health = await this.checker.run(track, !!media);
-            if (health && health.length > 0) {
+            if (health.length > 0) {
                 result.push({ track, health });
             }
         });

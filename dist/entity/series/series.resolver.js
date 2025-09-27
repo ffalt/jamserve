@@ -14,7 +14,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { StateQL } from '../state/state.js';
 import { Series, SeriesIndexQL, SeriesPageQL, SeriesQL } from './series.js';
-import { SeriesArgsQL, SeriesIndexArgsQL } from './series.args.js';
+import { SeriesParametersQL, SeriesIndexParametersQL } from './series.parameters.js';
 import { AlbumQL } from '../album/album.js';
 import { TrackQL } from '../track/track.js';
 import { FolderQL } from '../folder/folder.js';
@@ -80,7 +80,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [SeriesArgsQL, Object]),
+    __metadata("design:paramtypes", [SeriesParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesResolver.prototype, "serieses", null);
 __decorate([
@@ -88,7 +88,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [SeriesIndexArgsQL, Object]),
+    __metadata("design:paramtypes", [SeriesIndexParametersQL, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesResolver.prototype, "seriesIndex", null);
 __decorate([

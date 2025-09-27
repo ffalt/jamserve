@@ -1,0 +1,1 @@
+{"version":3,"file":"controller.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAElE,OAAO,EAAE,cAAc,EAAE,MAAM,0CAA0C,CAAC;AAE1E,MAAM,UAAU,UAAU,CAAC,KAAa,EAAE,OAA2B;IACpE,OAAO,cAAc,CAAC,eAAe,EAAE,EAAE,KAAK,EAAE,OAAO,CAAC,CAAC;AAC1D,CAAC"}

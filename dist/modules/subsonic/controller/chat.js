@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterChatMessage, SubsonicParameterChatMessages } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterChatMessage, SubsonicParameterChatMessages } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseChatMessages } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicFormatter } from '../formatter.js';
 let SubsonicChatApi = class SubsonicChatApi {
     async addChatMessage(query, { engine, user }) {
@@ -24,7 +24,7 @@ let SubsonicChatApi = class SubsonicChatApi {
     }
     async getChatMessages(query, { engine }) {
         const messages = await engine.chat.get(query.since);
-        return { chatMessages: { chatMessage: messages.map(msg => SubsonicFormatter.packChatMessage(msg)) } };
+        return { chatMessages: { chatMessage: messages.map(message => SubsonicFormatter.packChatMessage(message)) } };
     }
 };
 __decorate([
@@ -33,8 +33,8 @@ __decorate([
         description: 'Adds a message to the chat log.',
         tags: ['Chat']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterChatMessage, Object]),
     __metadata("design:returntype", Promise)
@@ -45,8 +45,8 @@ __decorate([
         description: 'Returns the current visible (non-expired) chat messages.',
         tags: ['Chat']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterChatMessages, Object]),
     __metadata("design:returntype", Promise)

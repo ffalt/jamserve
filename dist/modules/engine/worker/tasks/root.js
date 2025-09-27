@@ -13,16 +13,16 @@ import { WorkerMergeScan } from '../merge-scan.js';
 let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
     static async validateRootPath(orm, dir) {
         const d = dir.trim();
-        if (d[0] === '.') {
-            return Promise.reject(Error('Root Directory must be absolute'));
+        if (d.startsWith('.')) {
+            return Promise.reject(new Error('Root Directory must be absolute'));
         }
         if (d.length === 0 || d.includes('*')) {
-            return Promise.reject(Error('Root Directory invalid'));
+            return Promise.reject(new Error('Root Directory invalid'));
         }
         const roots = await orm.Root.all();
         for (const r of roots) {
             if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
-                return Promise.reject(Error('Root path already used'));
+                return Promise.reject(new Error('Root path already used'));
             }
         }
     }
@@ -58,12 +58,13 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         let rootMatch;
         for (const folder of folders) {
             const parents = await this.getParents(folder);
-            if (parents[0]) {
+            const parent = parents.at(0);
+            if (parent) {
                 if (!rootMatch) {
-                    const tracks = await RootWorker_1.buildMergeTracks(parents[0]);
-                    rootMatch = { changed: true, folder: parents[0], path: parents[0].path, children: [], tracks, nrOfTracks: tracks.length };
+                    const tracks = await RootWorker_1.buildMergeTracks(parent);
+                    rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
                 }
-                const pathToChild = parents.slice(1).concat([folder]);
+                const pathToChild = [...parents.slice(1), folder];
                 await this.buildMergeNode(pathToChild, rootMatch);
             }
         }
@@ -74,7 +75,10 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         }
     }
     async buildMergeNode(pathToChild, merge) {
-        const folder = pathToChild[0];
+        const folder = pathToChild.at(0);
+        if (!folder) {
+            return;
+        }
         let node = merge.children.find(c => c.folder.id === folder.id);
         if (!node) {
             const tracks = await RootWorker_1.buildMergeTracks(folder);
@@ -112,7 +116,7 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         if (!parent) {
             return [];
         }
-        return (await this.getParents(parent)).concat([parent]);
+        return [...(await this.getParents(parent)), parent];
     }
     async loadEmptyUnchanged(node) {
         const folders = await node.folder.children.getItems();
@@ -134,10 +138,10 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         }
     }
     logNode(node) {
-        let stat = [' '.repeat(node?.folder?.level || 0) + (node?.changed ? '** ' : '|- ') + node?.folder?.path];
-        (node?.children || []).forEach(n => {
-            stat = stat.concat(this.logNode(n));
-        });
+        let stat = [`${' '.repeat(node?.folder.level ?? 0)}${node?.changed ? '** ' : '|- '}${node?.folder.path}`];
+        for (const n of (node?.children ?? [])) {
+            stat = [...stat, ...this.logNode(n)];
+        }
         return stat;
     }
     static async buildMergeTracks(folder) {

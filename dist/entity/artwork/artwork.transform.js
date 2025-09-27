@@ -8,10 +8,10 @@ import { InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
 let ArtworkTransformService = class ArtworkTransformService extends BaseTransformService {
-    async artworkBases(orm, list, artworkArgs, user) {
-        return await Promise.all(list.map(t => this.artworkBase(orm, t, artworkArgs, user)));
+    async artworkBases(orm, list, artworkParameters, user) {
+        return await Promise.all(list.map(t => this.artworkBase(orm, t, artworkParameters, user)));
     }
-    async artworkBase(orm, o, artworkArgs, user) {
+    async artworkBase(orm, o, artworkParameters, user) {
         return {
             id: o.id,
             name: o.name,
@@ -20,7 +20,7 @@ let ArtworkTransformService = class ArtworkTransformService extends BaseTransfor
             width: o.width,
             format: o.format,
             created: o.createdAt.valueOf(),
-            state: artworkArgs.artworkIncState ? await this.state(orm, o.id, DBObjectType.artwork, user.id) : undefined,
+            state: artworkParameters.artworkIncState ? await this.state(orm, o.id, DBObjectType.artwork, user.id) : undefined,
             size: o.fileSize
         };
     }

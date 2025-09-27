@@ -1,46 +1,42 @@
 import fse from 'fs-extra';
 import { ID3v2 } from 'jamp3';
-import { parentPort } from 'worker_threads';
+import { parentPort } from 'node:worker_threads';
 import { fileDeleteIfExists, fileSuffix } from '../../../utils/fs-utils.js';
 import { rewriteWriteFFmpeg } from '../tools/ffmpeg-rewrite.js';
 import { AudioFormatType } from '../../../types/enums.js';
-export async function rewriteAudio(param) {
-    const tempFile = `${param}.tmp`;
-    const backupFile = `${param}.bak`;
+export async function rewriteAudio(filename) {
+    const temporaryFile = `${filename}.tmp`;
+    const backupFile = `${filename}.bak`;
     try {
-        const suffix = fileSuffix(param);
+        const suffix = fileSuffix(filename);
         const id3v2 = new ID3v2();
         let tag;
         if (suffix === AudioFormatType.mp3) {
-            tag = await id3v2.read(param);
+            tag = await id3v2.read(filename);
         }
-        await rewriteWriteFFmpeg(param, tempFile);
+        await rewriteWriteFFmpeg(filename, temporaryFile);
         const exits = await fse.pathExists(backupFile);
-        if (exits) {
-            await fileDeleteIfExists(param);
-        }
-        else {
-            await fse.copy(param, backupFile);
-        }
+        await (exits ? fileDeleteIfExists(filename) : fse.copy(filename, backupFile));
         if (tag) {
-            await id3v2.write(tempFile, tag, 4, 0, { keepBackup: false, paddingSize: 10 });
+            await id3v2.write(temporaryFile, tag, 4, 0, { keepBackup: false, paddingSize: 10 });
         }
-        await fse.rename(tempFile, param);
+        await fse.rename(temporaryFile, filename);
     }
-    catch (e) {
-        await fileDeleteIfExists(tempFile);
-        return Promise.reject(e);
+    catch (error) {
+        await fileDeleteIfExists(temporaryFile);
+        return Promise.reject(error);
     }
 }
 if (parentPort && process.env.JAM_USE_TASKS) {
-    parentPort.on('message', async (param) => {
-        if (typeof param !== 'string') {
-            throw new Error('param must be a string.');
+    const caller = parentPort;
+    caller.on('message', (parameters) => {
+        if (typeof parameters !== 'string') {
+            throw new TypeError('param must be a string.');
         }
-        await rewriteAudio(param);
-        if (parentPort) {
-            parentPort.postMessage(undefined);
-        }
+        void rewriteAudio(parameters)
+            .then(() => {
+            caller.postMessage(undefined);
+        });
     });
 }
 //# sourceMappingURL=task-rewrite-mp3.js.map

@@ -6,12 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { InRequestScope } from 'typescript-ioc';
 import { StateHelper } from './state.helper.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let StateService = class StateService {
     async fav(orm, id, remove, user) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         const helper = new StateHelper(orm.em);
         return await helper.fav(result.obj.id, result.objType, user, !!remove);
@@ -19,7 +19,7 @@ let StateService = class StateService {
     async rate(orm, id, rating, user) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         const helper = new StateHelper(orm.em);
         return await helper.rate(result.obj.id, result.objType, user, rating);

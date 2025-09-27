@@ -12,45 +12,45 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Artwork, ArtworkPage } from './artwork.model.js';
 import { UserRole } from '../../types/enums.js';
-import { ArtworkFilterArgs, ArtworkNewArgs, ArtworkNewUploadArgs, ArtworkOrderArgs, ArtworkRenameArgs, IncludesArtworkArgs, IncludesArtworkChildrenArgs } from './artwork.args.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
+import { ArtworkFilterParameters, ArtworkNewParameters, ArtworkNewUploadParameters, ArtworkOrderParameters, ArtworkRenameParameters, IncludesArtworkParameters, IncludesArtworkChildrenParameters } from './artwork.parameters.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
-import { IncludesFolderArgs } from '../folder/folder.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { Upload } from '../../modules/rest/decorators/Upload.js';
+import { IncludesFolderParameters } from '../folder/folder.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { Upload } from '../../modules/rest/decorators/upload.js';
 import { UploadFile } from '../../modules/deco/definitions/upload-file.js';
-import { BodyParam } from '../../modules/rest/decorators/BodyParam.js';
+import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 let ArtworkController = class ArtworkController {
-    async id(id, artworkArgs, artworkChildrenArgs, folderArgs, { orm, engine, user }) {
-        return engine.transform.artwork(orm, await orm.Artwork.oneOrFailByID(id), artworkArgs, artworkChildrenArgs, folderArgs, user);
+    async id(id, artworkParameters, artworkChildrenParameters, folderParameters, { orm, engine, user }) {
+        return engine.transform.artwork(orm, await orm.Artwork.oneOrFailByID(id), artworkParameters, artworkChildrenParameters, folderParameters, user);
     }
-    async search(page, artworkArgs, artworkChildrenArgs, folderArgs, filter, order, list, { orm, engine, user }) {
+    async search(page, artworkParameters, artworkChildrenParameters, folderParameters, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
+            return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user));
         }
-        return await orm.Artwork.searchTransformFilter(filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkArgs, artworkChildrenArgs, folderArgs, user));
+        return await orm.Artwork.searchTransformFilter(filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user));
     }
-    async createByUrl(args, { orm, engine }) {
-        const folder = await orm.Folder.oneOrFailByID(args.folderID);
-        return await engine.artwork.createByUrl(folder, args.url, args.types);
+    async createByUrl(parameters, { orm, engine }) {
+        const folder = await orm.Folder.oneOrFailByID(parameters.folderID);
+        return await engine.artwork.createByUrl(folder, parameters.url, parameters.types);
     }
-    async createByUpload(args, file, { orm, engine }) {
-        const folder = await orm.Folder.oneOrFailByID(args.folderID);
-        return await engine.artwork.createByFile(folder, file.name, args.types);
+    async createByUpload(parameters, file, { orm, engine }) {
+        const folder = await orm.Folder.oneOrFailByID(parameters.folderID);
+        return await engine.artwork.createByFile(folder, file.name, parameters.types);
     }
     async update(id, file, { orm, engine }) {
         const artwork = await orm.Artwork.oneOrFailByID(id);
         return await engine.artwork.upload(artwork, file.name);
     }
-    async rename(args, { orm, engine }) {
-        const artwork = await orm.Artwork.oneOrFailByID(args.id);
-        return await engine.artwork.rename(artwork, args.newName);
+    async rename(parameters, { orm, engine }) {
+        const artwork = await orm.Artwork.oneOrFailByID(parameters.id);
+        return await engine.artwork.rename(artwork, parameters.newName);
     }
     async remove(id, { orm, engine }) {
         const artwork = await orm.Artwork.oneOrFailByID(id);
@@ -59,76 +59,76 @@ let ArtworkController = class ArtworkController {
 };
 __decorate([
     Get('/id', () => Artwork, { description: 'Get an Artwork by Id', summary: 'Get Artwork' }),
-    __param(0, QueryParam('id', { description: 'Artwork Id', isID: true })),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Artwork Id', isID: true })),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, IncludesArtworkArgs,
-        IncludesArtworkChildrenArgs,
-        IncludesFolderArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesArtworkParameters,
+        IncludesArtworkChildrenParameters,
+        IncludesFolderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "id", null);
 __decorate([
     Get('/search', () => ArtworkPage, { description: 'Search Artworks' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, QueryParams()),
-    __param(5, QueryParams()),
-    __param(6, QueryParams()),
-    __param(7, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, QueryParameters()),
+    __param(5, QueryParameters()),
+    __param(6, QueryParameters()),
+    __param(7, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesArtworkArgs,
-        IncludesArtworkChildrenArgs,
-        IncludesFolderArgs,
-        ArtworkFilterArgs,
-        ArtworkOrderArgs,
-        ListArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesArtworkParameters,
+        IncludesArtworkChildrenParameters,
+        IncludesFolderParameters,
+        ArtworkFilterParameters,
+        ArtworkOrderParameters,
+        ListParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "search", null);
 __decorate([
     Post('/create', () => AdminChangeQueueInfo, { description: 'Create an Artwork', roles: [UserRole.admin], summary: 'Create Artwork' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ArtworkNewArgs, Object]),
+    __metadata("design:paramtypes", [ArtworkNewParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "createByUrl", null);
 __decorate([
     Post('/upload', () => AdminChangeQueueInfo, { description: 'Upload an Artwork', roles: [UserRole.admin], summary: 'Upload Artwork' }),
-    __param(0, BodyParams()),
+    __param(0, BodyParameters()),
     __param(1, Upload('image')),
-    __param(2, Ctx()),
+    __param(2, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ArtworkNewUploadArgs,
+    __metadata("design:paramtypes", [ArtworkNewUploadParameters,
         UploadFile, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "createByUpload", null);
 __decorate([
     Post('/update', () => AdminChangeQueueInfo, { description: 'Update an Artwork', roles: [UserRole.admin], summary: 'Update Artwork' }),
-    __param(0, BodyParam('id', { description: 'Artwork Id', isID: true })),
+    __param(0, BodyParameter('id', { description: 'Artwork Id', isID: true })),
     __param(1, Upload('image')),
-    __param(2, Ctx()),
+    __param(2, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, UploadFile, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "update", null);
 __decorate([
     Post('/rename', () => AdminChangeQueueInfo, { description: 'Rename an Artwork', roles: [UserRole.admin], summary: 'Rename Artwork' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ArtworkRenameArgs, Object]),
+    __metadata("design:paramtypes", [ArtworkRenameParameters, Object]),
     __metadata("design:returntype", Promise)
 ], ArtworkController.prototype, "rename", null);
 __decorate([
     Post('/remove', () => AdminChangeQueueInfo, { description: 'Remove an Artwork', roles: [UserRole.admin], summary: 'Remove Artwork' }),
-    __param(0, BodyParam('id', { description: 'Artwork Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, BodyParameter('id', { description: 'Artwork Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)

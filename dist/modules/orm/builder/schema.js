@@ -1,6 +1,9 @@
-import seq from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { ORM_DATETIME, ORM_FLOAT, ORM_ID, ORM_INT } from '../definitions/orm-types.js';
 export class DBModel {
+    constructor(db) {
+        this.db = db;
+    }
 }
 export class ModelBuilder {
     constructor(sequelize, metadata) {
@@ -10,62 +13,61 @@ export class ModelBuilder {
     }
     async buildColumnAttributeModel(field, entity) {
         const type = field.getType();
-        const opts = field.typeOptions;
-        const allowNull = opts.nullable === true;
-        if (type === ORM_ID && opts.primaryKey) {
+        const options = field.typeOptions;
+        const allowNull = options.nullable === true;
+        if (type === ORM_ID && options.primaryKey) {
             return {
-                type: seq.DataTypes.UUID,
-                defaultValue: seq.DataTypes.UUIDV4,
+                type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV4,
                 allowNull: false,
                 unique: true,
                 primaryKey: true
             };
         }
         if (type === ORM_ID) {
-            return { type: seq.DataTypes.UUID, defaultValue: seq.DataTypes.UUIDV4, allowNull };
+            return { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull };
         }
         if (type === Boolean) {
-            return { type: seq.DataTypes.BOOLEAN, allowNull };
+            return { type: DataTypes.BOOLEAN, allowNull };
         }
         if (type === ORM_INT) {
-            return { type: seq.DataTypes.INTEGER, allowNull };
+            return { type: DataTypes.INTEGER, allowNull };
         }
         if (type === ORM_DATETIME || type === Date) {
-            return { type: seq.DataTypes.DATE, allowNull };
+            return { type: DataTypes.DATE, allowNull };
         }
         if (type === ORM_FLOAT || type === Number) {
-            return { type: seq.DataTypes.FLOAT, allowNull };
+            return { type: DataTypes.FLOAT, allowNull };
         }
         if (type === String) {
             return {
-                type: seq.DataTypes.TEXT,
+                type: DataTypes.TEXT,
                 allowNull
             };
         }
-        const enumInfo = this.metadata.enums.find(e => e.enumObj === type);
+        const enumInfo = this.metadata.enumInfo(type);
         if (enumInfo) {
             return {
-                type: seq.DataTypes.TEXT,
+                type: DataTypes.TEXT,
                 allowNull
             };
         }
-        const fObjectType = this.metadata.entities.find(it => it.target === type);
+        const fObjectType = this.metadata.entityInfo(type);
         if (fObjectType) {
             return;
         }
         throw new Error(`Unknown Property Type for ${entity.name}.${field.name}. Maybe an unregistered enum or entity?`);
     }
-    resolveMappedBy(opts, sourceEntity, sourceField, destEntity) {
-        if (!opts.mappedBy) {
+    resolveMappedBy(options, sourceEntity, sourceField, destinationEntity) {
+        if (!options.mappedBy) {
             throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);
         }
-        const properties = {};
-        destEntity.fields.forEach(f => properties[f.name] = f);
-        const destField = opts.mappedBy(properties);
-        if (!destField) {
+        const properties = Object.fromEntries(destinationEntity.fields.map(f => [f.name, f]));
+        const destinationField = options.mappedBy(properties);
+        if (!destinationField) {
             throw new Error(`Unknown Relation Mapping for ${sourceEntity.name}.${sourceField.name}.`);
         }
-        return destField;
+        return destinationField;
     }
     async buildEntityLinks(sourceEntity) {
         const sourceModel = this.modelMap.get(sourceEntity.name);
@@ -73,54 +75,54 @@ export class ModelBuilder {
             return;
         }
         for (const sourceField of sourceEntity.fields) {
-            const opts = sourceField.typeOptions;
-            if (opts.relation) {
-                this.buildRelation(opts, sourceEntity, sourceField, sourceModel);
+            const options = sourceField.typeOptions;
+            if (options.relation) {
+                this.buildRelation(options, sourceEntity, sourceField, sourceModel);
             }
         }
     }
-    buildRelation(opts, sourceEntity, sourceField, sourceModel) {
+    buildRelation(options, sourceEntity, sourceField, sourceModel) {
         const type = sourceField.getType();
-        const destEntity = this.metadata.entities.find(it => it.target === type);
-        if (destEntity) {
-            const destModel = this.modelMap.get(destEntity.name);
-            if (destModel) {
-                switch (opts.relation) {
+        const destinationEntity = this.metadata.entityInfo(type);
+        if (destinationEntity) {
+            const destinationModel = this.modelMap.get(destinationEntity.name);
+            if (destinationModel) {
+                switch (options.relation) {
                     case 'one2many': {
-                        this.oneToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+                        this.oneToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
                         break;
                     }
                     case 'many2one': {
-                        this.manyToOne(opts, sourceEntity, sourceField, destEntity);
+                        this.manyToOne(options, sourceEntity, sourceField, destinationEntity);
                         break;
                     }
                     case 'many2many': {
-                        this.manyToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+                        this.manyToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
                         break;
                     }
                     case 'one2one': {
-                        this.oneToOne(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel);
+                        this.oneToOne(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
                         break;
                     }
                 }
             }
         }
     }
-    oneToOne(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel) {
-        const o2o = opts;
-        const destField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destEntity);
-        if (destField.typeOptions.relation !== 'one2one') {
-            throw new Error(`Invalid OneToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+    oneToOne(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel) {
+        const o2o = options;
+        const destinationField = this.resolveMappedBy(o2o, sourceEntity, sourceField, destinationEntity);
+        if (destinationField.typeOptions.relation !== 'one2one') {
+            throw new Error(`Invalid OneToOne Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
         }
-        if (!o2o.owner && !destField.typeOptions.owner) {
-            throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+        if (!o2o.owner && !destinationField.typeOptions.owner) {
+            throw new Error(`Missing owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destinationEntity.name}.${destinationField.name}.`);
         }
-        if (o2o.owner && destField.typeOptions.owner) {
-            throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destEntity.name}.${destField.name}.`);
+        if (o2o.owner && destinationField.typeOptions.owner) {
+            throw new Error(`Invalid both sides owner OneToOne Relation Spec for ${sourceEntity.name}.${sourceField.name} or ${destinationEntity.name}.${destinationField.name}.`);
         }
         if (o2o.owner) {
-            sourceModel.belongsTo(destModel, {
-                as: sourceField.name + 'ORM',
+            sourceModel.belongsTo(destinationModel, {
+                as: `${sourceField.name}ORM`,
                 foreignKey: {
                     allowNull: o2o.nullable,
                     name: sourceField.name
@@ -128,39 +130,37 @@ export class ModelBuilder {
             });
         }
     }
-    manyToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel) {
-        const m2m = opts;
-        const destField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destEntity);
-        if (destField.typeOptions.relation !== 'many2many') {
-            throw new Error(`Invalid ManyToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+    manyToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel) {
+        const m2m = options;
+        const destinationField = this.resolveMappedBy(m2m, sourceEntity, sourceField, destinationEntity);
+        if (destinationField.typeOptions.relation !== 'many2many') {
+            throw new Error(`Invalid ManyToMany Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
         }
-        const through = [sourceEntity, destEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
-        destModel.belongsToMany(sourceModel, { through, as: destField.name + 'ORM', foreignKey: sourceField.name });
+        const through = [sourceEntity, destinationEntity].sort((a, b) => a.name.localeCompare(b.name)).map(f => f.name).join('_to_');
+        destinationModel.belongsToMany(sourceModel, { through, as: `${destinationField.name}ORM`, foreignKey: sourceField.name });
     }
-    manyToOne(opts, sourceEntity, sourceField, destEntity) {
-        const m2o = opts;
-        const destField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destEntity);
-        if (destField.typeOptions.relation !== 'one2many') {
-            throw new Error(`Invalid OneToMany Relation Spec for ${destEntity.name}.${destField.name}.`);
+    manyToOne(options, sourceEntity, sourceField, destinationEntity) {
+        const m2o = options;
+        const destinationField = this.resolveMappedBy(m2o, sourceEntity, sourceField, destinationEntity);
+        if (destinationField.typeOptions.relation !== 'one2many') {
+            throw new Error(`Invalid OneToMany Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
         }
     }
-    oneToMany(opts, sourceEntity, sourceField, destEntity, sourceModel, destModel) {
-        const o2m = opts;
-        const destField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destEntity);
-        if (destField.typeOptions.relation !== 'many2one') {
-            throw new Error(`Invalid ManyToOne Relation Spec for ${destEntity.name}.${destField.name}.`);
+    oneToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel) {
+        const o2m = options;
+        const destinationField = this.resolveMappedBy(o2m, sourceEntity, sourceField, destinationEntity);
+        if (destinationField.typeOptions.relation !== 'many2one') {
+            throw new Error(`Invalid ManyToOne Relation Spec for ${destinationEntity.name}.${destinationField.name}.`);
         }
-        sourceModel.hasMany(destModel, {
-            type: seq.DataTypes.UUID,
-            as: sourceField.name + 'ORM',
+        sourceModel.hasMany(destinationModel, {
+            as: `${sourceField.name}ORM`,
             onDelete: o2m.onDelete,
-            foreignKey: destField.name
+            foreignKey: destinationField.name
         });
-        destModel.belongsTo(sourceModel, {
-            type: seq.DataTypes.UUID,
-            as: destField.name + 'ORM',
+        destinationModel.belongsTo(sourceModel, {
+            as: `${destinationField.name}ORM`,
             foreignKey: {
-                name: destField.name,
+                name: destinationField.name,
                 allowNull: o2m.nullable
             }
         });
@@ -179,8 +179,8 @@ export class ModelBuilder {
         this.modelMap.set(entity.name, model);
     }
     async build() {
-        const result = new DBModel();
-        const entities = this.metadata.entities.filter(e => !e.isAbstract);
+        const result = new DBModel(true);
+        const entities = this.metadata.entities.filter(entity => !entity.isAbstract);
         for (const entity of entities) {
             await this.buildEntityModel(entity);
         }

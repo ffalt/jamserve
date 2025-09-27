@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Arg, Args, Ctx, FieldResolver, ID, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { Root, RootPageQL, RootQL, RootStatusQL } from './root.js';
-import { RootsArgs } from './root.args.js';
+import { RootsParameters } from './root.parameters.js';
 import { TrackQL } from '../track/track.js';
 import { FolderQL } from '../folder/folder.js';
 import { AlbumQL } from '../album/album.js';
@@ -60,7 +60,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RootsArgs, Object]),
+    __metadata("design:paramtypes", [RootsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], RootResolver.prototype, "roots", null);
 __decorate([

@@ -10,13 +10,16 @@ export class PlaylistEntryRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case PlaylistEntryOrderFields.created:
+            case PlaylistEntryOrderFields.created: {
                 return [['createdAt', direction]];
-            case PlaylistEntryOrderFields.updated:
+            }
+            case PlaylistEntryOrderFields.updated: {
                 return [['updatedAt', direction]];
+            }
             case PlaylistEntryOrderFields.default:
-            case PlaylistEntryOrderFields.position:
+            case PlaylistEntryOrderFields.position: {
                 return [['position', direction]];
+            }
         }
         return [];
     }

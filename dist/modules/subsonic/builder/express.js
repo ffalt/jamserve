@@ -8,7 +8,7 @@ export function subsonicRouter(router, metadata, options) {
         }
         let all = [];
         iterateControllers(metadata.controllerClasses, ctrl, ctrlClass => {
-            all = all.concat(metadata.all.filter(g => g.controllerClassMetadata === ctrlClass));
+            all = [...all, ...metadata.all.filter(g => g.controllerClassMetadata === ctrlClass)];
         });
         const method = new ExpressMethod();
         for (const request of all) {

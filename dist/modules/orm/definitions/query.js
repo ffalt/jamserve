@@ -2,8 +2,6 @@ export var QueryOrder;
 (function (QueryOrder) {
     QueryOrder["ASC"] = "ASC";
     QueryOrder["DESC"] = "DESC";
-    QueryOrder["asc"] = "asc";
-    QueryOrder["desc"] = "desc";
 })(QueryOrder || (QueryOrder = {}));
 export var QueryOrderNumeric;
 (function (QueryOrderNumeric) {

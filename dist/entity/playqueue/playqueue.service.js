@@ -7,17 +7,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var PlayQueueService_1;
 import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let PlayQueueService = PlayQueueService_1 = class PlayQueueService {
     static async getDuration(media) {
         switch (media.objType) {
             case DBObjectType.episode: {
                 const episodeTag = await media.obj.tag.get();
-                return (episodeTag?.mediaDuration || 0);
+                return (episodeTag?.mediaDuration ?? 0);
             }
             case DBObjectType.track: {
                 const trackTag = await media.obj.tag.get();
-                return (trackTag?.mediaDuration || 0);
+                return (trackTag?.mediaDuration ?? 0);
             }
         }
         return 0;
@@ -30,30 +30,29 @@ let PlayQueueService = PlayQueueService_1 = class PlayQueueService {
         }
         return queue;
     }
-    async set(orm, args, user, client) {
+    async set(orm, { mediaIDs }, user, client) {
         let queue = await orm.PlayQueue.findOne({ where: { user: user.id } });
         if (!queue) {
             queue = orm.PlayQueue.create({});
             await queue.user.set(user);
         }
         queue.changedBy = client;
-        const ids = args.mediaIDs || [];
+        const ids = mediaIDs ?? [];
         const mediaList = [];
         for (const id of ids) {
             const media = await orm.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(NotFoundError());
+                return Promise.reject(notFoundError());
             }
             mediaList.push(media);
         }
-        const oldEntries = (await queue.entries.getItems()).sort((a, b) => b.position - a.position);
+        const entries = await queue.entries.getItems();
+        const oldEntries = entries.sort((a, b) => b.position - a.position);
         let duration = 0;
         let position = 1;
         for (const media of mediaList) {
             let entry = oldEntries.pop();
-            if (!entry) {
-                entry = orm.PlayQueueEntry.create({ playlist: queue, position });
-            }
+            entry ?? (entry = orm.PlayQueueEntry.create({ playlist: queue, position }));
             entry.position = position;
             await entry.track.set(media.objType === DBObjectType.track ? media.obj : undefined);
             await entry.episode.set(media.objType === DBObjectType.episode ? media.obj : undefined);

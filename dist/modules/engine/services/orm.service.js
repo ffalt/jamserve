@@ -26,13 +26,13 @@ import { InRequestScope } from 'typescript-ioc';
 import { MetaData } from '../../../entity/metadata/metadata.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
-import path from 'path';
+import path from 'node:path';
 import { ORM } from '../../orm/index.js';
 import { ORMEntities } from '../orm/entities.js';
 import { ORMRepositories } from '../orm/repositories.js';
 import { registerORMEnums } from '../orm/enum-registration.js';
 import { Genre } from '../../../entity/genre/genre.js';
-import { NotFoundError } from '../../deco/express/express-error.js';
+import { notFoundError } from '../../deco/express/express-error.js';
 registerORMEnums();
 export class Orm {
     constructor(em) {
@@ -64,7 +64,7 @@ export class Orm {
         for (const repo of repos) {
             const obj = await repo.findOneByID(id);
             if (obj) {
-                return { obj: obj, objType: repo.objType };
+                return { obj, objType: repo.objType };
             }
         }
         return;
@@ -77,13 +77,13 @@ export class Orm {
         for (const id of ids) {
             const media = await this.findInStreamTypes(id);
             if (!media) {
-                return Promise.reject(NotFoundError());
+                return Promise.reject(notFoundError());
             }
             list.push(media);
         }
         return list;
     }
-    byType(destType) {
+    byType(destinationType) {
         return [
             this.Album,
             this.Artist,
@@ -106,7 +106,7 @@ export class Orm {
             this.Tag,
             this.Track,
             this.User
-        ].find(repo => repo.objType === destType);
+        ].find(repo => repo.objType === destinationType);
     }
     async findInRepos(id, repos) {
         return Orm.findInReposTypes(id, repos);
@@ -174,7 +174,7 @@ let OrmService = class OrmService {
             username: config.env.db.user,
             password: config.env.db.password,
             database: config.env.db.name,
-            host: config.env.db.socket ? config.env.db.socket : config.env.db.host,
+            host: config.env.db.socket ?? config.env.db.host,
             port: config.env.db.port ? Number(config.env.db.port) : undefined
         };
     }

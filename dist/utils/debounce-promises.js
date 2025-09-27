@@ -3,22 +3,22 @@ export class DebouncePromises {
         this.pendingPromises = new Map();
     }
     getPendingArray(id) {
-        return this.pendingPromises.get(id) || [];
+        return this.pendingPromises.get(id) ?? [];
     }
     async append(id) {
         return new Promise((resolve, reject) => {
-            const run = (err, result) => {
-                if (err) {
-                    reject(err);
+            const run = (error, result) => {
+                if (error) {
+                    reject(error);
                 }
-                else if (!result) {
-                    reject(new Error('Invalid Promise Result'));
-                }
-                else {
+                else if (result) {
                     resolve(result);
                 }
+                else {
+                    reject(new Error('Invalid Promise Result'));
+                }
             };
-            this.pendingPromises.set(id, this.getPendingArray(id).concat([run]));
+            this.pendingPromises.set(id, [...this.getPendingArray(id), run]);
         });
     }
     setPending(id) {
@@ -30,15 +30,15 @@ export class DebouncePromises {
     resolve(id, result) {
         const pending = this.getPendingArray(id);
         this.pendingPromises.delete(id);
-        for (const cb of pending) {
-            cb(null, result);
+        for (const callback of pending) {
+            callback(undefined, result);
         }
     }
     reject(id, error) {
         const pending = this.getPendingArray(id);
         this.pendingPromises.delete(id);
-        for (const cb of pending) {
-            cb(error);
+        for (const callback of pending) {
+            callback(error);
         }
     }
 }

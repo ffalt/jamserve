@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { logger } from './logger.js';
 import { ensureTrailingPathSeparator } from './fs-utils.js';
 import { processQueue } from './queue.js';
@@ -19,7 +19,7 @@ export class DirScanner {
         const folders = [];
         const list = await fse.readdir(dir);
         for (const filename of list) {
-            if (filename[0] !== '.') {
+            if (!filename.startsWith('.')) {
                 const sub = path.join(dir, filename);
                 const subStat = await fse.stat(sub);
                 if (subStat.isDirectory()) {

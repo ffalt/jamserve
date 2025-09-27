@@ -7,8 +7,8 @@ export class WikipediaClient extends WebserviceClient {
     }
     async summary(title, lang) {
         log.info('requesting summary', title);
-        const url = `https://${(lang || 'en')}.wikipedia.org/w/api.php`;
-        const data = await this.getJson(url, {
+        const url = `https://${(lang ?? 'en')}.wikipedia.org/w/api.php`;
+        const data = await this.getJsonWithParameters(url, {
             action: 'query',
             prop: 'extracts',
             format: 'json',
@@ -16,20 +16,20 @@ export class WikipediaClient extends WebserviceClient {
             redirects: 1,
             titles: title
         });
-        if (!data || !data.query || !data.query.pages) {
+        if (!data?.query?.pages) {
             return;
         }
         const pages = data.query.pages;
-        const page = pages[Object.keys(pages)[0]];
+        const page = pages[Object.keys(pages).at(0) ?? -1];
         if (!page) {
             return;
         }
-        return { title: page.title, summary: page.extract, url: `https://${(lang || 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
+        return { title: page.title, summary: page.extract, url: `https://${(lang ?? 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
     }
     async summary_rest(title, lang) {
         log.info('requesting summary', title);
-        const url = `https://${(lang || 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-        const data = await this.getJson(url, { redirect: 'true' });
+        const url = `https://${(lang ?? 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+        const data = await this.getJsonWithParameters(url, { redirect: 'true' });
         if (!data) {
             return;
         }
@@ -39,10 +39,10 @@ export class WikipediaClient extends WebserviceClient {
         log.info('requesting wikidata entity', id);
         const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=${(id)}`;
         const data = await this.getJson(url);
-        if (!data || !data.entities) {
-            return;
+        if (data?.entities) {
+            return data.entities[id];
         }
-        return data.entities[id];
+        return;
     }
 }
 //# sourceMappingURL=wikipedia-client.js.map

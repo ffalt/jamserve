@@ -42,19 +42,15 @@ let SettingsService = SettingsService_1 = class SettingsService {
     }
     async loadSettings(orm) {
         const settingsStore = await SettingsService_1.getSettings(orm);
-        if (settingsStore) {
-            this.settings = JSON.parse(settingsStore.data);
-        }
+        this.settings = JSON.parse(settingsStore.data);
     }
     static async getSettings(orm) {
         let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });
-        if (!settingsStore) {
-            settingsStore = orm.Settings.create({
-                section: 'jamserve',
-                data: JSON.stringify(defaultEngineSettings),
-                version: JAMSERVE_VERSION
-            });
-        }
+        settingsStore ?? (settingsStore = orm.Settings.create({
+            section: 'jamserve',
+            data: JSON.stringify(defaultEngineSettings),
+            version: JAMSERVE_VERSION
+        }));
         return settingsStore;
     }
     async updateSettings(orm, settings) {

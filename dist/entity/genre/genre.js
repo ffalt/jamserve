@@ -9,8 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Field, Int, ObjectType } from 'type-graphql';
 import { Base, Index, IndexGroup, PaginatedResponse } from '../base/base.js';
-import { Entity, ManyToMany, Property } from '../../modules/orm/index.js';
-import { Collection } from '../../modules/orm/index.js';
+import { Entity, ManyToMany, Property, Collection } from '../../modules/orm/index.js';
 import { Track, TrackQL } from '../track/track.js';
 import { Album, AlbumQL } from '../album/album.js';
 import { Artist, ArtistQL } from '../artist/artist.js';

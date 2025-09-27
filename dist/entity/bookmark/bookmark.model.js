@@ -11,36 +11,36 @@ import { TrackBase } from '../track/track.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { EpisodeBase } from '../episode/episode.model.js';
 import { Page } from '../base/base.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let BookmarkBase = class BookmarkBase {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Track Id', isID: true }),
+    ObjectField({ description: 'Track Id', isID: true }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "trackID", void 0);
 __decorate([
-    ObjField({ description: 'Episode Id', isID: true }),
+    ObjectField({ description: 'Episode Id', isID: true }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "episodeID", void 0);
 __decorate([
-    ObjField({ description: 'Position in Audio', isID: true }),
+    ObjectField({ description: 'Position in Audio', isID: true }),
     __metadata("design:type", Number)
 ], BookmarkBase.prototype, "position", void 0);
 __decorate([
-    ObjField({ description: 'Comment', example: 'awesome!' }),
+    ObjectField({ description: 'Comment', example: 'awesome!' }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "comment", void 0);
 __decorate([
-    ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], BookmarkBase.prototype, "created", void 0);
 __decorate([
-    ObjField({ description: 'Changed Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Changed Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], BookmarkBase.prototype, "changed", void 0);
 BookmarkBase = __decorate([
@@ -50,11 +50,11 @@ export { BookmarkBase };
 let Bookmark = class Bookmark extends BookmarkBase {
 };
 __decorate([
-    ObjField(() => TrackBase, { nullable: true, description: 'The bookmarked Track' }),
+    ObjectField(() => TrackBase, { nullable: true, description: 'The bookmarked Track' }),
     __metadata("design:type", TrackBase)
 ], Bookmark.prototype, "track", void 0);
 __decorate([
-    ObjField(() => EpisodeBase, { nullable: true, description: 'The bookmarked Episode' }),
+    ObjectField(() => EpisodeBase, { nullable: true, description: 'The bookmarked Episode' }),
     __metadata("design:type", EpisodeBase)
 ], Bookmark.prototype, "episode", void 0);
 Bookmark = __decorate([
@@ -64,7 +64,7 @@ export { Bookmark };
 let BookmarkPage = class BookmarkPage extends Page {
 };
 __decorate([
-    ObjField(() => Bookmark, { description: 'List of Bookmark' }),
+    ObjectField(() => Bookmark, { description: 'List of Bookmark' }),
     __metadata("design:type", Array)
 ], BookmarkPage.prototype, "items", void 0);
 BookmarkPage = __decorate([

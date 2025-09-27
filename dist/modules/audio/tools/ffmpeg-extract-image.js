@@ -7,8 +7,8 @@ export async function extractFFmpegImage(filename, index, stream) {
             .on('end', () => {
             resolve();
         })
-            .on('error', err => {
-            reject(err);
+            .on('error', (error) => {
+            reject(error);
         });
         proc.writeToStream(stream, { end: true });
     });

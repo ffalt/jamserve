@@ -1,8 +1,8 @@
 import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, CoverArtArchiveLookupType, DefaultOrderFields, DownloadFormatType, EpisodeOrderFields, GenreOrderFields, FolderHealthID, FolderOrderFields, FolderType, ImageFormatType, JamObjectType, LastFMLookupType, ListType, MusicBrainzLookupType, MusicBrainzSearchType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackHealthID, TrackOrderFields, UserRole, WaveformFormatType } from '../../../types/enums.js';
 import { registerEnumType } from '../../deco/helpers/enums.js';
-import { getMetadataStorage } from '../../rest/metadata/getMetadataStorage.js';
+import { metadataStorage } from '../../rest/metadata/metadata-storage.js';
 export function registerRestEnums() {
-    const enums = getMetadataStorage().enums;
+    const enums = metadataStorage().enums;
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' }, enums);
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' }, enums);
     registerEnumType(TrackOrderFields, { name: 'TrackOrderFields' }, enums);

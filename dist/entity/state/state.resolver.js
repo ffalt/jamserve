@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Arg, Ctx, ID, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { StateQL } from './state.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let StateResolver = class StateResolver {
     async state(id, { orm, user }) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         return await orm.State.findOrCreate(result.obj.id, result.objType, user.id);
     }
@@ -29,7 +29,7 @@ let StateResolver = class StateResolver {
     }
 };
 __decorate([
-    Query(() => StateQL, { description: `Get User State (fav/rate/etc) for Base Objects` }),
+    Query(() => StateQL, { description: 'Get User State (fav/rate/etc) for Base Objects' }),
     __param(0, Arg('id', () => ID, { description: 'Object Id' })),
     __param(1, Ctx()),
     __metadata("design:type", Function),

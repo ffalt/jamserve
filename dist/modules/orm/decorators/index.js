@@ -1,8 +1,8 @@
-export * from './OneToMany.js';
-export * from './ManyToMany.js';
-export * from './ManyToOne.js';
-export * from './OneToOne.js';
-export * from './Property.js';
-export * from './PrimaryKey.js';
-export * from './Entity.js';
+export * from './one-to-many.js';
+export * from './many-to-many.js';
+export * from './many-to-one.js';
+export * from './one-to-one.js';
+export * from './property.js';
+export * from './primary-key.js';
+export * from './entity.js';
 //# sourceMappingURL=index.js.map

@@ -12,119 +12,119 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Genre, GenreIndex, GenrePage } from './genre.model.js';
 import { TrackOrderFields, UserRole } from '../../types/enums.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
-import { GenreFilterArgs, GenreOrderArgs, IncludesGenreArgs } from './genre.args.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
+import { GenreFilterParameters, GenreOrderParameters, IncludesGenreParameters } from './genre.parameters.js';
 import { TrackPage } from '../track/track.model.js';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
+import { IncludesTrackParameters, TrackOrderParameters } from '../track/track.parameters.js';
+import { AlbumOrderParameters, IncludesAlbumParameters } from '../album/album.parameters.js';
 import { AlbumPage } from '../album/album.model.js';
-import { ArtistOrderArgs, IncludesArtistArgs } from '../artist/artist.args.js';
+import { ArtistOrderParameters, IncludesArtistParameters } from '../artist/artist.parameters.js';
 import { ArtistPage } from '../artist/artist.model.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 let GenreController = class GenreController {
-    async id(id, genreArgs, { orm, engine, user }) {
-        return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), genreArgs, user);
+    async id(id, parameters, { orm, engine, user }) {
+        return engine.transform.Genre.genre(orm, await orm.Genre.oneOrFailByID(id), parameters, user);
     }
-    async search(page, genreArgs, filter, list, order, { orm, engine, user }) {
+    async search(page, parameters, filter, list, order, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, genreArgs, user));
+            return await orm.Genre.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, parameters, user));
         }
-        return await orm.Genre.searchTransformFilter(filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, genreArgs, user));
+        return await orm.Genre.searchTransformFilter(filter, [order], page, user, o => engine.transform.Genre.genre(orm, o, parameters, user));
     }
     async index(filter, { orm, engine }) {
         return await engine.transform.Genre.genreIndex(orm, await orm.Genre.indexFilter(filter));
     }
-    async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
+    async tracks(page, trackParameters, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        const orders = [{ orderBy: order?.orderBy ? order.orderBy : TrackOrderFields.default, orderDesc: order?.orderDesc || false }];
-        return await orm.Track.searchTransformFilter({ genreIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
+        const orders = [{ orderBy: order.orderBy ?? TrackOrderFields.default, orderDesc: order.orderDesc ?? false }];
+        return await orm.Track.searchTransformFilter({ genreIDs }, orders, page, user, o => engine.transform.Track.trackBase(orm, o, trackParameters, user));
     }
-    async albums(page, albumArgs, filter, order, { orm, engine, user }) {
+    async albums(page, albumParameters, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumParameters, user));
     }
-    async artists(page, artistArgs, filter, order, { orm, engine, user }) {
+    async artists(page, artistParameters, filter, order, { orm, engine, user }) {
         const genreIDs = await orm.Genre.findIDsFilter(filter, user);
-        return await orm.Artist.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Artist.artistBase(orm, o, artistArgs, user));
+        return await orm.Artist.searchTransformFilter({ genreIDs }, [order], page, user, o => engine.transform.Artist.artistBase(orm, o, artistParameters, user));
     }
 };
 __decorate([
     Get('/id', () => Genre, { description: 'Get a Genre by Id', summary: 'Get Genre' }),
-    __param(0, QueryParam('id', { description: 'Genre Id', isID: true })),
-    __param(1, QueryParams()),
-    __param(2, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Genre Id', isID: true })),
+    __param(1, QueryParameters()),
+    __param(2, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, IncludesGenreArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesGenreParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "id", null);
 __decorate([
     Get('/search', () => GenrePage, { description: 'Search Genres' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, QueryParams()),
-    __param(5, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, QueryParameters()),
+    __param(5, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesGenreArgs,
-        GenreFilterArgs,
-        ListArgs,
-        GenreOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesGenreParameters,
+        GenreFilterParameters,
+        ListParameters,
+        GenreOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "search", null);
 __decorate([
     Get('/index', () => GenreIndex, { description: 'Get the Navigation Index for Genres', summary: 'Get Genre Index' }),
-    __param(0, QueryParams()),
-    __param(1, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [GenreFilterArgs, Object]),
+    __metadata("design:paramtypes", [GenreFilterParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "index", null);
 __decorate([
     Get('/tracks', () => TrackPage, { description: 'Get Tracks of Genres', summary: 'Get Tracks' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesTrackArgs,
-        GenreFilterArgs,
-        TrackOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesTrackParameters,
+        GenreFilterParameters,
+        TrackOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "tracks", null);
 __decorate([
     Get('/albums', () => AlbumPage, { description: 'Get Albums of Genres', summary: 'Get Albums' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesAlbumArgs,
-        GenreFilterArgs,
-        AlbumOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesAlbumParameters,
+        GenreFilterParameters,
+        AlbumOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "albums", null);
 __decorate([
     Get('/artists', () => ArtistPage, { description: 'Get Artists of Genres', summary: 'Get Artists' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesArtistArgs,
-        GenreFilterArgs,
-        ArtistOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesArtistParameters,
+        GenreFilterParameters,
+        ArtistOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], GenreController.prototype, "artists", null);
 GenreController = __decorate([

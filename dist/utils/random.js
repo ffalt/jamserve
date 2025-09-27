@@ -1,8 +1,8 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 export function shuffle(list) {
-    for (let i = list.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [list[i], list[j]] = [list[j], list[i]];
+    for (let index = list.length - 1; index > 0; index--) {
+        const pos = Math.floor(Math.random() * (index + 1));
+        [list[index], list[pos]] = [list[pos], list[index]];
     }
     return list;
 }
@@ -16,10 +16,10 @@ export function randomItems(list, amount) {
     const result = [];
     const done = [];
     while ((result.length < amount)) {
-        const i = randomInt(0, list.length - 1);
-        if (!done.includes(i)) {
-            result.push(list[i]);
-            done.push(i);
+        const index = randomInt(0, list.length - 1);
+        if (!done.includes(index)) {
+            result.push(list[index]);
+            done.push(index);
         }
     }
     return result;

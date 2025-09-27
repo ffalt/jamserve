@@ -9,44 +9,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { MediaBase } from '../tag/tag.model.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let PlayQueueBase = class PlayQueueBase {
 };
 __decorate([
-    ObjField({ description: 'User Name', example: 'user' }),
+    ObjectField({ description: 'User Name', example: 'user' }),
     __metadata("design:type", String)
 ], PlayQueueBase.prototype, "userName", void 0);
 __decorate([
-    ObjField({ description: 'User Id', isID: true }),
+    ObjectField({ description: 'User Id', isID: true }),
     __metadata("design:type", String)
 ], PlayQueueBase.prototype, "userID", void 0);
 __decorate([
-    ObjField({ description: 'Number of Entries', min: 0, example: 5 }),
+    ObjectField({ description: 'Number of Entries', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], PlayQueueBase.prototype, "entriesCount", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'List of Media IDs' }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Media IDs' }),
     __metadata("design:type", Array)
 ], PlayQueueBase.prototype, "entriesIDs", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Current Entry Index in PlayQueue', min: 0, example: 1 }),
+    ObjectField({ nullable: true, description: 'Current Entry Index in PlayQueue', min: 0, example: 1 }),
     __metadata("design:type", Number)
 ], PlayQueueBase.prototype, "currentIndex", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Position in Current Entry', min: 0, example: 12345 }),
+    ObjectField({ nullable: true, description: 'Position in Current Entry', min: 0, example: 12345 }),
     __metadata("design:type", Number)
 ], PlayQueueBase.prototype, "mediaPosition", void 0);
 __decorate([
-    ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PlayQueueBase.prototype, "created", void 0);
 __decorate([
-    ObjField({ description: 'Changed Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Changed Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], PlayQueueBase.prototype, "changed", void 0);
 __decorate([
-    ObjField({ description: 'Last Changed by Client', example: 'Jamberry v1' }),
+    ObjectField({ description: 'Last Changed by Client', example: 'Jamberry v1' }),
     __metadata("design:type", String)
 ], PlayQueueBase.prototype, "changedBy", void 0);
 PlayQueueBase = __decorate([
@@ -56,7 +56,7 @@ export { PlayQueueBase };
 let PlayQueue = class PlayQueue extends PlayQueueBase {
 };
 __decorate([
-    ObjField(() => [MediaBase], { nullable: true, description: 'List of Media Entries' }),
+    ObjectField(() => [MediaBase], { nullable: true, description: 'List of Media Entries' }),
     __metadata("design:type", Array)
 ], PlayQueue.prototype, "entries", void 0);
 PlayQueue = __decorate([

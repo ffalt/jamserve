@@ -1,1 +1,0 @@
-{"version":3,"file":"Get.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/Get.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AAEvE,OAAO,EAAE,OAAO,EAAE,MAAM,8BAA8B,CAAC;AAEvD,MAAM,UAAU,GAAG,CAAC,8BAAwE,EAAE,uBAAwD,EAAE,YAA4B;IACnL,OAAO,OAAO,CAAC,kBAAkB,EAAE,EAAE,8BAA8B,EAAE,uBAAuB,EAAE,YAAY,CAAC,CAAC;AAC7G,CAAC"}

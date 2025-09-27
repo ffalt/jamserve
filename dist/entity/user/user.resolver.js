@@ -14,29 +14,29 @@ import { ListType, UserRole } from '../../types/enums.js';
 import { Arg, Args, Authorized, Ctx, FieldResolver, ID, ObjectType, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { User, UserFavoritesQL, UserIndexQL, UserPageQL, UserQL } from './user.js';
 import { UserService } from './user.service.js';
-import { UserIndexArgs, UsersArgs } from './user.args.js';
+import { UserIndexParameters, UsersParameters } from './user.parameters.js';
 import { SessionPageQL } from '../session/session.js';
 import { BookmarkPageQL } from '../bookmark/bookmark.js';
 import { PlayQueueQL } from '../playqueue/playqueue.js';
 import { PlaylistPageQL } from '../playlist/playlist.js';
-import { PlaylistPageArgsQL } from '../playlist/playlist.args.js';
-import { BookmarksPageArgsQL } from '../bookmark/bookmark.args.js';
-import { SessionsPageArgsQL } from '../session/session.args.js';
+import { PlaylistPageParametersQL } from '../playlist/playlist.parameters.js';
+import { BookmarksPageParametersQL } from '../bookmark/bookmark.parameters.js';
+import { SessionsPageParametersQL } from '../session/session.parameters.js';
 import { AlbumPageQL } from '../album/album.js';
-import { AlbumPageArgsQL } from '../album/album.args.js';
+import { AlbumPageParametersQL } from '../album/album.parameters.js';
 import { ArtistPageQL } from '../artist/artist.js';
-import { ArtistPageArgsQL } from '../artist/artist.args.js';
+import { ArtistPageParametersQL } from '../artist/artist.parameters.js';
 import { SeriesPageQL } from '../series/series.js';
-import { SeriesPageArgsQL } from '../series/series.args.js';
+import { SeriesPageParametersQL } from '../series/series.parameters.js';
 import { PodcastPageQL } from '../podcast/podcast.js';
-import { PodcastPageArgsQL } from '../podcast/podcast.args.js';
+import { PodcastPageParametersQL } from '../podcast/podcast.parameters.js';
 import { EpisodePageQL } from '../episode/episode.js';
-import { EpisodePageArgsQL } from '../episode/episode.args.js';
+import { EpisodePageParametersQL } from '../episode/episode.parameters.js';
 import { TrackPageQL } from '../track/track.js';
-import { TrackPageArgsQL } from '../track/track.args.js';
+import { TrackPageParametersQL } from '../track/track.parameters.js';
 import { FolderPageQL } from '../folder/folder.js';
-import { FolderPageArgsQL } from '../folder/folder.args.js';
-import { ArtworkPageArgsQL } from '../artwork/artwork.args.js';
+import { FolderPageParametersQL } from '../folder/folder.parameters.js';
+import { ArtworkPageParametersQL } from '../artwork/artwork.parameters.js';
 import { UserStatsQL } from '../stats/stats.js';
 let UserFavorites = class UserFavorites {
 };
@@ -79,7 +79,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, AlbumPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, AlbumPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "albums", null);
 __decorate([
@@ -88,7 +88,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, ArtistPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, ArtistPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "artists", null);
 __decorate([
@@ -97,7 +97,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, SeriesPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, SeriesPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "series", null);
 __decorate([
@@ -106,7 +106,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, PodcastPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, PodcastPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "podcasts", null);
 __decorate([
@@ -115,7 +115,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, EpisodePageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, EpisodePageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "episodes", null);
 __decorate([
@@ -124,7 +124,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, TrackPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, TrackPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "tracks", null);
 __decorate([
@@ -133,7 +133,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, FolderPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, FolderPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "folders", null);
 __decorate([
@@ -142,7 +142,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, PlaylistPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, PlaylistPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "playlists", null);
 __decorate([
@@ -151,7 +151,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserFavorites, Object, ArtworkPageArgsQL]),
+    __metadata("design:paramtypes", [UserFavorites, Object, ArtworkPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserFavoritesResolver.prototype, "artworks", null);
 UserFavoritesResolver = __decorate([
@@ -217,7 +217,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UsersArgs, Object]),
+    __metadata("design:paramtypes", [UsersParameters, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "users", null);
 __decorate([
@@ -226,7 +226,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UserIndexArgs, Object]),
+    __metadata("design:paramtypes", [UserIndexParameters, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "userIndex", null);
 __decorate([
@@ -250,7 +250,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [User, Object, PlaylistPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, PlaylistPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "playlists", null);
 __decorate([
@@ -259,7 +259,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [User, Object, BookmarksPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, BookmarksPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "bookmarks", null);
 __decorate([
@@ -268,7 +268,7 @@ __decorate([
     __param(1, Ctx()),
     __param(2, Args()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [User, Object, SessionsPageArgsQL]),
+    __metadata("design:paramtypes", [User, Object, SessionsPageParametersQL]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "sessions", null);
 __decorate([

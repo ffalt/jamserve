@@ -1,3 +1,4 @@
+import { errorStringCode } from '../../../../utils/error.js';
 export var WorkerRequestMode;
 (function (WorkerRequestMode) {
     WorkerRequestMode[WorkerRequestMode["refreshRoot"] = 0] = "refreshRoot";
@@ -31,12 +32,13 @@ export class IoRequest {
         try {
             return await this.execute(this.parameters);
         }
-        catch (e) {
-            console.error(e.stack);
-            if (['EACCES', 'ENOENT'].includes(e.code)) {
-                return Promise.reject(Error('Directory not found/no access/error in filesystem'));
+        catch (error) {
+            console.error(error);
+            const code = errorStringCode(error);
+            if (code && ['EACCES', 'ENOENT'].includes(code)) {
+                return Promise.reject(new Error('Directory not found/no access/error in filesystem'));
             }
-            return Promise.reject(e);
+            return Promise.reject(error);
         }
     }
 }

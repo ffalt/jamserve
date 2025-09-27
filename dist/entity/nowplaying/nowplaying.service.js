@@ -11,7 +11,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
 import { StateService } from '../state/state.service.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 const log = logger('NowPlayingService');
 let NowPlayingService = class NowPlayingService {
     constructor() {
@@ -33,7 +33,10 @@ let NowPlayingService = class NowPlayingService {
         this.report(orm, [
             { id: episode.id, type: DBObjectType.episode },
             { id: episode.podcast.idOrFail(), type: DBObjectType.podcast }
-        ], user).catch(e => log.error(e));
+        ], user)
+            .catch((error) => {
+            log.error(error);
+        });
         return result;
     }
     async reportTrack(orm, track, user) {
@@ -47,21 +50,27 @@ let NowPlayingService = class NowPlayingService {
             { id: track.folder.id(), type: DBObjectType.folder },
             { id: track.series.id(), type: DBObjectType.series },
             { id: track.root.id(), type: DBObjectType.root }
-        ], user).catch(e => log.error(e));
+        ], user)
+            .catch((error) => {
+            log.error(error);
+        });
         return result;
     }
     async scrobble(orm, id, user) {
         const result = await orm.findInStreamTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         switch (result.objType) {
-            case DBObjectType.track:
+            case DBObjectType.track: {
                 return await this.reportTrack(orm, result.obj, user);
-            case DBObjectType.episode:
+            }
+            case DBObjectType.episode: {
                 return this.reportEpisode(orm, result.obj, user);
-            default:
-                return Promise.reject(Error('Invalid Object Type for Scrobbling'));
+            }
+            default: {
+                return Promise.reject(new Error('Invalid Object Type for Scrobbling'));
+            }
         }
     }
 };

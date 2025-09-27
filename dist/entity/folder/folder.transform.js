@@ -13,8 +13,8 @@ import { DBObjectType, FolderType } from '../../types/enums.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let FolderTransformService = class FolderTransformService extends BaseTransformService {
-    async folderBases(orm, list, folderArgs, user) {
-        return await Promise.all(list.map(o => this.folderBase(orm, o, folderArgs, user)));
+    async folderBases(orm, list, folderParameters, user) {
+        return await Promise.all(list.map(o => this.folderBase(orm, o, folderParameters, user)));
     }
     async folderInfo(orm, o) {
         return o.folderType === FolderType.artist ?
@@ -24,7 +24,7 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
     async folderGenres(orm, o, user) {
         return this.Genre.genreBases(orm, await o.genres.getItems(), {}, user);
     }
-    async folderBase(orm, o, folderArgs, user) {
+    async folderBase(orm, o, folderParameters, user) {
         return {
             id: o.id,
             name: o.name,
@@ -33,36 +33,37 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
             type: o.folderType,
             level: o.level,
             parentID: o.parent.id(),
-            genres: folderArgs.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
-            trackCount: folderArgs.folderIncTrackCount ? await o.tracks.count() : undefined,
-            folderCount: folderArgs.folderIncChildFolderCount ? await o.children.count() : undefined,
-            artworkCount: folderArgs.folderIncArtworkCount ? await o.children.count() : undefined,
-            tag: folderArgs.folderIncTag ? await this.folderTag(o) : undefined,
-            parents: folderArgs.folderIncParents ? await this.folderParents(orm, o) : undefined,
-            trackIDs: folderArgs.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
-            folderIDs: folderArgs.folderIncFolderIDs ? await o.children.getIDs() : undefined,
-            artworkIDs: folderArgs.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
-            info: folderArgs.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
-            state: folderArgs.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
+            genres: folderParameters.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
+            trackCount: folderParameters.folderIncTrackCount ? await o.tracks.count() : undefined,
+            folderCount: folderParameters.folderIncChildFolderCount ? await o.children.count() : undefined,
+            artworkCount: folderParameters.folderIncArtworkCount ? await o.children.count() : undefined,
+            tag: folderParameters.folderIncTag ? await this.folderTag(o) : undefined,
+            parents: folderParameters.folderIncParents ? await this.folderParents(orm, o) : undefined,
+            trackIDs: folderParameters.folderIncTrackIDs ? await o.tracks.getIDs() : undefined,
+            folderIDs: folderParameters.folderIncFolderIDs ? await o.children.getIDs() : undefined,
+            artworkIDs: folderParameters.folderIncArtworkIDs ? await o.artworks.getIDs() : undefined,
+            info: folderParameters.folderIncInfo ? await this.folderInfo(orm, o) : undefined,
+            state: folderParameters.folderIncSimilar ? await this.state(orm, o.id, DBObjectType.folder, user.id) : undefined
         };
     }
-    async folderChildren(orm, o, folderChildrenArgs, user) {
-        const folderArgs = {
-            folderIncTag: folderChildrenArgs.folderChildIncTag,
-            folderIncState: folderChildrenArgs.folderChildIncState,
-            folderIncChildFolderCount: folderChildrenArgs.folderChildIncChildFolderCount,
-            folderIncTrackCount: folderChildrenArgs.folderChildIncTrackCount,
-            folderIncArtworkCount: folderChildrenArgs.folderChildIncArtworkCount,
-            folderIncParents: folderChildrenArgs.folderChildIncParents,
-            folderIncInfo: folderChildrenArgs.folderChildIncInfo,
-            folderIncSimilar: folderChildrenArgs.folderChildIncSimilar,
-            folderIncArtworkIDs: folderChildrenArgs.folderChildIncArtworkIDs,
-            folderIncTrackIDs: folderChildrenArgs.folderChildIncTrackIDs,
-            folderIncFolderIDs: folderChildrenArgs.folderChildIncFolderIDs
+    async folderChildren(orm, o, folderChildrenParameters, user) {
+        const folderParameters = {
+            folderIncTag: folderChildrenParameters.folderChildIncTag,
+            folderIncState: folderChildrenParameters.folderChildIncState,
+            folderIncChildFolderCount: folderChildrenParameters.folderChildIncChildFolderCount,
+            folderIncTrackCount: folderChildrenParameters.folderChildIncTrackCount,
+            folderIncArtworkCount: folderChildrenParameters.folderChildIncArtworkCount,
+            folderIncParents: folderChildrenParameters.folderChildIncParents,
+            folderIncInfo: folderChildrenParameters.folderChildIncInfo,
+            folderIncSimilar: folderChildrenParameters.folderChildIncSimilar,
+            folderIncArtworkIDs: folderChildrenParameters.folderChildIncArtworkIDs,
+            folderIncTrackIDs: folderChildrenParameters.folderChildIncTrackIDs,
+            folderIncFolderIDs: folderChildrenParameters.folderChildIncFolderIDs
         };
-        return await Promise.all((await o.children.getItems()).map(t => this.folderBase(orm, t, folderArgs, user)));
+        const items = await o.children.getItems();
+        return await Promise.all(items.map(t => this.folderBase(orm, t, folderParameters, user)));
     }
-    async folderIndex(orm, result) {
+    async folderIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,
@@ -72,19 +73,20 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
         });
     }
     async folderTag(o) {
+        const genres = await o.genres.getItems();
         return {
             album: o.album,
             albumType: o.albumType,
             artist: o.artist,
             artistSort: o.artistSort,
-            genres: (await o.genres.getItems()).map(g => g.name),
+            genres: genres.map(g => g.name),
             year: o.year,
             mbArtistID: o.mbArtistID,
             mbReleaseID: o.mbReleaseID,
             mbReleaseGroupID: o.mbReleaseGroupID
         };
     }
-    async folderParents(orm, o) {
+    async folderParents(_orm, o) {
         const result = [];
         let parent = o;
         while (parent) {

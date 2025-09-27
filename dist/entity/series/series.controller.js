@@ -15,121 +15,121 @@ import { UserRole } from '../../types/enums.js';
 import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { TrackPage } from '../track/track.model.js';
 import { AlbumPage } from '../album/album.model.js';
-import { AlbumOrderArgs, IncludesAlbumArgs } from '../album/album.args.js';
-import { IncludesSeriesArgs, IncludesSeriesChildrenArgs, SeriesFilterArgs, SeriesOrderArgs } from './series.args.js';
-import { IncludesTrackArgs, TrackOrderArgs } from '../track/track.args.js';
-import { ListArgs, PageArgs } from '../base/base.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
+import { AlbumOrderParameters, IncludesAlbumParameters } from '../album/album.parameters.js';
+import { IncludesSeriesParameters, IncludesSeriesChildrenParameters, SeriesFilterParameters, SeriesOrderParameters } from './series.parameters.js';
+import { IncludesTrackParameters, TrackOrderParameters } from '../track/track.parameters.js';
+import { ListParameters, PageParameters } from '../base/base.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 let SeriesController = class SeriesController {
-    async id(id, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, { orm, engine, user }) {
-        return engine.transform.series(orm, await orm.Series.oneOrFailByID(id), seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user);
+    async id(id, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, { orm, engine, user }) {
+        return engine.transform.series(orm, await orm.Series.oneOrFailByID(id), seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user);
     }
     async index(filter, { orm, engine, user }) {
         const result = await orm.Series.indexFilter(filter, user);
         return engine.transform.Series.seriesIndex(orm, result);
     }
-    async search(page, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, filter, order, list, { orm, engine, user }) {
+    async search(page, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, filter, order, list, { orm, engine, user }) {
         if (list.list) {
-            return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user));
+            return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user));
         }
-        return await orm.Series.searchTransformFilter(filter, [order], page, user, o => engine.transform.series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user));
+        return await orm.Series.searchTransformFilter(filter, [order], page, user, o => engine.transform.series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user));
     }
     async info(id, { orm, engine }) {
         const series = await orm.Series.oneOrFailByID(id);
         return { info: await engine.metadata.extInfo.bySeries(orm, series) };
     }
-    async albums(page, albumArgs, filter, order, { orm, engine, user }) {
+    async albums(page, albumParameters, filter, order, { orm, engine, user }) {
         const seriesIDs = await orm.Series.findIDsFilter(filter, user);
-        return await orm.Album.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumArgs, user));
+        return await orm.Album.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Album.albumBase(orm, o, albumParameters, user));
     }
-    async tracks(page, trackArgs, filter, order, { orm, engine, user }) {
+    async tracks(page, trackParameters, filter, order, { orm, engine, user }) {
         const seriesIDs = await orm.Series.findIDsFilter(filter, user);
-        return await orm.Track.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Track.trackBase(orm, o, trackArgs, user));
+        return await orm.Track.searchTransformFilter({ seriesIDs }, [order], page, user, o => engine.transform.Track.trackBase(orm, o, trackParameters, user));
     }
 };
 __decorate([
     Get('/id', () => Series, { description: 'Get a Series by Id', summary: 'Get Series' }),
-    __param(0, QueryParam('id', { description: 'Series Id', isID: true })),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, QueryParams()),
-    __param(5, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Series Id', isID: true })),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, QueryParameters()),
+    __param(5, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, IncludesSeriesArgs,
-        IncludesSeriesChildrenArgs,
-        IncludesAlbumArgs,
-        IncludesTrackArgs, Object]),
+    __metadata("design:paramtypes", [String, IncludesSeriesParameters,
+        IncludesSeriesChildrenParameters,
+        IncludesAlbumParameters,
+        IncludesTrackParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "id", null);
 __decorate([
     Get('/index', () => SeriesIndex, { description: 'Get the Navigation Index for Series', summary: 'Get Index' }),
-    __param(0, QueryParams()),
-    __param(1, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [SeriesFilterArgs, Object]),
+    __metadata("design:paramtypes", [SeriesFilterParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "index", null);
 __decorate([
     Get('/search', () => SeriesPage, { description: 'Search Series' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, QueryParams()),
-    __param(5, QueryParams()),
-    __param(6, QueryParams()),
-    __param(7, QueryParams()),
-    __param(8, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, QueryParameters()),
+    __param(5, QueryParameters()),
+    __param(6, QueryParameters()),
+    __param(7, QueryParameters()),
+    __param(8, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesSeriesArgs,
-        IncludesSeriesChildrenArgs,
-        IncludesAlbumArgs,
-        IncludesTrackArgs,
-        SeriesFilterArgs,
-        SeriesOrderArgs,
-        ListArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesSeriesParameters,
+        IncludesSeriesChildrenParameters,
+        IncludesAlbumParameters,
+        IncludesTrackParameters,
+        SeriesFilterParameters,
+        SeriesOrderParameters,
+        ListParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "search", null);
 __decorate([
     Get('/info', () => ExtendedInfoResult, { description: 'Get Meta Data Info of a Series by Id (External Service)', summary: 'Get Info' }),
-    __param(0, QueryParam('id', { description: 'Series Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Series Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "info", null);
 __decorate([
     Get('/albums', () => AlbumPage, { description: 'Get Albums of Series', summary: 'Get Albums' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesAlbumArgs,
-        SeriesFilterArgs,
-        AlbumOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesAlbumParameters,
+        SeriesFilterParameters,
+        AlbumOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "albums", null);
 __decorate([
     Get('/tracks', () => TrackPage, { description: 'Get Tracks of Series', summary: 'Get Tracks' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, QueryParams()),
-    __param(4, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, QueryParameters()),
+    __param(4, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PageArgs,
-        IncludesTrackArgs,
-        SeriesFilterArgs,
-        TrackOrderArgs, Object]),
+    __metadata("design:paramtypes", [PageParameters,
+        IncludesTrackParameters,
+        SeriesFilterParameters,
+        TrackOrderParameters, Object]),
     __metadata("design:returntype", Promise)
 ], SeriesController.prototype, "tracks", null);
 SeriesController = __decorate([

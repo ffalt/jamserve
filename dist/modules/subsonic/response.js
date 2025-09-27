@@ -1,14 +1,15 @@
 import { xml } from './xml.js';
 import { ApiBaseResponder } from '../deco/express/express-responder.js';
 import { SubsonicFormatter } from './formatter.js';
+import { errorNumberCode, errorToString } from '../../utils/error.js';
 export class ApiResponder extends ApiBaseResponder {
     send(req, res, data) {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        const params = req.parameters;
-        if ((params.format === 'jsonp') && (params.callback)) {
-            this.sendJSONP(req, res, params.callback, data);
+        const parameters = req.parameters;
+        if ((parameters.format === 'jsonp') && (parameters.callback)) {
+            this.sendJSONP(req, res, parameters.callback, data);
         }
-        else if (params.format === 'json') {
+        else if (parameters.format === 'json') {
             this.sendJSON(req, res, data);
         }
         else {
@@ -22,13 +23,8 @@ export class ApiResponder extends ApiBaseResponder {
     sendOK(req, res) {
         this.send(req, res, SubsonicFormatter.packOK());
     }
-    sendError(req, res, err) {
-        if (err?.fail) {
-            this.send(req, res, SubsonicFormatter.packFail(err.code, err.fail));
-        }
-        else {
-            this.send(req, res, SubsonicFormatter.packFail(SubsonicFormatter.FAIL.GENERIC, (typeof err === 'string' ? err : (err.message || 'Unknown Error')).toString()));
-        }
+    sendError(req, res, error) {
+        this.send(req, res, SubsonicFormatter.packFail(errorNumberCode(error) ?? SubsonicFormatter.FAIL.GENERIC, errorToString(error)));
     }
     sendBinary(req, res, data) {
         res.setHeader('Access-Control-Allow-Origin', '*');

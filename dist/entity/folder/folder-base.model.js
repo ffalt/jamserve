@@ -12,44 +12,44 @@ import { AlbumType, FolderType } from '../../types/enums.js';
 import { GenreBase } from '../genre/genre.model.js';
 import { ExtendedInfo } from '../metadata/metadata.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let FolderTag = class FolderTag {
 };
 __decorate([
-    ObjField({ nullable: true, description: 'Album Name', example: 'California' }),
+    ObjectField({ nullable: true, description: 'Album Name', example: 'California' }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "album", void 0);
 __decorate([
-    ObjField(() => AlbumType, { nullable: true, description: 'Album Type', example: AlbumType.album }),
+    ObjectField(() => AlbumType, { nullable: true, description: 'Album Type', example: AlbumType.album }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "albumType", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Artist Name', example: 'Mr. Bungle' }),
+    ObjectField({ nullable: true, description: 'Artist Name', example: 'Mr. Bungle' }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "artist", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Artist Sort Name', example: 'Mr. Bungle' }),
+    ObjectField({ nullable: true, description: 'Artist Sort Name', example: 'Mr. Bungle' }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "artistSort", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'Genres', example: examples.genres }),
+    ObjectField(() => [String], { nullable: true, description: 'Genres', example: examples.genres }),
     __metadata("design:type", Array)
 ], FolderTag.prototype, "genres", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Year', example: 1999 }),
+    ObjectField({ nullable: true, description: 'Year', example: 1999 }),
     __metadata("design:type", Number)
 ], FolderTag.prototype, "year", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'MusicBrainz Artist Id', example: examples.mbArtistID }),
+    ObjectField({ nullable: true, description: 'MusicBrainz Artist Id', example: examples.mbArtistID }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "mbArtistID", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'MusicBrainz Release Id', example: examples.mbReleaseID }),
+    ObjectField({ nullable: true, description: 'MusicBrainz Release Id', example: examples.mbReleaseID }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "mbReleaseID", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'MusicBrainz Release Group Id', example: examples.mbReleaseGroupID }),
+    ObjectField({ nullable: true, description: 'MusicBrainz Release Group Id', example: examples.mbReleaseGroupID }),
     __metadata("design:type", String)
 ], FolderTag.prototype, "mbReleaseGroupID", void 0);
 FolderTag = __decorate([
@@ -59,11 +59,11 @@ export { FolderTag };
 let FolderParent = class FolderParent {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], FolderParent.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome' }),
+    ObjectField({ description: 'Name', example: 'Awesome' }),
     __metadata("design:type", String)
 ], FolderParent.prototype, "name", void 0);
 FolderParent = __decorate([
@@ -73,59 +73,59 @@ export { FolderParent };
 let FolderBase = class FolderBase extends Base {
 };
 __decorate([
-    ObjField({ nullable: true, description: 'Title', example: 'Awesome' }),
+    ObjectField({ nullable: true, description: 'Title', example: 'Awesome' }),
     __metadata("design:type", String)
 ], FolderBase.prototype, "title", void 0);
 __decorate([
-    ObjField(() => FolderType, { description: 'Album Type', example: FolderType.multialbum }),
+    ObjectField(() => FolderType, { description: 'Album Type', example: FolderType.multialbum }),
     __metadata("design:type", String)
 ], FolderBase.prototype, "type", void 0);
 __decorate([
-    ObjField({ description: 'Level in Root', example: 3 }),
+    ObjectField({ description: 'Level in Root', example: 3 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "level", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Parent Folder Id', isID: true }),
+    ObjectField({ nullable: true, description: 'Parent Folder Id', isID: true }),
     __metadata("design:type", String)
 ], FolderBase.prototype, "parentID", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Number of Tracks', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Number of Tracks', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "trackCount", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Number of Folders', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Number of Folders', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "folderCount", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Number of Artworks', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Number of Artworks', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "artworkCount", void 0);
 __decorate([
-    ObjField(() => [GenreBase], { nullable: true, description: 'Genres' }),
+    ObjectField(() => [GenreBase], { nullable: true, description: 'Genres' }),
     __metadata("design:type", Array)
 ], FolderBase.prototype, "genres", void 0);
 __decorate([
-    ObjField(() => FolderTag, { nullable: true, description: 'Folder Meta Information' }),
+    ObjectField(() => FolderTag, { nullable: true, description: 'Folder Meta Information' }),
     __metadata("design:type", FolderTag)
 ], FolderBase.prototype, "tag", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'List of Track Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Track Ids', isID: true }),
     __metadata("design:type", Array)
 ], FolderBase.prototype, "trackIDs", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'List of Folder Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Folder Ids', isID: true }),
     __metadata("design:type", Array)
 ], FolderBase.prototype, "folderIDs", void 0);
 __decorate([
-    ObjField(() => [String], { nullable: true, description: 'List of Artwork Ids', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Artwork Ids', isID: true }),
     __metadata("design:type", Array)
 ], FolderBase.prototype, "artworkIDs", void 0);
 __decorate([
-    ObjField(() => ExtendedInfo, { nullable: true, description: 'Metadata for the Folder (via External Service)' }),
+    ObjectField(() => ExtendedInfo, { nullable: true, description: 'Metadata for the Folder (via External Service)' }),
     __metadata("design:type", ExtendedInfo)
 ], FolderBase.prototype, "info", void 0);
 __decorate([
-    ObjField(() => [FolderParent], { nullable: true, description: 'List of Parent Folders up to Root' }),
+    ObjectField(() => [FolderParent], { nullable: true, description: 'List of Parent Folders up to Root' }),
     __metadata("design:type", Array)
 ], FolderBase.prototype, "parents", void 0);
 FolderBase = __decorate([

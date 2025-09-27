@@ -8,24 +8,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let State = class State {
 };
 __decorate([
-    ObjField({ nullable: true, description: 'Number of Plays', min: 0, example: 5 }),
+    ObjectField({ nullable: true, description: 'Number of Plays', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], State.prototype, "played", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Last Played Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ nullable: true, description: 'Last Played Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], State.prototype, "lastPlayed", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Faved Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ nullable: true, description: 'Faved Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], State.prototype, "faved", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'User Rating', min: 0, max: 5, example: 5 }),
+    ObjectField({ nullable: true, description: 'User Rating', min: 0, max: 5, example: 5 }),
     __metadata("design:type", Number)
 ], State.prototype, "rated", void 0);
 State = __decorate([
@@ -35,11 +35,11 @@ export { State };
 let StateInfo = class StateInfo {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], StateInfo.prototype, "id", void 0);
 __decorate([
-    ObjField(() => State, { description: 'State' }),
+    ObjectField(() => State, { description: 'State' }),
     __metadata("design:type", State)
 ], StateInfo.prototype, "state", void 0);
 StateInfo = __decorate([
@@ -49,7 +49,7 @@ export { StateInfo };
 let States = class States {
 };
 __decorate([
-    ObjField(() => [StateInfo], { description: 'List of State Infos' }),
+    ObjectField(() => [StateInfo], { description: 'List of State Infos' }),
     __metadata("design:type", Array)
 ], States.prototype, "states", void 0);
 States = __decorate([

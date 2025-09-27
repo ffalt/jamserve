@@ -11,22 +11,28 @@ export class FolderRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case FolderOrderFields.created:
+            case FolderOrderFields.created: {
                 return [['createdAt', direction]];
-            case FolderOrderFields.updated:
+            }
+            case FolderOrderFields.updated: {
                 return [['updatedAt', direction]];
-            case FolderOrderFields.year:
+            }
+            case FolderOrderFields.year: {
                 return [['year', direction]];
-            case FolderOrderFields.level:
+            }
+            case FolderOrderFields.level: {
                 return [['level', direction]];
-            case FolderOrderFields.title:
+            }
+            case FolderOrderFields.title: {
                 return [
                     ['title', direction],
                     ['path', direction]
                 ];
+            }
             case FolderOrderFields.default:
-            case FolderOrderFields.name:
+            case FolderOrderFields.name: {
                 return [['path', direction]];
+            }
         }
         return [];
     }
@@ -37,13 +43,13 @@ export class FolderRepository extends BaseRepository {
         let parentIDs = [];
         if (filter.childOfID) {
             const folder = await this.oneOrFailByID(filter.childOfID);
-            parentIDs = parentIDs.concat(await this.findAllDescendantsIds(folder));
+            parentIDs = [...parentIDs, ...await this.findAllDescendantsIds(folder)];
             if (parentIDs.length === 0) {
                 parentIDs.push('__non_existing_');
             }
         }
         if (filter.parentIDs) {
-            parentIDs = parentIDs.concat(filter?.parentIDs);
+            parentIDs = [...parentIDs, ...filter.parentIDs];
         }
         const result = QHelper.buildQuery([
             { id: filter.ids },

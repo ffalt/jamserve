@@ -1,0 +1,1 @@
+{"version":3,"file":"foldertype.js","sourceRoot":"","sources":["../../src/utils/foldertype.ts"],"names":[],"mappings":"AAAA,OAAO,IAAI,MAAM,WAAW,CAAC;AAE7B,MAAM,UAAU,aAAa,CAAC,MAAc;IAC3C,MAAM,IAAI,GAAG,IAAI,CAAC,QAAQ,CAAC,MAAM,CAAC,CAAC,WAAW,EAAE,CAAC;IACjD,MAAM,OAAO,GAAG,wBAAwB,CAAC;IACzC,OAAO,OAAO,CAAC,IAAI,CAAC,IAAI,CAAC,KAAK,IAAI,CAAC;AACpC,CAAC"}

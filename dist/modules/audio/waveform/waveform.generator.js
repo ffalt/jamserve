@@ -2,7 +2,7 @@ import { max, min } from 'd3-array';
 import { scaleLinear } from 'd3-scale';
 import { area } from 'd3-shape';
 import { select } from 'd3-selection';
-import fs from 'fs';
+import fs from 'node:fs';
 import WaveformData from 'waveform-data';
 import { Waveform } from './waveform.class.js';
 import { JSDOM } from 'jsdom';
@@ -26,9 +26,9 @@ export class WaveformGenerator {
                 samplesPerPixel: 256,
                 sampleRate: 44100
             });
-            wf.run(err => {
-                if (err) {
-                    reject(err);
+            wf.run((error) => {
+                if (error) {
+                    reject(error);
                 }
                 else {
                     resolve(wf);
@@ -44,11 +44,11 @@ export class WaveformGenerator {
         const channel = wfd.channel(0);
         const minArray = channel.min_array();
         const maxArray = channel.max_array();
-        x.domain([0, wfd.length]).rangeRound([0, width || 4000]);
+        x.domain([0, wfd.length]).rangeRound([0, width ?? 4000]);
         y.domain([min(minArray), max(maxArray)]).rangeRound([0, height]);
         const waveArea = area()
-            .x((a, i) => x(i))
-            .y0((b, i) => y(minArray[i]))
+            .x((_a, index) => x(index))
+            .y0((_b, index) => y(minArray[index]))
             .y1(c => y(c));
         const fakedom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
         const d3Element = select(fakedom.window.document).select('body');
@@ -65,7 +65,7 @@ export class WaveformGenerator {
             .attr('fill', 'darkgreen')
             .attr('d', waveArea);
         const node = svg.node();
-        return node?.outerHTML || '';
+        return node?.outerHTML ?? '';
     }
 }
 //# sourceMappingURL=waveform.generator.js.map

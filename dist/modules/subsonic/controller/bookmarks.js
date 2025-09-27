@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterBookmark, SubsonicParameterID, SubsonicParameterPlayQueue } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse, SubsonicResponseBookmarks, SubsonicResponsePlayQueue } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 let SubsonicBookmarkApi = class SubsonicBookmarkApi {
@@ -25,8 +25,9 @@ let SubsonicBookmarkApi = class SubsonicBookmarkApi {
     }
     async getBookmarks({ orm, user }) {
         const bookmarklist = await orm.Bookmark.findFilter({ userIDs: [user.id] });
-        const bookmarks = {};
-        bookmarks.bookmark = await SubsonicHelper.prepareBookmarks(orm, bookmarklist, user);
+        const bookmarks = {
+            bookmark: await SubsonicHelper.prepareBookmarks(orm, bookmarklist, user)
+        };
         return { bookmarks };
     }
     async deleteBookmark(query, { engine, orm, user }) {
@@ -37,9 +38,6 @@ let SubsonicBookmarkApi = class SubsonicBookmarkApi {
     }
     async getPlayQueue({ engine, orm, user }) {
         const playqueue = await engine.playQueue.get(orm, user);
-        if (!playqueue) {
-            return {};
-        }
         const entries = await playqueue.entries.getItems();
         const tracks = [];
         for (const entry of entries) {
@@ -52,12 +50,15 @@ let SubsonicBookmarkApi = class SubsonicBookmarkApi {
         return { playQueue: SubsonicFormatter.packPlayQueue(playqueue, user, childs) };
     }
     async savePlayQueue(query, { engine, orm, user, client }) {
-        const mediaIDs = query.id ? (Array.isArray(query.id) ? query.id : [query.id]) : [];
+        let mediaIDs = [];
+        if (query.id) {
+            mediaIDs = Array.isArray(query.id) ? query.id : [query.id];
+        }
         await engine.playQueue.set(orm, {
             mediaIDs,
             currentID: query.current,
             position: query.position
-        }, user, client || 'unknown');
+        }, user, client ?? 'unknown');
         return {};
     }
 };
@@ -67,8 +68,8 @@ __decorate([
         description: 'Creates or updates a bookmark (a position within a media file). Bookmarks are personal and not visible to other users.',
         tags: ['Bookmarks']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterBookmark, Object]),
     __metadata("design:returntype", Promise)
@@ -79,30 +80,30 @@ __decorate([
         description: 'Returns all bookmarks for this user. A bookmark is a position within a certain media file.',
         tags: ['Bookmarks']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicBookmarkApi.prototype, "getBookmarks", null);
 __decorate([
     SubsonicRoute('/deleteBookmark', () => SubsonicOKResponse, { summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicBookmarkApi.prototype, "deleteBookmark", null);
 __decorate([
     SubsonicRoute('/getPlayQueue', () => SubsonicResponsePlayQueue, { summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicBookmarkApi.prototype, "getPlayQueue", null);
 __decorate([
     SubsonicRoute('/savePlayQueue', () => SubsonicOKResponse, { summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterPlayQueue, Object]),
     __metadata("design:returntype", Promise)

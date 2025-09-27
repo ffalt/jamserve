@@ -1,0 +1,1 @@
+{"version":3,"file":"subsonic-result-type.js","sourceRoot":"","sources":["../../../../src/modules/subsonic/decorators/subsonic-result-type.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,eAAe,EAAE,MAAM,iCAAiC,CAAC;AAClE,OAAO,EAAE,cAAc,EAAqB,MAAM,2CAA2C,CAAC;AAK9F,MAAM,UAAU,kBAAkB,CAAC,aAA0C,EAAE,YAAgC;IAC9G,OAAO,cAAc,CAAC,eAAe,EAAE,EAAE,aAAa,EAAE,YAAY,CAAC,CAAC;AACvE,CAAC"}

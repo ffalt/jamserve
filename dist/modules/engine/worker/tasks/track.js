@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var TrackWorker_1;
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { processQueue } from '../../../../utils/queue.js';
@@ -29,12 +29,13 @@ export class TrackUpdater {
         }
         await track.tag.set(tag);
         const genres = await this.findOrCreateGenres(tag);
-        const removedGenreIDs = (await track.genres.getIDs()).filter(id => !genres.find(g => g.id == id));
+        const ids = await track.genres.getIDs();
+        const removedGenreIDs = ids.filter(id => !genres.some(g => g.id === id));
         this.changes.genres.updated.appendIDs(removedGenreIDs);
         await track.genres.set(genres);
     }
     async findOrCreateGenres(tag) {
-        const names = tag.genres || [];
+        const names = tag.genres ?? [];
         const genres = [];
         for (const name of names) {
             genres.push(await this.findOrCreateGenre(name));
@@ -108,7 +109,7 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async rename(orm, trackID, newName, changes) {
         const track = await orm.Track.findOneByID(trackID);
         if (!track) {
-            return Promise.reject(Error('Track not found'));
+            return Promise.reject(new Error('Track not found'));
         }
         track.fileName = await this.renameFile(track.path, track.fileName, newName);
         await TrackWorker_1.updateTrackStats(track);
@@ -119,7 +120,7 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async remove(orm, root, trackIDs, changes) {
         const removedTracks = await orm.Track.findByIDs(trackIDs);
         if (removedTracks.length !== trackIDs.length) {
-            return Promise.reject(Error('Track not found'));
+            return Promise.reject(new Error('Track not found'));
         }
         for (const track of removedTracks) {
             await this.moveToTrash(root, track.path, track.fileName);
@@ -130,15 +131,15 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async move(orm, trackIDs, newParentID, changes) {
         const tracks = await orm.Track.findByIDs(trackIDs);
         if (tracks.length !== trackIDs.length) {
-            return Promise.reject(Error('Track not found'));
+            return Promise.reject(new Error('Track not found'));
         }
         const newParent = await orm.Folder.findOneByID(newParentID);
         if (!newParent) {
-            return Promise.reject(Error('Destination Folder not found'));
+            return Promise.reject(new Error('Destination Folder not found'));
         }
         for (const track of tracks) {
             if (await fse.pathExists(path.join(newParent.path, track.fileName))) {
-                return Promise.reject(Error('File name is already used in folder'));
+                return Promise.reject(new Error('File name is already used in folder'));
             }
         }
         changes.folders.updated.add(newParent);
@@ -159,7 +160,7 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async refresh(orm, trackIDs, changes) {
         const tracks = await orm.Track.findByIDs(trackIDs);
         if (tracks.length !== trackIDs.length) {
-            return Promise.reject(Error('Track not found'));
+            return Promise.reject(new Error('Track not found'));
         }
         for (const track of tracks) {
             changes.tracks.updated.add(track);

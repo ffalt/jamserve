@@ -6,26 +6,33 @@ import { WaveformFormatType } from '../../../types/enums.js';
 const log = logger('Audio:Waveform');
 export class WaveformModule {
     constructor(waveformCachePath) {
-        this.waveformCache = new IDFolderCache(waveformCachePath, 'waveform', (params) => {
-            return `${params.width !== undefined ? `-${params.width}` : ''}.${params.format}`;
+        this.waveformCache = new IDFolderCache(waveformCachePath, 'waveform', (parameters) => {
+            let suffix = '';
+            if (parameters.width !== undefined) {
+                suffix = `-${parameters.width}`;
+            }
+            return `${suffix}.${parameters.format}`;
         });
     }
     static async generateWaveform(filename, format, width) {
         const wf = new WaveformGenerator();
         switch (format) {
-            case WaveformFormatType.svg:
+            case WaveformFormatType.svg: {
                 return { buffer: { buffer: Buffer.from(await wf.svg(filename, width), 'ascii'), contentType: 'image/svg+xml' } };
-            case WaveformFormatType.json:
+            }
+            case WaveformFormatType.json: {
                 return { json: await wf.json(filename) };
-            case WaveformFormatType.dat:
+            }
+            case WaveformFormatType.dat: {
                 return { buffer: { buffer: await wf.binary(filename), contentType: 'application/binary' } };
+            }
             default:
         }
-        return Promise.reject(Error('Invalid Format for Waveform generation'));
+        return Promise.reject(new Error('Invalid Format for Waveform generation'));
     }
     async get(id, filename, format, width) {
         if (!filename || !(await fse.pathExists(filename))) {
-            return Promise.reject(Error('Invalid filename for waveform generation'));
+            return Promise.reject(new Error('Invalid filename for waveform generation'));
         }
         return this.waveformCache.get(id, { format, width }, async (cacheFilename) => {
             const result = await WaveformModule.generateWaveform(filename, format, width);

@@ -16,19 +16,20 @@ import { IoCommandsArtwork } from './io/io.commands.artwork.js';
 import { IoCommandsFolder } from './io/io.commands.folder.js';
 import { IoCommandsRoot } from './io/io.commands.root.js';
 import { IoCommandsTrack } from './io/io.commands.track.js';
+import { errorToString } from '../../../utils/error.js';
 const log = logger('IO');
 let IoService = class IoService {
     constructor() {
-        this.scanning = false;
-        this.afterRefreshListeners = [];
-        this.rootStatus = new Map();
-        this.queue = [];
-        this.nextID = Date.now();
-        this.history = [];
         this.artwork = new IoCommandsArtwork(this);
         this.folder = new IoCommandsFolder(this);
         this.root = new IoCommandsRoot(this);
         this.track = new IoCommandsTrack(this);
+        this.scanning = false;
+        this.rootStatus = new Map();
+        this.queue = [];
+        this.history = [];
+        this.afterRefreshListeners = [];
+        this.nextID = Date.now();
     }
     async runRequest(cmd) {
         this.clearAfterRefresh();
@@ -40,15 +41,15 @@ let IoService = class IoService {
             this.history.push({ id: cmd.id, date: Date.now() });
             this.current = undefined;
         }
-        catch (e) {
-            console.error(e);
+        catch (error) {
+            console.error(error);
             this.current = undefined;
-            let msg = e.toString();
-            if (msg.startsWith('Error:')) {
-                msg = msg.slice(6).trim();
+            let message = errorToString(error);
+            if (message.startsWith('Error:')) {
+                message = message.slice(6).trim();
             }
-            this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: msg });
-            this.history.push({ id: cmd.id, error: msg, date: Date.now() });
+            this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: message });
+            this.history.push({ id: cmd.id, error: message, date: Date.now() });
         }
         if (this.queue.length === 0) {
             this.runAfterRefresh();
@@ -60,8 +61,8 @@ let IoService = class IoService {
             this.clearAfterRefresh();
             for (const listener of this.afterRefreshListeners) {
                 listener()
-                    .catch(e => {
-                    console.error(e);
+                    .catch((error) => {
+                    console.error(error);
                 });
             }
         }, 10000);
@@ -90,9 +91,9 @@ let IoService = class IoService {
             this.scanning = false;
             log.info('Stop Processing');
         })
-            .catch(e => {
+            .catch((error) => {
             this.scanning = false;
-            log.error(e);
+            log.error(error);
         });
     }
     generateRequestID() {
@@ -107,15 +108,16 @@ let IoService = class IoService {
     findRequest(rootID, mode) {
         return this.queue.find(c => !!c.parameters.rootID && (c.parameters.rootID === rootID && c.mode === mode));
     }
-    find(param) {
-        return this.queue.find(param);
+    find(parameter) {
+        return this.queue.find(parameter);
     }
     getRequestInfo(req) {
         const pos = this.queue.indexOf(req);
-        return { id: req.id, pos: pos >= 0 ? pos : undefined };
+        return { id: req.id, pos: pos === -1 ? undefined : pos };
     }
     newRequest(mode, execute, parameters) {
-        return this.addRequest(new IoRequest(this.generateRequestID(), mode, execute, parameters));
+        const request = (new IoRequest(this.generateRequestID(), mode, execute, parameters));
+        return this.addRequest(request);
     }
     getAdminChangeQueueInfoStatus(id) {
         if (this.current && this.current.id === id) {
@@ -124,7 +126,7 @@ let IoService = class IoService {
         const cmd = this.queue.find(c => c.id === id);
         if (cmd) {
             const pos = this.queue.indexOf(cmd);
-            return { id, pos: pos >= 0 ? pos : undefined };
+            return { id, pos: pos === -1 ? undefined : pos };
         }
         const done = this.history.find(c => c.id === id);
         if (done) {
@@ -140,9 +142,7 @@ let IoService = class IoService {
     }
     getRootStatus(id) {
         let status = this.rootStatus.get(id);
-        if (!status) {
-            status = { lastScan: Date.now() };
-        }
+        status ?? (status = { lastScan: Date.now() });
         if (!status.scanning) {
             const cmd = this.queue.find(c => c.parameters.rootID === id);
             status.scanning = !!cmd;

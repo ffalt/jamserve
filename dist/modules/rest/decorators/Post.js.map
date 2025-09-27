@@ -1,1 +1,0 @@
-{"version":3,"file":"Post.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/Post.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AAEvE,OAAO,EAAE,QAAQ,EAAE,MAAM,+BAA+B,CAAC;AAEzD,MAAM,UAAU,IAAI,CAAC,KAAa,EAAE,uBAAwD,EAAE,YAA4B;IACzH,OAAO,QAAQ,CAAC,kBAAkB,EAAE,EAAE,KAAK,EAAE,uBAAuB,EAAE,YAAY,CAAC,CAAC;AACrF,CAAC"}

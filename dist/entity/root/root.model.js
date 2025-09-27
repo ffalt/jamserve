@@ -9,20 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Base, Page } from '../base/base.model.js';
 import { RootScanStrategy, UserRole } from '../../types/enums.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let RootUpdateStatus = class RootUpdateStatus {
 };
 __decorate([
-    ObjField({ description: 'Last Scan Timestamp' }),
+    ObjectField({ description: 'Last Scan Timestamp' }),
     __metadata("design:type", Number)
 ], RootUpdateStatus.prototype, "lastScan", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Last Error (if any)' }),
+    ObjectField({ nullable: true, description: 'Last Error (if any)' }),
     __metadata("design:type", String)
 ], RootUpdateStatus.prototype, "error", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Is currently scanning?' }),
+    ObjectField({ nullable: true, description: 'Is currently scanning?' }),
     __metadata("design:type", Boolean)
 ], RootUpdateStatus.prototype, "scanning", void 0);
 RootUpdateStatus = __decorate([
@@ -32,15 +32,15 @@ export { RootUpdateStatus };
 let Root = class Root extends Base {
 };
 __decorate([
-    ObjField({ description: 'Root Path', roles: [UserRole.admin] }),
+    ObjectField({ description: 'Root Path', roles: [UserRole.admin] }),
     __metadata("design:type", String)
 ], Root.prototype, "path", void 0);
 __decorate([
-    ObjField(() => RootUpdateStatus, { description: 'Root Update Status' }),
+    ObjectField(() => RootUpdateStatus, { description: 'Root Update Status' }),
     __metadata("design:type", RootUpdateStatus)
 ], Root.prototype, "status", void 0);
 __decorate([
-    ObjField(() => RootScanStrategy, { description: 'Root Scan Strategy', example: RootScanStrategy.auto }),
+    ObjectField(() => RootScanStrategy, { description: 'Root Scan Strategy', example: RootScanStrategy.auto }),
     __metadata("design:type", String)
 ], Root.prototype, "strategy", void 0);
 Root = __decorate([
@@ -50,7 +50,7 @@ export { Root };
 let RootPage = class RootPage extends Page {
 };
 __decorate([
-    ObjField(() => Root, { description: 'List of Roots' }),
+    ObjectField(() => Root, { description: 'List of Roots' }),
     __metadata("design:type", Array)
 ], RootPage.prototype, "items", void 0);
 RootPage = __decorate([

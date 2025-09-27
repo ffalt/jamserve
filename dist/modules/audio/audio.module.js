@@ -52,7 +52,7 @@ let AudioModule = class AudioModule {
         this.setSettings(this.settingsService.settings.externalServices);
     }
     setSettings(externalServices) {
-        const enabled = externalServices?.enabled;
+        const enabled = externalServices.enabled;
         this.musicbrainz.enabled = enabled;
         this.acoustid.enabled = enabled;
         this.lastFM.enabled = enabled;
@@ -71,11 +71,11 @@ let AudioModule = class AudioModule {
         if (suffix === AudioFormatType.flac) {
             return this.flac.read(filename);
         }
-        const p = await probe(filename, []);
-        if (!p) {
+        const probeResult = await probe(filename, []);
+        if (!probeResult) {
             return { format: TagFormatType.none };
         }
-        return { ...FORMAT.packProbeJamServeTag(p), ...FORMAT.packProbeJamServeMedia(p, suffix) };
+        return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, suffix) };
     }
     async readRawTag(filename) {
         const suffix = fileSuffix(filename);
@@ -97,11 +97,11 @@ let AudioModule = class AudioModule {
                 await this.flac.write(filename, tag);
             }
             else {
-                return Promise.reject(new Error(`Writing to format ${suffix} is currently not supported`));
+                throw new Error(`Writing to format ${suffix} is currently not supported`);
             }
         }
-        catch (e) {
-            return Promise.reject(e);
+        catch (error) {
+            return Promise.reject(error);
         }
     }
     async extractTagImage(filename) {

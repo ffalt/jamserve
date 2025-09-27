@@ -9,24 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { State } from '../state/state.model.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let Base = class Base {
 };
 __decorate([
-    ObjField({ description: 'ID', isID: true }),
+    ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], Base.prototype, "id", void 0);
 __decorate([
-    ObjField({ description: 'Name', example: 'Awesome' }),
+    ObjectField({ description: 'Name', example: 'Awesome' }),
     __metadata("design:type", String)
 ], Base.prototype, "name", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'User State Info' }),
+    ObjectField({ nullable: true, description: 'User State Info' }),
     __metadata("design:type", State)
 ], Base.prototype, "state", void 0);
 __decorate([
-    ObjField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
+    ObjectField({ description: 'Created Timestamp', min: 0, example: examples.timestamp }),
     __metadata("design:type", Number)
 ], Base.prototype, "created", void 0);
 Base = __decorate([
@@ -36,15 +36,15 @@ export { Base };
 let Page = class Page {
 };
 __decorate([
-    ObjField({ nullable: true, description: 'Items starting from offset position', min: 0, example: 0 }),
+    ObjectField({ nullable: true, description: 'Items starting from offset position', min: 0, example: 0 }),
     __metadata("design:type", Number)
 ], Page.prototype, "skip", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Amount of returned items', min: 0, example: 25 }),
+    ObjectField({ nullable: true, description: 'Amount of returned items', min: 0, example: 25 }),
     __metadata("design:type", Number)
 ], Page.prototype, "take", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Total amount of available items', min: 0, example: 123 }),
+    ObjectField({ nullable: true, description: 'Total amount of available items', min: 0, example: 123 }),
     __metadata("design:type", Number)
 ], Page.prototype, "total", void 0);
 Page = __decorate([

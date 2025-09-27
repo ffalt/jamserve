@@ -14,7 +14,7 @@ import { ConfigService } from '../../engine/services/config.service.js';
 import { subsonicRouter } from '../../subsonic/builder/express.js';
 import { UserRole } from '../../../types/enums.js';
 import { buildSubsonicMeta } from '../../subsonic/metadata/builder.js';
-import { getMetadataStorage } from '../../subsonic/metadata/getMetadataStorage.js';
+import { metadataStorage } from '../../subsonic/metadata/metadata-storage.js';
 import { ApiResponder } from '../../subsonic/response.js';
 import { SubsonicParameterMiddleWare } from '../../subsonic/parameters.js';
 import { SubsonicCheckAuthMiddleWare, SubsonicLoginMiddleWare } from '../../subsonic/login.js';
@@ -25,13 +25,15 @@ let SubsonicMiddleware = class SubsonicMiddleware {
         this.controllers = SubsonicControllers;
     }
     middleware() {
-        void this.controllers.length;
+        if (this.controllers.length === 0) {
+            throw new Error('No subsonic controllers');
+        }
         const router = express.Router();
         router.use(SubsonicParameterMiddleWare);
         router.use(SubsonicLoginMiddleWare);
         router.use(SubsonicCheckAuthMiddleWare);
         buildSubsonicMeta();
-        const metadata = getMetadataStorage();
+        const metadata = metadataStorage();
         const options = {
             enums: metadata.enums,
             resultTypes: metadata.resultTypes,
@@ -67,7 +69,7 @@ let SubsonicMiddleware = class SubsonicMiddleware {
                 { name: 'format', alignment: 'left' }
             ]);
         }
-        router.use((req, res) => {
+        router.use((_req, res) => {
             res.status(404).send('Subsonic Api Path not found');
         });
         return router;

@@ -42,13 +42,10 @@ export class EntityManager {
     getRepository(entityName) {
         entityName = typeof entityName === 'string' ? entityName : entityName.name;
         if (!this.repositoryMap[entityName]) {
-            if (this.config.repositories[entityName]) {
-                const RepositoryClass = this.config.repositories[entityName];
-                this.repositoryMap[entityName] = new RepositoryClass(this, entityName);
-            }
-            else {
-                this.repositoryMap[entityName] = new EntityRepository(this, entityName);
-            }
+            const RepositoryClass = this.config.repositories[entityName];
+            this.repositoryMap[entityName] = RepositoryClass ?
+                new RepositoryClass(this, entityName) :
+                new EntityRepository(this, entityName);
         }
         return this.repositoryMap[entityName];
     }
@@ -58,8 +55,8 @@ export class EntityManager {
     }
     persistLater(entityName, entity) {
         let entities = Array.isArray(entity) ? entity : [entity];
-        entities = entities.filter(e => !this.changeSet.find(c => c.persist === e));
-        this.changeSet.push(...(entities.map(e => ({ entityName: entityName, persist: e }))));
+        entities = entities.filter(entry => !this.changeSet.some(c => c.persist === entry));
+        this.changeSet.push(...(entities.map(entry => ({ entityName: entityName, persist: entry }))));
     }
     async flush() {
         if (this.changeSet.length === 0) {
@@ -72,11 +69,11 @@ export class EntityManager {
                     mapManagedToSource(change.persist);
                     await change.persist._source.save({ transaction: t });
                 }
-                else if (change.remove && change.remove.entity) {
+                else if (change.remove?.entity) {
                     await change.remove.entity._source.destroy({ transaction: t });
                     this.parent.cache.remove(change.entityName, change.remove.entity);
                 }
-                else if (change.remove && change.remove.query) {
+                else if (change.remove?.query) {
                     const model = this.model(change.entityName);
                     change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction: t });
                     this.parent.cache.removePrefixed(change.entityName);
@@ -101,14 +98,6 @@ export class EntityManager {
             throw error;
         }
     }
-    persist(entityName, entity, flush = false) {
-        if (flush) {
-            return this.persistAndFlush(entityName, entity);
-        }
-        else {
-            this.persistLater(entityName, entity);
-        }
-    }
     async fromCacheOrLoad(entityName, ids) {
         const toLoadIDs = [];
         const fromCache = [];
@@ -125,12 +114,14 @@ export class EntityManager {
             return fromCache;
         }
         const model = this.model(entityName);
-        const loadedSources = await model.findAll({ where: { id: toLoadIDs } });
+        const findOptions = { where: { id: toLoadIDs } };
+        const loadedSources = await model.findAll(findOptions);
         const loaded = loadedSources.map(source => this.mapEntity(entityName, source));
         for (const item of loaded) {
             this.parent.cache.set(entityName, item);
         }
-        return loaded.concat(fromCache).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+        const list = [...loaded, ...fromCache];
+        return list.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
     }
     async findOne(entityName, options) {
         if (this.useCache) {
@@ -156,7 +147,7 @@ export class EntityManager {
     }
     async findOneByID(entityName, id) {
         if (!id || id.trim().length === 0) {
-            return Promise.reject(Error('Invalid ID'));
+            return Promise.reject(new Error('Invalid ID'));
         }
         if (this.useCache) {
             const cached = this.parent.cache.get(entityName, id);
@@ -216,21 +207,21 @@ export class EntityManager {
     }
     async findOneID(entityName, options) {
         const model = this.model(entityName);
-        const opts = { ...options, raw: true, attributes: ['id'] };
-        const result = await model.findOne(opts);
+        const findOptions = { ...options, raw: true, attributes: ['id'] };
+        const result = await model.findOne(findOptions);
         return result?.id;
     }
     async findIDs(entityName, options) {
         const model = this.model(entityName);
-        const opts = { ...options, raw: true, attributes: ['id'] };
-        const result = await model.findAll(opts);
+        const findOptions = { ...options, raw: true, attributes: ['id'] };
+        const result = await model.findAll(findOptions);
         return result.map(o => o.id);
     }
     async findIDsAndCount(entityName, options) {
         const model = this.model(entityName);
-        const opts = { ...options, raw: true, attributes: ['id'] };
-        const { count, rows } = await model.findAndCountAll(opts);
-        return { count, ids: rows.map(o => o.id) };
+        const findOptions = { ...options, raw: true, attributes: ['id'] };
+        const { count, rows } = await model.findAndCountAll(findOptions);
+        return { count, ids: rows.map((o) => o.id) };
     }
     async count(entityName, options = {}) {
         return await this.model(entityName).count(options);
@@ -239,26 +230,20 @@ export class EntityManager {
         return this.sequelize.model(entityName);
     }
     mapEntity(entityName, source) {
-        const meta = this.metadata.entities.find(e => e.name === entityName);
+        const meta = this.metadata.entityInfoByName(entityName);
         if (!meta) {
-            throw Error('Invalid ORM setup');
+            throw new Error('Invalid ORM setup');
         }
         return createManagedEntity(meta, source, this);
     }
     create(entityName, data) {
         const idData = { id: v4(), createdAt: new Date(), updatedAt: new Date(), ...data };
-        const _source = this.model(entityName).build(idData);
-        const entity = this.mapEntity(entityName, _source);
-        Object.keys(idData).forEach(key => entity[key] = idData[key]);
+        const source = this.model(entityName).build(idData);
+        const entity = this.mapEntity(entityName, source);
+        for (const [key, value] of Object.entries(idData)) {
+            entity[key] = value;
+        }
         return entity;
-    }
-    remove(entityName, entity, flush) {
-        if (flush) {
-            return this.removeAndFlush(entityName, entity);
-        }
-        else {
-            this.removeLater(entityName, entity);
-        }
     }
     async removeAndFlush(entityName, entity) {
         this.removeLater(entityName, entity);
@@ -266,7 +251,7 @@ export class EntityManager {
     }
     removeLater(entityName, entity) {
         const entities = Array.isArray(entity) ? entity : [entity];
-        this.changeSet.push(...(entities.map(e => ({ entityName: entityName, remove: { entity: e } }))));
+        this.changeSet.push(...(entities.map(entry => ({ entityName: entityName, remove: { entity: entry } }))));
     }
     async removeByQueryAndFlush(entityName, options) {
         const change = { entityName: entityName, remove: { query: options, resultCount: 0 } };
@@ -282,10 +267,7 @@ export class EntityManager {
     }
     getOrderFindOptions(entityName, order) {
         const repo = this.getRepository(entityName);
-        if (repo) {
-            return repo.buildOrderByFindOptions(order);
-        }
-        return;
+        return repo.buildOrderByFindOptions(order);
     }
 }
 //# sourceMappingURL=manager.js.map

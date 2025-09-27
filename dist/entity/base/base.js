@@ -29,7 +29,7 @@ Base = __decorate([
     Entity({ isAbstract: true })
 ], Base);
 export { Base };
-export function IndexGroup(EntityClass, EntityQLClass) {
+export function IndexGroup(_EntityClass, EntityQLClass) {
     let IndexResultResponseClass = class IndexResultResponseClass {
     };
     __decorate([
@@ -57,7 +57,7 @@ export function Index(EntityQLClass) {
     ], IndexResponseClass);
     return IndexResponseClass;
 }
-export function PaginatedResponse(EntityClass, EntityQLClass) {
+export function PaginatedResponse(_EntityClass, EntityQLClass) {
     let PaginatedResponseClass = class PaginatedResponseClass {
     };
     __decorate([
@@ -81,12 +81,12 @@ export function PaginatedResponse(EntityClass, EntityQLClass) {
     ], PaginatedResponseClass);
     return PaginatedResponseClass;
 }
-export class OrderHelper {
-    static direction(args) {
-        return args?.orderDesc ? 'DESC' : 'ASC';
-    }
-    static inverse(order) {
+export const OrderHelper = {
+    direction(parameters) {
+        return parameters?.orderDesc ? 'DESC' : 'ASC';
+    },
+    inverse(order) {
         return order === 'ASC' ? 'DESC' : 'ASC';
     }
-}
+};
 //# sourceMappingURL=base.js.map

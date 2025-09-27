@@ -12,27 +12,27 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole } from '../../types/enums.js';
 import { State, States } from './state.model.js';
-import { FavArgs, RateArgs, StatesArgs } from './state.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParam } from '../../modules/rest/decorators/QueryParam.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
+import { FavParameters, RateParameters, StatesParameters } from './state.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameter } from '../../modules/rest/decorators/query-parameter.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
 const description = '[Album, Artist, Artwork, Episode, Folder, Root, Playlist, Podcast, Radio, Series, Track]';
 let StateController = class StateController {
     async state(id, { orm, engine, user }) {
         const result = await orm.findInStateTypes(id);
         if (!result) {
-            return Promise.reject(NotFoundError());
+            return Promise.reject(notFoundError());
         }
         return engine.transform.Base.state(orm, id, result.objType, user.id);
     }
-    async states(args, { orm, engine, user }) {
+    async states(parameters, { orm, engine, user }) {
         const states = { states: [] };
-        for (const id of args.ids) {
+        for (const id of parameters.ids) {
             const result = await orm.findInStateTypes(id);
             if (result) {
                 states.states.push({ id, state: await engine.transform.Base.state(orm, id, result.objType, user.id) });
@@ -40,43 +40,43 @@ let StateController = class StateController {
         }
         return states;
     }
-    async fav(args, { orm, engine, user }) {
-        return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, args.id, args.remove, user));
+    async fav(parameters, { orm, engine, user }) {
+        return await engine.transform.Base.stateBase(orm, await engine.state.fav(orm, parameters.id, parameters.remove, user));
     }
-    async rate(args, { orm, engine, user }) {
-        return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, args.id, args.rating, user));
+    async rate(parameters, { orm, engine, user }) {
+        return await engine.transform.Base.stateBase(orm, await engine.state.rate(orm, parameters.id, parameters.rating, user));
     }
 };
 __decorate([
     Get('/id', () => State, { description: `Get User State (fav/rate/etc) ${description}`, summary: 'Get State' }),
-    __param(0, QueryParam('id', { description: 'Object Id', isID: true })),
-    __param(1, Ctx()),
+    __param(0, QueryParameter('id', { description: 'Object Id', isID: true })),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "state", null);
 __decorate([
     Get('/list', () => States, { description: `Get User States (fav/rate/etc) ${description}`, summary: 'Get States' }),
-    __param(0, QueryParams()),
-    __param(1, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [StatesArgs, Object]),
+    __metadata("design:paramtypes", [StatesParameters, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "states", null);
 __decorate([
     Post('/fav', () => State, { description: `Set/Unset Favorite ${description}`, summary: 'Fav' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [FavArgs, Object]),
+    __metadata("design:paramtypes", [FavParameters, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "fav", null);
 __decorate([
     Post('/rate', () => State, { description: `Rate ${description}`, summary: 'Rate' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RateArgs, Object]),
+    __metadata("design:paramtypes", [RateParameters, Object]),
     __metadata("design:returntype", Promise)
 ], StateController.prototype, "rate", null);
 StateController = __decorate([

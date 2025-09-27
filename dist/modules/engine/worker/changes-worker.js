@@ -44,7 +44,7 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         }
         const imageIDs = imageCleanIds.ids();
         if (imageIDs.length > 0) {
-            log.debug('Cleaning Image Cache IDs:', imageIDs.length);
+            log.debug('Cleaning Image Cache IDs:', imageIDs.length.toString());
             await this.imageModule.clearImageCacheByIDs(imageIDs);
         }
         const trackCleanIds = new IdSet();
@@ -52,7 +52,7 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         trackCleanIds.appendIDs(changes.tracks.updated.ids());
         const trackIDs = trackCleanIds.ids();
         if (trackIDs.length > 0) {
-            log.debug('Cleaning Audio Cache IDs:', trackIDs.length);
+            log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
             await this.audioModule.clearCacheByIDs(trackIDs);
         }
     }
@@ -76,9 +76,9 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
             await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
             stateCleanIds.appendIDs(playlistEntryIDs);
         }
-        const stateDestIDs = stateCleanIds.ids();
-        if (stateDestIDs.length > 0) {
-            const states = await orm.State.findIDs({ where: { destID: stateDestIDs } });
+        const stateDestinationIDs = stateCleanIds.ids();
+        if (stateDestinationIDs.length > 0) {
+            const states = await orm.State.findIDs({ where: { destID: stateDestinationIDs } });
             await orm.State.removeLaterByIDs(states);
         }
         if (orm.em.hasChanges()) {
@@ -102,13 +102,13 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     logChanges(changes) {
         function logChange(name, list) {
             if (list.size > 0) {
-                log.info(name, list.size);
+                log.info(name, list.size.toString());
             }
         }
         function logChangeSet(name, set) {
-            logChange('Added ' + name, set.added);
-            logChange('Updated ' + name, set.updated);
-            logChange('Removed ' + name, set.removed);
+            logChange(`Added ${name}`, set.added);
+            logChange(`Updated ${name}`, set.updated);
+            logChange(`Removed ${name}`, set.removed);
         }
         const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
         log.info('Duration:', v);

@@ -1,5 +1,5 @@
 export function useEngineMiddleware(engine) {
-    return (req, res, next) => {
+    return (req, _res, next) => {
         req.engine = engine;
         req.orm = engine.orm.fork();
         next();

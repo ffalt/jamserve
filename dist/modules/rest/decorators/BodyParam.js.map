@@ -1,1 +1,0 @@
-{"version":3,"file":"BodyParam.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/BodyParam.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AACvE,OAAO,EAAE,aAAa,EAAoB,MAAM,oCAAoC,CAAC;AAKrF,MAAM,UAAU,SAAS,CAAC,IAAY,EAAE,uBAA2D,EAAE,YAA+B;IACnI,OAAO,aAAa,CAAC,kBAAkB,EAAE,EAAE,IAAI,EAAE,uBAAuB,EAAE,YAAY,CAAC,CAAC;AACzF,CAAC"}

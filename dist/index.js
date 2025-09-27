@@ -5,7 +5,7 @@ import { configureLogger, logger } from './utils/logger.js';
 import { Server } from './modules/server/server.js';
 import { Container } from 'typescript-ioc';
 dotenv.config();
-configureLogger(process.env.JAM_LOG_LEVEL || 'info', process.env.JAM_LOG_FILE);
+configureLogger(process.env.JAM_LOG_LEVEL ?? 'info', process.env.JAM_LOG_FILE);
 const log = logger('Server');
 const server = Container.get(Server);
 async function run() {
@@ -20,17 +20,19 @@ async function stop() {
         await server.stop();
         process.exit();
     }
-    catch (e) {
-        console.error('Error on server stop', e);
+    catch (error) {
+        console.error('Error on server stop', error);
         process.exit(1);
     }
 }
 process.on('SIGTERM', () => {
-    stop().catch(e => {
-        console.error(e);
+    stop()
+        .catch((error) => {
+        console.error(error);
     });
 });
-run().catch(e => {
-    console.error(e);
+run()
+    .catch((error) => {
+    console.error(error);
 });
 //# sourceMappingURL=index.js.map

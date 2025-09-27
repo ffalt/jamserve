@@ -12,7 +12,8 @@ import { FolderService } from '../folder/folder.service.js';
 export class RootService {
     async getImage(orm, root, size, format) {
         const folders = await root.folders.getItems();
-        const folder = folders.sort((a, b) => b.level - a.level)[0];
+        const sorted = folders.sort((a, b) => b.level - a.level);
+        const folder = sorted.at(0);
         if (folder) {
             return this.folderService.getImage(orm, folder, size, format);
         }

@@ -9,7 +9,7 @@ export class Validator {
         }
     }
     static async validateReference(objID, collection, property, object, maybeNull) {
-        const id = await collection.id();
+        const id = collection.id();
         if (!maybeNull && !id) {
             log.error(`Missing ${property} ID on ${object} [${objID}]`);
         }
@@ -24,27 +24,30 @@ export class Validator {
     static async validateStates(orm) {
         const states = await orm.State.all();
         for (const state of states) {
+            log.info(`Validating State "${state.destType}" by User ${state.user.id()}`);
             const repo = orm.byType(state.destType);
-            if (!repo) {
-                log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
-            }
-            else {
+            if (repo) {
                 const obj = await repo.findOneByID(state.destID);
                 if (!obj) {
                     log.error(`Missing DestObj "${state.destID}" in State [${state.id}]`);
                 }
+            }
+            else {
+                log.error(`Invalid DestType "${state.destType}" in State [${state.id}]`);
             }
         }
     }
     async validatePlaylists(orm) {
         const playlists = await orm.Playlist.all();
         for (const playlist of playlists) {
+            log.info(`Validating Playlist "${playlist.name}"`);
             await Validator.validateCollection(playlist.id, playlist.entries, 'Entries', 'Album');
         }
     }
     async validateTracks(orm) {
         const tracks = await orm.Track.all();
         for (const track of tracks) {
+            log.info(`Validating Track "${track.name}"`);
             await Validator.validateReference(track.id, track.albumArtist, 'AlbumArtist', 'Track', false);
             await Validator.validateReference(track.id, track.artist, 'Artist', 'Track', false);
             await Validator.validateReference(track.id, track.album, 'Album', 'Track', false);
@@ -59,6 +62,7 @@ export class Validator {
     async validateFolders(orm) {
         const folders = await orm.Folder.all();
         for (const folder of folders) {
+            log.info(`Validating Folder "${folder.name}"`);
             await Validator.validateReference(folder.id, folder.root, 'Root', 'Folder', false);
             await Validator.validateCollection(folder.id, folder.artworks, 'Artwork', 'Folder');
             await Validator.validateCollection(folder.id, folder.children, 'Children', 'Folder');
@@ -102,7 +106,7 @@ export class Validator {
         }
     }
     async validateORM(orm) {
-        log.info(`Validating DB`);
+        log.info('Validating DB');
         await this.validateAlbums(orm);
         await this.validateArtists(orm);
         await this.validateSeries(orm);

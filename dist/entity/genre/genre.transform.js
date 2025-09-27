@@ -8,27 +8,27 @@ import { InRequestScope } from 'typescript-ioc';
 import { DBObjectType } from '../../types/enums.js';
 import { BaseTransformService } from '../base/base.transform.js';
 let GenreTransformService = class GenreTransformService extends BaseTransformService {
-    async genreBases(orm, list, genreArgs, user) {
+    async genreBases(orm, list, _parameters, user) {
         return await Promise.all(list.map(g => this.genreBase(orm, g, {}, user)));
     }
-    async genreBase(orm, o, genreArgs, user) {
+    async genreBase(orm, o, parameters, user) {
         return {
             id: o.id,
             name: o.name,
             created: o.createdAt.valueOf(),
-            state: genreArgs.genreState ? await this.state(orm, o.id, DBObjectType.genre, user.id) : undefined
+            state: parameters.genreState ? await this.state(orm, o.id, DBObjectType.genre, user.id) : undefined
         };
     }
-    async genre(orm, o, genreArgs, user) {
+    async genre(orm, o, parameters, user) {
         return {
-            ...(await this.genreBase(orm, o, genreArgs, user)),
+            ...(await this.genreBase(orm, o, parameters, user)),
             albumCount: await o.albums.count(),
             trackCount: await o.tracks.count(),
             artistCount: await o.artists.count(),
             folderCount: await o.folders.count()
         };
     }
-    async genreIndex(orm, result) {
+    async genreIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

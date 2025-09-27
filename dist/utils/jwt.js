@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { hashMD5 } from './md5.js';
+import crypto from 'node:crypto';
 export function jwtHash(token) {
-    return hashMD5(token);
+    return crypto.createHash('sha256').update(token).digest('hex');
 }
 export function generateJWT(userID, client, secret, maxAge) {
     const tokenData = { id: userID, client };

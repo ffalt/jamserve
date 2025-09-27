@@ -1,9 +1,10 @@
 import { AlbumType, FolderType, RootScanStrategy } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
-import path from 'path';
+import path from 'node:path';
 import { logger } from '../../../utils/logger.js';
 import { MatchNodeMetaStats } from './meta-stats.js';
 import { QHelper } from '../../orm/index.js';
+import { isExtraFolder } from '../../../utils/foldertype.js';
 const log = logger('IO.MergeScan');
 export class WorkerMergeScan {
     constructor(orm, strategy, changes) {
@@ -22,10 +23,6 @@ export class WorkerMergeScan {
             log.debug('Syncing Folder Changes to DB');
             await this.orm.em.flush();
         }
-    }
-    static isExtraFolder(node) {
-        const name = path.basename(node.path).toLowerCase();
-        return !!name.match(/(\[(extra|various)]|^(extra|various)$)/);
     }
     static getMultiAlbumFolderType(node) {
         const a = node.children.find(d => d.folder.folderType === FolderType.artist);
@@ -51,11 +48,11 @@ export class WorkerMergeScan {
         if (node.folder.level === 0) {
             return FolderType.collection;
         }
-        if (WorkerMergeScan.isExtraFolder(node)) {
+        if (isExtraFolder(node.path)) {
             return FolderType.extras;
         }
         if (metaStat.trackCount > 0) {
-            return this.getTrackFolderType(node, metaStat, strategy);
+            return WorkerMergeScan.getTrackFolderType(node, metaStat, strategy);
         }
         if (node.children.length === 0) {
             return FolderType.extras;
@@ -66,7 +63,7 @@ export class WorkerMergeScan {
         if (node.children.length === 1) {
             return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
         }
-        if (!metaStat.hasMultipleArtists && !!node.children.find(d => d.folder.folderType === FolderType.artist)) {
+        if (!metaStat.hasMultipleArtists && node.children.some(d => d.folder.folderType === FolderType.artist)) {
             return FolderType.artist;
         }
         return WorkerMergeScan.getMultiAlbumFolderType(node);
@@ -77,7 +74,7 @@ export class WorkerMergeScan {
             node.changed = true;
         }
         switch (type) {
-            case FolderType.collection:
+            case FolderType.collection: {
                 node.folder.mbArtistID = undefined;
                 node.folder.mbReleaseID = undefined;
                 node.folder.mbAlbumType = undefined;
@@ -87,13 +84,15 @@ export class WorkerMergeScan {
                 node.folder.album = undefined;
                 node.folder.year = undefined;
                 break;
-            case FolderType.artist:
+            }
+            case FolderType.artist: {
                 node.folder.mbReleaseID = undefined;
                 node.folder.mbAlbumType = undefined;
                 node.folder.mbReleaseGroupID = undefined;
                 node.folder.album = undefined;
                 node.folder.year = undefined;
                 break;
+            }
             default:
         }
     }
@@ -102,11 +101,10 @@ export class WorkerMergeScan {
             WorkerMergeScan.setFolderType(node, FolderType.multialbum);
         }
         for (const child of node.children) {
-            if (child.folder.folderType !== FolderType.extras) {
-                if (node.folder.albumType !== child.folder.albumType) {
-                    node.folder.albumType = child.folder.albumType;
-                    node.changed = true;
-                }
+            if (child.folder.folderType !== FolderType.extras &&
+                node.folder.albumType !== child.folder.albumType) {
+                node.folder.albumType = child.folder.albumType;
+                node.changed = true;
             }
             WorkerMergeScan.markMultiAlbumChildDirs(child);
         }
@@ -129,7 +127,7 @@ export class WorkerMergeScan {
         folder.albumType = metaStat.albumType;
         folder.artist = metaStat.artist;
         folder.artistSort = metaStat.artistSort;
-        folder.title = title !== name ? title : undefined;
+        folder.title = title === name ? undefined : title;
         folder.name = name;
         folder.mbReleaseID = metaStat.mbReleaseID;
         folder.mbReleaseGroupID = metaStat.mbReleaseGroupID;
@@ -138,7 +136,7 @@ export class WorkerMergeScan {
         folder.albumTrackCount = metaStat.trackCount;
         folder.year = (year !== undefined && year > 0) ? year : metaStat.year;
         folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
-        const genreNames = metaStat.genres || [];
+        const genreNames = metaStat.genres ?? [];
         let genres = [];
         if (genreNames.length > 0) {
             genres = await this.orm.Genre.find({ where: { name: QHelper.inOrEqual(genreNames) } });
@@ -171,10 +169,8 @@ export class WorkerMergeScan {
                 changed = true;
             }
         }
-        if (changed) {
-            if (!this.changes.folders.added.hasID(node.folder.id) && !this.changes.folders.removed.hasID(node.folder.id)) {
-                this.changes.folders.updated.addID(node.folder.id);
-            }
+        if (changed && !this.changes.folders.added.hasID(node.folder.id) && !this.changes.folders.removed.hasID(node.folder.id)) {
+            this.changes.folders.updated.addID(node.folder.id);
         }
         node.changed = changed;
     }

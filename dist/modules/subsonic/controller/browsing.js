@@ -11,13 +11,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { AlbumOrderFields, DBObjectType, LastFMLookupType, TrackOrderFields } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-parameters.js';
 import { SubsonicResponseAlbumInfo, SubsonicResponseAlbumWithSongsID3, SubsonicResponseArtistInfo, SubsonicResponseArtistInfo2, SubsonicResponseArtistsID3, SubsonicResponseArtistWithAlbumsID3, SubsonicResponseDirectory, SubsonicResponseGenres, SubsonicResponseIndexes, SubsonicResponseMusicFolders, SubsonicResponseSimilarSongs, SubsonicResponseSimilarSongs2, SubsonicResponseSong, SubsonicResponseTopSongs, SubsonicResponseVideoInfo, SubsonicResponseVideos } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     async getArtist(query, { orm, user }) {
@@ -44,16 +44,16 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
         return { album: albumid3 };
     }
     async getArtistInfo(query, { engine, orm, user }) {
-        const limitCount = query.count || 20;
-        const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
+        const limitCount = query.count ?? 20;
+        const includeNotPresent = query.includeNotPresent ?? false;
         const limitLastFMSimilarArtists = async (info) => {
-            const similar = info.similar?.artist || [];
+            const similar = info.similar?.artist ?? [];
             if (similar.length === 0) {
                 return [];
             }
             const result = [];
             for (const sim of similar) {
-                if (result.length == limitCount) {
+                if (result.length === limitCount) {
                     break;
                 }
                 const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
@@ -62,11 +62,12 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
                     result.push(await SubsonicFormatter.packArtist(artist, state));
                 }
                 else if (includeNotPresent) {
+                    const image = sim.image && sim.image.length > 0 ? sim.image.at(0) : undefined;
                     result.push({
                         id: '-1',
                         name: sim.name,
                         musicBrainzId: sim.mbid,
-                        artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+                        artistImageUrl: image?.url,
                         albumCount: 0
                     });
                 }
@@ -74,36 +75,34 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
             return result;
         };
         const folder = await orm.Folder.findOneOrFailByID(query.id);
-        if (folder) {
-            if (folder.mbArtistID) {
-                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
+        if (folder.mbArtistID) {
+            const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, folder.mbArtistID);
+            if (lastfm?.artist) {
+                return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
+            }
+        }
+        else if (folder.artist) {
+            const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
+            if (al?.artist) {
+                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
                 if (lastfm?.artist) {
                     return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-                }
-            }
-            else if (folder.artist) {
-                const al = await engine.metadata.lastFMArtistSearch(orm, folder.artist);
-                if (al?.artist) {
-                    const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-                    if (lastfm?.artist) {
-                        return { artistInfo: SubsonicFormatter.packArtistInfo(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-                    }
                 }
             }
         }
         return { artistInfo: {} };
     }
     async getArtistInfo2(query, { engine, orm, user }) {
-        const includeNotPresent = (query.includeNotPresent !== undefined) ? query.includeNotPresent : false;
-        const limitCount = query.count || 20;
+        const includeNotPresent = query.includeNotPresent ?? false;
+        const limitCount = query.count ?? 20;
         const limitLastFMSimilarArtists = async (info) => {
-            const similar = info.similar?.artist || [];
+            const similar = info.similar?.artist ?? [];
             if (similar.length === 0) {
                 return [];
             }
             const result = [];
             for (const sim of similar) {
-                if (result.length == limitCount) {
+                if (result.length === limitCount) {
                     break;
                 }
                 const artist = await orm.Artist.findOneFilter({ mbArtistIDs: [sim.mbid] });
@@ -112,11 +111,12 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
                     result.push(await SubsonicFormatter.packArtist(artist, state));
                 }
                 else if (includeNotPresent) {
+                    const image = sim.image && sim.image.length > 0 ? sim.image.at(0) : undefined;
                     result.push({
                         id: '-1',
                         name: sim.name,
                         musicBrainzId: sim.mbid,
-                        artistImageUrl: sim.image?.length > 0 ? sim.image[0].url : undefined,
+                        artistImageUrl: image?.url,
                         albumCount: 0
                     });
                 }
@@ -124,20 +124,18 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
             return result;
         };
         const artist = await orm.Artist.findOneOrFailByID(query.id);
-        if (artist) {
-            if (artist.mbArtistID) {
-                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
-                if (lastfm && lastfm.artist) {
-                    return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-                }
+        if (artist.mbArtistID) {
+            const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, artist.mbArtistID);
+            if (lastfm?.artist) {
+                return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
             }
-            else if (artist.name) {
-                const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
-                if (al && al.artist) {
-                    const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
-                    if (lastfm && lastfm.artist) {
-                        return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
-                    }
+        }
+        else if (artist.name) {
+            const al = await engine.metadata.lastFMArtistSearch(orm, artist.name);
+            if (al?.artist) {
+                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.artist, al.artist.mbid);
+                if (lastfm?.artist) {
+                    return { artistInfo2: SubsonicFormatter.packArtistInfo2(lastfm.artist, await limitLastFMSimilarArtists(lastfm.artist)) };
                 }
             }
         }
@@ -145,20 +143,18 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     }
     async getAlbumInfo(query, { engine, orm }) {
         const folder = await orm.Folder.findOneOrFailByID(query.id);
-        if (folder) {
-            if (folder.mbReleaseID) {
-                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
-                if (lastfm && lastfm.album) {
-                    return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-                }
+        if (folder.mbReleaseID) {
+            const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, folder.mbReleaseID);
+            if (lastfm?.album) {
+                return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
             }
-            else if (folder.album && folder.artist) {
-                const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
-                if (al && al.album) {
-                    const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-                    if (lastfm && lastfm.album) {
-                        return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-                    }
+        }
+        else if (folder.album && folder.artist) {
+            const al = await engine.metadata.lastFMAlbumSearch(orm, folder.album, folder.artist);
+            if (al?.album) {
+                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
+                if (lastfm?.album) {
+                    return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
                 }
             }
         }
@@ -166,20 +162,19 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     }
     async getAlbumInfo2(query, { engine, orm }) {
         const album = await orm.Album.findOneOrFailByID(query.id);
-        if (album) {
-            if (album.mbReleaseID) {
-                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
-                if (lastfm && lastfm.album) {
-                    return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-                }
+        if (album.mbReleaseID) {
+            const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, album.mbReleaseID);
+            if (lastfm?.album) {
+                return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
             }
-            else if (album.name && album.artist.id()) {
-                const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, (await album.artist.getOrFail()).name);
-                if (al && al.album) {
-                    const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
-                    if (lastfm && lastfm.album) {
-                        return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
-                    }
+        }
+        else if (album.name && album.artist.id()) {
+            const artist = await album.artist.getOrFail();
+            const al = await engine.metadata.lastFMAlbumSearch(orm, album.name, artist.name);
+            if (al?.album) {
+                const lastfm = await engine.metadata.lastFMLookup(orm, LastFMLookupType.album, al.album.mbid);
+                if (lastfm?.album) {
+                    return { albumInfo: SubsonicFormatter.packAlbumInfo(lastfm.album) };
                 }
             }
         }
@@ -192,18 +187,17 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
         }, user, engine.settings.settings.index.ignoreArticles);
         const folderIndex = await engine.transform.Folder.folderIndex(orm, folderIndexORM);
         if (query.ifModifiedSince && query.ifModifiedSince > 0 && (folderIndex.lastModified <= query.ifModifiedSince)) {
-            const empty = {};
-            return empty;
+            return {};
         }
         let ids = [];
-        folderIndex.groups.forEach(group => {
-            ids = ids.concat(group.items.map(folder => folder.id));
-        });
+        for (const group of folderIndex.groups) {
+            ids = [...ids, ...group.items.map(folder => folder.id)];
+        }
         const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.folder, user.id);
         return {
             indexes: {
                 lastModified: folderIndex.lastModified,
-                ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
+                ignoredArticles: engine.settings.settings.index.ignoreArticles.join(' '),
                 index: await SubsonicFormatter.packFolderIndex(folderIndex, states)
             }
         };
@@ -211,13 +205,13 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     async getArtists(query, { engine, orm, user }) {
         const artistIndex = await orm.Artist.indexFilter({ rootIDs: query.musicFolderId ? [query.musicFolderId] : undefined }, user, engine.settings.settings.index.ignoreArticles);
         let ids = [];
-        artistIndex.groups.forEach(group => {
-            ids = ids.concat(group.items.map(artist => artist.id));
-        });
+        for (const group of artistIndex.groups) {
+            ids = [...ids, ...group.items.map(artist => artist.id)];
+        }
         const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.artist, user.id);
         return {
             artists: {
-                ignoredArticles: (engine.settings.settings.index.ignoreArticles || []).join(' '),
+                ignoredArticles: engine.settings.settings.index.ignoreArticles.join(' '),
                 index: await SubsonicFormatter.packArtistIndex(artistIndex, states)
             }
         };
@@ -228,9 +222,9 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
         const folders = await folder.children.getItems();
         let childs = [];
         let list = await SubsonicHelper.prepareFolders(orm, folders, user);
-        childs = childs.concat(list);
+        childs = [...childs, ...list];
         list = await SubsonicHelper.prepareTracks(orm, tracks, user);
-        childs = childs.concat(list);
+        childs = [...childs, ...list];
         const state = await orm.State.findOrCreate(folder.id, DBObjectType.folder, user.id);
         const directory = await SubsonicFormatter.packDirectory(folder, state);
         directory.child = childs;
@@ -264,23 +258,27 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     async getSimilarSongs(query, { engine, orm, user }) {
         const result = await orm.findInRepos(query.id, [orm.Track, orm.Folder, orm.Artist, orm.Album]);
         if (!result?.obj) {
-            return Promise.reject(SubsonicFormatter.ERRORS.NOT_FOUND);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.NOT_FOUND));
         }
         let tracks;
-        const page = { take: query.count || 50, skip: 0 };
+        const page = { take: query.count ?? 50, skip: 0 };
         switch (result.objType) {
-            case DBObjectType.track:
+            case DBObjectType.track: {
                 tracks = await engine.metadata.similarTracks.byTrack(orm, result.obj, page);
                 break;
-            case DBObjectType.folder:
+            }
+            case DBObjectType.folder: {
                 tracks = await engine.metadata.similarTracks.byFolder(orm, result.obj, page);
                 break;
-            case DBObjectType.artist:
+            }
+            case DBObjectType.artist: {
                 tracks = await engine.metadata.similarTracks.byArtist(orm, result.obj, page);
                 break;
-            case DBObjectType.album:
+            }
+            case DBObjectType.album: {
                 tracks = await engine.metadata.similarTracks.byAlbum(orm, result.obj, page);
                 break;
+            }
             default:
         }
         const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
@@ -288,10 +286,10 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
     }
     async getSimilarSongs2(query, { engine, orm, user }) {
         const artist = await orm.Artist.findOneOrFailByID(query.id);
-        const page = { take: query.count || 50, skip: 0 };
+        const page = { take: query.count ?? 50, skip: 0 };
         const tracks = await engine.metadata.similarTracks.byArtist(orm, artist, page);
-        const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
-        return { similarSongs2: SubsonicFormatter.packSimilarSongs2(childs) };
+        const childs = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
+        return { similarSongs2: SubsonicFormatter.packSimilarSongs(childs) };
     }
     async getSong(query, { orm, user }) {
         const track = await orm.Track.findOneOrFailByID(query.id);
@@ -299,15 +297,15 @@ let SubsonicBrowsingApi = class SubsonicBrowsingApi {
         return { song: child };
     }
     async getTopSongs(query, { engine, orm, user }) {
-        const page = { take: query.count || 50, skip: 0 };
+        const page = { take: query.count ?? 50, skip: 0 };
         const tracks = await engine.metadata.topTracks.byArtistName(orm, query.artist, page);
-        const childs = tracks ? await SubsonicHelper.prepareTracks(orm, tracks.items, user) : [];
+        const childs = await SubsonicHelper.prepareTracks(orm, tracks.items, user);
         return { topSongs: { song: childs } };
     }
-    async getVideos(_ctx) {
+    async getVideos(_context) {
         return { videos: {} };
     }
-    async getVideoInfo(_query, _ctx) {
+    async getVideoInfo(_query, _context) {
         return { videoInfo: { id: '0' } };
     }
 };
@@ -317,8 +315,8 @@ __decorate([
         description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -329,8 +327,8 @@ __decorate([
         description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -341,8 +339,8 @@ __decorate([
         description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterArtistInfo, Object]),
     __metadata("design:returntype", Promise)
@@ -353,8 +351,8 @@ __decorate([
         description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterArtistInfo, Object]),
     __metadata("design:returntype", Promise)
@@ -365,8 +363,8 @@ __decorate([
         description: 'Returns album notes, image URLs etc, using data from last.fm.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -377,8 +375,8 @@ __decorate([
         description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -389,8 +387,8 @@ __decorate([
         description: 'Returns an indexed structure of all artists.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterIndexes, Object]),
     __metadata("design:returntype", Promise)
@@ -401,8 +399,8 @@ __decorate([
         description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterMusicFolderID, Object]),
     __metadata("design:returntype", Promise)
@@ -413,8 +411,8 @@ __decorate([
         description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -425,7 +423,7 @@ __decorate([
         description: 'Returns all configured top-level music folders.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -436,7 +434,7 @@ __decorate([
         description: 'Returns all genres.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -447,8 +445,8 @@ __decorate([
         description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterSimilarSongs, Object]),
     __metadata("design:returntype", Promise)
@@ -459,8 +457,8 @@ __decorate([
         description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterSimilarSongs, Object]),
     __metadata("design:returntype", Promise)
@@ -471,8 +469,8 @@ __decorate([
         description: 'Returns details for a song.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)
@@ -483,8 +481,8 @@ __decorate([
         description: 'Returns top songs for the given artist, using data from last.fm.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterTopSongs, Object]),
     __metadata("design:returntype", Promise)
@@ -495,7 +493,7 @@ __decorate([
         description: 'Returns all video files.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicCtx()),
+    __param(0, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
@@ -506,8 +504,8 @@ __decorate([
         description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',
         tags: ['Browsing']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterID, Object]),
     __metadata("design:returntype", Promise)

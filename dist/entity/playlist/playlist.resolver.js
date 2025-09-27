@@ -15,13 +15,13 @@ import { StateQL } from '../state/state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Playlist, PlaylistIndexQL, PlaylistPageQL, PlaylistQL } from './playlist.js';
 import { PlaylistEntryQL } from '../playlistentry/playlist-entry.js';
-import { PlaylistIndexArgs, PlaylistsArgs } from './playlist.args.js';
-import { NotFoundError } from '../../modules/deco/express/express-error.js';
+import { PlaylistIndexParameters, PlaylistsParameters } from './playlist.parameters.js';
+import { notFoundError } from '../../modules/deco/express/express-error.js';
 let PlaylistResolver = class PlaylistResolver {
     async playlist(id, { orm, user }) {
         const list = await orm.Playlist.oneOrFail({ where: { id } });
         if (!list.isPublic && user.id !== list.user.id()) {
-            throw NotFoundError();
+            throw notFoundError();
         }
         return list;
     }
@@ -44,7 +44,8 @@ let PlaylistResolver = class PlaylistResolver {
         return playlist.user.idOrFail();
     }
     async userName(playlist) {
-        return (await playlist.user.getOrFail()).name;
+        const user = await playlist.user.getOrFail();
+        return user.name;
     }
     async state(playlist, { orm, user }) {
         return await orm.State.findOrCreate(playlist.id, DBObjectType.playlist, user.id);
@@ -63,7 +64,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PlaylistsArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "playlists", null);
 __decorate([
@@ -71,7 +72,7 @@ __decorate([
     __param(0, Args()),
     __param(1, Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PlaylistIndexArgs, Object]),
+    __metadata("design:paramtypes", [PlaylistIndexParameters, Object]),
     __metadata("design:returntype", Promise)
 ], PlaylistResolver.prototype, "playlistIndex", null);
 __decorate([

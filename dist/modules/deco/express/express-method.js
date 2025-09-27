@@ -1,4 +1,4 @@
-import { GenericError, UnauthError } from './express-error.js';
+import { genericError, unauthError } from './express-error.js';
 import { logger } from '../../../utils/logger.js';
 import { ExpressParameters } from './express-parameters.js';
 import { processCustomPathParameters } from './express-path-parameters.js';
@@ -18,103 +18,103 @@ export class ExpressMethod {
         if (target === String) {
             return 'string';
         }
-        return method.defaultReturnTypeFormat || 'json';
+        return method.defaultReturnTypeFormat ?? 'json';
     }
-    buildArguments(method, context, metadata) {
-        const args = [];
-        const params = method.params.sort((a, b) => a.index - b.index);
-        for (const param of params) {
-            const arg = this.parameters.validateArgument(param, context, metadata);
-            if (arg) {
-                args.push(arg);
+    buildParameters(method, context, metadata) {
+        const result = [];
+        const parameters = method.parameters.sort((a, b) => a.index - b.index);
+        for (const parameter of parameters) {
+            const validatedParameter = this.parameters.validateParameter(parameter, context, metadata);
+            if (validatedParameter) {
+                result.push(validatedParameter);
             }
         }
-        return args;
+        return result;
     }
     async callMethod(method, context, name, { responder, resultTypes }, metadata) {
         try {
             const Controller = method.controllerClassMetadata?.target;
             if (!Controller) {
-                throw GenericError(`Internal: Invalid controller in method ${method.methodName}`);
+                throw genericError(`Internal: Invalid controller in method ${method.methodName}`);
             }
             const instance = new Controller();
-            const func = instance[method.methodName];
-            const args = this.buildArguments(method, context, metadata);
+            const instanceFunction = instance[method.methodName];
+            const parameters = this.buildParameters(method, context, metadata);
             if (method.binary !== undefined) {
-                const result = await func.apply(instance, args);
+                const result = await instanceFunction.apply(instance, parameters);
                 responder.sendBinary(context.req, context.res, result);
                 return;
             }
             if (method.getReturnType === undefined) {
-                await func.apply(instance, args);
+                await instanceFunction.apply(instance, parameters);
                 responder.sendOK(context.req, context.res);
                 return;
             }
             const target = method.getReturnType();
             if (target === String) {
-                const result = await func.apply(instance, args);
+                const result = await instanceFunction.apply(instance, parameters);
                 responder.sendString(context.req, context.res, result);
                 return;
             }
             const resultType = resultTypes.find(it => it.target === target);
             if (!resultType) {
-                throw GenericError(`The value used as a result type of '@${name}' for '${String(method.getReturnType())}' of '${method.target.name}.${method.methodName}' ` +
-                    `is not a class decorated with '@ResultType' decorator!`);
+                throw genericError(`The value used as a result type of '@${name}' for '${JSON.stringify(method.getReturnType())}' of '${method.target.name}.${method.methodName}' is not a class decorated with '@ResultType' decorator!`);
             }
-            const result = await instance[method.methodName].apply(instance, args);
+            const result = await instance[method.methodName](...parameters);
             responder.sendData(context.req, context.res, result);
         }
-        catch (e) {
-            log.error(e.fail || e.message);
-            responder.sendError(context.req, context.res, e);
+        catch (error) {
+            log.error(error);
+            responder.sendError(context.req, context.res, error);
         }
     }
     POST(post, ctrl, router, options, uploadHandler, metadata) {
-        let route = (post.route || '/');
+        let route = (post.route ?? '/');
         if (post.customPathParameters) {
-            route = (!post.route) ? '/:pathParameters' : post.route.split('{')[0] + ':pathParameters';
+            route = (post.route) ? `${post.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
         }
-        const roles = post.roles || ctrl?.roles || [];
+        const roles = post.roles ?? ctrl?.roles ?? [];
         const handlers = [];
-        for (const param of post.params) {
-            if ((param.kind === 'arg' && param.mode === 'file')) {
-                handlers.push(uploadHandler(param.name));
+        for (const parameter of post.parameters) {
+            if ((parameter.kind === 'arg' && parameter.mode === 'file')) {
+                handlers.push(uploadHandler(parameter.name));
             }
         }
         router.post(route, ...handlers, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
-                    throw UnauthError();
+                    throw unauthError();
                 }
                 if (post.customPathParameters) {
                     req.params = {
                         ...req.params,
-                        ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post, options), pathParameters: undefined
+                        ...processCustomPathParameters(post.customPathParameters, req.params.pathParameters, post, options),
+                        pathParameters: undefined
                     };
                 }
                 await this.callMethod(post, { req, res, next, orm: req.orm, engine: req.engine, user: req.user }, 'Post', options, metadata);
             }
-            catch (e) {
-                options.responder.sendError(req, res, e);
+            catch (error) {
+                options.responder.sendError(req, res, error);
             }
         });
         return {
             method: 'POST',
-            endpoint: (ctrl ? ctrl.route : '') + route,
+            endpoint: (ctrl?.route ?? '') + route,
             role: roles.length > 0 ? roles.join(',') : 'public',
             format: ExpressMethod.getMethodResultFormat(post)
         };
     }
     GET(get, ctrl, router, options, metadata) {
-        let route = (get.route || '/');
+        let route = (get.route ?? '/');
         if (get.customPathParameters) {
-            route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
+            route = (get.route) ? `${get.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
         }
-        const roles = get.roles || ctrl?.roles || [];
+        const roles = get.roles ?? ctrl?.roles ?? [];
         router.get(route, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
-                    throw UnauthError();
+                    throw unauthError();
                 }
                 if (get.customPathParameters) {
                     req.params = {
@@ -124,27 +124,27 @@ export class ExpressMethod {
                 }
                 await this.callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get', options, metadata);
             }
-            catch (e) {
-                options.responder.sendError(req, res, e);
+            catch (error) {
+                options.responder.sendError(req, res, error);
             }
         });
         return {
             method: 'GET',
-            endpoint: (ctrl ? ctrl.route : '') + route,
+            endpoint: (ctrl?.route ?? '') + route,
             role: roles.length > 0 ? roles.join(',') : 'public',
             format: ExpressMethod.getMethodResultFormat(get)
         };
     }
     SUBSONIC(get, ctrl, router, options, metadata) {
-        let route = (get.route || '/');
+        let route = (get.route ?? '/');
         if (get.customPathParameters) {
-            route = (!get.route) ? '/:pathParameters' : get.route.split('{')[0] + ':pathParameters';
+            route = (get.route) ? `${get.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
         }
-        const roles = get.roles || ctrl?.roles || [];
+        const roles = get.roles ?? ctrl?.roles ?? [];
         router.all(`${route}{.view}`, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {
-                    throw UnauthError();
+                    throw unauthError();
                 }
                 if (get.customPathParameters) {
                     req.params = {
@@ -154,13 +154,13 @@ export class ExpressMethod {
                 }
                 await this.callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'All', options, metadata);
             }
-            catch (e) {
-                options.responder.sendError(req, res, e);
+            catch (error) {
+                options.responder.sendError(req, res, error);
             }
         });
         return {
             method: 'ALL',
-            endpoint: (ctrl ? ctrl.route : '') + route,
+            endpoint: (ctrl?.route ?? '') + route,
             role: roles.length > 0 ? roles.join(',') : 'public',
             format: ExpressMethod.getMethodResultFormat(get)
         };

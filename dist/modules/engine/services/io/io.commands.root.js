@@ -47,12 +47,7 @@ export class IoCommandsRoot {
         return result;
     }
     async startUpRefresh(orm, forceRescan) {
-        if (!forceRescan) {
-            await this.refreshAll(orm);
-        }
-        else {
-            await this.refreshAllMeta(orm);
-        }
+        await (forceRescan ? this.refreshAllMeta(orm) : this.refreshAll(orm));
     }
 }
 //# sourceMappingURL=io.commands.root.js.map

@@ -1,5 +1,6 @@
 import { WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
 import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types.js';
+import { capitalize } from '../../../utils/capitalize.js';
 export class MusicbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
@@ -8,33 +9,35 @@ export class MusicbrainzClient extends WebserviceJSONClient {
         };
         super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
     }
+    formatKey(key) {
+        return key.split('-').map((value, index) => {
+            if (index === 0) {
+                return value;
+            }
+            return capitalize(value);
+        }).join('');
+    }
+    ;
     beautify(obj) {
-        const formatKey = (key) => {
-            return key.split('-').map((value, index) => {
-                if (index === 0) {
-                    return value;
-                }
-                return value[0].toUpperCase() + value.slice(1);
-            }).join('');
-        };
         const walk = (o) => {
             if (o === null) {
-                return undefined;
+                return;
             }
             if (o === undefined) {
-                return undefined;
+                return;
             }
             if (Array.isArray(o)) {
-                return o.map(walk).filter((sub) => sub !== undefined);
+                return o.map((element) => walk(element)).filter((sub) => sub !== undefined);
             }
             if (typeof o === 'object') {
                 const result = {};
-                Object.keys(o).forEach(key => {
-                    const sub = walk(o[key]);
+                for (const key of Object.keys(o)) {
+                    const value = o[key];
+                    const sub = walk(value);
                     if (sub !== undefined) {
-                        result[formatKey(key)] = sub;
+                        result[this.formatKey(key)] = sub;
                     }
-                });
+                }
                 return result;
             }
             return o;
@@ -42,89 +45,76 @@ export class MusicbrainzClient extends WebserviceJSONClient {
         return walk(obj);
     }
     concatSearchQuery(query) {
-        return Object.keys(query)
-            .filter(key => (query[key] !== undefined && query[key] !== null))
-            .map(key => `${key}:"${encodeURIComponent(query[key])}"`)
+        return Object.entries(query)
+            .filter(([_key, value]) => (value !== undefined && value !== null))
+            .map(([key, value]) => `${key}:"${encodeURIComponent(value)}"`)
             .join('%20AND%20');
     }
     reqToUrl(req) {
-        const q = Object.keys(req.query)
-            .filter(key => (req.query[key] !== undefined && req.query[key] !== null))
-            .map(key => `${key}=${req.query[key]}`);
-        q.push(`limit=${req.limit || this.options.limit || 25}`);
-        q.push(`offset=${req.offset || 0}`);
-        q.push('fmt=json');
+        const q = Object.entries(req.query)
+            .filter(([_key, value]) => (value !== undefined && value !== null))
+            .map(([key, value]) => `${key}=${value}`);
+        q.push(`limit=${req.limit ?? this.options.limit ?? 25}`, `offset=${req.offset ?? 0}`, 'fmt=json');
         return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
     }
     isRateLimitError(body) {
-        return !!(body?.error && body.error.includes('allowable rate limit'));
+        return !!(body?.error?.includes('allowable rate limit'));
     }
-    async search(params) {
+    async search(parameters) {
         const data = await this.get({
-            path: `${this.options.basePath}${params.type}/`,
-            query: { query: this.concatSearchQuery(params.query || {}) },
+            path: `${this.options.basePath}${parameters.type}/`,
+            query: { query: this.concatSearchQuery(parameters.query) },
             retry: 0,
-            limit: params.limit,
-            offset: params.offset
+            limit: parameters.limit,
+            offset: parameters.offset
         });
         return this.beautify(data);
     }
-    async lookup(params) {
-        if (!params.id || params.id.length === 0) {
-            return Promise.reject(Error(`Invalid lookup id for type ${params.type}`));
+    async lookup(parameters) {
+        if (!parameters.id || parameters.id.length === 0) {
+            return Promise.reject(new Error(`Invalid lookup id for type ${parameters.type}`));
         }
-        const lookup = LookupIncludes[params.type];
-        const inc = params.inc || LookupIncludes[params.type].join('+');
+        const lookup = LookupIncludes[parameters.type];
         if (!lookup) {
-            return Promise.reject(Error('Invalid Lookup'));
+            return Promise.reject(new Error('Invalid Lookup'));
         }
+        const inc = parameters.inc ?? lookup.join('+');
         const data = await this.get({
-            path: `${this.options.basePath}${params.type}/${params.id}`,
-            query: {
-                mbid: params.id,
-                inc
-            },
+            path: `${this.options.basePath}${parameters.type}/${parameters.id}`,
+            query: { mbid: parameters.id, inc },
             retry: 0,
-            limit: params.limit,
-            offset: params.offset
+            limit: parameters.limit,
+            offset: parameters.offset
         });
-        const result = {};
-        result[params.type] = data || {};
-        return this.beautify(result);
+        return this.beautify({ [parameters.type]: data });
     }
-    async browse(params) {
-        const invalidKey = Object.keys(params.lookupIds).find(key => !LookupBrowseTypes[params.type] || !LookupBrowseTypes[params.type].includes(key));
+    async browse(parameters) {
+        const invalidKey = Object.keys(parameters.lookupIds).find(key => !LookupBrowseTypes[parameters.type]?.includes(key));
         if (invalidKey) {
-            return Promise.reject(Error(`Invalid browse lookup key for type ${params.type}: ${invalidKey}`));
+            return Promise.reject(new Error(`Invalid browse lookup key for type ${parameters.type}: ${invalidKey}`));
         }
-        const query = { inc: params.inc, ...params.lookupIds };
+        const query = { inc: parameters.inc, ...parameters.lookupIds };
         const data = await this.get({
-            path: `${this.options.basePath}${params.type}/`,
+            path: `${this.options.basePath}${parameters.type}/`,
             query,
             retry: 0,
-            limit: params.limit,
-            offset: params.offset
+            limit: parameters.limit,
+            offset: parameters.offset
         });
-        const result = {};
-        result[params.type] = data || {};
-        return this.beautify(result);
+        return this.beautify({ [parameters.type]: data });
     }
-    async luceneSearch(params) {
-        if (!params.query || params.query.length === 0) {
-            return Promise.reject(Error(`Invalid query for type ${params.type}`));
+    async luceneSearch(parameters) {
+        if (!parameters.query || parameters.query.length === 0) {
+            return Promise.reject(new Error(`Invalid query for type ${parameters.type}`));
         }
         const data = await this.get({
-            path: `${this.options.basePath}${params.type}/`,
-            query: {
-                query: encodeURIComponent(params.query || '')
-            },
+            path: `${this.options.basePath}${parameters.type}/`,
+            query: { query: encodeURIComponent(parameters.query || '') },
             retry: 0,
-            limit: params.limit,
-            offset: params.offset
+            limit: parameters.limit,
+            offset: parameters.offset
         });
-        const result = {};
-        result[params.type] = data || {};
-        return this.beautify(result);
+        return this.beautify({ [parameters.type]: data });
     }
 }
 //# sourceMappingURL=musicbrainz-client.js.map

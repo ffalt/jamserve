@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import fse from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { downloadFile } from '../../utils/download.js';
@@ -29,12 +29,9 @@ let EpisodeService = class EpisodeService {
         return this.episodeDownloadDebounce.isPending(podcastEpisodeId);
     }
     async downloadEpisodeFile(episode) {
-        let url = '';
         const enclosures = episode.enclosuresJSON ? JSON.parse(episode.enclosuresJSON) : undefined;
-        if (enclosures && enclosures.length > 0) {
-            url = enclosures[0].url;
-        }
-        else {
+        const url = enclosures?.at(0)?.url;
+        if (!url) {
             throw new Error('No podcast episode url found');
         }
         let suffix = fileSuffix(url);
@@ -76,16 +73,16 @@ let EpisodeService = class EpisodeService {
                 episode.duration = result.mediaDuration;
                 episode.path = filename;
             }
-            catch (e) {
+            catch (error) {
                 episode.status = PodcastStatus.error;
-                episode.error = (e || '').toString();
+                episode.error = JSON.stringify(error);
             }
             await orm.Episode.persistAndFlush(episode);
             this.episodeDownloadDebounce.resolve(episode.id, undefined);
         }
-        catch (e) {
+        catch (error) {
             this.episodeDownloadDebounce.resolve(episode.id, undefined);
-            return Promise.reject(e);
+            return Promise.reject(error);
         }
     }
     async removeEpisodes(orm, podcastID) {
@@ -120,7 +117,7 @@ let EpisodeService = class EpisodeService {
             return;
         }
         const tag = await episode.tag.get();
-        if (tag && tag.nrTagImages) {
+        if (tag?.nrTagImages) {
             const result = await this.imageModule.getExisting(episode.id, size, format);
             if (result) {
                 return result;

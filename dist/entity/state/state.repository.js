@@ -11,12 +11,12 @@ export class StateRepository extends BaseRepository {
     async buildFilter(_, __) {
         return {};
     }
-    async findOrCreate(destID, destType, userID) {
-        const state = await this.findOne({ where: { user: userID, destID, destType } });
-        return state || this.create({});
+    async findOrCreate(destinationID, destinationType, userID) {
+        const state = await this.findOne({ where: { user: userID, destID: destinationID, destType: destinationType } });
+        return state ?? this.create({});
     }
-    async findMany(destIDs, destType, userID) {
-        return await this.find({ where: { user: userID, destID: destIDs, destType } });
+    async findMany(destinationIDs, destinationType, userID) {
+        return await this.find({ where: { user: userID, destID: destinationIDs, destType: destinationType } });
     }
 }
 //# sourceMappingURL=state.repository.js.map

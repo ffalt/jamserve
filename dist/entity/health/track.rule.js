@@ -1,5 +1,5 @@
 import { ID3v2 } from 'jamp3';
-import path from 'path';
+import path from 'node:path';
 import { ID3TrackTagRawFormatTypes } from '../../modules/audio/audio.module.js';
 import { flac_test } from '../../modules/audio/tools/flac.js';
 import { logger } from '../../utils/logger.js';
@@ -22,19 +22,19 @@ const analyzeErrors = {
         'MPEG: Unknown data found before audio'
     ]
 };
-const fixable = analyzeErrors.xingMissing.concat(analyzeErrors.xing).concat(analyzeErrors.mpeg);
-const GARBAGE_FRAMES_IDS = [
+const FIXABLE = new Set([...analyzeErrors.xingMissing, ...analyzeErrors.xing, ...analyzeErrors.mpeg]);
+const GARBAGE_FRAMES_IDS = new Set([
     'PRIV',
     'COMM',
     'POPM'
-];
-function hasID3v2Tag(track, tag) {
+]);
+function hasID3v2Tag(_track, tag) {
     return !!tag?.format && ID3TrackTagRawFormatTypes.includes(tag.format);
 }
-function isMP3(track, tag) {
+function isMP3(_track, tag) {
     return !!tag && tag.mediaFormat === AudioFormatType.mp3;
 }
-function isFlac(track, tag) {
+function isFlac(_track, tag) {
     return !!tag && tag.mediaFormat === AudioFormatType.flac;
 }
 const trackRules = [
@@ -59,7 +59,7 @@ const trackRules = [
             if (!tag?.trackNr) {
                 missing.push('track nr');
             }
-            if (folder.albumType !== undefined && !track.series && !tag?.trackTotal) {
+            if (folder.albumType !== undefined && !track.series.id() && !tag?.trackTotal) {
                 missing.push('total track count');
             }
             if (folder.albumType !== undefined && AlbumTypesArtistMusic.includes(folder.albumType) && !tag?.year) {
@@ -75,7 +75,7 @@ const trackRules = [
         id: TrackHealthID.id3v2Exists,
         name: 'ID3v2 Tag is missing',
         mp3: true,
-        run: async (folder, track, tag) => {
+        run: async (_folder, track, tag) => {
             if (!hasID3v2Tag(track, tag)) {
                 return {};
             }
@@ -86,8 +86,8 @@ const trackRules = [
         id: TrackHealthID.id3v2Valid,
         name: 'ID3v2 is invalid',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
-            if (tagCache.mp3Warnings && tagCache.mp3Warnings.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
+        run: async (_folder, _track, _tag, tagCache) => {
+            if (tagCache.mp3Warnings?.id3v2 && tagCache.mp3Warnings.id3v2.length > 0) {
                 return {
                     details: tagCache.mp3Warnings.id3v2.map(m => {
                         return { reason: m.msg, expected: m.expected.toString(), actual: m.actual.toString() };
@@ -101,16 +101,16 @@ const trackRules = [
         id: TrackHealthID.id3v2Garbage,
         name: 'ID3v2 has garbage frames',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.id3v2) {
-                const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.includes(frame.id));
+                const frames = tagCache.id3v2.frames.filter(frame => GARBAGE_FRAMES_IDS.has(frame.id));
                 if (frames.length > 0) {
                     const ids = [];
-                    frames.forEach(frame => {
+                    for (const frame of frames) {
                         if (!ids.includes(frame.id)) {
                             ids.push(frame.id);
                         }
-                    });
+                    }
                     return {
                         details: ids.map(m => {
                             return { reason: m };
@@ -125,7 +125,7 @@ const trackRules = [
         id: TrackHealthID.mp3Garbage,
         name: 'MP3 has unaccounted data',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.mp3Warnings?.mpeg) {
                 const warnings = tagCache.mp3Warnings.mpeg.filter(m => analyzeErrors.mpeg.includes(m.msg));
                 if (warnings.length > 0) {
@@ -143,7 +143,7 @@ const trackRules = [
         id: TrackHealthID.mp3HeaderExists,
         name: 'VBR Header is missing',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.mp3Warnings?.xing) {
                 const warning = tagCache.mp3Warnings.xing.find(m => {
                     return analyzeErrors.xingMissing.includes(m.msg);
@@ -159,7 +159,7 @@ const trackRules = [
         id: TrackHealthID.mp3HeaderValid,
         name: 'VBR Header is invalid',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.mp3Warnings?.xing) {
                 const warnings = tagCache.mp3Warnings.xing.filter(m => analyzeErrors.xing.includes(m.msg));
                 if (warnings.length > 0) {
@@ -177,9 +177,9 @@ const trackRules = [
         id: TrackHealthID.mp3MediaValid,
         name: 'MP3 Media is invalid',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
-            if (tagCache.mp3Warnings && tagCache.mp3Warnings.mpeg) {
-                const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !fixable.includes(m.msg));
+        run: async (_folder, _track, _tag, tagCache) => {
+            if (tagCache.mp3Warnings?.mpeg) {
+                const mp3Warnings = tagCache.mp3Warnings.mpeg.filter(m => !FIXABLE.has(m.msg));
                 if (mp3Warnings.length > 0) {
                     return {
                         details: mp3Warnings.map(m => {
@@ -195,7 +195,7 @@ const trackRules = [
         id: TrackHealthID.flacMediaValid,
         name: 'Flac Media is invalid',
         mp3: true,
-        run: async (folder, track, tag, tagCache) => {
+        run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.flacWarnings) {
                 return { details: [{ reason: tagCache.flacWarnings }] };
             }
@@ -234,18 +234,16 @@ export class TrackRulesChecker {
                 mediaCache.flacWarnings = await flac_test(filename);
             }
         }
-        else {
-            if (isMP3(track, tag)) {
-                const id3v2 = new ID3v2();
-                mediaCache.id3v2 = await id3v2.read(filename);
-                if (mediaCache.id3v2) {
-                    mediaCache.mp3Warnings = {
-                        xing: [],
-                        mpeg: [],
-                        id3v1: [],
-                        id3v2: ID3v2.check(mediaCache.id3v2)
-                    };
-                }
+        else if (isMP3(track, tag)) {
+            const id3v2 = new ID3v2();
+            mediaCache.id3v2 = await id3v2.read(filename);
+            if (mediaCache.id3v2) {
+                mediaCache.mp3Warnings = {
+                    xing: [],
+                    mpeg: [],
+                    id3v1: [],
+                    id3v2: ID3v2.check(mediaCache.id3v2)
+                };
             }
         }
         const folder = await track.folder.getOrFail();

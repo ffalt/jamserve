@@ -12,21 +12,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { PlayQueue } from './playqueue.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesTrackArgs } from '../track/track.args.js';
-import { IncludesPlayQueueArgs, PlayQueueSetArgs } from './playqueue.args.js';
-import { IncludesEpisodeArgs } from '../episode/episode.args.js';
-import { Controller } from '../../modules/rest/decorators/Controller.js';
-import { Get } from '../../modules/rest/decorators/Get.js';
-import { QueryParams } from '../../modules/rest/decorators/QueryParams.js';
-import { Ctx } from '../../modules/rest/decorators/Ctx.js';
-import { Post } from '../../modules/rest/decorators/Post.js';
-import { BodyParams } from '../../modules/rest/decorators/BodyParams.js';
+import { IncludesTrackParameters } from '../track/track.parameters.js';
+import { IncludesPlayQueueParameters, PlayQueueSetParameters } from './playqueue.parameters.js';
+import { IncludesEpisodeParameters } from '../episode/episode.parameters.js';
+import { Controller } from '../../modules/rest/decorators/controller.js';
+import { Get } from '../../modules/rest/decorators/get.js';
+import { QueryParameters } from '../../modules/rest/decorators/query-parameters.js';
+import { RestContext } from '../../modules/rest/decorators/rest-context.js';
+import { Post } from '../../modules/rest/decorators/post.js';
+import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
 let PlayQueueController = class PlayQueueController {
-    async get(playqueueArgs, trackArgs, episodeArgs, { orm, engine, user }) {
-        return engine.transform.playQueue(orm, await engine.playQueue.get(orm, user), playqueueArgs, trackArgs, episodeArgs, user);
+    async get(queueParameters, trackParameters, episodeParameters, { orm, engine, user }) {
+        return engine.transform.playQueue(orm, await engine.playQueue.get(orm, user), queueParameters, trackParameters, episodeParameters, user);
     }
-    async set(args, { req, engine, orm, user }) {
-        await engine.playQueue.set(orm, args, user, req.session?.client || 'unknown');
+    async set(parameters, { req, engine, orm, user }) {
+        await engine.playQueue.set(orm, parameters, user, req.session.client ?? 'unknown');
     }
     async clear({ orm, engine, user }) {
         await engine.playQueue.clear(orm, user);
@@ -34,27 +34,27 @@ let PlayQueueController = class PlayQueueController {
 };
 __decorate([
     Get('/get', () => PlayQueue, { description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' }),
-    __param(0, QueryParams()),
-    __param(1, QueryParams()),
-    __param(2, QueryParams()),
-    __param(3, Ctx()),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, QueryParameters()),
+    __param(3, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [IncludesPlayQueueArgs,
-        IncludesTrackArgs,
-        IncludesEpisodeArgs, Object]),
+    __metadata("design:paramtypes", [IncludesPlayQueueParameters,
+        IncludesTrackParameters,
+        IncludesEpisodeParameters, Object]),
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "get", null);
 __decorate([
     Post('/set', { description: 'Create/update the PlayQueue for the calling user', summary: 'Set PlayQueue' }),
-    __param(0, BodyParams()),
-    __param(1, Ctx()),
+    __param(0, BodyParameters()),
+    __param(1, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PlayQueueSetArgs, Object]),
+    __metadata("design:paramtypes", [PlayQueueSetParameters, Object]),
     __metadata("design:returntype", Promise)
 ], PlayQueueController.prototype, "set", null);
 __decorate([
     Post('/clear', { description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue' }),
-    __param(0, Ctx()),
+    __param(0, RestContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)

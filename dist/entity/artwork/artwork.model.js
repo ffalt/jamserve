@@ -10,28 +10,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Base, Page } from '../base/base.model.js';
 import { ArtworkImageType } from '../../types/enums.js';
 import { FolderBase } from '../folder/folder-base.model.js';
-import { ObjField } from '../../modules/rest/decorators/ObjField.js';
-import { ResultType } from '../../modules/rest/decorators/ResultType.js';
+import { ObjectField } from '../../modules/rest/decorators/object-field.js';
+import { ResultType } from '../../modules/rest/decorators/result-type.js';
 let ArtworkBase = class ArtworkBase extends Base {
 };
 __decorate([
-    ObjField(() => [ArtworkImageType], { description: 'Artwork Image Type', example: [ArtworkImageType.front] }),
+    ObjectField(() => [ArtworkImageType], { description: 'Artwork Image Type', example: [ArtworkImageType.front] }),
     __metadata("design:type", Array)
 ], ArtworkBase.prototype, "types", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Image Height', min: 0, example: 500 }),
+    ObjectField({ nullable: true, description: 'Image Height', min: 0, example: 500 }),
     __metadata("design:type", Number)
 ], ArtworkBase.prototype, "height", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Image Width', min: 0, example: 500 }),
+    ObjectField({ nullable: true, description: 'Image Width', min: 0, example: 500 }),
     __metadata("design:type", Number)
 ], ArtworkBase.prototype, "width", void 0);
 __decorate([
-    ObjField({ nullable: true, description: 'Image Format', example: 'png' }),
+    ObjectField({ nullable: true, description: 'Image Format', example: 'png' }),
     __metadata("design:type", String)
 ], ArtworkBase.prototype, "format", void 0);
 __decorate([
-    ObjField({ description: 'File Size', min: 0, example: 500 }),
+    ObjectField({ description: 'File Size', min: 0, example: 500 }),
     __metadata("design:type", Number)
 ], ArtworkBase.prototype, "size", void 0);
 ArtworkBase = __decorate([
@@ -41,7 +41,7 @@ export { ArtworkBase };
 let Artwork = class Artwork extends ArtworkBase {
 };
 __decorate([
-    ObjField(() => FolderBase, { nullable: true, description: 'Artwork Folder' }),
+    ObjectField(() => FolderBase, { nullable: true, description: 'Artwork Folder' }),
     __metadata("design:type", FolderBase)
 ], Artwork.prototype, "folder", void 0);
 Artwork = __decorate([
@@ -51,7 +51,7 @@ export { Artwork };
 let ArtworkPage = class ArtworkPage extends Page {
 };
 __decorate([
-    ObjField(() => Artwork, { description: 'List of Artworks' }),
+    ObjectField(() => Artwork, { description: 'List of Artworks' }),
     __metadata("design:type", Array)
 ], ArtworkPage.prototype, "items", void 0);
 ArtworkPage = __decorate([

@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { paginate } from '../../../entity/base/base.utils.js';
 import { DBObjectType, FolderType } from '../../../types/enums.js';
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterSearch, SubsonicParameterSearch2 } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterSearch, SubsonicParameterSearch2 } from '../model/subsonic-rest-parameters.js';
 import { SubsonicResponseSearchResult, SubsonicResponseSearchResult2, SubsonicResponseSearchResult3 } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 let SubsonicSearchApi = class SubsonicSearchApi {
@@ -33,8 +33,8 @@ let SubsonicSearchApi = class SubsonicSearchApi {
             name: query.title,
             since: query.newerThan
         });
-        const searchResult = { offset: query.offset || 0, totalHits: list.length };
-        list = paginate(list, { take: query.count || 20, skip: query.offset || 0 }).items;
+        const searchResult = { offset: query.offset ?? 0, totalHits: list.length };
+        list = paginate(list, { take: query.count ?? 20, skip: query.offset ?? 0 }).items;
         const tracks = await orm.Track.findByIDs(list);
         searchResult.match = await SubsonicHelper.prepareTracks(orm, tracks, user);
         return { searchResult };
@@ -42,12 +42,12 @@ let SubsonicSearchApi = class SubsonicSearchApi {
     async search2(query, { orm, user }) {
         const searchResult2 = {};
         const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
-        const q = (query.query || '').replace(/\*/g, '');
-        const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount || 20, skip: query.songOffset || 0 });
+        const q = (query.query ?? '').replaceAll('*', '');
+        const trackList = await orm.Track.findFilter({ query: q, rootIDs }, undefined, { take: query.songCount ?? 20, skip: query.songOffset ?? 0 });
         searchResult2.song = await SubsonicHelper.prepareTracks(orm, trackList, user);
-        const artistFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.artist] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
-        const albumFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.album] }, undefined, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
-        const ids = (albumFolderList.map(f => f.id)).concat(artistFolderList.map(f => f.id));
+        const artistFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.artist] }, undefined, { take: query.artistCount ?? 20, skip: query.artistOffset ?? 0 });
+        const albumFolderList = await orm.Folder.findFilter({ query: q, rootIDs, folderTypes: [FolderType.album] }, undefined, { take: query.artistCount ?? 20, skip: query.artistOffset ?? 0 });
+        const ids = [...(albumFolderList.map(f => f.id)), ...artistFolderList.map(f => f.id)];
         const states = await SubsonicHelper.loadStates(orm, ids, DBObjectType.folder, user.id);
         searchResult2.artist = [];
         searchResult2.album = [];
@@ -63,19 +63,19 @@ let SubsonicSearchApi = class SubsonicSearchApi {
         const searchResult3 = {};
         const tracklist = await orm.Track.findIDsFilter({ query: query.query });
         if (tracklist.length > 0) {
-            const limit = paginate(tracklist, { take: query.songCount || 20, skip: query.songOffset || 0 });
+            const limit = paginate(tracklist, { take: query.songCount ?? 20, skip: query.songOffset ?? 0 });
             const tracks = await orm.Track.findByIDs(limit.items);
             searchResult3.song = await SubsonicHelper.prepareTracks(orm, tracks, user);
         }
         const albumlist = await orm.Album.findIDsFilter({ query: query.query });
         if (albumlist.length > 0) {
-            const limit = paginate(albumlist, { take: query.albumCount || 20, skip: query.albumOffset || 0 });
+            const limit = paginate(albumlist, { take: query.albumCount ?? 20, skip: query.albumOffset ?? 0 });
             const albums = await orm.Album.findByIDs(limit.items);
             searchResult3.album = await SubsonicHelper.prepareAlbums(orm, albums, user);
         }
         const artistlist = await orm.Artist.findIDsFilter({ query: query.query });
         if (artistlist.length > 0) {
-            const limit = paginate(artistlist, { take: query.artistCount || 20, skip: query.artistOffset || 0 });
+            const limit = paginate(artistlist, { take: query.artistCount ?? 20, skip: query.artistOffset ?? 0 });
             const artists = await orm.Artist.findByIDs(limit.items);
             searchResult3.artist = await SubsonicHelper.prepareArtists(orm, artists, user);
         }
@@ -88,8 +88,8 @@ __decorate([
         description: 'Returns a listing of files matching the given search criteria.',
         tags: ['Search']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterSearch, Object]),
     __metadata("design:returntype", Promise)
@@ -100,8 +100,8 @@ __decorate([
         description: 'Returns albums, artists and songs matching the given search criteria.',
         tags: ['Search']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterSearch2, Object]),
     __metadata("design:returntype", Promise)
@@ -112,8 +112,8 @@ __decorate([
         description: 'Similar to search2, but organizes music according to ID3 tags.',
         tags: ['Search']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterSearch2, Object]),
     __metadata("design:returntype", Promise)

@@ -1,26 +1,26 @@
-function processParams(req) {
-    const params = {
-        username: req.query.u || '',
+function processParameters(req) {
+    const parameters = {
+        username: req.query.u ?? '',
         password: req.query.p,
-        format: req.query.f || 'xml',
-        version: req.query.v || '',
+        format: req.query.f ?? 'xml',
+        version: req.query.v ?? '',
         token: req.query.t,
         salt: req.query.s,
-        client: req.query.c || '',
+        client: req.query.c ?? '',
         callback: req.query.callback
     };
-    delete req.query.t;
-    delete req.query.u;
-    delete req.query.p;
-    delete req.query.f;
-    delete req.query.v;
-    delete req.query.c;
-    delete req.query.s;
-    delete req.query.callback;
-    return params;
+    req.query.t = undefined;
+    req.query.u = undefined;
+    req.query.p = undefined;
+    req.query.f = undefined;
+    req.query.v = undefined;
+    req.query.c = undefined;
+    req.query.s = undefined;
+    req.query.callback = undefined;
+    return parameters;
 }
 export function SubsonicParameterMiddleWare(req, _res, next) {
-    req.parameters = processParams(req);
+    req.parameters = processParameters(req);
     next();
 }
 //# sourceMappingURL=parameters.js.map

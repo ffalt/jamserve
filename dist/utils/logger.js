@@ -3,6 +3,7 @@ import { Table } from 'console-table-printer';
 import { createStream } from 'rotating-file-stream';
 import TransportStream from 'winston-transport';
 import { MESSAGE } from 'triple-beam';
+import { errorToString } from './error.js';
 export class WinstonRotatingFile extends TransportStream {
     constructor(options) {
         super(options);
@@ -12,7 +13,7 @@ export class WinstonRotatingFile extends TransportStream {
         this.stream.end();
     }
     log(info, done) {
-        this.stream.write(info[MESSAGE] + '\n', done);
+        this.stream.write(`${info[MESSAGE]}\n`, done);
     }
 }
 export function configureLogger(level, logfile) {
@@ -38,20 +39,20 @@ export class Logger {
     constructor(name) {
         this.name = name;
     }
-    applyLog(level, format, ...params) {
-        winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format].concat(params).join(' ')}`);
+    applyLog(level, format, ...parameters) {
+        winston.log(level, `${(new Date()).toISOString()} [${this.name}] ${[format, ...parameters].join(' ')}`);
     }
-    debug(format, ...params) {
-        this.applyLog('debug', format, params);
+    debug(format, ...parameters) {
+        this.applyLog('debug', format, ...parameters);
     }
-    info(format, ...params) {
-        this.applyLog('info', format, params);
+    info(format, ...parameters) {
+        this.applyLog('info', format, ...parameters);
     }
-    warn(format, ...params) {
-        this.applyLog('warn', format, params);
+    warn(format, ...parameters) {
+        this.applyLog('warn', format, ...parameters);
     }
-    error(format, ...params) {
-        this.applyLog('error', format.toString(), params);
+    error(format, ...parameters) {
+        this.applyLog('error', errorToString(format), ...parameters);
     }
     table(items, columns) {
         if (winston.level === 'info') {
@@ -60,8 +61,8 @@ export class Logger {
             p.printTable();
         }
     }
-    access(format, ...params) {
-        this.applyLog('debug', format, params);
+    access(format, ...parameters) {
+        this.applyLog('debug', format, ...parameters);
     }
 }
 export function logger(name) {

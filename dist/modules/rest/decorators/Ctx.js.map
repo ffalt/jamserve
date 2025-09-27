@@ -1,1 +1,0 @@
-{"version":3,"file":"Ctx.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/Ctx.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AACvE,OAAO,EAAE,OAAO,EAAE,MAAM,8BAA8B,CAAC;AAEvD,MAAM,UAAU,GAAG,CAAC,YAAqB;IACxC,OAAO,OAAO,CAAC,kBAAkB,EAAE,EAAE,YAAY,CAAC,CAAC;AACpD,CAAC"}

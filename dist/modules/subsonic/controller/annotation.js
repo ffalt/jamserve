@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { SubsonicRoute } from '../decorators/SubsonicRoute.js';
-import { SubsonicParams } from '../decorators/SubsonicParams.js';
-import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterState } from '../model/subsonic-rest-params.js';
+import { SubsonicRoute } from '../decorators/subsonic-route.js';
+import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
+import { SubsonicParameterRate, SubsonicParameterScrobble, SubsonicParameterState } from '../model/subsonic-rest-parameters.js';
 import { SubsonicOKResponse } from '../model/subsonic-rest-data.js';
-import { SubsonicController } from '../decorators/SubsonicController.js';
-import { SubsonicCtx } from '../decorators/SubsonicContext.js';
-import { SubsonicFormatter } from '../formatter.js';
+import { SubsonicController } from '../decorators/subsonic-controller.js';
+import { SubsonicContext } from '../decorators/subsonic-context.js';
+import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 let SubsonicAnnotationApi = class SubsonicAnnotationApi {
     async star(query, { engine, orm, user }) {
@@ -35,12 +35,12 @@ let SubsonicAnnotationApi = class SubsonicAnnotationApi {
     }
     async setRating(query, { engine, orm, user }) {
         if ((query.rating < 0) || (query.rating > 5)) {
-            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_INVALID);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_INVALID));
         }
         await engine.state.rate(orm, query.id, query.rating, user);
         return {};
     }
-    async scrobble(_query, _ctx) {
+    async scrobble(_query, _context) {
         return {};
     }
 };
@@ -50,32 +50,32 @@ __decorate([
         description: 'Attaches a star to a song, album or artist.',
         tags: ['Annotation']
     }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterState, Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicAnnotationApi.prototype, "star", null);
 __decorate([
     SubsonicRoute('/unstar', () => SubsonicOKResponse, { summary: 'Unstar', description: 'Removes the star from a song, album or artist.', tags: ['Annotation'] }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterState, Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicAnnotationApi.prototype, "unstar", null);
 __decorate([
     SubsonicRoute('/setRating', () => SubsonicOKResponse, { summary: 'Rate', description: 'Sets the rating for a music file.', tags: ['Annotation'] }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterRate, Object]),
     __metadata("design:returntype", Promise)
 ], SubsonicAnnotationApi.prototype, "setRating", null);
 __decorate([
     SubsonicRoute('/scrobble', () => SubsonicOKResponse, { summary: 'Scrobble', description: 'Registers the local playback of one or more media files.', tags: ['Annotation'] }),
-    __param(0, SubsonicParams()),
-    __param(1, SubsonicCtx()),
+    __param(0, SubsonicParameters()),
+    __param(1, SubsonicContext()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [SubsonicParameterScrobble, Object]),
     __metadata("design:returntype", Promise)

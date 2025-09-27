@@ -28,111 +28,121 @@ import { BaseTransformService } from '../../../entity/base/base.transform.js';
 import { SessionTransformService } from '../../../entity/session/session.transform.js';
 import { UserTransformService } from '../../../entity/user/user.transform.js';
 let TransformService = class TransformService {
-    async album(orm, o, albumArgs, albumChildrenArgs, trackArgs, artistIncludes, user) {
+    async album(orm, o, albumParameters, albumChildrenParameters, trackParameters, artistIncludes, user) {
         return {
-            ...(await this.Album.albumBase(orm, o, albumArgs, user)),
-            tracks: albumChildrenArgs.albumIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackArgs, user) : undefined,
-            artist: albumChildrenArgs.albumIncArtist ? await this.Artist.artistBase(orm, await o.artist.getOrFail(), artistIncludes, user) : undefined
+            ...(await this.Album.albumBase(orm, o, albumParameters, user)),
+            tracks: albumChildrenParameters.albumIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackParameters, user) : undefined,
+            artist: albumChildrenParameters.albumIncArtist ? await this.Artist.artistBase(orm, await o.artist.getOrFail(), artistIncludes, user) : undefined
         };
     }
-    async artist(orm, o, artistArgs, artistChildrenArgs, trackArgs, albumArgs, seriesArgs, user) {
+    async artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user) {
         return {
-            ...(await this.Artist.artistBase(orm, o, artistArgs, user)),
-            tracks: artistChildrenArgs.artistIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackArgs, user) : undefined,
-            albums: artistChildrenArgs.artistIncAlbums ? await this.Album.albumBases(orm, await o.albums.getItems(), albumArgs, user) : undefined,
-            series: artistChildrenArgs.artistIncSeries ? await this.Series.seriesBases(orm, await o.series.getItems(), seriesArgs, user) : undefined
+            ...(await this.Artist.artistBase(orm, o, artistParameters, user)),
+            tracks: artistChildrenParameters.artistIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackParameters, user) : undefined,
+            albums: artistChildrenParameters.artistIncAlbums ? await this.Album.albumBases(orm, await o.albums.getItems(), albumParameters, user) : undefined,
+            series: artistChildrenParameters.artistIncSeries ? await this.Series.seriesBases(orm, await o.series.getItems(), seriesParameters, user) : undefined
         };
     }
-    async artwork(orm, o, artworksArgs, artworkChildrenArgs, folderArgs, user) {
+    async artwork(orm, o, artworksParameters, artworkChildrenParameters, folderParameters, user) {
         return {
-            ...(await this.Artwork.artworkBase(orm, o, artworksArgs, user)),
-            folder: artworkChildrenArgs.artworkIncFolder ? await this.Folder.folderBase(orm, await o.folder.getOrFail(), folderArgs, user) : undefined
+            ...(await this.Artwork.artworkBase(orm, o, artworksParameters, user)),
+            folder: artworkChildrenParameters.artworkIncFolder ? await this.Folder.folderBase(orm, await o.folder.getOrFail(), folderParameters, user) : undefined
         };
     }
-    async bookmark(orm, o, bookmarkArgs, trackArgs, episodeArgs, user) {
+    async bookmark(orm, o, bookmarkParameters, trackParameters, episodeParameters, user) {
         return {
             ...(await this.Bookmark.bookmarkBase(orm, o)),
-            track: bookmarkArgs.bookmarkIncTrack && o.track.id() ? await this.Track.trackBase(orm, await o.track.getOrFail(), trackArgs, user) : undefined,
-            episode: bookmarkArgs.bookmarkIncTrack && o.episode.id() ? await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user) : undefined
+            track: bookmarkParameters.bookmarkIncTrack && o.track.id() ? await this.Track.trackBase(orm, await o.track.getOrFail(), trackParameters, user) : undefined,
+            episode: bookmarkParameters.bookmarkIncTrack && o.episode.id() ? await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeParameters, user) : undefined
         };
     }
-    async episode(orm, o, episodeArgs, episodeParentArgs, podcastArgs, user) {
+    async episode(orm, o, episodeParameters, episodeParentParameters, podcastParameters, user) {
         return {
-            ...(await this.Episode.episodeBase(orm, o, episodeArgs, user)),
-            podcast: episodeParentArgs.episodeIncParent ? await this.Podcast.podcastBase(orm, await o.podcast.getOrFail(), podcastArgs, user) : undefined
+            ...(await this.Episode.episodeBase(orm, o, episodeParameters, user)),
+            podcast: episodeParentParameters.episodeIncParent ? await this.Podcast.podcastBase(orm, await o.podcast.getOrFail(), podcastParameters, user) : undefined
         };
     }
-    async folder(orm, o, folderArgs, folderChildrenArgs, trackArgs, artworkArgs, user) {
+    async folder(orm, o, folderParameters, folderChildrenParameters, trackParameters, artworkParameters, user) {
         return {
-            ...(await this.Folder.folderBase(orm, o, folderArgs, user)),
-            tracks: folderChildrenArgs.folderIncChildren || folderChildrenArgs.folderIncTracks ?
-                await this.Track.trackBases(orm, await o.tracks.getItems(), trackArgs, user) :
+            ...(await this.Folder.folderBase(orm, o, folderParameters, user)),
+            tracks: folderChildrenParameters.folderIncChildren || folderChildrenParameters.folderIncTracks ?
+                await this.Track.trackBases(orm, await o.tracks.getItems(), trackParameters, user) :
                 undefined,
-            folders: folderChildrenArgs.folderIncChildren || folderChildrenArgs.folderIncFolders ?
-                await this.Folder.folderChildren(orm, o, folderChildrenArgs, user) :
+            folders: folderChildrenParameters.folderIncChildren || folderChildrenParameters.folderIncFolders ?
+                await this.Folder.folderChildren(orm, o, folderChildrenParameters, user) :
                 undefined,
-            artworks: folderChildrenArgs.folderIncArtworks ?
-                await this.Artwork.artworkBases(orm, await o.artworks.getItems(), artworkArgs, user) :
+            artworks: folderChildrenParameters.folderIncArtworks ?
+                await this.Artwork.artworkBases(orm, await o.artworks.getItems(), artworkParameters, user) :
                 undefined
         };
     }
-    async playlist(orm, o, playlistArgs, trackArgs, episodeArgs, user) {
-        const entries = playlistArgs.playlistIncEntriesIDs || playlistArgs.playlistIncEntries ? await o.entries.getItems() : [];
+    async playlist(orm, o, playlistParameters, trackParameters, episodeParameters, user) {
+        const entries = playlistParameters.playlistIncEntriesIDs || playlistParameters.playlistIncEntries ? await o.entries.getItems() : [];
         return {
-            ...(await this.Playlist.playlistBase(orm, o, playlistArgs, user)),
-            entries: playlistArgs.playlistIncEntries ? await Promise.all(entries.map(t => this.playlistEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
+            ...(await this.Playlist.playlistBase(orm, o, playlistParameters, user)),
+            entries: playlistParameters.playlistIncEntries ? await Promise.all(entries.map(t => this.playlistEntry(orm, t, trackParameters, episodeParameters, user))) : undefined
         };
     }
-    async playlistEntry(orm, o, trackArgs, episodeArgs, user) {
+    async playlistEntry(orm, o, trackParameters, episodeParameters, user) {
         if (o.track.id()) {
-            return await this.Track.trackBase(orm, await o.track.getOrFail(), trackArgs, user);
+            return await this.Track.trackBase(orm, await o.track.getOrFail(), trackParameters, user);
         }
         if (o.episode.id()) {
-            return await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user);
+            return await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeParameters, user);
         }
         throw new Error('Internal: Invalid Playlist Entry');
     }
-    async playQueue(orm, o, playQueueArgs, trackArgs, episodeArgs, user) {
+    async playQueue(orm, o, playQueueParameters, trackParameters, episodeParameters, user) {
+        let entries;
+        if (playQueueParameters.playQueueEntries) {
+            const items = await o.entries.getItems();
+            entries = await Promise.all(items.map(t => this.playQueueEntry(orm, t, trackParameters, episodeParameters, user)));
+        }
         return {
-            ...(await this.PlayQueue.playQueueBase(orm, o, playQueueArgs, user)),
-            entries: playQueueArgs.playQueueEntries ? await Promise.all((await o.entries.getItems()).map(t => this.playQueueEntry(orm, t, trackArgs, episodeArgs, user))) : undefined
+            ...(await this.PlayQueue.playQueueBase(orm, o, playQueueParameters, user)),
+            entries
         };
     }
-    async playQueueEntry(orm, o, trackArgs, episodeArgs, user) {
+    async playQueueEntry(orm, o, trackParameters, episodeParameters, user) {
         if (o.track.id()) {
-            return await this.Track.trackBase(orm, await o.track.getOrFail(), trackArgs, user);
+            return await this.Track.trackBase(orm, await o.track.getOrFail(), trackParameters, user);
         }
         if (o.episode.id()) {
-            return await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeArgs, user);
+            return await this.Episode.episodeBase(orm, await o.episode.getOrFail(), episodeParameters, user);
         }
         throw new Error('Internal: Invalid PlayQueue Entry');
     }
-    async podcast(orm, o, podcastArgs, podcastChildrenArgs, episodeArgs, user) {
+    async podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user) {
+        let episodes;
+        if (podcastChildrenParameters.podcastIncEpisodes) {
+            const items = await o.episodes.getItems();
+            episodes = await Promise.all(items.map(t => this.Episode.episodeBase(orm, t, episodeParameters, user)));
+        }
         return {
-            ...(await this.Podcast.podcastBase(orm, o, podcastArgs, user)),
-            episodes: podcastChildrenArgs.podcastIncEpisodes ? await Promise.all((await o.episodes.getItems()).map(t => this.Episode.episodeBase(orm, t, episodeArgs, user))) : undefined
+            ...(await this.Podcast.podcastBase(orm, o, podcastParameters, user)),
+            episodes
         };
     }
-    async nowPlaying(orm, o, nowPlayingArgs, trackArgs, episodeArgs, user) {
+    async nowPlaying(orm, o, nowPlayingParameters, trackParameters, episodeParameters, user) {
         return {
             userName: o.user.name,
             userID: o.user.id,
             minutesAgo: Math.round(moment.duration(moment().diff(moment(o.time))).asMinutes()),
-            trackID: nowPlayingArgs.nowPlayingIncTrackIDs ? o.track?.id : undefined,
-            track: nowPlayingArgs.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackArgs, user)) : undefined,
-            episodeID: nowPlayingArgs.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,
-            episode: nowPlayingArgs.nowPlayingIncEpisodes && o.episode ? (await this.Episode.episodeBase(orm, o.episode, episodeArgs, user)) : undefined
+            trackID: nowPlayingParameters.nowPlayingIncTrackIDs ? o.track?.id : undefined,
+            track: nowPlayingParameters.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackParameters, user)) : undefined,
+            episodeID: nowPlayingParameters.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,
+            episode: nowPlayingParameters.nowPlayingIncEpisodes && o.episode ? (await this.Episode.episodeBase(orm, o.episode, episodeParameters, user)) : undefined
         };
     }
-    async series(orm, o, seriesArgs, seriesChildrenArgs, albumArgs, trackArgs, user) {
+    async series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user) {
         return {
-            ...(await this.Series.seriesBase(orm, o, seriesArgs, user)),
-            tracks: seriesChildrenArgs.seriesIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackArgs, user) : undefined,
-            albums: seriesChildrenArgs.seriesIncAlbums ? await this.Album.albumBases(orm, await o.albums.getItems(), albumArgs, user) : undefined
+            ...(await this.Series.seriesBase(orm, o, seriesParameters, user)),
+            tracks: seriesChildrenParameters.seriesIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackParameters, user) : undefined,
+            albums: seriesChildrenParameters.seriesIncAlbums ? await this.Album.albumBases(orm, await o.albums.getItems(), albumParameters, user) : undefined
         };
     }
-    async track(orm, o, trackArgs, user) {
-        return this.Track.trackBase(orm, o, trackArgs, user);
+    async track(orm, o, trackParameters, user) {
+        return this.Track.trackBase(orm, o, trackParameters, user);
     }
 };
 __decorate([

@@ -8,30 +8,30 @@ export class MetadataServiceExtendedInfo {
     }
     async getWikiDataExtendedInfo(orm, id, lang) {
         const wiki = await this.service.wikidataSummary(orm, id, lang);
-        if (wiki && wiki.summary) {
+        if (wiki?.summary) {
             return MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
         }
         return;
     }
     async getMusicBrainzIDWikipediaArtistInfo(orm, mbArtistID) {
         const result = await this.service.musicbrainzLookup(orm, MusicBrainzLookupType.artist, mbArtistID);
-        if (result && result.artist && result.artist.relations) {
-            let rel = result.artist.relations.find(r => r.type === 'wikidata');
-            if (rel && rel.url && rel.url.resource) {
-                const list = rel.url.resource.split('/');
-                const id = list[list.length - 1];
-                const res = this.getWikiDataExtendedInfo(orm, id, 'en');
-                if (res) {
-                    return res;
+        if (result?.artist?.relations) {
+            let relation = result.artist.relations.find(r => r.type === 'wikidata');
+            if (relation?.url?.resource) {
+                const list = relation.url.resource.split('/');
+                const id = list.at(-1) ?? '';
+                const wikiResult = await this.getWikiDataExtendedInfo(orm, id, 'en');
+                if (wikiResult) {
+                    return wikiResult;
                 }
             }
-            rel = result.artist.relations.find(r => r.type === 'wikipedia');
-            if (rel && rel.url && rel.url.resource) {
-                const list = rel.url.resource.split('/');
-                const title = list[list.length - 1];
-                const lang = list[2].split('.')[0];
+            relation = result.artist.relations.find(r => r.type === 'wikipedia');
+            if (relation?.url?.resource) {
+                const list = relation.url.resource.split('/');
+                const title = list.at(-1) ?? '';
+                const lang = (list.at(2) ?? '').split('.').at(0);
                 const wiki = await this.service.wikipediaSummary(orm, title, lang);
-                if (wiki && wiki.summary) {
+                if (wiki?.summary) {
                     return MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
                 }
             }
@@ -40,11 +40,11 @@ export class MetadataServiceExtendedInfo {
     }
     async getMusicBrainzIDWikipediaAlbumInfo(orm, mbReleaseID) {
         const lookup = await this.service.musicbrainzLookup(orm, MusicBrainzLookupType.release, mbReleaseID);
-        if (lookup && lookup.release && lookup.release.relations) {
-            const rel = lookup.release.relations.find(r => r.type === 'wikidata');
-            if (rel && rel.url && rel.url.resource) {
-                const list = rel.url.resource.split('/');
-                const id = list[list.length - 1];
+        if (lookup?.release?.relations) {
+            const relation = lookup.release.relations.find(r => r.type === 'wikidata');
+            if (relation?.url?.resource) {
+                const list = relation.url.resource.split('/');
+                const id = list.at(-1) ?? '';
                 return this.getWikiDataExtendedInfo(orm, id, 'en');
             }
         }
@@ -52,14 +52,14 @@ export class MetadataServiceExtendedInfo {
     }
     async getLastFMArtistInfo(orm, mbArtistID) {
         const lookup = await this.service.lastFMLookup(orm, LastFMLookupType.artist, mbArtistID);
-        if (lookup && lookup.artist && lookup.artist.bio && lookup.artist.bio.content) {
+        if (lookup?.artist?.bio?.content) {
             return MetaDataFormat.formatLastFMExtendedInfo(lookup.artist.url, lookup.artist.bio.content);
         }
         return;
     }
     async getLastFMAlbumInfo(orm, mbReleaseID) {
         const lookup = await this.service.lastFMLookup(orm, LastFMLookupType.album, mbReleaseID);
-        if (lookup && lookup.album && lookup.album.wiki && lookup.album.wiki.content) {
+        if (lookup?.album?.wiki?.content) {
             return MetaDataFormat.formatLastFMExtendedInfo(lookup.album.url, lookup.album.wiki.content);
         }
         return;
@@ -79,28 +79,34 @@ export class MetadataServiceExtendedInfo {
         return this.getLastFMAlbumInfo(orm, mbReleaseID);
     }
     async getArtistInfoByName(orm, artistName) {
-        const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.artist, { artist: artistName });
+        const mbResult = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.artist, { artist: artistName });
         let result;
-        if (res && res.artists && res.artists.length === 1) {
-            result = await this.getArtistInfoByMusicBrainzID(orm, res.artists[0].id);
+        if (mbResult?.artists?.length === 1) {
+            const artist = mbResult.artists.at(0);
+            if (artist) {
+                result = await this.getArtistInfoByMusicBrainzID(orm, artist.id);
+            }
         }
         if (!result) {
             const lastfm = await this.service.lastFMArtistSearch(orm, artistName);
-            if (lastfm && lastfm.artist && lastfm.artist.mbid) {
+            if (lastfm?.artist?.mbid) {
                 result = await this.getArtistInfoByMusicBrainzID(orm, lastfm.artist.mbid);
             }
         }
         return result;
     }
     async getAlbumInfoByName(orm, albumName, artistName) {
-        const res = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, { release: albumName, artist: artistName });
+        const mbResult = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, { release: albumName, artist: artistName });
         let info;
-        if (res && res.releases && res.releases.length > 1) {
-            info = await this.getAlbumInfoByMusicBrainzID(orm, res.releases[0].id);
+        if (mbResult?.releases && mbResult.releases.length > 1) {
+            const release = mbResult.releases.at(0);
+            if (release) {
+                info = await this.getAlbumInfoByMusicBrainzID(orm, release.id);
+            }
         }
         if (!info) {
             const lastfm = await this.service.lastFMAlbumSearch(orm, albumName, artistName);
-            if (lastfm && lastfm.album && lastfm.album.mbid) {
+            if (lastfm?.album?.mbid) {
                 info = await this.getAlbumInfoByMusicBrainzID(orm, lastfm.album.mbid);
             }
         }
@@ -116,8 +122,8 @@ export class MetadataServiceExtendedInfo {
                 info = await this.getArtistInfoByName(orm, artist.name);
             }
         }
-        catch (e) {
-            log.error(e);
+        catch (error) {
+            log.error(error);
         }
         return info;
     }
@@ -130,8 +136,8 @@ export class MetadataServiceExtendedInfo {
                 }
             }
         }
-        catch (e) {
-            log.error(e);
+        catch (error) {
+            log.error(error);
         }
         return;
     }
@@ -146,8 +152,8 @@ export class MetadataServiceExtendedInfo {
                 info = await this.getAlbumInfoByName(orm, album.name, artist.name);
             }
         }
-        catch (e) {
-            log.error(e);
+        catch (error) {
+            log.error(error);
         }
         return info;
     }
@@ -161,8 +167,8 @@ export class MetadataServiceExtendedInfo {
                 info = await this.getArtistInfoByName(orm, folder.artist);
             }
         }
-        catch (e) {
-            log.error(e);
+        catch (error) {
+            log.error(error);
         }
         return info;
     }
@@ -176,8 +182,8 @@ export class MetadataServiceExtendedInfo {
                 info = await this.getAlbumInfoByName(orm, folder.album, folder.artist);
             }
         }
-        catch (e) {
-            log.error(e);
+        catch (error) {
+            log.error(error);
         }
         return info;
     }

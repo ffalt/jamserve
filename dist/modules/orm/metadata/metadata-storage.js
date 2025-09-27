@@ -1,4 +1,9 @@
 import { ensureReflectMetadataExists } from '../../../utils/reflect.js';
+let ORMMetadataStorage;
+export function metadataStorage() {
+    ORMMetadataStorage ?? (ORMMetadataStorage = new MetadataStorage());
+    return ORMMetadataStorage;
+}
 export class MetadataStorage {
     constructor() {
         this.entities = [];
@@ -14,29 +19,41 @@ export class MetadataStorage {
             this.initialized = true;
         }
     }
+    enumInfo(type) {
+        return this.enums.find(enumInfo => enumInfo.enumObj === type);
+    }
+    entityInfo(type) {
+        return this.entities.find(entity => entity.target === type);
+    }
+    entityInfoByTargetName(name) {
+        return this.entities.find(entity => entity.target.name === name);
+    }
+    entityInfoByName(name) {
+        return this.entities.find(entity => entity.name === name);
+    }
     buildFieldMetadata(definitions) {
-        definitions.forEach(def => {
-            if (def.isRelation) {
-                const type = def.getType();
-                def.linkedEntity = this.entities.find(e => e.target === type);
+        for (const definition of definitions) {
+            if (definition.isRelation) {
+                const type = definition.getType();
+                definition.linkedEntity = this.entityInfo(type);
             }
-        });
+        }
     }
     buildClassMetadata(definitions) {
-        definitions.forEach(def => {
-            if (!def.fields || def.fields.length === 0) {
-                let fields = this.fields.filter(field => field.target === def.target);
-                let superClass = Object.getPrototypeOf(def.target);
+        for (const definition of definitions) {
+            if (definition.fields.length === 0) {
+                let fields = this.fields.filter(field => field.target === definition.target);
+                let superClass = Object.getPrototypeOf(definition.target);
                 while (superClass.prototype !== undefined) {
-                    const superArgumentType = definitions.find(it => it.target === superClass);
-                    if (superArgumentType) {
-                        fields = fields.concat(this.fields.filter(field => field.target === superArgumentType.target));
+                    const superParameterType = definitions.find(it => it.target === superClass);
+                    if (superParameterType) {
+                        fields = [...fields, ...this.fields.filter(field => field.target === superParameterType.target)];
                     }
                     superClass = Object.getPrototypeOf(superClass);
                 }
-                def.fields = fields;
+                definition.fields = fields;
             }
-        });
+        }
     }
     clear() {
         this.entities = [];

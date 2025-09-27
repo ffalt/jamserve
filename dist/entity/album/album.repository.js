@@ -2,7 +2,7 @@ import { BaseRepository } from '../base/base.repository.js';
 import { AlbumOrderFields, DBObjectType } from '../../types/enums.js';
 import { OrderHelper } from '../base/base.js';
 import { QHelper } from '../../modules/orm/index.js';
-import Sequelize from 'sequelize';
+import { literal } from 'sequelize';
 export class AlbumRepository extends BaseRepository {
     constructor() {
         super(...arguments);
@@ -12,24 +12,33 @@ export class AlbumRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case AlbumOrderFields.created:
+            case AlbumOrderFields.created: {
                 return [['createdAt', direction]];
-            case AlbumOrderFields.updated:
+            }
+            case AlbumOrderFields.updated: {
                 return [['updatedAt', direction]];
-            case AlbumOrderFields.name:
+            }
+            case AlbumOrderFields.name: {
                 return [['name', direction]];
-            case AlbumOrderFields.duration:
+            }
+            case AlbumOrderFields.duration: {
                 return [['duration', direction]];
-            case AlbumOrderFields.albumType:
+            }
+            case AlbumOrderFields.albumType: {
                 return [['albumType', direction]];
-            case AlbumOrderFields.artist:
+            }
+            case AlbumOrderFields.artist: {
                 return [['artistORM', 'name', direction]];
-            case AlbumOrderFields.year:
+            }
+            case AlbumOrderFields.year: {
                 return [['year', direction]];
-            case AlbumOrderFields.seriesNr:
+            }
+            case AlbumOrderFields.seriesNr: {
                 return this.seriesNrOrder(direction);
-            case AlbumOrderFields.default:
+            }
+            case AlbumOrderFields.default: {
                 return AlbumRepository.defaultOrder(direction);
+            }
         }
         return [];
     }
@@ -44,10 +53,10 @@ export class AlbumRepository extends BaseRepository {
     seriesNrOrder(direction) {
         switch (this.em.dialect) {
             case 'sqlite': {
-                return [[Sequelize.literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
+                return [[literal(`substr('0000000000'||\`Album\`.\`seriesNr\`, -10, 10)`), direction]];
             }
             case 'postgres': {
-                return [[Sequelize.literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
+                return [[literal(`LPAD("Album"."seriesNr"::text, 10, '0')`), direction]];
             }
             default: {
                 throw new Error(`Implement LPAD request for dialect ${this.em.dialect}`);

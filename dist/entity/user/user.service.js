@@ -10,46 +10,46 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
 import { SessionMode, UserRole } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
-import path from 'path';
+import path from 'node:path';
 import fse from 'fs-extra';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import commonPassword from 'common-password-checker';
 import { randomString } from '../../utils/random.js';
-import { InvalidParamError, UnauthError } from '../../modules/deco/express/express-error.js';
+import { invalidParameterError, unauthError } from '../../modules/deco/express/express-error.js';
 import { hashMD5 } from '../../utils/md5.js';
-import { SubsonicFormatter } from '../../modules/subsonic/formatter.js';
+import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 let UserService = class UserService {
     constructor() {
         this.userAvatarPath = this.configService.getDataPath(['images']);
     }
     async findByName(orm, name) {
         if (!name || name.trim().length === 0) {
-            return Promise.reject(UnauthError('Invalid Username'));
+            return Promise.reject(unauthError('Invalid Username'));
         }
         return await orm.User.findOne({ where: { name } });
     }
     async findByID(orm, id) {
         const user = await orm.User.findOneByID(id);
-        return user || undefined;
+        return user ?? undefined;
     }
     async auth(orm, name, pass) {
-        if ((!pass) || (!pass.length)) {
-            return Promise.reject(InvalidParamError('password', 'Invalid Password'));
+        if (!pass?.length) {
+            return Promise.reject(invalidParameterError('password', 'Invalid Password'));
         }
         const user = await this.findByName(orm, name);
         if (!user) {
-            return Promise.reject(InvalidParamError('username', 'Invalid Username'));
+            return Promise.reject(invalidParameterError('username', 'Invalid Username'));
         }
         if (!(await bcryptComparePassword(pass, user.hash))) {
-            return Promise.reject(InvalidParamError('password', 'Invalid Password'));
+            return Promise.reject(invalidParameterError('password', 'Invalid Password'));
         }
         return user;
     }
     async authJWT(orm, jwtPayload) {
         if (!jwtPayload?.id) {
-            return Promise.reject(InvalidParamError('token', 'Invalid token'));
+            return Promise.reject(invalidParameterError('token', 'Invalid token'));
         }
         return await orm.User.findOneByID(jwtPayload.id);
     }
@@ -72,7 +72,7 @@ let UserService = class UserService {
     avatarImageFilename(user) {
         return path.join(this.userAvatarPath, `avatar-${user.id}.png`);
     }
-    async getImage(orm, user, size, format) {
+    async getImage(_orm, user, size, format) {
         const filename = this.avatarImageFilename(user);
         let exists = await fse.pathExists(filename);
         if (!exists) {
@@ -87,24 +87,24 @@ let UserService = class UserService {
     async generateAvatar(user, seed) {
         const filename = this.avatarImageFilename(user);
         await fileDeleteIfExists(filename);
-        await this.imageModule.generateAvatar(seed || user.name, filename);
+        await this.imageModule.generateAvatar(seed ?? user.name, filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
     async setUserImage(user, filename) {
-        const destName = this.avatarImageFilename(user);
-        await this.imageModule.createAvatar(filename, destName);
+        const avatarImageFilename = this.avatarImageFilename(user);
+        await this.imageModule.createAvatar(filename, avatarImageFilename);
         await fileDeleteIfExists(filename);
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
     async validatePassword(password) {
-        if ((!password) || (!password.trim().length)) {
-            return Promise.reject(InvalidParamError('Invalid Password'));
+        if (!password?.trim().length) {
+            return Promise.reject(invalidParameterError('Invalid Password'));
         }
         if (password.length < 4) {
-            return Promise.reject(InvalidParamError('Password is too short'));
+            return Promise.reject(invalidParameterError('Password is too short'));
         }
         if (commonPassword(password)) {
-            return Promise.reject(Error('Your password is found in the most frequently used password list and too easy to guess'));
+            return Promise.reject(new Error('Your password is found in the most frequently used password list and too easy to guess'));
         }
     }
     async setUserPassword(orm, user, pass) {
@@ -113,8 +113,8 @@ let UserService = class UserService {
         await orm.User.persistAndFlush(user);
     }
     async setUserEmail(orm, user, email) {
-        if ((!email) || (!email.trim().length)) {
-            return Promise.reject(InvalidParamError('email', 'Invalid Email'));
+        if (!email?.trim().length) {
+            return Promise.reject(invalidParameterError('email', 'Invalid Email'));
         }
         user.email = email;
         await orm.User.persistAndFlush(user);
@@ -130,69 +130,69 @@ let UserService = class UserService {
         await orm.User.persistAndFlush(user);
         return user;
     }
-    async create(orm, args) {
-        if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(InvalidParamError('name', 'Invalid Username'));
+    async create(orm, parameters) {
+        if (!parameters?.name.trim().length) {
+            return Promise.reject(invalidParameterError('name', 'Invalid Username'));
         }
-        const existingUser = await orm.User.findOne({ where: { name: args.name } });
+        const existingUser = await orm.User.findOne({ where: { name: parameters.name } });
         if (existingUser) {
-            return Promise.reject(InvalidParamError('name', 'Username already exists'));
+            return Promise.reject(invalidParameterError('name', 'Username already exists'));
         }
         const pass = randomString(32);
-        return await this.createUser(orm, args.name, args.email || '', pass, !!args.roleAdmin, !!args.roleStream, !!args.roleUpload, !!args.rolePodcast);
+        return await this.createUser(orm, parameters.name, parameters.email ?? '', pass, !!parameters.roleAdmin, !!parameters.roleStream, !!parameters.roleUpload, !!parameters.rolePodcast);
     }
-    async update(orm, user, args) {
-        if (!args.name || args.name.trim().length === 0) {
-            return Promise.reject(InvalidParamError('name', 'Invalid Username'));
+    async update(orm, user, parameters) {
+        if (!parameters?.name.trim().length) {
+            return Promise.reject(invalidParameterError('name', 'Invalid Username'));
         }
-        const existingUser = await orm.User.findOne({ where: { name: args.name } });
+        const existingUser = await orm.User.findOne({ where: { name: parameters.name } });
         if (existingUser && existingUser.id !== user.id) {
-            return Promise.reject(InvalidParamError('name', 'Username already exists'));
+            return Promise.reject(invalidParameterError('name', 'Username already exists'));
         }
-        user.name = args.name;
-        user.email = args.email || user.email;
-        user.roleAdmin = !!args.roleAdmin;
-        user.rolePodcast = !!args.rolePodcast;
-        user.roleStream = !!args.roleStream;
-        user.roleUpload = !!args.roleUpload;
+        user.name = parameters.name;
+        user.email = parameters.email ?? user.email;
+        user.roleAdmin = !!parameters.roleAdmin;
+        user.rolePodcast = !!parameters.rolePodcast;
+        user.roleStream = !!parameters.roleStream;
+        user.roleUpload = !!parameters.roleUpload;
         await orm.User.persistAndFlush(user);
         return user;
     }
     async authSubsonicPassword(orm, name, pass) {
-        if ((!pass) || (!pass.length)) {
-            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        if (!pass?.length) {
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
         const user = await orm.User.findOne({ where: { name } });
         if (!user) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
         if (!session) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         if (pass !== session.jwth) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         return user;
     }
     async authSubsonicToken(orm, name, token, salt) {
-        if (!name || name.trim().length === 0) {
-            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        if (!name?.trim().length) {
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
-        if ((!token) || (!token.length)) {
-            return Promise.reject(SubsonicFormatter.ERRORS.PARAM_MISSING);
+        if (!token?.length) {
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
         const user = await orm.User.findOne({ where: { name } });
         if (!user) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         const session = await orm.Session.findOne({ where: { user: user.id, mode: SessionMode.subsonic } });
         if (!session) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
-        const t = hashMD5(session.jwth + salt);
+        const t = hashMD5(`${session.jwth}${salt}`);
         if (token !== t) {
-            return Promise.reject(SubsonicFormatter.ERRORS.LOGIN_FAILED);
+            return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         return user;
     }

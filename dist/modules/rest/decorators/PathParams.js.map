@@ -1,1 +1,0 @@
-{"version":3,"file":"PathParams.js","sourceRoot":"","sources":["../../../../src/modules/rest/decorators/PathParams.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,kBAAkB,EAAE,MAAM,mCAAmC,CAAC;AACvE,OAAO,EAAE,cAAc,EAAE,MAAM,qCAAqC,CAAC;AAKrE,MAAM,UAAU,UAAU,CAAC,oBAAuD,EAAE,YAA8B;IACjH,OAAO,cAAc,CAAC,kBAAkB,EAAE,EAAE,oBAAoB,EAAE,YAAY,CAAC,CAAC;AACjF,CAAC"}

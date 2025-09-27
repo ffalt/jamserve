@@ -15,14 +15,15 @@ let AlbumService = AlbumService_1 = class AlbumService {
     static async getAlbumFolder(album) {
         const folders = await album.folders.getItems();
         if (folders.length > 0) {
-            return folders.sort((a, b) => b.level - a.level)[0];
+            return folders.sort((a, b) => b.level - a.level).at(0);
         }
         return;
     }
     async getAlbumTrackImage(orm, album, size, format) {
         const tracks = await album.tracks.getItems();
-        if (tracks.length > 0) {
-            return this.trackService.getImage(orm, tracks[0], size, format);
+        const track = tracks.at(0);
+        if (track) {
+            return this.trackService.getImage(orm, track, size, format);
         }
         return;
     }
@@ -35,15 +36,11 @@ let AlbumService = AlbumService_1 = class AlbumService {
     }
     async getImage(orm, album, size, format) {
         let result;
-        if (album.series) {
+        if (album.series.id()) {
             result = await this.getAlbumTrackImage(orm, album, size, format);
         }
-        if (!result) {
-            result = await this.getAlbumFolderImage(orm, album, size, format);
-        }
-        if (!result) {
-            result = await this.getAlbumTrackImage(orm, album, size, format);
-        }
+        result ?? (result = await this.getAlbumFolderImage(orm, album, size, format));
+        result ?? (result = await this.getAlbumTrackImage(orm, album, size, format));
         return result;
     }
 };

@@ -11,15 +11,19 @@ export class ArtistRepository extends BaseRepository {
     buildOrder(order) {
         const direction = OrderHelper.direction(order);
         switch (order?.orderBy) {
-            case ArtistOrderFields.created:
+            case ArtistOrderFields.created: {
                 return [['createdAt', direction]];
-            case ArtistOrderFields.updated:
+            }
+            case ArtistOrderFields.updated: {
                 return [['updatedAt', direction]];
-            case ArtistOrderFields.name:
+            }
+            case ArtistOrderFields.name: {
                 return [['name', direction]];
+            }
             case ArtistOrderFields.default:
-            case ArtistOrderFields.nameSort:
+            case ArtistOrderFields.nameSort: {
                 return [['nameSort', direction]];
+            }
         }
         return [];
     }

@@ -1,6 +1,6 @@
-import { getMetadataStorage } from '../metadata/getMetadataStorage.js';
+import { metadataStorage } from '../metadata/metadata-storage.js';
 export function registerEnumType(enumObj, enumConfig) {
-    getMetadataStorage().enums.push({
+    metadataStorage().enums.push({
         enumObj,
         name: enumConfig.name,
         description: enumConfig.description

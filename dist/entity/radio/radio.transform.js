@@ -8,7 +8,7 @@ import { InRequestScope } from 'typescript-ioc';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
 let RadioTransformService = class RadioTransformService extends BaseTransformService {
-    async radio(orm, o, radioArgs, user) {
+    async radio(orm, o, { radioState }, user) {
         return {
             id: o.id,
             name: o.name,
@@ -16,10 +16,10 @@ let RadioTransformService = class RadioTransformService extends BaseTransformSer
             homepage: o.homepage,
             created: o.createdAt.valueOf(),
             changed: o.updatedAt.valueOf(),
-            state: radioArgs.radioState ? await this.state(orm, o.id, DBObjectType.radio, user.id) : undefined
+            state: radioState ? await this.state(orm, o.id, DBObjectType.radio, user.id) : undefined
         };
     }
-    async radioIndex(orm, result) {
+    async radioIndex(_orm, result) {
         return this.index(result, async (item) => {
             return {
                 id: item.id,

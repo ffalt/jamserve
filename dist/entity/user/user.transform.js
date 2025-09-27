@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { InRequestScope } from 'typescript-ioc';
 let UserTransformService = class UserTransformService {
-    async user(orm, o, userArgs, currentUser) {
+    async user(_orm, o, _parameters, currentUser) {
         return {
             id: o.id,
             name: o.name,
