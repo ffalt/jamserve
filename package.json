@@ -119,7 +119,7 @@
     "@types/fs-extra": "11.0.4",
     "@types/graphql-type-json": "0.3.5",
     "@types/jest": "30.0.0",
-    "@types/jsdom": "21.1.7",
+    "@types/jsdom": "27.0.0",
     "@types/mime-types": "3.0.1",
     "@types/multer": "2.0.0",
     "@types/mustache": "4.2.6",
