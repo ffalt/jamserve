@@ -94,7 +94,7 @@
     "typescript-ioc": "3.2.2",
     "waveform-data": "4.5.2",
     "which": "5.0.0",
-    "winston": "3.17.0",
+    "winston": "3.18.3",
     "winston-transport": "4.9.0",
     "yauzl": "3.2.0"
   },
