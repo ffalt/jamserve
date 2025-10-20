@@ -138,7 +138,7 @@ export class IoService {
 	}
 
 	getAdminChangeQueueInfoStatus(id: string): AdminChangeQueueInfo {
-		if (this.current && this.current.id === id) {
+		if (this.current?.id === id) {
 			return { id };
 		}
 		const cmd = this.queue.find(c => c.id === id);

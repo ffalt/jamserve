@@ -8,6 +8,7 @@ const unicornRules = {
 	"unicorn/empty-brace-spaces": "off",
 	"unicorn/no-await-expression-member": "off",
 	"unicorn/no-null": "off",
+	"unicorn/no-array-sort": "off",
 	"unicorn/no-process-exit": "off",
 	"unicorn/no-useless-promise-resolve-reject": "off",
 	"unicorn/no-useless-undefined": "off",

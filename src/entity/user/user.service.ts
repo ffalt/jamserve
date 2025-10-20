@@ -32,7 +32,7 @@ export class UserService {
 	}
 
 	async findByName(orm: Orm, name: string): Promise<User | undefined> {
-		if (!name || name.trim().length === 0) {
+		if (name.trim().length === 0) {
 			return Promise.reject(unauthError('Invalid Username'));
 		}
 		return await orm.User.findOne({ where: { name } });

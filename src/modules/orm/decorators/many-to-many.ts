@@ -4,7 +4,7 @@ import { registerRelation } from '../helpers/relation-register.js';
 export function ManyToMany<T>(
 	returnTypeFunction: ReturnTypeFunction,
 	mappedBy: MappedByFunction<T>,
-	options?: ManyToManyFieldOptions,
+	options?: ManyToManyFieldOptions
 ): MethodAndPropertyDecorator;
 export function ManyToMany<T>(
 	returnTypeFunction: ReturnTypeFunction,

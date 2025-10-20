@@ -86,7 +86,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	}
 
 	async lookup(parameters: MusicbrainzClientApi.ParameterLookup): Promise<MusicBrainz.Response> {
-		if (!parameters.id || parameters.id.length === 0) {
+		if (parameters.id.length === 0) {
 			return Promise.reject(new Error(`Invalid lookup id for type ${parameters.type}`));
 		}
 		const lookup = LookupIncludes[parameters.type];
@@ -122,7 +122,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 
 	async luceneSearch(parameters: MusicbrainzClientApi.ParameterLuceneSearch): Promise<MusicBrainz.Response> {
 		// https://lucene.apache.org/core/4_3_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description
-		if (!parameters.query || parameters.query.length === 0) {
+		if (parameters.query.length === 0) {
 			return Promise.reject(new Error(`Invalid query for type ${parameters.type}`));
 		}
 		const data = await this.get({

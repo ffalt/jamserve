@@ -164,7 +164,7 @@ export class EntityManager {
 	}
 
 	async findOneByID<T extends IDEntity<T>>(entityName: EntityName<T>, id: string): Promise<T | undefined> {
-		if (!id || id.trim().length === 0) {
+		if (id.trim().length === 0) {
 			return Promise.reject(new Error('Invalid ID'));
 		}
 		if (this.useCache) {
