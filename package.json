@@ -44,7 +44,7 @@
     "body-parser": "2.2.0",
     "class-validator": "0.14.2",
     "common-password-checker": "0.1.0",
-    "console-table-printer": "2.14.6",
+    "console-table-printer": "2.15.0",
     "cors": "2.8.5",
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
@@ -123,7 +123,7 @@
     "@types/mime-types": "3.0.1",
     "@types/multer": "2.0.0",
     "@types/mustache": "4.2.6",
-    "@types/node": "24.8.1",
+    "@types/node": "24.9.1",
     "@types/node-fetch": "3.0.2",
     "@types/on-finished": "2.3.5",
     "@types/passport": "1.0.17",
@@ -154,7 +154,7 @@
     "ts-node": "10.9.2",
     "tsc-watch": "7.2.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.46.1",
+    "typescript-eslint": "8.46.2",
     "uuid": "13.0.0"
   }
 }
