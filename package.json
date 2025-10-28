@@ -103,7 +103,7 @@
     "@eslint/js": "9.38.0",
     "@jest/globals": "30.2.0",
     "@stylistic/eslint-plugin": "5.5.0",
-    "@types/archiver": "6.0.3",
+    "@types/archiver": "7.0.0",
     "@types/bcrypt": "6.0.0",
     "@types/chance": "1.1.7",
     "@types/cors": "2.8.19",
