@@ -52,7 +52,7 @@
     "d3-shape": "3.2.0",
     "dotenv": "17.2.3",
     "express": "5.1.0",
-    "express-rate-limit": "8.1.0",
+    "express-rate-limit": "8.2.0",
     "express-session": "1.18.2",
     "express-useragent": "1.0.15",
     "feedparser": "2.2.10",
