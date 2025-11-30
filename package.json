@@ -79,7 +79,7 @@
     "passport-local": "1.0.0",
     "pg": "8.16.3",
     "pg-hstore": "2.3.4",
-    "rate-limiter-flexible": "8.1.0",
+    "rate-limiter-flexible": "8.3.0",
     "reflect-metadata": "0.2.2",
     "rotating-file-stream": "3.2.7",
     "seedrandom": "3.0.5",
