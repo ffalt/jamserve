@@ -6,7 +6,6 @@ import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 import { metadataStorage } from '../metadata/metadata-storage.js';
 import { ControllerClassMetadata } from '../../deco/definitions/controller-metadata.js';
 import { CustomPathParameterAliasRouteOptions } from '../../deco/definitions/types.js';
-import { ClassType } from 'type-graphql';
 
 class OpenApiBuilder extends BaseOpenApiBuilder {
 	protected buildOpenApiMethod(method: MethodMetadata, ctrl: ControllerClassMetadata, schemas: Schemas, isPost: boolean, alias?: CustomPathParameterAliasRouteOptions): { path: string; o: OperationObject } {
@@ -27,7 +26,7 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 		return { path, o };
 	}
 
-	fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+	fillFormatResponses(type: Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
 		this.fillJSONResponses(type, method, schemas, responses);
 	}
 

@@ -70,7 +70,7 @@ class LastFMClientBeautify {
 		}
 		if (Array.isArray(o)) {
 			return o
-				.map((sub: Array<object | Array<any> | undefined | null>) => LastFMClientBeautify.walk(sub, parent))
+				.map((sub: Array<object | undefined | null>) => LastFMClientBeautify.walk(sub, parent))
 				.filter((sub: any) => sub !== undefined);
 		}
 		if (typeof o === 'object') {

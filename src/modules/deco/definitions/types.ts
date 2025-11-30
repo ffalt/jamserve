@@ -1,11 +1,11 @@
 import type { ValidatorOptions } from 'class-validator';
-import { ClassType, TypeResolver } from 'type-graphql';
+import { TypeResolver } from 'type-graphql';
 
 export const bannedTypes: Array<Function> = [Promise, Array, Object, Function];
 
 export type RecursiveArray<TValue> = Array<RecursiveArray<TValue> | TValue>;
 
-export declare type TypeValue = ClassType | Function | object | symbol;
+export declare type TypeValue = Function | object | symbol;
 export declare type TypeValueThunk = (type?: unknown) => TypeValue;
 export declare type ReturnTypeFunctionValue = TypeValue | RecursiveArray<TypeValue> | undefined;
 export declare type ReturnTypeFunction = (returns?: unknown) => ReturnTypeFunctionValue;

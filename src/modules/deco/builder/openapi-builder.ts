@@ -6,9 +6,8 @@ import {
 	ResponsesObject, RequestBodyObject, SchemaObject
 } from './openapi-helpers.js';
 import { OpenApiReferenceBuilder } from './openapi-reference-builder.js';
-import { ClassType } from 'type-graphql';
 
-type ErrorResponseType = ClassType<any> | Function | object | symbol;
+type ErrorResponseType = Function | object | symbol;
 
 export abstract class BaseOpenApiBuilder {
 	refsBuilder: OpenApiReferenceBuilder;
@@ -54,7 +53,7 @@ export abstract class BaseOpenApiBuilder {
 		return responses;
 	}
 
-	protected fillXMLResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+	protected fillXMLResponses(type: Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
 		const content: ContentObject = {};
 		let schema: SchemaObject | ReferenceObject = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
 		if (method.returnTypeOptions?.array) {
@@ -64,7 +63,7 @@ export abstract class BaseOpenApiBuilder {
 		responses['200'] = { description: 'xml data', content };
 	}
 
-	protected fillJSONResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+	protected fillJSONResponses(type: Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
 		const content: ContentObject = {};
 		let schema: SchemaObject | ReferenceObject = { $ref: this.refsBuilder.getResultRef(type, method.methodName, schemas) };
 		if (method.returnTypeOptions?.array) {

@@ -145,7 +145,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 
 	private static removeArticles(ignore: string, name: string): string {
 		// /^(?:(?:the|los|les)\s+)?(.*)/gi
-		const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
+		const matches = new RegExp(String.raw`^(?:(?:${ignore})\s+)?(.*)`, 'gi').exec(name);
 		return matches?.at(1) ?? name;
 	}
 

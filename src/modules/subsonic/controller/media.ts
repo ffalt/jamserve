@@ -123,9 +123,11 @@ export class SubsonicMediaRetrievalApi {
 		let hasUnssynced = false;
 
 		const splitLyrics = (lyrics: string): SubsonicStructuredLyrics => {
-			const l: SubsonicStructuredLyrics = { lang: 'und', synced: false };
-			l.line = lyrics.split('\n').map(value => ({ value }));
-			return l;
+			return {
+				lang: 'und',
+				synced: false,
+				line: lyrics.split('\n').map(value => ({ value }))
+			};
 		};
 		if (tag?.syncedlyrics) {
 			structuredLyrics.push(splitLyrics(tag.syncedlyrics));
@@ -138,8 +140,11 @@ export class SubsonicMediaRetrievalApi {
 		if (!hasSynced) {
 			const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
 			if (slyrics) {
-				const l: SubsonicStructuredLyrics = { lang: slyrics.language || 'und', synced: true };
-				l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
+				const l: SubsonicStructuredLyrics = {
+					lang: slyrics.language || 'und',
+					synced: true,
+					line: slyrics.events.map(value => ({ value: value.text, start: value.timestamp }))
+				};
 				structuredLyrics.push(l);
 			}
 		}

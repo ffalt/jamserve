@@ -44,7 +44,7 @@ export class AvatarGenerator {
 	}
 
 	private static BuildVariantsMap({ parts, partsLocation, imageExtension }: AvatarGenearatorSettings): VariantsMap {
-		const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
+		const fileRegex = new RegExp(String.raw`(${parts.join('|')})(\d+)${imageExtension}`);
 		const discriminators = fs
 			.readdirSync(partsLocation)
 			.filter(partsDir =>

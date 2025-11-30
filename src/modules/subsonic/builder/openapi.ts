@@ -4,7 +4,6 @@ import { Schemas, OpenAPIObject, OperationObject, ParameterObject, PathsObject, 
 import { SUBSONIC_VERSION } from '../version.js';
 import { BaseOpenApiBuilder } from '../../deco/builder/openapi-builder.js';
 import { CustomPathParameterAliasRouteOptions } from '../../deco/definitions/types.js';
-import { ClassType } from 'type-graphql';
 import { SecurityRequirementObject } from 'openapi3-ts/oas30';
 
 const security: Array<SecurityRequirementObject> = [
@@ -31,7 +30,7 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
 		return { path, o };
 	}
 
-	fillFormatResponses(type: ClassType<any> | Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
+	fillFormatResponses(type: Function | object | symbol, method: MethodMetadata, schemas: Schemas, responses: ResponsesObject) {
 		this.fillXMLResponses(type, method, schemas, responses);
 	}
 

@@ -36,7 +36,7 @@ function xmlParameters(o: Record<string, any>): string {
 function xmlObject(o: Record<string, any>): string {
 	const sl: Array<string> = [];
 	for (const key of Object.keys(o)) {
-		const sub = o[key] as Array<Record<string, any>> | object | undefined;
+		const sub = o[key] as object | undefined;
 		if (Array.isArray(sub)) {
 			for (const entry of (sub as Array<Record<string, any>>)) {
 				const value = xmlContent(entry) + xmlObject(entry);
