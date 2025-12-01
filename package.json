@@ -51,7 +51,7 @@
     "d3-selection": "3.0.0",
     "d3-shape": "3.2.0",
     "dotenv": "17.2.3",
-    "express": "5.1.0",
+    "express": "5.2.1",
     "express-rate-limit": "8.2.1",
     "express-session": "1.18.2",
     "express-useragent": "2.0.2",
