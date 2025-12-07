@@ -146,7 +146,7 @@ export class EntityManager {
         return result;
     }
     async findOneByID(entityName, id) {
-        if (!id || id.trim().length === 0) {
+        if (id.trim().length === 0) {
             return Promise.reject(new Error('Invalid ID'));
         }
         if (this.useCache) {

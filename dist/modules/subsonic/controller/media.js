@@ -71,9 +71,11 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
         let hasSynced = false;
         let hasUnssynced = false;
         const splitLyrics = (lyrics) => {
-            const l = { lang: 'und', synced: false };
-            l.line = lyrics.split('\n').map(value => ({ value }));
-            return l;
+            return {
+                lang: 'und',
+                synced: false,
+                line: lyrics.split('\n').map(value => ({ value }))
+            };
         };
         if (tag?.syncedlyrics) {
             structuredLyrics.push(splitLyrics(tag.syncedlyrics));
@@ -86,8 +88,11 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
         if (!hasSynced) {
             const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
             if (slyrics) {
-                const l = { lang: slyrics.language || 'und', synced: true };
-                l.line = slyrics.events.map(value => ({ value: value.text, start: value.timestamp }));
+                const l = {
+                    lang: slyrics.language || 'und',
+                    synced: true,
+                    line: slyrics.events.map(value => ({ value: value.text, start: value.timestamp }))
+                };
                 structuredLyrics.push(l);
             }
         }

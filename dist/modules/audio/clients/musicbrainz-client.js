@@ -71,7 +71,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
         return this.beautify(data);
     }
     async lookup(parameters) {
-        if (!parameters.id || parameters.id.length === 0) {
+        if (parameters.id.length === 0) {
             return Promise.reject(new Error(`Invalid lookup id for type ${parameters.type}`));
         }
         const lookup = LookupIncludes[parameters.type];
@@ -104,7 +104,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
         return this.beautify({ [parameters.type]: data });
     }
     async luceneSearch(parameters) {
-        if (!parameters.query || parameters.query.length === 0) {
+        if (parameters.query.length === 0) {
             return Promise.reject(new Error(`Invalid query for type ${parameters.type}`));
         }
         const data = await this.get({

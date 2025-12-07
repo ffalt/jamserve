@@ -1,6 +1,6 @@
 # Jamserve Audio Server
 
-An audio library server written in Typescript for NodeJS
+An audio library server written in TypeScript for Node.js
 
 [![Test](https://github.com/ffalt/jamserve/workflows/test/badge.svg)](https://github.com/ffalt/jamserve/actions?query=workflow%3Atest)
 [![Maintainability](https://qlty.sh/gh/ffalt/projects/jamserve/maintainability.svg)](https://qlty.sh/gh/ffalt/projects/jamserve)
@@ -8,67 +8,67 @@ An audio library server written in Typescript for NodeJS
 
 ## Preamble
 
-This is my long term pet project to manage/stream/edit my own music collection.
-It's work in progress and probably always will be.
+This is my long-term pet project to manage, stream, and edit my own music collection.
+It's a work in progress and probably always will be.
 
-This is the backend development repository. See
+This is the backend development repository. See:
 
-[Jamberry](https://github.com/ffalt/jamberry) for web-client development
+[Jamberry](https://github.com/ffalt/jamberry) for web client development.
 
-[Jampacked](https://github.com/ffalt/jampacked) for mobile app development
+[Jampacked](https://github.com/ffalt/jampacked) for mobile app development.
 
-[Jam-Dockerimage](https://github.com/ffalt/jam-dockerimage) Docker-Image for JamServe & Jamberry
+[Jam-Dockerimage](https://github.com/ffalt/jam-dockerimage) Docker image for JamServe & Jamberry.
 
-[Jam-Docker](https://github.com/ffalt/jam-docker) run JamServe & Jamberry with Docker
+[Jam-Docker](https://github.com/ffalt/jam-docker) Run JamServe & Jamberry with Docker.
 
 Features:
 
-* REST & GraphQL API for Media Scanning, Streaming, Transcoding, MP3 ID3v2 Editing, User Management
-* API Specs & Documentation with OpenAPI, see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
-* Enhance Metadata via Musicbrainz, LastFM, Wikipedia, lyricsOVH, LrcLib & AcoustID
-* Database Support for [postgresql](https://www.postgresql.org/) and SQLite for local development
+* REST & GraphQL API for media scanning, streaming, transcoding, MP3 ID3v2 editing, and user management
+* API specs and documentation with OpenAPI - see [JamAPI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ffalt/jamserve/main/specs/jam.openapi.json)
+* Enhanced metadata via MusicBrainz, Last.fm, Wikipedia, Lyrics.ovh, LRCLib, and AcoustID
+* Database support for [PostgreSQL](https://www.postgresql.org/) and SQLite for local development
 
 ## Requirements
 
-* install [NodeJS](https://nodejs.org/) and [NPM](https://www.npmjs.com/)
+* Install [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/)
 
-* install [FFMPEG](https://ffmpeg.org/)
+* Install [FFmpeg](https://ffmpeg.org/)
 
     `apt-get install ffmpeg`
 
-     manual installation: available in PATH or [environment variable](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): *FFPROBE_PATH* and *FFMPEG_PATH*
+    Manual installation: available in PATH or via [environment variables](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): FFPROBE_PATH and FFMPEG_PATH
 
-optional for metadata matching & mp3 repair support
+Optional for metadata matching and MP3 repair support:
 
-* install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
+* Install [fpcalc](https://github.com/acoustid/chromaprint/releases/)
 
     `apt-get install libchromaprint-tools`
 
-     manual installation: available in PATH or environment variable *FPCALC_PATH*
+    Manual installation: available in PATH or environment variable FPCALC_PATH
 
-* install [mp3val](http://mp3val.sourceforge.net/)
+* Install [mp3val](http://mp3val.sourceforge.net/)
 
     `apt-get install mp3val`
 
-     manual installation: available in PATH or environment variable *MP3VAL_PATH*
+    Manual installation: available in PATH or environment variable MP3VAL_PATH
 
-* install [flac](https://xiph.org/flac/)
+* Install [FLAC](https://xiph.org/flac/)
 
     `apt-get install flac`
 
-     manual installation: available in PATH or environment variable *FLAC_PATH*
+    Manual installation: available in PATH or environment variable FLAC_PATH
 
 ## Installation
 
-* run command `npm install` in the root folder of this repository
-* in folder `config`:
-    copy file `firststart.config.dist.json` to `firststart.config.json` and
-    add an admin user / add some media folders (can be changed on runtime via the frontend UI)
-* set environment variables or create an environment variables file `.env`
+* Run `npm install` in the root folder of this repository.
+* In the `config` folder:
+    copy `firststart.config.dist.json` to `firststart.config.json` and
+    add an admin user and some media folders (these can be changed at runtime via the frontend UI).
+* Set environment variables or create an environment file named `.env`.
 
 ## Environment Variables
 
-Example `.env` file for debugging on localhost
+Example `.env` file for debugging on localhost:
 
 ```dosini
 ## Server
@@ -91,38 +91,38 @@ JAM_DATA_PATH=./data/
 # JamServe Frontend Path
 JAM_FRONTEND_PATH=./static/jamberry/
 
-## JSON Web Token https://jwt.io/
+## JSON Web Token (JWT) https://jwt.io/
 
-# An unique string for your instance to sign the jwt tokens
+# A unique string for your instance to sign the JWT tokens
 JAM_JWT_SECRET=keyboard cat is stomping
 
-# Max Age for a valid jwt (set 0 for no expiration)
-# possible values: 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute'
+# Max age for a valid JWT (set 0 for no expiration)
+# Possible values: 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute'
 JAM_JWT_MAXAGE=1 day
 
 
 ## Login: Cookie Session
 
-# Due to CORS security you MUST name all domains where login with session cookie is allowed
+# Due to CORS security, you MUST list all domains where login with a session cookie is allowed
 # https://de.wikipedia.org/wiki/Cross-Origin_Resource_Sharing
-# (background: random sites cannot access/create cookies for your domain)
+# (Background: random sites cannot access/create cookies for your domain)
 JAM_ALLOWED_COOKIE_DOMAINS=http://localhost:4040,http://localhost:4200
 
-# An unique string for your instance to sign the session cookie (change it!)
+# A unique string for your instance to sign the session cookie (change it!)
 # http://www.senchalabs.org/connect/session.html
 JAM_SESSION_SECRET=keyboard cat is dancing
 
-# If true, session cookies are only available for https, NOT http
+# If true, session cookies are only available over HTTPS; not HTTP
 JAM_SESSION_COOKIE_SECURE=false
 
-# If true, server trusts first reverse proxy like nginx
+# If true, the server trusts the first reverse proxy (e.g., Nginx)
 JAM_SESSION_TRUST_PROXY=false
 
-# Max Age for a valid session cookie (set 0 for no expiration)
+# Max age for a valid session cookie (set 0 for no expiration)
 JAM_SESSION_MAXAGE=1 day
 
-# DB to use: "postgres" 
-# or: "sqlite" (does not support multiuser, so only use it for testing/development)
+# Database to use: "postgres"
+# or: "sqlite" (does not support multi-user, so only use it for testing/development)
 JAM_DB_DIALECT=sqlite
 
 # Database name
@@ -134,14 +134,14 @@ JAM_DB_USER=jam
 # Database user password
 JAM_DB_PASSWORD=jam
 
-# Datebase Unix Socket Path to connect (or use host/port)
+# Database Unix socket path to connect (or use host/port)
 # NOT the socket itself /var/run/postgresql/.s.PGSQL.5432
 JAM_DB_SOCKET=/var/run/postgresql/
 
-# Datebase Host
+# Database host
 JAM_DB_HOST=127.0.0.1
 
-# Datebase Port
+# Database port
 JAM_DB_PORT=5432
 
 ```
@@ -150,27 +150,27 @@ Example **config/firststart.config.json**:
 
 ```json5
 /*
-  Add Admin user and media folders on first start
+  Add admin user and media folders on first start
  */
 {
   /*
-    Default Admin user
+    Default admin user
   */
   "adminUser": {
     "name": "admin",
     /*
-      Since the default admin password is stored in clear in this file,
+      Since the default admin password is stored in clear text in this file,
       you MUST change it on first login
     */
     "pass": "your admin password"
   },
   /*
-    Default Media folders
+    Default media folders
     Scan strategies:
     'auto' -- try to figure it out
     'artistalbum' -- artist/album folder structure
-    'compilation' -- bunch of compilation folders
-    'audiobook' -- bunch of audiobook folders
+    'compilation' -- collection of compilation folders
+    'audiobook' -- collection of audiobook folders
    */
   "roots": [
     {"name": "Music", "path": "path/to/music", "strategy": "auto"},
@@ -185,28 +185,28 @@ Example **config/firststart.config.json**:
 
 ### Start
 
-`npm run start` to run the server (available after a successful build)
+`npm run start` to run the server (available after a successful build).
 
 ### Development Build
 
-`npm run build` to build the server into dist/
+`npm run build` to build the server into dist/.
 
 ### Production Build
 
-`npm run build:prod` to clean & build the server into dist/
+`npm run build:prod` to clean & build the server into dist/.
 
 ### Develop Full
 
-`npm run develop` to run the server & rebuild/reload on source file changes
+`npm run develop` to run the server & rebuild/reload on source file changes.
 
 ### Clean Dist
 
-`npm run clean` to clean up the distribution folder
+`npm run clean` to clean up the distribution folder.
 
 ### Test
 
-`npm run test` to run all tests
+`npm run test` to run all tests.
 
 ### Test Coverage
 
-`npm run coverage` to run all tests & generate a coverage report
+`npm run coverage` to run all tests & generate a coverage report.

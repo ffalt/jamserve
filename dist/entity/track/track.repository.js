@@ -57,8 +57,7 @@ export class TrackRepository extends BaseRepository {
         if (filter.childOfID) {
             const folderRepo = this.em.getRepository(Folder);
             const folder = await folderRepo.oneOrFailByID(filter.childOfID);
-            folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder)];
-            folderIDs.push(filter.childOfID);
+            folderIDs = [...folderIDs, ...await folderRepo.findAllDescendantsIds(folder), filter.childOfID];
         }
         if (filter.folderIDs) {
             folderIDs = [...folderIDs, ...filter.folderIDs];

@@ -17,7 +17,7 @@ export class AvatarGenerator {
         this._parts = cfg.parts;
     }
     static BuildVariantsMap({ parts, partsLocation, imageExtension }) {
-        const fileRegex = new RegExp(`(${parts.join('|')})(\\d+)${imageExtension}`);
+        const fileRegex = new RegExp(String.raw `(${parts.join('|')})(\d+)${imageExtension}`);
         const discriminators = fs
             .readdirSync(partsLocation)
             .filter(partsDir => fs.statSync(path.join(partsLocation, partsDir)).isDirectory());

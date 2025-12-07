@@ -118,7 +118,7 @@ export class BaseRepository extends EntityRepository {
         return c;
     }
     static removeArticles(ignore, name) {
-        const matches = new RegExp(`^(?:(?:${ignore})\\s+)?(.*)`, 'gi').exec(name);
+        const matches = new RegExp(String.raw `^(?:(?:${ignore})\s+)?(.*)`, 'gi').exec(name);
         return matches?.at(1) ?? name;
     }
     async index(property, options, ignoreArticles) {

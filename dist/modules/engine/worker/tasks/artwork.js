@@ -57,7 +57,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
             const info = await this.imageModule.getImageInfo(importFilename);
             suffix = info.format;
         }
-        if (!suffix || suffix.length === 0 || suffix === 'invalid') {
+        if (suffix.length === 0 || suffix === 'invalid') {
             return Promise.reject(new Error('Image Format invalid/not known'));
         }
         let destination = `${name}.${suffix}`;
@@ -106,7 +106,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         const name = basenameStripExtension(artwork.name);
         const info = await this.imageModule.getImageInfo(artworkFilename);
         const suffix = info.format;
-        if (!suffix || suffix.length === 0 || suffix === 'invalid') {
+        if (suffix.length === 0 || suffix === 'invalid') {
             return Promise.reject(new Error('Image Format invalid/not known'));
         }
         await fileDeleteIfExists(path.join(artwork.path, artwork.name));

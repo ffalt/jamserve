@@ -25,7 +25,7 @@ let UserService = class UserService {
         this.userAvatarPath = this.configService.getDataPath(['images']);
     }
     async findByName(orm, name) {
-        if (!name || name.trim().length === 0) {
+        if (name.trim().length === 0) {
             return Promise.reject(unauthError('Invalid Username'));
         }
         return await orm.User.findOne({ where: { name } });
