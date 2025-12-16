@@ -1,5 +1,5 @@
 import express from 'express';
-import ffmpeg from 'fluent-ffmpeg';
+import ffmpeg, { FfmpegCommand } from '../tools/ffmpeg.js';
 import { SupportedTranscodeAudioFormat } from '../../../utils/filetype.js';
 import { logger } from '../../../utils/logger.js';
 import { AudioFormatType } from '../../../types/enums.js';
@@ -16,7 +16,7 @@ export abstract class TranscoderStream implements StreamData {
 		return SupportedTranscodeAudioFormat.includes(format);
 	}
 
-	static getTranscodeProc(source: string, format: string, maxBitRate: number): ffmpeg.FfmpegCommand {
+	static getTranscodeProc(source: string, format: string, maxBitRate: number): FfmpegCommand {
 		const proc = ffmpeg({ source })
 			.withNoVideo();
 		switch (format) {

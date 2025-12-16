@@ -5,7 +5,7 @@
 
  */
 
-import Ffmpeg from 'fluent-ffmpeg';
+import ffmpeg, { FfmpegCommand, type FfmpegCommandOptions } from '../tools/ffmpeg.js';
 import { PassThrough, Readable, Transform, TransformCallback } from 'node:stream';
 import { logger } from '../../../utils/logger.js';
 import { errorStringCode } from '../../../utils/error.js';
@@ -15,7 +15,7 @@ const log = logger('waveform.stream');
 export class WaveformStream extends Transform {
 	_buffer = new PassThrough();
 	_out = new PassThrough();
-	_ffmpeg: Ffmpeg.FfmpegCommand;
+	_ffmpeg: FfmpegCommand;
 	_sampleRate: number;
 	_samplesPerPixel: number;
 	_started = false;
@@ -28,10 +28,10 @@ export class WaveformStream extends Transform {
 		super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
 		this._samplesPerPixel = atSamplesPerPixel ?? 256;
 		this._sampleRate = atSampleRate ?? 44_100;
-		const options: Ffmpeg.FfmpegCommandOptions = {
+		const options: FfmpegCommandOptions = {
 			source: this._buffer as Readable
 		};
-		this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
+		this._ffmpeg = ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
 		this._ffmpeg.on('start', (cmd: string) => {
 			log.debug(`ffmpeg started with ${cmd}`);
 			this._started = true;

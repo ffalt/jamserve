@@ -8,7 +8,6 @@ export enum QueryOrderNumeric {
 	DESC = -1
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export declare type QueryOrderKeysFlat = QueryOrder | QueryOrderNumeric | keyof typeof QueryOrder;
 export declare type QueryOrderKeys = QueryOrderKeysFlat | QueryOrderMap;
 
