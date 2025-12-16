@@ -4,7 +4,11 @@ import which from 'which';
 
 export const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
 
-const cache: Record<string, string> = {};
+let cache: Record<string, string> = {};
+
+export function clearBinCache(): void {
+	cache = {};
+}
 
 async function localBin(name: string): Promise<string | undefined> {
 	const s = path.join('.', 'bin', 'tools', name, process.platform, process.arch, name) + (isWindows ? '.exe' : '');

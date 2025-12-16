@@ -36,7 +36,7 @@ Features:
 
     `apt-get install ffmpeg`
 
-    Manual installation: available in PATH or via [environment variables](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg#ffmpeg-and-ffprobe): FFPROBE_PATH and FFMPEG_PATH
+    Manual installation: available in PATH or via environment variables: FFPROBE_PATH and FFMPEG_PATH
 
 Optional for metadata matching and MP3 repair support:
 
