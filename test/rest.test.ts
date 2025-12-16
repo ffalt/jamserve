@@ -25,6 +25,11 @@ initTest();
 const apiPrefix = `/jam/${JAMAPI_URL_VERSION}/`;
 const roles = [UserRole.admin, UserRole.podcast, UserRole.upload, UserRole.stream];
 
+
+beforeEach(() => {
+	nock.cleanAll();
+});
+
 describe.each(DBConfigs)('REST with %o', db => {
 	let server: Server;
 	let dir: tmp.DirResult;
