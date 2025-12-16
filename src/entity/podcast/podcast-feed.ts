@@ -1,10 +1,12 @@
 import FeedParser from 'feedparser';
-import iconv from 'iconv-lite';
+import iconvDefault, { Iconv as IconvType } from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
 import { EpisodeChapter } from '../episode/episode.js';
+
+const iconv = iconvDefault as unknown as typeof IconvType;
 
 export interface PodcastTag {
 	title?: string;
