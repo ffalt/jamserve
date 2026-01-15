@@ -39,7 +39,7 @@ export class ChatController {
 		@RestContext() { engine, user }: Context
 	): Promise<void> {
 		const chat = await engine.chat.find(time);
-		if (chat && chat.userID === user.id) {
+		if (chat?.userID === user.id) {
 			await engine.chat.remove(chat);
 		}
 	}

@@ -17,7 +17,7 @@ interface FolderRuleInfo {
 function isAlbumTopMostFolder(_orm: Orm, folder: Folder, parents: Array<Folder>): boolean {
 	if (folder.folderType === FolderType.multialbum) {
 		const parent = parents.at(-1);
-		if (parent && parent.folderType === FolderType.multialbum) {
+		if (parent?.folderType === FolderType.multialbum) {
 			return false;
 		}
 	}
