@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.2](https://github.com/ffalt/jamserve/compare/v0.6.1...v0.6.2) (2026-01-15)
+
+
+### Features
+
+* **audio:** support m4b format extension ([c0a21dd](https://github.com/ffalt/jamserve/commit/c0a21dd9a6d81cfa01f09d3bfd7174ff07ed2259))
+
 ## [0.6.1](https://github.com/ffalt/jamserve/compare/v0.6.0...v0.6.1) (2025-12-07)
 
 ## [0.6.0](https://github.com/ffalt/jamserve/compare/v0.5.26...v0.6.0) (2025-09-27)
