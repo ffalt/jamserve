@@ -36,6 +36,7 @@ export abstract class TranscoderStream implements StreamData {
 					.withAudioCodec('libmp3lame');
 			}
 			case AudioFormatType.mp4:
+			case AudioFormatType.m4b:
 			case AudioFormatType.m4a: {
 				return proc
 					.toFormat('mp4')

@@ -73,6 +73,7 @@ describe('TranscoderStream integration with real ffmpeg', () => {
 			{ fmt: AudioFormatType.flac, bitrate: 0 },
 			{ fmt: AudioFormatType.mp4, bitrate: 128 },
 			{ fmt: AudioFormatType.m4a, bitrate: 160 },
+			{ fmt: AudioFormatType.m4b, bitrate: 32 },
 			{ fmt: AudioFormatType.webma, bitrate: 0 }
 		];
 
@@ -95,6 +96,9 @@ describe('TranscoderStream integration with real ffmpeg', () => {
 				}
 				case AudioFormatType.m4a: {
 					return 'm4a';
+				}
+				case AudioFormatType.m4b: {
+					return 'm4b';
 				}
 				case AudioFormatType.webma: {
 					return 'webm';

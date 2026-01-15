@@ -134,9 +134,9 @@ describe('TranscoderStream ffmpeg argument generation and runtime', () => {
 		});
 	});
 
-	test('getTranscodeProc for m4a/mp4 uses mp4 format and bitrate', async () => {
+	test('getTranscodeProc for m4a/mp4/m4b uses mp4 format and bitrate', async () => {
 		process.env.FFMPEG_PATH = '/usr/bin/true';
-		for (const fmt of [AudioFormatType.mp4, AudioFormatType.m4a]) {
+		for (const fmt of [AudioFormatType.mp4, AudioFormatType.m4a, AudioFormatType.m4b]) {
 			const proc = TranscoderStream.getTranscodeProc('in.wav', fmt, 160);
 			await new Promise<void>((resolve, reject) => {
 				const to = setTimeout(() => {

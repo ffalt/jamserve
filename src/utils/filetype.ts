@@ -8,6 +8,7 @@ export const SupportedAudioFormat: Array<AudioFormatType> = [
 	AudioFormatType.mp3,
 	AudioFormatType.flac,
 	AudioFormatType.m4a,
+	AudioFormatType.m4b,
 	AudioFormatType.mp4,
 	AudioFormatType.ogg,
 	AudioFormatType.oga,
@@ -23,6 +24,7 @@ export const SupportedTranscodeAudioFormat: Array<AudioFormatType> = [
 	AudioFormatType.wav,
 	AudioFormatType.webma,
 	AudioFormatType.mp4,
+	AudioFormatType.m4b,
 	AudioFormatType.m4a
 ];
 

@@ -27,12 +27,12 @@ describe('filetype functions and constants', () => {
 	});
 
 	describe('SupportedAudioFormat', () => {
-		test.each(['mp3', 'm4a', 'mp4', 'ogg', 'oga', 'flac', 'webma', 'wav'])('should contain expected audio formats', input => {
+		test.each(['mp3', 'm4a', 'm4b', 'mp4', 'ogg', 'oga', 'flac', 'webma', 'wav'])('should contain expected audio formats', input => {
 			expect(SupportedAudioFormat).toContain(input);
 		});
 	});
 	describe('SupportedTranscodeAudioFormat', () => {
-		test.each(['mp3', 'm4a', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'])('should contain expected transcode audio formats', input => {
+		test.each(['mp3', 'm4a', 'm4b', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'])('should contain expected transcode audio formats', input => {
 			expect(SupportedTranscodeAudioFormat).toContain(input);
 		});
 	});
@@ -56,6 +56,7 @@ describe('filetype functions and constants', () => {
 			'audio.mp3',
 			'audio.flac',
 			'audio.m4a',
+			'audio.m4b',
 			'audio.mp4',
 			'audio.ogg',
 			'audio.oga',
