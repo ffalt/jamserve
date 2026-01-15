@@ -28,7 +28,7 @@ let ChatController = class ChatController {
     }
     async remove({ time }, { engine, user }) {
         const chat = await engine.chat.find(time);
-        if (chat && chat.userID === user.id) {
+        if (chat?.userID === user.id) {
             await engine.chat.remove(chat);
         }
     }

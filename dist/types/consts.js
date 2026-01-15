@@ -5,6 +5,6 @@ export const cUnknownAlbum = '[Unknown Album]';
 export const ApiImageTypes = ['image/jpeg', 'image/png', 'image/tiff', 'image/webp'];
 export const ApiDownloadTypes = ['application/zip', 'application/tar'];
 export const ApiWaveformTypes = ['image/svg+xml', 'application/json', 'application/binary'];
-export const AudioFormats = ['mp3', 'm4a', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'];
+export const AudioFormats = ['mp3', 'm4a', 'm4b', 'mp4', 'ogg', 'oga', 'flv', 'flac', 'webma', 'wav'];
 export const ApiStreamTypes = ['audio/mpeg', 'audio/flac', 'audio/mp4', 'audio/ogg', 'audio/x-flv'];
 //# sourceMappingURL=consts.js.map

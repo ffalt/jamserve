@@ -1,4 +1,4 @@
-import Ffmpeg from 'fluent-ffmpeg';
+import ffmpeg from '../tools/ffmpeg.js';
 import { PassThrough, Transform } from 'node:stream';
 import { logger } from '../../../utils/logger.js';
 import { errorStringCode } from '../../../utils/error.js';
@@ -18,7 +18,7 @@ export class WaveformStream extends Transform {
         const options = {
             source: this._buffer
         };
-        this._ffmpeg = Ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
+        this._ffmpeg = ffmpeg(options).addOptions(['-f s16le', '-ac 1', '-acodec pcm_s16le', `-ar ${this._sampleRate}`]);
         this._ffmpeg.on('start', (cmd) => {
             log.debug(`ffmpeg started with ${cmd}`);
             this._started = true;

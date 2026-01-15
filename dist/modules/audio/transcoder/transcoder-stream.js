@@ -1,4 +1,4 @@
-import ffmpeg from 'fluent-ffmpeg';
+import ffmpeg from '../tools/ffmpeg.js';
 import { SupportedTranscodeAudioFormat } from '../../../utils/filetype.js';
 import { logger } from '../../../utils/logger.js';
 import { AudioFormatType } from '../../../types/enums.js';
@@ -30,6 +30,7 @@ export class TranscoderStream {
                     .withAudioCodec('libmp3lame');
             }
             case AudioFormatType.mp4:
+            case AudioFormatType.m4b:
             case AudioFormatType.m4a: {
                 return proc
                     .toFormat('mp4')

@@ -2,7 +2,10 @@ import fse from 'fs-extra';
 import path from 'node:path';
 import which from 'which';
 export const isWindows = ['win32', 'cygwin', 'msys'].includes(process.platform);
-const cache = {};
+let cache = {};
+export function clearBinCache() {
+    cache = {};
+}
 async function localBin(name) {
     const s = path.join('.', 'bin', 'tools', name, process.platform, process.arch, name) + (isWindows ? '.exe' : '');
     const exists = await fse.pathExists(s);

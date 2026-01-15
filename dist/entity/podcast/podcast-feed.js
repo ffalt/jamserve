@@ -1,8 +1,9 @@
 import FeedParser from 'feedparser';
-import iconv from 'iconv-lite';
+import iconvDefault from 'iconv-lite';
 import moment from 'moment';
 import fetch from 'node-fetch';
 import zlib from 'node:zlib';
+const iconv = iconvDefault;
 export class Feed {
     static parseDurationMilliseconds(s) {
         return moment.duration(s).as('milliseconds');

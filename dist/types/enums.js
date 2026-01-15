@@ -110,6 +110,7 @@ export var AudioFormatType;
 (function (AudioFormatType) {
     AudioFormatType["mp3"] = "mp3";
     AudioFormatType["m4a"] = "m4a";
+    AudioFormatType["m4b"] = "m4b";
     AudioFormatType["mp4"] = "mp4";
     AudioFormatType["ogg"] = "ogg";
     AudioFormatType["oga"] = "oga";
