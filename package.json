@@ -39,7 +39,7 @@
     "form-data": "4.0.5"
   },
   "dependencies": {
-    "@apollo/server": "5.2.0",
+    "@apollo/server": "5.3.0",
     "@as-integrations/express5": "1.1.2",
     "archiver": "7.0.1",
     "bcrypt": "6.0.0",
