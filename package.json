@@ -54,7 +54,7 @@
     "dotenv": "17.2.3",
     "express": "5.2.1",
     "express-rate-limit": "8.2.1",
-    "express-session": "1.18.2",
+    "express-session": "1.19.0",
     "express-useragent": "2.0.2",
     "feedparser": "2.2.10",
     "fs-extra": "11.3.3",
