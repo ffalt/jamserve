@@ -36,10 +36,12 @@
     "@conventional-changelog/git-client": "2.5.1",
     "node-gyp": "12.1.0",
     "test-exclude": "7.0.1",
-    "form-data": "4.0.5"
+    "form-data": "4.0.5",
+    "lodash": "4.17.23",
+    "tar": "7.5.6"
   },
   "dependencies": {
-    "@apollo/server": "5.2.0",
+    "@apollo/server": "5.3.0",
     "@as-integrations/express5": "1.1.2",
     "archiver": "7.0.1",
     "bcrypt": "6.0.0",
@@ -47,14 +49,14 @@
     "class-validator": "0.14.3",
     "common-password-checker": "0.1.0",
     "console-table-printer": "2.15.0",
-    "cors": "2.8.5",
+    "cors": "2.8.6",
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
     "d3-shape": "3.2.0",
     "dotenv": "17.2.3",
     "express": "5.2.1",
     "express-rate-limit": "8.2.1",
-    "express-session": "1.18.2",
+    "express-session": "1.19.0",
     "express-useragent": "2.0.2",
     "feedparser": "2.2.10",
     "fs-extra": "11.3.3",
@@ -76,7 +78,7 @@
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
-    "pg": "8.17.1",
+    "pg": "8.17.2",
     "pg-hstore": "2.3.4",
     "rate-limiter-flexible": "9.0.1",
     "reflect-metadata": "0.2.2",
@@ -98,10 +100,10 @@
     "yauzl": "3.2.0"
   },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "15.2.0",
+    "@apidevtools/json-schema-ref-parser": "15.2.2",
     "@eslint/js": "9.39.2",
     "@jest/globals": "30.2.0",
-    "@stylistic/eslint-plugin": "5.7.0",
+    "@stylistic/eslint-plugin": "5.7.1",
     "@types/archiver": "7.0.0",
     "@types/bcrypt": "6.0.0",
     "@types/chance": "1.1.7",
@@ -119,7 +121,7 @@
     "@types/mime-types": "3.0.1",
     "@types/multer": "2.0.0",
     "@types/mustache": "4.2.6",
-    "@types/node": "25.0.9",
+    "@types/node": "25.0.10",
     "@types/node-fetch": "3.0.2",
     "@types/on-finished": "2.3.5",
     "@types/passport": "1.0.17",
@@ -150,7 +152,7 @@
     "ts-node": "10.9.2",
     "tsc-watch": "7.2.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.53.0",
+    "typescript-eslint": "8.53.1",
     "uuid": "13.0.0"
   }
 }
