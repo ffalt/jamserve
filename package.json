@@ -57,7 +57,7 @@
     "express": "5.2.1",
     "express-rate-limit": "8.2.1",
     "express-session": "1.19.0",
-    "express-useragent": "2.0.2",
+    "express-useragent": "2.1.0",
     "feedparser": "2.2.10",
     "fs-extra": "11.3.3",
     "graphql": "16.12.0",
