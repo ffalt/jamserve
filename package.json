@@ -82,7 +82,7 @@
     "pg-hstore": "2.3.4",
     "rate-limiter-flexible": "9.0.1",
     "reflect-metadata": "0.2.2",
-    "rotating-file-stream": "3.2.7",
+    "rotating-file-stream": "3.2.8",
     "seedrandom": "3.0.5",
     "semver": "7.7.3",
     "sequelize": "6.37.7",
