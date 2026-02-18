@@ -44,8 +44,8 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 	}
 }
 
-export function processCustomPathParameters(customPathParameters: CustomPathParameters, pathParameters: string, method: MethodMetadata, options: RestOptions): any {
-	const r = customPathParameters.regex.exec(pathParameters) ?? [];
+export function processCustomPathParameters(customPathParameters: CustomPathParameters, pathParameters: string | Array<string>, method: MethodMetadata, options: RestOptions): any {
+	const r = customPathParameters.regex.exec(pathParameters as string) ?? [];
 	let index = 1;
 	const result: any = {};
 	const relativeRoute = customPathParameters.groups.filter((_g, index) => r[index + 1]).map(g => `${g.prefix ?? ''}{${g.name}}`).join('');

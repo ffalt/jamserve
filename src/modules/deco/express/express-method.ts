@@ -196,7 +196,7 @@ export class ExpressMethod {
 						...req.params,
 						...processCustomPathParameters(
 							get.customPathParameters,
-							req.params.pathParameters,
+							req.params.pathParameters as string,
 							get,
 							options
 						), pathParameters: undefined
