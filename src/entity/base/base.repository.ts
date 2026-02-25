@@ -251,7 +251,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	private async getListIDs(list: ListType, seed: string | undefined, findOptions: FindOptions<Entity>, userID: string): Promise<PageResult<string>> {
-		let ids: Array<string> = [];
+		let ids: Array<string>;
 		const options = { ...findOptions, limit: undefined, offset: undefined };
 		const page = { skip: findOptions.offset, take: findOptions.limit };
 		switch (list) {

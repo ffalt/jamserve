@@ -14,7 +14,7 @@ export class ApiResponder extends ApiBaseResponder {
 
 	sendError(req: express.Request, res: express.Response, error: unknown): void {
 		let failCode = 0;
-		let message: string = '';
+		let message: string;
 		if (error instanceof ApiError) {
 			failCode = error.failCode;
 			message = error.message;

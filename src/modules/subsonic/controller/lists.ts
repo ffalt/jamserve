@@ -102,7 +102,7 @@ export class SubsonicListsApi {
 		 */
 		const take = query.size ?? 20;
 		const skip = query.offset ?? 0;
-		let folders: Array<Folder> = [];
+		let folders: Array<Folder>;
 		switch (query.type) {
 			case 'random': {
 				const data = await orm.Folder.findListFilter(
@@ -239,7 +239,7 @@ export class SubsonicListsApi {
 		const take = Math.min(query.size ?? 20, 500);
 		const skip = query.offset ?? 0;
 		const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
-		let albums: Array<Album> = [];
+		let albums: Array<Album>;
 		switch (query.type) {
 			case 'random': {
 				const data = await orm.Album.findListFilter(
