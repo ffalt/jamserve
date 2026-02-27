@@ -40,11 +40,12 @@ function passPortAuth(name: string, next: express.NextFunction, req: UserRequest
 				next();
 				req.engine.rateLimit.loginSlowDownReset(req)
 					.catch((error: unknown) => {
-						throw error;
+						log.error(error);
 					});
 			})
 			.catch((error: unknown) => {
-				throw error;
+				log.error(error);
+				next(error);
 			});
 	});
 	void result(req, res, next);
@@ -114,11 +115,14 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		}
 		const jwth = jwtHash(token);
 		req.engine.rateLimit.loginSlowDown(req, res)
-			.then(() => {
-				passPortAuth(name, next, req, jwth, res);
+			.then(handled => {
+				if (!handled) {
+					passPortAuth(name, next, req, jwth, res);
+				}
 			})
 			.catch((error: unknown) => {
-				throw error;
+				log.error(error);
+				next(error);
 			});
 	}
 
