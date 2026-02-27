@@ -34,7 +34,7 @@ export class SubsonicMiddleware {
 		const options: RestOptions = {
 			enums: metadata.enums,
 			resultTypes: metadata.resultTypes,
-			responder: new ApiResponder(),
+			responder: new ApiResponder(this.configService.env.session.allowedCookieDomains),
 			tmpPath: this.configService.getDataPath(['cache', 'uploads']),
 			validateRoles: (user, roles) => {
 				if (roles.length > 0) {

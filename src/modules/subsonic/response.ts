@@ -8,18 +8,25 @@ import { errorNumberCode, errorToString } from '../../utils/error.js';
 import { SubsonicResponse } from './model/subsonic-rest-data.js';
 
 export class ApiResponder extends ApiBaseResponder {
-	private static setSubsonicCors(req: express.Request, res: express.Response): void {
-		// Echo back the requesting origin instead of using a wildcard,
-		// so credentials/cookies are never exposed to arbitrary origins.
+	private readonly allowedOrigins: Array<string>;
+
+	constructor(allowedOrigins?: Array<string>) {
+		super();
+		this.allowedOrigins = allowedOrigins ?? [];
+	}
+
+	private setSubsonicCors(req: express.Request, res: express.Response): void {
+		// Validate the requesting origin against the configured allowlist,
+		// applying the same CORS policy as the main REST API.
 		const origin = req.headers.origin;
-		if (origin) {
+		if (origin && this.allowedOrigins.includes(origin)) {
 			res.setHeader('Access-Control-Allow-Origin', origin);
 			res.setHeader('Vary', 'Origin');
 		}
 	}
 
 	private send(req: express.Request, res: express.Response, data: Record<string, any>): void {
-		ApiResponder.setSubsonicCors(req, res);
+		this.setSubsonicCors(req, res);
 		const parameters = (req as SubsonicParameterRequest).parameters;
 		if ((parameters.format === 'jsonp') && (parameters.callback)) {
 			this.sendJSONP(req, res, parameters.callback, data);
@@ -44,7 +51,7 @@ export class ApiResponder extends ApiBaseResponder {
 	}
 
 	public sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
-		ApiResponder.setSubsonicCors(req, res);
+		this.setSubsonicCors(req, res);
 		super.sendBinary(req, res, data);
 	}
 }
