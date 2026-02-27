@@ -67,6 +67,8 @@ export class AuthController {
 							.catch((error: unknown) => {
 								reject(error);
 							});
+					} else {
+						reject(unauthError('Rate limited'));
 					}
 				})
 				.catch((error: unknown) => {
