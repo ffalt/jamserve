@@ -50,7 +50,11 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 
 		tools = ThirdPartyConfig;
 
-		validateSessionSecret = (): void => {
+		validateSecrets = (): void => {
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		validateSecret(_envName: string, _secret: string, _weakSecrets: Array<string>): void {
 		}
 
 		getDataPath(parts: Array<string>): string {

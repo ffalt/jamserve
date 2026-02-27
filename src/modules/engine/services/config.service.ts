@@ -93,7 +93,7 @@ export class ConfigService {
 	};
 
 	constructor() {
-		this.validateSessionSecret();
+		this.validateSecrets();
 
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
@@ -107,9 +107,7 @@ export class ConfigService {
 		}
 	}
 
-	validateSessionSecret(): void {
-		const secret = this.env.session.secret;
-
+	validateSecrets(): void {
 		// List of weak/default secrets to reject
 		const weakSecrets = [
 			'keyboard cat is dancing',
@@ -120,9 +118,14 @@ export class ConfigService {
 			'password'
 		];
 
+		this.validateSecret('JAM_SESSION_SECRET', this.env.session.secret, weakSecrets);
+		this.validateSecret('JAM_JWT_SECRET', this.env.jwt.secret, weakSecrets);
+	}
+
+	validateSecret(envName: string, secret: string, weakSecrets: Array<string>): void {
 		if (weakSecrets.includes(secret.toLowerCase())) {
 			throw new Error(
-				'CRITICAL: JAM_SESSION_SECRET contains a default/weak value. ' +
+				`CRITICAL: ${envName} contains a default/weak value. ` +
 				'Please generate a strong random secret:\n' +
 				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
 			);
@@ -130,7 +133,7 @@ export class ConfigService {
 
 		if (secret.length < 32) {
 			throw new Error(
-				'CRITICAL: JAM_SESSION_SECRET must be at least 32 characters long. ' +
+				`CRITICAL: ${envName} must be at least 32 characters long. ` +
 				`Current length: ${secret.length}. ` +
 				'Generate a strong secret:\n' +
 				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
