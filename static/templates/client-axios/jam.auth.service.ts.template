@@ -51,7 +51,7 @@ export class JamAuthService {
 		return (data.allowedCookieDomains ?? []).includes(this.configuration.domain());
 	}
 
-	async login(server: string, username: string, password: string, storePassword?: boolean): Promise<void> {
+	async login(server: string, username: string, password: string): Promise<void> {
 		const canUseSession = await this.canUseSession(server);
 		try {
 			const data = await this.http.post<Jam.Session>(`${server}${JamAuthService.apiPrefix}/auth/login`, {
@@ -69,8 +69,7 @@ export class JamAuthService {
 				username: this.user.name,
 				session: canUseSession,
 				token: canUseSession ? undefined : data.jwt,
-				version: data.version,
-				password: storePassword ? password : undefined
+				version: data.version
 			};
 			await this.configuration.toStorage({ auth: this.auth, user: this.user });
 			await this.configuration.userChangeNotify(this.user);
