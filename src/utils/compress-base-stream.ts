@@ -29,8 +29,10 @@ export abstract class BaseCompressStream implements StreamData {
 		archive.on('error', error => {
 			throw error;
 		});
+		// eslint-disable-next-line no-control-regex
+		const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
 		stream.contentType('zip');
-		stream.setHeader('Content-Disposition', `attachment; filename="${this.filename || 'download'}.${format}"`);
+		stream.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.${format}"`);
 		stream.on('finish', () => {
 			this.streaming = false;
 		});

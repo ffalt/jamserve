@@ -1,6 +1,15 @@
 import express from 'express';
 import path from 'node:path';
 
+/**
+ * Sanitize a filename for safe use in Content-Disposition headers.
+ * Strips characters that could enable header injection (quotes, backslashes, control chars).
+ */
+function sanitizeContentDispositionFilename(name: string): string {
+	// eslint-disable-next-line no-control-regex
+	return name.replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
+}
+
 export interface StreamData {
 	pipe(stream: express.Response): void;
 }
@@ -50,10 +59,11 @@ export abstract class ApiBaseResponder {
 			res.set('Content-Length', data.buffer.buffer.length.toString());
 			res.status(200).send(data.buffer.buffer);
 		} else if (data.file) {
+			const name = sanitizeContentDispositionFilename(data.file.name || path.basename(data.file.filename));
 			res.sendFile(data.file.filename, {
 				dotfiles: 'deny',
 				headers: {
-					'Content-Disposition': `attachment; filename="${data.file.name || path.basename(data.file.filename)}"`
+					'Content-Disposition': `attachment; filename="${name}"`
 				}
 			});
 		}
