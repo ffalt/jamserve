@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import fetch from 'node-fetch';
 import { fileDeleteIfExists } from './fs-utils.js';
+import { validateExternalUrl } from './url-check.js';
 
 export async function downloadFile(url: string, filename: string): Promise<void> {
+	await validateExternalUrl(url);
 	const response = await fetch(url);
 	if (!response.ok) {
 		throw new Error(`Unexpected Response ${response.statusText || response.status}`);

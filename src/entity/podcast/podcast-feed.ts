@@ -5,6 +5,7 @@ import fetch from 'node-fetch';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
 import { EpisodeChapter } from '../episode/episode.js';
+import { validateExternalUrl } from '../../utils/url-check.js';
 
 const iconv = iconvDefault as unknown as typeof IconvType;
 
@@ -96,6 +97,7 @@ export class Feed {
 
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
+		await validateExternalUrl(url);
 		const result = await fetch(url, {
 			// timeout: 10000,
 			headers: {
