@@ -116,7 +116,7 @@ export async function buildTemplate(template: string, data: unknown = {}): Promi
 }
 
 export async function buildParts(template: string, serviceParts: Array<Part>): Promise<string> {
-	const list: Array<Part> = serviceParts
+	const list: Array<Part> = [...serviceParts]
 		.sort((a, b) => a.name.localeCompare(b.name));
 	for (const [index, entry] of list.entries()) {
 		entry.isLast = index === list.length - 1;
@@ -135,7 +135,7 @@ export function getResultType(call: MethodMetadata): string | undefined {
 				break;
 			}
 			case Number: {
-				resultType = 'string';
+				resultType = 'number';
 				break;
 			}
 			case Boolean: {
@@ -182,7 +182,7 @@ function getCallParameterArgumentType(parameter: RestParameterMetadata, metadata
 			default: {
 				const enumInfo = metadata.enumInfo(type);
 				if (enumInfo) {
-					typeString = `{${parameter.name}${optional}: ${enumInfo.name}`;
+					typeString = `{${parameter.name}${optional}: ${enumInfo.name}}`;
 				} else {
 					const fObjectType = metadata.parameterTypes.find(it => it.target === type);
 					typeString = fObjectType?.name ? (`JamParameter.${fObjectType.name}`) : 'any';
