@@ -21,6 +21,9 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 		void fixMP3(parameter)
 			.then(() => {
 				caller.postMessage(undefined);
+			})
+			.catch((error: unknown) => {
+				caller.postMessage({ error: String(error) });
 			});
 	});
 }
