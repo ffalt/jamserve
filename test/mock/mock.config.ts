@@ -18,6 +18,7 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 			domain: 'http://localhost:4141',
 			host: '0.0.0.0',
 			port: 4141,
+			minPasswordLength: 10,
 			jwt: { maxAge: 800_000, secret: 'secret' },
 			session: { proxy: false, maxAge: 800_000, secret: 'secret', secure: false, allowedCookieDomains: [] },
 			db,

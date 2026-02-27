@@ -20,6 +20,7 @@ export interface ENVConfig {
 	domain: string;
 	host: string;
 	port: number;
+	minPasswordLength: number;
 	jwt: {
 		secret: string;
 		maxAge: number;
@@ -44,6 +45,7 @@ export class ConfigService {
 		domain: process.env.JAM_DOMAIN ?? 'http://localhost',
 		host: process.env.JAM_HOST ?? '127.0.0.1',
 		port: Number(process.env.JAM_PORT ?? 4040),
+		minPasswordLength: Number(process.env.JAM_MIN_PASSWORD_LENGTH ?? 10),
 		jwt: {
 			secret: process.env.JAM_JWT_SECRET ?? 'keyboard cat is sad because no secret has been set',
 			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)

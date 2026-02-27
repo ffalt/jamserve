@@ -117,8 +117,9 @@ export class UserService {
 		if (!password?.trim().length) {
 			return Promise.reject(invalidParameterError('Invalid Password'));
 		}
-		if (password.length < 4) {
-			return Promise.reject(invalidParameterError('Password is too short'));
+		const minLength = this.configService.env.minPasswordLength;
+		if (password.length < minLength) {
+			return Promise.reject(invalidParameterError(`Password is too short (minimum ${minLength} characters)`));
 		}
 		if (commonPassword(password)) {
 			return Promise.reject(new Error('Your password is found in the most frequently used password list and too easy to guess'));
@@ -197,7 +198,7 @@ export class UserService {
 		if (!session) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
-		if (!session.jwth || pass.length !== session.jwth.length || !crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(session.jwth))) {
+		if (pass.length !== session.jwth?.length || !crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(session.jwth))) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
