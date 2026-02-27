@@ -240,7 +240,7 @@ const trackRules: Array<TrackRuleInfo> = [
 	{
 		id: TrackHealthID.flacMediaValid,
 		name: 'Flac Media is invalid',
-		mp3: true,
+		flac: true,
 		run: async (_folder: Folder, _track: Track, _tag: Tag | undefined, tagCache: MediaCache): Promise<RuleResult | undefined> => {
 			if (tagCache.flacWarnings) {
 				return { details: [{ reason: tagCache.flacWarnings }] };
