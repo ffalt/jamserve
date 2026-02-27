@@ -57,7 +57,7 @@ export class ConfigService {
 			secure: process.env.JAM_SESSION_COOKIE_SECURE !== 'false',
 			proxy: process.env.JAM_SESSION_TRUST_PROXY === 'true',
 			secret: process.env.JAM_SESSION_SECRET ?? 'keyboard cat is sad because no secret has been set',
-			allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS ?? '').split(','),
+			allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS ?? '').split(',').filter(Boolean),
 			maxAge: getMaxAge(process.env.JAM_SESSION_MAXAGE)
 		},
 		paths: {
