@@ -15,6 +15,9 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 		void removeID3v1(parameter)
 			.then(result => {
 				caller.postMessage(result);
+			})
+			.catch((error: unknown) => {
+				caller.postMessage({ error: String(error) });
 			});
 	});
 }

@@ -37,6 +37,9 @@ if (parentPort && process.env.JAM_USE_TASKS) {
 		void rewriteAudio(parameters)
 			.then(() => {
 				caller.postMessage(undefined);
+			})
+			.catch((error: unknown) => {
+				caller.postMessage({ error: String(error) });
 			});
 	});
 }
