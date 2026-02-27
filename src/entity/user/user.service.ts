@@ -5,6 +5,7 @@ import { SessionMode, UserRole } from '../../types/enums.js';
 import { JWTPayload } from '../../utils/jwt.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import fse from 'fs-extra';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
@@ -196,7 +197,7 @@ export class UserService {
 		if (!session) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
-		if (pass !== session.jwth) {
+		if (!session.jwth || pass.length !== session.jwth.length || !crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(session.jwth))) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
@@ -218,7 +219,7 @@ export class UserService {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		const t = hashMD5(`${session.jwth}${salt}`);
-		if (token !== t) {
+		if (token.length !== t.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(t))) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
