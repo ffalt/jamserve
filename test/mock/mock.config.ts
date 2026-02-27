@@ -36,6 +36,10 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 			graphlql: {
 				windowMs: 60 * 60 * 1000, // 60 minutes
 				limit: 60_000 // max 60000 requests per windowMs
+			},
+			login: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60_000 // max 60000 login attempts per windowMs
 			}
 		};
 
@@ -45,6 +49,9 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		};
 
 		tools = ThirdPartyConfig;
+
+		validateSessionSecret = (): void => {
+		}
 
 		getDataPath(parts: Array<string>): string {
 			return path.join(this.env.paths.data, ...parts);

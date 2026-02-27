@@ -75,20 +75,26 @@ export class ConfigService {
 	firstStart?: FirstStartConfig;
 	rateLimits = {
 		frontend: {
-			windowMs: 10 * 60 * 1000, // 10 minutes
-			limit: 1000 // max 1000 requests per windowMs
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			limit: 100 // 100 requests per window
 		},
 		docs: {
 			windowMs: 10 * 60 * 1000, // 10 minutes
-			limit: 100 // max 100 requests per windowMs
+			limit: 100 // max 100 requests per window
 		},
 		graphlql: {
 			windowMs: 10 * 60 * 1000, // 10 minutes
-			limit: 1000 // max 1000 requests per windowMs
+			limit: 100 // 100 requests per window
+		},
+		login: {
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			limit: 5 // max 5 login attempts per 15 minutes
 		}
 	};
 
 	constructor() {
+		this.validateSessionSecret();
+
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
 			this.firstStart = fse.readJSONSync(configFirstStartFile);
@@ -98,6 +104,37 @@ export class ConfigService {
 				adminUser: undefined,
 				roots: []
 			};
+		}
+	}
+
+	validateSessionSecret(): void {
+		const secret = this.env.session.secret;
+
+		// List of weak/default secrets to reject
+		const weakSecrets = [
+			'keyboard cat is dancing',
+			'keyboard cat is sad because no secret has been set',
+			'your-secret-key',
+			'change-me',
+			'secret',
+			'password'
+		];
+
+		if (weakSecrets.includes(secret.toLowerCase())) {
+			throw new Error(
+				'CRITICAL: JAM_SESSION_SECRET contains a default/weak value. ' +
+				'Please generate a strong random secret:\n' +
+				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+			);
+		}
+
+		if (secret.length < 32) {
+			throw new Error(
+				'CRITICAL: JAM_SESSION_SECRET must be at least 32 characters long. ' +
+				`Current length: ${secret.length}. ` +
+				'Generate a strong secret:\n' +
+				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+			);
 		}
 	}
 }
