@@ -10,6 +10,7 @@ export async function downloadFile(url: string, filename: string): Promise<void>
 	return new Promise((resolve, reject) => {
 		const destination = fs.createWriteStream(filename);
 		if (!response.body) {
+			destination.destroy();
 			reject(new Error('Bad file stream'));
 			return;
 		}
