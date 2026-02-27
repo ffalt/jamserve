@@ -14,6 +14,8 @@ export function useSessionMiddleware(configService: ConfigService, sessionServic
 		saveUninitialized: false,
 		cookie: {
 			secure: !!(configService.env.session.secure as unknown),
+			httpOnly: true, // Prevent JavaScript access (XSS protection)
+			sameSite: 'lax', // CSRF protection
 			path: '/',
 			maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : undefined
 		}
