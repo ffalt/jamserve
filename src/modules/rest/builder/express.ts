@@ -7,9 +7,39 @@ import { ExpressMethod, RestOptions, RouteInfo } from '../../deco/express/expres
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { iterateControllers } from '../../deco/helpers/iterate-super.js';
 
+// File type validation helper
+function validateUploadedFile(file: Express.Multer.File): void {
+	const ALLOWED_MIME_TYPES = [
+		'image/jpeg',
+		'image/png',
+		'image/webp',
+		'image/gif'
+	];
+
+	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB for images
+
+	// Check file size
+	if (file.size > MAX_FILE_SIZE) {
+		throw new Error(`File size exceeds maximum of ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+	}
+
+	// Check mime type from multer
+	if (!ALLOWED_MIME_TYPES.includes(file.mimetype || '')) {
+		throw new Error(
+			`Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}. ` +
+			`Detected: ${file.mimetype || 'unknown'}`
+		);
+	}
+}
+
 export function restRouter(api: express.Router, options: RestOptions): Array<RouteInfo> {
 	const routeInfos: Array<RouteInfo> = [];
-	const upload = multer({ dest: ensureTrailingPathSeparator(options.tmpPath) });
+	const upload = multer({
+		dest: ensureTrailingPathSeparator(options.tmpPath),
+		limits: {
+			fileSize: 50 * 1024 * 1024 // 50MB max per file (SECURITY FIX #4)
+		}
+	});
 	const metadata = metadataStorage();
 	const method = new ExpressMethod();
 
@@ -30,7 +60,26 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 			if (autoClean) {
 				registerAutoClean(req, res);
 			}
-			void mu(req, res, next);
+			// SECURITY FIX #4: Validate uploaded file after multer processes it
+			void mu(req, res, (error: unknown) => {
+				if (error) {
+					next(error);
+					return;
+				}
+
+				if (req.file) {
+					try {
+						validateUploadedFile(req.file);
+						next();
+					} catch (validationError) {
+						// Clean up rejected file
+						void fileDeleteIfExists(req.file.path);
+						next(validationError);
+					}
+				} else {
+					next();
+				}
+			});
 		};
 	};
 
