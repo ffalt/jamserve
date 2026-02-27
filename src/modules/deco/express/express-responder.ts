@@ -26,6 +26,11 @@ export abstract class ApiBaseResponder {
 	}
 
 	sendJSONP(_req: express.Request, res: express.Response, callback: string, data: any): void {
+		// Validate callback to prevent XSS via JSONP injection
+		if (!/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/.test(callback)) {
+			res.status(400).send('Invalid callback parameter');
+			return;
+		}
 		res.writeHead(200, { 'Content-Type': 'application/javascript' });
 		res.end(`${callback}(${JSON.stringify(data)});`);
 	}
