@@ -13,6 +13,7 @@ import { Episode, EpisodeEnclosure } from './episode.js';
 import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
+import { errorToString } from '../../utils/error.js';
 
 const log = logger('EpisodeService');
 
@@ -84,7 +85,7 @@ export class EpisodeService {
 				episode.path = filename;
 			} catch (error: unknown) {
 				episode.status = PodcastStatus.error;
-				episode.error = JSON.stringify(error);
+				episode.error = errorToString(error);
 			}
 			await orm.Episode.persistAndFlush(episode);
 			this.episodeDownloadDebounce.resolve(episode.id, undefined);
