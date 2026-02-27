@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { minutesAgo } from '../../../utils/date-time.js';
 import { Track as ORMTrack } from '../../../entity/track/track.js';
 import { Track } from '../../../entity/track/track.model.js';
 import { Podcast as ORMPodcast } from '../../../entity/podcast/podcast.js';
@@ -191,7 +191,7 @@ export class TransformService {
 		return {
 			userName: o.user.name,
 			userID: o.user.id,
-			minutesAgo: Math.round(moment.duration(moment().diff(moment(o.time))).asMinutes()),
+			minutesAgo: minutesAgo(o.time),
 			trackID: nowPlayingParameters.nowPlayingIncTrackIDs ? o.track?.id : undefined,
 			track: nowPlayingParameters.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackParameters, user)) : undefined,
 			episodeID: nowPlayingParameters.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,

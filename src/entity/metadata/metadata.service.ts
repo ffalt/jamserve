@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { durationToMilliseconds } from '../../utils/date-time.js';
 import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import * as MusicbrainzClientApi from '../../modules/audio/clients/musicbrainz-client.interface.js';
@@ -42,7 +42,7 @@ export class MetaDataService {
 	}
 
 	async cleanUp(orm: Orm): Promise<void> {
-		const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
+		const olderThan = Date.now() - durationToMilliseconds(1, 'd');
 		const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [Op.lt]: new Date(olderThan) } } });
 		if (removed > 0) {
 			log.info(`Removed meta data cache entries: ${removed} `);

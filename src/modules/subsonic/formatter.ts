@@ -25,7 +25,7 @@ import {
 	SubsonicSimilarSongs2,
 	SubsonicUser
 } from './model/subsonic-rest-data.js';
-import moment from 'moment';
+import { formatDateToUTC, minutesAgo } from '../../utils/date-time.js';
 import { Root } from '../../entity/root/root.js';
 import { User } from '../../entity/user/user.js';
 import { FolderIndex, FolderIndexEntry } from '../../entity/folder/folder.model.js';
@@ -162,7 +162,7 @@ export class SubsonicFormatter {
 		if (date === undefined) {
 			return;
 		}
-		return moment(date).utc().format(); // .format('YYYY-MM-DDThh:mm:ss.000Z');
+		return formatDateToUTC(date); // .format('YYYY-MM-DDThh:mm:ss.000Z');
 	}
 
 	static async packRoot(root: Root): Promise<SubsonicMusicFolder> {
@@ -562,7 +562,7 @@ export class SubsonicFormatter {
 		}
 		const nowPlay = entry as SubsonicNowPlayingEntry;
 		nowPlay.username = nowPlaying.user.name;
-		nowPlay.minutesAgo = Math.round(moment.duration(moment().diff(moment(nowPlaying.time))).asMinutes());
+		nowPlay.minutesAgo = minutesAgo(nowPlaying.time);
 		nowPlay.playerId = 0;
 		return nowPlay;
 	}

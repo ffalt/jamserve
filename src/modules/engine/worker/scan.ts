@@ -13,7 +13,7 @@ import { Orm } from '../services/orm.service.js';
 import { Artwork } from '../../../entity/artwork/artwork.js';
 import { artWorkImageNameToType } from '../../../utils/artwork-type.js';
 import { ImageModule } from '../../image/image.module.js';
-import moment from 'moment';
+import { isSameDate } from '../../../utils/date-time.js';
 import { TrackUpdater } from './tasks/track.js';
 
 const log = logger('IO.Scan');
@@ -286,8 +286,8 @@ export class WorkerScan {
 		result.artworksCount += 1;
 		if (
 			scanArtwork.size !== artwork.fileSize ||
-			!moment(scanArtwork.ctime).isSame(artwork.statCreated) ||
-			!moment(scanArtwork.mtime).isSame(artwork.statModified)
+			!isSameDate(scanArtwork.ctime, artwork.statCreated) ||
+			!isSameDate(scanArtwork.mtime, artwork.statModified)
 		) {
 			result.changed = true;
 			await this.updateArtwork(scanArtwork, artwork);
@@ -320,8 +320,8 @@ export class WorkerScan {
 		foundScanTracks.push(scanTrack);
 		if (this.changes.tracks.updated.has(track) ||
 			scanTrack.size !== track.fileSize ||
-			!moment(scanTrack.ctime).isSame(track.statCreated) ||
-			!moment(scanTrack.mtime).isSame(track.statModified)
+			!isSameDate(scanTrack.ctime, track.statCreated) ||
+			!isSameDate(scanTrack.mtime, track.statModified)
 		) {
 			const t = await this.updateTrack(scanTrack, track);
 			if (t) {

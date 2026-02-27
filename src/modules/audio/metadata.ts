@@ -1,5 +1,5 @@
 import { ID3v2, ID3V24TagBuilder, IID3V2, ITagID } from 'jamp3';
-import moment from 'moment';
+import { parseDateToTimestamp } from '../../utils/date-time.js';
 import { ImageModule } from '../image/image.module.js';
 import { FlacInfo } from './formats/flac/index.js';
 import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
@@ -132,7 +132,7 @@ export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<s
 	let nr = 1;
 	let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
 	while (simple[id]) {
-		const chapterTime = moment(simple[id]).valueOf() || 0;
+		const chapterTime = parseDateToTimestamp(simple[id]);
 		const chapterID = simple[`${id}ID`] || id;
 		const chapterName = simple[`${id}NAME`];
 		const chapterURL = simple[`${id}URL`];

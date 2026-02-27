@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { durationToMilliseconds, nowMinusMilliseconds } from '../../utils/date-time.js';
 import { Chat } from './chat.js';
 import { SettingsService } from '../settings/settings.service.js';
 import { User } from '../user/user.js';
@@ -10,7 +10,7 @@ export class ChatService {
 	private readonly settingsService!: SettingsService;
 
 	private messages: Array<Chat> = [];
-	private duration: moment.Duration = moment.duration(0, 's');
+	private durationMs: number = 0;
 
 	constructor() {
 		this.settingsService.registerChangeListener(async () => {
@@ -21,11 +21,11 @@ export class ChatService {
 	}
 
 	updateSettings(): void {
-		this.duration = moment.duration(this.settingsService.settings.chat.maxAge.value, this.settingsService.settings.chat.maxAge.unit as moment.unitOfTime.Base);
+		this.durationMs = durationToMilliseconds(this.settingsService.settings.chat.maxAge.value, this.settingsService.settings.chat.maxAge.unit);
 	}
 
 	async cleanOld(): Promise<void> {
-		const d = moment().subtract(this.duration).valueOf();
+		const d = nowMinusMilliseconds(this.durationMs);
 		this.messages = this.messages.filter(c => d < c.created.valueOf());
 	}
 

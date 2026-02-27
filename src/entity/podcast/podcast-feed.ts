@@ -1,6 +1,6 @@
 import FeedParser from 'feedparser';
 import iconvDefault, { Iconv as IconvType } from 'iconv-lite';
-import moment from 'moment';
+import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
@@ -39,7 +39,7 @@ export interface EpisodeData {
 
 export class Feed {
 	static parseDurationMilliseconds(s: string): number {
-		return moment.duration(s).as('milliseconds');
+		return parseDurationToMilliseconds(s);
 	}
 
 	static parseItunesDurationSeconds(value: string): number {
@@ -50,7 +50,7 @@ export class Feed {
 		if (value.length === 5) {
 			value = `00:${value}`;
 		}
-		return moment.duration(value).as('seconds');
+		return parseDurationToSeconds(value);
 	}
 
 	static getParams(value: string): Record<string, string> {

@@ -6,7 +6,7 @@ import { MetaMerger } from './merge-meta.js';
 import { Base } from '../../../entity/base/base.js';
 import { Changes, ChangeSet, IdSet } from './changes.js';
 import { logger } from '../../../utils/logger.js';
-import moment from 'moment';
+import { formatElapsedDuration } from '../../../utils/date-time.js';
 
 const log = logger('IO.Changes');
 
@@ -126,7 +126,7 @@ export class ChangesWorker extends BaseWorker {
 			logChange(`Removed ${name}`, set.removed);
 		}
 
-		const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
+		const v = formatElapsedDuration(changes.end - changes.start);
 		log.info('Duration:', v);
 		logChangeSet('Tracks', changes.tracks);
 		logChangeSet('Folders', changes.folders);
