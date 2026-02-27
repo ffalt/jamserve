@@ -47,7 +47,7 @@ export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<strin
 		.grouping(simple.GROUPING)
 		.date(simple.DATE)
 		.composer(simple.COMPOSER)
-		.composerSort(simple.COMPOSER)
+		.composerSort(simple.COMPOSERSORT)
 		.remixer(simple.REMIXER)
 		.label(simple.LABEL)
 		.subtitle(simple.SUBTITLE)
