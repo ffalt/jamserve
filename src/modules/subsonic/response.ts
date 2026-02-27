@@ -8,8 +8,18 @@ import { errorNumberCode, errorToString } from '../../utils/error.js';
 import { SubsonicResponse } from './model/subsonic-rest-data.js';
 
 export class ApiResponder extends ApiBaseResponder {
+	private static setSubsonicCors(req: express.Request, res: express.Response): void {
+		// Echo back the requesting origin instead of using a wildcard,
+		// so credentials/cookies are never exposed to arbitrary origins.
+		const origin = req.headers.origin;
+		if (origin) {
+			res.setHeader('Access-Control-Allow-Origin', origin);
+			res.setHeader('Vary', 'Origin');
+		}
+	}
+
 	private send(req: express.Request, res: express.Response, data: Record<string, any>): void {
-		res.setHeader('Access-Control-Allow-Origin', '*');
+		ApiResponder.setSubsonicCors(req, res);
 		const parameters = (req as SubsonicParameterRequest).parameters;
 		if ((parameters.format === 'jsonp') && (parameters.callback)) {
 			this.sendJSONP(req, res, parameters.callback, data);
@@ -34,7 +44,7 @@ export class ApiResponder extends ApiBaseResponder {
 	}
 
 	public sendBinary(req: express.Request, res: express.Response, data: ApiBinaryResult): void {
-		res.setHeader('Access-Control-Allow-Origin', '*');
+		ApiResponder.setSubsonicCors(req, res);
 		super.sendBinary(req, res, data);
 	}
 }
