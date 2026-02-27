@@ -66,6 +66,9 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		validateSecret(_envName: string, _secret: string, _weakSecrets: Array<string>): void {
 		}
 
+		validateSessionCookieSecure(): void {
+		}
+
 		getDataPath(parts: Array<string>): string {
 			return path.join(this.env.paths.data, ...parts);
 		}

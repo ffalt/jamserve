@@ -5,6 +5,9 @@ import { FirstStartConfig } from '../../../config/firststart.config.js';
 import { getMaxAge } from '../../../utils/max-age.js';
 import { Dialect } from 'sequelize';
 import fse from 'fs-extra';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('ConfigService');
 
 export interface ENVConfigDB {
 	dialect: Dialect;
@@ -51,7 +54,7 @@ export class ConfigService {
 			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
 		},
 		session: {
-			secure: process.env.JAM_SESSION_COOKIE_SECURE === 'true',
+			secure: process.env.JAM_SESSION_COOKIE_SECURE !== 'false',
 			proxy: process.env.JAM_SESSION_TRUST_PROXY === 'true',
 			secret: process.env.JAM_SESSION_SECRET ?? 'keyboard cat is sad because no secret has been set',
 			allowedCookieDomains: (process.env.JAM_ALLOWED_COOKIE_DOMAINS ?? '').split(','),
@@ -104,6 +107,7 @@ export class ConfigService {
 
 	constructor() {
 		this.validateSecrets();
+		this.validateSessionCookieSecure();
 
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
@@ -148,6 +152,20 @@ export class ConfigService {
 				'Generate a strong secret:\n' +
 				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
 			);
+		}
+	}
+
+	validateSessionCookieSecure(): void {
+		if (!this.env.session.secure) {
+			const domain = this.env.domain.toLowerCase();
+			const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
+			if (!isLocalhost) {
+				log.warn(
+					'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false). ' +
+					'Cookies will be sent over plain HTTP, which may expose sessions to hijacking. ' +
+					'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
+				);
+			}
 		}
 	}
 }

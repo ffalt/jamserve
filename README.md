@@ -112,8 +112,9 @@ JAM_ALLOWED_COOKIE_DOMAINS=http://localhost:4040,http://localhost:4200
 # http://www.senchalabs.org/connect/session.html
 JAM_SESSION_SECRET=keyboard cat is dancing
 
-# If true, session cookies are only available over HTTPS; not HTTP
-JAM_SESSION_COOKIE_SECURE=false
+# Session cookies are only available over HTTPS by default.
+# Set to "false" only for local HTTP-only development setups.
+JAM_SESSION_COOKIE_SECURE=true
 
 # If true, the server trusts the first reverse proxy (e.g., Nginx)
 JAM_SESSION_TRUST_PROXY=false
