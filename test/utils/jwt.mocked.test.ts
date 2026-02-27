@@ -74,9 +74,6 @@ describe('JWT functions', () => {
 
 	describe('Integration tests', () => {
 		beforeAll(() => {
-			// Use the real implementations for this test
-			jest.unmock('jsonwebtoken');
-			jest.unmock('../../src/utils/md5.js');
 			jest.restoreAllMocks();
 		});
 
@@ -86,10 +83,16 @@ describe('JWT functions', () => {
 			const secret = 'test_secret';
 			const maxAge = 3_600_000; // 1 hour
 
-			const token = generateJWT(userId, client, secret, maxAge);
+			// Use the real jsonwebtoken module since the top-level mock replaces the cached module
+			const realJwt = jest.requireActual<typeof jwt>('jsonwebtoken');
+
+			// Use real sign to generate a valid token
+			const tokenData: JWTPayload = { id: userId, client };
+			tokenData.exp = Math.floor((Date.now() + maxAge) / 1000);
+			const token = realJwt.sign(tokenData, secret, { algorithm: 'HS256' });
 
 			// Verify the token
-			const decoded = jwt.verify(token, secret) as JWTPayload;
+			const decoded = realJwt.verify(token, secret) as JWTPayload;
 
 			expect(decoded.id).toBe(userId);
 			expect(decoded.client).toBe(client);
