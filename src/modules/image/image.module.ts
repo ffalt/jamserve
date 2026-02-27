@@ -4,6 +4,7 @@ import path from 'node:path';
 import sharp, { FormatEnum } from 'sharp';
 import { downloadFile } from '../../utils/download.js';
 import { SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { validateExternalUrl } from '../../utils/url-check.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { IDFolderCache } from '../../utils/id-file-cache.js';
 import { logger } from '../../utils/logger.js';
@@ -59,6 +60,7 @@ export class ImageModule {
 
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
 		log.debug('Requesting image', imageUrl);
+		await validateExternalUrl(imageUrl);
 		const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
 		if (imageExtension.length === 0) {
 			return Promise.reject(new Error('Invalid Image URL'));
