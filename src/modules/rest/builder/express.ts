@@ -37,7 +37,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 	const upload = multer({
 		dest: ensureTrailingPathSeparator(options.tmpPath),
 		limits: {
-			fileSize: 50 * 1024 * 1024 // 50MB max per file (SECURITY FIX #4)
+			fileSize: 50 * 1024 * 1024 // 50MB max per file
 		}
 	});
 	const metadata = metadataStorage();
@@ -60,7 +60,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 			if (autoClean) {
 				registerAutoClean(req, res);
 			}
-			// SECURITY FIX #4: Validate uploaded file after multer processes it
+			// Validate uploaded file after multer processes it
 			void mu(req, res, (error: unknown) => {
 				if (error) {
 					next(error);

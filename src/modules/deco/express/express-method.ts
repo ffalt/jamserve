@@ -47,7 +47,7 @@ export class ExpressMethod {
 
 	private buildParameters(method: MethodMetadata, context: RestContext<any, any, any>, metadata: MetadataStorage): Array<any> {
 		const result: Array<any> = [];
-		const parameters = method.parameters.sort((a, b) => a.index - b.index);
+		const parameters = [...method.parameters].sort((a, b) => a.index - b.index);
 		for (const parameter of parameters) {
 			const validatedParameter = this.parameters.validateParameter(parameter, context, metadata);
 			if (validatedParameter) {
