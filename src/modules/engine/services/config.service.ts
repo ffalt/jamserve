@@ -78,6 +78,14 @@ export class ConfigService {
 			windowMs: 15 * 60 * 1000, // 15 minutes
 			limit: 100 // 100 requests per window
 		},
+		api: {
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			limit: 1000 // 1000 requests per window
+		},
+		subsonic: {
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			limit: 1000 // 1000 requests per window
+		},
 		docs: {
 			windowMs: 10 * 60 * 1000, // 10 minutes
 			limit: 100 // max 100 requests per window

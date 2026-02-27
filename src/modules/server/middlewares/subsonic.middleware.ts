@@ -11,6 +11,7 @@ import { ApiResponder } from '../../subsonic/response.js';
 import { SubsonicParameterMiddleWare } from '../../subsonic/parameters.js';
 import { SubsonicCheckAuthMiddleWare, SubsonicLoginMiddleWare } from '../../subsonic/login.js';
 import { SubsonicControllers } from '../../subsonic/controllers.js';
+import RateLimit from 'express-rate-limit';
 
 const log = logger('Subsonic');
 
@@ -24,6 +25,7 @@ export class SubsonicMiddleware {
 			throw new Error('No subsonic controllers');
 		}
 		const router = express.Router();
+		router.use(RateLimit(this.configService.rateLimits.subsonic));
 		router.use(SubsonicParameterMiddleWare);
 		router.use(SubsonicLoginMiddleWare);
 		router.use(SubsonicCheckAuthMiddleWare);

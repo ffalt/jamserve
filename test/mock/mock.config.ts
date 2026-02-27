@@ -29,6 +29,14 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 				windowMs: 60 * 60 * 1000, // 60 minutes
 				limit: 60_000 // max 60000 requests per windowMs
 			},
+			api: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60_000 // max 60000 requests per windowMs
+			},
+			subsonic: {
+				windowMs: 60 * 60 * 1000, // 60 minutes
+				limit: 60_000 // max 60000 requests per windowMs
+			},
 			docs: {
 				windowMs: 60 * 60 * 1000, // 60 minutes
 				limit: 60_000 // max 60000 requests per windowMs

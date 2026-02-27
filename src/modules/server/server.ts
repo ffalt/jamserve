@@ -70,8 +70,6 @@ export class Server {
 			res.status(204).end();
 		});
 
-		// TODO: ratelimit for jam api and subsonic api
-
 		app.use(useEngineMiddleware(this.engine));
 
 		log.debug('registering subsonic api middleware');
