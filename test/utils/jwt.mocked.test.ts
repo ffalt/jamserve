@@ -27,7 +27,8 @@ describe('JWT functions', () => {
 
 			expect(jwt.sign).toHaveBeenCalledWith(
 				{ id: 'user123', client: 'web' },
-				'secret'
+				'secret',
+				{ algorithm: 'HS256' }
 			);
 			expect(result).toBe('generated_token');
 		});
@@ -42,7 +43,8 @@ describe('JWT functions', () => {
 					client: 'web',
 					exp: Math.floor((1_600_000_000_000 + maxAge) / 1000) // Expected expiration timestamp
 				},
-				'secret'
+				'secret',
+				{ algorithm: 'HS256' }
 			);
 			expect(result).toBe('generated_token');
 		});
@@ -52,7 +54,8 @@ describe('JWT functions', () => {
 
 			expect(jwt.sign).toHaveBeenCalledWith(
 				{ id: 'user123', client: 'web' },
-				'secret'
+				'secret',
+				{ algorithm: 'HS256' }
 			);
 			expect(result).toBe('generated_token');
 		});
@@ -62,7 +65,8 @@ describe('JWT functions', () => {
 
 			expect(jwt.sign).toHaveBeenCalledWith(
 				{ id: 'user123', client: 'web' },
-				'secret'
+				'secret',
+				{ algorithm: 'HS256' }
 			);
 			expect(result).toBe('generated_token');
 		});

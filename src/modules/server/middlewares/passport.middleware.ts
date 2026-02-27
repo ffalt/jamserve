@@ -84,7 +84,8 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 	};
 	passport.use('jwt-header', new passportJWT.Strategy({
 		jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
-		secretOrKey: engine.config.env.jwt.secret
+		secretOrKey: engine.config.env.jwt.secret,
+		algorithms: ['HS256']
 	}, resolvePayload));
 
 	function jwtAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
