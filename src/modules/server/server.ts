@@ -101,7 +101,7 @@ export class Server {
 	}
 
 	getDomain(): string {
-		return this.configService.env.domain || this.getDomain();
+		return this.configService.env.domain || '-';
 	}
 
 	async start(): Promise<void> {
