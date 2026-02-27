@@ -970,7 +970,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				});
 
 				it('should handle invalid parameters', async () => {
-					await expect(workerService.artwork.download({ ...options, artworkURL: '' })).rejects.toThrow('Invalid Image URL');
+					await expect(workerService.artwork.download({ ...options, artworkURL: '' })).rejects.toThrow('Invalid URL');
 					await expect(workerService.artwork.download({ ...options, artworkURL: mockNockURL('invalid') })).rejects.toThrow('Invalid Image URL');
 					await expect(workerService.artwork.download({ ...options, folderID: UNKNOWN_UUID, artworkURL: mockNockURL('nonexisting.png') })).rejects.toThrow('Folder not found');
 				});
