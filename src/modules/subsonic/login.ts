@@ -31,14 +31,7 @@ import semver from 'semver';
 import { SUBSONIC_VERSION } from './version.js';
 import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
 import { SubsonicError } from './model/subsonic-rest-data.js';
-
-export function hexDecode(hex: string): string {
-	let result = '';
-	for (let index = 0; index < hex.length; index += 2) {
-		result += String.fromCodePoint(Number.parseInt(hex.slice(index, index + 2), 16));
-	}
-	return result.trim();
-}
+import { hexDecode } from '../../utils/hex-decode.js';
 
 /**
  * Fill user into req.user express requests
