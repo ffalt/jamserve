@@ -115,7 +115,7 @@ export class MetadataServiceExtendedInfo {
 	private async getAlbumInfoByName(orm: Orm, albumName: string, artistName: string): Promise<ExtendedInfo | undefined> {
 		const mbResult = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, { release: albumName, artist: artistName });
 		let info: ExtendedInfo | undefined;
-		if (mbResult?.releases && mbResult.releases.length > 1) {
+		if (mbResult?.releases && mbResult.releases.length > 0) {
 			const release = mbResult.releases.at(0);
 			if (release) {
 				info = await this.getAlbumInfoByMusicBrainzID(orm, release.id);
