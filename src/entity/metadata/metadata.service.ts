@@ -121,7 +121,7 @@ export class MetaDataService {
 	async lastFMSimilarTracksSearch(orm: Orm, name: string, artist: string): Promise<LastFM.Result | undefined> {
 		return this.searchInStore<LastFM.Result>(orm, `similar-search-track-${name}//${artist}`,
 			MetaDataType.lastfm, async () => {
-				return { album: await this.audioModule.lastFM.similarTrack(name, artist) };
+				return { similartracks: await this.audioModule.lastFM.similarTrack(name, artist) };
 			});
 	}
 
