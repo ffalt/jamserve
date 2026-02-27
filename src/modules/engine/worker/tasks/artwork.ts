@@ -48,7 +48,7 @@ export class ArtworkWorker extends BaseWorker {
 	}
 
 	private static getArtworkName(folder: Folder, types: Array<ArtworkImageType>): string {
-		let name = types.sort((a, b) => a.localeCompare(b)).join('-');
+		let name = [...types].sort((a, b) => a.localeCompare(b)).join('-');
 		if (!name) {
 			name = FolderTypeImageName[folder.folderType];
 		}
@@ -129,7 +129,7 @@ export class ArtworkWorker extends BaseWorker {
 
 	async download(orm: Orm, folderID: string, artworkURL: string, types: Array<ArtworkImageType>, changes: Changes): Promise<void> {
 		const folder = await orm.Folder.findOneOrFailByID(folderID);
-		const name = types.sort((a, b) => a.localeCompare(b)).join('-');
+		const name = [...types].sort((a, b) => a.localeCompare(b)).join('-');
 		const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
 		const artwork = orm.Artwork.create({ name: filename, path: folder.path });
 		await artwork.folder.set(folder);
