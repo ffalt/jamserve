@@ -86,10 +86,6 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
 		secretOrKey: engine.config.env.jwt.secret
 	}, resolvePayload));
-	passport.use('jwt-parameter', new passportJWT.Strategy({
-		jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
-		secretOrKey: engine.config.env.jwt.secret
-	}, resolvePayload));
 
 	function jwtAuthMiddleware(req: UserRequest, res: express.Response, next: express.NextFunction): void {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -102,11 +98,6 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		if (token) {
 			token = token.slice(7); // Bearer xyz
 			name = 'jwt-header';
-		} else {
-			token = req.query.bearer as string;
-			if (token) {
-				name = 'jwt-parameter';
-			}
 		}
 		if (!token || !name) {
 			// no or not valid auth token, go to next login method (request will fail eventually if req.user is not set)
