@@ -59,7 +59,9 @@ export class AuthController {
 		return new Promise<Session>((resolve, reject) => {
 			engine.rateLimit.loginSlowDown(req, res)
 				.then(handled => {
-					if (!handled) {
+					if (handled) {
+						reject(unauthError('Rate limited'));
+					} else {
 						this.authenticate(credentials, req, res, next, engine)
 							.then(session => {
 								resolve(session);
@@ -67,8 +69,6 @@ export class AuthController {
 							.catch((error: unknown) => {
 								reject(error);
 							});
-					} else {
-						reject(unauthError('Rate limited'));
 					}
 				})
 				.catch((error: unknown) => {
