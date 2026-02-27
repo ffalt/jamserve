@@ -3,6 +3,7 @@ import { EngineService } from '../../engine/services/engine.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { Context } from './apollo.context.js';
 import express from 'express';
+import { logger } from '../../../utils/logger.js';
 import { ArgumentValidationError, AuthChecker, buildSchema, registerEnumType } from 'type-graphql';
 import {
 	AlbumOrderFields,
@@ -60,6 +61,8 @@ import { unwrapResolverError } from '@apollo/server/errors';
 import type { ValidationError as ClassValidatorValidationError } from 'class-validator';
 import { GraphQLDateTimeISO } from 'graphql-scalars';
 import { GraphQLScalarType } from 'graphql';
+
+const log = logger('Apollo');
 
 function registerEnums(): void {
 	registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
@@ -210,7 +213,21 @@ export class ApolloMiddleware {
 								const { errors } = requestContext;
 								if (errors) {
 									for (const error of errors) {
-										console.error(error);
+										// In production, log safely without exposing internals
+										if (process.env.NODE_ENV === 'production') {
+											log.error(`GraphQL Error: ${error.message}`);
+										} else {
+											console.error(error);
+										}
+
+										// Sanitize the error returned to client in production
+										if (process.env.NODE_ENV === 'production') {
+											error.message = 'An error occurred processing your request';
+											// Extensions always exist on GraphQL errors
+											(error.extensions as any).code = 'INTERNAL_SERVER_ERROR';
+											// Remove sensitive stack trace and internal details
+											delete (error.extensions as any).exception;
+										}
 									}
 								}
 							}
