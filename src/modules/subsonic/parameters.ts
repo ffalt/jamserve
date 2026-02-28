@@ -42,7 +42,7 @@ function processParameters(req: express.Request<any, any, any,
 		token: req.query.t,
 		salt: req.query.s,
 		client: req.query.c ?? '',
-		callback: req.query.callback
+		callback: req.query.callback?.slice(0, 128)
 	};
 	req.query.t = undefined;
 	req.query.u = undefined;
