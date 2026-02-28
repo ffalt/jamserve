@@ -257,9 +257,11 @@ export class ImageModule {
 		try {
 			const metadata = await sharpy.metadata();
 			return {
-				width: metadata.width,
-				height: metadata.height,
-				format: metadata.format,
+				width: metadata.width || 0,
+				height: metadata.height || 0,
+				// defensive: sharp can return undefined for corrupt images
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				format: metadata.format || 'unknown',
 				colorDepth: metadata.density ?? 0,
 				colors: 0
 			};
