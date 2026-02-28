@@ -30,4 +30,3 @@ describe('hexDecode', () => {
 		expect(hexDecode('736573616d65')).toBe('sesame');
 	});
 });
-

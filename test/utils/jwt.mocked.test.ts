@@ -87,8 +87,7 @@ describe('JWT functions', () => {
 			const realJwt = jest.requireActual<typeof jwt>('jsonwebtoken');
 
 			// Use real sign to generate a valid token
-			const tokenData: JWTPayload = { id: userId, client };
-			tokenData.exp = Math.floor((Date.now() + maxAge) / 1000);
+			const tokenData: JWTPayload = { id: userId, client, exp: Math.floor((Date.now() + maxAge) / 1000) };
 			const token = realJwt.sign(tokenData, secret, { algorithm: 'HS256' });
 
 			// Verify the token

@@ -36,6 +36,25 @@ describe('date-time utilities', () => {
 		test('should return 0 for a value of 0', () => {
 			expect(durationToMilliseconds(0, 's')).toBe(0);
 		});
+
+		test('should convert weeks to milliseconds', () => {
+			expect(durationToMilliseconds(1, 'week')).toBe(604_800_000);
+			expect(durationToMilliseconds(1, 'w')).toBe(604_800_000);
+		});
+
+		test('should convert months to milliseconds (30-day approximation)', () => {
+			expect(durationToMilliseconds(1, 'month')).toBe(2_592_000_000);
+			expect(durationToMilliseconds(1, 'M')).toBe(2_592_000_000);
+		});
+
+		test('should convert years to milliseconds (365-day approximation)', () => {
+			expect(durationToMilliseconds(1, 'year')).toBe(31_536_000_000);
+			expect(durationToMilliseconds(1, 'y')).toBe(31_536_000_000);
+		});
+
+		test('should return 0 for unknown unit', () => {
+			expect(durationToMilliseconds(1, 'unknown')).toBe(0);
+		});
 	});
 
 	describe('parseDurationToMilliseconds', () => {
@@ -95,6 +114,24 @@ describe('date-time utilities', () => {
 			const ts = Date.now();
 			expect(isSameDate(ts, ts)).toBe(true);
 			expect(isSameDate(ts, ts + 1)).toBe(false);
+		});
+
+		test('should handle string values coerced from SQLite date storage', () => {
+			const d = new Date('2025-06-15T12:00:00.000Z');
+			const dateString = '2025-06-15T12:00:00.000Z' as unknown as Date;
+			expect(isSameDate(d, dateString)).toBe(true);
+		});
+
+		test('should handle two string values coerced from SQLite', () => {
+			const a = '2025-06-15T12:00:00.000Z' as unknown as Date;
+			const b = '2025-06-15T12:00:00.000Z' as unknown as Date;
+			expect(isSameDate(a, b)).toBe(true);
+		});
+
+		test('should return false for different string date values', () => {
+			const a = '2025-06-15T12:00:00.000Z' as unknown as Date;
+			const b = '2025-06-15T12:00:01.000Z' as unknown as Date;
+			expect(isSameDate(a, b)).toBe(false);
 		});
 	});
 
@@ -164,6 +201,18 @@ describe('date-time utilities', () => {
 			const result = formatDateToUTC(d);
 			expect(result).toContain('2025-01-01T00:00:00');
 		});
+
+		test('should produce +00:00 suffix (ISO-8601 with offset)', () => {
+			const d = new Date('2025-06-15T12:30:45.000Z');
+			const result = formatDateToUTC(d);
+			expect(result).toBe('2025-06-15T12:30:45+00:00');
+		});
+
+		test('should handle dates with non-zero milliseconds', () => {
+			const d = new Date('2025-06-15T12:30:45.123Z');
+			const result = formatDateToUTC(d);
+			expect(result).toBe('2025-06-15T12:30:45+00:00');
+		});
 	});
 
 	describe('parseDateToTimestamp', () => {
@@ -197,15 +246,14 @@ describe('date-time utilities', () => {
 			const now = 1_700_000_000_000;
 			dateSpy.mockReturnValue(now);
 			const result = nowMinusMilliseconds(60_000);
-			// Allow a tiny tolerance because moment internally calls Date.now()
-			expect(result).toBeCloseTo(now - 60_000, -1);
+			expect(result).toBe(now - 60_000);
 		});
 
-		test('should return approximately now when ms is 0', () => {
+		test('should return exactly now when ms is 0', () => {
 			const now = 1_700_000_000_000;
 			dateSpy.mockReturnValue(now);
 			const result = nowMinusMilliseconds(0);
-			expect(result).toBeCloseTo(now, -1);
+			expect(result).toBe(now);
 		});
 	});
 });
