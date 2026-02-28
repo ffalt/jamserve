@@ -95,6 +95,9 @@ function isBlockedIP(ip: string): boolean {
  * @throws Error if the URL targets a blocked resource
  */
 export async function validateExternalUrl(url: string): Promise<void> {
+	if (url.trim().length === 0) {
+		throw new Error('Invalid URL');
+	}
 	let parsed: URL;
 	try {
 		parsed = new URL(url);

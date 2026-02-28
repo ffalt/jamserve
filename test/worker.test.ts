@@ -971,8 +971,13 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle invalid parameters', async () => {
 					await expect(workerService.artwork.download({ ...options, artworkURL: '' })).rejects.toThrow('Invalid URL');
-					await expect(workerService.artwork.download({ ...options, artworkURL: mockNockURL('invalid') })).rejects.toThrow('Invalid Image URL');
+					await expect(workerService.artwork.download({ ...options, artworkURL: 'http://127.0.0.1/somefile.png' })).rejects.toThrow('URL targets a blocked network address');
 					await expect(workerService.artwork.download({ ...options, folderID: UNKNOWN_UUID, artworkURL: mockNockURL('nonexisting.png') })).rejects.toThrow('Folder not found');
+					const scope = mockNock()
+						.get('/invalid').reply(200, '', { 'Content-Type': '' });
+					await expect(workerService.artwork.download({ ...options, artworkURL: mockNockURL('invalid') })).rejects
+						.toThrow('Downloaded file is not a valid image: Input file contains unsupported image format');
+					expect(scope.isDone()).toBe(true); // 'No request has been made'
 				});
 
 				it('should handle 404s', async () => {
