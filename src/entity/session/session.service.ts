@@ -175,7 +175,7 @@ export class SessionService {
 		});
 		const user = await orm.User.findOneOrFailByID(userID);
 		await session.user.set(user);
-		session.jwth = randomString(16);
+		session.jwth = randomString(32);
 		await orm.Session.persistAndFlush(session);
 		return session;
 	}
