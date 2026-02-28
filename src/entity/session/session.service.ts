@@ -87,19 +87,26 @@ export class SessionService {
 	}
 
 	async remove(sessionID: string): Promise<void> {
-		this.jwthCache.clear();
+		// Get the session to find its JWTH before removing
+		const session = await this.getSession(sessionID);
+		if (session?.jwth) {
+			this.jwthCache.delete(session.jwth);
+		}
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({ where: { sessionID } });
 	}
 
 	async removeUserSession(id: string, userID: string): Promise<void> {
-		this.jwthCache.clear();
 		const orm = this.ormService.fork();
+		const session = await orm.Session.findOneByID(id);
+		if (session?.jwth) {
+			this.jwthCache.delete(session.jwth);
+		}
 		await orm.Session.removeByQueryAndFlush({ where: { id, user: userID } });
 	}
 
 	async removeByJwth(jwth: string): Promise<void> {
-		this.jwthCache.clear();
+		this.jwthCache.delete(jwth);
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({ where: { jwth } });
 	}
