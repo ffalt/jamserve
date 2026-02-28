@@ -102,7 +102,7 @@ export class Feed {
 		const posts: Array<FeedParser.Item> = [];
 		await validateExternalUrl(url);
 		const result = await fetch(url, {
-			// timeout: 10000,
+			signal: AbortSignal.timeout(30_000),
 			headers: {
 				// Some feeds do not respond without user-agent and accept headers.
 				'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',

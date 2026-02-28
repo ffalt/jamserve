@@ -59,8 +59,8 @@ export class WebserviceClient {
 		await this.limit();
 		const urlParameters = parameters ? this.formatParams<P>(parameters) : '';
 		const response = await fetch(url + urlParameters, {
-			headers: { 'User-Agent': this.userAgent }
-			// timeout: 20000
+			headers: { 'User-Agent': this.userAgent },
+			signal: AbortSignal.timeout(30_000)
 		});
 		if (!ignoreStatus && response.status !== 200) {
 			return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));
