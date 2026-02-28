@@ -139,11 +139,21 @@ export class UserService {
 		await orm.User.persistAndFlush(user);
 	}
 
+	// Basic email format validation (local@domain with at least one dot in domain)
+	private static readonly EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+	private static isValidEmail(email: string): boolean {
+		return UserService.EMAIL_REGEX.test(email);
+	}
+
 	async setUserEmail(orm: Orm, user: User, email?: string): Promise<void> {
 		if (!email?.trim().length) {
 			return Promise.reject(invalidParameterError('email', 'Invalid Email'));
 		}
-		user.email = email;
+		if (!UserService.isValidEmail(email.trim())) {
+			return Promise.reject(invalidParameterError('email', 'Invalid Email format'));
+		}
+		user.email = email.trim();
 		await orm.User.persistAndFlush(user);
 	}
 
@@ -184,7 +194,10 @@ export class UserService {
 			return Promise.reject(invalidParameterError('name', 'Username already exists'));
 		}
 		user.name = parameters.name;
-		user.email = parameters.email ?? user.email;
+		if (parameters.email && !UserService.isValidEmail(parameters.email.trim())) {
+			return Promise.reject(invalidParameterError('email', 'Invalid Email format'));
+		}
+		user.email = parameters.email?.trim() ?? user.email;
 		user.roleAdmin = !!parameters.roleAdmin;
 		user.rolePodcast = !!parameters.rolePodcast;
 		user.roleStream = !!parameters.roleStream;
