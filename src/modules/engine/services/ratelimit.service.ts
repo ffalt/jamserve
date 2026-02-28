@@ -9,7 +9,9 @@ function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits: number): 
 	for (let index = 2; index <= capped; index++) {
 		[a, b] = [b, a + b];
 	}
-	return b;
+	// Cap at 96 hours to prevent excessive lockouts for shared IPs
+	const maxBlockDurationMinutes = 96 * 60;
+	return Math.min(b, maxBlockDurationMinutes);
 }
 
 @InRequestScope
