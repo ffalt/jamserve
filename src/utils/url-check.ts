@@ -40,12 +40,18 @@ const BLOCKED_IPV4_RANGES: Array<{ prefix: number; mask: number }> = [
 
 function ipv4ToInt(ip: string): number {
 	const parts = ip.split('.').map(Number);
-	return ((parts.at(0)! << 24) | (parts.at(1)! << 16) | (parts.at(2)! << 8) | parts.at(3)!);
+	// >>> 0 coerces to unsigned 32-bit; without it, IPs >= 128.0.0.0 produce negative values
+	const signed = ((parts.at(0)! << 24) | (parts.at(1)! << 16) | (parts.at(2)! << 8) | parts.at(3)!);
+	return signed >>> 0;
 }
 
 function isBlockedIPv4(ip: string): boolean {
 	const addr = ipv4ToInt(ip);
-	return BLOCKED_IPV4_RANGES.some(range => ((addr & range.mask)) === range.prefix);
+	// >>> 0 coerces bitwise AND result to unsigned 32-bit for correct comparison with unsigned prefix
+	return BLOCKED_IPV4_RANGES.some(range => {
+		const masked = (addr & range.mask) >>> 0;
+		return masked === range.prefix;
+	});
 }
 
 function isBlockedIPv6(ip: string): boolean {
