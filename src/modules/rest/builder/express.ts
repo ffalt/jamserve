@@ -72,9 +72,16 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 						validateUploadedFile(req.file);
 						next();
 					} catch (validationError) {
-						// Clean up rejected file
-						void fileDeleteIfExists(req.file.path);
-						next(validationError);
+						// Clean up rejected file and handle any cleanup errors
+						const filePath = req.file.path;
+						fileDeleteIfExists(filePath)
+							.then(() => {
+								next(validationError);
+							})
+							.catch((removeError: unknown) => {
+								console.error('Failed to clean up rejected upload file:', removeError);
+								next(validationError);
+							});
 					}
 				} else {
 					next();
