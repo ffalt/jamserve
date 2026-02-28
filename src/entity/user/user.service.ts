@@ -218,7 +218,12 @@ export class UserService {
 		if (!session) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
-		if (pass.length !== session.jwth?.length || !crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(session.jwth))) {
+		// Perform timing-safe comparison regardless of length to prevent timing attacks
+		// that could leak password length information
+		const sessionJwth = session.jwth ?? '';
+		const lengthMatch = pass.length === sessionJwth.length;
+		const contentMatch = lengthMatch && crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(sessionJwth));
+		if (!contentMatch) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;
