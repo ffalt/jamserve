@@ -11,6 +11,28 @@ import { Folder } from '../../../../entity/folder/folder.js';
 
 @InRequestScope
 export class RootWorker extends BaseWorker {
+	// System directories that must not be used as media roots
+	private static readonly DENIED_ROOT_PATHS = [
+		'/', // filesystem root
+		'/bin', // system binaries
+		'/boot', // boot files
+		'/dev', // device files
+		'/etc', // system configuration
+		'/lib', // system libraries
+		'/lib64', // 64-bit system libraries
+		'/proc', // kernel process info
+		'/root', // root home (in some contexts)
+		'/run', // runtime data
+		'/sbin', // system binaries
+		'/sys', // kernel sysfs
+		'/tmp', // temporary files
+		'/usr', // user programs and data
+		'/var', // variable data (logs, caches, etc.)
+		'/opt', // optional software (usually system)
+		'/srv', // service data (usually system)
+		'/root' // root home directory
+	];
+
 	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
 		const d = dir.trim();
 		if (d.startsWith('.')) {
@@ -18,6 +40,13 @@ export class RootWorker extends BaseWorker {
 		}
 		if (d.length === 0 || d.includes('*')) {
 			return Promise.reject(new Error('Root Directory invalid'));
+		}
+		// Check against deny-list of sensitive system paths
+		const normalizedPath = d.endsWith('/') ? d.slice(0, -1) : d;
+		for (const deniedPath of RootWorker.DENIED_ROOT_PATHS) {
+			if (normalizedPath === deniedPath || normalizedPath.startsWith(deniedPath + '/')) {
+				return Promise.reject(new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`));
+			}
 		}
 		const roots = await orm.Root.all();
 		for (const r of roots) {
