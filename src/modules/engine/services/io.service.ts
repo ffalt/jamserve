@@ -38,6 +38,15 @@ export class IoService {
 	private nextID: number = Date.now();
 	private afterScanTimeout: ReturnType<typeof setTimeout> | undefined;
 
+	private static readonly HISTORY_MAX = 1000;
+
+	private pushHistory(entry: { id: string; error?: string; date: number }): void {
+		this.history.push(entry);
+		if (this.history.length > IoService.HISTORY_MAX) {
+			this.history.shift();
+		}
+	}
+
 	private async runRequest(cmd: IoRequest<WorkerRequestParameters>): Promise<void> {
 		this.clearAfterRefresh();
 		this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), scanning: true });
@@ -45,17 +54,17 @@ export class IoService {
 			this.current = cmd;
 			await cmd.run();
 			this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
-			this.history.push({ id: cmd.id, date: Date.now() });
+			this.pushHistory({ id: cmd.id, date: Date.now() });
 			this.current = undefined;
 		} catch (error: unknown) {
-			console.error(error);
+			log.error(error);
 			this.current = undefined;
 			let message = errorToString(error);
 			if (message.startsWith('Error:')) {
 				message = message.slice(6).trim();
 			}
 			this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: message });
-			this.history.push({ id: cmd.id, error: message, date: Date.now() });
+			this.pushHistory({ id: cmd.id, error: message, date: Date.now() });
 		}
 		if (this.queue.length === 0) {
 			this.runAfterRefresh();
@@ -69,7 +78,7 @@ export class IoService {
 			for (const listener of this.afterRefreshListeners) {
 				listener()
 					.catch((error: unknown) => {
-						console.error(error);
+						log.error(error);
 					});
 			}
 		}, 10_000);
