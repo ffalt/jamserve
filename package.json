@@ -86,7 +86,7 @@
     "sqlite3": "5.1.7",
     "tiny-async-pool": "2.1.0",
     "triple-beam": "1.4.1",
-    "type-graphql": "2.0.0-rc.3",
+    "type-graphql": "2.0.0-rc.4",
     "typescript-ioc": "3.2.2",
     "waveform-data": "4.5.2",
     "which": "6.0.1",
