@@ -6,7 +6,7 @@ export async function spawnTool(binName: string, envName: string, parameters: Ar
 	if (!bin || bin.length === 0) {
 		return Promise.reject(new Error(`Tool binary not found ${binName}`));
 	}
-	return new Promise<{ result: string; errMsg: string }>(resolve => {
+	return new Promise<{ result: string; errMsg: string }>((resolve, reject) => {
 		const child = spawn(bin, parameters);
 		let result = '';
 		let errorMessage = '';
@@ -16,8 +16,19 @@ export async function spawnTool(binName: string, envName: string, parameters: Ar
 		child.stderr.on('data', (data: Buffer) => {
 			errorMessage += data.toString();
 		});
-		child.on('close', () => {
+		child.on('close', (code: number | null, signal: string | null) => {
+			if (signal) {
+				reject(new Error(`Tool ${binName} killed by signal ${signal}`));
+				return;
+			}
+			if (code !== 0) {
+				reject(new Error(`Tool ${binName} exited with code ${code}: ${errorMessage}`));
+				return;
+			}
 			resolve({ result, errMsg: errorMessage });
+		});
+		child.on('error', (error: Error) => {
+			reject(new Error(`Failed to spawn tool ${binName}: ${error.message}`));
 		});
 	});
 }
