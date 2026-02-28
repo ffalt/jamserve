@@ -45,7 +45,7 @@ function ipv4ToInt(ip: string): number {
 
 function isBlockedIPv4(ip: string): boolean {
 	const addr = ipv4ToInt(ip);
-	return BLOCKED_IPV4_RANGES.some(range => (addr & range.mask) === range.prefix);
+	return BLOCKED_IPV4_RANGES.some(range => ((addr & range.mask)) === range.prefix);
 }
 
 function isBlockedIPv6(ip: string): boolean {
