@@ -25,10 +25,19 @@ export abstract class BaseCompressStream implements StreamData {
 
 	pipe(stream: express.Response): void {
 		const archive = archiver(this.format as archiver.Format, { zlib: { level: 0 } });
-		archive.on('error', error => {
+
+		const onArchiveError = (error: Error): void => {
 			log.error('Archive error:', error.message);
-			stream.destroy();
-		});
+			this.streaming = false;
+			if (stream.headersSent) {
+				stream.destroy();
+			} else {
+				stream.status(500).json({ error: 'Archive creation failed' });
+			}
+		};
+
+		archive.on('error', onArchiveError);
+
 		// eslint-disable-next-line no-control-regex
 		const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
 		stream.contentType(this.format);
@@ -40,7 +49,7 @@ export abstract class BaseCompressStream implements StreamData {
 		this.run(archive);
 		archive.finalize()
 			.catch((error: unknown) => {
-				log.error(error);
+				onArchiveError(error instanceof Error ? error : new Error(String(error)));
 			});
 	}
 
