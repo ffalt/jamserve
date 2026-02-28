@@ -16,16 +16,12 @@ export function randomItems<T>(list: Array<T>, amount?: number): Array<T> {
 	if (amount === undefined || amount < 0 || list.length <= amount) {
 		return shuffle<T>(list);
 	}
-	const result: Array<T> = [];
-	const done: Array<number> = [];
-	while ((result.length < amount)) {
-		const index = randomInt(0, list.length - 1);
-		if (!done.includes(index)) {
-			result.push(list[index]);
-			done.push(index);
-		}
+	const copy = [...list];
+	for (let index = 0; index < amount; index++) {
+		const pos = crypto.randomInt(index, copy.length);
+		[copy[index], copy[pos]] = [copy[pos], copy[index]];
 	}
-	return result;
+	return copy.slice(0, amount);
 }
 
 export function randomString(length: number): string {
