@@ -7,10 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { InRequestScope } from 'typescript-ioc';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits) {
-    if (countConsecutiveOutOfLimits <= 1) {
-        return 1;
+    const capped = Math.min(Math.max(countConsecutiveOutOfLimits, 1), 20);
+    let a = 1;
+    let b = 1;
+    for (let index = 2; index <= capped; index++) {
+        [a, b] = [b, a + b];
     }
-    return getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 1) + getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 2);
+    const maxBlockDurationMinutes = 96 * 60;
+    return Math.min(b, maxBlockDurationMinutes);
 }
 let RateLimitService = class RateLimitService {
     constructor() {
@@ -27,7 +31,7 @@ let RateLimitService = class RateLimitService {
         });
     }
     async loginSlowDown(req, res) {
-        const key = req.ip;
+        const key = req.ip ?? 'unknown';
         try {
             const responseConsume = await this.loginLimiter.consume(key);
             if (responseConsume.remainingPoints <= 0) {
@@ -52,7 +56,7 @@ let RateLimitService = class RateLimitService {
         }
     }
     async loginSlowDownReset(req) {
-        const key = req.ip;
+        const key = req.ip ?? 'unknown';
         await this.limiterConsecutiveOutOfLimits.delete(key);
         await this.loginLimiter.delete(key);
     }

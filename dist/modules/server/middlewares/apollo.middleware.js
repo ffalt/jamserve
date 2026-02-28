@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { OrmService } from '../../engine/services/orm.service.js';
 import { EngineService } from '../../engine/services/engine.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
+import { logger } from '../../../utils/logger.js';
 import { ArgumentValidationError, buildSchema, registerEnumType } from 'type-graphql';
 import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, DefaultOrderFields, EpisodeOrderFields, FolderOrderFields, FolderType, GenreOrderFields, ListType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackOrderFields, UserRole } from '../../../types/enums.js';
 import { UserFavoritesResolver, UserResolver } from '../../../entity/user/user.resolver.js';
@@ -43,6 +44,7 @@ import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
 import { GraphQLDateTimeISO } from 'graphql-scalars';
 import { GraphQLScalarType } from 'graphql';
+const log = logger('Apollo');
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
     registerEnumType(PodcastOrderFields, { name: 'PodcastOrderFields' });
@@ -164,7 +166,17 @@ let ApolloMiddleware = class ApolloMiddleware {
                                 const { errors } = requestContext;
                                 if (errors) {
                                     for (const error of errors) {
-                                        console.error(error);
+                                        if (process.env.NODE_ENV === 'production') {
+                                            log.error(`GraphQL Error: ${error.message}`);
+                                        }
+                                        else {
+                                            log.error(error);
+                                        }
+                                        if (process.env.NODE_ENV === 'production') {
+                                            error.message = 'An error occurred processing your request';
+                                            error.extensions.code = 'INTERNAL_SERVER_ERROR';
+                                            delete error.extensions.exception;
+                                        }
                                     }
                                 }
                             }

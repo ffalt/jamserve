@@ -41,7 +41,7 @@ let FolderService = class FolderService {
         return;
     }
     async health(orm, list) {
-        const folders = list.sort((a, b) => a.path.localeCompare(b.path));
+        const folders = [...list].sort((a, b) => a.path.localeCompare(b.path));
         const result = [];
         for (const folder of folders) {
             const parents = await this.collectFolderPath(await folder.parent.get());

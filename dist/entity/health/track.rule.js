@@ -194,7 +194,7 @@ const trackRules = [
     {
         id: TrackHealthID.flacMediaValid,
         name: 'Flac Media is invalid',
-        mp3: true,
+        flac: true,
         run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.flacWarnings) {
                 return { details: [{ reason: tagCache.flacWarnings }] };

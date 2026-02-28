@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var IoService_1;
 import { WorkerService } from './worker.service.js';
 import { OrmService } from './orm.service.js';
 import { IoRequest } from './io/io.types.js';
@@ -18,7 +19,7 @@ import { IoCommandsRoot } from './io/io.commands.root.js';
 import { IoCommandsTrack } from './io/io.commands.track.js';
 import { errorToString } from '../../../utils/error.js';
 const log = logger('IO');
-let IoService = class IoService {
+let IoService = IoService_1 = class IoService {
     constructor() {
         this.artwork = new IoCommandsArtwork(this);
         this.folder = new IoCommandsFolder(this);
@@ -31,6 +32,12 @@ let IoService = class IoService {
         this.afterRefreshListeners = [];
         this.nextID = Date.now();
     }
+    pushHistory(entry) {
+        this.history.push(entry);
+        if (this.history.length > IoService_1.HISTORY_MAX) {
+            this.history.shift();
+        }
+    }
     async runRequest(cmd) {
         this.clearAfterRefresh();
         this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), scanning: true });
@@ -38,18 +45,18 @@ let IoService = class IoService {
             this.current = cmd;
             await cmd.run();
             this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now() });
-            this.history.push({ id: cmd.id, date: Date.now() });
+            this.pushHistory({ id: cmd.id, date: Date.now() });
             this.current = undefined;
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             this.current = undefined;
             let message = errorToString(error);
             if (message.startsWith('Error:')) {
                 message = message.slice(6).trim();
             }
             this.rootStatus.set(cmd.parameters.rootID, { lastScan: Date.now(), error: message });
-            this.history.push({ id: cmd.id, error: message, date: Date.now() });
+            this.pushHistory({ id: cmd.id, error: message, date: Date.now() });
         }
         if (this.queue.length === 0) {
             this.runAfterRefresh();
@@ -62,7 +69,7 @@ let IoService = class IoService {
             for (const listener of this.afterRefreshListeners) {
                 listener()
                     .catch((error) => {
-                    console.error(error);
+                    log.error(error);
                 });
             }
         }, 10000);
@@ -156,6 +163,7 @@ let IoService = class IoService {
         this.afterRefreshListeners = this.afterRefreshListeners.filter(l => l !== listener);
     }
 };
+IoService.HISTORY_MAX = 1000;
 __decorate([
     Inject,
     __metadata("design:type", OrmService)
@@ -164,7 +172,7 @@ __decorate([
     Inject,
     __metadata("design:type", WorkerService)
 ], IoService.prototype, "workerService", void 0);
-IoService = __decorate([
+IoService = IoService_1 = __decorate([
     InRequestScope
 ], IoService);
 export { IoService };

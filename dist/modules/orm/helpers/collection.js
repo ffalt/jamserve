@@ -52,7 +52,7 @@ export class Collection {
             }
             const removed = this.changeSet.remove;
             if (removed) {
-                list = list.filter(item => removed.find(p => p.id === item.id));
+                list = list.filter(item => !removed.some(p => p.id === item.id));
             }
         }
         this.list = list;

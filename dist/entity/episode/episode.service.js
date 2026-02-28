@@ -19,6 +19,7 @@ import { Inject, InRequestScope } from 'typescript-ioc';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { PodcastStatus } from '../../types/enums.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
+import { errorToString } from '../../utils/error.js';
 const log = logger('EpisodeService');
 let EpisodeService = class EpisodeService {
     constructor() {
@@ -75,7 +76,7 @@ let EpisodeService = class EpisodeService {
             }
             catch (error) {
                 episode.status = PodcastStatus.error;
-                episode.error = JSON.stringify(error);
+                episode.error = errorToString(error);
             }
             await orm.Episode.persistAndFlush(episode);
             this.episodeDownloadDebounce.resolve(episode.id, undefined);

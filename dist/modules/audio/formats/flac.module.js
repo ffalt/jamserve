@@ -3,6 +3,8 @@ import { FORMAT } from '../audio.format.js';
 import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js';
 import { Flac } from './flac/index.js';
 import { TagFormatType } from '../../../types/enums.js';
+import { logger } from '../../../utils/logger.js';
+const log = logger('FLAC');
 export class AudioModuleFLAC {
     constructor(imageModule) {
         this.imageModule = imageModule;
@@ -18,7 +20,7 @@ export class AudioModuleFLAC {
             };
         }
         catch (error) {
-            console.error(error);
+            log.error(error);
             return { format: TagFormatType.none };
         }
     }

@@ -1,5 +1,7 @@
 import { spawn } from 'node:child_process';
 import { getBinPath } from '../../../utils/which.js';
+import { logger } from '../../../utils/logger.js';
+const log = logger('Ffmpeg');
 export class FfmpegCommand extends EventTarget {
     constructor(options) {
         super();
@@ -61,6 +63,12 @@ export class FfmpegCommand extends EventTarget {
         return new SimpleCustomEvent(name, { detail });
     }
     emitEvent(name, detail) {
+        if (name === 'error') {
+            const hasErrorListener = this.listeners.has('error') && this.listeners.get('error').size > 0;
+            if (!hasErrorListener) {
+                log.errorMsg('Unhandled error:', detail);
+            }
+        }
         this.dispatchEvent(this.createEvent(name, detail));
     }
     addOption(key, value) {

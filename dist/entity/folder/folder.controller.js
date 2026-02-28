@@ -266,7 +266,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "move", null);
 __decorate([
-    Post('/remove', () => AdminChangeQueueInfo, { description: 'Remove a Folder', summary: 'Remove Folder' }),
+    Post('/remove', () => AdminChangeQueueInfo, { description: 'Remove a Folder', roles: [UserRole.admin], summary: 'Remove Folder' }),
     __param(0, BodyParameter('id', { description: 'Folder Id', isID: true })),
     __param(1, RestContext()),
     __metadata("design:type", Function),

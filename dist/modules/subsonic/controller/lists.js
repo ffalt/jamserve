@@ -50,7 +50,7 @@ let SubsonicListsApi = class SubsonicListsApi {
     async getAlbumList(query, { orm, user }) {
         const take = query.size ?? 20;
         const skip = query.offset ?? 0;
-        let folders = [];
+        let folders;
         switch (query.type) {
             case 'random': {
                 const data = await orm.Folder.findListFilter(ListType.random, undefined, { folderTypes: FolderTypesAlbum }, undefined, { skip, take }, user);
@@ -112,7 +112,7 @@ let SubsonicListsApi = class SubsonicListsApi {
         const take = Math.min(query.size ?? 20, 500);
         const skip = query.offset ?? 0;
         const rootIDs = query.musicFolderId ? [query.musicFolderId] : undefined;
-        let albums = [];
+        let albums;
         switch (query.type) {
             case 'random': {
                 const data = await orm.Album.findListFilter(ListType.random, undefined, { rootIDs }, undefined, { skip, take }, user);

@@ -43,12 +43,12 @@ export class FlacProcessorStream extends Transform {
         while (!chunk.done) {
             this.process(chunk);
         }
-        if (!this.hasError) {
-            this.emit('done');
-        }
         callback();
     }
     _flush(callback) {
+        if (!this.hasError) {
+            this.emit('done');
+        }
         this.state = STATE.IDLE;
         this.mdbLastWritten = false;
         this.hasID3 = false;

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { formatDateToUTC, minutesAgo } from '../../utils/date-time.js';
 import path from 'node:path';
 import { fileSuffix } from '../../utils/fs-utils.js';
 import mimeTypes from 'mime-types';
@@ -46,7 +46,7 @@ export class SubsonicFormatter {
         if (date === undefined) {
             return;
         }
-        return moment(date).utc().format();
+        return formatDateToUTC(date);
     }
     static async packRoot(root) {
         return { id: root.id, name: root.name };
@@ -283,7 +283,7 @@ export class SubsonicFormatter {
         }
         const nowPlay = entry;
         nowPlay.username = nowPlaying.user.name;
-        nowPlay.minutesAgo = Math.round(moment.duration(moment().diff(moment(nowPlaying.time))).asMinutes());
+        nowPlay.minutesAgo = minutesAgo(nowPlaying.time);
         nowPlay.playerId = 0;
         return nowPlay;
     }

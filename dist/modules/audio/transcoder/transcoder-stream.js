@@ -38,7 +38,9 @@ export class TranscoderStream {
             }
             case AudioFormatType.webma: {
                 return proc
-                    .toFormat('webm');
+                    .toFormat('webm')
+                    .withAudioCodec('libopus')
+                    .withAudioBitrate(`${maxBitRate || 128}k`);
             }
             default: {
                 return proc

@@ -7,6 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var SettingsService_1;
 import { JAMSERVE_VERSION } from '../../version.js';
 import { InRequestScope } from 'typescript-ioc';
+import { logger } from '../../utils/logger.js';
+const log = logger('SettingsService');
 export const defaultEngineSettings = {
     chat: {
         maxMessages: 100,
@@ -42,7 +44,13 @@ let SettingsService = SettingsService_1 = class SettingsService {
     }
     async loadSettings(orm) {
         const settingsStore = await SettingsService_1.getSettings(orm);
-        this.settings = JSON.parse(settingsStore.data);
+        try {
+            this.settings = JSON.parse(settingsStore.data);
+        }
+        catch (error) {
+            log.warn('Settings data in the database is not valid JSON — falling back to defaults.', error instanceof Error ? error.message : String(error));
+            this.settings = defaultEngineSettings;
+        }
     }
     static async getSettings(orm) {
         let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });

@@ -4,7 +4,7 @@ import { splitDirectoryName } from '../../../utils/dir-name.js';
 import path from 'node:path';
 import { basenameStripExtension, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
 import { artWorkImageNameToType } from '../../../utils/artwork-type.js';
-import moment from 'moment';
+import { isSameDate } from '../../../utils/date-time.js';
 import { TrackUpdater } from './tasks/track.js';
 const log = logger('IO.Scan');
 export class OnDemandTrackMatch {
@@ -224,8 +224,8 @@ export class WorkerScan {
         foundScanArtworks.push(scanArtwork);
         result.artworksCount += 1;
         if (scanArtwork.size !== artwork.fileSize ||
-            !moment(scanArtwork.ctime).isSame(artwork.statCreated) ||
-            !moment(scanArtwork.mtime).isSame(artwork.statModified)) {
+            !isSameDate(scanArtwork.ctime, artwork.statCreated) ||
+            !isSameDate(scanArtwork.mtime, artwork.statModified)) {
             result.changed = true;
             await this.updateArtwork(scanArtwork, artwork);
         }
@@ -255,8 +255,8 @@ export class WorkerScan {
         foundScanTracks.push(scanTrack);
         if (this.changes.tracks.updated.has(track) ||
             scanTrack.size !== track.fileSize ||
-            !moment(scanTrack.ctime).isSame(track.statCreated) ||
-            !moment(scanTrack.mtime).isSame(track.statModified)) {
+            !isSameDate(scanTrack.ctime, track.statCreated) ||
+            !isSameDate(scanTrack.mtime, track.statModified)) {
             const t = await this.updateTrack(scanTrack, track);
             if (t) {
                 result.tracks.push(new ObjTrackMatch(t));

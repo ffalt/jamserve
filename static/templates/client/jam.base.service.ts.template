@@ -15,10 +15,7 @@ export class JamBaseService {
 	private readonly http = inject(JamHttpService);
 	private readonly authService = inject(JamAuthService);
 
-	buildRequest(view: string, params: GenericParameters = {}, forDOM: boolean = true): { url: string; parameters: HttpParams } {
-		if (forDOM && this.authService.auth?.token) {
-			params.bearer = this.authService.auth.token;
-		}
+	buildRequest(view: string, params: GenericParameters = {}): { url: string; parameters: HttpParams } {
 		let result = new HttpParams();
 		for (const key of Object.keys(params)) {
 			if (params[key] !== undefined) {
@@ -34,24 +31,24 @@ export class JamBaseService {
 		return { url: `${this.authService.auth?.server}${JamAuthService.apiPrefix}${view}`, parameters: result };
 	}
 
-	buildUrl(view: string, params: unknown, forDOM: boolean): string {
-		const { url, parameters } = this.buildRequest(view, params as GenericParameters, forDOM);
+	buildUrl(view: string, params: unknown): string {
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters);
 		const flat = parameters.toString();
 		return url + (flat ? `?${flat}` : '');
 	}
 
 	async raw(view: string, params?: unknown): Promise<{ buffer: ArrayBuffer; contentType: string }> {
-		const { url, parameters } = this.buildRequest(view, params as GenericParameters, false);
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters);
 		return this.http.raw(url, { ...this.authService.getHTTPOptions(), params: parameters });
 	}
 
 	async get<T>(view: string, params: unknown, responseType?: HTTPResponseType): Promise<T> {
-		const { url, parameters } = this.buildRequest(view, params as GenericParameters, false);
+		const { url, parameters } = this.buildRequest(view, params as GenericParameters);
 		return this.http.get(url, { ...this.authService.getHTTPOptions(), responseType, params: parameters });
 	}
 
 	async post<T>(view: string, params: unknown, body: any): Promise<T> {
-		return this.http.post<T>(this.buildUrl(view, params, false), body, this.authService.getHTTPOptions());
+		return this.http.post<T>(this.buildUrl(view, params), body, this.authService.getHTTPOptions());
 	}
 
 	async requestString(path: string, params: unknown): Promise<string> {
@@ -83,8 +80,8 @@ export class JamBaseService {
 		await this.requestData(path, params);
 	}
 
-	buildRequestUrl(view: string, params?: unknown, forDom: boolean = true): string {
-		return this.buildUrl(view, params, forDom);
+	buildRequestUrl(view: string, params?: unknown): string {
+		return this.buildUrl(view, params);
 	}
 
 	async binary(path: string, params?: unknown): Promise<{ buffer: ArrayBuffer; contentType: string }> {
@@ -101,7 +98,7 @@ export class JamBaseService {
 			formData.append(key, data[key]);
 		}
 		formData.append(name, file);
-		const url = this.buildUrl(path, {}, false);
+		const url = this.buildUrl(path, {});
 		const options = this.authService.getHTTPOptions();
 		options.reportProgress = true;
 		return this.http.postObserve<T>(url, formData, options);

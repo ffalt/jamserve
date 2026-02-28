@@ -15,7 +15,7 @@ export async function pathDeleteIfExists(pathName) {
 export function fileSuffix(filename) {
     return path.extname(filename).slice(1).toLowerCase();
 }
-export function fileExtention(filename) {
+export function fileExtension(filename) {
     return path.extname(filename).toLowerCase();
 }
 export function basenameStripExtension(filename) {

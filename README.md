@@ -112,8 +112,9 @@ JAM_ALLOWED_COOKIE_DOMAINS=http://localhost:4040,http://localhost:4200
 # http://www.senchalabs.org/connect/session.html
 JAM_SESSION_SECRET=keyboard cat is dancing
 
-# If true, session cookies are only available over HTTPS; not HTTP
-JAM_SESSION_COOKIE_SECURE=false
+# Session cookies are only available over HTTPS by default.
+# Set to "false" only for local HTTP-only development setups.
+JAM_SESSION_COOKIE_SECURE=true
 
 # If true, the server trusts the first reverse proxy (e.g., Nginx)
 JAM_SESSION_TRUST_PROXY=false
@@ -144,6 +145,13 @@ JAM_DB_HOST=127.0.0.1
 # Database port
 JAM_DB_PORT=5432
 
+## Third-Party API Keys (optional)
+
+# AcoustID API key for audio fingerprinting (https://acoustid.org/)
+# JAM_ACOUSTID_API_KEY=your-acoustid-api-key
+
+# Last.fm API key for music metadata (https://www.last.fm/api)
+# JAM_LASTFM_API_KEY=your-lastfm-api-key
 ```
 
 Example **config/firststart.config.json**:

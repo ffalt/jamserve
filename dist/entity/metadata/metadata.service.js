@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var MetaDataService_1;
-import moment from 'moment';
+import { durationToMilliseconds } from '../../utils/date-time.js';
 import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { logger } from '../../utils/logger.js';
@@ -34,7 +34,7 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         await orm.MetaData.persistAndFlush(item);
     }
     async cleanUp(orm) {
-        const olderThan = Date.now() - moment.duration(1, 'd').asMilliseconds();
+        const olderThan = Date.now() - durationToMilliseconds(1, 'd');
         const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [Op.lt]: new Date(olderThan) } } });
         if (removed > 0) {
             log.info(`Removed meta data cache entries: ${removed} `);
@@ -92,7 +92,7 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
     }
     async lastFMSimilarTracksSearch(orm, name, artist) {
         return this.searchInStore(orm, `similar-search-track-${name}//${artist}`, MetaDataType.lastfm, async () => {
-            return { album: await this.audioModule.lastFM.similarTrack(name, artist) };
+            return { similartracks: await this.audioModule.lastFM.similarTrack(name, artist) };
         });
     }
     async acousticbrainzLookup(orm, mbid, nr) {

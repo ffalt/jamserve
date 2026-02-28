@@ -44,7 +44,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         changes.folders.updated.add(await artwork.folder.get());
     }
     static getArtworkName(folder, types) {
-        let name = types.sort((a, b) => a.localeCompare(b)).join('-');
+        let name = [...types].sort((a, b) => a.localeCompare(b)).join('-');
         if (!name) {
             name = FolderTypeImageName[folder.folderType];
         }
@@ -123,7 +123,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
     }
     async download(orm, folderID, artworkURL, types, changes) {
         const folder = await orm.Folder.findOneOrFailByID(folderID);
-        const name = types.sort((a, b) => a.localeCompare(b)).join('-');
+        const name = [...types].sort((a, b) => a.localeCompare(b)).join('-');
         const filename = await this.imageModule.storeImage(folder.path, name, artworkURL);
         const artwork = orm.Artwork.create({ name: filename, path: folder.path });
         await artwork.folder.set(folder);

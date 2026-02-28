@@ -1,12 +1,13 @@
 import FeedParser from 'feedparser';
 import iconvDefault from 'iconv-lite';
-import moment from 'moment';
+import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
 import zlib from 'node:zlib';
+import { validateExternalUrl } from '../../utils/url-check.js';
 const iconv = iconvDefault;
 export class Feed {
     static parseDurationMilliseconds(s) {
-        return moment.duration(s).as('milliseconds');
+        return parseDurationToMilliseconds(s);
     }
     static parseItunesDurationSeconds(value) {
         const number = Number(value);
@@ -16,7 +17,7 @@ export class Feed {
         if (value.length === 5) {
             value = `00:${value}`;
         }
-        return moment.duration(value).as('seconds');
+        return parseDurationToSeconds(value);
     }
     static getParams(value) {
         const parameters = {};
@@ -57,15 +58,22 @@ export class Feed {
     }
     async fetch(url) {
         const posts = [];
+        await validateExternalUrl(url);
         const result = await fetch(url, {
+            signal: AbortSignal.timeout(30000),
             headers: {
                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
                 'accept': 'text/html,application/xhtml+xml'
             }
         });
         if (result.ok && result.status === 200) {
+            const contentLength = Number(result.headers.get('content-length'));
+            if (contentLength && contentLength > Feed.MAX_FEED_SIZE) {
+                throw new Error(`Feed response too large: ${contentLength} bytes exceeds limit of ${Feed.MAX_FEED_SIZE} bytes`);
+            }
             let feed;
             return new Promise((resolve, reject) => {
+                let received = 0;
                 const done = (error) => {
                     if (error) {
                         reject(error);
@@ -90,7 +98,15 @@ export class Feed {
                     done(new Error('Bad feed stream'));
                     return;
                 }
-                result.body.pipe(feedParser);
+                const body = result.body;
+                body.on('data', (chunk) => {
+                    received += chunk.length;
+                    if (received > Feed.MAX_FEED_SIZE) {
+                        body.destroy();
+                        reject(new Error(`Feed response too large: exceeded limit of ${Feed.MAX_FEED_SIZE} bytes`));
+                    }
+                });
+                body.pipe(feedParser);
             });
         }
         throw new Error(`Bad status code ${result.status} ${result.statusText}`.trimEnd());
@@ -144,4 +160,5 @@ export class Feed {
         return { tag, episodes };
     }
 }
+Feed.MAX_FEED_SIZE = 10 * 1024 * 1024;
 //# sourceMappingURL=podcast-feed.js.map

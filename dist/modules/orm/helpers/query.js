@@ -1,13 +1,29 @@
 import { Op } from 'sequelize';
+function escapeLikeValue(value) {
+    return value.replaceAll(/[%_\\]/g, String.raw `\$&`);
+}
 export const QHelper = {
     eq(value) {
         return value ?? undefined;
     },
     like(value, dialect) {
-        if (dialect === 'postgres') {
-            return value ? { [Op.iLike]: `%${value}%` } : undefined;
+        if (!value) {
+            return undefined;
         }
-        return value ? { [Op.like]: `%${value}%` } : undefined;
+        const escaped = escapeLikeValue(value);
+        if (dialect === 'postgres') {
+            return { [Op.iLike]: `%${escaped}%` };
+        }
+        return { [Op.like]: `%${escaped}%` };
+    },
+    likeRaw(value, dialect) {
+        if (!value) {
+            return undefined;
+        }
+        if (dialect === 'postgres') {
+            return { [Op.iLike]: `%${value}%` };
+        }
+        return { [Op.like]: `%${value}%` };
     },
     gte(value) {
         return (value === undefined) ? undefined : { [Op.gte]: value };
@@ -20,7 +36,7 @@ export const QHelper = {
             return [];
         }
         const expressions = list.map(entry => {
-            return { [propertyName]: { [Op.like]: `%|${entry.replaceAll('%', '')}|%` } };
+            return { [propertyName]: { [Op.like]: `%|${escapeLikeValue(entry)}|%` } };
         });
         if (expressions.length === 1) {
             return expressions;

@@ -4,6 +4,8 @@ export class ExpressSessionStore extends Store {
         super();
         this.sessionService = sessionService;
         this.cache = new Map();
+        this.accessOrder = [];
+        this.maxCacheSize = 1000;
         this.get = (sid, callback) => {
             this._get(sid)
                 .then(data => {
@@ -12,12 +14,19 @@ export class ExpressSessionStore extends Store {
                 .catch(callback);
         };
         this.set = (sid, data, callback) => {
+            this.evictLRU();
             this.cache.set(sid, data);
+            this.markAccessed(sid);
             void this.sessionService.set(sid, data)
                 .then(callback)
                 .catch(callback);
         };
         this.destroy = (sid, callback) => {
+            this.cache.delete(sid);
+            const index = this.accessOrder.indexOf(sid);
+            if (index !== -1) {
+                this.accessOrder.splice(index, 1);
+            }
             void this.sessionService.remove(sid)
                 .then(callback)
                 .catch(callback);
@@ -43,6 +52,7 @@ export class ExpressSessionStore extends Store {
         };
         this.clear = callback => {
             this.cache.clear();
+            this.accessOrder.length = 0;
             void this.sessionService.clear()
                 .then(callback)
                 .catch(callback);
@@ -51,9 +61,28 @@ export class ExpressSessionStore extends Store {
     }
     async clearCache() {
         this.cache.clear();
+        this.accessOrder.length = 0;
+    }
+    markAccessed(sid) {
+        const index = this.accessOrder.indexOf(sid);
+        if (index !== -1) {
+            this.accessOrder.splice(index, 1);
+        }
+        this.accessOrder.push(sid);
+    }
+    evictLRU() {
+        if (this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0) {
+            const lruSid = this.accessOrder.shift();
+            if (lruSid) {
+                this.cache.delete(lruSid);
+            }
+        }
     }
     static expired(data) {
-        return (data.cookie.expires ?? 0).valueOf() < Date.now();
+        const expires = data.cookie.expires;
+        if (!expires)
+            return false;
+        return expires.valueOf() < Date.now();
     }
     async _get(sid) {
         const result = this.cache.get(sid);
@@ -62,11 +91,14 @@ export class ExpressSessionStore extends Store {
                 await this.sessionService.remove(sid);
                 return;
             }
+            this.markAccessed(sid);
             return result;
         }
         const session = await this.sessionService.get(sid);
         if (session) {
+            this.evictLRU();
             this.cache.set(sid, session);
+            this.markAccessed(sid);
             return session;
         }
         return;

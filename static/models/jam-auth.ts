@@ -4,5 +4,4 @@ export interface Auth {
 	session: boolean;
 	token?: string;
 	version?: string;
-	password?: string;
 }

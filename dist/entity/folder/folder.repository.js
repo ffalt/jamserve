@@ -85,11 +85,11 @@ export class FolderRepository extends BaseRepository {
         return result;
     }
     async findAllDescendants(folder) {
-        const options = QHelper.buildQuery([{ path: QHelper.like(folder.path) }]);
+        const options = QHelper.buildQuery([{ path: QHelper.likeRaw(folder.path) }]);
         return this.find(options);
     }
     async findAllDescendantsIds(folder) {
-        const options = QHelper.buildQuery([{ path: QHelper.like(folder.path) }]);
+        const options = QHelper.buildQuery([{ path: QHelper.likeRaw(folder.path) }]);
         return this.findIDs(options);
     }
 }

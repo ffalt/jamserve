@@ -15,13 +15,21 @@ export class BaseCompressStream {
         return ['zip', 'tar'].includes(format);
     }
     pipe(stream) {
-        const format = 'zip';
         const archive = archiver(this.format, { zlib: { level: 0 } });
-        archive.on('error', error => {
-            throw error;
-        });
-        stream.contentType('zip');
-        stream.setHeader('Content-Disposition', `attachment; filename="${this.filename || 'download'}.${format}"`);
+        const onArchiveError = (error) => {
+            log.error('Archive error:', error.message);
+            this.streaming = false;
+            if (stream.headersSent) {
+                stream.destroy();
+            }
+            else {
+                stream.status(500).json({ error: 'Archive creation failed' });
+            }
+        };
+        archive.on('error', onArchiveError);
+        const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
+        stream.contentType(this.format);
+        stream.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.${this.format}"`);
         stream.on('finish', () => {
             this.streaming = false;
         });
@@ -29,7 +37,7 @@ export class BaseCompressStream {
         this.run(archive);
         archive.finalize()
             .catch((error) => {
-            log.error(error);
+            onArchiveError(error instanceof Error ? error : new Error(String(error)));
         });
     }
 }

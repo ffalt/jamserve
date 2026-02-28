@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import moment from 'moment';
+import { minutesAgo } from '../../../utils/date-time.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import { ChatTransformService } from '../../../entity/chat/chat.transform.js';
 import { GenreTransformService } from '../../../entity/genre/genre.transform.js';
@@ -127,7 +127,7 @@ let TransformService = class TransformService {
         return {
             userName: o.user.name,
             userID: o.user.id,
-            minutesAgo: Math.round(moment.duration(moment().diff(moment(o.time))).asMinutes()),
+            minutesAgo: minutesAgo(o.time),
             trackID: nowPlayingParameters.nowPlayingIncTrackIDs ? o.track?.id : undefined,
             track: nowPlayingParameters.nowPlayingIncTracks && o.track ? (await this.Track.trackBase(orm, o.track, trackParameters, user)) : undefined,
             episodeID: nowPlayingParameters.nowPlayingIncEpisodeIDs ? o.episode?.id : undefined,

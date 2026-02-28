@@ -48,7 +48,7 @@ export class MetaStatBuilder {
             slug = slug.trim();
             this.stats[name] = this.stats[name] ?? {};
             const stat = this.stats[name];
-            stat[slug] = stat[value] ?? { count: 0, val: slug };
+            stat[slug] = stat[slug] ?? { count: 0, val: slug };
             stat[slug].count += 1;
         }
     }

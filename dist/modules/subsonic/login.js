@@ -2,13 +2,7 @@ import { ApiResponder } from './response.js';
 import semver from 'semver';
 import { SUBSONIC_VERSION } from './version.js';
 import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
-export function hexDecode(hex) {
-    let result = '';
-    for (let index = 0; index < hex.length; index += 2) {
-        result += String.fromCodePoint(Number.parseInt(hex.slice(index, index + 2), 16));
-    }
-    return result.trim();
-}
+import { hexDecode } from '../../utils/hex-decode.js';
 function sendError(req, res, error) {
     (new ApiResponder()).sendError(req, res, error);
 }
@@ -71,8 +65,11 @@ export async function subsonicLoginRateLimited(req, res, next) {
     const user = await validateCredentials(req);
     if (user) {
         req.user = user;
-        next();
         await req.engine.rateLimit.loginSlowDownReset(req);
+        next();
+    }
+    else {
+        sendError(req, res, SubsonicFormatter.ERRORS.LOGIN_FAILED);
     }
 }
 export function SubsonicLoginMiddleWare(req, res, next) {

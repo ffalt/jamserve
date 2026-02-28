@@ -22,7 +22,7 @@ export class ExpressMethod {
     }
     buildParameters(method, context, metadata) {
         const result = [];
-        const parameters = method.parameters.sort((a, b) => a.index - b.index);
+        const parameters = [...method.parameters].sort((a, b) => a.index - b.index);
         for (const parameter of parameters) {
             const validatedParameter = this.parameters.validateParameter(parameter, context, metadata);
             if (validatedParameter) {

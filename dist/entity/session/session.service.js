@@ -16,7 +16,7 @@ import { randomString } from '../../utils/random.js';
 let SessionService = SessionService_1 = class SessionService {
     constructor() {
         this.events = [];
-        this.jwthCache = [];
+        this.jwthCache = new Set();
     }
     expired(data) {
         return data.expires ? (data.expires < new Date()) : false;
@@ -76,22 +76,28 @@ let SessionService = SessionService_1 = class SessionService {
         return await orm.Session.findOneByID(id);
     }
     async remove(sessionID) {
-        this.jwthCache = [];
+        const session = await this.getSession(sessionID);
+        if (session?.jwth) {
+            this.jwthCache.delete(session.jwth);
+        }
         const orm = this.ormService.fork();
         await orm.Session.removeByQueryAndFlush({ where: { sessionID } });
     }
     async removeUserSession(id, userID) {
-        this.jwthCache = [];
         const orm = this.ormService.fork();
+        const session = await orm.Session.findOneByID(id);
+        if (session?.jwth) {
+            this.jwthCache.delete(session.jwth);
+        }
         await orm.Session.removeByQueryAndFlush({ where: { id, user: userID } });
     }
     async removeByJwth(jwth) {
-        this.jwthCache = [];
+        this.jwthCache.delete(jwth);
         const orm = this.ormService.fork();
         await orm.Session.removeByQueryAndFlush({ where: { jwth } });
     }
     async clear() {
-        this.jwthCache = [];
+        this.jwthCache.clear();
         const orm = this.ormService.fork();
         await orm.Session.removeByQueryAndFlush({});
     }
@@ -100,7 +106,7 @@ let SessionService = SessionService_1 = class SessionService {
         return orm.Session.count();
     }
     async clearCache() {
-        this.jwthCache = [];
+        this.jwthCache.clear();
         for (const notify of this.events) {
             await notify.clearCache();
         }
@@ -109,12 +115,18 @@ let SessionService = SessionService_1 = class SessionService {
         this.events.push(notify);
     }
     async isRevoked(jwth) {
-        if (this.jwthCache.includes(jwth)) {
+        if (this.jwthCache.has(jwth)) {
             return false;
         }
         const session = await this.byJwth(jwth);
         if (session) {
-            this.jwthCache.push(jwth);
+            if (this.jwthCache.size >= SessionService_1.JWTH_CACHE_MAX) {
+                const oldest = this.jwthCache.values().next().value;
+                if (oldest !== undefined) {
+                    this.jwthCache.delete(oldest);
+                }
+            }
+            this.jwthCache.add(jwth);
         }
         return !session;
     }
@@ -147,11 +159,12 @@ let SessionService = SessionService_1 = class SessionService {
         }));
         const user = await orm.User.findOneOrFailByID(userID);
         await session.user.set(user);
-        session.jwth = randomString(16);
+        session.jwth = randomString(32);
         await orm.Session.persistAndFlush(session);
         return session;
     }
 };
+SessionService.JWTH_CACHE_MAX = 10000;
 __decorate([
     Inject,
     __metadata("design:type", OrmService)

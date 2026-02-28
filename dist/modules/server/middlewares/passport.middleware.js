@@ -24,13 +24,10 @@ function passPortAuth(name, next, req, jwth, res) {
                 req.user = user;
             }
             next();
-            req.engine.rateLimit.loginSlowDownReset(req)
-                .catch((error) => {
-                throw error;
-            });
         })
             .catch((error) => {
-            throw error;
+            log.error(error);
+            next(error);
         });
     });
     void result(req, res, next);
@@ -64,11 +61,8 @@ export function usePassPortMiddleWare(router, engine) {
     };
     passport.use('jwt-header', new passportJWT.Strategy({
         jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: engine.config.env.jwt.secret
-    }, resolvePayload));
-    passport.use('jwt-parameter', new passportJWT.Strategy({
-        jwtFromRequest: passportJWT.ExtractJwt.fromUrlQueryParameter('bearer'),
-        secretOrKey: engine.config.env.jwt.secret
+        secretOrKey: engine.config.env.jwt.secret,
+        algorithms: ['HS256']
     }, resolvePayload));
     function jwtAuthMiddleware(req, res, next) {
         if (req.user) {
@@ -81,24 +75,12 @@ export function usePassPortMiddleWare(router, engine) {
             token = token.slice(7);
             name = 'jwt-header';
         }
-        else {
-            token = req.query.bearer;
-            if (token) {
-                name = 'jwt-parameter';
-            }
-        }
         if (!token || !name) {
             next();
             return;
         }
         const jwth = jwtHash(token);
-        req.engine.rateLimit.loginSlowDown(req, res)
-            .then(() => {
-            passPortAuth(name, next, req, jwth, res);
-        })
-            .catch((error) => {
-            throw error;
-        });
+        passPortAuth(name, next, req, jwth, res);
     }
     return jwtAuthMiddleware;
 }

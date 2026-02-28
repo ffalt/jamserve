@@ -14,7 +14,7 @@ import { OrmService } from '../services/orm.service.js';
 import { MetaMerger } from './merge-meta.js';
 import { Changes, IdSet } from './changes.js';
 import { logger } from '../../../utils/logger.js';
-import moment from 'moment';
+import { formatElapsedDuration } from '../../../utils/date-time.js';
 const log = logger('IO.Changes');
 let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     async start(rootID) {
@@ -110,7 +110,7 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
             logChange(`Updated ${name}`, set.updated);
             logChange(`Removed ${name}`, set.removed);
         }
-        const v = moment.utc(changes.end - changes.start).format('HH:mm:ss.SSS');
+        const v = formatElapsedDuration(changes.end - changes.start);
         log.info('Duration:', v);
         logChangeSet('Tracks', changes.tracks);
         logChangeSet('Folders', changes.folders);

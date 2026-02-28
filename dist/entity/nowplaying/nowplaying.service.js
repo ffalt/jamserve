@@ -13,11 +13,17 @@ import { logger } from '../../utils/logger.js';
 import { StateService } from '../state/state.service.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 const log = logger('NowPlayingService');
+const NOW_PLAYING_TTL_MS = 120 * 60 * 1000;
 let NowPlayingService = class NowPlayingService {
     constructor() {
         this.playing = [];
     }
+    pruneStale() {
+        const cutoff = Date.now() - NOW_PLAYING_TTL_MS;
+        this.playing = this.playing.filter(np => np.time > cutoff);
+    }
     async getNowPlaying() {
+        this.pruneStale();
         return this.playing;
     }
     clear() {
@@ -27,6 +33,7 @@ let NowPlayingService = class NowPlayingService {
         await this.stateService.reportPlaying(orm, entries, user);
     }
     async reportEpisode(orm, episode, user) {
+        this.pruneStale();
         this.playing = this.playing.filter(np => (np.user.id !== user.id));
         const result = { time: Date.now(), episode, user };
         this.playing.push(result);
@@ -40,6 +47,7 @@ let NowPlayingService = class NowPlayingService {
         return result;
     }
     async reportTrack(orm, track, user) {
+        this.pruneStale();
         this.playing = this.playing.filter(np => (np.user.id !== user.id));
         const result = { time: Date.now(), track, user };
         this.playing.push(result);

@@ -1,5 +1,5 @@
 import { ID3v2, ID3V24TagBuilder, ITagID } from 'jamp3';
-import moment from 'moment';
+import { parseDateToTimestamp } from '../../utils/date-time.js';
 import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 function prepareFrame(frame) {
@@ -38,7 +38,7 @@ export function flacToRawTagBase(builder, simple) {
         .grouping(simple.GROUPING)
         .date(simple.DATE)
         .composer(simple.COMPOSER)
-        .composerSort(simple.COMPOSER)
+        .composerSort(simple.COMPOSERSORT)
         .remixer(simple.REMIXER)
         .label(simple.LABEL)
         .subtitle(simple.SUBTITLE)
@@ -119,7 +119,7 @@ export function flacToRawTagChapters(builder, simple) {
     let nr = 1;
     let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
     while (simple[id]) {
-        const chapterTime = moment(simple[id]).valueOf() || 0;
+        const chapterTime = parseDateToTimestamp(simple[id]);
         const chapterID = simple[`${id}ID`] || id;
         const chapterName = simple[`${id}NAME`];
         const chapterURL = simple[`${id}URL`];

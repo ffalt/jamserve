@@ -10,8 +10,10 @@ export function useSessionMiddleware(configService, sessionService) {
         saveUninitialized: false,
         cookie: {
             secure: !!configService.env.session.secure,
+            httpOnly: true,
+            sameSite: 'lax',
             path: '/',
-            maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : undefined
+            maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : 365 * 24 * 60 * 60 * 1000
         }
     });
 }

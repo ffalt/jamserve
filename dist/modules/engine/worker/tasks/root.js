@@ -19,6 +19,12 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         if (d.length === 0 || d.includes('*')) {
             return Promise.reject(new Error('Root Directory invalid'));
         }
+        const normalizedPath = d.endsWith('/') ? d.slice(0, -1) : d;
+        for (const deniedPath of RootWorker_1.DENIED_ROOT_PATHS) {
+            if (normalizedPath === deniedPath || normalizedPath.startsWith(deniedPath + '/')) {
+                return Promise.reject(new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`));
+            }
+        }
         const roots = await orm.Root.all();
         for (const r of roots) {
             if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
@@ -153,6 +159,25 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         return list;
     }
 };
+RootWorker.DENIED_ROOT_PATHS = [
+    '/',
+    '/bin',
+    '/boot',
+    '/dev',
+    '/etc',
+    '/lib',
+    '/lib64',
+    '/proc',
+    '/root',
+    '/run',
+    '/sbin',
+    '/sys',
+    '/usr',
+    '/var',
+    '/opt',
+    '/srv',
+    '/root'
+];
 RootWorker = RootWorker_1 = __decorate([
     InRequestScope
 ], RootWorker);

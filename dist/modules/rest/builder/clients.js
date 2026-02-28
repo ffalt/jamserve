@@ -4,6 +4,8 @@ import fse from 'fs-extra';
 import archiver from 'archiver';
 import path from 'node:path';
 import { capitalize } from '../../../utils/capitalize.js';
+import { logger } from '../../../utils/logger.js';
+const log = logger('ClientBuilder');
 function generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls) {
     const name = call.methodName.replaceAll('/', '_');
     const upload = call.parameters.find(o => o.kind === 'arg' && o.mode === 'file');
@@ -57,7 +59,7 @@ export async function buildTemplate(template, data = {}) {
     return Mustache.render(file.toString(), data);
 }
 export async function buildParts(template, serviceParts) {
-    const list = serviceParts
+    const list = [...serviceParts]
         .sort((a, b) => a.name.localeCompare(b.name));
     for (const [index, entry] of list.entries()) {
         entry.isLast = index === list.length - 1;
@@ -75,7 +77,7 @@ export function getResultType(call) {
                 break;
             }
             case Number: {
-                resultType = 'string';
+                resultType = 'number';
                 break;
             }
             case Boolean: {
@@ -123,7 +125,7 @@ function getCallParameterArgumentType(parameter, metadata) {
             default: {
                 const enumInfo = metadata.enumInfo(type);
                 if (enumInfo) {
-                    typeString = `{${parameter.name}${optional}: ${enumInfo.name}`;
+                    typeString = `{${parameter.name}${optional}: ${enumInfo.name}}`;
                 }
                 else {
                     const fObjectType = metadata.parameterTypes.find(it => it.target === type);
@@ -190,13 +192,15 @@ export async function getClientZip(filename, list, models) {
     return {
         pipe: {
             pipe: (res) => {
+                const sanitizedName = (filename || 'client').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
                 const archive = archiver('zip', { zlib: { level: 9 } });
                 archive.on('error', error => {
-                    throw error;
+                    log.error('Archive error:', error.message);
+                    res.destroy();
                 });
                 res.contentType('zip');
                 res.type('application/zip');
-                res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+                res.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.zip"`);
                 for (const entry of list) {
                     archive.append(entry.content, { name: entry.name });
                 }
@@ -206,7 +210,7 @@ export async function getClientZip(filename, list, models) {
                 archive.pipe(res);
                 archive.finalize()
                     .catch((error) => {
-                    console.error(error);
+                    log.error(error);
                 });
             }
         }

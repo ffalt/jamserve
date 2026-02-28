@@ -8,6 +8,6 @@ export function generateJWT(userID, client, secret, maxAge) {
     if (maxAge > 0) {
         tokenData.exp = Math.floor((Date.now() + maxAge) / 1000);
     }
-    return jwt.sign(tokenData, secret);
+    return jwt.sign(tokenData, secret, { algorithm: 'HS256' });
 }
 //# sourceMappingURL=jwt.js.map

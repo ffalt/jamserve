@@ -1,13 +1,27 @@
 import { logger } from '../../../utils/logger.js';
 import { WebserviceClient } from '../../../utils/webservice-client.js';
 const log = logger('Wikipedia');
+function isValidLanguageCode(lang) {
+    if (!lang) {
+        return true;
+    }
+    return /^[a-z]{2,3}$/.test(lang);
+}
+function getSafeLanguageCode(lang) {
+    if (!lang || !isValidLanguageCode(lang)) {
+        log.warn(`Invalid language code: ${lang}, defaulting to 'en'`);
+        return 'en';
+    }
+    return lang;
+}
 export class WikipediaClient extends WebserviceClient {
     constructor(userAgent) {
         super(200, 1000, userAgent);
     }
     async summary(title, lang) {
         log.info('requesting summary', title);
-        const url = `https://${(lang ?? 'en')}.wikipedia.org/w/api.php`;
+        const safeLang = getSafeLanguageCode(lang);
+        const url = `https://${safeLang}.wikipedia.org/w/api.php`;
         const data = await this.getJsonWithParameters(url, {
             action: 'query',
             prop: 'extracts',
@@ -24,11 +38,12 @@ export class WikipediaClient extends WebserviceClient {
         if (!page) {
             return;
         }
-        return { title: page.title, summary: page.extract, url: `https://${(lang ?? 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
+        return { title: page.title, summary: page.extract, url: `https://${safeLang}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
     }
     async summary_rest(title, lang) {
         log.info('requesting summary', title);
-        const url = `https://${(lang ?? 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+        const safeLang = getSafeLanguageCode(lang);
+        const url = `https://${safeLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
         const data = await this.getJsonWithParameters(url, { redirect: 'true' });
         if (!data) {
             return;

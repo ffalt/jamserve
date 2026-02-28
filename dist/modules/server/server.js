@@ -34,13 +34,12 @@ let Server = class Server {
         log.debug('registering express standard middleware');
         app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
         app.use(bodyParser.json({ limit: '10mb' }));
-        app.use(bodyParser.json({ type: 'application/json', limit: '10mb' }));
         app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '10mb' }));
         app.use(bodyParser.json({ type: 'application/csp-report', limit: '10mb' }));
         app.use(helmet());
         app.use(useCSPMiddleware());
         if (this.configService.env.session.proxy) {
-            app.enable('trust proxy');
+            app.set('trust proxy', 1);
         }
         app.use(useLogMiddleware());
         app.post('/csp/report-violation', async (req, res) => {
@@ -61,13 +60,21 @@ let Server = class Server {
         app.use('/docs', this.docs.middleware(this.configService));
         log.debug('registering frontend middleware');
         app.use(staticMiddleware(this.configService));
+        app.use((error, _req, res, next) => {
+            if (res.headersSent) {
+                next(error);
+                return;
+            }
+            log.error('Unhandled error:', error instanceof Error ? error.message : String(error));
+            res.status(500).json({ error: 'Internal Server Error' });
+        });
         this.app = app;
     }
     getURL() {
         return `http://${this.configService.env.host === '127.0.0.1' ? 'localhost' : this.configService.env.host}:${this.configService.env.port}`;
     }
     getDomain() {
-        return this.configService.env.domain || this.getDomain();
+        return this.configService.env.domain || '-';
     }
     async start() {
         log.debug(`starting express on ${this.getURL()}`);

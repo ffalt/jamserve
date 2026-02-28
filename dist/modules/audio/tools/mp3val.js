@@ -3,12 +3,12 @@ function parseMP3ValueWarning(data) {
     let value = data;
     let index = value.indexOf('"');
     value = value.slice(index);
-    index = value.indexOf('"');
-    value = value.slice(index).trim();
+    index = value.indexOf('"', 1);
+    value = value.slice(index + 1).trim();
     let offset;
     if (value.startsWith('(')) {
         index = value.indexOf(')');
-        offset = value.slice(1, index - 1);
+        offset = value.slice(1, index);
     }
     index = value.indexOf(':');
     value = value.slice(index).trim();

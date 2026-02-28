@@ -7,10 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var UserService_1;
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
 import { SessionMode, UserRole } from '../../types/enums.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import fse from 'fs-extra';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { fileDeleteIfExists } from '../../utils/fs-utils.js';
@@ -20,7 +22,7 @@ import { randomString } from '../../utils/random.js';
 import { invalidParameterError, unauthError } from '../../modules/deco/express/express-error.js';
 import { hashMD5 } from '../../utils/md5.js';
 import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
-let UserService = class UserService {
+let UserService = UserService_1 = class UserService {
     constructor() {
         this.userAvatarPath = this.configService.getDataPath(['images']);
     }
@@ -35,15 +37,17 @@ let UserService = class UserService {
         return user ?? undefined;
     }
     async auth(orm, name, pass) {
-        if (!pass?.length) {
-            return Promise.reject(invalidParameterError('password', 'Invalid Password'));
+        if (!pass?.trim().length) {
+            return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
         }
+        const trimmedPass = pass.trim();
         const user = await this.findByName(orm, name);
         if (!user) {
-            return Promise.reject(invalidParameterError('username', 'Invalid Username'));
+            await bcryptComparePassword(trimmedPass, UserService_1.DUMMY_HASH);
+            return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
         }
-        if (!(await bcryptComparePassword(pass, user.hash))) {
-            return Promise.reject(invalidParameterError('password', 'Invalid Password'));
+        if (!(await bcryptComparePassword(trimmedPass, user.hash))) {
+            return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
         }
         return user;
     }
@@ -97,26 +101,34 @@ let UserService = class UserService {
         await this.imageModule.clearImageCacheByIDs([user.id]);
     }
     async validatePassword(password) {
-        if (!password?.trim().length) {
+        const trimmed = password?.trim();
+        if (!trimmed?.length) {
             return Promise.reject(invalidParameterError('Invalid Password'));
         }
-        if (password.length < 4) {
-            return Promise.reject(invalidParameterError('Password is too short'));
+        const minLength = this.configService.env.minPasswordLength;
+        if (trimmed.length < minLength) {
+            return Promise.reject(invalidParameterError(`Password is too short (minimum ${minLength} characters)`));
         }
-        if (commonPassword(password)) {
+        if (commonPassword(trimmed)) {
             return Promise.reject(new Error('Your password is found in the most frequently used password list and too easy to guess'));
         }
     }
     async setUserPassword(orm, user, pass) {
         await this.validatePassword(pass);
-        user.hash = await bcryptPassword(pass);
+        user.hash = await bcryptPassword(pass.trim());
         await orm.User.persistAndFlush(user);
+    }
+    static isValidEmail(email) {
+        return UserService_1.EMAIL_REGEX.test(email);
     }
     async setUserEmail(orm, user, email) {
         if (!email?.trim().length) {
             return Promise.reject(invalidParameterError('email', 'Invalid Email'));
         }
-        user.email = email;
+        if (!UserService_1.isValidEmail(email.trim())) {
+            return Promise.reject(invalidParameterError('email', 'Invalid Email format'));
+        }
+        user.email = email.trim();
         await orm.User.persistAndFlush(user);
     }
     async remove(orm, user) {
@@ -125,7 +137,7 @@ let UserService = class UserService {
         await fileDeleteIfExists(this.avatarImageFilename(user));
     }
     async createUser(orm, name, email, pass, roleAdmin, roleStream, roleUpload, rolePodcast) {
-        const hashAndSalt = await bcryptPassword(pass);
+        const hashAndSalt = await bcryptPassword(pass.trim());
         const user = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
         await orm.User.persistAndFlush(user);
         return user;
@@ -150,7 +162,10 @@ let UserService = class UserService {
             return Promise.reject(invalidParameterError('name', 'Username already exists'));
         }
         user.name = parameters.name;
-        user.email = parameters.email ?? user.email;
+        if (parameters.email && !UserService_1.isValidEmail(parameters.email.trim())) {
+            return Promise.reject(invalidParameterError('email', 'Invalid Email format'));
+        }
+        user.email = parameters.email?.trim() ?? user.email;
         user.roleAdmin = !!parameters.roleAdmin;
         user.rolePodcast = !!parameters.rolePodcast;
         user.roleStream = !!parameters.roleStream;
@@ -170,7 +185,10 @@ let UserService = class UserService {
         if (!session) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
-        if (pass !== session.jwth) {
+        const sessionJwth = session.jwth ?? '';
+        const lengthMatch = pass.length === sessionJwth.length;
+        const contentMatch = lengthMatch && crypto.timingSafeEqual(Buffer.from(pass), Buffer.from(sessionJwth));
+        if (!contentMatch) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         return user;
@@ -191,12 +209,14 @@ let UserService = class UserService {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         const t = hashMD5(`${session.jwth}${salt}`);
-        if (token !== t) {
+        if (token.length !== t.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(t))) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         return user;
     }
 };
+UserService.DUMMY_HASH = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234';
+UserService.EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 __decorate([
     Inject,
     __metadata("design:type", ConfigService)
@@ -205,7 +225,7 @@ __decorate([
     Inject,
     __metadata("design:type", ImageModule)
 ], UserService.prototype, "imageModule", void 0);
-UserService = __decorate([
+UserService = UserService_1 = __decorate([
     InRequestScope,
     __metadata("design:paramtypes", [])
 ], UserService);

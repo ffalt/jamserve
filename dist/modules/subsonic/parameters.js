@@ -1,3 +1,4 @@
+import { validJSONP } from '../../utils/jsonp.js';
 function processParameters(req) {
     const parameters = {
         username: req.query.u ?? '',
@@ -7,7 +8,12 @@ function processParameters(req) {
         token: req.query.t,
         salt: req.query.s,
         client: req.query.c ?? '',
-        callback: req.query.callback
+        callback: (() => {
+            if (validJSONP(req.query.callback)) {
+                return req.query.callback;
+            }
+            return undefined;
+        })()
     };
     req.query.t = undefined;
     req.query.u = undefined;

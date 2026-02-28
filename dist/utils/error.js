@@ -68,11 +68,11 @@ export function errorNumberCode(error) {
     }
     return;
 }
-export function hasstatusCode(error) {
+export function hasStatusCode(error) {
     return typeof error === 'object' && error !== null && 'statusCode' in error && typeof error.statusCode === 'number';
 }
 export function errorStatusCode(error) {
-    if (hasstatusCode(error)) {
+    if (hasStatusCode(error)) {
         return error.statusCode;
     }
     return;

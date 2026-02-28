@@ -53,7 +53,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
     reqToUrl(req) {
         const q = Object.entries(req.query)
             .filter(([_key, value]) => (value !== undefined && value !== null))
-            .map(([key, value]) => `${key}=${value}`);
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
         q.push(`limit=${req.limit ?? this.options.limit ?? 25}`, `offset=${req.offset ?? 0}`, 'fmt=json');
         return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
     }

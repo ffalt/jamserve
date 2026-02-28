@@ -21,18 +21,18 @@ async function stop() {
         process.exit();
     }
     catch (error) {
-        console.error('Error on server stop', error);
+        log.errorMsg('Error on server stop', error);
         process.exit(1);
     }
 }
 process.on('SIGTERM', () => {
     stop()
         .catch((error) => {
-        console.error(error);
+        log.error(error);
     });
 });
 run()
     .catch((error) => {
-    console.error(error);
+    log.error(error);
 });
 //# sourceMappingURL=index.js.map

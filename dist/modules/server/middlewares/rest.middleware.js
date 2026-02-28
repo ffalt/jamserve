@@ -18,11 +18,13 @@ import { buildRestMeta } from '../../rest/metadata/builder.js';
 import { restRouter } from '../../rest/builder/express.js';
 import { metadataStorage } from '../../rest/metadata/metadata-storage.js';
 import { ApiResponder } from '../../rest/response.js';
+import RateLimit from 'express-rate-limit';
 const log = logger('REST');
 registerRestEnums();
 let RestMiddleware = class RestMiddleware {
     middleware() {
         const api = express.Router();
+        api.use(RateLimit(this.configService.rateLimits.api));
         RestControllers();
         buildRestMeta();
         const metadata = metadataStorage();

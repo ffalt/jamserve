@@ -198,7 +198,7 @@ export class BaseRepository extends EntityRepository {
         return await this.index(this.indexProperty, await this.buildFilter(filter, user), ignoreArticles);
     }
     async getListIDs(list, seed, findOptions, userID) {
-        let ids = [];
+        let ids;
         const options = { ...findOptions, limit: undefined, offset: undefined };
         const page = { skip: findOptions.offset, take: findOptions.limit };
         switch (list) {

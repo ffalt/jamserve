@@ -5,6 +5,7 @@ import { ensureTrailingPathSeparator } from './fs-utils.js';
 import { processQueue } from './queue.js';
 import { getFileType } from './filetype.js';
 const log = logger('IO.DirScanner');
+const MAX_RECURSION_DEPTH = 50;
 export class DirScanner {
     async scanDirR(dir, stat, level) {
         log.debug('Scanning:', dir);
@@ -16,6 +17,10 @@ export class DirScanner {
             directories: [],
             files: []
         };
+        if (level >= MAX_RECURSION_DEPTH) {
+            log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${dir}, stopping scan`);
+            return result;
+        }
         const folders = [];
         const list = await fse.readdir(dir);
         for (const filename of list) {

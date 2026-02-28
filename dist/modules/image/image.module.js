@@ -13,7 +13,8 @@ import mimeTypes from 'mime-types';
 import path from 'node:path';
 import sharp from 'sharp';
 import { downloadFile } from '../../utils/download.js';
-import { SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { SupportedReadImageFormat, SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { validateExternalUrl } from '../../utils/url-check.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { IDFolderCache } from '../../utils/id-file-cache.js';
 import { logger } from '../../utils/logger.js';
@@ -37,20 +38,61 @@ let ImageModule = ImageModule_1 = class ImageModule {
             return `${sizePrefix}.${fileFormat}`;
         });
     }
+    static async verifyDownloadedImage(temporaryFilename) {
+        let sharpFormat;
+        try {
+            const metadata = await sharp(temporaryFilename, { failOn: 'error' }).metadata();
+            sharpFormat = metadata.format;
+        }
+        catch (error) {
+            await fileDeleteIfExists(temporaryFilename);
+            throw new Error(`Downloaded file is not a valid image: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+        }
+        const normalizedFormat = sharpFormat === 'jpeg' ? 'jpg' : sharpFormat;
+        if (!SupportedReadImageFormat.includes(normalizedFormat)) {
+            await fileDeleteIfExists(temporaryFilename);
+            throw new Error(`Downloaded file has unsupported image format: ${sharpFormat}`);
+        }
+        return normalizedFormat;
+    }
     async storeImage(filepath, name, imageUrl) {
         log.debug('Requesting image', imageUrl);
-        const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
-        if (imageExtension.length === 0) {
-            return Promise.reject(new Error('Invalid Image URL'));
+        await validateExternalUrl(imageUrl);
+        const urlExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase().slice(1);
+        if (urlExtension.length > 0 && !SupportedReadImageFormat.includes(urlExtension)) {
+            return Promise.reject(new Error(`Unsupported image format in URL: ${urlExtension}`));
         }
-        let filename = name + imageExtension;
+        const temporaryFilename = path.join(filepath, `${name}-tmp-${randomString(8)}`);
+        await fse.ensureDir(filepath);
+        let contentType;
+        try {
+            contentType = await downloadFile(imageUrl, temporaryFilename, 20 * 1024 * 1024);
+        }
+        catch (error) {
+            await fileDeleteIfExists(temporaryFilename);
+            throw error;
+        }
+        const mimeFromHeader = contentType?.split(';').at(0)?.trim().toLowerCase();
+        const allowedMimes = new Set(SupportedReadImageFormat.map(extension => mimeTypes.lookup(extension)).filter(Boolean));
+        if (mimeFromHeader && !allowedMimes.has(mimeFromHeader)) {
+            await fileDeleteIfExists(temporaryFilename);
+            return Promise.reject(new Error(`Rejected image: Content-Type "${mimeFromHeader}" is not an allowed image type`));
+        }
+        const normalizedFormat = await ImageModule_1.verifyDownloadedImage(temporaryFilename);
+        let filename = `${name}.${normalizedFormat}`;
         let nr = 2;
         while (await fse.pathExists(path.join(filepath, filename))) {
-            filename = `${name}-${nr}${imageExtension}`;
+            filename = `${name}-${nr}.${normalizedFormat}`;
             nr++;
         }
-        await downloadFile(imageUrl, path.join(filepath, filename));
-        log.info('Image downloaded', filename);
+        try {
+            await fse.rename(temporaryFilename, path.join(filepath, filename));
+        }
+        catch (error) {
+            await fileDeleteIfExists(temporaryFilename);
+            throw error;
+        }
+        log.info('Image downloaded and verified', filename);
         return filename;
     }
     async paint(text, size, format) {
@@ -221,9 +263,9 @@ let ImageModule = ImageModule_1 = class ImageModule {
         try {
             const metadata = await sharpy.metadata();
             return {
-                width: metadata.width,
-                height: metadata.height,
-                format: metadata.format,
+                width: metadata.width || 0,
+                height: metadata.height || 0,
+                format: metadata.format || 'unknown',
                 colorDepth: metadata.density ?? 0,
                 colors: 0
             };

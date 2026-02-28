@@ -98,7 +98,7 @@ export class MetadataServiceExtendedInfo {
     async getAlbumInfoByName(orm, albumName, artistName) {
         const mbResult = await this.service.musicbrainzSearch(orm, MusicBrainzSearchType.release, { release: albumName, artist: artistName });
         let info;
-        if (mbResult?.releases && mbResult.releases.length > 1) {
+        if (mbResult?.releases && mbResult.releases.length > 0) {
             const release = mbResult.releases.at(0);
             if (release) {
                 info = await this.getAlbumInfoByMusicBrainzID(orm, release.id);

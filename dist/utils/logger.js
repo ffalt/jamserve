@@ -54,6 +54,9 @@ export class Logger {
     error(format, ...parameters) {
         this.applyLog('error', errorToString(format), ...parameters);
     }
+    errorMsg(message, format, ...parameters) {
+        this.applyLog('error', `${message}:${errorToString(format)}`, ...parameters);
+    }
     table(items, columns) {
         if (winston.level === 'info') {
             const p = new Table({ columns });

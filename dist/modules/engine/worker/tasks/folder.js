@@ -48,20 +48,20 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
         orm.Folder.persistLater(folder);
         const destination = ensureTrailingPathSeparator(newPath);
         for (const sub of folders) {
-            sub.path = sub.path.replace(source, destination);
+            sub.path = sub.path.replaceAll(source, destination);
             sub.root = newParent.root;
             changes.folders.updated.add(sub);
             orm.Folder.persistLater(sub);
             const tracks = await sub.tracks.getItems();
             for (const track of tracks) {
-                track.path = track.path.replace(source, destination);
+                track.path = track.path.replaceAll(source, destination);
                 track.root = newParent.root;
                 changes.tracks.updated.add(track);
                 orm.Track.persistLater(track);
             }
             const artworks = await sub.artworks.getItems();
             for (const artwork of artworks) {
-                artwork.path = artwork.path.replace(source, destination);
+                artwork.path = artwork.path.replaceAll(source, destination);
                 changes.artworks.updated.add(artwork);
                 orm.Artwork.persistLater(artwork);
             }
@@ -140,18 +140,18 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
         const folders = await orm.Folder.findAllDescendants(folder);
         const destination = ensureTrailingPathSeparator(newPath);
         for (const item of folders) {
-            item.path = item.path.replace(oldPath, destination);
+            item.path = item.path.replaceAll(oldPath, destination);
             changes.folders.updated.add(item);
             orm.Folder.persistLater(item);
             const tracks = await item.tracks.getItems();
             for (const track of tracks) {
-                track.path = track.path.replace(oldPath, destination);
+                track.path = track.path.replaceAll(oldPath, destination);
                 changes.tracks.updated.add(track);
                 orm.Track.persistLater(track);
             }
             const artworks = await item.artworks.getItems();
             for (const artwork of artworks) {
-                artwork.path = artwork.path.replace(oldPath, destination);
+                artwork.path = artwork.path.replaceAll(oldPath, destination);
                 changes.artworks.updated.add(artwork);
                 orm.Artwork.persistLater(artwork);
             }

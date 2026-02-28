@@ -58,7 +58,10 @@ let AuthController = AuthController_1 = class AuthController {
         return new Promise((resolve, reject) => {
             engine.rateLimit.loginSlowDown(req, res)
                 .then(handled => {
-                if (!handled) {
+                if (handled) {
+                    reject(unauthError('Rate limited'));
+                }
+                else {
                     this.authenticate(credentials, req, res, next, engine)
                         .then(session => {
                         resolve(session);
@@ -74,7 +77,8 @@ let AuthController = AuthController_1 = class AuthController {
         });
     }
     static buildSessionResult(req, credentials, user, engine) {
-        const client = req.body?.client ?? 'Unknown Client';
+        const rawClient = req.body?.client;
+        const client = (typeof rawClient === 'string' ? rawClient.trim().slice(0, AuthController_1.MAX_CLIENT_LENGTH) : '') || 'Unknown Client';
         const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
         if (req.session) {
             const session = req.session;
@@ -100,12 +104,17 @@ let AuthController = AuthController_1 = class AuthController {
             }
         };
     }
-    async logout({ req }) {
+    async logout({ req, engine }) {
+        const jwth = req.jwth;
+        if (jwth) {
+            await engine.session.removeByJwth(jwth);
+        }
         return new Promise(resolve => {
             req.logout(resolve);
         });
     }
 };
+AuthController.MAX_CLIENT_LENGTH = 128;
 __decorate([
     Post('/login', () => Session, { description: 'Start session or jwt access', summary: 'Login' }),
     __param(0, BodyParameters()),

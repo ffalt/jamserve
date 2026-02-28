@@ -13,6 +13,9 @@ if (parentPort && process.env.JAM_USE_TASKS) {
         void analyzeMP3(parameter)
             .then(result => {
             caller.postMessage(result);
+        })
+            .catch((error) => {
+            caller.postMessage({ error: String(error) });
         });
     });
 }

@@ -23,7 +23,7 @@ let GraphqlMiddleware = class GraphqlMiddleware {
     }
     async middleware(configService) {
         const graphql = express.Router();
-        graphql.use(RateLimit(configService.rateLimits.graphlql));
+        graphql.use(RateLimit(configService.rateLimits.graphql));
         log.debug('registering graphql playground');
         graphql.use('/playground', await this.playground());
         log.debug('registering graphql api middleware');

@@ -7,13 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import moment from 'moment';
+import { durationToMilliseconds, nowMinusMilliseconds } from '../../utils/date-time.js';
 import { SettingsService } from '../settings/settings.service.js';
 import { Inject, InRequestScope } from 'typescript-ioc';
 let ChatService = class ChatService {
     constructor() {
         this.messages = [];
-        this.duration = moment.duration(0, 's');
+        this.durationMs = 0;
         this.settingsService.registerChangeListener(async () => {
             this.updateSettings();
             await this.cleanOld();
@@ -21,10 +21,10 @@ let ChatService = class ChatService {
         this.updateSettings();
     }
     updateSettings() {
-        this.duration = moment.duration(this.settingsService.settings.chat.maxAge.value, this.settingsService.settings.chat.maxAge.unit);
+        this.durationMs = durationToMilliseconds(this.settingsService.settings.chat.maxAge.value, this.settingsService.settings.chat.maxAge.unit);
     }
     async cleanOld() {
-        const d = moment().subtract(this.duration).valueOf();
+        const d = nowMinusMilliseconds(this.durationMs);
         this.messages = this.messages.filter(c => d < c.created.valueOf());
     }
     async find(time) {
