@@ -113,8 +113,10 @@ export async function subsonicLoginRateLimited(req: SubsonicRequest, res: expres
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (user) {
 		req.user = user;
-		next();
 		await req.engine.rateLimit.loginSlowDownReset(req);
+		next();
+	} else {
+		sendError(req, res, SubsonicFormatter.ERRORS.LOGIN_FAILED);
 	}
 }
 
