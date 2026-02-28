@@ -58,24 +58,78 @@ export class ImageModule {
 		);
 	}
 
+	private static async verifyDownloadedImage(temporaryFilename: string): Promise<string> {
+		let sharpFormat: string;
+		try {
+			const metadata = await sharp(temporaryFilename, { failOn: 'error' }).metadata();
+			// metadata.format is always a string when sharp does not throw
+			sharpFormat = metadata.format as string;
+		} catch (error) {
+			await fileDeleteIfExists(temporaryFilename);
+			throw new Error(`Downloaded file is not a valid image: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+		}
+		// Normalize 'jpeg' → 'jpg' for consistency with the rest of the codebase.
+		const normalizedFormat = sharpFormat === 'jpeg' ? 'jpg' : sharpFormat;
+		if (!SupportedReadImageFormat.includes(normalizedFormat)) {
+			await fileDeleteIfExists(temporaryFilename);
+			throw new Error(`Downloaded file has unsupported image format: ${sharpFormat}`);
+		}
+		return normalizedFormat;
+	}
+
 	async storeImage(filepath: string, name: string, imageUrl: string): Promise<string> {
 		log.debug('Requesting image', imageUrl);
 		await validateExternalUrl(imageUrl);
-		const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
-		if (imageExtension.length === 0) {
-			return Promise.reject(new Error('Invalid Image URL'));
+
+		// Stage 1: cheap URL-extension pre-flight — catches obvious non-images early.
+		const urlExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase().slice(1);
+		if (urlExtension.length > 0 && !SupportedReadImageFormat.includes(urlExtension)) {
+			return Promise.reject(new Error(`Unsupported image format in URL: ${urlExtension}`));
 		}
-		if (!SupportedReadImageFormat.includes(imageExtension.slice(1))) {
-			return Promise.reject(new Error(`Unsupported image format: ${imageExtension}`));
+
+		// Download to a temporary file so we can inspect the content before
+		// committing it under a permanent name.
+		const temporaryFilename = path.join(filepath, `${name}-tmp-${randomString(8)}`);
+		await fse.ensureDir(filepath);
+
+		let contentType: string | undefined;
+		try {
+			contentType = await downloadFile(imageUrl, temporaryFilename, 20 * 1024 * 1024);
+		} catch (error) {
+			await fileDeleteIfExists(temporaryFilename);
+			throw error;
 		}
-		let filename = name + imageExtension;
+
+		// Stage 2a: verify Content-Type header against allowed MIME types.
+		// Strip parameters like "; charset=utf-8" before comparing.
+		const mimeFromHeader = contentType?.split(';').at(0)?.trim().toLowerCase();
+		const allowedMimes = new Set(
+			SupportedReadImageFormat.map(extension => mimeTypes.lookup(extension) as string).filter(Boolean)
+		);
+		if (mimeFromHeader && !allowedMimes.has(mimeFromHeader)) {
+			await fileDeleteIfExists(temporaryFilename);
+			return Promise.reject(new Error(`Rejected image: Content-Type "${mimeFromHeader}" is not an allowed image type`));
+		}
+
+		// Stage 2b: authoritative check — read magic bytes via sharp.
+		// Cannot be spoofed by a misleading URL extension or Content-Type header.
+		const normalizedFormat = await ImageModule.verifyDownloadedImage(temporaryFilename);
+
+		// Commit: rename the temp file using the sharp-verified extension.
+		let filename = `${name}.${normalizedFormat}`;
 		let nr = 2;
 		while (await fse.pathExists(path.join(filepath, filename))) {
-			filename = `${name}-${nr}${imageExtension}`;
+			filename = `${name}-${nr}.${normalizedFormat}`;
 			nr++;
 		}
-		await downloadFile(imageUrl, path.join(filepath, filename), 20 * 1024 * 1024);
-		log.info('Image downloaded', filename);
+		try {
+			await fse.rename(temporaryFilename, path.join(filepath, filename));
+		} catch (error) {
+			await fileDeleteIfExists(temporaryFilename);
+			throw error;
+		}
+
+		log.info('Image downloaded and verified', filename);
 		return filename;
 	}
 

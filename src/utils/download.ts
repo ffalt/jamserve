@@ -6,7 +6,7 @@ import { validateExternalUrl } from './url-check.js';
 
 const DEFAULT_MAX_DOWNLOAD_SIZE = 500 * 1024 * 1024; // 500 MB
 
-export async function downloadFile(url: string, filename: string, maxSize: number = DEFAULT_MAX_DOWNLOAD_SIZE): Promise<void> {
+export async function downloadFile(url: string, filename: string, maxSize: number = DEFAULT_MAX_DOWNLOAD_SIZE): Promise<string | undefined> {
 	await validateExternalUrl(url);
 	const response = await fetch(url);
 	if (!response.ok) {
@@ -16,6 +16,8 @@ export async function downloadFile(url: string, filename: string, maxSize: numbe
 	if (contentLength && contentLength > maxSize) {
 		throw new Error(`Response too large: ${contentLength} bytes exceeds limit of ${maxSize} bytes`);
 	}
+	// Capture before the body stream is consumed.
+	const contentType = response.headers.get('content-type') ?? undefined;
 	return new Promise((resolve, reject) => {
 		const destination = fs.createWriteStream(filename);
 		if (!response.body) {
@@ -41,7 +43,7 @@ export async function downloadFile(url: string, filename: string, maxSize: numbe
 		body.pipe(destination);
 		destination.on('close', () => {
 			if (!aborted) {
-				resolve();
+				resolve(contentType);
 			}
 		});
 		destination.on('error', (error: unknown) => {
