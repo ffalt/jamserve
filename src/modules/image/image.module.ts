@@ -3,7 +3,7 @@ import mimeTypes from 'mime-types';
 import path from 'node:path';
 import sharp, { FormatEnum } from 'sharp';
 import { downloadFile } from '../../utils/download.js';
-import { SupportedWriteImageFormat } from '../../utils/filetype.js';
+import { SupportedReadImageFormat, SupportedWriteImageFormat } from '../../utils/filetype.js';
 import { validateExternalUrl } from '../../utils/url-check.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { IDFolderCache } from '../../utils/id-file-cache.js';
@@ -64,6 +64,9 @@ export class ImageModule {
 		const imageExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase();
 		if (imageExtension.length === 0) {
 			return Promise.reject(new Error('Invalid Image URL'));
+		}
+		if (!SupportedReadImageFormat.includes(imageExtension.slice(1))) {
+			return Promise.reject(new Error(`Unsupported image format: ${imageExtension}`));
 		}
 		let filename = name + imageExtension;
 		let nr = 2;
