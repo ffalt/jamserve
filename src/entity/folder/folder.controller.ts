@@ -262,7 +262,7 @@ export class FolderController {
 	@Post(
 		'/remove',
 		() => AdminChangeQueueInfo,
-		{ description: 'Remove a Folder', summary: 'Remove Folder' }
+		{ description: 'Remove a Folder', roles: [UserRole.admin], summary: 'Remove Folder' }
 	)
 	async remove(
 		@BodyParameter('id', { description: 'Folder Id', isID: true }) id: string,
