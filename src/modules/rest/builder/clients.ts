@@ -250,13 +250,15 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 	return {
 		pipe: {
 			pipe: (res: express.Response): void => {
+				// eslint-disable-next-line no-control-regex
+				const sanitizedName = (filename || 'client').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
 				const archive = archiver('zip', { zlib: { level: 9 } });
 				archive.on('error', error => {
 					throw error;
 				});
 				res.contentType('zip');
 				res.type('application/zip');
-				res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+				res.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.zip"`);
 				for (const entry of list) {
 					archive.append(entry.content, { name: entry.name });
 				}
