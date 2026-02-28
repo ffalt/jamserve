@@ -4,6 +4,26 @@ import { WikiData } from './wikidata-rest-data.js';
 
 const log = logger('Wikipedia');
 
+/**
+ * Validate language code against ISO 639 pattern (2-3 lowercase letters)
+ * Examples: 'en', 'de', 'fr', 'zh', 'pt', 'es', etc.
+ */
+function isValidLanguageCode(lang: string | undefined): boolean {
+	if (!lang) {
+		return true; // undefined/null defaults to 'en', which is valid
+	}
+	// Match ISO 639-1 (2 letter) or ISO 639-2/3 (3 letter) codes
+	return /^[a-z]{2,3}$/.test(lang);
+}
+
+function getSafeLanguageCode(lang: string | undefined): string {
+	if (!lang || !isValidLanguageCode(lang)) {
+		log.warn(`Invalid language code: ${lang}, defaulting to 'en'`);
+		return 'en';
+	}
+	return lang;
+}
+
 export interface WikipediaSummary {
 	type: string;
 	title: string;
@@ -90,7 +110,8 @@ export class WikipediaClient extends WebserviceClient {
 
 	async summary(title: string, lang: string | undefined): Promise<{ title: string; url: string; summary: string } | undefined> {
 		log.info('requesting summary', title);
-		const url = `https://${(lang ?? 'en')}.wikipedia.org/w/api.php`;
+		const safeLang = getSafeLanguageCode(lang);
+		const url = `https://${safeLang}.wikipedia.org/w/api.php`;
 		const data = await this.getJsonWithParameters<WikiPHPApiSummary | undefined,
 			{
 				action: string;
@@ -116,12 +137,13 @@ export class WikipediaClient extends WebserviceClient {
 		if (!page) {
 			return;
 		}
-		return { title: page.title, summary: page.extract, url: `https://${(lang ?? 'en')}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
+		return { title: page.title, summary: page.extract, url: `https://${safeLang}.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
 	}
 
 	async summary_rest(title: string, lang: string | undefined): Promise<string | undefined> {
 		log.info('requesting summary', title);
-		const url = `https://${(lang ?? 'en')}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+		const safeLang = getSafeLanguageCode(lang);
+		const url = `https://${safeLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
 		const data = await this.getJsonWithParameters<WikipediaSummary | undefined, { redirect: string }>(url, { redirect: 'true' });
 		if (!data) {
 			return;
