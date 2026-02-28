@@ -90,6 +90,16 @@ export class Server {
 		log.debug('registering frontend middleware');
 		app.use(staticMiddleware(this.configService));
 
+		// Global error handler — must be registered last with 4 parameters
+		app.use((error: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+			if (res.headersSent) {
+				next(error);
+				return;
+			}
+			log.error('Unhandled error:', error instanceof Error ? error.message : String(error));
+			res.status(500).json({ error: 'Internal Server Error' });
+		});
+
 		this.app = app;
 	}
 
