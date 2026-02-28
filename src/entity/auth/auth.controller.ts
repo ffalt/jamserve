@@ -110,7 +110,12 @@ export class AuthController {
 	}
 
 	@Post('/logout', { roles: [UserRole.stream], description: 'End session or jwt access', summary: 'Logout' })
-	async logout(@RestContext() { req }: Context): Promise<void> {
+	async logout(@RestContext() { req, engine }: Context): Promise<void> {
+		// Revoke the JWT token from the session store if this was a JWT-authenticated request
+		const jwth: string | undefined = (req as any).jwth;
+		if (jwth) {
+			await engine.session.removeByJwth(jwth);
+		}
 		return new Promise<void>(resolve => {
 			req.logout(resolve);
 		});
