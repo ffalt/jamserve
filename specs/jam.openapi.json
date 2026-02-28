@@ -11962,12 +11962,12 @@
 				"security": [
 					{
 						"cookieAuth": [
-							"stream"
+							"admin"
 						]
 					},
 					{
 						"bearerAuth": [
-							"stream"
+							"admin"
 						]
 					}
 				]
