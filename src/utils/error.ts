@@ -72,12 +72,12 @@ export function errorNumberCode(error: unknown): number | undefined {
 	return;
 }
 
-export function hasstatusCode(error: unknown): error is { statusCode: number } {
+export function hasStatusCode(error: unknown): error is { statusCode: number } {
 	return typeof error === 'object' && error !== null && 'statusCode' in error && typeof (error as any).statusCode === 'number';
 }
 
 export function errorStatusCode(error: unknown): number | undefined {
-	if (hasstatusCode(error)) {
+	if (hasStatusCode(error)) {
 		return (error as any).statusCode as number;
 	}
 	return;

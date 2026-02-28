@@ -19,7 +19,7 @@ export function fileSuffix(filename: string): string {
 	return path.extname(filename).slice(1).toLowerCase();
 }
 
-export function fileExtention(filename: string): string {
+export function fileExtension(filename: string): string {
 	return path.extname(filename).toLowerCase();
 }
 

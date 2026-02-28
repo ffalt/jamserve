@@ -95,7 +95,7 @@ export class ConfigService {
 			windowMs: 10 * 60 * 1000, // 10 minutes
 			limit: 100 // max 100 requests per window
 		},
-		graphlql: {
+		graphql: {
 			windowMs: 10 * 60 * 1000, // 10 minutes
 			limit: 100 // 100 requests per window
 		},

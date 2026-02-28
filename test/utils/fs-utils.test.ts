@@ -3,7 +3,7 @@ import {
 	fileDeleteIfExists,
 	pathDeleteIfExists,
 	fileSuffix,
-	fileExtention,
+	fileExtension,
 	basenameStripExtension,
 	replaceFileSystemChars,
 	containsFolderSystemChars,
@@ -86,15 +86,15 @@ describe('fs-utils functions', () => {
 
 	describe('fileExt', () => {
 		test('should return the file extension with the dot', () => {
-			expect(fileExtention('file.txt')).toBe('.txt');
-			expect(fileExtention('file.TXT')).toBe('.txt'); // lowercase
-			expect(fileExtention('file.tar.gz')).toBe('.gz');
-			expect(fileExtention('/path/to/file.jpg')).toBe('.jpg');
+			expect(fileExtension('file.txt')).toBe('.txt');
+			expect(fileExtension('file.TXT')).toBe('.txt'); // lowercase
+			expect(fileExtension('file.tar.gz')).toBe('.gz');
+			expect(fileExtension('/path/to/file.jpg')).toBe('.jpg');
 		});
 
 		test('should return empty string for files without extension', () => {
-			expect(fileExtention('file')).toBe('');
-			expect(fileExtention('/path/to/file')).toBe('');
+			expect(fileExtension('file')).toBe('');
+			expect(fileExtension('/path/to/file')).toBe('');
 		});
 	});
 
