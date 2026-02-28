@@ -45,8 +45,8 @@ export abstract class TranscoderStream implements StreamData {
 			case AudioFormatType.webma: {
 				return proc
 					.toFormat('webm')
-					// .withAudioBitrate(`${maxBitRate || 128}k`) TODO: which max bitrate/audiocodec for webm
-				;
+					.withAudioCodec('libopus')
+					.withAudioBitrate(`${maxBitRate || 128}k`);
 			}
 			default: {
 				return proc
