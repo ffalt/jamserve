@@ -145,11 +145,22 @@ export class ConfigService {
 			);
 		}
 
-		if (secret.length < 32) {
+		// Require at least 64 characters for adequate entropy (256 bits of random data = 64 hex chars)
+		if (secret.length < 64) {
 			throw new Error(
-				`CRITICAL: ${envName} must be at least 32 characters long. ` +
+				`CRITICAL: ${envName} must be at least 64 characters long (recommended: cryptographically random). ` +
 				`Current length: ${secret.length}. ` +
-				'Generate a strong secret:\n' +
+				'Generate a strong secret using:\n' +
+				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+			);
+		}
+
+		// Check for obvious weak patterns (all same character, simple repeating pattern, etc.)
+		const hasVariation = new Set(secret).size > 10; // At least 10 unique characters
+		if (!hasVariation) {
+			throw new Error(
+				`CRITICAL: ${envName} lacks sufficient character variation and may be weak. ` +
+				'Use a cryptographically random secret:\n' +
 				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
 			);
 		}
