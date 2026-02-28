@@ -3,6 +3,9 @@ import { JAMSERVE_VERSION } from '../../version.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { InRequestScope } from 'typescript-ioc';
 import { AdminSettings } from '../admin/admin.js';
+import { logger } from '../../utils/logger.js';
+
+const log = logger('SettingsService');
 
 export const defaultEngineSettings: AdminSettings = {
 	chat: {
@@ -45,7 +48,15 @@ export class SettingsService {
 
 	async loadSettings(orm: Orm): Promise<void> {
 		const settingsStore = await SettingsService.getSettings(orm);
-		this.settings = JSON.parse(settingsStore.data);
+		try {
+			this.settings = JSON.parse(settingsStore.data) as AdminSettings;
+		} catch (error: unknown) {
+			log.warn(
+				'Settings data in the database is not valid JSON — falling back to defaults.',
+				error instanceof Error ? error.message : String(error)
+			);
+			this.settings = defaultEngineSettings;
+		}
 	}
 
 	private static async getSettings(orm: Orm): Promise<Settings> {
