@@ -16,7 +16,9 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 
 	private static expired(data: SessionData): boolean {
 		// eslint-disable-next-line @typescript-eslint/no-deprecated
-		return (data.cookie.expires ?? 0).valueOf() < Date.now();
+		const expires = data.cookie.expires;
+		if (!expires) return false; // no expiry = session-lifetime cookie
+		return expires.valueOf() < Date.now();
 	}
 
 	private async _get(sid: string): Promise<SessionData | undefined> {
