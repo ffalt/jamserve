@@ -43,10 +43,14 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	}
 
 	protected reqToUrl(req: T): string {
-		const q = Object.keys(req.query)
-			.filter(key => (req.query[key] !== undefined && req.query[key] !== null))
-			.map(key => `${key}=${req.query[key]}`);
-		const parameters = q.length > 0 ? `?${q.join('&')}` : '';
+		const search = new URLSearchParams();
+		for (const [key, value] of Object.entries(req.query)) {
+			if (value !== undefined && value !== null) {
+				search.append(key, value);
+			}
+		}
+		const qs = search.toString();
+		const parameters = qs ? `?${qs}` : '';
 		return `${this.reqToHost(req)}${req.path}${parameters}`;
 	}
 
