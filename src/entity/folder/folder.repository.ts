@@ -92,12 +92,12 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterParamet
 	}
 
 	async findAllDescendants(folder: Folder): Promise<Array<Folder>> {
-		const options = QHelper.buildQuery<Folder>([{ path: QHelper.like(folder.path) }]);
+		const options = QHelper.buildQuery<Folder>([{ path: QHelper.likeRaw(folder.path) }]);
 		return this.find(options);
 	}
 
 	async findAllDescendantsIds(folder: Folder): Promise<Array<string>> {
-		const options = QHelper.buildQuery<Folder>([{ path: QHelper.like(folder.path) }]);
+		const options = QHelper.buildQuery<Folder>([{ path: QHelper.likeRaw(folder.path) }]);
 		return this.findIDs(options);
 	}
 }

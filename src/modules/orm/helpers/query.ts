@@ -1,15 +1,41 @@
 import { Op, FindOptions, Includeable, WhereOptions, WhereAttributeHashValue } from 'sequelize';
 
+/**
+ * Escape special SQL LIKE pattern characters (`%`, `_`, `\`) in a user-supplied
+ * value so they are matched literally instead of acting as wildcards.
+ */
+function escapeLikeValue(value: string): string {
+	return value.replaceAll(/[%_\\]/g, String.raw`\$&`);
+}
+
 export const QHelper = {
 	eq<T>(value?: T): T | undefined {
 		return value ?? undefined;
 	},
 
 	like(value?: string, dialect?: string): WhereAttributeHashValue<string> | undefined {
-		if (dialect === 'postgres') {
-			return value ? { [Op.iLike]: `%${value}%` } : undefined;
+		if (!value) {
+			return undefined;
 		}
-		return value ? { [Op.like]: `%${value}%` } : undefined;
+		const escaped = escapeLikeValue(value);
+		if (dialect === 'postgres') {
+			return { [Op.iLike]: `%${escaped}%` };
+		}
+		return { [Op.like]: `%${escaped}%` };
+	},
+
+	/**
+	 * Build a LIKE clause without escaping wildcards.
+	 * Only use this for trusted/internal values (e.g. folder paths), never for user input.
+	 */
+	likeRaw(value?: string, dialect?: string): WhereAttributeHashValue<string> | undefined {
+		if (!value) {
+			return undefined;
+		}
+		if (dialect === 'postgres') {
+			return { [Op.iLike]: `%${value}%` };
+		}
+		return { [Op.like]: `%${value}%` };
 	},
 
 	gte(value?: number): WhereAttributeHashValue<number> | undefined {
@@ -25,7 +51,7 @@ export const QHelper = {
 			return [];
 		}
 		const expressions = list.map(entry => {
-			return { [propertyName]: { [Op.like]: `%|${entry.replaceAll('%', '')}|%` } } as WhereOptions<Entity>;
+			return { [propertyName]: { [Op.like]: `%|${escapeLikeValue(entry)}|%` } } as WhereOptions<Entity>;
 		});
 		if (expressions.length === 1) {
 			return expressions;
