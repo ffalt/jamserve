@@ -45,7 +45,7 @@ export abstract class ApiBaseResponder {
 	}
 
 	sendXML(_req: express.Request, res: express.Response, data: string): void {
-		res.set('Content-Type', 'application/xml');
+		res.set('Content-Type', 'application/xml; charset=utf-8');
 		res.status(200).send(data);
 	}
 
