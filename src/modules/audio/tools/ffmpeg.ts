@@ -1,6 +1,9 @@
 import type { Readable, Writable } from 'node:stream';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { getBinPath } from '../../../utils/which.js';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('Ffmpeg');
 
 export interface FfmpegCommandOptions {
 	source?: string | Readable;
@@ -88,6 +91,13 @@ export class FfmpegCommand extends EventTarget {
 	}
 
 	private emitEvent(name: string, detail?: any) {
+		// If emitting an error event and no error listener is attached, log it to prevent silent failures
+		if (name === 'error') {
+			const hasErrorListener = this.listeners.has('error') && this.listeners.get('error')!.size > 0;
+			if (!hasErrorListener) {
+				log.errorMsg('Unhandled error:', detail);
+			}
+		}
 		this.dispatchEvent(this.createEvent(name, detail));
 	}
 
