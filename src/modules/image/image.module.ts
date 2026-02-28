@@ -71,7 +71,7 @@ export class ImageModule {
 			filename = `${name}-${nr}${imageExtension}`;
 			nr++;
 		}
-		await downloadFile(imageUrl, path.join(filepath, filename));
+		await downloadFile(imageUrl, path.join(filepath, filename), 20 * 1024 * 1024);
 		log.info('Image downloaded', filename);
 		return filename;
 	}

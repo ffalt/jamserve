@@ -2,6 +2,7 @@ import FeedParser from 'feedparser';
 import iconvDefault, { Iconv as IconvType } from 'iconv-lite';
 import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
+import { Readable } from 'node:stream';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
 import { EpisodeChapter } from '../episode/episode.js';
@@ -95,6 +96,8 @@ export class Feed {
 		return stream;
 	}
 
+	private static readonly MAX_FEED_SIZE = 10 * 1024 * 1024; // 10 MB
+
 	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		await validateExternalUrl(url);
@@ -107,8 +110,13 @@ export class Feed {
 			}
 		});
 		if (result.ok && result.status === 200) {
+			const contentLength = Number(result.headers.get('content-length'));
+			if (contentLength && contentLength > Feed.MAX_FEED_SIZE) {
+				throw new Error(`Feed response too large: ${contentLength} bytes exceeds limit of ${Feed.MAX_FEED_SIZE} bytes`);
+			}
 			let feed: Record<string, any>;
 			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
+				let received = 0;
 				const done = (error?: unknown): void => {
 					if (error) {
 						reject(error as unknown);
@@ -132,7 +140,15 @@ export class Feed {
 					done(new Error('Bad feed stream'));
 					return;
 				}
-				result.body.pipe(feedParser);
+				const body = result.body as unknown as Readable;
+				body.on('data', (chunk: Buffer) => {
+					received += chunk.length;
+					if (received > Feed.MAX_FEED_SIZE) {
+						body.destroy();
+						reject(new Error(`Feed response too large: exceeded limit of ${Feed.MAX_FEED_SIZE} bytes`));
+					}
+				});
+				body.pipe(feedParser);
 			});
 		}
 		throw new Error(`Bad status code ${result.status} ${result.statusText}`.trimEnd());
