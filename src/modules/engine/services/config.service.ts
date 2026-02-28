@@ -77,6 +77,7 @@ export class ConfigService {
 
 	getDataPath = (parts: Array<string>): string => path.resolve(this.env.paths.data, ...parts);
 	tools: ThirdpartyToolsConfig = ThirdPartyConfig;
+
 	firstStart?: FirstStartConfig;
 	rateLimits = {
 		frontend: {
@@ -108,6 +109,9 @@ export class ConfigService {
 	constructor() {
 		this.validateSecrets();
 		this.validateSessionCookieSecure();
+
+		this.tools.acoustid.apiKey = process.env.JAM_ACOUSTID_API_KEY ?? '';
+		this.tools.lastfm.apiKey = process.env.JAM_LASTFM_API_KEY ?? '';
 
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {
