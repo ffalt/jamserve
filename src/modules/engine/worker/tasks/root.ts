@@ -25,7 +25,6 @@ export class RootWorker extends BaseWorker {
 		'/run', // runtime data
 		'/sbin', // system binaries
 		'/sys', // kernel sysfs
-		'/tmp', // temporary files
 		'/usr', // user programs and data
 		'/var', // variable data (logs, caches, etc.)
 		'/opt', // optional software (usually system)
