@@ -21,6 +21,7 @@ export class ApiResponder extends ApiBaseResponder {
 		const origin = req.headers.origin;
 		if (origin && this.allowedOrigins.includes(origin)) {
 			res.setHeader('Access-Control-Allow-Origin', origin);
+			res.setHeader('Access-Control-Allow-Credentials', 'true');
 			res.setHeader('Vary', 'Origin');
 		}
 	}
