@@ -81,7 +81,7 @@ export class ConfigService {
 	rateLimits = {
 		frontend: {
 			windowMs: 15 * 60 * 1000, // 15 minutes
-			limit: 100 // 100 requests per window
+			limit: 2000 // 2000 requests per window
 		},
 		api: {
 			windowMs: 15 * 60 * 1000, // 15 minutes
