@@ -10,6 +10,9 @@ import path from 'node:path';
 import { RestParameterMetadata, RestParametersMetadata } from '../../deco/definitions/parameter-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 import { capitalize } from '../../../utils/capitalize.js';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('ClientBuilder');
 
 export interface MustacheDataClientCallFunction {
 	name: string;
@@ -254,7 +257,8 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				const sanitizedName = (filename || 'client').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
 				const archive = archiver('zip', { zlib: { level: 9 } });
 				archive.on('error', error => {
-					throw error;
+					log.error('Archive error:', error.message);
+					res.destroy();
 				});
 				res.contentType('zip');
 				res.type('application/zip');
