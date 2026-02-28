@@ -272,7 +272,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				archive.pipe(res);
 				archive.finalize()
 					.catch((error: unknown) => {
-						console.error(error);
+						log.error(error);
 					});
 			}
 		}

@@ -7,6 +7,9 @@ import { Flac } from './flac/index.js';
 import { MetaWriteableDataBlock } from './flac/lib/block.writeable.js';
 import { TagFormatType } from '../../../types/enums.js';
 import { MediaTagRaw } from '../../../entity/tag/tag.model.js';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('FLAC');
 
 export class AudioModuleFLAC {
 	constructor(private readonly imageModule: ImageModule) {
@@ -22,7 +25,7 @@ export class AudioModuleFLAC {
 				...FORMAT.packFlacVorbisCommentJamServeTag(result.comment, result.pictures)
 			};
 		} catch (error: unknown) {
-			console.error(error);
+			log.error(error);
 			return { format: TagFormatType.none };
 		}
 	}

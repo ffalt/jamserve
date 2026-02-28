@@ -217,7 +217,7 @@ export class ApolloMiddleware {
 										if (process.env.NODE_ENV === 'production') {
 											log.error(`GraphQL Error: ${error.message}`);
 										} else {
-											console.error(error);
+											log.error(error);
 										}
 
 										// Sanitize the error returned to client in production

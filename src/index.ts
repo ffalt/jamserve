@@ -26,7 +26,7 @@ async function stop(): Promise<void> {
 		await server.stop();
 		process.exit();
 	} catch (error: unknown) {
-		console.error('Error on server stop', error);
+		log.errorMsg('Error on server stop', error);
 		process.exit(1);
 	}
 }
@@ -34,11 +34,11 @@ async function stop(): Promise<void> {
 process.on('SIGTERM', () => {
 	stop()
 		.catch((error: unknown) => {
-			console.error(error);
+			log.error(error);
 		});
 });
 
 run()
 	.catch((error: unknown) => {
-		console.error(error);
+		log.error(error);
 	});

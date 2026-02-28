@@ -84,6 +84,10 @@ export class Logger {
 		this.applyLog('error', errorToString(format), ...parameters);
 	}
 
+	errorMsg(message: string, format: unknown, ...parameters: Array<string>): void {
+		this.applyLog('error', `${message}:${errorToString(format)}`, ...parameters);
+	}
+
 	table(items: Array<Dictionary>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
 		if (winston.level === 'info') {
 			const p = new Table({ columns });

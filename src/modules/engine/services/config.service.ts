@@ -113,7 +113,7 @@ export class ConfigService {
 		try {
 			this.firstStart = fse.readJSONSync(configFirstStartFile);
 		} catch (error: unknown) {
-			console.error('Error loading first start config', error);
+			log.errorMsg('Error loading first start config', error);
 			this.firstStart = {
 				adminUser: undefined,
 				roots: []

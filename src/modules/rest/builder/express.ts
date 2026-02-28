@@ -6,6 +6,9 @@ import finishedRequest from 'on-finished';
 import { ExpressMethod, RestOptions, RouteInfo } from '../../deco/express/express-method.js';
 import { MethodMetadata } from '../../deco/definitions/method-metadata.js';
 import { iterateControllers } from '../../deco/helpers/iterate-super.js';
+import { logger } from '../../../utils/logger.js';
+
+const log = logger('ExpressRestBuilder');
 
 // File type validation helper
 function validateUploadedFile(file: Express.Multer.File): void {
@@ -48,7 +51,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 			if (error && req.file?.path) {
 				fileDeleteIfExists(req.file.path)
 					.catch((removeError: unknown) => {
-						console.error(removeError);
+						log.error(removeError);
 					});
 			}
 		});
@@ -79,7 +82,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 								next(validationError);
 							})
 							.catch((removeError: unknown) => {
-								console.error('Failed to clean up rejected upload file:', removeError);
+								log.errorMsg('Failed to clean up rejected upload file:', removeError);
 								next(validationError);
 							});
 					}
