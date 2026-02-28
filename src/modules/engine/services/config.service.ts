@@ -2,7 +2,7 @@ import { ThirdPartyConfig, ThirdpartyToolsConfig } from '../../../config/thirdpa
 import { InRequestScope } from 'typescript-ioc';
 import path from 'node:path';
 import { FirstStartConfig } from '../../../config/firststart.config.js';
-import { getMaxAge } from '../../../utils/max-age.js';
+import { getMaxAge, ONE_YEAR_MS } from '../../../utils/max-age.js';
 import { Dialect } from 'sequelize';
 import fse from 'fs-extra';
 import { logger } from '../../../utils/logger.js';
@@ -51,7 +51,7 @@ export class ConfigService {
 		minPasswordLength: Number(process.env.JAM_MIN_PASSWORD_LENGTH ?? 10),
 		jwt: {
 			secret: process.env.JAM_JWT_SECRET ?? 'keyboard cat is sad because no secret has been set',
-			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE)
+			maxAge: getMaxAge(process.env.JAM_JWT_MAXAGE, ONE_YEAR_MS)
 		},
 		session: {
 			secure: process.env.JAM_SESSION_COOKIE_SECURE !== 'false',
