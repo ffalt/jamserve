@@ -17,7 +17,7 @@ export function useSessionMiddleware(configService: ConfigService, sessionServic
 			httpOnly: true, // Prevent JavaScript access (XSS protection)
 			sameSite: 'lax', // CSRF protection
 			path: '/',
-			maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : undefined
+			maxAge: configService.env.session.maxAge > 0 ? configService.env.session.maxAge : 365 * 24 * 60 * 60 * 1000 // default: 1 year
 		}
 	});
 }
