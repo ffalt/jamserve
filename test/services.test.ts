@@ -13,26 +13,17 @@ import { PodcastStatus } from '../src/types/enums.js';
 import nock from 'nock';
 import { hashMD5 } from '../src/utils/md5.js';
 import { User } from '../src/entity/user/user.js';
+import { randomString } from '../src/utils/random.js';
 import { describe, beforeEach, afterEach, expect, it } from '@jest/globals';
 
 initTest();
 
+/**
+ * Generate a cryptographically secure random salt string for testing.
+ * Uses randomString utility instead of Math.random() to ensure proper entropy.
+ */
 function salt(length: number): string {
-	let s = '';
-	const randomchar = (): string => {
-		const n = Math.floor(Math.random() * 62);
-		if (n < 10) {
-			return n.toString(); // 1-10
-		}
-		if (n < 36) {
-			return String.fromCodePoint(n + 55); // A-Z
-		}
-		return String.fromCodePoint(n + 61); // a-z
-	};
-	while (s.length < length) {
-		s += randomchar();
-	}
-	return s;
+	return randomString(length);
 }
 
 describe.each(DBConfigs)('Services with %o', db => {
