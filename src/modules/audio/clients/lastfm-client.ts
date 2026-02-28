@@ -105,6 +105,9 @@ export class LastFMClient extends WebserviceClient {
 	}
 
 	private async get(api: string, parameters: Record<string, string>): Promise<LastFM.Result> {
+		if (!this.options.key) {
+			throw new Error('Last.fm API key is not configured. Set the JAM_LASTFM_API_KEY environment variable.');
+		}
 		log.info('requesting', api, JSON.stringify(parameters));
 		parameters.method = api;
 		const sortedParameters: Record<string, string | number | undefined> = { method: api };

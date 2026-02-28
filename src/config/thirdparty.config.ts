@@ -25,13 +25,13 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		https://acoustid.org/
 		audio identification via fingerprinting
 	 */
-	acoustid: { apiKey: 'bLwTKyNczi', userAgent },
+	acoustid: { apiKey: process.env.JAM_ACOUSTID_API_KEY ?? '', userAgent },
 	/*
 		LastFM
 		https://www.last.fm/api
 		music database
 	 */
-	lastfm: { apiKey: 'ead198fb293eefea29e8a5b8f0908e55', userAgent },
+	lastfm: { apiKey: process.env.JAM_LASTFM_API_KEY ?? '', userAgent },
 	/*
 		MusicBrainz
 		https://musicbrainz.org/

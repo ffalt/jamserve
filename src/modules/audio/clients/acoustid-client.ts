@@ -50,6 +50,9 @@ export class AcoustidClient extends WebserviceClient {
 
 	async acoustid(file: string, includes: string | undefined): Promise<Array<Acoustid.Result>> {
 		this.checkDisabled();
+		if (!this.options.key) {
+			throw new Error('AcoustID API key is not configured. Set the JAM_ACOUSTID_API_KEY environment variable.');
+		}
 		const result = await fpcalc(file, this.options.fpcalc ?? {});
 		return this.get(result, includes);
 	}
