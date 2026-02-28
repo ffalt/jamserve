@@ -35,11 +35,20 @@ export abstract class ApiBaseResponder {
 	}
 
 	sendJSONP(_req: express.Request, res: express.Response, callback: string, data: any): void {
-		// Validate callback to prevent XSS via JSONP injection
-		if (!/^[a-zA-Z_$][a-zA-Z0-9_$.]*$/.test(callback)) {
+		// Validate callback to prevent XSS and prototype pollution via JSONP injection
+		// Allow only valid JavaScript identifiers: alphanumeric, underscore, and dollar sign (no dots)
+		if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(callback)) {
 			res.status(400).send('Invalid callback parameter');
 			return;
 		}
+
+		// Explicitly block dangerous prototype-related keywords
+		const forbiddenCallbacks = ['constructor', 'prototype', '__proto__', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__'];
+		if (forbiddenCallbacks.includes(callback)) {
+			res.status(400).send('Invalid callback parameter');
+			return;
+		}
+
 		res.writeHead(200, { 'Content-Type': 'application/javascript' });
 		res.end(`${callback}(${JSON.stringify(data)});`);
 	}
