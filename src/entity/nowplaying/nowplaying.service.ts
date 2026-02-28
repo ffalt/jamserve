@@ -11,13 +11,22 @@ import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 const log = logger('NowPlayingService');
 
+/** Entries older than this are considered stale and removed automatically. */
+const NOW_PLAYING_TTL_MS = 120 * 60 * 1000; // 120 minutes
+
 @InRequestScope
 export class NowPlayingService {
 	private playing: Array<NowPlaying> = [];
 	@Inject
 	private readonly stateService!: StateService;
 
+	private pruneStale(): void {
+		const cutoff = Date.now() - NOW_PLAYING_TTL_MS;
+		this.playing = this.playing.filter(np => np.time > cutoff);
+	}
+
 	async getNowPlaying(): Promise<Array<NowPlaying>> {
+		this.pruneStale();
 		return this.playing;
 	}
 
@@ -30,6 +39,7 @@ export class NowPlayingService {
 	}
 
 	async reportEpisode(orm: Orm, episode: Episode, user: User): Promise<NowPlaying> {
+		this.pruneStale();
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		const result = { time: Date.now(), episode, user };
 		this.playing.push(result);
@@ -44,6 +54,7 @@ export class NowPlayingService {
 	}
 
 	async reportTrack(orm: Orm, track: Track, user: User): Promise<NowPlaying> {
+		this.pruneStale();
 		this.playing = this.playing.filter(np => (np.user.id !== user.id));
 		const result = { time: Date.now(), track, user };
 		this.playing.push(result);
