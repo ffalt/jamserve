@@ -80,6 +80,40 @@ describe('Compress Stream Classes', () => {
 				'attachment; filename="test.zip"'
 			);
 		});
+
+		test('should use tar format in contentType and Content-Disposition when format is tar', () => {
+			const stream = new TestCompressStream('my-archive', 'tar');
+
+			const mockResponse = {
+				contentType: jest.fn(),
+				setHeader: jest.fn(),
+				on: jest.fn((event: string, callback: () => void) => {
+					if (event === 'finish') {
+						callback();
+					}
+					return mockResponse;
+				}),
+				pipe: jest.fn()
+			} as unknown as express.Response;
+
+			const mockArchiver = {
+				on: jest.fn().mockReturnThis(),
+				pipe: jest.fn().mockReturnThis(),
+				finalize: jest.fn().mockResolvedValue(undefined as never)
+			};
+
+			const mockArchiverFunction = jest.fn().mockReturnValue(mockArchiver);
+			jest.spyOn(archiver, 'create').mockImplementation(mockArchiverFunction as any);
+
+			stream.pipe(mockResponse);
+
+			expect(stream.format).toBe('tar');
+			expect(mockResponse.contentType).toHaveBeenCalledWith('tar');
+			expect(mockResponse.setHeader).toHaveBeenCalledWith(
+				'Content-Disposition',
+				'attachment; filename="my-archive.tar"'
+			);
+		});
 	});
 
 	describe('CompressFolderStream', () => {
