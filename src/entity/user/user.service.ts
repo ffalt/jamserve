@@ -48,16 +48,17 @@ export class UserService {
 	private static readonly DUMMY_HASH = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234';
 
 	async auth(orm: Orm, name: string, pass?: string): Promise<User | undefined> {
-		if (!pass?.length) {
+		if (!pass?.trim().length) {
 			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
+		const trimmedPass = pass.trim();
 		const user = await this.findByName(orm, name);
 		if (!user) {
 			// Perform a dummy compare to prevent timing-based user enumeration
-			await bcryptComparePassword(pass, UserService.DUMMY_HASH);
+			await bcryptComparePassword(trimmedPass, UserService.DUMMY_HASH);
 			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
-		if (!(await bcryptComparePassword(pass, user.hash))) {
+		if (!(await bcryptComparePassword(trimmedPass, user.hash))) {
 			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
 		return user;
@@ -119,21 +120,22 @@ export class UserService {
 	}
 
 	async validatePassword(password?: string): Promise<void> {
-		if (!password?.trim().length) {
+		const trimmed = password?.trim();
+		if (!trimmed?.length) {
 			return Promise.reject(invalidParameterError('Invalid Password'));
 		}
 		const minLength = this.configService.env.minPasswordLength;
-		if (password.length < minLength) {
+		if (trimmed.length < minLength) {
 			return Promise.reject(invalidParameterError(`Password is too short (minimum ${minLength} characters)`));
 		}
-		if (commonPassword(password)) {
+		if (commonPassword(trimmed)) {
 			return Promise.reject(new Error('Your password is found in the most frequently used password list and too easy to guess'));
 		}
 	}
 
 	async setUserPassword(orm: Orm, user: User, pass: string): Promise<void> {
 		await this.validatePassword(pass);
-		user.hash = await bcryptPassword(pass);
+		user.hash = await bcryptPassword(pass.trim());
 		await orm.User.persistAndFlush(user);
 	}
 
@@ -154,7 +156,7 @@ export class UserService {
 	public async createUser(
 		orm: Orm, name: string, email: string, pass: string,
 		roleAdmin: boolean, roleStream: boolean, roleUpload: boolean, rolePodcast: boolean): Promise<User> {
-		const hashAndSalt = await bcryptPassword(pass);
+		const hashAndSalt = await bcryptPassword(pass.trim());
 		const user: User = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
 		await orm.User.persistAndFlush(user);
 		return user;
