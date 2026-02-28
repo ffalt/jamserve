@@ -26,7 +26,8 @@ export abstract class BaseCompressStream implements StreamData {
 	pipe(stream: express.Response): void {
 		const archive = archiver(this.format as archiver.Format, { zlib: { level: 0 } });
 		archive.on('error', error => {
-			throw error;
+			log.error('Archive error:', error.message);
+			stream.destroy();
 		});
 		// eslint-disable-next-line no-control-regex
 		const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
