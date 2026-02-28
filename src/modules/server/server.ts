@@ -59,7 +59,7 @@ export class Server {
 		app.use(helmet());
 		app.use(useCSPMiddleware());
 		if (this.configService.env.session.proxy) {
-			app.enable('trust proxy'); // trust first proxy
+			app.set('trust proxy', 1); // trust only the first proxy hop
 		}
 
 		app.use(useLogMiddleware());
