@@ -44,16 +44,21 @@ export class UserService {
 		return user ?? undefined;
 	}
 
+	// Pre-hashed dummy value used for constant-time comparison when user is not found
+	private static readonly DUMMY_HASH = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234';
+
 	async auth(orm: Orm, name: string, pass?: string): Promise<User | undefined> {
 		if (!pass?.length) {
-			return Promise.reject(invalidParameterError('password', 'Invalid Password'));
+			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
 		const user = await this.findByName(orm, name);
 		if (!user) {
-			return Promise.reject(invalidParameterError('username', 'Invalid Username'));
+			// Perform a dummy compare to prevent timing-based user enumeration
+			await bcryptComparePassword(pass, UserService.DUMMY_HASH);
+			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
 		if (!(await bcryptComparePassword(pass, user.hash))) {
-			return Promise.reject(invalidParameterError('password', 'Invalid Password'));
+			return Promise.reject(invalidParameterError('credentials', 'Invalid credentials'));
 		}
 		return user;
 	}
