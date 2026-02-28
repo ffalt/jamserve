@@ -2,6 +2,9 @@ import express from 'express';
 import { ApiError } from '../deco/express/express-error.js';
 import { ApiBaseResponder } from '../deco/express/express-responder.js';
 import { errorToString } from '../../utils/error.js';
+import { logger } from '../../utils/logger.js';
+
+const log = logger('ApiResponder');
 
 export class ApiResponder extends ApiBaseResponder {
 	sendData(req: express.Request, res: express.Response, data: unknown): void {
@@ -19,7 +22,12 @@ export class ApiResponder extends ApiBaseResponder {
 			failCode = error.failCode;
 			message = error.message;
 		} else {
-			message = errorToString(error);
+			// Log the full error server-side for debugging
+			log.error('Unhandled API error:', errorToString(error));
+			// In production, return a generic message to avoid leaking internal details
+			message = process.env.NODE_ENV === 'production' ?
+				'An error occurred processing your request' :
+				errorToString(error);
 		}
 		this.sendErrorMsg(req, res, failCode || 500, message || 'Guru Meditation');
 	}
