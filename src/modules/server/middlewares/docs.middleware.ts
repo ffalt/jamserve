@@ -57,10 +57,15 @@ export class DocsMiddleware {
 			res.sendFile(explorerJS);
 		});
 		api.get('/subsonic.js', (req, res) => {
+			// Escape for safe embedding in a <script> block: JSON.stringify alone
+			// does not escape </script> or <!-- sequences.
+			const safeUserName = JSON.stringify(req.user?.name ?? '')
+				.replaceAll('</', String.raw`<\/`)
+				.replaceAll('<!--', String.raw`<\!--`);
 			const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
 const explorer = document.getElementsByTagName('openapi-explorer')[0];  
 setTimeout(() => {
-	explorer.setAuthenticationConfiguration('UserAuth', {token: ${JSON.stringify(req.user?.name ?? '')}});
+	explorer.setAuthenticationConfiguration('UserAuth', {token: ${safeUserName}});
 	// explorer.setAuthenticationConfiguration('PasswordAuth', {token: 'dev'}); 
 	explorer.setAuthenticationConfiguration('VersionAuth', {token: '1.16.0'});
 	explorer.setAuthenticationConfiguration('ClientAuth', {token: 'Api Docs Test Client'});
