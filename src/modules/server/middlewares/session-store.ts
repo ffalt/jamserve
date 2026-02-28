@@ -4,6 +4,8 @@ import { SessionData } from '../../../types/express.js';
 
 export class ExpressSessionStore extends Store implements SessionNotifyEventObject {
 	private readonly cache = new Map<string, SessionData>();
+	private readonly accessOrder: Array<string> = []; // Track access order for LRU eviction
+	private readonly maxCacheSize = 1000;
 
 	constructor(private readonly sessionService: SessionService) {
 		super();
@@ -12,6 +14,24 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 
 	async clearCache(): Promise<void> {
 		this.cache.clear();
+		this.accessOrder.length = 0;
+	}
+
+	private markAccessed(sid: string): void {
+		const index = this.accessOrder.indexOf(sid);
+		if (index !== -1) {
+			this.accessOrder.splice(index, 1);
+		}
+		this.accessOrder.push(sid);
+	}
+
+	private evictLRU(): void {
+		if (this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0) {
+			const lruSid = this.accessOrder.shift();
+			if (lruSid) {
+				this.cache.delete(lruSid);
+			}
+		}
 	}
 
 	private static expired(data: SessionData): boolean {
@@ -28,11 +48,14 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 				await this.sessionService.remove(sid);
 				return;
 			}
+			this.markAccessed(sid);
 			return result;
 		}
 		const session = await this.sessionService.get(sid);
 		if (session) {
+			this.evictLRU();
 			this.cache.set(sid, session);
+			this.markAccessed(sid);
 			return session;
 		}
 		return;
@@ -47,13 +70,20 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 	};
 
 	set: (sid: string, data: SessionData, callback?: (error?: unknown) => void) => void = (sid, data, callback) => {
+		this.evictLRU();
 		this.cache.set(sid, data);
+		this.markAccessed(sid);
 		void this.sessionService.set(sid, data)
 			.then(callback)
 			.catch(callback);
 	};
 
 	destroy: (sid: string, callback?: (error?: unknown) => void) => void = (sid, callback) => {
+		this.cache.delete(sid);
+		const index = this.accessOrder.indexOf(sid);
+		if (index !== -1) {
+			this.accessOrder.splice(index, 1);
+		}
 		void this.sessionService.remove(sid)
 			.then(callback)
 			.catch(callback);
@@ -84,6 +114,7 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 
 	clear: (callback?: (error?: unknown) => void) => void = callback => {
 		this.cache.clear();
+		this.accessOrder.length = 0;
 		void this.sessionService.clear()
 			.then(callback)
 			.catch(callback);
