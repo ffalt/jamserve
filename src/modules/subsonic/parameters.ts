@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../../entity/user/user.js';
 import { EngineRequest } from '../server/middlewares/engine.middleware.js';
+import { validJSONP } from '../../utils/jsonp.js';
 
 export interface SubsonicBaseParameters {
 	username: string;
@@ -42,7 +43,12 @@ function processParameters(req: express.Request<any, any, any,
 		token: req.query.t,
 		salt: req.query.s,
 		client: req.query.c ?? '',
-		callback: req.query.callback?.slice(0, 128)
+		callback: (() => {
+			if (validJSONP(req.query.callback)) {
+				return req.query.callback;
+			}
+			return undefined;
+		})()
 	};
 	req.query.t = undefined;
 	req.query.u = undefined;
