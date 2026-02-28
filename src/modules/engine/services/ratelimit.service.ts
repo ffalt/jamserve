@@ -3,10 +3,13 @@ import express from 'express';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits: number): number {
-	if (countConsecutiveOutOfLimits <= 1) {
-		return 1;
+	const capped = Math.min(Math.max(countConsecutiveOutOfLimits, 1), 20);
+	let a = 1;
+	let b = 1;
+	for (let index = 2; index <= capped; index++) {
+		[a, b] = [b, a + b];
 	}
-	return getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 1) + getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits - 2);
+	return b;
 }
 
 @InRequestScope
