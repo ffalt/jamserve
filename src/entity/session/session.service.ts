@@ -16,7 +16,8 @@ export class SessionService {
 	private readonly ormService!: OrmService;
 
 	private readonly events: Array<SessionNotifyEventObject> = [];
-	private jwthCache: Array<string> = [];
+	private static readonly JWTH_CACHE_MAX = 10_000;
+	private jwthCache = new Set<string>();
 
 	expired(data: Session): boolean {
 		return data.expires ? (data.expires < new Date()) : false;
@@ -86,25 +87,25 @@ export class SessionService {
 	}
 
 	async remove(sessionID: string): Promise<void> {
-		this.jwthCache = [];
+		this.jwthCache.clear();
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({ where: { sessionID } });
 	}
 
 	async removeUserSession(id: string, userID: string): Promise<void> {
-		this.jwthCache = [];
+		this.jwthCache.clear();
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({ where: { id, user: userID } });
 	}
 
 	async removeByJwth(jwth: string): Promise<void> {
-		this.jwthCache = [];
+		this.jwthCache.clear();
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({ where: { jwth } });
 	}
 
 	async clear(): Promise<void> {
-		this.jwthCache = [];
+		this.jwthCache.clear();
 		const orm = this.ormService.fork();
 		await orm.Session.removeByQueryAndFlush({});
 	}
@@ -115,7 +116,7 @@ export class SessionService {
 	}
 
 	async clearCache(): Promise<void> {
-		this.jwthCache = [];
+		this.jwthCache.clear();
 		for (const notify of this.events) {
 			await notify.clearCache();
 		}
@@ -126,12 +127,19 @@ export class SessionService {
 	}
 
 	async isRevoked(jwth: string): Promise<boolean> {
-		if (this.jwthCache.includes(jwth)) {
+		if (this.jwthCache.has(jwth)) {
 			return false;
 		}
 		const session = await this.byJwth(jwth);
 		if (session) {
-			this.jwthCache.push(jwth);
+			if (this.jwthCache.size >= SessionService.JWTH_CACHE_MAX) {
+				// Evict the oldest entry (first inserted)
+				const oldest = this.jwthCache.values().next().value;
+				if (oldest !== undefined) {
+					this.jwthCache.delete(oldest);
+				}
+			}
+			this.jwthCache.add(jwth);
 		}
 		return !session;
 	}
