@@ -2,14 +2,14 @@ import crypto from 'node:crypto';
 
 export function shuffle<T>(list: Array<T>): Array<T> {
 	for (let index = list.length - 1; index > 0; index--) {
-		const pos = Math.floor(Math.random() * (index + 1));
+		const pos = crypto.randomInt(index + 1);
 		[list[index], list[pos]] = [list[pos], list[index]];
 	}
 	return list;
 }
 
 export function randomInt(min: number, max: number): number {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+	return crypto.randomInt(min, max + 1);
 }
 
 export function randomItems<T>(list: Array<T>, amount?: number): Array<T> {
