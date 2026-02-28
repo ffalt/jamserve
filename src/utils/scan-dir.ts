@@ -7,6 +7,7 @@ import { processQueue } from './queue.js';
 import { getFileType } from './filetype.js';
 
 const log = logger('IO.DirScanner');
+const MAX_RECURSION_DEPTH = 50;
 
 export interface ScanDir {
 	path: string;
@@ -36,6 +37,11 @@ export class DirScanner {
 			directories: [],
 			files: []
 		};
+		// Check recursion depth limit to prevent stack overflow
+		if (level >= MAX_RECURSION_DEPTH) {
+			log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${dir}, stopping scan`);
+			return result;
+		}
 		const folders: Array<{ dir: string; stat: fse.Stats }> = [];
 		const list = await fse.readdir(dir);
 		for (const filename of list) {
