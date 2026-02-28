@@ -60,7 +60,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	protected reqToUrl(req: MusicbrainzClientApi.Request): string {
 		const q = Object.entries(req.query)
 			.filter(([_key, value]) => (value !== undefined && value !== null))
-			.map(([key, value]) => `${key}=${value}`);
+			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value!)}`);
 		q.push(
 			`limit=${req.limit ?? (this.options as MusicbrainzClientApi.Options).limit ?? 25}`,
 			`offset=${req.offset ?? 0}`,
