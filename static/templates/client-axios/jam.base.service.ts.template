@@ -69,7 +69,7 @@ export class JamBaseService {
 	}
 
 	async post<T>(view: string, params: unknown, body: unknown): Promise<T> {
-		return this.http.post<T>(this.buildUrl(view, params, false), body, this.authService.getHTTPOptions());
+		return this.http.post<T>(this.buildUrl(view, params), body, this.authService.getHTTPOptions());
 	}
 
 	async requestData<T>(path: string, params: unknown): Promise<T> {
