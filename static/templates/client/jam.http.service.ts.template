@@ -64,7 +64,7 @@ export class JamHttpService {
 		}
 	}
 
-	async post<T>(url: string, body: any, options: HTTPOptions): Promise<T> {
+	async post<T>(url: string, body: unknown, options: HTTPOptions): Promise<T> {
 		try {
 			return await firstValueFrom(this.client.post<T>(url, body,
 				{ params: options.params, headers: options.headers, reportProgress: options.reportProgress, withCredentials: options.withCredentials }
@@ -74,7 +74,7 @@ export class JamHttpService {
 		}
 	}
 
-	postObserve<T>(url: string, body: any, options: HTTPOptions): Observable<HttpEvent<T>> {
+	postObserve<T>(url: string, body: unknown, options: HTTPOptions): Observable<HttpEvent<T>> {
 		return this.client.request<T>(new HttpRequest('POST', url, body, {
 			params: options.params,
 			headers: options.headers,

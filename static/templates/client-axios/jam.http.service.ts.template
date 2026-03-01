@@ -47,7 +47,7 @@ export class JamHttpService {
 		}
 	}
 
-	async post<T>(url: string, body: any, options: HTTPOptions): Promise<T> {
+	async post<T>(url: string, body: unknown, options: HTTPOptions): Promise<T> {
 		try {
 			const result = await axios.post(
 				url,
@@ -64,7 +64,7 @@ export class JamHttpService {
 		}
 	}
 
-	async postObserve<T>(url: string, body: any, options: HTTPOptions, onUploadProgress: (progressEvent: any) => void): Promise<T> {
+	async postObserve<T>(url: string, body: unknown, options: HTTPOptions, onUploadProgress: (progressEvent: any) => void): Promise<T> {
 		try {
 			const result = await axios.post(
 				url,

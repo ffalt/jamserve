@@ -74,7 +74,7 @@ function downloadJSON(req: TestAgent<supertest.Test>, url: string, done: (error?
 	req.get(url)
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
-		.end((error: Error | null, res: { body: any }) => {
+		.end((error: Error | null, res: { body: unknown }) => {
 			if (error) {
 				done(error);
 				return;
