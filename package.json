@@ -55,7 +55,7 @@
     "express-session": "1.19.0",
     "express-useragent": "2.1.0",
     "feedparser": "2.2.10",
-    "fs-extra": "11.3.3",
+    "fs-extra": "11.3.4",
     "graphql": "16.13.0",
     "graphql-type-json": "0.3.2",
     "helmet": "8.1.0",
