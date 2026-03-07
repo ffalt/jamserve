@@ -8,6 +8,8 @@ import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../services/orm.service.js';
 import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
 import { Folder } from '../../../../entity/folder/folder.js';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import path from 'node:path';
 
 @InRequestScope
 export class RootWorker extends BaseWorker {
@@ -32,7 +34,7 @@ export class RootWorker extends BaseWorker {
 		'/root' // root home directory
 	];
 
-	private static async validateRootPath(orm: Orm, dir: string): Promise<void> {
+	private static async validateRootPath(orm: Orm, dir: string, rootIdToIgnore?: string): Promise<void> {
 		const d = dir.trim();
 		if (d.startsWith('.')) {
 			return Promise.reject(new Error('Root Directory must be absolute'));
@@ -47,10 +49,18 @@ export class RootWorker extends BaseWorker {
 				return Promise.reject(new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`));
 			}
 		}
-		const roots = await orm.Root.all();
+		const roots = (await orm.Root.all()).filter(r => r.id !== rootIdToIgnore);
+		const newPath = ensureTrailingPathSeparator(path.resolve(d));
 		for (const r of roots) {
-			if (dir.startsWith(r.path) || r.path.startsWith(dir)) {
-				return Promise.reject(new Error('Root path already used'));
+			const existingPath = ensureTrailingPathSeparator(path.resolve(r.path));
+			if (newPath === existingPath) {
+				return Promise.reject(new Error(`Root path is already used by root '${r.name}'`));
+			}
+			if (newPath.startsWith(existingPath)) {
+				return Promise.reject(new Error(`Root path '${d}' is inside an existing root '${r.name}' ('${r.path}')`));
+			}
+			if (existingPath.startsWith(newPath)) {
+				return Promise.reject(new Error(`Root path '${d}' contains an existing root '${r.name}' ('${r.path}')`));
 			}
 		}
 	}
@@ -140,7 +150,7 @@ export class RootWorker extends BaseWorker {
 	async update(orm: Orm, root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<void> {
 		root.name = name;
 		if (root.path !== path) {
-			await RootWorker.validateRootPath(orm, path);
+			await RootWorker.validateRootPath(orm, path, root.id);
 			root.path = path;
 		}
 		root.strategy = strategy;

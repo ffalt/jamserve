@@ -776,7 +776,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					await expect(workerService.root.create({ ...options, path: '.' })).rejects.toThrow('Root Directory must be absolute');
 					await expect(workerService.root.create({ ...options, path: '..' })).rejects.toThrow('Root Directory must be absolute');
 					await expect(workerService.root.create({ ...options, path: './data/' })).rejects.toThrow('Root Directory must be absolute');
-					await expect(workerService.root.create({ ...options, path: mockRoot.path })).rejects.toThrow('Root path already used');
+					await expect(workerService.root.create({ ...options, path: mockRoot.path })).rejects.toThrow(/Root path is already used by root/);
 				});
 
 				it('should create a root', async () => {
@@ -794,9 +794,9 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should not allow already scanned path or parts of path in a new root', async () => {
 					const changes = await workerService.root.create({ ...options, path: '/invalid/test/path/' });
 					expectChanges(changes, {});
-					await expect(workerService.root.create({ ...options, path: '/invalid/test/path/' })).rejects.toThrow('Root path already used');
-					await expect(workerService.root.create({ ...options, path: '/invalid/test/' })).rejects.toThrow('Root path already used');
-					await expect(workerService.root.create({ ...options, path: '/invalid/test/path/other' })).rejects.toThrow('Root path already used');
+					await expect(workerService.root.create({ ...options, path: '/invalid/test/path/' })).rejects.toThrow(/Root path is already used by root/);
+					await expect(workerService.root.create({ ...options, path: '/invalid/test/' })).rejects.toThrow(/contains an existing root/);
+					await expect(workerService.root.create({ ...options, path: '/invalid/test/path/other' })).rejects.toThrow(/is inside an existing root/);
 				});
 			});
 
