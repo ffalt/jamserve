@@ -243,9 +243,10 @@ export class WorkerScan {
 
 	private async scanSubfolders(folder: Folder, dir: ScanDir, result: MatchNode) {
 		const folders = await folder.children.getItems();
+		const folderMap = new Map(folders.map(f => [f.path, f]));
 		for (const subDir of dir.directories) {
 			if (subDir.path !== folder.path) {
-				const subFolder = folders.find(f => f.path === subDir.path);
+				const subFolder = folderMap.get(subDir.path);
 				result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
 			}
 		}
