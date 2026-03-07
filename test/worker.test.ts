@@ -839,19 +839,21 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					expectChanges(changes, {});
 				});
 
-				it('should update a root path', async () => {
-					await fse.mkdir(mediaPath);
+				it('should update a root path and migrate', async () => {
+					const trackID = (await orm.Track.findOneOrFail({ where: { root: mockRoot.id } })).id;
+					await fse.move(mockRoot.path, mediaPath);
 					const changes = await workerService.root.update({ ...options });
-					expectChanges(changes, {
-						foldersNew: 1,
-						tracksRemoved: mockRoot.expected.tracks,
-						artistsRemoved: mockRoot.expected.artists.length,
-						albumsRemoved: mockRoot.expected.albums,
-						foldersRemoved: mockRoot.expected.folders,
-						artworksRemoved: mockRoot.expected.artworks,
-						seriesRemoved: mockRoot.expected.series,
-						genresRemoved: mockRoot.expected.genres
-					});
+					expect(changes.tracks.added.size).toBe(0);
+					expect(changes.tracks.removed.size).toBe(0);
+					const root = await orm.Root.oneOrFailByID(mockRoot.id);
+					expect(root.path).toBe(mediaPath);
+					const folder = await orm.Folder.findOneOrFail({ where: { root: mockRoot.id, level: 0 } });
+					expect(folder.path).toBe(mediaPath);
+					const track = await orm.Track.oneOrFailByID(trackID);
+					expect(track.path.startsWith(mediaPath)).toBe(true);
+					const rescan_changes = await workerService.root.refresh({ rootID: mockRoot.id });
+					expect(rescan_changes.tracks.added.size).toBe(0);
+					expect(rescan_changes.tracks.removed.size).toBe(0);
 				});
 			});
 		});

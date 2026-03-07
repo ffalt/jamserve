@@ -10,6 +10,9 @@ import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
 import { Folder } from '../../../../entity/folder/folder.js';
 import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import path from 'node:path';
+import { logger } from '../../../../utils/logger.js';
+
+const log = logger('RootWorker');
 
 @InRequestScope
 export class RootWorker extends BaseWorker {
@@ -34,35 +37,36 @@ export class RootWorker extends BaseWorker {
 		'/root' // root home directory
 	];
 
-	private static async validateRootPath(orm: Orm, dir: string, rootIdToIgnore?: string): Promise<void> {
+	private static async validateRootPath(orm: Orm, dir: string, rootIdToIgnore?: string): Promise<string> {
 		const d = dir.trim();
 		if (d.startsWith('.')) {
-			return Promise.reject(new Error('Root Directory must be absolute'));
+			throw new Error('Root Directory must be absolute');
 		}
 		if (d.length === 0 || d.includes('*')) {
-			return Promise.reject(new Error('Root Directory invalid'));
+			throw new Error('Root Directory invalid');
 		}
 		// Check against deny-list of sensitive system paths
 		const normalizedPath = d.endsWith('/') ? d.slice(0, -1) : d;
 		for (const deniedPath of RootWorker.DENIED_ROOT_PATHS) {
 			if (normalizedPath === deniedPath || normalizedPath.startsWith(deniedPath + '/')) {
-				return Promise.reject(new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`));
+				throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
 			}
 		}
 		const roots = (await orm.Root.all()).filter(r => r.id !== rootIdToIgnore);
-		const newPath = ensureTrailingPathSeparator(path.resolve(d));
+		const newPath = ensureTrailingPathSeparator(path.isAbsolute(d) ? d : path.resolve(d));
 		for (const r of roots) {
 			const existingPath = ensureTrailingPathSeparator(path.resolve(r.path));
 			if (newPath === existingPath) {
-				return Promise.reject(new Error(`Root path is already used by root '${r.name}'`));
+				throw new Error(`Root path is already used by root '${r.name}'`);
 			}
 			if (newPath.startsWith(existingPath)) {
-				return Promise.reject(new Error(`Root path '${d}' is inside an existing root '${r.name}' ('${r.path}')`));
+				throw new Error(`Root path '${d}' is inside an existing root '${r.name}' ('${r.path}')`);
 			}
 			if (existingPath.startsWith(newPath)) {
-				return Promise.reject(new Error(`Root path '${d}' contains an existing root '${r.name}' ('${r.path}')`));
+				throw new Error(`Root path '${d}' contains an existing root '${r.name}' ('${r.path}')`);
 			}
 		}
+		return newPath;
 	}
 
 	async remove(orm: Orm, root: Root, changes: Changes): Promise<void> {
@@ -141,8 +145,8 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async create(orm: Orm, name: string, path: string, strategy: RootScanStrategy): Promise<Root> {
-		await RootWorker.validateRootPath(orm, path);
-		const root = orm.Root.create({ name, path, strategy });
+		const newPath = await RootWorker.validateRootPath(orm, path);
+		const root = orm.Root.create({ name, path: newPath, strategy });
 		await orm.Root.persistAndFlush(root);
 		return root;
 	}
@@ -150,11 +154,49 @@ export class RootWorker extends BaseWorker {
 	async update(orm: Orm, root: Root, name: string, path: string, strategy: RootScanStrategy): Promise<void> {
 		root.name = name;
 		if (root.path !== path) {
-			await RootWorker.validateRootPath(orm, path, root.id);
-			root.path = path;
+			const newPath = await RootWorker.validateRootPath(orm, path, root.id);
+			const oldPath = ensureTrailingPathSeparator(root.path);
+			root.path = newPath;
+			await this.migrateRootPath(orm, root, oldPath, newPath);
 		}
 		root.strategy = strategy;
 		orm.Root.persistLater(root);
+	}
+
+	private async migrateRootPath(orm: Orm, root: Root, oldPath: string, newPath: string): Promise<void> {
+		log.info(`Migrating root path from ${oldPath} to ${newPath}`);
+		const folders = await orm.Folder.find({ where: { root: root.id } });
+		const tracks = await orm.Track.find({ where: { root: root.id } });
+		const artworks = await orm.Artwork.findFilter({ folderIDs: folders.map(f => f.id) });
+
+		let updatedFolders = 0;
+		for (const folder of folders) {
+			if (folder.path.startsWith(oldPath)) {
+				folder.path = newPath + folder.path.slice(oldPath.length);
+				orm.Folder.persistLater(folder);
+				updatedFolders++;
+			}
+		}
+
+		let updatedTracks = 0;
+		for (const track of tracks) {
+			if (track.path.startsWith(oldPath)) {
+				track.path = newPath + track.path.slice(oldPath.length);
+				orm.Track.persistLater(track);
+				updatedTracks++;
+			}
+		}
+
+		let updatedArtworks = 0;
+		for (const artwork of artworks) {
+			if (artwork.path.startsWith(oldPath)) {
+				artwork.path = newPath + artwork.path.slice(oldPath.length);
+				orm.Artwork.persistLater(artwork);
+				updatedArtworks++;
+			}
+		}
+		log.info(`Migrated ${updatedFolders} folders, ${updatedTracks} tracks, ${updatedArtworks} artworks`);
+		await orm.em.flush();
 	}
 
 	private async getParents(folder: Folder): Promise<Array<Folder>> {
