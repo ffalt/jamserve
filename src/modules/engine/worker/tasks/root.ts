@@ -8,8 +8,9 @@ import { InRequestScope } from 'typescript-ioc';
 import { Orm } from '../../services/orm.service.js';
 import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
 import { Folder } from '../../../../entity/folder/folder.js';
-import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { ensureTrailingPathSeparator, removeTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { logger } from '../../../../utils/logger.js';
 
 const log = logger('RootWorker');
@@ -45,15 +46,22 @@ export class RootWorker extends BaseWorker {
 		if (d.length === 0 || d.includes('*')) {
 			throw new Error('Root Directory invalid');
 		}
+		// Resolve symlinks so that a symlink pointing to a sensitive path is also caught
+		let resolvedDir: string;
+		try {
+			resolvedDir = await fs.realpath(d);
+		} catch {
+			resolvedDir = d;
+		}
 		// Check against deny-list of sensitive system paths
-		const normalizedPath = d.endsWith('/') ? d.slice(0, -1) : d;
+		const normalizedPath = removeTrailingPathSeparator(resolvedDir);
 		for (const deniedPath of RootWorker.DENIED_ROOT_PATHS) {
 			if (normalizedPath === deniedPath || normalizedPath.startsWith(deniedPath + '/')) {
 				throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
 			}
 		}
 		const roots = (await orm.Root.all()).filter(r => r.id !== rootIdToIgnore);
-		const newPath = ensureTrailingPathSeparator(path.isAbsolute(d) ? d : path.resolve(d));
+		const newPath = ensureTrailingPathSeparator(path.isAbsolute(resolvedDir) ? resolvedDir : path.resolve(resolvedDir));
 		for (const r of roots) {
 			const existingPath = ensureTrailingPathSeparator(path.resolve(r.path));
 			if (newPath === existingPath) {
