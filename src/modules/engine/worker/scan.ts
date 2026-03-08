@@ -167,7 +167,7 @@ export class WorkerScan {
 		const name = path.basename(dir.path);
 		const folder = this.orm.Folder.create({
 			level: dir.level,
-			path: dir.path,
+			path: ensureTrailingPathSeparator(dir.path),
 			name,
 			title: name === title ? undefined : title,
 			year,
