@@ -4,7 +4,7 @@ import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 
 @ObjectParametersType()
 export class StreamPathParameters {
-	@ObjectField({ nullable: true, description: 'maximal bitrate if transcoding (in Kbps)', min: 10, max: 480, example: 128 })
+	@ObjectField({ nullable: true, description: 'maximal bitrate if transcoding (in Kbps)', min: 10, max: 320, example: 128 })
 	maxBitRate?: number;
 
 	@ObjectField(() => AudioFormatType, { nullable: true, description: 'format of the audio', example: AudioFormatType.mp3 })
