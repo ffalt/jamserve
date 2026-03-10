@@ -4,7 +4,7 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { pathDeleteIfExists } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Podcast } from './podcast.js';
 import { PodcastStatus } from '../../types/enums.js';
@@ -22,23 +22,24 @@ import { errorToString } from '../../utils/error.js';
 
 const log = logger('PodcastService');
 
-@InRequestScope
+@injectable()
 export class PodcastService {
 	private readonly podcastRefreshDebounce = new DebouncePromises<void>();
-	private readonly podcastsPath: string;
-	@Inject
+	private podcastsPath!: string;
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
-	@Inject
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
-	@Inject
+	@inject(ConfigService)
 	private readonly configService!: ConfigService;
 
-	@Inject
+	@inject(EpisodeService)
 	private readonly episodeService!: EpisodeService;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.podcastsPath = this.configService.getDataPath(['podcasts']);
 	}
 

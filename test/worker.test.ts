@@ -6,12 +6,11 @@ import { WorkerService } from '../src/modules/engine/services/worker.service.js'
 import { ensureTrailingPathSeparator } from '../src/utils/fs-utils.js';
 import { AlbumType, ArtworkImageType, DBObjectType, FolderType, RootScanStrategy } from '../src/types/enums.js';
 import { randomString } from '../src/utils/random.js';
-import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { Folder } from '../src/entity/folder/folder.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Artwork } from '../src/entity/artwork/artwork.js';
-import { Container } from 'typescript-ioc';
 import { describe, jest, expect, afterEach, it, beforeEach } from '@jest/globals';
 
 import {
@@ -55,7 +54,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 		nock.cleanAll();
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name, db);
-		engine = Container.get(EngineService);
+		engine = testContainer.get(EngineService);
 		workerService = engine.io.workerService;
 		await engine.init();
 		await engine.orm.drop();

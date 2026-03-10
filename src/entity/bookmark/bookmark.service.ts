@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Bookmark } from './bookmark.js';
 import { DBObjectType } from '../../types/enums.js';
@@ -8,7 +8,7 @@ import { User } from '../user/user.js';
 import { Op } from 'sequelize';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 
-@InRequestScope
+@injectable()
 export class BookmarkService {
 	async create(orm: Orm, destinationID: string, user: User, position: number, comment: string | undefined): Promise<Bookmark> {
 		let bookmark = await orm.Bookmark.findOne({ where: { user: user.id, position: position, [Op.or]: [{ episode: destinationID }, { track: destinationID }] } });

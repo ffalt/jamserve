@@ -2,17 +2,18 @@ import { durationToMilliseconds, nowMinusMilliseconds } from '../../utils/date-t
 import { Chat } from './chat.js';
 import { SettingsService } from '../settings/settings.service.js';
 import { User } from '../user/user.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 
-@InRequestScope
+@injectable()
 export class ChatService {
-	@Inject
+	@inject(SettingsService)
 	private readonly settingsService!: SettingsService;
 
 	private messages: Array<Chat> = [];
 	private durationMs: number = 0;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.settingsService.registerChangeListener(async () => {
 			this.updateSettings();
 			await this.cleanOld();

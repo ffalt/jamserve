@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import express from 'express';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 
@@ -14,7 +14,7 @@ function getFibonacciBlockDurationMinutes(countConsecutiveOutOfLimits: number): 
 	return Math.min(b, maxBlockDurationMinutes);
 }
 
-@InRequestScope
+@injectable()
 export class RateLimitService {
 	loginLimiterOption = {
 		points: 5, // 5 attempts

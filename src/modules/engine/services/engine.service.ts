@@ -6,7 +6,7 @@ import { ConfigService } from './config.service.js';
 import { JAMSERVE_VERSION } from '../../../version.js';
 import { Orm, OrmService } from './orm.service.js';
 import { WaveformService } from '../../../entity/waveform/waveform.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { RootScanStrategy } from '../../../types/enums.js';
 import { UserService } from '../../../entity/user/user.service.js';
@@ -34,37 +34,91 @@ import { RateLimitService } from './ratelimit.service.js';
 
 const log = logger('Engine');
 
-@InRequestScope
+@injectable()
 export class EngineService {
-	@Inject public artwork!: ArtworkService;
-	@Inject public audio!: AudioModule;
-	@Inject public chat!: ChatService;
-	@Inject public config!: ConfigService;
-	@Inject public download!: DownloadService;
-	@Inject public episode!: EpisodeService;
-	@Inject public folder!: FolderService;
-	@Inject public genre!: GenreService;
-	@Inject public image!: ImageService;
-	@Inject public io!: IoService;
-	@Inject public metadata!: MetaDataService;
-	@Inject public nowPlaying!: NowPlayingService;
-	@Inject public orm!: OrmService;
-	@Inject public playlist!: PlaylistService;
-	@Inject public playQueue!: PlayQueueService;
-	@Inject public podcast!: PodcastService;
-	@Inject public session!: SessionService;
-	@Inject public settings!: SettingsService;
-	@Inject public state!: StateService;
-	@Inject public stats!: StatsService;
-	@Inject public stream!: StreamService;
-	@Inject public track!: TrackService;
-	@Inject public transform!: TransformService;
-	@Inject public user!: UserService;
-	@Inject public waveform!: WaveformService;
-	@Inject public bookmark!: BookmarkService;
-	@Inject public rateLimit!: RateLimitService;
+	@inject(ArtworkService)
+	public artwork!: ArtworkService;
 
-	constructor() {
+	@inject(AudioModule)
+	public audio!: AudioModule;
+
+	@inject(ChatService)
+	public chat!: ChatService;
+
+	@inject(ConfigService)
+	public config!: ConfigService;
+
+	@inject(DownloadService)
+	public download!: DownloadService;
+
+	@inject(EpisodeService)
+	public episode!: EpisodeService;
+
+	@inject(FolderService)
+	public folder!: FolderService;
+
+	@inject(GenreService)
+	public genre!: GenreService;
+
+	@inject(ImageService)
+	public image!: ImageService;
+
+	@inject(IoService)
+	public io!: IoService;
+
+	@inject(MetaDataService)
+	public metadata!: MetaDataService;
+
+	@inject(NowPlayingService)
+	public nowPlaying!: NowPlayingService;
+
+	@inject(OrmService)
+	public orm!: OrmService;
+
+	@inject(PlaylistService)
+	public playlist!: PlaylistService;
+
+	@inject(PlayQueueService)
+	public playQueue!: PlayQueueService;
+
+	@inject(PodcastService)
+	public podcast!: PodcastService;
+
+	@inject(SessionService)
+	public session!: SessionService;
+
+	@inject(SettingsService)
+	public settings!: SettingsService;
+
+	@inject(StateService)
+	public state!: StateService;
+
+	@inject(StatsService)
+	public stats!: StatsService;
+
+	@inject(StreamService)
+	public stream!: StreamService;
+
+	@inject(TrackService)
+	public track!: TrackService;
+
+	@inject(TransformService)
+	public transform!: TransformService;
+
+	@inject(UserService)
+	public user!: UserService;
+
+	@inject(WaveformService)
+	public waveform!: WaveformService;
+
+	@inject(BookmarkService)
+	public bookmark!: BookmarkService;
+
+	@inject(RateLimitService)
+	public rateLimit!: RateLimitService;
+
+	@postConstruct()
+	postConstruct(): void {
 		this.io.registerAfterRefresh((): Promise<void> => this.afterRefresh());
 	}
 

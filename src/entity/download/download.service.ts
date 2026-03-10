@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Episode } from '../episode/episode.js';
 import { Track } from '../track/track.js';
 import { Folder } from '../folder/folder.js';
@@ -17,7 +17,7 @@ import { Artwork } from '../artwork/artwork.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { invalidParameterError, unauthError } from '../../modules/deco/express/express-error.js';
 
-@InRequestScope
+@injectable()
 export class DownloadService {
 	private static async downloadEpisode(episode: Episode, format?: string): Promise<ApiBinaryResult> {
 		if (!episode.path) {

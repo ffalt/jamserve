@@ -7,7 +7,7 @@ import { Root } from '../../../../entity/root/root.js';
 import { Changes } from '../changes.js';
 import { BaseWorker } from './base.js';
 import { Track } from '../../../../entity/track/track.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 import { AudioModule } from '../../../audio/audio.module.js';
 import { TrackTag } from '../../../audio/audio.format.js';
@@ -66,7 +66,7 @@ export class TrackUpdater {
 	}
 }
 
-@InRequestScope
+@injectable()
 export class TrackWorker extends BaseWorker {
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: MediaTagRaw }>, changes: Changes): Promise<void> {
 		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);

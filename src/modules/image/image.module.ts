@@ -12,7 +12,7 @@ import { randomString } from '../../utils/random.js';
 import { AvatarGen } from './image.avatar.js';
 import { ImageResult } from './image.format.js';
 import { ConfigService } from '../engine/services/config.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { ImageFormatType } from '../../types/enums.js';
 import { Jimp, loadFont, VerticalAlign, HorizontalAlign } from 'jimp';
 import { SANS_32_WHITE } from './image.font.js';
@@ -36,16 +36,17 @@ sharp.simd(false);
  * Handles image access/reading/writing/transforming
  */
 
-@InRequestScope
+@injectable()
 export class ImageModule {
 	private readonly format = 'png';
 	private font?: JimpFont;
-	private readonly cache: IDFolderCache<{ size?: number; format?: string }>;
-	private readonly imageCachePath: string;
-	@Inject
+	private cache!: IDFolderCache<{ size?: number; format?: string }>;
+	private imageCachePath!: string;
+	@inject(ConfigService)
 	private readonly configService!: ConfigService;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
 		this.cache = new IDFolderCache<{ size?: number; format?: string }>(
 			this.imageCachePath,

@@ -1,8 +1,8 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Chat as ORMChat } from './chat.js';
 import { Chat } from './chat.model.js';
 
-@InRequestScope
+@injectable()
 export class ChatTransformService {
 	chats(chats: Array<ORMChat>): Array<Chat> {
 		return chats.map(c => {

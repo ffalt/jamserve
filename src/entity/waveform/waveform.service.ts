@@ -6,7 +6,7 @@ import { DBObjectType, WaveformFormatType } from '../../types/enums.js';
 import { Track } from '../track/track.js';
 import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../utils/logger.js';
 import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 
@@ -31,9 +31,9 @@ export interface WaveFormData {
 	data: Array<number>;
 }
 
-@InRequestScope
+@injectable()
 export class WaveformService {
-	@Inject
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
 	async getWaveform(obj: Base, objType: DBObjectType, format?: WaveformFormatType, width?: number): Promise<WaveformResult> {

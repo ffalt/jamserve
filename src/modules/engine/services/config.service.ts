@@ -1,5 +1,5 @@
 import { ThirdPartyConfig, ThirdpartyToolsConfig } from '../../../config/thirdparty.config.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import path from 'node:path';
 import { FirstStartConfig } from '../../../config/firststart.config.js';
 import { getMaxAge, ONE_YEAR_MS } from '../../../utils/max-age.js';
@@ -42,7 +42,7 @@ export interface ENVConfig {
 	db: ENVConfigDB;
 }
 
-@InRequestScope
+@injectable()
 export class ConfigService {
 	env: ENVConfig = {
 		domain: process.env.JAM_DOMAIN ?? 'http://localhost',

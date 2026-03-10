@@ -7,7 +7,7 @@ import fse from 'fs-extra';
 import { OpenAPIObject } from '../src/modules/deco/builder/openapi-helpers.js';
 import supertest from 'supertest';
 import { JAMAPI_URL_VERSION } from '../src/modules/engine/rest/version.js';
-import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { FolderType, RootScanStrategy, UserRole } from '../src/types/enums.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { MockRequests, RequestMock } from './mock/mock.request.js';
@@ -15,7 +15,6 @@ import { ensureTrailingPathSeparator } from '../src/utils/fs-utils.js';
 import path from 'node:path';
 import { buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock } from './mock/mock.root.js';
 import { initTest } from './init.js';
-import { Container, Snapshot } from 'typescript-ioc';
 import { OpenAPISpecObject } from 'openapi-validator';
 import TestAgent from 'supertest/lib/agent.js';
 import { describe, expect, beforeAll, afterAll, it, afterEach } from '@jest/globals';
@@ -40,14 +39,12 @@ describe.each(DBConfigs)('REST with %o', db => {
 	};
 	let mocks: Array<RequestMock>;
 	let validMocks: Array<RequestMock>;
-	let snapshot: Snapshot;
 
 	beforeAll(async () => {
 		nock.cleanAll();
-		snapshot = Container.snapshot();
 		dir = tmp.dirSync();
-		server = Container.get(Server);
 		bindMockConfig(dir.name, db, false);
+		server = testContainer.get(Server);
 		await server.init();
 		await server.engine.init();
 		await server.engine.orm.drop();
@@ -153,7 +150,6 @@ describe.each(DBConfigs)('REST with %o', db => {
 		await server.engine.stop();
 		await server.stop();
 		await fse.remove(dir.name);
-		snapshot.restore();
 	});
 
 	describe('must fail', () => {

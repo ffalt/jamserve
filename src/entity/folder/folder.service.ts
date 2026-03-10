@@ -2,7 +2,7 @@ import { Folder, FolderHealth } from './folder.js';
 import { Artwork } from '../artwork/artwork.js';
 import { ArtworkImageType, FolderType } from '../../types/enums.js';
 import path from 'node:path';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
@@ -14,10 +14,10 @@ export async function getFolderDisplayArtwork(_orm: Orm, folder: Folder): Promis
 	return items.find(a => a.types.includes(search));
 }
 
-@InRequestScope
+@injectable()
 export class FolderService {
 	readonly checker = new FolderRulesChecker();
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
 	async collectFolderPath(folder?: Folder): Promise<Array<Folder>> {

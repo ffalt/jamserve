@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Artist } from './artist.js';
 import { MUSICBRAINZ_VARIOUS_ARTISTS_ID } from '../../types/consts.js';
 import { Folder } from '../folder/folder.js';
@@ -7,9 +7,9 @@ import { FolderType } from '../../types/enums.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
-@InRequestScope
+@injectable()
 export class ArtistService {
-	@Inject
+	@inject(FolderService)
 	private readonly folderService!: FolderService;
 
 	canHaveArtistImage(artist: Artist): boolean {

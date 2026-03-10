@@ -7,7 +7,7 @@ import { MetadataServiceExtendedInfo } from './metadata.service.extended-info.js
 import { MetadataServiceSimilarArtists } from './metadata.service.similar-artists.js';
 import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks.js';
 import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Track } from '../track/track.js';
@@ -27,13 +27,13 @@ import { Tag } from '../tag/tag.js';
 
 const log = logger('Metadata');
 
-@InRequestScope
+@injectable()
 export class MetaDataService {
 	extInfo = new MetadataServiceExtendedInfo(this);
 	similarArtists = new MetadataServiceSimilarArtists(this);
 	similarTracks = new MetadataServiceSimilarTracks(this);
 	topTracks = new MetadataServiceTopTracks(this);
-	@Inject
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
 	private static async addToStore(orm: Orm, name: string, dataType: MetaDataType, data: string): Promise<void> {

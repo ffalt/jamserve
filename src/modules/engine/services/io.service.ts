@@ -3,7 +3,7 @@ import { WorkerService } from './worker.service.js';
 import { OrmService } from './orm.service.js';
 import { AdminChangeQueueInfo, IoRequest, RootStatus, WorkerRequestMode } from './io/io.types.js';
 import { WorkerRequestParameters } from './worker/worker.types.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { IoCommandsArtwork } from './io/io.commands.artwork.js';
 import { IoCommandsFolder } from './io/io.commands.folder.js';
@@ -16,12 +16,12 @@ const log = logger('IO');
 /*
 	The IO Service queues the requests coming from REST & Services, the actual work is done through WorkerService
  */
-@InRequestScope
+@injectable()
 export class IoService {
-	@Inject
+	@inject(OrmService)
 	public readonly orm!: OrmService;
 
-	@Inject
+	@inject(WorkerService)
 	public readonly workerService!: WorkerService;
 
 	public readonly artwork = new IoCommandsArtwork(this);

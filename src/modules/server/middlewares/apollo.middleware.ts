@@ -1,6 +1,6 @@
 import { OrmService } from '../../engine/services/orm.service.js';
 import { EngineService } from '../../engine/services/engine.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Context } from './apollo.context.js';
 import express from 'express';
 import { logger } from '../../../utils/logger.js';
@@ -195,10 +195,14 @@ function formatGraphQLFormatError(
 	return formattedError;
 }
 
-@InRequestScope
+@injectable()
 export class ApolloMiddleware {
-	@Inject private readonly orm!: OrmService;
-	@Inject private readonly engine!: EngineService;
+	@inject(OrmService)
+	private readonly orm!: OrmService;
+
+	@inject(EngineService)
+	private readonly engine!: EngineService;
+
 	private schema!: GraphQLSchema;
 
 	async middleware(): Promise<express.RequestHandler> {

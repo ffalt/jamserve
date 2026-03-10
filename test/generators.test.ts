@@ -4,10 +4,9 @@ import tmp from 'tmp';
 import yauzl, { Entry, ZipFile } from 'yauzl';
 import fse from 'fs-extra';
 import supertest from 'supertest';
-import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { initTest } from './init.js';
-import { Container, Snapshot } from 'typescript-ioc';
 import TestAgent from 'supertest/lib/agent.js';
 import { describe, it, beforeAll, afterAll } from '@jest/globals';
 
@@ -104,14 +103,11 @@ describe('Generators', () => {
 	let server: Server;
 	let dir: tmp.DirResult;
 	let request: TestAgent<supertest.Test>;
-	let snapshot: Snapshot;
-
 	beforeAll(async () => {
 		nock.cleanAll();
-		snapshot = Container.snapshot();
 		dir = tmp.dirSync();
-		server = Container.get(Server);
 		bindMockConfig(dir.name, DBConfigs.at(0)!, false);
+		server = testContainer.get(Server);
 		await server.init();
 		await server.engine.init();
 		await server.engine.orm.drop();
@@ -124,7 +120,6 @@ describe('Generators', () => {
 		await server.engine.stop();
 		await server.stop();
 		await fse.remove(dir.name);
-		snapshot.restore();
 	});
 
 	describe('must download', () => {

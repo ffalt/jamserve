@@ -5,7 +5,7 @@ import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stre
 import { fileSuffix } from '../../utils/fs-utils.js';
 import { Episode } from '../episode/episode.js';
 import { Track } from '../track/track.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { Base } from '../base/base.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
@@ -17,9 +17,9 @@ export interface StreamOptions {
 	format?: string;
 }
 
-@InRequestScope
+@injectable()
 export class StreamService {
-	@Inject
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
 	async streamFile(filename: string, id: string, sourceFormat?: string, options?: StreamOptions): Promise<ApiBinaryResult> {

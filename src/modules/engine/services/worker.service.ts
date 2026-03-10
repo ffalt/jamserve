@@ -2,28 +2,28 @@ import { ArtworkWorker } from '../worker/tasks/artwork.js';
 import { FolderWorker } from '../worker/tasks/folder.js';
 import { RootWorker } from '../worker/tasks/root.js';
 import { TrackWorker } from '../worker/tasks/track.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { WorkerCommandsFolder } from './worker/worker.commands.folder.js';
 import { WorkerCommandsArtwork } from './worker/worker.commands.artwork.js';
 import { WorkerCommandsRoot } from './worker/worker.commands.root.js';
 import { WorkerCommandsTrack } from './worker/worker.commands.track.js';
 import { ChangesWorker } from '../worker/changes-worker.js';
 
-@InRequestScope
+@injectable()
 export class WorkerService {
-	@Inject
+	@inject(ArtworkWorker)
 	public readonly artworkWorker!: ArtworkWorker;
 
-	@Inject
+	@inject(TrackWorker)
 	public readonly trackWorker!: TrackWorker;
 
-	@Inject
+	@inject(FolderWorker)
 	public readonly folderWorker!: FolderWorker;
 
-	@Inject
+	@inject(RootWorker)
 	public readonly rootWorker!: RootWorker;
 
-	@Inject
+	@inject(ChangesWorker)
 	public readonly changes!: ChangesWorker;
 
 	public readonly folder = new WorkerCommandsFolder(this);

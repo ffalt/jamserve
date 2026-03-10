@@ -1,8 +1,10 @@
 import { ConfigService, ENVConfig, ENVConfigDB } from '../../src/modules/engine/services/config.service.js';
 import path from 'node:path';
 import { ThirdPartyConfig } from '../../src/config/thirdparty.config.js';
-import { Container, Scope } from 'typescript-ioc';
+import { Container, injectable } from 'inversify';
 import { OrmService } from '../../src/modules/engine/services/orm.service.js';
+
+export let testContainer: Container;
 
 export const DBConfigs: Array<ENVConfigDB> = [
 	{ dialect: 'sqlite', name: 'jamtest' }
@@ -13,6 +15,7 @@ if (!process.env.DISABLE_POSTGRES_TEST) {
 }
 
 export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boolean = true): void {
+	@injectable()
 	class MockConfigService implements ConfigService {
 		env: ENVConfig = {
 			domain: 'http://localhost:4141',
@@ -74,6 +77,6 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		}
 	}
 
-	Container.bind(ConfigService).to(MockConfigService);
-	Container.bind(OrmService).scope(Scope.Request);
+	testContainer = new Container({ defaultScope: 'Singleton', autoBindInjectable: true });
+	testContainer.bind<ConfigService>(ConfigService).to(MockConfigService).inSingletonScope();
 }

@@ -1,11 +1,12 @@
-import { Inject } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { FolderService } from '../folder/folder.service.js';
 import { Root } from './root.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
+@injectable()
 export class RootService {
-	@Inject
+	@inject(FolderService)
 	folderService!: FolderService;
 
 	async getImage(orm: Orm, root: Root, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {

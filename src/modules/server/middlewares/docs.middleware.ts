@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import express from 'express';
 import { ApolloMiddleware } from './apollo.middleware.js';
 import path from 'node:path';
@@ -10,9 +10,10 @@ import { buildSubsonicOpenApi } from '../../subsonic/builder/openapi.js';
 import RateLimit from 'express-rate-limit';
 import { ConfigService } from '../../engine/services/config.service.js';
 
-@InRequestScope
+@injectable()
 export class DocsMiddleware {
-	@Inject private readonly apollo!: ApolloMiddleware;
+	@inject(ApolloMiddleware)
+	private readonly apollo!: ApolloMiddleware;
 
 	getOpenApiSchema(): string {
 		const openapi = buildOpenApi();

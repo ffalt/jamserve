@@ -1,6 +1,6 @@
 import express from 'express';
 import { UserRole } from '../../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { RestControllers } from '../../engine/rest/controllers.js';
 import { ConfigService } from '../../engine/services/config.service.js';
@@ -16,9 +16,9 @@ const log = logger('REST');
 
 registerRestEnums();
 
-@InRequestScope
+@injectable()
 export class RestMiddleware {
-	@Inject
+	@inject(ConfigService)
 	readonly configService!: ConfigService;
 
 	middleware(): express.Router {

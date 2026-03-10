@@ -4,13 +4,14 @@ import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
 import { AudioModule } from '../../../audio/audio.module.js';
 import { Root } from '../../../../entity/root/root.js';
-import { Inject } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 
+@injectable()
 export class BaseWorker {
-	@Inject
+	@inject(AudioModule)
 	protected audioModule!: AudioModule;
 
-	@Inject
+	@inject(ImageModule)
 	protected imageModule!: ImageModule;
 
 	async renameFile(dir: string, oldName: string, newName: string): Promise<string> {

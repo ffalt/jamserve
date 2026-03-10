@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { Folder } from '../folder/folder.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
@@ -26,36 +26,36 @@ import { ArtworkService } from '../artwork/artwork.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
-@InRequestScope
+@injectable()
 export class ImageService {
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
-	@Inject
+	@inject(PodcastService)
 	private readonly podcastService!: PodcastService;
 
-	@Inject
+	@inject(TrackService)
 	private readonly trackService!: TrackService;
 
-	@Inject
+	@inject(FolderService)
 	private readonly folderService!: FolderService;
 
-	@Inject
+	@inject(UserService)
 	private readonly userService!: UserService;
 
-	@Inject
+	@inject(RootService)
 	private readonly rootService!: RootService;
 
-	@Inject
+	@inject(SeriesService)
 	private readonly seriesService!: SeriesService;
 
-	@Inject
+	@inject(ArtistService)
 	private readonly artistService!: ArtistService;
 
-	@Inject
+	@inject(AlbumService)
 	private readonly albumService!: AlbumService;
 
-	@Inject
+	@inject(ArtworkService)
 	private readonly artworkService!: ArtworkService;
 
 	private static getCoverArtTextFolder(folder: Folder): string {

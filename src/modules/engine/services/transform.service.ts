@@ -18,7 +18,7 @@ import { Artist } from '../../../entity/artist/artist.model.js';
 import { Album as ORMAlbum } from '../../../entity/album/album.js';
 import { Album } from '../../../entity/album/album.model.js';
 import { Orm } from './orm.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { MediaBase } from '../../../entity/tag/tag.model.js';
 import { Folder } from '../../../entity/folder/folder.model.js';
 import { Artwork } from '../../../entity/artwork/artwork.model.js';
@@ -60,26 +60,61 @@ import { BaseTransformService } from '../../../entity/base/base.transform.js';
 import { SessionTransformService } from '../../../entity/session/session.transform.js';
 import { UserTransformService } from '../../../entity/user/user.transform.js';
 
-@InRequestScope
+@injectable()
 export class TransformService {
-	@Inject readonly Base!: BaseTransformService;
-	@Inject readonly Chat!: ChatTransformService;
-	@Inject readonly Genre!: GenreTransformService;
-	@Inject readonly Radio!: RadioTransformService;
-	@Inject readonly Root!: RootTransformService;
-	@Inject readonly Podcast!: PodcastTransformService;
-	@Inject readonly Episode!: EpisodeTransformService;
-	@Inject readonly Folder!: FolderTransformService;
-	@Inject readonly Track!: TrackTransformService;
-	@Inject readonly Series!: SeriesTransformService;
-	@Inject readonly Artist!: ArtistTransformService;
-	@Inject readonly Album!: AlbumTransformService;
-	@Inject readonly Artwork!: ArtworkTransformService;
-	@Inject readonly Playlist!: PlaylistTransformService;
-	@Inject readonly Bookmark!: BookmarkTransformService;
-	@Inject readonly PlayQueue!: PlayQueueTransformService;
-	@Inject readonly Session!: SessionTransformService;
-	@Inject readonly User!: UserTransformService;
+	@inject(BaseTransformService)
+	readonly Base!: BaseTransformService;
+
+	@inject(ChatTransformService)
+	readonly Chat!: ChatTransformService;
+
+	@inject(GenreTransformService)
+	readonly Genre!: GenreTransformService;
+
+	@inject(RadioTransformService)
+	readonly Radio!: RadioTransformService;
+
+	@inject(RootTransformService)
+	readonly Root!: RootTransformService;
+
+	@inject(PodcastTransformService)
+	readonly Podcast!: PodcastTransformService;
+
+	@inject(EpisodeTransformService)
+	readonly Episode!: EpisodeTransformService;
+
+	@inject(FolderTransformService)
+	readonly Folder!: FolderTransformService;
+
+	@inject(TrackTransformService)
+	readonly Track!: TrackTransformService;
+
+	@inject(SeriesTransformService)
+	readonly Series!: SeriesTransformService;
+
+	@inject(ArtistTransformService)
+	readonly Artist!: ArtistTransformService;
+
+	@inject(AlbumTransformService)
+	readonly Album!: AlbumTransformService;
+
+	@inject(ArtworkTransformService)
+	readonly Artwork!: ArtworkTransformService;
+
+	@inject(PlaylistTransformService)
+	readonly Playlist!: PlaylistTransformService;
+
+	@inject(BookmarkTransformService)
+	readonly Bookmark!: BookmarkTransformService;
+
+	@inject(PlayQueueTransformService)
+	readonly PlayQueue!: PlayQueueTransformService;
+
+	@inject(SessionTransformService)
+	readonly Session!: SessionTransformService;
+
+	@inject(UserTransformService)
+	readonly User!: UserTransformService;
 
 	async album(orm: Orm, o: ORMAlbum, albumParameters: IncludesAlbumParameters, albumChildrenParameters: IncludesAlbumChildrenParameters, trackParameters: IncludesTrackParameters, artistIncludes: IncludesArtistParameters, user: User): Promise<Album> {
 		return {

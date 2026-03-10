@@ -1,10 +1,10 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Bookmark as ORMBookmark } from './bookmark.js';
 import { BookmarkBase } from './bookmark.model.js';
 
-@InRequestScope
+@injectable()
 export class BookmarkTransformService extends BaseTransformService {
 	async bookmarkBase(_orm: Orm, o: ORMBookmark): Promise<BookmarkBase> {
 		return {

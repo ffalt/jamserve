@@ -1,7 +1,7 @@
 import { Settings } from './settings.js';
 import { JAMSERVE_VERSION } from '../../version.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { AdminSettings } from '../admin/admin.js';
 import { logger } from '../../utils/logger.js';
 
@@ -25,7 +25,7 @@ export const defaultEngineSettings: AdminSettings = {
 
 export type SettingChangesListener = () => Promise<void>;
 
-@InRequestScope
+@injectable()
 export class SettingsService {
 	public settings: AdminSettings = { ...defaultEngineSettings };
 	private settingsChangeListeners: Array<SettingChangesListener> = [];

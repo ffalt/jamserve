@@ -1,6 +1,6 @@
 import { Track } from '../track/track.js';
 import { Playlist } from './playlist.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { PlaylistMutateParameters } from './playlist.parameters.js';
 import { User } from '../user/user.js';
@@ -9,7 +9,7 @@ import { Episode } from '../episode/episode.js';
 import { Base } from '../base/base.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 
-@InRequestScope
+@injectable()
 export class PlaylistService {
 	private static async getDuration(media: { obj: Base; objType: DBObjectType }): Promise<number> {
 		switch (media.objType) {

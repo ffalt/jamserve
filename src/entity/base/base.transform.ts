@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { IndexResult, IndexResultGroup } from './base.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { State as ORMState } from '../state/state.js';
@@ -7,7 +7,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { Tag as ORMTag } from '../tag/tag.js';
 import { MediaInfo, MediaTag } from '../tag/tag.model.js';
 
-@InRequestScope
+@injectable()
 export class BaseTransformService {
 	protected async index<T, Y>(result: IndexResult<IndexResultGroup<T>>, mapItem: (item: T) => Promise<Y>): Promise<{
 		lastModified: number;

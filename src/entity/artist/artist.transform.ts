@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Artist as ORMArtist } from './artist.js';
@@ -10,12 +10,12 @@ import { IndexResult, IndexResultGroup } from '../base/base.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 
-@InRequestScope
+@injectable()
 export class ArtistTransformService extends BaseTransformService {
-	@Inject
+	@inject(MetaDataService)
 	public metaData!: MetaDataService;
 
-	@Inject
+	@inject(GenreTransformService)
 	public Genre!: GenreTransformService;
 
 	async artistBases(orm: Orm, list: Array<ORMArtist>, artistParameters: IncludesArtistParameters, user: User): Promise<Array<ArtistBase>> {

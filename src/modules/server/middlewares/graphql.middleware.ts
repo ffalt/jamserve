@@ -1,5 +1,5 @@
 import express from 'express';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { ApolloMiddleware } from './apollo.middleware.js';
@@ -8,12 +8,12 @@ import RateLimit from 'express-rate-limit';
 
 const log = logger('Graphql');
 
-@InRequestScope
+@injectable()
 export class GraphqlMiddleware {
-	@Inject
+	@inject(ConfigService)
 	readonly configService!: ConfigService;
 
-	@Inject
+	@inject(ApolloMiddleware)
 	readonly apollo!: ApolloMiddleware;
 
 	async playground(): Promise<express.Router> {

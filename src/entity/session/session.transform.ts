@@ -1,10 +1,10 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Session as ORMSession } from './session.js';
 import { UserSession } from './user-session.model.js';
 import { parseAgent } from './session.utils.js';
 
-@InRequestScope
+@injectable()
 export class SessionTransformService {
 	userSession(_orm: Orm, o: ORMSession): UserSession {
 		const ua = parseAgent(o);

@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Episode as ORMEpisode, EpisodeChapter, EpisodeEnclosure } from './episode.js';
@@ -9,12 +9,12 @@ import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums.js
 import { EpisodeService } from './episode.service.js';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 
-@InRequestScope
+@injectable()
 export class EpisodeTransformService extends BaseTransformService {
-	@Inject
+	@inject(EpisodeService)
 	public episodeService!: EpisodeService;
 
-	@Inject
+	@inject(AudioModule)
 	public audioModule!: AudioModule;
 
 	async episodeBase(orm: Orm, o: ORMEpisode, episodeParameters: IncludesEpisodeParameters, user: User): Promise<EpisodeBase> {

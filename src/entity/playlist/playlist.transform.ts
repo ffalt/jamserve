@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Playlist as ORMPlaylist } from './playlist.js';
@@ -8,7 +8,7 @@ import { PlaylistBase, PlaylistIndex } from './playlist.model.js';
 import { DBObjectType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
 
-@InRequestScope
+@injectable()
 export class PlaylistTransformService extends BaseTransformService {
 	async playlistBase(orm: Orm, o: ORMPlaylist, playlistParameters: IncludesPlaylistParameters, user: User): Promise<PlaylistBase> {
 		const u = await o.user.getOrFail();

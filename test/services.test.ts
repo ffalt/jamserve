@@ -1,14 +1,13 @@
 import { EngineService } from '../src/modules/engine/services/engine.service.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import { bindMockConfig, DBConfigs } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { initTest } from './init.js';
 import { MockFeed1 } from './mock/mock.rss-feed.js';
 import { Podcast } from '../src/entity/podcast/podcast.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Orm } from '../src/modules/engine/services/orm.service.js';
-import { Container, Snapshot } from 'typescript-ioc';
 import { PodcastStatus } from '../src/types/enums.js';
 import nock from 'nock';
 import { hashMD5 } from '../src/utils/md5.js';
@@ -30,17 +29,15 @@ describe.each(DBConfigs)('Services with %o', db => {
 	let engine: EngineService;
 	let orm: Orm;
 	let dir: tmp.DirResult;
-	let snapshot: Snapshot;
 	let user: User;
 
 	beforeEach(async () => {
 		nock.cleanAll();
 
-		snapshot = Container.snapshot();
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name, db);
 
-		engine = Container.get(EngineService);
+		engine = testContainer.get(EngineService);
 		await engine.init();
 		await engine.orm.drop();
 		await engine.start();
@@ -52,7 +49,6 @@ describe.each(DBConfigs)('Services with %o', db => {
 	afterEach(async () => {
 		await engine.stop();
 		await fse.remove(dir.name);
-		snapshot.restore();
 	});
 
 	describe('userService', () => {

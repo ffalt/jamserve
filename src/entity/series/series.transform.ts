@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Series as ORMSeries } from './series.js';
@@ -9,9 +9,9 @@ import { DBObjectType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
 
-@InRequestScope
+@injectable()
 export class SeriesTransformService extends BaseTransformService {
-	@Inject
+	@inject(MetaDataService)
 	public metaData!: MetaDataService;
 
 	async seriesBases(orm: Orm, list: Array<ORMSeries>, seriesParameters: IncludesSeriesParameters, user: User): Promise<Array<SeriesBase>> {

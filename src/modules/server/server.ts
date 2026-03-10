@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import http from 'node:http';
 import express from 'express';
 import { EngineService } from '../engine/services/engine.service.js';
@@ -22,27 +22,27 @@ import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 
 const log = logger('Server');
 
-@InRequestScope
+@injectable()
 export class Server {
-	@Inject
+	@inject(EngineService)
 	engine!: EngineService;
 
-	@Inject
+	@inject(GraphqlMiddleware)
 	graphql!: GraphqlMiddleware;
 
-	@Inject
+	@inject(RestMiddleware)
 	rest!: RestMiddleware;
 
-	@Inject
+	@inject(SubsonicMiddleware)
 	subsonic!: SubsonicMiddleware;
 
-	@Inject
+	@inject(ConfigService)
 	configService!: ConfigService;
 
-	@Inject
+	@inject(SessionService)
 	sessionService!: SessionService;
 
-	@Inject
+	@inject(DocsMiddleware)
 	docs!: DocsMiddleware;
 
 	app!: express.Application;

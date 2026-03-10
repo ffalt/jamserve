@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Genre as ORMGenre } from './genre.js';
 import { IncludesGenreParameters } from './genre.parameters.js';
@@ -8,7 +8,7 @@ import { DBObjectType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
 import { BaseTransformService } from '../base/base.transform.js';
 
-@InRequestScope
+@injectable()
 export class GenreTransformService extends BaseTransformService {
 	async genreBases(orm: Orm, list: Array<ORMGenre>, _parameters: IncludesGenreParameters, user: User): Promise<Array<GenreBase>> {
 		return await Promise.all(list.map(g => this.genreBase(orm, g, {}, user)));

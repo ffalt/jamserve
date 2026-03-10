@@ -1,7 +1,7 @@
 import { OrmService } from '../../modules/engine/services/orm.service.js';
 import { Session } from './session.js';
 import { SessionMode } from '../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Op } from 'sequelize';
 import { SessionData } from '../../types/express.js';
 import { randomString } from '../../utils/random.js';
@@ -10,9 +10,9 @@ export interface SessionNotifyEventObject {
 	clearCache(): Promise<void>;
 }
 
-@InRequestScope
+@injectable()
 export class SessionService {
-	@Inject
+	@inject(OrmService)
 	private readonly ormService!: OrmService;
 
 	private readonly events: Array<SessionNotifyEventObject> = [];

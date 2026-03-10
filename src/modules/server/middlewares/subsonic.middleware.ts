@@ -1,5 +1,5 @@
 import express from 'express';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { subsonicRouter } from '../../subsonic/builder/express.js';
@@ -15,9 +15,11 @@ import RateLimit from 'express-rate-limit';
 
 const log = logger('Subsonic');
 
-@InRequestScope
+@injectable()
 export class SubsonicMiddleware {
-	@Inject configService!: ConfigService;
+	@inject(ConfigService)
+	configService!: ConfigService;
+
 	controllers = SubsonicControllers;
 
 	middleware(): express.Router {

@@ -2,7 +2,7 @@ import { Episode } from '../episode/episode.js';
 import { Track } from '../track/track.js';
 import { User } from '../user/user.js';
 import { NowPlaying } from './nowplaying.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { DBObjectType } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
@@ -14,10 +14,10 @@ const log = logger('NowPlayingService');
 /** Entries older than this are considered stale and removed automatically. */
 const NOW_PLAYING_TTL_MS = 120 * 60 * 1000; // 120 minutes
 
-@InRequestScope
+@injectable()
 export class NowPlayingService {
 	private playing: Array<NowPlaying> = [];
-	@Inject
+	@inject(StateService)
 	private readonly stateService!: StateService;
 
 	private pruneStale(): void {

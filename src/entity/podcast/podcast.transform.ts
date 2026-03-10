@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Podcast as ORMPodcast } from './podcast.js';
@@ -9,9 +9,9 @@ import { DBObjectType, PodcastStatus } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
 import { PodcastService } from './podcast.service.js';
 
-@InRequestScope
+@injectable()
 export class PodcastTransformService extends BaseTransformService {
-	@Inject
+	@inject(PodcastService)
 	public podcastService!: PodcastService;
 
 	async podcastBase(orm: Orm, o: ORMPodcast, podcastParameters: IncludesPodcastParameters, user: User): Promise<PodcastBase> {

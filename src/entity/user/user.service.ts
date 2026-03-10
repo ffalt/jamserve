@@ -3,7 +3,7 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
 import { SessionMode, UserRole } from '../../types/enums.js';
 import { JWTPayload } from '../../utils/jwt.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import fse from 'fs-extra';
@@ -18,17 +18,18 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 import { hashMD5 } from '../../utils/md5.js';
 import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 
-@InRequestScope
+@injectable()
 export class UserService {
-	@Inject
+	@inject(ConfigService)
 	private readonly configService!: ConfigService;
 
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
-	private readonly userAvatarPath: string;
+	private userAvatarPath!: string;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.userAvatarPath = this.configService.getDataPath(['images']);
 	}
 
@@ -229,14 +230,18 @@ export class UserService {
 		return user;
 	}
 
-	public async authSubsonicToken(orm: Orm, name?: string, token?: string, salt?: string): Promise<User> {
-		if (!name?.trim().length) {
+	public async authSubsonicToken(orm: Orm, name?: string | Array<string>, token?: string | Array<string>, salt?: string | Array<string>): Promise<User> {
+		// Normalize array params to first element (HTTP params can be arrays)
+		const normalizedName = Array.isArray(name) ? name.at(0) : name;
+		const normalizedToken = Array.isArray(token) ? token.at(0) : token;
+		const normalizedSalt = Array.isArray(salt) ? salt.at(0) : salt;
+		if (!normalizedName?.trim().length) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
-		if (!token?.length) {
+		if (!normalizedToken?.length) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
-		const user = await orm.User.findOne({ where: { name } });
+		const user = await orm.User.findOne({ where: { name: normalizedName } });
 		if (!user) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
@@ -244,8 +249,8 @@ export class UserService {
 		if (!session) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
-		const t = hashMD5(`${session.jwth}${salt}`);
-		if (token.length !== t.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(t))) {
+		const t = hashMD5(`${session.jwth}${normalizedSalt}`);
+		if (normalizedToken.length !== t.length || !crypto.timingSafeEqual(Buffer.from(normalizedToken), Buffer.from(t))) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
 		}
 		return user;

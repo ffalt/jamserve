@@ -1,17 +1,17 @@
 import { Folder } from '../folder/folder.js';
 import { Album } from './album.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
-@InRequestScope
+@injectable()
 export class AlbumService {
-	@Inject
+	@inject(TrackService)
 	private readonly trackService!: TrackService;
 
-	@Inject
+	@inject(FolderService)
 	private readonly folderService!: FolderService;
 
 	private static async getAlbumFolder(album: Album): Promise<Folder | undefined> {

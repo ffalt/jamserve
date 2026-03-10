@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { BaseTransformService } from '../base/base.transform.js';
 import { User } from '../user/user.js';
@@ -7,9 +7,9 @@ import { IncludesRootParameters } from './root.parameters.js';
 import { Root, RootUpdateStatus } from './root.model.js';
 import { IoService } from '../../modules/engine/services/io.service.js';
 
-@InRequestScope
+@injectable()
 export class RootTransformService extends BaseTransformService {
-	@Inject
+	@inject(IoService)
 	private readonly ioService!: IoService;
 
 	async root(_orm: Orm, o: ORMRoot, _parameters: IncludesRootParameters, user: User): Promise<Root> {

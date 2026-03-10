@@ -1,6 +1,6 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 
-@InRequestScope
+@injectable()
 export class GenreService {
 
 }

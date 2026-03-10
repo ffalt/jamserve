@@ -1,13 +1,13 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Series } from './series.js';
 import { FolderService } from '../folder/folder.service.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { FolderType } from '../../types/enums.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
-@InRequestScope
+@injectable()
 export class SeriesService {
-	@Inject
+	@inject(FolderService)
 	folderService!: FolderService;
 
 	async getImage(orm: Orm, series: Series, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {

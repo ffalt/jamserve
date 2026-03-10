@@ -6,7 +6,7 @@ import { logger } from '../../utils/logger.js';
 import { trackTagToRawTag } from '../../modules/audio/metadata.js';
 import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { FolderService } from '../folder/folder.service.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
@@ -16,19 +16,20 @@ import { MediaTagRaw } from '../tag/tag.model.js';
 
 const log = logger('TrackService');
 
-@InRequestScope
+@injectable()
 export class TrackService {
-	readonly checker: TrackRulesChecker;
-	@Inject
+	checker!: TrackRulesChecker;
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
-	@Inject
+	@inject(FolderService)
 	private readonly folderService!: FolderService;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.checker = new TrackRulesChecker(this.audioModule);
 	}
 

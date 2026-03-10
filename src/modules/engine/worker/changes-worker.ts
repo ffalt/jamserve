@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseWorker } from './tasks/base.js';
 import { Orm, OrmService } from '../services/orm.service.js';
 import { Root } from '../../../entity/root/root.js';
@@ -10,9 +10,9 @@ import { formatElapsedDuration } from '../../../utils/date-time.js';
 
 const log = logger('IO.Changes');
 
-@InRequestScope
+@injectable()
 export class ChangesWorker extends BaseWorker {
-	@Inject
+	@inject(OrmService)
 	ormService!: OrmService;
 
 	async start(rootID: string): Promise<{ changes: Changes; orm: Orm; root: Root }> {

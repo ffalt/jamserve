@@ -4,7 +4,7 @@ import { DirScanner } from '../../../../utils/scan-dir.js';
 import { ObjLoadTrackMatch, OnDemandTrackMatch, WorkerScan } from '../scan.js';
 import { Changes } from '../changes.js';
 import { BaseWorker } from './base.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
 import { Folder } from '../../../../entity/folder/folder.js';
@@ -15,7 +15,7 @@ import { logger } from '../../../../utils/logger.js';
 
 const log = logger('RootWorker');
 
-@InRequestScope
+@injectable()
 export class RootWorker extends BaseWorker {
 	// System directories that must not be used as media roots
 	private static readonly DENIED_ROOT_PATHS = [

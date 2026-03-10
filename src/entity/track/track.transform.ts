@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { User } from '../user/user.js';
 import { DBObjectType, JamObjectType } from '../../types/enums.js';
@@ -9,12 +9,12 @@ import { TrackBase } from './track.model.js';
 import { TrackService } from './track.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 
-@InRequestScope
+@injectable()
 export class TrackTransformService extends BaseTransformService {
-	@Inject
+	@inject(TrackService)
 	public trackService!: TrackService;
 
-	@Inject
+	@inject(GenreTransformService)
 	public Genre!: GenreTransformService;
 
 	async trackBases(orm: Orm, list: Array<ORMTrack>, trackParameters: IncludesTrackParameters, user: User): Promise<Array<TrackBase>> {

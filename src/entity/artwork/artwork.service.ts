@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
 import { ArtworkImageType } from '../../types/enums.js';
 import { Folder } from '../folder/folder.js';
@@ -9,12 +9,12 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ImageResult } from '../../modules/image/image.format.js';
 
-@InRequestScope
+@injectable()
 export class ArtworkService {
-	@Inject
+	@inject(IoService)
 	private readonly ioService!: IoService;
 
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
 	async createByUrl(folder: Folder, url: string, types: Array<ArtworkImageType>): Promise<AdminChangeQueueInfo> {

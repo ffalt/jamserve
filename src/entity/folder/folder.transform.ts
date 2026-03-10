@@ -1,4 +1,4 @@
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Folder as ORMFolder } from './folder.js';
@@ -13,12 +13,12 @@ import { ExtendedInfo } from '../metadata/metadata.model.js';
 import { GenreBase } from '../genre/genre.model.js';
 import { FolderBase, FolderParent, FolderTag } from './folder-base.model.js';
 
-@InRequestScope
+@injectable()
 export class FolderTransformService extends BaseTransformService {
-	@Inject
+	@inject(MetaDataService)
 	public metaData!: MetaDataService;
 
-	@Inject
+	@inject(GenreTransformService)
 	public Genre!: GenreTransformService;
 
 	async folderBases(orm: Orm, list: Array<ORMFolder>, folderParameters: IncludesFolderParameters, user: User): Promise<Array<FolderBase>> {

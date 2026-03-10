@@ -1,4 +1,4 @@
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Artwork as ORMArtwork } from './artwork.js';
@@ -7,7 +7,7 @@ import { User } from '../user/user.js';
 import { ArtworkBase } from './artwork.model.js';
 import { DBObjectType } from '../../types/enums.js';
 
-@InRequestScope
+@injectable()
 export class ArtworkTransformService extends BaseTransformService {
 	async artworkBases(orm: Orm, list: Array<ORMArtwork>, artworkParameters: IncludesArtworkParameters, user: User): Promise<Array<ArtworkBase>> {
 		return await Promise.all(list.map(t => this.artworkBase(orm, t, artworkParameters, user)));

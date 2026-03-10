@@ -6,7 +6,7 @@ import { downloadFile } from '../../utils/download.js';
 import { SupportedAudioFormat } from '../../utils/filetype.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Episode, EpisodeEnclosure } from './episode.js';
@@ -17,20 +17,21 @@ import { errorToString } from '../../utils/error.js';
 
 const log = logger('EpisodeService');
 
-@InRequestScope
+@injectable()
 export class EpisodeService {
 	private readonly episodeDownloadDebounce = new DebouncePromises<void>();
-	private readonly podcastsPath: string;
-	@Inject
+	private podcastsPath!: string;
+	@inject(AudioModule)
 	private readonly audioModule!: AudioModule;
 
-	@Inject
+	@inject(ImageModule)
 	private readonly imageModule!: ImageModule;
 
-	@Inject
+	@inject(ConfigService)
 	private readonly configService!: ConfigService;
 
-	constructor() {
+	@postConstruct()
+	postConstruct(): void {
 		this.podcastsPath = this.configService.getDataPath(['podcasts']);
 	}
 
