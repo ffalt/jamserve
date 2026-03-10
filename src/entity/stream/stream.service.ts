@@ -36,7 +36,10 @@ export class StreamService {
 		if (destinationFormat.startsWith('.')) {
 			destinationFormat = destinationFormat.slice(1);
 		}
-		const bitRate = options?.maxBitRate ?? 0;
+		let bitRate = options?.maxBitRate ?? 0;
+		if (destinationFormat === AudioFormatType.webma && bitRate > 256) {
+			bitRate = 256;
+		}
 		// TOOD: support time opts?.timeOffset
 		if (destinationFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat ?? fileSuffix(filename), destinationFormat, bitRate)) {
 			return this.audioModule.transcoder.get(filename, id, destinationFormat, bitRate);
