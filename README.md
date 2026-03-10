@@ -62,7 +62,7 @@ Optional for metadata matching and MP3 repair support:
 
 * Run `npm install` in the root folder of this repository.
 * In the `config` folder:
-    copy `firststart.config.dist.json` to `firststart.config.json` and
+    Copy `firststart.config.dist.json` to `firststart.config.json` and
     add an admin user and some media folders (these can be changed at runtime via the frontend UI).
 * Set environment variables or create an environment file named `.env`.
 
