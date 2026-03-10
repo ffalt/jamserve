@@ -60,7 +60,7 @@
     "graphql-type-json": "0.3.2",
     "helmet": "8.1.0",
     "iconv-lite": "0.7.2",
-    "jamp3": "0.6.0",
+    "jamp3": "0.6.1",
     "jimp": "1.6.0",
     "jsonwebtoken": "9.0.3",
     "mime-types": "3.0.2",
