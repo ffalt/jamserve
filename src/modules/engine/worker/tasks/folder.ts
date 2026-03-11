@@ -7,10 +7,11 @@ import { Root } from '../../../../entity/root/root.js';
 import { Changes } from '../changes.js';
 import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name.js';
 import { BaseWorker } from './base.js';
-import { injectable } from 'inversify';
+import { injectable, injectFromBase } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 
 @injectable()
+@injectFromBase()
 export class FolderWorker extends BaseWorker {
 	private static async validateFolderTask(destinationPath: string, destinationName: string): Promise<void> {
 		const newPath = path.join(destinationPath, destinationName);

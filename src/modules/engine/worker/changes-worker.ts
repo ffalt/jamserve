@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { injectable, inject, injectFromBase } from 'inversify';
 import { BaseWorker } from './tasks/base.js';
 import { Orm, OrmService } from '../services/orm.service.js';
 import { Root } from '../../../entity/root/root.js';
@@ -11,6 +11,7 @@ import { formatElapsedDuration } from '../../../utils/date-time.js';
 const log = logger('IO.Changes');
 
 @injectable()
+@injectFromBase()
 export class ChangesWorker extends BaseWorker {
 	@inject(OrmService)
 	ormService!: OrmService;

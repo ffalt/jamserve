@@ -8,7 +8,7 @@ import { ArtworkImageType } from '../../../../types/enums.js';
 import { BaseWorker } from './base.js';
 import { Root } from '../../../../entity/root/root.js';
 import { Folder } from '../../../../entity/folder/folder.js';
-import { injectable } from 'inversify';
+import { injectable, injectFromBase } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 
 export const FolderTypeImageName: Record<string, string> = {
@@ -21,6 +21,7 @@ export const FolderTypeImageName: Record<string, string> = {
 };
 
 @injectable()
+@injectFromBase()
 export class ArtworkWorker extends BaseWorker {
 	private async updateArtworkImageFile(artwork: Artwork): Promise<void> {
 		const destinationFile = path.join(artwork.path, artwork.name);

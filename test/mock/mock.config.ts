@@ -77,6 +77,6 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		}
 	}
 
-	testContainer = new Container({ defaultScope: 'Singleton', autoBindInjectable: true });
+	testContainer = new Container({ defaultScope: 'Singleton', autobind: true });
 	testContainer.bind<ConfigService>(ConfigService).to(MockConfigService).inSingletonScope();
 }
