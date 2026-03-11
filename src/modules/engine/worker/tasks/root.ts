@@ -41,7 +41,7 @@ export class RootWorker extends BaseWorker {
 
 	private static async validateRootPath(orm: Orm, dir: string, rootIdToIgnore?: string): Promise<string> {
 		const d = dir.trim();
-		if (d.startsWith('.')) {
+		if (!path.isAbsolute(d)) {
 			throw new Error('Root Directory must be absolute');
 		}
 		if (d.length === 0 || d.includes('*')) {
