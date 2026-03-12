@@ -9,6 +9,7 @@ import { Album } from '../album/album.js';
 import { Podcast } from '../podcast/podcast.js';
 import { Playlist } from '../playlist/playlist.js';
 import { CompressListStream } from '../../utils/compress-list-stream.js';
+import { CompressPlaylistStream } from '../../utils/compress-playlist-stream.js';
 import { CompressFolderStream } from '../../utils/compress-folder-stream.js';
 import { User } from '../user/user.js';
 import { DBObjectType } from '../../types/enums.js';
@@ -80,8 +81,7 @@ export class DownloadService {
 				}
 			}
 		}
-		// TODO: add playlist index file m3u/pls
-		return { pipe: new CompressListStream(fileList, playlist.name, format) };
+		return { pipe: new CompressPlaylistStream(fileList, playlist.name, format) };
 	}
 
 	async getObjDownload(o: Base, objType: DBObjectType, format: string | undefined, user: User): Promise<ApiBinaryResult> {
