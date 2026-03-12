@@ -39,13 +39,33 @@ export class RootWorker extends BaseWorker {
 		'/root' // root home directory
 	];
 
+	private static readonly REMOVE_BATCH_SIZE = 1000;
+
+	private static async appendRemovedIDsInBatches(
+		fetchIDs: (offset: number, limit: number) => Promise<Array<string>>,
+		append: (ids: Array<string>) => void
+	): Promise<void> {
+		let offset = 0;
+		for (;;) {
+			const ids = await fetchIDs(offset, RootWorker.REMOVE_BATCH_SIZE);
+			if (ids.length === 0) {
+				break;
+			}
+			append(ids);
+			offset += ids.length;
+			if (ids.length < RootWorker.REMOVE_BATCH_SIZE) {
+				break;
+			}
+		}
+	}
+
 	private static async validateRootPath(orm: Orm, dir: string, rootIdToIgnore?: string): Promise<string> {
 		const d = dir.trim();
-		if (!path.isAbsolute(d)) {
-			throw new Error('Root Directory must be absolute');
-		}
 		if (d.length === 0 || d.includes('*')) {
 			throw new Error('Root Directory invalid');
+		}
+		if (!path.isAbsolute(d)) {
+			throw new Error('Root Directory must be absolute');
 		}
 		// Resolve symlinks so that a symlink pointing to a sensitive path is also caught
 		let resolvedDir: string;
@@ -79,14 +99,30 @@ export class RootWorker extends BaseWorker {
 	}
 
 	async remove(orm: Orm, root: Root, changes: Changes): Promise<void> {
-		const removedTracks = await orm.Track.find({ where: { root: root.id } });
-		const removedFolders = await orm.Folder.find({ where: { root: root.id } });
-		if (removedFolders.length > 0) {
-			const removedArtworks = await orm.Artwork.findFilter({ folderIDs: removedFolders.map(r => r.id) });
-			changes.artworks.removed.append(removedArtworks);
+		await RootWorker.appendRemovedIDsInBatches(
+			(offset, limit) => orm.Track.findIDs({ where: { root: root.id }, offset, limit }),
+			ids => {
+				changes.tracks.removed.appendIDs(ids);
+			}
+		);
+
+		await RootWorker.appendRemovedIDsInBatches(
+			(offset, limit) => orm.Folder.findIDs({ where: { root: root.id }, offset, limit }),
+			ids => {
+				changes.folders.removed.appendIDs(ids);
+			}
+		);
+
+		const folderIDs = changes.folders.removed.ids();
+		for (let start = 0; start < folderIDs.length; start += RootWorker.REMOVE_BATCH_SIZE) {
+			const folderBatch = folderIDs.slice(start, start + RootWorker.REMOVE_BATCH_SIZE);
+			if (folderBatch.length === 0) {
+				continue;
+			}
+			const artworkIDs = await orm.Artwork.findIDs({ where: { folder: folderBatch } });
+			changes.artworks.removed.appendIDs(artworkIDs);
 		}
-		changes.folders.removed.append(removedFolders);
-		changes.tracks.removed.append(removedTracks);
+
 		changes.roots.removed.add(root);
 	}
 
