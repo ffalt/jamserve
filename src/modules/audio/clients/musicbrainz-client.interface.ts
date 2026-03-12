@@ -1,3 +1,5 @@
+import type { MusicBrainzLookupType } from '../../../types/enums.js';
+
 export interface Request {
 	path: string;
 	query: Record<string, string | undefined | null>;
@@ -186,18 +188,41 @@ export interface ParameterSearch {
 	offset?: number;
 }
 
+export type MusicBrainzLookupInclude = 'recordings' |
+	'releases' |
+	'release-groups' |
+	'works' |
+	'aliases' |
+	'artist-rels' |
+	'url-rels' |
+	'tags' |
+	'ratings' |
+	'user-collections' |
+	'artists' |
+	'artist-credits' |
+	'annotation' |
+	'labels' |
+	'discids' |
+	'media' |
+	'isrcs';
+
+export type MusicBrainzLookupIncludes = MusicBrainzLookupInclude |
+	`${MusicBrainzLookupInclude},${string}` |
+	`${MusicBrainzLookupInclude} ${string}` |
+	`${MusicBrainzLookupInclude}+${string}`;
+
 export interface ParameterLookup {
-	type: string;
+	type: MusicBrainzLookupType;
 	id: string;
-	inc?: string;
+	inc?: MusicBrainzLookupIncludes;
 	limit?: number;
 	offset?: number;
 }
 
 export interface ParameterBrowse {
-	type: string;
+	type: MusicBrainzLookupType;
 	lookupIds: Record<string, string>;
-	inc?: string;
+	inc?: MusicBrainzLookupIncludes;
 	limit?: number;
 	offset?: number;
 }

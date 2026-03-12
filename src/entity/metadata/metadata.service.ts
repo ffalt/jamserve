@@ -8,7 +8,7 @@ import { MetadataServiceSimilarArtists } from './metadata.service.similar-artist
 import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks.js';
 import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
 import { injectable, inject } from 'inversify';
-import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
+import { CoverArtArchiveLookupType, DBObjectType, MetaDataType, MusicBrainzLookupType } from '../../types/enums.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Track } from '../track/track.js';
 import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
@@ -24,6 +24,7 @@ import { invalidParameterError } from '../../modules/deco/express/express-error.
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
 import { Tag } from '../tag/tag.js';
+import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
 
 const log = logger('Metadata');
 
@@ -154,7 +155,7 @@ export class MetaDataService {
 			});
 	}
 
-	async musicbrainzLookup(orm: Orm, type: string, mbid: string, inc?: string): Promise<MusicBrainz.Response | undefined> {
+	async musicbrainzLookup(orm: Orm, type: MusicBrainzLookupType, mbid: string, inc?: MusicBrainzLookupIncludes): Promise<MusicBrainz.Response | undefined> {
 		const lookupKey = ['lookup-', type, mbid, inc ?? ''].join('');
 		return this.searchInStore<MusicBrainz.Response>(
 			orm,

@@ -1,4 +1,6 @@
-export const LookupBrowseTypes: Record<string, Array<string> | undefined> = {
+import type { MusicBrainzLookupType } from '../../../types/enums.js';
+
+export const LookupBrowseTypes: Record<MusicBrainzLookupType, Array<string> | undefined> = {
 	'area': ['collection'],
 	'artist': ['area', 'collection', 'recording', 'release', 'release-group', 'work'],
 	'collection': ['area', 'artist', 'editor', 'event', 'label', 'place', 'recording', 'release', 'release-group', 'work'],
@@ -14,7 +16,7 @@ export const LookupBrowseTypes: Record<string, Array<string> | undefined> = {
 	'url': ['resource']
 };
 
-export const LookupIncludes: Record<string, Array<string> | undefined> = {
+export const LookupIncludes: Record<MusicBrainzLookupType, Array<string> | undefined> = {
 	'area': [],
 	'artist': ['recordings', 'releases', 'release-groups', 'works', 'aliases', 'artist-rels', 'url-rels', 'tags', 'ratings'],
 	'collection': ['user-collections'],

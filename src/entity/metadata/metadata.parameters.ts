@@ -1,7 +1,25 @@
 import { CoverArtArchiveLookupType, LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
+import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
 import { examples } from '../../modules/engine/rest/example.consts.js';
 import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
 import { ObjectField } from '../../modules/rest/decorators/object-field.js';
+
+export type AcoustidLookupInclude = 'recordings' |
+	'recordingids' |
+	'releases' |
+	'releaseids' |
+	'releasegroups' |
+	'releasegroupids' |
+	'tracks' |
+	'compress' |
+	'usermeta' |
+	'sources';
+
+export type AcoustidLookupIncludes = AcoustidLookupInclude |
+	`${AcoustidLookupInclude},${string}` |
+	`${AcoustidLookupInclude} ${string}`;
+
+// MusicBrainz include typing is shared from musicbrainz-client.interface.ts
 
 @ObjectParametersType()
 export class LastFMLookupParameters {
@@ -41,8 +59,8 @@ export class AcoustidLookupParameters {
 	@ObjectField({ description: 'Track ID', example: examples.mbTrackID })
 	trackID!: string;
 
-	@ObjectField({ nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' })
-	inc?: string; // TODO: typescript-type the acoustid lookup includes
+	@ObjectField(() => String, { nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' })
+	inc?: AcoustidLookupIncludes;
 }
 
 @ObjectParametersType()
@@ -53,8 +71,8 @@ export class MusicBrainzLookupParameters {
 	@ObjectField(() => MusicBrainzLookupType, { description: 'MusicBrainz Lookup Type', example: MusicBrainzLookupType.release })
 	type!: MusicBrainzLookupType;
 
-	@ObjectField({ nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' })
-	inc?: string; // TODO: typescript-type the musicbrainz lookup includes
+	@ObjectField(() => String, { nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' })
+	inc?: MusicBrainzLookupIncludes;
 }
 
 @ObjectParametersType()
