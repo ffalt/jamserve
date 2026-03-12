@@ -1,7 +1,7 @@
 import { State } from './state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { User } from '../user/user.js';
-import { Op } from 'sequelize';
+import { Op, col, fn } from 'sequelize';
 import { EntityManager, EntityRepository } from '../../modules/orm/index.js';
 
 // This is not a service, to avoid circular usage orm => orm.baseRepository => stateServide => orm
@@ -68,22 +68,14 @@ export class StateHelper {
 	}
 
 	async getAvgHighestDestIDs(destinationType: DBObjectType): Promise<Array<string>> {
-		// TODO: calc avg in db
-		const states = await this.stateRepo.find({ where: { destType: destinationType, rated: { [Op.gte]: 1 } } });
-		const ratings: Record<string, Array<number>> = {};
-		for (const state of states) {
-			if (state.rated !== undefined) {
-				ratings[state.destID] = ratings[state.destID] ?? [];
-				ratings[state.destID].push(state.rated);
-			}
-		}
-		const list = Object.keys(ratings).map(key => {
-			return {
-				id: key,
-				avg: ratings[key].reduce((b, c) => (b + c), 0) / ratings[key].length
-			};
-		}).sort((a, b) => (b.avg - a.avg));
-		return list.map(a => a.id);
+		const rows = await this.em.model(State.name).findAll({
+			where: { destType: destinationType, rated: { [Op.gte]: 1 } },
+			attributes: ['destID', [fn('AVG', col('rated')), 'avgRated']],
+			group: ['destID'],
+			order: [[fn('AVG', col('rated')), 'DESC'], ['destID', 'ASC']],
+			raw: true
+		}) as Array<{ destID: string }>;
+		return rows.map(row => row.destID);
 	}
 
 	async getFrequentlyPlayedDestIDs(destinationType: DBObjectType, userID: string): Promise<Array<string>> {

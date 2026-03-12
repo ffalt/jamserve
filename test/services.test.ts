@@ -8,8 +8,10 @@ import { MockFeed1 } from './mock/mock.rss-feed.js';
 import { Podcast } from '../src/entity/podcast/podcast.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Orm } from '../src/modules/engine/services/orm.service.js';
-import { PodcastStatus } from '../src/types/enums.js';
+import { PodcastStatus, DBObjectType, ListType } from '../src/types/enums.js';
 import nock from 'nock';
+import { Op } from 'sequelize';
+import { StateHelper } from '../src/entity/state/state.helper.js';
 import { hashMD5 } from '../src/utils/md5.js';
 import { User } from '../src/entity/user/user.js';
 import { randomString } from '../src/utils/random.js';
@@ -123,6 +125,58 @@ describe.each(DBConfigs)('Services with %o', db => {
 			const items = await podcast.episodes.getItems();
 			expect(items.find(item => item.guid === MockFeed1.expected.episode1.guid)).toEqual(expect.objectContaining(MockFeed1.expected.episode1));
 			expect(items.find(item => item.guid === MockFeed1.expected.episode2.guid)).toEqual(expect.objectContaining(MockFeed1.expected.episode2));
+		});
+	});
+
+	describe('state/list avghighest', () => {
+		it('should aggregate average rating in DB and ignore unrated entries', async () => {
+			const genreA = orm.Genre.create({ name: 'Genre A' });
+			const genreB = orm.Genre.create({ name: 'Genre B' });
+			const genreC = orm.Genre.create({ name: 'Genre C' });
+			const missingGenreID = orm.Genre.create({ name: 'Missing Genre ID' }).id;
+			const unratedGenreID = orm.Genre.create({ name: 'Ignored Unrated ID' }).id;
+			await orm.Genre.persistAndFlush([genreA, genreB, genreC]);
+
+			const user2 = await engine.user.createUser(orm, 'avg-user', 'avg@localhost', 'test', false, true, false, false);
+			const helper = new StateHelper(orm.em);
+			await helper.rate(genreA.id, DBObjectType.genre, user, 5);
+			await helper.rate(genreA.id, DBObjectType.genre, user2, 3);
+			await helper.rate(genreB.id, DBObjectType.genre, user, 4);
+			await helper.rate(genreB.id, DBObjectType.genre, user2, 4);
+			await helper.rate(genreC.id, DBObjectType.genre, user, 5);
+			await helper.rate(missingGenreID, DBObjectType.genre, user, 5);
+			await helper.rate(unratedGenreID, DBObjectType.genre, user, 0);
+
+			const ids = await helper.getAvgHighestDestIDs(DBObjectType.genre);
+			expect(ids.slice(0, 2).sort()).toEqual([genreC.id, missingGenreID].sort());
+			expect(ids.slice(2).sort()).toEqual([genreA.id, genreB.id].sort());
+			expect(ids).not.toContain(unratedGenreID);
+		});
+
+		it('should apply avghighest ordering before filtering and pagination', async () => {
+			const genreA = orm.Genre.create({ name: 'Avg Genre A' });
+			const genreB = orm.Genre.create({ name: 'Avg Genre B' });
+			const genreC = orm.Genre.create({ name: 'Avg Genre C' });
+			const missingGenreID = orm.Genre.create({ name: 'Missing Genre ID List' }).id;
+			await orm.Genre.persistAndFlush([genreA, genreB, genreC]);
+
+			const user2 = await engine.user.createUser(orm, 'avg-list-user', 'avg-list@localhost', 'test', false, true, false, false);
+			const helper = new StateHelper(orm.em);
+			await helper.rate(genreA.id, DBObjectType.genre, user, 5);
+			await helper.rate(genreA.id, DBObjectType.genre, user2, 3);
+			await helper.rate(genreB.id, DBObjectType.genre, user, 5);
+			await helper.rate(genreB.id, DBObjectType.genre, user2, 5);
+			await helper.rate(genreC.id, DBObjectType.genre, user, 3);
+			await helper.rate(missingGenreID, DBObjectType.genre, user, 5);
+
+			const result = await orm.Genre.findList(ListType.avghighest, undefined, {
+				where: { name: { [Op.in]: ['Avg Genre A', 'Avg Genre C'] } },
+				offset: 0,
+				limit: 1
+			}, user.id);
+
+			expect(result.total).toBe(2);
+			expect(result.items.map(item => item.id)).toEqual([genreA.id]);
 		});
 	});
 });
