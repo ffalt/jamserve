@@ -74,7 +74,6 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			// workaround for:
 			// https://github.com/sequelize/sequelize/issues/12348
 			// https://github.com/sequelize/sequelize/issues/7778
-			// TODO: check if workaround is still needed
 			options.subQuery = false;
 		}
 	}
