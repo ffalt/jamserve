@@ -77,16 +77,14 @@ export class ChangesWorker extends BaseWorker {
 			stateCleanIds.appendIDs(stateBookmarkIDs);
 		}
 		const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
+		let affectedPlaylistIDs: Array<string> = [];
 		if (playlistEntryIDs.length > 0) {
-			await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
+			const entries = await orm.PlaylistEntry.findByIDs(playlistEntryIDs);
+			affectedPlaylistIDs = [...new Set(entries.map(entry => entry.playlist.id()).filter((id): id is string => id !== undefined))];
+			for (const entry of entries) {
+				orm.PlaylistEntry.removeLater(entry);
+			}
 			stateCleanIds.appendIDs(playlistEntryIDs);
-			// TODO: collect and update playlists
-			// qlty-ignore: radarlint-js:typescript:S125
-			/*
-							log.debug('Updating Playlist:', playlist.name);
-							await updatePlayListTracks(this.store.trackStore, playlist);
-							await this.store.playlistStore.replace(playlist);
-			*/
 		}
 		const stateDestinationIDs = stateCleanIds.ids();
 		if (stateDestinationIDs.length > 0) {
@@ -95,6 +93,38 @@ export class ChangesWorker extends BaseWorker {
 		}
 		if (orm.em.hasChanges()) {
 			log.debug('Syncing Removal Dependend Updates to DB');
+			await orm.em.flush();
+		}
+		await ChangesWorker.updateAffectedPlaylists(orm, affectedPlaylistIDs);
+	}
+
+	private static async updateAffectedPlaylists(orm: Orm, affectedPlaylistIDs: Array<string>): Promise<void> {
+		if (affectedPlaylistIDs.length === 0) {
+			return;
+		}
+		const playlists = await orm.Playlist.findByIDs(affectedPlaylistIDs);
+		for (const playlist of playlists) {
+			log.debug('Updating Playlist:', playlist.name);
+			const remainingEntries = await playlist.entries.getItems();
+			let duration = 0;
+			for (const entry of remainingEntries) {
+				const track = await entry.track.get();
+				if (track) {
+					const tag = await track.tag.get();
+					duration += tag?.mediaDuration ?? 0;
+				} else {
+					const episode = await entry.episode.get();
+					if (episode) {
+						const tag = await episode.tag.get();
+						duration += tag?.mediaDuration ?? 0;
+					}
+				}
+			}
+			playlist.duration = duration;
+			orm.Playlist.persistLater(playlist);
+		}
+		if (orm.em.hasChanges()) {
+			log.debug('Syncing Playlist Duration Updates to DB');
 			await orm.em.flush();
 		}
 	}
