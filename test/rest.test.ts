@@ -14,12 +14,9 @@ import { MockRequests, RequestMock } from './mock/mock.request.js';
 import { ensureTrailingPathSeparator } from '../src/utils/fs-utils.js';
 import path from 'node:path';
 import { buildMockRoot, MockRoot, writeAndStoreExternalMedia, writeAndStoreMock } from './mock/mock.root.js';
-import { initTest } from './init.js';
 import { OpenAPISpecObject } from 'openapi-validator';
 import TestAgent from 'supertest/lib/agent.js';
 import { describe, expect, beforeAll, afterAll, it, afterEach } from '@jest/globals';
-
-initTest();
 
 const apiPrefix = `/jam/${JAMAPI_URL_VERSION}/`;
 const roles = [UserRole.admin, UserRole.podcast, UserRole.upload, UserRole.stream];

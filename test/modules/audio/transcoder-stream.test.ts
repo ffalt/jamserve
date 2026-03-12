@@ -161,6 +161,82 @@ describe('TranscoderStream ffmpeg argument generation and runtime', () => {
 		}
 	});
 
+	test('getTranscodeProc with timeOffset inserts -ss before -i', async () => {
+		process.env.FFMPEG_PATH = '/usr/bin/true';
+		const proc = TranscoderStream.getTranscodeProc('input.mp3', AudioFormatType.mp3, 128, 30);
+		await new Promise<void>((resolve, reject) => {
+			const to = setTimeout(() => {
+				reject(new Error('timeout waiting for start'));
+			}, 2000);
+			proc.on('start', (cmd: string) => {
+				clearTimeout(to);
+				try {
+					const ssIndex = cmd.indexOf('-ss');
+					const iIndex = cmd.indexOf('-i');
+					expect(ssIndex).toBeGreaterThan(-1);
+					expect(ssIndex).toBeLessThan(iIndex);
+					expect(cmd).toMatch(/-ss\s+30/);
+					resolve();
+				} catch (error) {
+					reject(error);
+				}
+			});
+			proc.on('error', error => {
+				clearTimeout(to);
+				reject(error as Error);
+			});
+			proc.writeToStream(new PassThrough());
+		});
+	});
+
+	test('getTranscodeProc without timeOffset does not include -ss', async () => {
+		process.env.FFMPEG_PATH = '/usr/bin/true';
+		const proc = TranscoderStream.getTranscodeProc('input.mp3', AudioFormatType.mp3, 128);
+		await new Promise<void>((resolve, reject) => {
+			const to = setTimeout(() => {
+				reject(new Error('timeout waiting for start'));
+			}, 2000);
+			proc.on('start', (cmd: string) => {
+				clearTimeout(to);
+				try {
+					expect(cmd).not.toMatch(/-ss\b/);
+					resolve();
+				} catch (error) {
+					reject(error);
+				}
+			});
+			proc.on('error', error => {
+				clearTimeout(to);
+				reject(error as Error);
+			});
+			proc.writeToStream(new PassThrough());
+		});
+	});
+
+	test('getTranscodeProc with timeOffset zero does not include -ss', async () => {
+		process.env.FFMPEG_PATH = '/usr/bin/true';
+		const proc = TranscoderStream.getTranscodeProc('input.mp3', AudioFormatType.mp3, 128, 0);
+		await new Promise<void>((resolve, reject) => {
+			const to = setTimeout(() => {
+				reject(new Error('timeout waiting for start'));
+			}, 2000);
+			proc.on('start', (cmd: string) => {
+				clearTimeout(to);
+				try {
+					expect(cmd).not.toMatch(/-ss\b/);
+					resolve();
+				} catch (error) {
+					reject(error);
+				}
+			});
+			proc.on('error', error => {
+				clearTimeout(to);
+				reject(error as Error);
+			});
+			proc.writeToStream(new PassThrough());
+		});
+	});
+
 	test('addOptions tokenizes quoted arguments correctly', async () => {
 		process.env.FFMPEG_PATH = '/usr/bin/true';
 		const proc = TranscoderStream.getTranscodeProc('in.mp3', AudioFormatType.mp3, 128);

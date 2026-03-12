@@ -5,7 +5,7 @@ import { TranscoderStream } from './transcoder-stream.js';
 const log = logger('audio.transcoder.live');
 
 export class LiveTranscoderStream extends TranscoderStream {
-	constructor(public filename: string, public format: string, public maxBitRate: number) {
+	constructor(public filename: string, public format: string, public maxBitRate: number, public timeOffset?: number) {
 		super();
 		if (maxBitRate <= 0) {
 			this.maxBitRate = 128;
@@ -15,7 +15,7 @@ export class LiveTranscoderStream extends TranscoderStream {
 	pipe(stream: express.Response): void {
 		log.info('Start transcode streaming', this.format, this.maxBitRate.toString());
 		stream.contentType(this.format);
-		const proc = TranscoderStream.getTranscodeProc(this.filename, this.format, this.maxBitRate);
+		const proc = TranscoderStream.getTranscodeProc(this.filename, this.format, this.maxBitRate, this.timeOffset);
 		proc
 			.on('end', () => {
 				log.debug('file has been transcoded successfully');

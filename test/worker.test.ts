@@ -32,7 +32,6 @@ import { Track } from '../src/entity/track/track.js';
 import { mockImage, writeMockImage } from './mock/mock.image.js';
 import { buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot } from './mock/mock.root.js';
 import { writeMockFolder } from './mock/mock.folder.js';
-import { initTest } from './init.js';
 import { expectChanges, validateMockRoot } from './mock/mock.changes.js';
 import { Orm } from '../src/modules/engine/services/orm.service.js';
 import { v4 } from 'uuid';
@@ -40,8 +39,6 @@ import nock from 'nock';
 import { StateHelper } from '../src/entity/state/state.helper.js';
 
 const UNKNOWN_UUID = v4();
-
-initTest();
 
 describe.each(DBConfigs)('WorkerService with %o', db => {
 	let engine: EngineService;

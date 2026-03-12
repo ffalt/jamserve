@@ -3,7 +3,6 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
-import { initTest } from './init.js';
 import { MockFeed1 } from './mock/mock.rss-feed.js';
 import { Podcast } from '../src/entity/podcast/podcast.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
@@ -16,8 +15,6 @@ import { hashMD5 } from '../src/utils/md5.js';
 import { User } from '../src/entity/user/user.js';
 import { randomString } from '../src/utils/random.js';
 import { describe, beforeEach, afterEach, expect, it } from '@jest/globals';
-
-initTest();
 
 /**
  * Generate a cryptographically secure random salt string for testing.

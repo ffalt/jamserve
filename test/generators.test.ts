@@ -6,11 +6,8 @@ import fse from 'fs-extra';
 import supertest from 'supertest';
 import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
-import { initTest } from './init.js';
 import TestAgent from 'supertest/lib/agent.js';
 import { describe, it, beforeAll, afterAll } from '@jest/globals';
-
-initTest();
 
 function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (error?: Error | string) => void): void {
 	req.get(url)

@@ -40,9 +40,16 @@ export class StreamService {
 		if (destinationFormat === AudioFormatType.webma && bitRate > 256) {
 			bitRate = 256;
 		}
-		// TOOD: support time opts?.timeOffset
+		const timeOffset = options?.timeOffset;
 		if (destinationFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat ?? fileSuffix(filename), destinationFormat, bitRate)) {
+			if (timeOffset !== undefined && timeOffset > 0) {
+				return { pipe: this.audioModule.transcoder.getLive(filename, destinationFormat, bitRate, timeOffset) };
+			}
 			return this.audioModule.transcoder.get(filename, id, destinationFormat, bitRate);
+		}
+		if (timeOffset !== undefined && timeOffset > 0) {
+			const effectiveFormat = destinationFormat === 'raw' ? (sourceFormat ?? fileSuffix(filename)) : destinationFormat;
+			return { pipe: this.audioModule.transcoder.getLive(filename, effectiveFormat, bitRate, timeOffset) };
 		}
 		return { file: { filename, name: `${id}.${destinationFormat}` } };
 	}

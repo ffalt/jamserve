@@ -1,6 +1,7 @@
 export default {
 	preset: "ts-jest",
 	testEnvironment: "node",
+	setupFilesAfterEnv: ["<rootDir>/test/jest.setup.ts"],
 	coverageDirectory: "coverage",
 	coverageProvider: "v8",
 	testTimeout: 1_000_000,

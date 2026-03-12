@@ -18,6 +18,7 @@ export class FfmpegCommand extends EventTarget {
 	private outputEnd: boolean = true; // whether to end the destination stream when ffmpeg stdout ends
 	private addedOptions: Array<string> = [];
 	private noVideo = false;
+	private inputSeek?: number;
 	private audioCodec?: string;
 	private audioBitrate?: string;
 	private formatName?: string;
@@ -112,6 +113,11 @@ export class FfmpegCommand extends EventTarget {
 		return this;
 	}
 
+	seekInput(seconds: number): this {
+		this.inputSeek = seconds;
+		return this;
+	}
+
 	withNoVideo(): this {
 		this.noVideo = true;
 		return this;
@@ -171,6 +177,10 @@ export class FfmpegCommand extends EventTarget {
 
 		let stdinPipe = false;
 		let stdoutPipe = false;
+
+		if (this.inputSeek !== undefined && this.inputSeek > 0) {
+			arguments_.push('-ss', this.inputSeek.toString());
+		}
 
 		if (typeof this.source === 'string' && this.source.length > 0) {
 			arguments_.push('-i', this.source);

@@ -51,8 +51,8 @@ export class SubsonicSystemApi {
 		return {
 			openSubsonicExtensions: [
 				{ name: 'songLyrics', versions: [1] }, // https://opensubsonic.netlify.app/docs/extensions/songlyrics/
-				{ name: 'formPost', versions: [1] } // https://opensubsonic.netlify.app/docs/extensions/formpost/
-				// TODO: support timeOffset in stream https://opensubsonic.netlify.app/docs/extensions/transcodeoffset/, { name: 'transcodeOffset', versions: [1] }
+				{ name: 'formPost', versions: [1] }, // https://opensubsonic.netlify.app/docs/extensions/formpost/
+				{ name: 'transcodeOffset', versions: [1] } // https://opensubsonic.netlify.app/docs/extensions/transcodeoffset/
 			]
 		};
 	}

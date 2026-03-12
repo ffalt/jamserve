@@ -1,14 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import winston from 'winston';
 import { ffmpegAvailable, generateSineWav, convertToMp3, temporaryDirectory } from './audio-generator.js';
 import { WaveformStream } from '../../../src/modules/audio/waveform/waveform.stream.js';
 import { clearBinCache } from '../../../src/utils/which.js';
 import { beforeEach } from '@jest/globals';
 
 const TMPDIR = path.join(os.tmpdir(), 'jamserve-waveform');
-winston.configure({ transports: [new winston.transports.Console({ silent: true })] });
 
 afterEach(() => {
 	clearBinCache();

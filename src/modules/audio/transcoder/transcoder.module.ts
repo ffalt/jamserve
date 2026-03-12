@@ -1,4 +1,5 @@
 import { TranscoderStream } from './transcoder-stream.js';
+import { LiveTranscoderStream } from './transcoder-live-stream.js';
 import { IDFolderCache } from '../../../utils/id-file-cache.js';
 import { logger } from '../../../utils/logger.js';
 import { AudioFormatType } from '../../../types/enums.js';
@@ -37,6 +38,10 @@ export class TranscoderModule {
 			log.debug('Writing transcode cache file', cacheFilename);
 			await TranscoderStream.transcodeToFile(filename, cacheFilename, format, maxBitRate);
 		});
+	}
+
+	getLive(filename: string, format: string, maxBitRate: number, timeOffset?: number): LiveTranscoderStream {
+		return new LiveTranscoderStream(filename, format, maxBitRate, timeOffset);
 	}
 
 	async clearCacheByIDs(ids: Array<string>): Promise<void> {
