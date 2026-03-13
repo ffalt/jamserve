@@ -7,12 +7,12 @@ import { LiveTranscoderStream } from '../../../src/modules/audio/transcoder/tran
 import { AudioFormatType } from '../../../src/types/enums.js';
 
 const TMPDIR = path.join(os.tmpdir(), 'jamserve-stream-svc');
-let tempFile: string;
+let temporaryFile: string;
 
 beforeAll(async () => {
 	await fs.promises.mkdir(TMPDIR, { recursive: true });
-	tempFile = path.join(TMPDIR, 'test.mp3');
-	await fs.promises.writeFile(tempFile, Buffer.alloc(100));
+	temporaryFile = path.join(TMPDIR, 'test.mp3');
+	await fs.promises.writeFile(temporaryFile, Buffer.alloc(100));
 });
 
 const cachedResult = { file: { filename: 'cached.mp3', name: 'id.mp3' } };
@@ -46,9 +46,9 @@ describe('StreamService.streamFile', () => {
 
 	test('returns file result when no transcoding needed (same format, no bitrate)', async () => {
 		const { service, transcoder } = makeService();
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.mp3 });
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.mp3 });
 		expect(result.file).toBeDefined();
-		expect(result.file!.filename).toBe(tempFile);
+		expect(result.file!.filename).toBe(temporaryFile);
 		expect(result.file!.name).toBe('myid.mp3');
 		expect(transcoder.get).not.toHaveBeenCalled();
 		expect(transcoder.getLive).not.toHaveBeenCalled();
@@ -56,47 +56,47 @@ describe('StreamService.streamFile', () => {
 
 	test('returns file result for raw format', async () => {
 		const { service, transcoder } = makeService();
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, { format: 'raw' });
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, { format: 'raw' });
 		expect(result.file).toBeDefined();
-		expect(result.file!.filename).toBe(tempFile);
+		expect(result.file!.filename).toBe(temporaryFile);
 		expect(result.file!.name).toBe('myid.raw');
 		expect(transcoder.get).not.toHaveBeenCalled();
 	});
 
 	test('strips leading dot from format', async () => {
 		const { service } = makeService();
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, { format: '.mp3' });
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, { format: '.mp3' });
 		expect(result.file!.name).toBe('myid.mp3');
 	});
 
 	test('uses cached transcoder when transcoding is needed', async () => {
 		const { service, transcoder } = makeService();
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.ogg });
-		expect(transcoder.get).toHaveBeenCalledWith(tempFile, 'myid', AudioFormatType.ogg, 0);
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.ogg });
+		expect(transcoder.get).toHaveBeenCalledWith(temporaryFile, 'myid', AudioFormatType.ogg, 0);
 		expect(result.file).toBeDefined();
 		expect(result.pipe).toBeUndefined();
 	});
 
 	test('uses cached transcoder when bitrate is set for same format', async () => {
 		const { service, transcoder } = makeService();
-		await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.mp3, maxBitRate: 128 });
-		expect(transcoder.get).toHaveBeenCalledWith(tempFile, 'myid', AudioFormatType.mp3, 128);
+		await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, { format: AudioFormatType.mp3, maxBitRate: 128 });
+		expect(transcoder.get).toHaveBeenCalledWith(temporaryFile, 'myid', AudioFormatType.mp3, 128);
 	});
 
 	test('caps webma maxBitRate at 256', async () => {
 		const { service, transcoder } = makeService();
-		await service.streamFile(tempFile, 'myid', 'mp3', { format: AudioFormatType.webma, maxBitRate: 320 });
-		expect(transcoder.get).toHaveBeenCalledWith(tempFile, 'myid', AudioFormatType.webma, 256);
+		await service.streamFile(temporaryFile, 'myid', 'mp3', { format: AudioFormatType.webma, maxBitRate: 320 });
+		expect(transcoder.get).toHaveBeenCalledWith(temporaryFile, 'myid', AudioFormatType.webma, 256);
 	});
 
 	test('returns live stream pipe when timeOffset is set and transcoding is needed', async () => {
 		const liveStream = new LiveTranscoderStream('', 'ogg', 128, 30);
 		const { service, transcoder } = makeService(jest.fn().mockReturnValue(liveStream as never));
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, {
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, {
 			format: AudioFormatType.ogg,
 			timeOffset: 30
 		});
-		expect(transcoder.getLive).toHaveBeenCalledWith(tempFile, AudioFormatType.ogg, 0, 30);
+		expect(transcoder.getLive).toHaveBeenCalledWith(temporaryFile, AudioFormatType.ogg, 0, 30);
 		expect(transcoder.get).not.toHaveBeenCalled();
 		expect(result.pipe).toBe(liveStream);
 		expect(result.file).toBeUndefined();
@@ -105,11 +105,11 @@ describe('StreamService.streamFile', () => {
 	test('returns live stream pipe when timeOffset is set but no transcoding needed', async () => {
 		const liveStream = new LiveTranscoderStream('', 'mp3', 128, 15);
 		const { service, transcoder } = makeService(jest.fn().mockReturnValue(liveStream as never));
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, {
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, {
 			format: AudioFormatType.mp3,
 			timeOffset: 15
 		});
-		expect(transcoder.getLive).toHaveBeenCalledWith(tempFile, AudioFormatType.mp3, 0, 15);
+		expect(transcoder.getLive).toHaveBeenCalledWith(temporaryFile, AudioFormatType.mp3, 0, 15);
 		expect(transcoder.get).not.toHaveBeenCalled();
 		expect(result.pipe).toBe(liveStream);
 	});
@@ -117,17 +117,17 @@ describe('StreamService.streamFile', () => {
 	test('uses source format for raw format with timeOffset', async () => {
 		const liveStream = new LiveTranscoderStream('', 'mp3', 128, 10);
 		const { service, transcoder } = makeService(jest.fn().mockReturnValue(liveStream as never));
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, {
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, {
 			format: 'raw',
 			timeOffset: 10
 		});
-		expect(transcoder.getLive).toHaveBeenCalledWith(tempFile, AudioFormatType.mp3, 0, 10);
+		expect(transcoder.getLive).toHaveBeenCalledWith(temporaryFile, AudioFormatType.mp3, 0, 10);
 		expect(result.pipe).toBe(liveStream);
 	});
 
 	test('ignores timeOffset of zero (returns file result)', async () => {
 		const { service, transcoder } = makeService();
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3, {
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3, {
 			format: AudioFormatType.mp3,
 			timeOffset: 0
 		});
@@ -138,7 +138,7 @@ describe('StreamService.streamFile', () => {
 	test('defaults to mp3 format when no format option given', async () => {
 		const { service, transcoder } = makeService();
 		// tempFile is an mp3 — same format → no transcode → file result
-		const result = await service.streamFile(tempFile, 'myid', AudioFormatType.mp3);
+		const result = await service.streamFile(temporaryFile, 'myid', AudioFormatType.mp3);
 		expect(result.file!.name).toBe('myid.mp3');
 		expect(transcoder.get).not.toHaveBeenCalled();
 	});

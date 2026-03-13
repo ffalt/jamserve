@@ -172,9 +172,9 @@ describe('TranscoderStream ffmpeg argument generation and runtime', () => {
 				clearTimeout(to);
 				try {
 					const ssIndex = cmd.indexOf('-ss');
-					const iIndex = cmd.indexOf('-i');
+					const indexIndex = cmd.indexOf('-i');
 					expect(ssIndex).toBeGreaterThan(-1);
-					expect(ssIndex).toBeLessThan(iIndex);
+					expect(ssIndex).toBeLessThan(indexIndex);
 					expect(cmd).toMatch(/-ss\s+30/);
 					resolve();
 				} catch (error) {
