@@ -39,7 +39,7 @@
     "graphql": "16.13.1"
   },
   "dependencies": {
-    "@apollo/server": "5.4.0",
+    "@apollo/server": "5.5.0",
     "@as-integrations/express5": "1.1.2",
     "archiver": "7.0.1",
     "bcrypt": "6.0.0",
