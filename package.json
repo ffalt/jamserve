@@ -136,7 +136,7 @@
     "conventional-changelog": "7.2.0",
     "conventional-changelog-angular": "8.3.0",
     "eslint": "10.1.0",
-    "eslint-plugin-jest": "29.15.0",
+    "eslint-plugin-jest": "29.15.1",
     "eslint-plugin-unicorn": "63.0.0",
     "jest": "30.3.0",
     "jest-openapi": "0.14.2",
