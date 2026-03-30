@@ -70,7 +70,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				}
 			}
 		}
-		if (hasOrder && options.include && ((options.include as Array<any>).length > 0) && (options.include as Array<any>).some(o => !!o.where)) {
+		if (hasOrder && options.include && (options.include as Array<any>).some(o => !!o.where)) {
 			// workaround for:
 			// https://github.com/sequelize/sequelize/issues/12348
 			// https://github.com/sequelize/sequelize/issues/7778
