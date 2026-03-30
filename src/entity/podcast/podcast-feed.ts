@@ -98,7 +98,7 @@ export class Feed {
 
 	private static readonly MAX_FEED_SIZE = 10 * 1024 * 1024; // 10 MB
 
-	private async fetch(url: string): Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }> {
+	private async fetch(url: string): Promise<{ feed: FeedParser.Meta; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		await validateExternalUrl(url);
 		const result = await fetch(url, {
@@ -114,8 +114,8 @@ export class Feed {
 			if (contentLength && contentLength > Feed.MAX_FEED_SIZE) {
 				throw new Error(`Feed response too large: ${contentLength} bytes exceeds limit of ${Feed.MAX_FEED_SIZE} bytes`);
 			}
-			let feed: Record<string, any>;
-			return new Promise<{ feed: FeedParser.Node; posts: Array<FeedParser.Item> }>((resolve, reject) => {
+			let feed: FeedParser.Meta;
+			return new Promise<{ feed: FeedParser.Meta; posts: Array<FeedParser.Item> }>((resolve, reject) => {
 				let received = 0;
 				const done = (error?: unknown): void => {
 					if (error) {
@@ -163,7 +163,7 @@ export class Feed {
 			author: data.feed.author,
 			generator: data.feed.generator,
 			language: data.feed.language,
-			image: data.feed.image?.url,
+			image: data.feed.image.url,
 			categories: data.feed.categories
 		};
 		if (data.feed['itunes:summary']?.['#']) {
