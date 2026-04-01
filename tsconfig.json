@@ -3,7 +3,6 @@
     "target": "es2020",
     "module": "NodeNext",
     "moduleResolution": "nodenext",
-    "baseUrl": "./",
     "outDir": "./dist",
     "rootDir": "src",
     "strict": true,
@@ -35,7 +34,7 @@
     ],
     "paths": {
       "common-password-checker": [
-        "src/@types/common-password-checker"
+        "./src/@types/common-password-checker"
       ]
     }
   },
