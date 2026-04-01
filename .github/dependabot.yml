@@ -6,3 +6,8 @@ updates:
     interval: daily
     time: "04:00"
   open-pull-requests-limit: 10
+  cooldown:
+    default-days: 5
+    semver-major-days: 30
+    semver-minor-days: 14
+    semver-patch-days: 5
