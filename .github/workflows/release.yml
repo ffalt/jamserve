@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          npm install
+          npm ci
 
       - name: Build
         run: |
