@@ -32,9 +32,8 @@
     "releaselog": "conventional-changelog -p angular -r 2 -o RELEASELOG.md"
   },
   "overrides": {
-    "axios": "1.13.5",
+    "axios": "1.15.0",
     "@tootallnate/once": "3.0.1",
-    "tar": "7.5.11",
     "glob": "13.0.6"
   },
   "dependencies": {
@@ -50,7 +49,7 @@
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
     "d3-shape": "3.2.0",
-    "dotenv": "17.3.1",
+    "dotenv": "17.4.1",
     "express": "5.2.1",
     "express-rate-limit": "8.3.2",
     "express-session": "1.19.0",
@@ -85,6 +84,7 @@
     "sharp": "0.34.5",
     "shuffle-seed": "1.1.6",
     "sqlite3": "6.0.1",
+    "tar": "7.5.11",
     "tiny-async-pool": "2.1.0",
     "triple-beam": "1.4.1",
     "type-graphql": "2.0.0-rc.4",
@@ -116,7 +116,7 @@
     "@types/mime-types": "3.0.1",
     "@types/multer": "2.1.0",
     "@types/mustache": "4.2.6",
-    "@types/node": "25.5.0",
+    "@types/node": "25.6.0",
     "@types/node-fetch": "3.0.2",
     "@types/on-finished": "2.3.5",
     "@types/passport": "1.0.17",
@@ -133,8 +133,8 @@
     "chance": "1.1.13",
     "conventional-changelog": "7.2.0",
     "conventional-changelog-angular": "8.3.1",
-    "eslint": "10.1.0",
-    "eslint-plugin-jest": "29.15.1",
+    "eslint": "10.2.0",
+    "eslint-plugin-jest": "29.15.2",
     "eslint-plugin-unicorn": "64.0.0",
     "jest": "30.3.0",
     "jest-openapi": "0.14.2",
@@ -147,7 +147,7 @@
     "ts-node": "10.9.2",
     "tsc-watch": "7.2.0",
     "typescript": "6.0.2",
-    "typescript-eslint": "8.58.0",
+    "typescript-eslint": "8.58.1",
     "uuid": "13.0.0"
   }
 }
