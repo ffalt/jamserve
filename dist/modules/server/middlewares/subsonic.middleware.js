@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import express from 'express';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { subsonicRouter } from '../../subsonic/builder/express.js';
@@ -78,11 +78,11 @@ let SubsonicMiddleware = class SubsonicMiddleware {
     }
 };
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], SubsonicMiddleware.prototype, "configService", void 0);
 SubsonicMiddleware = __decorate([
-    InRequestScope
+    injectable()
 ], SubsonicMiddleware);
 export { SubsonicMiddleware };
 //# sourceMappingURL=subsonic.middleware.js.map

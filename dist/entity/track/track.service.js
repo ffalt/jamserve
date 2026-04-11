@@ -14,12 +14,12 @@ import { logger } from '../../utils/logger.js';
 import { trackTagToRawTag } from '../../modules/audio/metadata.js';
 import { processQueue } from '../../utils/queue.js';
 import { TrackRulesChecker } from '../health/track.rule.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { FolderService } from '../folder/folder.service.js';
 import { basenameStripExtension } from '../../utils/fs-utils.js';
 const log = logger('TrackService');
 let TrackService = class TrackService {
-    constructor() {
+    postConstruct() {
         this.checker = new TrackRulesChecker(this.audioModule);
     }
     async getRawTag(track) {
@@ -79,20 +79,25 @@ let TrackService = class TrackService {
     }
 };
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], TrackService.prototype, "audioModule", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], TrackService.prototype, "imageModule", void 0);
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], TrackService.prototype, "folderService", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TrackService.prototype, "postConstruct", null);
 TrackService = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], TrackService);
 export { TrackService };
 //# sourceMappingURL=track.service.js.map

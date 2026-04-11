@@ -10,7 +10,7 @@ import path from 'node:path';
 import { basenameStripExtension, ensureTrailingPathSeparator, fileDeleteIfExists, fileSuffix } from '../../../../utils/fs-utils.js';
 import { artWorkImageNameToType } from '../../../../utils/artwork-type.js';
 import { BaseWorker } from './base.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable, injectFromBase } from 'inversify';
 export const FolderTypeImageName = {
     unknown: 'folder',
     artist: 'artist',
@@ -170,7 +170,8 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
     }
 };
 ArtworkWorker = ArtworkWorker_1 = __decorate([
-    InRequestScope
+    injectable(),
+    injectFromBase()
 ], ArtworkWorker);
 export { ArtworkWorker };
 //# sourceMappingURL=artwork.js.map

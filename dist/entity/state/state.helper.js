@@ -1,5 +1,5 @@
 import { State } from './state.js';
-import { Op } from 'sequelize';
+import { Op, col, fn } from 'sequelize';
 export class StateHelper {
     constructor(em) {
         this.em = em;
@@ -57,21 +57,14 @@ export class StateHelper {
         return states.map(a => a.destID);
     }
     async getAvgHighestDestIDs(destinationType) {
-        const states = await this.stateRepo.find({ where: { destType: destinationType, rated: { [Op.gte]: 1 } } });
-        const ratings = {};
-        for (const state of states) {
-            if (state.rated !== undefined) {
-                ratings[state.destID] = ratings[state.destID] ?? [];
-                ratings[state.destID].push(state.rated);
-            }
-        }
-        const list = Object.keys(ratings).map(key => {
-            return {
-                id: key,
-                avg: ratings[key].reduce((b, c) => (b + c), 0) / ratings[key].length
-            };
-        }).sort((a, b) => (b.avg - a.avg));
-        return list.map(a => a.id);
+        const rows = await this.em.model(State.name).findAll({
+            where: { destType: destinationType, rated: { [Op.gte]: 1 } },
+            attributes: ['destID', [fn('AVG', col('rated')), 'avgRated']],
+            group: ['destID'],
+            order: [[fn('AVG', col('rated')), 'DESC'], ['destID', 'ASC']],
+            raw: true
+        });
+        return rows.map(row => row.destID);
     }
     async getFrequentlyPlayedDestIDs(destinationType, userID) {
         const states = await this.stateRepo.find({

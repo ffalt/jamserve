@@ -11,7 +11,7 @@ var IoService_1;
 import { WorkerService } from './worker.service.js';
 import { OrmService } from './orm.service.js';
 import { IoRequest } from './io/io.types.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { IoCommandsArtwork } from './io/io.commands.artwork.js';
 import { IoCommandsFolder } from './io/io.commands.folder.js';
@@ -165,15 +165,15 @@ let IoService = IoService_1 = class IoService {
 };
 IoService.HISTORY_MAX = 1000;
 __decorate([
-    Inject,
+    inject(OrmService),
     __metadata("design:type", OrmService)
 ], IoService.prototype, "orm", void 0);
 __decorate([
-    Inject,
+    inject(WorkerService),
     __metadata("design:type", WorkerService)
 ], IoService.prototype, "workerService", void 0);
 IoService = IoService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], IoService);
 export { IoService };
 //# sourceMappingURL=io.service.js.map

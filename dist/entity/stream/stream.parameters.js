@@ -13,7 +13,7 @@ import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let StreamPathParameters = class StreamPathParameters {
 };
 __decorate([
-    ObjectField({ nullable: true, description: 'maximal bitrate if transcoding (in Kbps)', min: 10, max: 480, example: 128 }),
+    ObjectField({ nullable: true, description: 'maximal bitrate if transcoding (in Kbps)', min: 10, max: 320, example: 128 }),
     __metadata("design:type", Number)
 ], StreamPathParameters.prototype, "maxBitRate", void 0);
 __decorate([

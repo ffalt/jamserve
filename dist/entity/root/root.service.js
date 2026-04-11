@@ -7,9 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { FolderService } from '../folder/folder.service.js';
-export class RootService {
+let RootService = class RootService {
     async getImage(orm, root, size, format) {
         const folders = await root.folders.getItems();
         const sorted = folders.sort((a, b) => a.level - b.level);
@@ -19,9 +19,13 @@ export class RootService {
         }
         return;
     }
-}
+};
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], RootService.prototype, "folderService", void 0);
+RootService = __decorate([
+    injectable()
+], RootService);
+export { RootService };
 //# sourceMappingURL=root.service.js.map

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import express from 'express';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { ConfigService } from '../../engine/services/config.service.js';
 import { ApolloMiddleware } from './apollo.middleware.js';
@@ -32,15 +32,15 @@ let GraphqlMiddleware = class GraphqlMiddleware {
     }
 };
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], GraphqlMiddleware.prototype, "configService", void 0);
 __decorate([
-    Inject,
+    inject(ApolloMiddleware),
     __metadata("design:type", ApolloMiddleware)
 ], GraphqlMiddleware.prototype, "apollo", void 0);
 GraphqlMiddleware = __decorate([
-    InRequestScope
+    injectable()
 ], GraphqlMiddleware);
 export { GraphqlMiddleware };
 //# sourceMappingURL=graphql.middleware.js.map

@@ -11,7 +11,7 @@ import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import { FolderType } from '../../../../types/enums.js';
 import { splitDirectoryName, validateFolderName } from '../../../../utils/dir-name.js';
 import { BaseWorker } from './base.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable, injectFromBase } from 'inversify';
 let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
     static async validateFolderTask(destinationPath, destinationName) {
         const newPath = path.join(destinationPath, destinationName);
@@ -183,7 +183,8 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
     }
 };
 FolderWorker = FolderWorker_1 = __decorate([
-    InRequestScope
+    injectable(),
+    injectFromBase()
 ], FolderWorker);
 export { FolderWorker };
 //# sourceMappingURL=folder.js.map

@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import express from 'express';
 import { ApolloMiddleware } from './apollo.middleware.js';
 import path from 'node:path';
@@ -76,11 +76,11 @@ setTimeout(() => {
     }
 };
 __decorate([
-    Inject,
+    inject(ApolloMiddleware),
     __metadata("design:type", ApolloMiddleware)
 ], DocsMiddleware.prototype, "apollo", void 0);
 DocsMiddleware = __decorate([
-    InRequestScope
+    injectable()
 ], DocsMiddleware);
 export { DocsMiddleware };
 //# sourceMappingURL=docs.middleware.js.map

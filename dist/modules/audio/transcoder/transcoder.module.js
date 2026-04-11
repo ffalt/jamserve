@@ -1,4 +1,5 @@
 import { TranscoderStream } from './transcoder-stream.js';
+import { LiveTranscoderStream } from './transcoder-live-stream.js';
 import { IDFolderCache } from '../../../utils/id-file-cache.js';
 import { logger } from '../../../utils/logger.js';
 const log = logger('Audio:Transcoder');
@@ -20,6 +21,9 @@ export class TranscoderModule {
             log.debug('Writing transcode cache file', cacheFilename);
             await TranscoderStream.transcodeToFile(filename, cacheFilename, format, maxBitRate);
         });
+    }
+    getLive(filename, format, maxBitRate, timeOffset) {
+        return new LiveTranscoderStream(filename, format, maxBitRate, timeOffset);
     }
     async clearCacheByIDs(ids) {
         await this.transcodeCache.removeByIDs(ids);

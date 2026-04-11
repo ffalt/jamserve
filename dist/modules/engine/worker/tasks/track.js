@@ -11,7 +11,7 @@ import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { processQueue } from '../../../../utils/queue.js';
 import { BaseWorker } from './base.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable, injectFromBase } from 'inversify';
 export class TrackUpdater {
     constructor(orm, audioModule, changes) {
         this.orm = orm;
@@ -169,7 +169,8 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     }
 };
 TrackWorker = TrackWorker_1 = __decorate([
-    InRequestScope
+    injectable(),
+    injectFromBase()
 ], TrackWorker);
 export { TrackWorker };
 //# sourceMappingURL=track.js.map

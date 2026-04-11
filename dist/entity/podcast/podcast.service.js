@@ -13,7 +13,7 @@ import { ImageModule } from '../../modules/image/image.module.js';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { pathDeleteIfExists } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { PodcastStatus } from '../../types/enums.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { Feed } from './podcast-feed.js';
@@ -25,6 +25,8 @@ const log = logger('PodcastService');
 let PodcastService = class PodcastService {
     constructor() {
         this.podcastRefreshDebounce = new DebouncePromises();
+    }
+    postConstruct() {
         this.podcastsPath = this.configService.getDataPath(['podcasts']);
     }
     isDownloading(podcastId) {
@@ -174,24 +176,29 @@ let PodcastService = class PodcastService {
     }
 };
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], PodcastService.prototype, "imageModule", void 0);
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], PodcastService.prototype, "audioModule", void 0);
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], PodcastService.prototype, "configService", void 0);
 __decorate([
-    Inject,
+    inject(EpisodeService),
     __metadata("design:type", EpisodeService)
 ], PodcastService.prototype, "episodeService", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PodcastService.prototype, "postConstruct", null);
 PodcastService = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], PodcastService);
 export { PodcastService };
 //# sourceMappingURL=podcast.service.js.map

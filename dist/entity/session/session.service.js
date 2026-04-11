@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var SessionService_1;
 import { OrmService } from '../../modules/engine/services/orm.service.js';
 import { SessionMode } from '../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { Op } from 'sequelize';
 import { randomString } from '../../utils/random.js';
 let SessionService = SessionService_1 = class SessionService {
@@ -166,11 +166,11 @@ let SessionService = SessionService_1 = class SessionService {
 };
 SessionService.JWTH_CACHE_MAX = 10000;
 __decorate([
-    Inject,
+    inject(OrmService),
     __metadata("design:type", OrmService)
 ], SessionService.prototype, "ormService", void 0);
 SessionService = SessionService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], SessionService);
 export { SessionService };
 //# sourceMappingURL=session.service.js.map

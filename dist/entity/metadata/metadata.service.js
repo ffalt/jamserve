@@ -16,7 +16,7 @@ import { MetadataServiceExtendedInfo } from './metadata.service.extended-info.js
 import { MetadataServiceSimilarArtists } from './metadata.service.similar-artists.js';
 import { MetadataServiceSimilarTracks } from './metadata.service.similar-tracks.js';
 import { MetadataServiceTopTracks } from './metadata.service.top-tracks.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { CoverArtArchiveLookupType, DBObjectType, MetaDataType } from '../../types/enums.js';
 import { Op } from 'sequelize';
 import fetch from 'node-fetch';
@@ -240,11 +240,11 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
     }
 };
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], MetaDataService.prototype, "audioModule", void 0);
 MetaDataService = MetaDataService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], MetaDataService);
 export { MetaDataService };
 //# sourceMappingURL=metadata.service.js.map

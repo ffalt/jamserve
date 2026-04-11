@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { FolderService } from '../folder/folder.service.js';
 import { FolderType } from '../../types/enums.js';
 let SeriesService = class SeriesService {
@@ -33,11 +33,11 @@ let SeriesService = class SeriesService {
     }
 };
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], SeriesService.prototype, "folderService", void 0);
 SeriesService = __decorate([
-    InRequestScope
+    injectable()
 ], SeriesService);
 export { SeriesService };
 //# sourceMappingURL=series.service.js.map

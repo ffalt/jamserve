@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { DBObjectType, JamObjectType } from '../../types/enums.js';
 import { BaseTransformService } from '../base/base.transform.js';
 import { TrackService } from './track.service.js';
@@ -38,15 +38,15 @@ let TrackTransformService = class TrackTransformService extends BaseTransformSer
     }
 };
 __decorate([
-    Inject,
+    inject(TrackService),
     __metadata("design:type", TrackService)
 ], TrackTransformService.prototype, "trackService", void 0);
 __decorate([
-    Inject,
+    inject(GenreTransformService),
     __metadata("design:type", GenreTransformService)
 ], TrackTransformService.prototype, "Genre", void 0);
 TrackTransformService = __decorate([
-    InRequestScope
+    injectable()
 ], TrackTransformService);
 export { TrackTransformService };
 //# sourceMappingURL=track.transform.js.map

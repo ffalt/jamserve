@@ -22,7 +22,7 @@ import { Settings } from '../../../entity/settings/settings.js';
 import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
 import { Tag } from '../../../entity/tag/tag.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { MetaData } from '../../../entity/metadata/metadata.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
@@ -210,7 +210,7 @@ let OrmService = class OrmService {
     }
 };
 OrmService = __decorate([
-    InRequestScope
+    injectable()
 ], OrmService);
 export { OrmService };
 //# sourceMappingURL=orm.service.js.map

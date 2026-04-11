@@ -113,7 +113,7 @@ export class WorkerScan {
         const name = path.basename(dir.path);
         const folder = this.orm.Folder.create({
             level: dir.level,
-            path: dir.path,
+            path: ensureTrailingPathSeparator(dir.path),
             name,
             title: name === title ? undefined : title,
             year,
@@ -184,9 +184,10 @@ export class WorkerScan {
     }
     async scanSubfolders(folder, dir, result) {
         const folders = await folder.children.getItems();
+        const folderMap = new Map(folders.map(f => [f.path, f]));
         for (const subDir of dir.directories) {
             if (subDir.path !== folder.path) {
-                const subFolder = folders.find(f => f.path === subDir.path);
+                const subFolder = folderMap.get(subDir.path);
                 result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
             }
         }

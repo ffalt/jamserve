@@ -12,8 +12,8 @@ import path from 'node:path';
 import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
 import { AudioModule } from '../../../audio/audio.module.js';
-import { Inject } from 'typescript-ioc';
-export class BaseWorker {
+import { injectable, inject } from 'inversify';
+let BaseWorker = class BaseWorker {
     async renameFile(dir, oldName, newName) {
         if (containsFolderSystemChars(newName)) {
             return Promise.reject(new Error('Invalid Name'));
@@ -49,13 +49,17 @@ export class BaseWorker {
             return Promise.reject(new Error('Moving to Trash failed'));
         }
     }
-}
+};
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], BaseWorker.prototype, "audioModule", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], BaseWorker.prototype, "imageModule", void 0);
+BaseWorker = __decorate([
+    injectable()
+], BaseWorker);
+export { BaseWorker };
 //# sourceMappingURL=base.js.map

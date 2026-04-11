@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { IoService } from '../../modules/engine/services/io.service.js';
 import path from 'node:path';
 import { ImageModule } from '../../modules/image/image.module.js';
@@ -35,15 +35,15 @@ let ArtworkService = class ArtworkService {
     }
 };
 __decorate([
-    Inject,
+    inject(IoService),
     __metadata("design:type", IoService)
 ], ArtworkService.prototype, "ioService", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], ArtworkService.prototype, "imageModule", void 0);
 ArtworkService = __decorate([
-    InRequestScope
+    injectable()
 ], ArtworkService);
 export { ArtworkService };
 //# sourceMappingURL=artwork.service.js.map

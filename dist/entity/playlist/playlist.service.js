@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PlaylistService_1;
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { DBObjectType } from '../../types/enums.js';
 import { notFoundError } from '../../modules/deco/express/express-error.js';
 let PlaylistService = PlaylistService_1 = class PlaylistService {
@@ -89,7 +89,7 @@ let PlaylistService = PlaylistService_1 = class PlaylistService {
     }
 };
 PlaylistService = PlaylistService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], PlaylistService);
 export { PlaylistService };
 //# sourceMappingURL=playlist.service.js.map

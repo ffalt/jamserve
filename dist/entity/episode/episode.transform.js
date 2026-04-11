@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType, JamObjectType, PodcastStatus } from '../../types/enums.js';
 import { EpisodeService } from './episode.service.js';
@@ -46,15 +46,15 @@ let EpisodeTransformService = class EpisodeTransformService extends BaseTransfor
     }
 };
 __decorate([
-    Inject,
+    inject(EpisodeService),
     __metadata("design:type", EpisodeService)
 ], EpisodeTransformService.prototype, "episodeService", void 0);
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], EpisodeTransformService.prototype, "audioModule", void 0);
 EpisodeTransformService = __decorate([
-    InRequestScope
+    injectable()
 ], EpisodeTransformService);
 export { EpisodeTransformService };
 //# sourceMappingURL=episode.transform.js.map

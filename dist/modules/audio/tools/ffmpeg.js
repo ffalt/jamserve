@@ -82,6 +82,10 @@ export class FfmpegCommand extends EventTarget {
         this.addedOptions.push(...options);
         return this;
     }
+    seekInput(seconds) {
+        this.inputSeek = seconds;
+        return this;
+    }
     withNoVideo() {
         this.noVideo = true;
         return this;
@@ -129,6 +133,9 @@ export class FfmpegCommand extends EventTarget {
         const arguments_ = ['-hide_banner'];
         let stdinPipe = false;
         let stdoutPipe = false;
+        if (this.inputSeek !== undefined && this.inputSeek > 0) {
+            arguments_.push('-ss', this.inputSeek.toString());
+        }
         if (typeof this.source === 'string' && this.source.length > 0) {
             arguments_.push('-i', this.source);
         }

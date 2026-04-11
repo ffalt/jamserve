@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { IoService } from '../../modules/engine/services/io.service.js';
 let RootTransformService = class RootTransformService extends BaseTransformService {
@@ -26,11 +26,11 @@ let RootTransformService = class RootTransformService extends BaseTransformServi
     }
 };
 __decorate([
-    Inject,
+    inject(IoService),
     __metadata("design:type", IoService)
 ], RootTransformService.prototype, "ioService", void 0);
 RootTransformService = __decorate([
-    InRequestScope
+    injectable()
 ], RootTransformService);
 export { RootTransformService };
 //# sourceMappingURL=root.transform.js.map

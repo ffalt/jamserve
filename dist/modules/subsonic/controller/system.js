@@ -30,7 +30,8 @@ let SubsonicSystemApi = class SubsonicSystemApi {
         return {
             openSubsonicExtensions: [
                 { name: 'songLyrics', versions: [1] },
-                { name: 'formPost', versions: [1] }
+                { name: 'formPost', versions: [1] },
+                { name: 'transcodeOffset', versions: [1] }
             ]
         };
     }

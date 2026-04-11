@@ -25,12 +25,12 @@ import { WaveformModule } from './waveform/waveform.module.js';
 import { AudioFormatType, TagFormatType } from '../../types/enums.js';
 import { SettingsService } from '../../entity/settings/settings.service.js';
 import { ConfigService } from '../engine/services/config.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
 export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 let AudioModule = class AudioModule {
-    constructor() {
+    postConstruct() {
         this.waveformCachePath = this.configService.getDataPath(['cache', 'waveforms']);
         this.transcodeCachePath = this.configService.getDataPath(['cache', 'transcode']);
         this.musicbrainz = new MusicbrainzClient({ userAgent: this.configService.tools.musicbrainz.userAgent, retryOn: true });
@@ -127,20 +127,25 @@ let AudioModule = class AudioModule {
     }
 };
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], AudioModule.prototype, "configService", void 0);
 __decorate([
-    Inject,
+    inject(SettingsService),
     __metadata("design:type", SettingsService)
 ], AudioModule.prototype, "settingsService", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], AudioModule.prototype, "imageModule", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AudioModule.prototype, "postConstruct", null);
 AudioModule = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], AudioModule);
 export { AudioModule };
 //# sourceMappingURL=audio.module.js.map

@@ -12,7 +12,7 @@ import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { TranscoderStream } from '../../modules/audio/transcoder/transcoder-stream.js';
 import { fileSuffix } from '../../utils/fs-utils.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { AudioFormatType, DBObjectType } from '../../types/enums.js';
 import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 let StreamService = class StreamService {
@@ -31,9 +31,20 @@ let StreamService = class StreamService {
         if (destinationFormat.startsWith('.')) {
             destinationFormat = destinationFormat.slice(1);
         }
-        const bitRate = options?.maxBitRate ?? 0;
+        let bitRate = options?.maxBitRate ?? 0;
+        if (destinationFormat === AudioFormatType.webma && bitRate > 256) {
+            bitRate = 256;
+        }
+        const timeOffset = options?.timeOffset;
         if (destinationFormat !== 'raw' && TranscoderStream.needsTranscoding(sourceFormat ?? fileSuffix(filename), destinationFormat, bitRate)) {
+            if (timeOffset !== undefined && timeOffset > 0) {
+                return { pipe: this.audioModule.transcoder.getLive(filename, destinationFormat, bitRate, timeOffset) };
+            }
             return this.audioModule.transcoder.get(filename, id, destinationFormat, bitRate);
+        }
+        if (timeOffset !== undefined && timeOffset > 0) {
+            const effectiveFormat = destinationFormat === 'raw' ? (sourceFormat ?? fileSuffix(filename)) : destinationFormat;
+            return { pipe: this.audioModule.transcoder.getLive(filename, effectiveFormat, bitRate, timeOffset) };
         }
         return { file: { filename, name: `${id}.${destinationFormat}` } };
     }
@@ -62,11 +73,11 @@ let StreamService = class StreamService {
     }
 };
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], StreamService.prototype, "audioModule", void 0);
 StreamService = __decorate([
-    InRequestScope
+    injectable()
 ], StreamService);
 export { StreamService };
 //# sourceMappingURL=stream.service.js.map

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { ThirdPartyConfig } from '../../../config/thirdparty.config.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import path from 'node:path';
 import { getMaxAge, ONE_YEAR_MS } from '../../../utils/max-age.js';
 import fse from 'fs-extra';
@@ -134,7 +134,7 @@ let ConfigService = class ConfigService {
     }
 };
 ConfigService = __decorate([
-    InRequestScope,
+    injectable(),
     __metadata("design:paramtypes", [])
 ], ConfigService);
 export { ConfigService };

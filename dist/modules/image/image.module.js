@@ -21,7 +21,7 @@ import { logger } from '../../utils/logger.js';
 import { randomString } from '../../utils/random.js';
 import { AvatarGen } from './image.avatar.js';
 import { ConfigService } from '../engine/services/config.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { ImageFormatType } from '../../types/enums.js';
 import { Jimp, loadFont, VerticalAlign, HorizontalAlign } from 'jimp';
 import { SANS_32_WHITE } from './image.font.js';
@@ -31,6 +31,8 @@ sharp.simd(false);
 let ImageModule = ImageModule_1 = class ImageModule {
     constructor() {
         this.format = 'png';
+    }
+    postConstruct() {
         this.imageCachePath = this.configService.getDataPath(['cache', 'images']);
         this.cache = new IDFolderCache(this.imageCachePath, 'thumb', (parameters) => {
             const sizePrefix = parameters.size === undefined ? '' : `-${parameters.size}`;
@@ -282,12 +284,17 @@ let ImageModule = ImageModule_1 = class ImageModule {
     }
 };
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], ImageModule.prototype, "configService", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ImageModule.prototype, "postConstruct", null);
 ImageModule = ImageModule_1 = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], ImageModule);
 export { ImageModule };
 //# sourceMappingURL=image.module.js.map

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var ImageService_1;
 import path from 'node:path';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
 import { PodcastService } from '../podcast/podcast.service.js';
@@ -133,47 +133,47 @@ let ImageService = ImageService_1 = class ImageService {
     }
 };
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], ImageService.prototype, "imageModule", void 0);
 __decorate([
-    Inject,
+    inject(PodcastService),
     __metadata("design:type", PodcastService)
 ], ImageService.prototype, "podcastService", void 0);
 __decorate([
-    Inject,
+    inject(TrackService),
     __metadata("design:type", TrackService)
 ], ImageService.prototype, "trackService", void 0);
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], ImageService.prototype, "folderService", void 0);
 __decorate([
-    Inject,
+    inject(UserService),
     __metadata("design:type", UserService)
 ], ImageService.prototype, "userService", void 0);
 __decorate([
-    Inject,
+    inject(RootService),
     __metadata("design:type", RootService)
 ], ImageService.prototype, "rootService", void 0);
 __decorate([
-    Inject,
+    inject(SeriesService),
     __metadata("design:type", SeriesService)
 ], ImageService.prototype, "seriesService", void 0);
 __decorate([
-    Inject,
+    inject(ArtistService),
     __metadata("design:type", ArtistService)
 ], ImageService.prototype, "artistService", void 0);
 __decorate([
-    Inject,
+    inject(AlbumService),
     __metadata("design:type", AlbumService)
 ], ImageService.prototype, "albumService", void 0);
 __decorate([
-    Inject,
+    inject(ArtworkService),
     __metadata("design:type", ArtworkService)
 ], ImageService.prototype, "artworkService", void 0);
 ImageService = ImageService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], ImageService);
 export { ImageService };
 //# sourceMappingURL=image.service.js.map

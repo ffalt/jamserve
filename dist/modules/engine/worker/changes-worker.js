@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var ChangesWorker_1;
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, injectFromBase } from 'inversify';
 import { BaseWorker } from './tasks/base.js';
 import { OrmService } from '../services/orm.service.js';
 import { MetaMerger } from './merge-meta.js';
@@ -72,8 +72,13 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
             stateCleanIds.appendIDs(stateBookmarkIDs);
         }
         const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
+        let affectedPlaylistIDs = [];
         if (playlistEntryIDs.length > 0) {
-            await orm.PlaylistEntry.removeLaterByIDs(playlistEntryIDs);
+            const entries = await orm.PlaylistEntry.findByIDs(playlistEntryIDs);
+            affectedPlaylistIDs = [...new Set(entries.map(entry => entry.playlist.id()).filter((id) => id !== undefined))];
+            for (const entry of entries) {
+                orm.PlaylistEntry.removeLater(entry);
+            }
             stateCleanIds.appendIDs(playlistEntryIDs);
         }
         const stateDestinationIDs = stateCleanIds.ids();
@@ -83,6 +88,38 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         }
         if (orm.em.hasChanges()) {
             log.debug('Syncing Removal Dependend Updates to DB');
+            await orm.em.flush();
+        }
+        await ChangesWorker_1.updateAffectedPlaylists(orm, affectedPlaylistIDs);
+    }
+    static async updateAffectedPlaylists(orm, affectedPlaylistIDs) {
+        if (affectedPlaylistIDs.length === 0) {
+            return;
+        }
+        const playlists = await orm.Playlist.findByIDs(affectedPlaylistIDs);
+        for (const playlist of playlists) {
+            log.debug('Updating Playlist:', playlist.name);
+            const remainingEntries = await playlist.entries.getItems();
+            let duration = 0;
+            for (const entry of remainingEntries) {
+                const track = await entry.track.get();
+                if (track) {
+                    const tag = await track.tag.get();
+                    duration += tag?.mediaDuration ?? 0;
+                }
+                else {
+                    const episode = await entry.episode.get();
+                    if (episode) {
+                        const tag = await episode.tag.get();
+                        duration += tag?.mediaDuration ?? 0;
+                    }
+                }
+            }
+            playlist.duration = duration;
+            orm.Playlist.persistLater(playlist);
+        }
+        if (orm.em.hasChanges()) {
+            log.debug('Syncing Playlist Duration Updates to DB');
             await orm.em.flush();
         }
     }
@@ -123,11 +160,12 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     }
 };
 __decorate([
-    Inject,
+    inject(OrmService),
     __metadata("design:type", OrmService)
 ], ChangesWorker.prototype, "ormService", void 0);
 ChangesWorker = ChangesWorker_1 = __decorate([
-    InRequestScope
+    injectable(),
+    injectFromBase()
 ], ChangesWorker);
 export { ChangesWorker };
 //# sourceMappingURL=changes-worker.js.map

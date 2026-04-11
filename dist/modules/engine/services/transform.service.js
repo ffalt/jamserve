@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { minutesAgo } from '../../../utils/date-time.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { ChatTransformService } from '../../../entity/chat/chat.transform.js';
 import { GenreTransformService } from '../../../entity/genre/genre.transform.js';
 import { RadioTransformService } from '../../../entity/radio/radio.transform.js';
@@ -146,79 +146,79 @@ let TransformService = class TransformService {
     }
 };
 __decorate([
-    Inject,
+    inject(BaseTransformService),
     __metadata("design:type", BaseTransformService)
 ], TransformService.prototype, "Base", void 0);
 __decorate([
-    Inject,
+    inject(ChatTransformService),
     __metadata("design:type", ChatTransformService)
 ], TransformService.prototype, "Chat", void 0);
 __decorate([
-    Inject,
+    inject(GenreTransformService),
     __metadata("design:type", GenreTransformService)
 ], TransformService.prototype, "Genre", void 0);
 __decorate([
-    Inject,
+    inject(RadioTransformService),
     __metadata("design:type", RadioTransformService)
 ], TransformService.prototype, "Radio", void 0);
 __decorate([
-    Inject,
+    inject(RootTransformService),
     __metadata("design:type", RootTransformService)
 ], TransformService.prototype, "Root", void 0);
 __decorate([
-    Inject,
+    inject(PodcastTransformService),
     __metadata("design:type", PodcastTransformService)
 ], TransformService.prototype, "Podcast", void 0);
 __decorate([
-    Inject,
+    inject(EpisodeTransformService),
     __metadata("design:type", EpisodeTransformService)
 ], TransformService.prototype, "Episode", void 0);
 __decorate([
-    Inject,
+    inject(FolderTransformService),
     __metadata("design:type", FolderTransformService)
 ], TransformService.prototype, "Folder", void 0);
 __decorate([
-    Inject,
+    inject(TrackTransformService),
     __metadata("design:type", TrackTransformService)
 ], TransformService.prototype, "Track", void 0);
 __decorate([
-    Inject,
+    inject(SeriesTransformService),
     __metadata("design:type", SeriesTransformService)
 ], TransformService.prototype, "Series", void 0);
 __decorate([
-    Inject,
+    inject(ArtistTransformService),
     __metadata("design:type", ArtistTransformService)
 ], TransformService.prototype, "Artist", void 0);
 __decorate([
-    Inject,
+    inject(AlbumTransformService),
     __metadata("design:type", AlbumTransformService)
 ], TransformService.prototype, "Album", void 0);
 __decorate([
-    Inject,
+    inject(ArtworkTransformService),
     __metadata("design:type", ArtworkTransformService)
 ], TransformService.prototype, "Artwork", void 0);
 __decorate([
-    Inject,
+    inject(PlaylistTransformService),
     __metadata("design:type", PlaylistTransformService)
 ], TransformService.prototype, "Playlist", void 0);
 __decorate([
-    Inject,
+    inject(BookmarkTransformService),
     __metadata("design:type", BookmarkTransformService)
 ], TransformService.prototype, "Bookmark", void 0);
 __decorate([
-    Inject,
+    inject(PlayQueueTransformService),
     __metadata("design:type", PlayQueueTransformService)
 ], TransformService.prototype, "PlayQueue", void 0);
 __decorate([
-    Inject,
+    inject(SessionTransformService),
     __metadata("design:type", SessionTransformService)
 ], TransformService.prototype, "Session", void 0);
 __decorate([
-    Inject,
+    inject(UserTransformService),
     __metadata("design:type", UserTransformService)
 ], TransformService.prototype, "User", void 0);
 TransformService = __decorate([
-    InRequestScope
+    injectable()
 ], TransformService);
 export { TransformService };
 //# sourceMappingURL=transform.service.js.map

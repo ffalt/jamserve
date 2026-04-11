@@ -10,9 +10,12 @@ export class TranscoderStream {
     static validTranscoding(format) {
         return SupportedTranscodeAudioFormat.includes(format);
     }
-    static getTranscodeProc(source, format, maxBitRate) {
+    static getTranscodeProc(source, format, maxBitRate, timeOffset) {
         const proc = ffmpeg({ source })
             .withNoVideo();
+        if (timeOffset !== undefined && timeOffset > 0) {
+            proc.seekInput(timeOffset);
+        }
         switch (format) {
             case AudioFormatType.flv: {
                 return proc.toFormat(format).addOptions(['-ar 44100', `-maxrate ${maxBitRate || 128}k`]);

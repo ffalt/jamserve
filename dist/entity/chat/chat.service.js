@@ -9,11 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { durationToMilliseconds, nowMinusMilliseconds } from '../../utils/date-time.js';
 import { SettingsService } from '../settings/settings.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 let ChatService = class ChatService {
     constructor() {
         this.messages = [];
         this.durationMs = 0;
+    }
+    postConstruct() {
         this.settingsService.registerChangeListener(async () => {
             this.updateSettings();
             await this.cleanOld();
@@ -56,12 +58,17 @@ let ChatService = class ChatService {
     }
 };
 __decorate([
-    Inject,
+    inject(SettingsService),
     __metadata("design:type", SettingsService)
 ], ChatService.prototype, "settingsService", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ChatService.prototype, "postConstruct", null);
 ChatService = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], ChatService);
 export { ChatService };
 //# sourceMappingURL=chat.service.js.map

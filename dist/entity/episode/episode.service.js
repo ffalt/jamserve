@@ -15,7 +15,7 @@ import { downloadFile } from '../../utils/download.js';
 import { SupportedAudioFormat } from '../../utils/filetype.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { PodcastStatus } from '../../types/enums.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
@@ -24,6 +24,8 @@ const log = logger('EpisodeService');
 let EpisodeService = class EpisodeService {
     constructor() {
         this.episodeDownloadDebounce = new DebouncePromises();
+    }
+    postConstruct() {
         this.podcastsPath = this.configService.getDataPath(['podcasts']);
     }
     isDownloading(podcastEpisodeId) {
@@ -137,20 +139,25 @@ let EpisodeService = class EpisodeService {
     }
 };
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], EpisodeService.prototype, "audioModule", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], EpisodeService.prototype, "imageModule", void 0);
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], EpisodeService.prototype, "configService", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EpisodeService.prototype, "postConstruct", null);
 EpisodeService = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], EpisodeService);
 export { EpisodeService };
 //# sourceMappingURL=episode.service.js.map

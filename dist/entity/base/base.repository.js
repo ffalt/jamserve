@@ -58,7 +58,7 @@ export class BaseRepository extends EntityRepository {
                 }
             }
         }
-        if (hasOrder && options.include && (options.include.length > 0) && options.include.some(o => !!o.where)) {
+        if (hasOrder && options.include && options.include.some(o => !!o.where)) {
             options.subQuery = false;
         }
     }

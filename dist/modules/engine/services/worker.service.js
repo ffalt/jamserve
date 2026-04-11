@@ -11,7 +11,7 @@ import { ArtworkWorker } from '../worker/tasks/artwork.js';
 import { FolderWorker } from '../worker/tasks/folder.js';
 import { RootWorker } from '../worker/tasks/root.js';
 import { TrackWorker } from '../worker/tasks/track.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { WorkerCommandsFolder } from './worker/worker.commands.folder.js';
 import { WorkerCommandsArtwork } from './worker/worker.commands.artwork.js';
 import { WorkerCommandsRoot } from './worker/worker.commands.root.js';
@@ -26,27 +26,27 @@ let WorkerService = class WorkerService {
     }
 };
 __decorate([
-    Inject,
+    inject(ArtworkWorker),
     __metadata("design:type", ArtworkWorker)
 ], WorkerService.prototype, "artworkWorker", void 0);
 __decorate([
-    Inject,
+    inject(TrackWorker),
     __metadata("design:type", TrackWorker)
 ], WorkerService.prototype, "trackWorker", void 0);
 __decorate([
-    Inject,
+    inject(FolderWorker),
     __metadata("design:type", FolderWorker)
 ], WorkerService.prototype, "folderWorker", void 0);
 __decorate([
-    Inject,
+    inject(RootWorker),
     __metadata("design:type", RootWorker)
 ], WorkerService.prototype, "rootWorker", void 0);
 __decorate([
-    Inject,
+    inject(ChangesWorker),
     __metadata("design:type", ChangesWorker)
 ], WorkerService.prototype, "changes", void 0);
 WorkerService = __decorate([
-    InRequestScope
+    injectable()
 ], WorkerService);
 export { WorkerService };
 //# sourceMappingURL=worker.service.js.map

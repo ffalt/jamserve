@@ -6,8 +6,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var DownloadService_1;
 import path from 'node:path';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { CompressListStream } from '../../utils/compress-list-stream.js';
+import { CompressPlaylistStream } from '../../utils/compress-playlist-stream.js';
 import { CompressFolderStream } from '../../utils/compress-folder-stream.js';
 import { DBObjectType } from '../../types/enums.js';
 import { invalidParameterError, unauthError } from '../../modules/deco/express/express-error.js';
@@ -66,7 +67,7 @@ let DownloadService = DownloadService_1 = class DownloadService {
                 }
             }
         }
-        return { pipe: new CompressListStream(fileList, playlist.name, format) };
+        return { pipe: new CompressPlaylistStream(fileList, playlist.name, format) };
     }
     async getObjDownload(o, objType, format, user) {
         switch (objType) {
@@ -103,7 +104,7 @@ let DownloadService = DownloadService_1 = class DownloadService {
     }
 };
 DownloadService = DownloadService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], DownloadService);
 export { DownloadService };
 //# sourceMappingURL=download.service.js.map

@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { DBObjectType } from '../../types/enums.js';
 import { logger } from '../../utils/logger.js';
 import { StateService } from '../state/state.service.js';
@@ -83,11 +83,11 @@ let NowPlayingService = class NowPlayingService {
     }
 };
 __decorate([
-    Inject,
+    inject(StateService),
     __metadata("design:type", StateService)
 ], NowPlayingService.prototype, "stateService", void 0);
 NowPlayingService = __decorate([
-    InRequestScope
+    injectable()
 ], NowPlayingService);
 export { NowPlayingService };
 //# sourceMappingURL=nowplaying.service.js.map

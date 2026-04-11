@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import express from 'express';
 import { EngineService } from '../engine/services/engine.service.js';
 import bodyParser from 'body-parser';
@@ -118,35 +118,35 @@ let Server = class Server {
     }
 };
 __decorate([
-    Inject,
+    inject(EngineService),
     __metadata("design:type", EngineService)
 ], Server.prototype, "engine", void 0);
 __decorate([
-    Inject,
+    inject(GraphqlMiddleware),
     __metadata("design:type", GraphqlMiddleware)
 ], Server.prototype, "graphql", void 0);
 __decorate([
-    Inject,
+    inject(RestMiddleware),
     __metadata("design:type", RestMiddleware)
 ], Server.prototype, "rest", void 0);
 __decorate([
-    Inject,
+    inject(SubsonicMiddleware),
     __metadata("design:type", SubsonicMiddleware)
 ], Server.prototype, "subsonic", void 0);
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], Server.prototype, "configService", void 0);
 __decorate([
-    Inject,
+    inject(SessionService),
     __metadata("design:type", SessionService)
 ], Server.prototype, "sessionService", void 0);
 __decorate([
-    Inject,
+    inject(DocsMiddleware),
     __metadata("design:type", DocsMiddleware)
 ], Server.prototype, "docs", void 0);
 Server = __decorate([
-    InRequestScope
+    injectable()
 ], Server);
 export { Server };
 //# sourceMappingURL=server.js.map

@@ -16,7 +16,7 @@ import { ConfigService } from './config.service.js';
 import { JAMSERVE_VERSION } from '../../../version.js';
 import { OrmService } from './orm.service.js';
 import { WaveformService } from '../../../entity/waveform/waveform.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { RootScanStrategy } from '../../../types/enums.js';
 import { UserService } from '../../../entity/user/user.service.js';
@@ -43,7 +43,7 @@ import { BookmarkService } from '../../../entity/bookmark/bookmark.service.js';
 import { RateLimitService } from './ratelimit.service.js';
 const log = logger('Engine');
 let EngineService = EngineService_1 = class EngineService {
-    constructor() {
+    postConstruct() {
         this.io.registerAfterRefresh(() => this.afterRefresh());
     }
     async afterRefresh() {
@@ -134,116 +134,121 @@ let EngineService = EngineService_1 = class EngineService {
     }
 };
 __decorate([
-    Inject,
+    inject(ArtworkService),
     __metadata("design:type", ArtworkService)
 ], EngineService.prototype, "artwork", void 0);
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], EngineService.prototype, "audio", void 0);
 __decorate([
-    Inject,
+    inject(ChatService),
     __metadata("design:type", ChatService)
 ], EngineService.prototype, "chat", void 0);
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], EngineService.prototype, "config", void 0);
 __decorate([
-    Inject,
+    inject(DownloadService),
     __metadata("design:type", DownloadService)
 ], EngineService.prototype, "download", void 0);
 __decorate([
-    Inject,
+    inject(EpisodeService),
     __metadata("design:type", EpisodeService)
 ], EngineService.prototype, "episode", void 0);
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], EngineService.prototype, "folder", void 0);
 __decorate([
-    Inject,
+    inject(GenreService),
     __metadata("design:type", GenreService)
 ], EngineService.prototype, "genre", void 0);
 __decorate([
-    Inject,
+    inject(ImageService),
     __metadata("design:type", ImageService)
 ], EngineService.prototype, "image", void 0);
 __decorate([
-    Inject,
+    inject(IoService),
     __metadata("design:type", IoService)
 ], EngineService.prototype, "io", void 0);
 __decorate([
-    Inject,
+    inject(MetaDataService),
     __metadata("design:type", MetaDataService)
 ], EngineService.prototype, "metadata", void 0);
 __decorate([
-    Inject,
+    inject(NowPlayingService),
     __metadata("design:type", NowPlayingService)
 ], EngineService.prototype, "nowPlaying", void 0);
 __decorate([
-    Inject,
+    inject(OrmService),
     __metadata("design:type", OrmService)
 ], EngineService.prototype, "orm", void 0);
 __decorate([
-    Inject,
+    inject(PlaylistService),
     __metadata("design:type", PlaylistService)
 ], EngineService.prototype, "playlist", void 0);
 __decorate([
-    Inject,
+    inject(PlayQueueService),
     __metadata("design:type", PlayQueueService)
 ], EngineService.prototype, "playQueue", void 0);
 __decorate([
-    Inject,
+    inject(PodcastService),
     __metadata("design:type", PodcastService)
 ], EngineService.prototype, "podcast", void 0);
 __decorate([
-    Inject,
+    inject(SessionService),
     __metadata("design:type", SessionService)
 ], EngineService.prototype, "session", void 0);
 __decorate([
-    Inject,
+    inject(SettingsService),
     __metadata("design:type", SettingsService)
 ], EngineService.prototype, "settings", void 0);
 __decorate([
-    Inject,
+    inject(StateService),
     __metadata("design:type", StateService)
 ], EngineService.prototype, "state", void 0);
 __decorate([
-    Inject,
+    inject(StatsService),
     __metadata("design:type", StatsService)
 ], EngineService.prototype, "stats", void 0);
 __decorate([
-    Inject,
+    inject(StreamService),
     __metadata("design:type", StreamService)
 ], EngineService.prototype, "stream", void 0);
 __decorate([
-    Inject,
+    inject(TrackService),
     __metadata("design:type", TrackService)
 ], EngineService.prototype, "track", void 0);
 __decorate([
-    Inject,
+    inject(TransformService),
     __metadata("design:type", TransformService)
 ], EngineService.prototype, "transform", void 0);
 __decorate([
-    Inject,
+    inject(UserService),
     __metadata("design:type", UserService)
 ], EngineService.prototype, "user", void 0);
 __decorate([
-    Inject,
+    inject(WaveformService),
     __metadata("design:type", WaveformService)
 ], EngineService.prototype, "waveform", void 0);
 __decorate([
-    Inject,
+    inject(BookmarkService),
     __metadata("design:type", BookmarkService)
 ], EngineService.prototype, "bookmark", void 0);
 __decorate([
-    Inject,
+    inject(RateLimitService),
     __metadata("design:type", RateLimitService)
 ], EngineService.prototype, "rateLimit", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EngineService.prototype, "postConstruct", null);
 EngineService = EngineService_1 = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], EngineService);
 export { EngineService };
 //# sourceMappingURL=engine.service.js.map

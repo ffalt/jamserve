@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var AlbumService_1;
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
 let AlbumService = AlbumService_1 = class AlbumService {
@@ -45,15 +45,15 @@ let AlbumService = AlbumService_1 = class AlbumService {
     }
 };
 __decorate([
-    Inject,
+    inject(TrackService),
     __metadata("design:type", TrackService)
 ], AlbumService.prototype, "trackService", void 0);
 __decorate([
-    Inject,
+    inject(FolderService),
     __metadata("design:type", FolderService)
 ], AlbumService.prototype, "folderService", void 0);
 AlbumService = AlbumService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], AlbumService);
 export { AlbumService };
 //# sourceMappingURL=album.service.js.map

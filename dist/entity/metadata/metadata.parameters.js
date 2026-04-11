@@ -68,7 +68,7 @@ __decorate([
     __metadata("design:type", String)
 ], AcoustidLookupParameters.prototype, "trackID", void 0);
 __decorate([
-    ObjectField({ nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' }),
+    ObjectField(() => String, { nullable: true, description: 'Lookup Includes (comma-separated AcoustId includes)', defaultValue: 'recordings,releases,releasegroups,tracks,compress,usermeta,sources' }),
     __metadata("design:type", String)
 ], AcoustidLookupParameters.prototype, "inc", void 0);
 AcoustidLookupParameters = __decorate([
@@ -86,7 +86,7 @@ __decorate([
     __metadata("design:type", String)
 ], MusicBrainzLookupParameters.prototype, "type", void 0);
 __decorate([
-    ObjectField({ nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' }),
+    ObjectField(() => String, { nullable: true, description: 'Lookup Includes (comma-separated MusicBrainz includes https://musicbrainz.org/doc/Development/XML_Web_Service/Version_2#Lookups )' }),
     __metadata("design:type", String)
 ], MusicBrainzLookupParameters.prototype, "inc", void 0);
 MusicBrainzLookupParameters = __decorate([

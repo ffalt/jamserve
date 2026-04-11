@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var UserService_1;
 import { bcryptComparePassword, bcryptPassword } from '../../utils/bcrypt.js';
 import { SessionMode, UserRole } from '../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject, postConstruct } from 'inversify';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import fse from 'fs-extra';
@@ -23,7 +23,7 @@ import { invalidParameterError, unauthError } from '../../modules/deco/express/e
 import { hashMD5 } from '../../utils/md5.js';
 import { SubsonicApiError, SubsonicFormatter } from '../../modules/subsonic/formatter.js';
 let UserService = UserService_1 = class UserService {
-    constructor() {
+    postConstruct() {
         this.userAvatarPath = this.configService.getDataPath(['images']);
     }
     async findByName(orm, name) {
@@ -194,13 +194,16 @@ let UserService = UserService_1 = class UserService {
         return user;
     }
     async authSubsonicToken(orm, name, token, salt) {
-        if (!name?.trim().length) {
+        const normalizedName = Array.isArray(name) ? name.at(0) : name;
+        const normalizedToken = Array.isArray(token) ? token.at(0) : token;
+        const normalizedSalt = Array.isArray(salt) ? salt.at(0) : salt;
+        if (!normalizedName?.trim().length) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
-        if (!token?.length) {
+        if (!normalizedToken?.length) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
-        const user = await orm.User.findOne({ where: { name } });
+        const user = await orm.User.findOne({ where: { name: normalizedName } });
         if (!user) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
@@ -208,8 +211,8 @@ let UserService = UserService_1 = class UserService {
         if (!session) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
-        const t = hashMD5(`${session.jwth}${salt}`);
-        if (token.length !== t.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(t))) {
+        const t = hashMD5(`${session.jwth}${normalizedSalt}`);
+        if (normalizedToken.length !== t.length || !crypto.timingSafeEqual(Buffer.from(normalizedToken), Buffer.from(t))) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));
         }
         return user;
@@ -218,16 +221,21 @@ let UserService = UserService_1 = class UserService {
 UserService.DUMMY_HASH = '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234';
 UserService.EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], UserService.prototype, "configService", void 0);
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], UserService.prototype, "imageModule", void 0);
+__decorate([
+    postConstruct(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UserService.prototype, "postConstruct", null);
 UserService = UserService_1 = __decorate([
-    InRequestScope,
-    __metadata("design:paramtypes", [])
+    injectable()
 ], UserService);
 export { UserService };
 //# sourceMappingURL=user.service.js.map

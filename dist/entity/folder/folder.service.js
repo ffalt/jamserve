@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ArtworkImageType, FolderType } from '../../types/enums.js';
 import path from 'node:path';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 export async function getFolderDisplayArtwork(_orm, folder) {
@@ -54,11 +54,11 @@ let FolderService = class FolderService {
     }
 };
 __decorate([
-    Inject,
+    inject(ImageModule),
     __metadata("design:type", ImageModule)
 ], FolderService.prototype, "imageModule", void 0);
 FolderService = __decorate([
-    InRequestScope
+    injectable()
 ], FolderService);
 export { FolderService };
 //# sourceMappingURL=folder.service.js.map

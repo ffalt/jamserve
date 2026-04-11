@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var SettingsService_1;
 import { JAMSERVE_VERSION } from '../../version.js';
-import { InRequestScope } from 'typescript-ioc';
+import { injectable } from 'inversify';
 import { logger } from '../../utils/logger.js';
 const log = logger('SettingsService');
 export const defaultEngineSettings = {
@@ -79,7 +79,7 @@ let SettingsService = SettingsService_1 = class SettingsService {
     }
 };
 SettingsService = SettingsService_1 = __decorate([
-    InRequestScope
+    injectable()
 ], SettingsService);
 export { SettingsService };
 //# sourceMappingURL=settings.service.js.map

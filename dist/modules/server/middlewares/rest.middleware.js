@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import express from 'express';
 import { UserRole } from '../../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { RestControllers } from '../../engine/rest/controllers.js';
 import { ConfigService } from '../../engine/services/config.service.js';
@@ -70,11 +70,11 @@ let RestMiddleware = class RestMiddleware {
     }
 };
 __decorate([
-    Inject,
+    inject(ConfigService),
     __metadata("design:type", ConfigService)
 ], RestMiddleware.prototype, "configService", void 0);
 RestMiddleware = __decorate([
-    InRequestScope
+    injectable()
 ], RestMiddleware);
 export { RestMiddleware };
 //# sourceMappingURL=rest.middleware.js.map

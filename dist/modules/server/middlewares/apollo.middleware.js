@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { OrmService } from '../../engine/services/orm.service.js';
 import { EngineService } from '../../engine/services/engine.service.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { ArgumentValidationError, buildSchema, registerEnumType } from 'type-graphql';
 import { AlbumOrderFields, AlbumType, ArtistOrderFields, ArtworkImageType, AudioFormatType, BookmarkOrderFields, DefaultOrderFields, EpisodeOrderFields, FolderOrderFields, FolderType, GenreOrderFields, ListType, PlaylistEntryOrderFields, PlayQueueEntryOrderFields, PodcastOrderFields, PodcastStatus, RootScanStrategy, SessionMode, SessionOrderFields, TagFormatType, TrackOrderFields, UserRole } from '../../../types/enums.js';
@@ -208,15 +208,15 @@ let ApolloMiddleware = class ApolloMiddleware {
     }
 };
 __decorate([
-    Inject,
+    inject(OrmService),
     __metadata("design:type", OrmService)
 ], ApolloMiddleware.prototype, "orm", void 0);
 __decorate([
-    Inject,
+    inject(EngineService),
     __metadata("design:type", EngineService)
 ], ApolloMiddleware.prototype, "engine", void 0);
 ApolloMiddleware = __decorate([
-    InRequestScope
+    injectable()
 ], ApolloMiddleware);
 export { ApolloMiddleware };
 //# sourceMappingURL=apollo.middleware.js.map

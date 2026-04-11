@@ -11,7 +11,7 @@ import path from 'node:path';
 import fse from 'fs-extra';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { DBObjectType, WaveformFormatType } from '../../types/enums.js';
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { logger } from '../../utils/logger.js';
 import { genericError, invalidParameterError } from '../../modules/deco/express/express-error.js';
 const log = logger('Waveform');
@@ -77,11 +77,11 @@ let WaveformService = class WaveformService {
     }
 };
 __decorate([
-    Inject,
+    inject(AudioModule),
     __metadata("design:type", AudioModule)
 ], WaveformService.prototype, "audioModule", void 0);
 WaveformService = __decorate([
-    InRequestScope
+    injectable()
 ], WaveformService);
 export { WaveformService };
 //# sourceMappingURL=waveform.service.js.map

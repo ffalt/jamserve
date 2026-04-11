@@ -177,11 +177,11 @@ export function getCustomParameterTemplate(customPathParameters, call, result) {
     for (const g of customPathParameters.groups) {
         const hasOptionalAlias = (call.aliasRoutes ?? []).some(alias => (alias.hideParameters ?? []).includes(g.name));
         if (hasOptionalAlias) {
-            routeParts.push(`$\{params.${g.name} ? \`${g.prefix ?? ''}$\{params.${g.name}}\` : ''}`);
+            routeParts.push(`\${params.${g.name} ? \`${g.prefix ?? ''}\${params.${g.name}}\` : ''}`);
         }
         else {
             validateNames.push(g.name);
-            routeParts.push(`${g.prefix ?? ''}$\{params.${g.name}}`);
+            routeParts.push(`${g.prefix ?? ''}\${params.${g.name}}`);
         }
     }
     const condition = validateNames.map(s => `!params.${s}`).join(' && ');

@@ -70,15 +70,16 @@ export async function validateExternalUrl(url) {
         throw new Error(`Blocked URL scheme: ${parsed.protocol}`);
     }
     const hostname = parsed.hostname;
-    if (net.isIP(hostname)) {
-        if (isBlockedIP(hostname)) {
+    const normalizedHost = hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname;
+    if (net.isIP(normalizedHost)) {
+        if (isBlockedIP(normalizedHost)) {
             throw new Error('URL targets a blocked network address');
         }
         return;
     }
     let addresses;
     try {
-        const results = await dns.lookup(hostname, { all: true });
+        const results = await dns.lookup(normalizedHost, { all: true });
         addresses = results.map(r => r.address);
     }
     catch {

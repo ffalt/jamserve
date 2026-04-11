@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Inject, InRequestScope } from 'typescript-ioc';
+import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
 import { MetaDataService } from '../metadata/metadata.service.js';
@@ -46,15 +46,15 @@ let ArtistTransformService = class ArtistTransformService extends BaseTransformS
     }
 };
 __decorate([
-    Inject,
+    inject(MetaDataService),
     __metadata("design:type", MetaDataService)
 ], ArtistTransformService.prototype, "metaData", void 0);
 __decorate([
-    Inject,
+    inject(GenreTransformService),
     __metadata("design:type", GenreTransformService)
 ], ArtistTransformService.prototype, "Genre", void 0);
 ArtistTransformService = __decorate([
-    InRequestScope
+    injectable()
 ], ArtistTransformService);
 export { ArtistTransformService };
 //# sourceMappingURL=artist.transform.js.map
