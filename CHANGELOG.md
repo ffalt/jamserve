@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.4](https://github.com/ffalt/jamserve/compare/v0.6.3...v0.6.4) (2026-04-11)
+
+
+### Features
+
+* add CompressPlaylistStream for playlist compression with M3U and PLS support ([585c426](https://github.com/ffalt/jamserve/commit/585c426976392a2b0dfa1d02a06b6911219befcd))
+* implement timeOffset support in transcoding and add LiveTranscoderStream ([5dd3cdc](https://github.com/ffalt/jamserve/commit/5dd3cdc149ddf382b89d2f3502babaadc50d2a33))
+
+
+### Bug Fixes
+
+* **deps:** remove deprecated @types/uuid package ([fc249aa](https://github.com/ffalt/jamserve/commit/fc249aa62c6e6eacbfd839844933c0973fd716d7))
+* **deps:** remove file-type package override ([c0fee57](https://github.com/ffalt/jamserve/commit/c0fee57615341a29883d3e7e3d04bbe8da6626ac))
+* **deps:** update dependencies to latest versions for improved stability ([bef05eb](https://github.com/ffalt/jamserve/commit/bef05eb986eca56d5163a3e639f5301c9c14a596))
+* **deps:** update file-type to version 21.3.1 and yauzl to version 3.2.1 ([32ae7b6](https://github.com/ffalt/jamserve/commit/32ae7b6a3d6f2a3df6203315c1e766683a18be24))
+* **deps:** update jamp3 to version 0.6.1 ([8cf68ef](https://github.com/ffalt/jamserve/commit/8cf68ef8e9e5a3de1a36367e069cad86a8b4541c))
+* enforce absolute path requirement for root directory validation ([d6c2239](https://github.com/ffalt/jamserve/commit/d6c2239ca4d2fa3f1b58f2ef2de83bd988e04bf7))
+* enforce max bitrate limit of 256 Kbps for webma format ([5278544](https://github.com/ffalt/jamserve/commit/5278544bab91140d8867dd58b712fb4d0ceb7e7e))
+* implement batch processing for removed IDs in RootWorker and add tests ([bc9d1f4](https://github.com/ffalt/jamserve/commit/bc9d1f405e29aa41f30057a300fdf0792329be3b))
+* **jest:** enhance coverage configuration and ignore patterns ([ddb6c39](https://github.com/ffalt/jamserve/commit/ddb6c39291fe33e7baf03ca23e37701970e92e18))
+* lint ([4197d15](https://github.com/ffalt/jamserve/commit/4197d1536730a4ff2114212304d42fd72bc851a7))
+* **middleware:** add Content Security Policy header to enhance security ([a100410](https://github.com/ffalt/jamserve/commit/a10041004e2832428a4e8435746a00ac16fc615c))
+* normalize hostname for IP checks and add tests for URL validation ([15b75ea](https://github.com/ffalt/jamserve/commit/15b75ea007d95ab8f5ff5fd8fa7af0759fc27bde))
+* optimize average rating calculation in getAvgHighestDestIDs and add tests for aggregation ([7791beb](https://github.com/ffalt/jamserve/commit/7791beb7f626674ec54c28101942eedd4925b173))
+* remove TODO comment regarding sequelize workaround ([3740349](https://github.com/ffalt/jamserve/commit/3740349e6d62f01806eff0289da8a5e26bca74c7))
+* **root:** enhance root directory validation to resolve symlinks and prevent sensitive path usage ([2e1fb35](https://github.com/ffalt/jamserve/commit/2e1fb3539aaae0bf4e2d0a5f7344823cbb73d7c4))
+* **root:** enhance root path validation to prevent conflicts with existing roots ([a8b948c](https://github.com/ffalt/jamserve/commit/a8b948cc01cc6a0ff5ce73929f92e91b35cbfb60))
+* **root:** improve root path validation and add migration for updated paths ([ab291bd](https://github.com/ffalt/jamserve/commit/ab291bd4e285bd6e22704cdd179f9395745863be))
+* **scan:** ensure trailing path separator for folder paths ([3c00461](https://github.com/ffalt/jamserve/commit/3c00461931e39d42703d83bad92b629b2220671f))
+* **scan:** optimize subfolder scanning by using a map for folder lookup ([bb151e0](https://github.com/ffalt/jamserve/commit/bb151e0294056e5f333939dbad4d87f6c2ed31fc))
+* type Acoustid and MusicBrainz lookup includes for better type safety ([837620c](https://github.com/ffalt/jamserve/commit/837620c85d23d59ccc1ff8f0225a3bf798dafb54))
+* **types:** change 'any' to 'unknown' for post method parameters in service templates ([86e7d70](https://github.com/ffalt/jamserve/commit/86e7d70fc5a72646e91c6e22b0738bfb4a7b8eb7))
+* update affected playlists after track removals and calculate durations ([11de1f6](https://github.com/ffalt/jamserve/commit/11de1f6f1fe3fa9eb2a0980b2363344a984dca55))
+* update inversify package to version 7.11.0 and add injectFromBase decorator to workers ([e321457](https://github.com/ffalt/jamserve/commit/e321457c85f2b692b16439f9e72319fc45b8cafe))
+* update max bitrate limit for transcoding to 320 Kbps ([4c0df1a](https://github.com/ffalt/jamserve/commit/4c0df1a97f9d7ae793a34c3249ca09dbe339aca5))
+
 ## [0.6.3](https://github.com/ffalt/jamserve/compare/v0.6.2...v0.6.3) (2026-02-28)
 
 
