@@ -29,7 +29,7 @@
     "release": "npx commit-and-tag-version",
     "changelog:start": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
-    "releaselog": "conventional-changelog -p angular -r 2 -o RELEASELOG.md"
+    "releaselog": "node .github/scripts/extract-release.mjs"
   },
   "overrides": {
     "axios": "1.15.0",
