@@ -75,6 +75,7 @@ jobs:
       - name: Deploy to Release Branch 🚀
         uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
         with:
+          token: ${{ github.token }}
           branch: release # The branch the action should deploy to.
           folder: deploy # The folder the action should deploy.
           clean: true
