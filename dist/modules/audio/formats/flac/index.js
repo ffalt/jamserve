@@ -33,6 +33,7 @@ export class Flac {
             });
             try {
                 reader.pipe(processor);
+                processor.resume();
             }
             catch (error) {
                 reject(error);
