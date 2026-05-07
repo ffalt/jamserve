@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.6](https://github.com/ffalt/jamserve/compare/v0.6.5...v0.6.6) (2026-05-07)
+
+
+### Bug Fixes
+
+* **flac:** resume processor after pipe to drain stream ([abd21bb](https://github.com/ffalt/jamserve/commit/abd21bb0eaa50ad2395b10de637948c6504074ad))
+
 ## [0.6.5](https://github.com/ffalt/jamserve/compare/v0.6.4...v0.6.5) (2026-04-19)
 
 ## [0.6.4](https://github.com/ffalt/jamserve/compare/v0.6.3...v0.6.4) (2026-04-11)
