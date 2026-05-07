@@ -3,6 +3,7 @@ import stylistic from "@stylistic/eslint-plugin";
 import ts from "typescript-eslint";
 import jest from "eslint-plugin-jest";
 import unicorn from "eslint-plugin-unicorn";
+import globals from "globals";
 
 const unicornRules = {
 	"unicorn/empty-brace-spaces": "off",
@@ -165,7 +166,11 @@ export default ts.config(
 				jsx: false
 			})
 		],
+		languageOptions: {
+			globals: globals.node
+		},
 		rules: {
+			...unicornRules,
 			"arrow-body-style": ["error", "as-needed"],
 			"arrow-parens": ["error", "as-needed"],
 			"brace-style": ["error", "1tbs"],

@@ -29,11 +29,11 @@ async function main() {
 		return;
 	}
 
-	const firstHeading = matches[0];
+	const firstHeading = matches.at(0);
 	const startIndex = firstHeading.index;
 
 	// Determine the end index: start of the next heading or EOF
-	const secondHeading = matches[1];
+	const secondHeading = matches.at(1);
 	const endIndex = secondHeading ? secondHeading.index : content.length;
 
 	const latestSection = `${content.slice(startIndex, endIndex).trimEnd()}\n`;
