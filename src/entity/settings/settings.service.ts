@@ -48,15 +48,17 @@ export class SettingsService {
 
 	async loadSettings(orm: Orm): Promise<void> {
 		const settingsStore = await SettingsService.getSettings(orm);
+		let loaded: AdminSettings;
 		try {
-			this.settings = JSON.parse(settingsStore.data) as AdminSettings;
+			loaded = JSON.parse(settingsStore.data) as AdminSettings;
 		} catch (error: unknown) {
 			log.warn(
 				'Settings data in the database is not valid JSON — falling back to defaults.',
 				error instanceof Error ? error.message : String(error)
 			);
-			this.settings = defaultEngineSettings;
+			loaded = defaultEngineSettings;
 		}
+		await this.setSettings(loaded);
 	}
 
 	private static async getSettings(orm: Orm): Promise<Settings> {
