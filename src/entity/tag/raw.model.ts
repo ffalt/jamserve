@@ -89,6 +89,24 @@ export class MediaTagRawIdBin {
 }
 
 @ResultType()
+export class MediaTagRawPriv {
+	@ObjectField()
+	id!: string;
+
+	@ObjectField({ nullable: true })
+	bin?: string;
+
+	@ObjectField({ nullable: true })
+	num?: number;
+
+	@ObjectField({ nullable: true })
+	guid?: string;
+
+	@ObjectField({ nullable: true })
+	text?: string;
+}
+
+@ResultType()
 export class MediaTagRawChapterToc {
 	@ObjectField()
 	id!: string;
@@ -266,6 +284,15 @@ export class MediaTagRawText {
 }
 
 @ResultType()
+export class MediaTagRawLangText {
+	@ObjectField()
+	language!: string;
+
+	@ObjectField()
+	text!: string;
+}
+
+@ResultType()
 export class MediaTagRawRVA2 {
 	@ObjectField()
 	id!: string;
@@ -343,6 +370,12 @@ export class MediaTagRawFrameLangDescText extends MediaTagRawFrame {
 	value!: MediaTagRawLangDescText;
 }
 
+@ResultType({ description: 'Media Raw Tag LangText Frame' })
+export class MediaTagRawFrameLangText extends MediaTagRawFrame {
+	@ObjectField(() => MediaTagRawLangText)
+	value!: MediaTagRawLangText;
+}
+
 @ResultType({ description: 'Media Raw Tag GEOB Frame' })
 export class MediaTagRawFrameGEOB extends MediaTagRawFrame {
 	@ObjectField(() => MediaTagRawGEOB)
@@ -413,6 +446,12 @@ export class MediaTagRawFrameBin extends MediaTagRawFrame {
 export class MediaTagRawFrameIdBin extends MediaTagRawFrame {
 	@ObjectField(() => MediaTagRawIdBin)
 	value!: MediaTagRawIdBin;
+}
+
+@ResultType({ description: 'Media Raw Tag Priv Frame' })
+export class MediaTagRawFramePriv extends MediaTagRawFrame {
+	@ObjectField(() => MediaTagRawPriv)
+	value!: MediaTagRawPriv;
 }
 
 @ResultType({ description: 'Media Raw Tag SynchronisedLyricsEvent Frame' })
@@ -566,8 +605,8 @@ export class MediaTagRawFrames {
 	@ObjectField(() => [MediaTagRawFrameIdBin], { nullable: true, description: 'Frames' })
 	PRI?: Array<MediaTagRawFrameIdBin>;
 
-	@ObjectField(() => [MediaTagRawFrameIdBin], { nullable: true, description: 'Frames' })
-	PRIV?: Array<MediaTagRawFrameIdBin>;
+	@ObjectField(() => [MediaTagRawFramePriv], { nullable: true, description: 'Frames' })
+	PRIV?: Array<MediaTagRawFramePriv>;
 
 	@ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' })
 	RBUF?: Array<MediaTagRawFrameBin>;
@@ -596,8 +635,8 @@ export class MediaTagRawFrames {
 	@ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' })
 	SIGN?: Array<MediaTagRawFrameBin>;
 
-	@ObjectField(() => [MediaTagRawFrameSynchronisedLyricsEvent], { nullable: true, description: 'Frames' })
-	SLT?: Array<MediaTagRawFrameSynchronisedLyricsEvent>;
+	@ObjectField(() => [MediaTagRawFrameSynchronisedLyrics], { nullable: true, description: 'Frames' })
+	SLT?: Array<MediaTagRawFrameSynchronisedLyrics>;
 
 	@ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' })
 	STC?: Array<MediaTagRawFrameBin>;
@@ -722,8 +761,8 @@ export class MediaTagRawFrames {
 	@ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' })
 	TKEY?: Array<MediaTagRawFrameText>;
 
-	@ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' })
-	TKWD?: Array<MediaTagRawFrameBin>;
+	@ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' })
+	TKWD?: Array<MediaTagRawFrameText>;
 
 	@ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' })
 	TLA?: Array<MediaTagRawFrameText>;
@@ -923,8 +962,8 @@ export class MediaTagRawFrames {
 	@ObjectField(() => [MediaTagRawFrameLangDescText], { nullable: true, description: 'Frames' })
 	ULT?: Array<MediaTagRawFrameLangDescText>;
 
-	@ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' })
-	USER?: Array<MediaTagRawFrameBin>;
+	@ObjectField(() => [MediaTagRawFrameLangText], { nullable: true, description: 'Frames' })
+	USER?: Array<MediaTagRawFrameLangText>;
 
 	@ObjectField(() => [MediaTagRawFrameLangDescText], { nullable: true, description: 'Frames' })
 	USLT?: Array<MediaTagRawFrameLangDescText>;
@@ -980,7 +1019,7 @@ export class MediaTagRawFrames {
 	@ObjectField(() => [MediaTagRawFrameIdText], { nullable: true, description: 'Frames' })
 	WXX?: Array<MediaTagRawFrameIdText>;
 
-	@ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' })
+	@ObjectField(() => [MediaTagRawFrameIdText], { nullable: true, description: 'Frames' })
 	WXXX?: Array<MediaTagRawFrameIdText>;
 
 	@ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' })

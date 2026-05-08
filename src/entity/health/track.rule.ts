@@ -45,7 +45,7 @@ const analyzeErrors = {
 const FIXABLE = new Set([...analyzeErrors.xingMissing, ...analyzeErrors.xing, ...analyzeErrors.mpeg]);
 
 const GARBAGE_FRAMES_IDS = new Set([
-	'PRIV', // application specific binary, mostly windows media player
+	'PRIV', // application specific GUIDs and binary, mostly windows media player
 	'COMM',
 	'POPM'
 ]);

@@ -20596,7 +20596,7 @@
 						"schema": {
 							"type": "integer",
 							"minimum": 10,
-							"maximum": 480,
+							"maximum": 320,
 							"description": "maximal bitrate if transcoding (in Kbps)"
 						}
 					},
@@ -20809,7 +20809,7 @@
 						"schema": {
 							"type": "integer",
 							"minimum": 10,
-							"maximum": 480,
+							"maximum": 320,
 							"description": "maximal bitrate if transcoding (in Kbps)"
 						}
 					},
@@ -24418,6 +24418,46 @@
 					}
 				]
 			},
+			"MediaTagRawPriv": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"bin": {
+						"type": "string"
+					},
+					"num": {
+						"type": "integer"
+					},
+					"guid": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
+			"MediaTagRawFramePriv": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawPriv"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
 			"MediaTagRawReplayGainAdjustment": {
 				"type": "object",
 				"properties": {
@@ -24725,6 +24765,38 @@
 					}
 				]
 			},
+			"MediaTagRawLangText": {
+				"type": "object",
+				"properties": {
+					"language": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"language",
+					"text"
+				]
+			},
+			"MediaTagRawFrameLangText": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/MediaTagRawFrame"
+					},
+					{
+						"properties": {
+							"value": {
+								"$ref": "#/components/schemas/MediaTagRawLangText"
+							}
+						},
+						"required": [
+							"value"
+						]
+					}
+				]
+			},
 			"MediaTagRawFrames": {
 				"type": "object",
 				"properties": {
@@ -24989,7 +25061,7 @@
 					"PRIV": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/MediaTagRawFrameIdBin"
+							"$ref": "#/components/schemas/MediaTagRawFramePriv"
 						}
 					},
 					"RBUF": {
@@ -25049,7 +25121,7 @@
 					"SLT": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/MediaTagRawFrameSynchronisedLyricsEvent"
+							"$ref": "#/components/schemas/MediaTagRawFrameSynchronisedLyrics"
 						}
 					},
 					"STC": {
@@ -25301,7 +25373,7 @@
 					"TKWD": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+							"$ref": "#/components/schemas/MediaTagRawFrameText"
 						}
 					},
 					"TLA": {
@@ -25703,7 +25775,7 @@
 					"USER": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/MediaTagRawFrameBin"
+							"$ref": "#/components/schemas/MediaTagRawFrameLangText"
 						}
 					},
 					"USLT": {
@@ -25817,7 +25889,7 @@
 					"WXXX": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/MediaTagRawFrameText"
+							"$ref": "#/components/schemas/MediaTagRawFrameIdText"
 						}
 					},
 					"XDOR": {
