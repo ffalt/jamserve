@@ -137,6 +137,32 @@ MediaTagRawIdBin = __decorate([
     ResultType()
 ], MediaTagRawIdBin);
 export { MediaTagRawIdBin };
+let MediaTagRawPriv = class MediaTagRawPriv {
+};
+__decorate([
+    ObjectField(),
+    __metadata("design:type", String)
+], MediaTagRawPriv.prototype, "id", void 0);
+__decorate([
+    ObjectField({ nullable: true }),
+    __metadata("design:type", String)
+], MediaTagRawPriv.prototype, "bin", void 0);
+__decorate([
+    ObjectField({ nullable: true }),
+    __metadata("design:type", Number)
+], MediaTagRawPriv.prototype, "num", void 0);
+__decorate([
+    ObjectField({ nullable: true }),
+    __metadata("design:type", String)
+], MediaTagRawPriv.prototype, "guid", void 0);
+__decorate([
+    ObjectField({ nullable: true }),
+    __metadata("design:type", String)
+], MediaTagRawPriv.prototype, "text", void 0);
+MediaTagRawPriv = __decorate([
+    ResultType()
+], MediaTagRawPriv);
+export { MediaTagRawPriv };
 let MediaTagRawChapterToc = class MediaTagRawChapterToc {
 };
 __decorate([
@@ -403,6 +429,20 @@ MediaTagRawText = __decorate([
     ResultType()
 ], MediaTagRawText);
 export { MediaTagRawText };
+let MediaTagRawLangText = class MediaTagRawLangText {
+};
+__decorate([
+    ObjectField(),
+    __metadata("design:type", String)
+], MediaTagRawLangText.prototype, "language", void 0);
+__decorate([
+    ObjectField(),
+    __metadata("design:type", String)
+], MediaTagRawLangText.prototype, "text", void 0);
+MediaTagRawLangText = __decorate([
+    ResultType()
+], MediaTagRawLangText);
+export { MediaTagRawLangText };
 let MediaTagRawRVA2 = class MediaTagRawRVA2 {
 };
 __decorate([
@@ -529,6 +569,16 @@ MediaTagRawFrameLangDescText = __decorate([
     ResultType({ description: 'Media Raw Tag LangDescText Frame' })
 ], MediaTagRawFrameLangDescText);
 export { MediaTagRawFrameLangDescText };
+let MediaTagRawFrameLangText = class MediaTagRawFrameLangText extends MediaTagRawFrame {
+};
+__decorate([
+    ObjectField(() => MediaTagRawLangText),
+    __metadata("design:type", MediaTagRawLangText)
+], MediaTagRawFrameLangText.prototype, "value", void 0);
+MediaTagRawFrameLangText = __decorate([
+    ResultType({ description: 'Media Raw Tag LangText Frame' })
+], MediaTagRawFrameLangText);
+export { MediaTagRawFrameLangText };
 let MediaTagRawFrameGEOB = class MediaTagRawFrameGEOB extends MediaTagRawFrame {
 };
 __decorate([
@@ -649,6 +699,16 @@ MediaTagRawFrameIdBin = __decorate([
     ResultType({ description: 'Media Raw Tag IdBin Frame' })
 ], MediaTagRawFrameIdBin);
 export { MediaTagRawFrameIdBin };
+let MediaTagRawFramePriv = class MediaTagRawFramePriv extends MediaTagRawFrame {
+};
+__decorate([
+    ObjectField(() => MediaTagRawPriv),
+    __metadata("design:type", MediaTagRawPriv)
+], MediaTagRawFramePriv.prototype, "value", void 0);
+MediaTagRawFramePriv = __decorate([
+    ResultType({ description: 'Media Raw Tag Priv Frame' })
+], MediaTagRawFramePriv);
+export { MediaTagRawFramePriv };
 let MediaTagRawFrameSynchronisedLyricsEvent = class MediaTagRawFrameSynchronisedLyricsEvent extends MediaTagRawFrame {
 };
 __decorate([
@@ -854,7 +914,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "PRI", void 0);
 __decorate([
-    ObjectField(() => [MediaTagRawFrameIdBin], { nullable: true, description: 'Frames' }),
+    ObjectField(() => [MediaTagRawFramePriv], { nullable: true, description: 'Frames' }),
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "PRIV", void 0);
 __decorate([
@@ -894,7 +954,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "SIGN", void 0);
 __decorate([
-    ObjectField(() => [MediaTagRawFrameSynchronisedLyricsEvent], { nullable: true, description: 'Frames' }),
+    ObjectField(() => [MediaTagRawFrameSynchronisedLyrics], { nullable: true, description: 'Frames' }),
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "SLT", void 0);
 __decorate([
@@ -1062,7 +1122,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "TKEY", void 0);
 __decorate([
-    ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' }),
+    ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' }),
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "TKWD", void 0);
 __decorate([
@@ -1330,7 +1390,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "ULT", void 0);
 __decorate([
-    ObjectField(() => [MediaTagRawFrameBin], { nullable: true, description: 'Frames' }),
+    ObjectField(() => [MediaTagRawFrameLangText], { nullable: true, description: 'Frames' }),
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "USER", void 0);
 __decorate([
@@ -1406,7 +1466,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "WXX", void 0);
 __decorate([
-    ObjectField(() => [MediaTagRawFrameText], { nullable: true, description: 'Frames' }),
+    ObjectField(() => [MediaTagRawFrameIdText], { nullable: true, description: 'Frames' }),
     __metadata("design:type", Array)
 ], MediaTagRawFrames.prototype, "WXXX", void 0);
 __decorate([

@@ -44,13 +44,15 @@ let SettingsService = SettingsService_1 = class SettingsService {
     }
     async loadSettings(orm) {
         const settingsStore = await SettingsService_1.getSettings(orm);
+        let loaded;
         try {
-            this.settings = JSON.parse(settingsStore.data);
+            loaded = JSON.parse(settingsStore.data);
         }
         catch (error) {
             log.warn('Settings data in the database is not valid JSON — falling back to defaults.', error instanceof Error ? error.message : String(error));
-            this.settings = defaultEngineSettings;
+            loaded = defaultEngineSettings;
         }
+        await this.setSettings(loaded);
     }
     static async getSettings(orm) {
         let settingsStore = await orm.Settings.findOne({ where: { section: 'jamserve' } });
