@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.7](https://github.com/ffalt/jamserve/compare/v0.6.6...v0.6.7) (2026-05-08)
+
+
+### Bug Fixes
+
+* **flac:** ensure proper unsigned bit shift in vorbis comment header ([643299d](https://github.com/ffalt/jamserve/commit/643299da48dde98deee4550bef05a2ba9cea29c4))
+* **settings:** ensure settings are applied after loading ([e1892eb](https://github.com/ffalt/jamserve/commit/e1892eb3f039c947c3c6c8e308c6bb2f9483a3aa))
+* **tags:** add support for PRIV and LANGTEXT frames, update schema and typings ([a5e948b](https://github.com/ffalt/jamserve/commit/a5e948bca8b8cb08184b95d9b9ee26e279d2f6c8))
+
 ## [0.6.6](https://github.com/ffalt/jamserve/compare/v0.6.5...v0.6.6) (2026-05-07)
 
 
