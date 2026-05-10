@@ -27,7 +27,7 @@ export function extendSpecMockFolder(dir: string, folder: MockSpecFolder): MockF
 	return {
 		...folder,
 		path: folderPath,
-		folders: (folder.folders || []).map(f => extendSpecMockFolder(folderPath, f)),
+		folders: (folder.folders ?? []).map(f => extendSpecMockFolder(folderPath, f)),
 		tracks: folder.tracks.map(t => extendSpecMockTrack(folderPath, t))
 	};
 }

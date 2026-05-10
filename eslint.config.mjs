@@ -101,7 +101,7 @@ export default ts.config(
 	},
 	{
 		files: [
-			"**/*.test.ts",
+			"**/test/**/*.ts",
 			"deploy.ts"
 		],
 		extends: [

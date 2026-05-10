@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.7](https://github.com/ffalt/jamserve/compare/v0.6.6...v0.6.7) (2026-05-08)
 
-
 ### Bug Fixes
 
 * **flac:** ensure proper unsigned bit shift in vorbis comment header ([643299d](https://github.com/ffalt/jamserve/commit/643299da48dde98deee4550bef05a2ba9cea29c4))
@@ -12,7 +11,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **tags:** add support for PRIV and LANGTEXT frames, update schema and typings ([a5e948b](https://github.com/ffalt/jamserve/commit/a5e948bca8b8cb08184b95d9b9ee26e279d2f6c8))
 
 ## [0.6.6](https://github.com/ffalt/jamserve/compare/v0.6.5...v0.6.6) (2026-05-07)
-
 
 ### Bug Fixes
 
@@ -22,12 +20,10 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.4](https://github.com/ffalt/jamserve/compare/v0.6.3...v0.6.4) (2026-04-11)
 
-
 ### Features
 
 * add CompressPlaylistStream for playlist compression with M3U and PLS support ([585c426](https://github.com/ffalt/jamserve/commit/585c426976392a2b0dfa1d02a06b6911219befcd))
 * implement timeOffset support in transcoding and add LiveTranscoderStream ([5dd3cdc](https://github.com/ffalt/jamserve/commit/5dd3cdc149ddf382b89d2f3502babaadc50d2a33))
-
 
 ### Bug Fixes
 
@@ -58,7 +54,6 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.3](https://github.com/ffalt/jamserve/compare/v0.6.2...v0.6.3) (2026-02-28)
 
-
 ### Features
 
 * **auth:** trim and limit client identifier length in session results ([042e58e](https://github.com/ffalt/jamserve/commit/042e58ed001b10c79ec5355557fe76f417164735))
@@ -77,7 +72,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **tsconfig:** update module and moduleResolution for Jest compatibility ([e62141c](https://github.com/ffalt/jamserve/commit/e62141c1b2c5b1d4eeb219ed34a90142caf29185))
 * **url-validation:** add external URL validation to fetch and download functions ([b39963a](https://github.com/ffalt/jamserve/commit/b39963a2fadf3d3feca6cc594d55b4d6fbf80c56))
 * **url-validation:** add external URL validation to fetch and download functions ([7e1c369](https://github.com/ffalt/jamserve/commit/7e1c369ebba44823e72ee63bffb2671cfef4877e))
-
 
 ### Bug Fixes
 
@@ -178,7 +172,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **wikipedia-client:** validate and sanitize language codes for API requests ([9f51250](https://github.com/ffalt/jamserve/commit/9f512507395790214ac862b11600c67523a1b4a4))
 
 ## [0.6.2](https://github.com/ffalt/jamserve/compare/v0.6.1...v0.6.2) (2026-01-15)
-
 
 ### Features
 

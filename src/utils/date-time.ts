@@ -76,7 +76,13 @@ export function isSameDate(a: Date | number, b: Date | number): boolean {
  * Return the date as a number
  */
 export function toDateNumber(a: Date | number | string): number {
-	return a instanceof Date ? a.getTime() : (typeof a === 'number' ? a : new Date(a as string).getTime());
+	if (a instanceof Date) {
+		return a.getTime();
+	}
+	if (typeof a === 'number') {
+		return a;
+	}
+	return new Date(a as string).getTime();
 }
 
 /**

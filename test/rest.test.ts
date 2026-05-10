@@ -7,7 +7,7 @@ import fse from 'fs-extra';
 import { OpenAPIObject } from '../src/modules/deco/builder/openapi-helpers.js';
 import supertest from 'supertest';
 import { JAMAPI_URL_VERSION } from '../src/modules/engine/rest/version.js';
-import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { FolderType, RootScanStrategy, UserRole } from '../src/types/enums.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { MockRequests, RequestMock } from './mock/mock.request.js';
@@ -41,7 +41,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 		nock.cleanAll();
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name, db, false);
-		server = testContainer.get(Server);
+		server = getTestContainer().get(Server);
 		await server.init();
 		await server.engine.init();
 		await server.engine.orm.drop();

@@ -1,7 +1,7 @@
 import { EngineService } from '../src/modules/engine/services/engine.service.js';
 import tmp from 'tmp';
 import fse from 'fs-extra';
-import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { MockFeed1 } from './mock/mock.rss-feed.js';
 import { Podcast } from '../src/entity/podcast/podcast.js';
@@ -36,7 +36,7 @@ describe.each(DBConfigs)('Services with %o', db => {
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name, db);
 
-		engine = testContainer.get(EngineService);
+		engine = getTestContainer().get(EngineService);
 		await engine.init();
 		await engine.orm.drop();
 		await engine.start();
@@ -145,8 +145,8 @@ describe.each(DBConfigs)('Services with %o', db => {
 			await helper.rate(unratedGenreID, DBObjectType.genre, user, 0);
 
 			const ids = await helper.getAvgHighestDestIDs(DBObjectType.genre);
-			expect(ids.slice(0, 2).sort()).toEqual([genreC.id, missingGenreID].sort());
-			expect(ids.slice(2).sort()).toEqual([genreA.id, genreB.id].sort());
+			expect(ids.slice(0, 2).sort((a, b) => a.localeCompare(b))).toEqual([genreC.id, missingGenreID].sort((a, b) => a.localeCompare(b)));
+			expect(ids.slice(2).sort((a, b) => a.localeCompare(b))).toEqual([genreA.id, genreB.id].sort((a, b) => a.localeCompare(b)));
 			expect(ids).not.toContain(unratedGenreID);
 		});
 

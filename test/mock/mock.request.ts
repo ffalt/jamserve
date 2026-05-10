@@ -6,8 +6,8 @@ import { v4 } from 'uuid';
 const chance = new Chance();
 
 export const ValidData = {
-	generateValidDataByParameter(param: ParameterObject): { name: string; data: any } {
-		return { name: param.name, data: ValidData.generateValidDataSchema(param.schema as SchemaObject) };
+	generateValidDataByParameter(parameter: ParameterObject): { name: string; data: any } {
+		return { name: parameter.name, data: ValidData.generateValidDataSchema(parameter.schema as SchemaObject) };
 	},
 
 	generateValidStringData(schema: SchemaObject): any {
@@ -68,37 +68,39 @@ export const ValidData = {
 };
 
 export const InvalidData = {
-	generateInvalidDataByParameter(param: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
-		const schema = param.schema as SchemaObject;
+	generateInvalidDataByParameter(parameter: ParameterObject): Array<{ name: string; data: any; invalid?: string }> {
+		const schema = parameter.schema as SchemaObject;
 		return InvalidData.generateInvalidDataBySchema(schema, false, !!schema.required)
-			.map(o => ({ ...o, name: param.name }));
+			.map(o => ({ ...o, name: parameter.name }));
 	},
 
 	generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
-		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' });
-		let num = 0;
-		while (Number.isInteger(num)) {
-			num = chance.floating({ min: schema.minimum || 1, max: schema.maximum || 100, fixed: 2 });
+		const result: Array<{ data: any; invalid: string }> = [
+			{ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' }
+		];
+		let number_ = 0;
+		while (Number.isInteger(number_)) {
+			number_ = chance.floating({ min: schema.minimum ?? 1, max: schema.maximum ?? 100, fixed: 2 });
 		}
-		result.push({ data: num, invalid: 'float' });
+		result.push({ data: number_, invalid: 'float' });
 		if (schema.minimum !== undefined) {
 			result.push({ data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}` });
 		}
 		if (schema.maximum !== undefined) {
-			result.push({ data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}` });
+			result.push({ data: Number(schema.maximum) + 1, invalid: `more than minimum ${schema.maximum}` });
 		}
 		return result;
 	},
 
 	generateInvalidNumberData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
-		const result: Array<{ data: any; invalid: string }> = [];
-		result.push({ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' });
+		const result: Array<{ data: any; invalid: string }> = [
+			{ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' }
+		];
 		if (schema.minimum !== undefined) {
 			result.push({ data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}` });
 		}
 		if (schema.maximum !== undefined) {
-			result.push({ data: schema.maximum + 1, invalid: `more than minimum ${schema.maximum}` });
+			result.push({ data: Number(schema.maximum) + 1, invalid: `more than minimum ${schema.maximum}` });
 		}
 		return result;
 	},
@@ -115,14 +117,12 @@ export const InvalidData = {
 	},
 
 	generateInvalidBooleanData(_: SchemaObject): Array<{ data: any; invalid: string }> {
-		const result: Array<{ data: any; invalid: string }> = [];
-		result.push(
+		return [
 			{ data: '', invalid: 'empty string' },
 			{ data: chance.string(), invalid: 'string' },
 			{ data: chance.integer() + 2, invalid: 'integer > 1' },
 			{ data: -(chance.integer() + 1), invalid: 'integer < 0' }
-		);
-		return result;
+		];
 	},
 
 	generateInvalidArrayData(schema: SchemaObject, isField: boolean): Array<{ data: any; invalid: string }> {
@@ -180,26 +180,27 @@ export interface RequestMock {
 }
 
 export class MockRequests {
-	static generateValidRequestMock(apiName: string, method: string, roles: Array<string>, params: Array<ParameterObject>, property?: string): RequestMock {
-		const queryData = combineData(params.filter(p => p.in === 'query').map(element => ValidData.generateValidDataByParameter(element)));
-		const pathData = combineData(params.filter(p => p.in === 'path').map(element => ValidData.generateValidDataByParameter(element)));
+	static generateValidRequestMock(apiName: string, method: string, roles: Array<string>, parameters: Array<ParameterObject>, property?: string): RequestMock {
+		const queryData = combineData(parameters.filter(p => p.in === 'query').map(element => ValidData.generateValidDataByParameter(element)));
+		const pathData = combineData(parameters.filter(p => p.in === 'path').map(element => ValidData.generateValidDataByParameter(element)));
+		const ok = parameters.map(p => String(p.name)).join(',');
 		return {
 			apiName,
 			method,
 			roles,
 			valid: true,
 			expect: 200,
-			message: `should respond with 200 ok: ${params.map(p => p.name).join(',')}`,
+			message: `should respond with 200 ok: ${ok}`,
 			property,
 			data: queryData,
 			params: Object.keys(pathData).length > 0 ? pathData : undefined
 		};
 	}
 
-	static generateInvalidRequestMocks(apiName: string, method: string, isQuery: boolean, roles: Array<string>, params: Array<ParameterObject>, property: ParameterObject): Array<RequestMock> {
+	static generateInvalidRequestMocks(apiName: string, method: string, isQuery: boolean, roles: Array<string>, parameters: Array<ParameterObject>, property: ParameterObject): Array<RequestMock> {
 		const invalids = InvalidData.generateInvalidDataByParameter(property);
 		return invalids.map(invalid => {
-			const data = combineData(params.map(p => p === property ? invalid : ValidData.generateValidDataByParameter(p)));
+			const data = combineData(parameters.map(p => p === property ? invalid : ValidData.generateValidDataByParameter(p)));
 			let expectedStatus: number;
 			if (isQuery) {
 				expectedStatus = 422;
@@ -221,12 +222,12 @@ export class MockRequests {
 
 	static async generateRequestMock(apiName: string, method: string, op: OperationObject): Promise<Array<RequestMock>> {
 		let mocks: Array<RequestMock> = [];
-		const sec = (op.security || [])[0];
+		const sec = (op.security ?? [])[0];
 		let roles: Array<string> = [];
 		if (sec) {
-			roles = (sec[Object.keys(sec)[0]]) || [];
+			roles = (sec[Object.keys(sec)[0]]) ?? [];
 		}
-		const parameters: Array<ParameterObject> = (op.parameters || []) as Array<ParameterObject>;
+		const parameters: Array<ParameterObject> = (op.parameters ?? []) as Array<ParameterObject>;
 		const queryParameters = parameters.filter(p => p.in === 'query');
 		const pathParameters = parameters.filter(p => p.in === 'path');
 		if (queryParameters.length > 0) {
@@ -251,20 +252,20 @@ export class MockRequests {
 			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, pathParameters));
 		}
 		for (const item of minRequired) {
-			const paramMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, minRequired, item);
-			for (const p of paramMocks) {
+			const parameterMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, minRequired, item);
+			for (const p of parameterMocks) {
 				p.params = p.data;
 				p.data = undefined;
 			}
-			mocks = [...mocks, ...paramMocks];
+			mocks = [...mocks, ...parameterMocks];
 		}
 		for (const item of optional) {
-			const paramMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, [...minRequired, item], item);
-			for (const p of paramMocks) {
+			const parameterMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, [...minRequired, item], item);
+			for (const p of parameterMocks) {
 				p.params = p.data;
 				p.data = undefined;
 			}
-			mocks = [...mocks, ...paramMocks];
+			mocks = [...mocks, ...parameterMocks];
 		}
 		return mocks;
 	}

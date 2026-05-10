@@ -27,7 +27,7 @@ export function makeSeries({
 		artist: {
 			getOrFail: jest.fn().mockResolvedValue(artist as never),
 			get: jest.fn().mockResolvedValue(artist as never),
-			id: jest.fn().mockReturnValue(artist?.id)
+			id: jest.fn().mockReturnValue(artist.id)
 		},
 		tracks: {
 			getItems: jest.fn().mockResolvedValue(tracks as never),

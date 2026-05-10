@@ -4,7 +4,7 @@ import { WorkerService } from '../../src/modules/engine/services/worker.service.
 import { Orm } from '../../src/modules/engine/services/orm.service.js';
 import { expect } from '@jest/globals';
 
-function validateChangeSet(name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
+function validateChangeSet(_name: string, changeSet: ChangeSet<any>, added: number, updated: number, removed: number) {
 	expect(changeSet.added.size).toBe(added); // `New ${name} count doesnt match`
 	expect(changeSet.updated.size).toBe(updated); // `Updated ${name} count doesnt match`
 	expect(changeSet.removed.size).toBe(removed); // `Removed ${name} count doesnt match`
@@ -33,13 +33,13 @@ export function expectChanges(changes: Changes, expected: {
 	genresUpdate?: number;
 	genresRemoved?: number;
 }): void {
-	validateChangeSet('Folder', changes.folders, expected.foldersNew || 0, expected.foldersUpdate || 0, expected.foldersRemoved || 0);
-	validateChangeSet('Track', changes.tracks, expected.tracksNew || 0, expected.tracksUpdate || 0, expected.tracksRemoved || 0);
-	validateChangeSet('Artworks', changes.artworks, expected.artworksNew || 0, expected.artworksUpdate || 0, expected.artworksRemoved || 0);
-	validateChangeSet('Artist', changes.artists, expected.artistsNew || 0, expected.artistsUpdate || 0, expected.artistsRemoved || 0);
-	validateChangeSet('Album', changes.albums, expected.albumsNew || 0, expected.albumsUpdate || 0, expected.albumsRemoved || 0);
-	validateChangeSet('Series', changes.series, expected.seriesNew || 0, expected.seriesUpdate || 0, expected.seriesRemoved || 0);
-	validateChangeSet('Genres', changes.genres, expected.genresNew || 0, expected.genresUpdate || 0, expected.genresRemoved || 0);
+	validateChangeSet('Folder', changes.folders, expected.foldersNew ?? 0, expected.foldersUpdate ?? 0, expected.foldersRemoved ?? 0);
+	validateChangeSet('Track', changes.tracks, expected.tracksNew ?? 0, expected.tracksUpdate ?? 0, expected.tracksRemoved ?? 0);
+	validateChangeSet('Artworks', changes.artworks, expected.artworksNew ?? 0, expected.artworksUpdate ?? 0, expected.artworksRemoved ?? 0);
+	validateChangeSet('Artist', changes.artists, expected.artistsNew ?? 0, expected.artistsUpdate ?? 0, expected.artistsRemoved ?? 0);
+	validateChangeSet('Album', changes.albums, expected.albumsNew ?? 0, expected.albumsUpdate ?? 0, expected.albumsRemoved ?? 0);
+	validateChangeSet('Series', changes.series, expected.seriesNew ?? 0, expected.seriesUpdate ?? 0, expected.seriesRemoved ?? 0);
+	validateChangeSet('Genres', changes.genres, expected.genresNew ?? 0, expected.genresUpdate ?? 0, expected.genresRemoved ?? 0);
 }
 
 export async function validateMockRoot(mockRoot: MockRoot, changes: Changes, workerService: WorkerService, orm: Orm): Promise<void> {

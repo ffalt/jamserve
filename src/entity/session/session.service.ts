@@ -15,9 +15,9 @@ export class SessionService {
 	@inject(OrmService)
 	private readonly ormService!: OrmService;
 
-	private readonly events: Array<SessionNotifyEventObject> = [];
 	private static readonly JWTH_CACHE_MAX = 10_000;
-	private jwthCache = new Set<string>();
+	private readonly events: Array<SessionNotifyEventObject> = [];
+	private readonly jwthCache = new Set<string>();
 
 	expired(data: Session): boolean {
 		return data.expires ? (data.expires < new Date()) : false;

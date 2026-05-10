@@ -11,6 +11,7 @@ import { RestParameterMetadata, RestParametersMetadata } from '../../deco/defini
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 import { capitalize } from '../../../utils/capitalize.js';
 import { logger } from '../../../utils/logger.js';
+import { sanitizeFilename } from '../../../utils/saniitize-filename.js';
 
 const log = logger('ClientBuilder');
 
@@ -253,8 +254,7 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 	return {
 		pipe: {
 			pipe: (res: express.Response): void => {
-				// eslint-disable-next-line no-control-regex
-				const sanitizedName = (filename || 'client').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
+				const sanitizedName = sanitizeFilename(filename || 'client');
 				const archive = archiver('zip', { zlib: { level: 9 } });
 				archive.on('error', error => {
 					log.error('Archive error:', error.message);

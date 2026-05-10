@@ -34,7 +34,7 @@ export function makeAlbum({
 		artist: {
 			getOrFail: jest.fn().mockResolvedValue(artist as never),
 			get: jest.fn().mockResolvedValue(artist as never),
-			id: jest.fn().mockReturnValue(artist?.id)
+			id: jest.fn().mockReturnValue(artist.id)
 		},
 		series: {
 			get: jest.fn().mockResolvedValue(series as never),

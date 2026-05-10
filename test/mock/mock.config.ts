@@ -2,16 +2,19 @@ import { ConfigService, ENVConfig, ENVConfigDB } from '../../src/modules/engine/
 import path from 'node:path';
 import { ThirdPartyConfig } from '../../src/config/thirdparty.config.js';
 import { Container, injectable } from 'inversify';
-import { OrmService } from '../../src/modules/engine/services/orm.service.js';
 
-export let testContainer: Container;
+let testContainer: Container;
+
+export function getTestContainer(): Container {
+	return testContainer;
+}
 
 export const DBConfigs: Array<ENVConfigDB> = [
 	{ dialect: 'sqlite', name: 'jamtest' }
 ];
 
 if (!process.env.DISABLE_POSTGRES_TEST) {
-	DBConfigs.push({ dialect: 'postgres', name: 'jamtest', host: process.env.JAM_DB_HOST || 'localhost', port: 5432, user: 'test', password: 'test' });
+	DBConfigs.push({ dialect: 'postgres', name: 'jamtest', host: process.env.JAM_DB_HOST ?? 'localhost', port: 5432, user: 'test', password: 'test' });
 }
 
 export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boolean = true): void {
@@ -63,13 +66,15 @@ export function bindMockConfig(dataPath: string, db: ENVConfigDB, withAdmin: boo
 		tools = ThirdPartyConfig;
 
 		validateSecrets = (): void => {
-		}
+			// nop
+		};
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		validateSecret(_envName: string, _secret: string, _weakSecrets: Array<string>): void {
+			// nop
 		}
 
 		validateSessionCookieSecure(): void {
+			// nop
 		}
 
 		getDataPath(parts: Array<string>): string {

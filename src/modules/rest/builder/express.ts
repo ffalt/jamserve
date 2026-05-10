@@ -57,39 +57,59 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 		});
 	};
 
+	const runUpload = async (
+		req: express.Request,
+		res: express.Response,
+		handler: express.RequestHandler
+	): Promise<void> => {
+		await new Promise<void>((resolve, reject) => {
+			handler(req, res, (error?: unknown) => {
+				if (error) {
+					reject(error instanceof Error ? error : new Error('Upload failed'));
+					return;
+				}
+				resolve();
+			});
+		});
+	};
+
+	const validateOrCleanupUpload = async (req: express.Request): Promise<void> => {
+		if (!req.file) {
+			return;
+		}
+		try {
+			validateUploadedFile(req.file);
+		} catch (validationError) {
+			await fileDeleteIfExists(req.file.path)
+				.catch((removeError: unknown) => {
+					log.errorMsg('Failed to clean up rejected upload file:', removeError);
+				});
+			throw validationError;
+		}
+	};
+
+	const handleUploadRequest = async (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction,
+		handler: express.RequestHandler
+	): Promise<void> => {
+		try {
+			await runUpload(req, res, handler);
+			await validateOrCleanupUpload(req);
+			next();
+		} catch (error) {
+			next(error);
+		}
+	};
+
 	const uploadHandler = (field: string, autoClean: boolean = true): express.RequestHandler => {
 		const mu = upload.single(field);
 		return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
 			if (autoClean) {
 				registerAutoClean(req, res);
 			}
-			// Validate uploaded file after multer processes it
-			void mu(req, res, (error: unknown) => {
-				if (error) {
-					next(error);
-					return;
-				}
-
-				if (req.file) {
-					try {
-						validateUploadedFile(req.file);
-						next();
-					} catch (validationError) {
-						// Clean up rejected file and handle any cleanup errors
-						const filePath = req.file.path;
-						fileDeleteIfExists(filePath)
-							.then(() => {
-								next(validationError);
-							})
-							.catch((removeError: unknown) => {
-								log.errorMsg('Failed to clean up rejected upload file:', removeError);
-								next(validationError);
-							});
-					}
-				} else {
-					next();
-				}
-			});
+			void handleUploadRequest(req, res, next, mu);
 		};
 	};
 

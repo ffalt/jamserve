@@ -12,18 +12,18 @@ export interface FfmpegCommandOptions {
 type ListenerMap = Map<string, Map<Function, EventListener>>;
 
 export class FfmpegCommand extends EventTarget {
-	private source?: string | Readable;
+	private readonly source?: string | Readable;
+	private readonly addedOptions: Array<string> = [];
+	private readonly listeners: ListenerMap = new Map();
 	private outputFile?: string;
 	private outputStream?: Writable;
 	private outputEnd: boolean = true; // whether to end the destination stream when ffmpeg stdout ends
-	private addedOptions: Array<string> = [];
 	private noVideo = false;
 	private inputSeek?: number;
 	private audioCodec?: string;
 	private audioBitrate?: string;
 	private formatName?: string;
 	private child?: ChildProcessWithoutNullStreams;
-	private listeners: ListenerMap = new Map();
 
 	constructor(options?: FfmpegCommandOptions) {
 		super();

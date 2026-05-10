@@ -2,11 +2,11 @@ import { jest } from '@jest/globals';
 
 export function makeTransformService<T extends object>(
 	ServiceClass: new () => T,
-	extInfoKey: string
+	extensionInfoKey: string
 ) {
 	const service = new ServiceClass();
 	const metaData = {
-		extInfo: { [extInfoKey]: jest.fn().mockResolvedValue({ description: 'mock info' } as never) }
+		extInfo: { [extensionInfoKey]: jest.fn().mockResolvedValue({ description: 'mock info' } as never) }
 	};
 	const Genre = {
 		genreBases: jest.fn().mockResolvedValue([] as never)

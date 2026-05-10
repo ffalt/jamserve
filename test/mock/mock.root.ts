@@ -46,7 +46,7 @@ export function extendSpecMockRoot(dir: string, root: MockSpecRoot, strategy: Ro
 		...root,
 		strategy,
 		path: dir,
-		folders: (root.folders || []).map(f => extendSpecMockFolder(dir, f)),
+		folders: (root.folders ?? []).map(f => extendSpecMockFolder(dir, f)),
 		tracks: root.tracks.map(t => extendSpecMockTrack(dir, t))
 	};
 }
@@ -812,7 +812,7 @@ export async function validateMock(mockFolder: MockFolder, workerService: Worker
 	}
 }
 
-export async function writeAndStoreExternalMedia(workerService: WorkerService, orm: Orm): Promise<void> {
+export async function writeAndStoreExternalMedia(_workerService: WorkerService, orm: Orm): Promise<void> {
 	const admin = await orm.User.oneOrFail({ where: { name: 'admin' } });
 	const helper = new StateHelper(orm.em);
 	const radio = orm.Radio.create({

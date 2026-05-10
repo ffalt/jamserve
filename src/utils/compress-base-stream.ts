@@ -3,6 +3,7 @@ import express from 'express';
 import { replaceFileSystemChars } from './fs-utils.js';
 import { logger } from './logger.js';
 import { StreamData } from '../modules/deco/express/express-responder.js';
+import { sanitizeFilename } from './saniitize-filename.js';
 
 const log = logger('BaseCompressStream');
 
@@ -38,8 +39,7 @@ export abstract class BaseCompressStream implements StreamData {
 
 		archive.on('error', onArchiveError);
 
-		// eslint-disable-next-line no-control-regex
-		const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
+		const sanitizedName = sanitizeFilename(this.filename || 'download');
 		stream.contentType(this.format);
 		stream.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.${this.format}"`);
 		stream.on('finish', () => {

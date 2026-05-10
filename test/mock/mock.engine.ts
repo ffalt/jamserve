@@ -1,15 +1,17 @@
 import { EngineService } from '../../src/modules/engine/services/engine.service.js';
 
 export async function waitEngineStart(engine: EngineService): Promise<void> {
-	function wait(cb: () => void): void {
+	function wait(callback: () => void): void {
 		if (engine.io.scanning) {
 			setTimeout(() => {
-				wait(cb);
+				wait(callback);
 			}, 100);
 		} else {
-			cb();
+			callback();
 		}
 	}
 
-	return new Promise(resolve => wait(resolve));
+	return new Promise(resolve => {
+		wait(resolve);
+	});
 }

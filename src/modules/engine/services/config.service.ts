@@ -143,19 +143,23 @@ export class ConfigService {
 	validateSecret(envName: string, secret: string, weakSecrets: Array<string>): void {
 		if (weakSecrets.includes(secret.toLowerCase())) {
 			throw new Error(
-				`CRITICAL: ${envName} contains a default/weak value. ` +
-				'Please generate a strong random secret:\n' +
-				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				[
+					`CRITICAL: ${envName} contains a default/weak value.`,
+					'Please generate a strong random secret:',
+					'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				].join('\n')
 			);
 		}
 
 		// Require at least 64 characters for adequate entropy (256 bits of random data = 64 hex chars)
 		if (secret.length < 64) {
 			throw new Error(
-				`CRITICAL: ${envName} must be at least 64 characters long (recommended: cryptographically random). ` +
-				`Current length: ${secret.length}. ` +
-				'Generate a strong secret using:\n' +
-				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				[
+					`CRITICAL: ${envName} must be at least 64 characters long (recommended: cryptographically random).`,
+					`Current length: ${secret.length}.`,
+					'Generate a strong secret using:',
+					'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				].join('\n')
 			);
 		}
 
@@ -163,9 +167,11 @@ export class ConfigService {
 		const hasVariation = new Set(secret).size > 10; // At least 10 unique characters
 		if (!hasVariation) {
 			throw new Error(
-				`CRITICAL: ${envName} lacks sufficient character variation and may be weak. ` +
-				'Use a cryptographically random secret:\n' +
-				'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				[
+					`CRITICAL: ${envName} lacks sufficient character variation and may be weak.`,
+					'Use a cryptographically random secret:',
+					'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+				].join('\n')
 			);
 		}
 	}
@@ -176,9 +182,11 @@ export class ConfigService {
 			const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
 			if (!isLocalhost) {
 				log.warn(
-					'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false). ' +
-					'Cookies will be sent over plain HTTP, which may expose sessions to hijacking. ' +
-					'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
+					[
+						'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false).',
+						'Cookies will be sent over plain HTTP, which may expose sessions to hijacking.',
+						'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
+					].join('\n')
 				);
 			}
 		}

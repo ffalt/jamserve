@@ -48,7 +48,7 @@ import { RootResolver, RootStatusResolver } from '../../../entity/root/root.reso
 import { SeriesResolver } from '../../../entity/series/series.resolver.js';
 import { SessionResolver } from '../../../entity/session/session.resolver.js';
 import { TrackResolver } from '../../../entity/track/track.resolver.js';
-import { GraphQLFormattedError, GraphQLError, GraphQLSchema, printSchema } from 'graphql';
+import { GraphQLFormattedError, GraphQLError, GraphQLScalarType, GraphQLSchema, printSchema } from 'graphql';
 import { StatsResolver } from '../../../entity/stats/stats.resolver.js';
 import { StateResolver } from '../../../entity/state/state.resolver.js';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver.js';
@@ -60,7 +60,6 @@ import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
 import type { ValidationError as ClassValidatorValidationError } from 'class-validator';
 import { GraphQLDateTimeISO } from 'graphql-scalars';
-import { GraphQLScalarType } from 'graphql';
 
 const log = logger('Apollo');
 
@@ -230,7 +229,7 @@ export class ApolloMiddleware {
 											// Extensions always exist on GraphQL errors
 											(error.extensions as any).code = 'INTERNAL_SERVER_ERROR';
 											// Remove sensitive stack trace and internal details
-											delete (error.extensions as any).exception;
+											(error.extensions as any).exception = undefined;
 										}
 									}
 								}

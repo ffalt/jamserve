@@ -4,7 +4,7 @@ import tmp from 'tmp';
 import yauzl, { Entry, ZipFile } from 'yauzl';
 import fse from 'fs-extra';
 import supertest from 'supertest';
-import { bindMockConfig, DBConfigs, testContainer } from './mock/mock.config.js';
+import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import TestAgent from 'supertest/lib/agent.js';
 import { describe, it, beforeAll, afterAll } from '@jest/globals';
@@ -104,7 +104,7 @@ describe('Generators', () => {
 		nock.cleanAll();
 		dir = tmp.dirSync();
 		bindMockConfig(dir.name, DBConfigs.at(0)!, false);
-		server = testContainer.get(Server);
+		server = getTestContainer().get(Server);
 		await server.init();
 		await server.engine.init();
 		await server.engine.orm.drop();

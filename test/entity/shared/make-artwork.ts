@@ -26,7 +26,7 @@ export function makeArtwork({
 		folder: {
 			getOrFail: jest.fn().mockResolvedValue(folder as never),
 			get: jest.fn().mockResolvedValue(folder as never),
-			id: jest.fn().mockReturnValue(folder?.id)
+			id: jest.fn().mockReturnValue(folder.id)
 		}
 	};
 }
