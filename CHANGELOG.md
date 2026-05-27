@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.8](https://github.com/ffalt/jamserve/compare/v0.6.7...v0.6.8) (2026-05-27)
+
+
+### Features
+
+* **landscape:** add landscape data retrieval and visualization endpoints ([6b66d71](https://github.com/ffalt/jamserve/commit/6b66d71ce87bc6e09fb823c676cfbf8fbe78ad00))
+
+
+### Bug Fixes
+
+* **lint:** solve issues ([a8643c5](https://github.com/ffalt/jamserve/commit/a8643c55509669bb2c12c70838583f1835c0b70d))
+* **lint:** solve issues ([9c8f7f8](https://github.com/ffalt/jamserve/commit/9c8f7f8eb7baf86dea966aa231925444fad07e2d))
+* **typings:** make `Result.recordings` optional in `acoustid-rest-data` ([7be11c3](https://github.com/ffalt/jamserve/commit/7be11c3c5faa785ca6abaca69f55c84f6c588aa9))
+
 ## [0.6.7](https://github.com/ffalt/jamserve/compare/v0.6.6...v0.6.7) (2026-05-08)
 
 ### Bug Fixes
