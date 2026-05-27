@@ -5,13 +5,13 @@ import Mustache from 'mustache';
 import fse from 'fs-extra';
 import { ApiBinaryResult } from '../../deco/express/express-responder.js';
 import express from 'express';
-import archiver from 'archiver';
 import path from 'node:path';
 import { RestParameterMetadata, RestParametersMetadata } from '../../deco/definitions/parameter-metadata.js';
 import { MetadataStorage } from '../../deco/definitions/metadata-storage.js';
 import { capitalize } from '../../../utils/capitalize.js';
 import { logger } from '../../../utils/logger.js';
 import { sanitizeFilename } from '../../../utils/saniitize-filename.js';
+import { archive } from '../../../utils/archive.js';
 
 const log = logger('ClientBuilder');
 
@@ -255,8 +255,8 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 		pipe: {
 			pipe: (res: express.Response): void => {
 				const sanitizedName = sanitizeFilename(filename || 'client');
-				const archive = archiver('zip', { zlib: { level: 9 } });
-				archive.on('error', error => {
+				const zip = archive('zip', { zlib: { level: 9 } });
+				zip.on('error', error => {
 					log.error('Archive error:', error.message);
 					res.destroy();
 				});
@@ -264,13 +264,13 @@ export async function getClientZip(filename: string, list: Array<{ name: string;
 				res.type('application/zip');
 				res.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.zip"`);
 				for (const entry of list) {
-					archive.append(entry.content, { name: entry.name });
+					zip.append(entry.content, { name: entry.name });
 				}
 				for (const entry of models) {
-					archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
+					zip.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
 				}
-				archive.pipe(res);
-				archive.finalize()
+				zip.pipe(res);
+				zip.finalize()
 					.catch((error: unknown) => {
 						log.error(error);
 					});

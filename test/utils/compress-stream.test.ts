@@ -2,20 +2,24 @@ import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import { BaseCompressStream } from '../../src/utils/compress-base-stream.js';
 import { CompressFolderStream } from '../../src/utils/compress-folder-stream.js';
 import { CompressListStream } from '../../src/utils/compress-list-stream.js';
-import archiver from 'archiver';
 import express from 'express';
 import path from 'node:path';
 import tmp from 'tmp';
+import type { Archive } from '../../src/utils/archive.js';
 
-// Mock implementation of BaseCompressStream for testing
 class TestCompressStream extends BaseCompressStream {
 	public runCalled = false;
+	public mockArchiver: Archive | undefined;
 
 	constructor(filename: string, format?: string) {
 		super(filename, format);
 	}
 
-	protected run(_archive: archiver.Archiver): void {
+	protected override createArchive(): Archive {
+		return this.mockArchiver!;
+	}
+
+	protected run(_archive: Archive): void {
 		this.runCalled = true;
 	}
 }
@@ -66,9 +70,7 @@ describe('Compress Stream Classes', () => {
 				finalize: jest.fn().mockResolvedValue(undefined as never)
 			};
 
-			// Mock archiver function
-			const mockArchiverFunction = jest.fn().mockReturnValue(mockArchiver);
-			jest.spyOn(archiver, 'create').mockImplementation(mockArchiverFunction as any);
+			stream.mockArchiver = mockArchiver as unknown as Archive;
 
 			stream.pipe(mockResponse);
 
@@ -102,8 +104,7 @@ describe('Compress Stream Classes', () => {
 				finalize: jest.fn().mockResolvedValue(undefined as never)
 			};
 
-			const mockArchiverFunction = jest.fn().mockReturnValue(mockArchiver);
-			jest.spyOn(archiver, 'create').mockImplementation(mockArchiverFunction as any);
+			stream.mockArchiver = mockArchiver as unknown as Archive;
 
 			stream.pipe(mockResponse);
 
@@ -138,7 +139,7 @@ describe('Compress Stream Classes', () => {
 			};
 
 			// Call run method
-			stream['run'](mockArchiver as unknown as archiver.Archiver);
+			stream['run'](mockArchiver as unknown as Archive);
 
 			expect(mockArchiver.directory).toHaveBeenCalledWith(temporaryDir.name, false);
 		});
@@ -169,7 +170,7 @@ describe('Compress Stream Classes', () => {
 			};
 
 			// Call run method
-			stream['run'](mockArchiver as unknown as archiver.Archiver);
+			stream['run'](mockArchiver as unknown as Archive);
 
 			expect(mockArchiver.file).toHaveBeenCalledTimes(2);
 			expect(mockArchiver.file).toHaveBeenCalledWith(temporaryFiles[0], {

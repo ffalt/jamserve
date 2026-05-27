@@ -1,6 +1,6 @@
-import archiver from 'archiver';
 import path from 'node:path';
 import { BaseCompressStream } from './compress-base-stream.js';
+import { Archive } from './archive.js';
 
 export class CompressListStream extends BaseCompressStream {
 	public list: Array<string> = [];
@@ -10,7 +10,7 @@ export class CompressListStream extends BaseCompressStream {
 		this.list = list;
 	}
 
-	protected run(archive: archiver.Archiver): void {
+	protected run(archive: Archive): void {
 		for (const file of this.list) {
 			archive.file(file, { name: path.basename(file) });
 		}

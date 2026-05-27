@@ -1,9 +1,9 @@
-import archiver from 'archiver';
 import path from 'node:path';
 import { CompressListStream } from './compress-list-stream.js';
+import { Archive } from './archive.js';
 
 export class CompressPlaylistStream extends CompressListStream {
-	protected run(archive: archiver.Archiver): void {
+	protected run(archive: Archive): void {
 		super.run(archive);
 		const filenames = this.list.map(f => path.basename(f));
 		archive.append(this.buildM3U(filenames), { name: `${this.filename}.m3u` });
