@@ -63,7 +63,7 @@ export declare namespace Acoustid {
 	}
 
 	export interface Result {
-		recordings: Array<Recording>;
+		recordings?: Array<Recording>;
 		score: number;
 		id: string;
 	}

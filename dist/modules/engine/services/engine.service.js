@@ -40,6 +40,7 @@ import { PlaylistService } from '../../../entity/playlist/playlist.service.js';
 import { StreamService } from '../../../entity/stream/stream.service.js';
 import { TransformService } from './transform.service.js';
 import { BookmarkService } from '../../../entity/bookmark/bookmark.service.js';
+import { LandscapeService } from '../../../entity/landscape/landscape.service.js';
 import { RateLimitService } from './ratelimit.service.js';
 const log = logger('Engine');
 let EngineService = EngineService_1 = class EngineService {
@@ -47,6 +48,7 @@ let EngineService = EngineService_1 = class EngineService {
         this.io.registerAfterRefresh(() => this.afterRefresh());
     }
     async afterRefresh() {
+        this.landscape.clearCache();
     }
     resolveCachePaths() {
         return [
@@ -173,6 +175,10 @@ __decorate([
     inject(IoService),
     __metadata("design:type", IoService)
 ], EngineService.prototype, "io", void 0);
+__decorate([
+    inject(LandscapeService),
+    __metadata("design:type", LandscapeService)
+], EngineService.prototype, "landscape", void 0);
 __decorate([
     inject(MetaDataService),
     __metadata("design:type", MetaDataService)

@@ -1,10 +1,11 @@
 import { metadataStorage } from '../metadata/metadata-storage.js';
 import Mustache from 'mustache';
 import fse from 'fs-extra';
-import archiver from 'archiver';
 import path from 'node:path';
 import { capitalize } from '../../../utils/capitalize.js';
 import { logger } from '../../../utils/logger.js';
+import { sanitizeFilename } from '../../../utils/saniitize-filename.js';
+import { archive } from '../../../utils/archive.js';
 const log = logger('ClientBuilder');
 function generateClientCalls(call, method, generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls) {
     const name = call.methodName.replaceAll('/', '_');
@@ -192,9 +193,9 @@ export async function getClientZip(filename, list, models) {
     return {
         pipe: {
             pipe: (res) => {
-                const sanitizedName = (filename || 'client').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
-                const archive = archiver('zip', { zlib: { level: 9 } });
-                archive.on('error', error => {
+                const sanitizedName = sanitizeFilename(filename || 'client');
+                const zip = archive('zip', { zlib: { level: 9 } });
+                zip.on('error', error => {
                     log.error('Archive error:', error.message);
                     res.destroy();
                 });
@@ -202,13 +203,13 @@ export async function getClientZip(filename, list, models) {
                 res.type('application/zip');
                 res.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.zip"`);
                 for (const entry of list) {
-                    archive.append(entry.content, { name: entry.name });
+                    zip.append(entry.content, { name: entry.name });
                 }
                 for (const entry of models) {
-                    archive.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
+                    zip.append(fse.createReadStream(path.resolve(`./static/models/${entry}`)), { name: `model/${entry}` });
                 }
-                archive.pipe(res);
-                archive.finalize()
+                zip.pipe(res);
+                zip.finalize()
                     .catch((error) => {
                     log.error(error);
                 });

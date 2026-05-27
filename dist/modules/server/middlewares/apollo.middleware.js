@@ -32,7 +32,7 @@ import { RootResolver, RootStatusResolver } from '../../../entity/root/root.reso
 import { SeriesResolver } from '../../../entity/series/series.resolver.js';
 import { SessionResolver } from '../../../entity/session/session.resolver.js';
 import { TrackResolver } from '../../../entity/track/track.resolver.js';
-import { GraphQLError, printSchema } from 'graphql';
+import { GraphQLError, GraphQLScalarType, printSchema } from 'graphql';
 import { StatsResolver } from '../../../entity/stats/stats.resolver.js';
 import { StateResolver } from '../../../entity/state/state.resolver.js';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver.js';
@@ -43,7 +43,6 @@ import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/dis
 import { expressMiddleware } from '@as-integrations/express5';
 import { unwrapResolverError } from '@apollo/server/errors';
 import { GraphQLDateTimeISO } from 'graphql-scalars';
-import { GraphQLScalarType } from 'graphql';
 const log = logger('Apollo');
 function registerEnums() {
     registerEnumType(DefaultOrderFields, { name: 'DefaultOrderFields' });
@@ -175,7 +174,7 @@ let ApolloMiddleware = class ApolloMiddleware {
                                         if (process.env.NODE_ENV === 'production') {
                                             error.message = 'An error occurred processing your request';
                                             error.extensions.code = 'INTERNAL_SERVER_ERROR';
-                                            delete error.extensions.exception;
+                                            error.extensions.exception = undefined;
                                         }
                                     }
                                 }

@@ -19,6 +19,7 @@ import { StatsController } from '../../../entity/stats/stats.controller.js';
 import { GenreController } from '../../../entity/genre/genre.controller.js';
 import { AutocompleteController } from '../../../entity/autocomplete/autocomplete.controller.js';
 import { ImageController } from '../../../entity/image/image.controller.js';
+import { LandscapeController } from '../../../entity/landscape/landscape.controller.js';
 import { DownloadController } from '../../../entity/download/download.controller.js';
 import { StateController } from '../../../entity/state/state.controller.js';
 import { WaveformController } from '../../../entity/waveform/waveform.controller.js';
@@ -42,6 +43,7 @@ export function RestControllers() {
         FolderController,
         GenreController,
         ImageController,
+        LandscapeController,
         RootController,
         MetaDataController,
         NowPlayingController,

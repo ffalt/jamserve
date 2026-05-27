@@ -43,38 +43,49 @@ export function restRouter(api, options) {
             }
         });
     };
+    const runUpload = async (req, res, handler) => {
+        await new Promise((resolve, reject) => {
+            handler(req, res, (error) => {
+                if (error) {
+                    reject(error instanceof Error ? error : new Error('Upload failed'));
+                    return;
+                }
+                resolve();
+            });
+        });
+    };
+    const validateOrCleanupUpload = async (req) => {
+        if (!req.file) {
+            return;
+        }
+        try {
+            validateUploadedFile(req.file);
+        }
+        catch (validationError) {
+            await fileDeleteIfExists(req.file.path)
+                .catch((removeError) => {
+                log.errorMsg('Failed to clean up rejected upload file:', removeError);
+            });
+            throw validationError;
+        }
+    };
+    const handleUploadRequest = async (req, res, next, handler) => {
+        try {
+            await runUpload(req, res, handler);
+            await validateOrCleanupUpload(req);
+            next();
+        }
+        catch (error) {
+            next(error);
+        }
+    };
     const uploadHandler = (field, autoClean = true) => {
         const mu = upload.single(field);
         return (req, res, next) => {
             if (autoClean) {
                 registerAutoClean(req, res);
             }
-            void mu(req, res, (error) => {
-                if (error) {
-                    next(error);
-                    return;
-                }
-                if (req.file) {
-                    try {
-                        validateUploadedFile(req.file);
-                        next();
-                    }
-                    catch (validationError) {
-                        const filePath = req.file.path;
-                        fileDeleteIfExists(filePath)
-                            .then(() => {
-                            next(validationError);
-                        })
-                            .catch((removeError) => {
-                            log.errorMsg('Failed to clean up rejected upload file:', removeError);
-                            next(validationError);
-                        });
-                    }
-                }
-                else {
-                    next();
-                }
-            });
+            void handleUploadRequest(req, res, next, mu);
         };
     };
     for (const ctrl of metadata.controllerClasses) {

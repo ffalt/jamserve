@@ -1,8 +1,6 @@
 import path from 'node:path';
 import { validJSONP } from '../../../utils/jsonp.js';
-function sanitizeContentDispositionFilename(name) {
-    return name.replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
-}
+import { sanitizeFilename } from '../../../utils/saniitize-filename.js';
 export class ApiBaseResponder {
     sendString(_req, res, data) {
         res.set('Content-Type', 'text/plain').status(200).send(data);
@@ -35,7 +33,7 @@ export class ApiBaseResponder {
             res.status(200).send(data.buffer.buffer);
         }
         else if (data.file) {
-            const name = sanitizeContentDispositionFilename(data.file.name || path.basename(data.file.filename));
+            const name = sanitizeFilename(data.file.name || path.basename(data.file.filename));
             res.sendFile(data.file.filename, {
                 dotfiles: 'deny',
                 headers: {

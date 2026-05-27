@@ -104,21 +104,27 @@ let ConfigService = class ConfigService {
     }
     validateSecret(envName, secret, weakSecrets) {
         if (weakSecrets.includes(secret.toLowerCase())) {
-            throw new Error(`CRITICAL: ${envName} contains a default/weak value. ` +
-                'Please generate a strong random secret:\n' +
-                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+            throw new Error([
+                `CRITICAL: ${envName} contains a default/weak value.`,
+                'Please generate a strong random secret:',
+                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+            ].join('\n'));
         }
         if (secret.length < 64) {
-            throw new Error(`CRITICAL: ${envName} must be at least 64 characters long (recommended: cryptographically random). ` +
-                `Current length: ${secret.length}. ` +
-                'Generate a strong secret using:\n' +
-                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+            throw new Error([
+                `CRITICAL: ${envName} must be at least 64 characters long (recommended: cryptographically random).`,
+                `Current length: ${secret.length}.`,
+                'Generate a strong secret using:',
+                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+            ].join('\n'));
         }
         const hasVariation = new Set(secret).size > 10;
         if (!hasVariation) {
-            throw new Error(`CRITICAL: ${envName} lacks sufficient character variation and may be weak. ` +
-                'Use a cryptographically random secret:\n' +
-                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+            throw new Error([
+                `CRITICAL: ${envName} lacks sufficient character variation and may be weak.`,
+                'Use a cryptographically random secret:',
+                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+            ].join('\n'));
         }
     }
     validateSessionCookieSecure() {
@@ -126,9 +132,11 @@ let ConfigService = class ConfigService {
             const domain = this.env.domain.toLowerCase();
             const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
             if (!isLocalhost) {
-                log.warn('WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false). ' +
-                    'Cookies will be sent over plain HTTP, which may expose sessions to hijacking. ' +
-                    'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.');
+                log.warn([
+                    'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false).',
+                    'Cookies will be sent over plain HTTP, which may expose sessions to hijacking.',
+                    'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
+                ].join('\n'));
             }
         }
     }

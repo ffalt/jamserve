@@ -47,7 +47,7 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         }
         const normalizedPath = removeTrailingPathSeparator(resolvedDir);
         for (const deniedPath of RootWorker_1.DENIED_ROOT_PATHS) {
-            if (normalizedPath === deniedPath || normalizedPath.startsWith(deniedPath + '/')) {
+            if (normalizedPath === deniedPath || normalizedPath.startsWith(`${deniedPath}/`)) {
                 throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
             }
         }

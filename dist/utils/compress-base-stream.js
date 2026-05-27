@@ -1,6 +1,7 @@
-import archiver from 'archiver';
 import { replaceFileSystemChars } from './fs-utils.js';
 import { logger } from './logger.js';
+import { sanitizeFilename } from './saniitize-filename.js';
+import { archive } from './archive.js';
 const log = logger('BaseCompressStream');
 export class BaseCompressStream {
     constructor(filename, format) {
@@ -14,8 +15,11 @@ export class BaseCompressStream {
     static isSupportedFormat(format) {
         return ['zip', 'tar'].includes(format);
     }
+    createArchive() {
+        return archive(this.format, { zlib: { level: 0 } });
+    }
     pipe(stream) {
-        const archive = archiver(this.format, { zlib: { level: 0 } });
+        const container = this.createArchive();
         const onArchiveError = (error) => {
             log.error('Archive error:', error.message);
             this.streaming = false;
@@ -26,16 +30,16 @@ export class BaseCompressStream {
                 stream.status(500).json({ error: 'Archive creation failed' });
             }
         };
-        archive.on('error', onArchiveError);
-        const sanitizedName = (this.filename || 'download').replaceAll(/["\\]/g, '_').replaceAll(/[\u0000-\u001F\u007F]/g, '');
+        container.on('error', onArchiveError);
+        const sanitizedName = sanitizeFilename(this.filename || 'download');
         stream.contentType(this.format);
         stream.setHeader('Content-Disposition', `attachment; filename="${sanitizedName}.${this.format}"`);
         stream.on('finish', () => {
             this.streaming = false;
         });
-        archive.pipe(stream);
-        this.run(archive);
-        archive.finalize()
+        container.pipe(stream);
+        this.run(container);
+        container.finalize()
             .catch((error) => {
             onArchiveError(error instanceof Error ? error : new Error(String(error)));
         });

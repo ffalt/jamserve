@@ -39,7 +39,13 @@ export function isSameDate(a, b) {
     return toDateNumber(a) === toDateNumber(b);
 }
 export function toDateNumber(a) {
-    return a instanceof Date ? a.getTime() : (typeof a === 'number' ? a : new Date(a).getTime());
+    if (a instanceof Date) {
+        return a.getTime();
+    }
+    if (typeof a === 'number') {
+        return a;
+    }
+    return new Date(a).getTime();
 }
 export function formatElapsedDuration(ms) {
     const totalSeconds = Math.floor(ms / 1000);

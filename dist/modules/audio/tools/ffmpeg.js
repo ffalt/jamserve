@@ -5,10 +5,10 @@ const log = logger('Ffmpeg');
 export class FfmpegCommand extends EventTarget {
     constructor(options) {
         super();
-        this.outputEnd = true;
         this.addedOptions = [];
-        this.noVideo = false;
         this.listeners = new Map();
+        this.outputEnd = true;
+        this.noVideo = false;
         this.source = options?.source;
     }
     on(eventName, callback) {

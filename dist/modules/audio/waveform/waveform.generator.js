@@ -49,9 +49,9 @@ export class WaveformGenerator {
             .y0((_b, index) => y(minArray[index]))
             .y1(c => y(c));
         const d = waveArea(maxArray) ?? '';
-        return `<?xml version="1.0" encoding="UTF-8"?>\n` +
-            `<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 ${w} ${height}">` +
-            `<path stroke="green" fill="darkgreen" d="${d}"/></svg>`;
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 ${w} ${height}">
+<path stroke="green" fill="darkgreen" d="${d}"/></svg>`;
     }
 }
 //# sourceMappingURL=waveform.generator.js.map
