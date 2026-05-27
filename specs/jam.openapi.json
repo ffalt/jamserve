@@ -13363,6 +13363,111 @@
 				]
 			}
 		},
+		"/landscape": {
+			"get": {
+				"operationId": "LandscapeController.get",
+				"summary": "Get Landscape",
+				"description": "Get Music Collection Landscape Data for visualization",
+				"tags": [
+					"Landscape"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artistsWithAlbumsOnly",
+						"description": "Include only artists that have at least one album",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"description": "Include only artists that have at least one album"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ignoreUnknownGenres",
+						"description": "Ignore genre entries with no ENAO coordinate match",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"description": "Ignore genre entries with no ENAO coordinate match"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ignoreUnpositionedArtists",
+						"description": "Exclude artists that have no computed noise position (all genres unpositioned)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"description": "Exclude artists that have no computed noise position (all genres unpositioned)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minArtistTrackCount",
+						"description": "Minimum track count for an artist to be included",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "Minimum track count for an artist to be included"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minGenreArtistCount",
+						"description": "Minimum artist count for a genre to be included",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "Minimum artist count for a genre to be included"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minGenreTrackCount",
+						"description": "Minimum track count for a genre to be included",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"description": "Minimum track count for a genre to be included"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LandscapeData"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/metadata/lastfm/lookup": {
 			"get": {
 				"operationId": "MetaDataController.lastfmLookup",
@@ -27909,6 +28014,117 @@
 					"jpeg",
 					"tiff",
 					"webp"
+				]
+			},
+			"LandscapeGenreNode": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/ID"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name"
+					},
+					"trackCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Track Count"
+					},
+					"artistCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Artist Count"
+					},
+					"albumCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Album Count"
+					},
+					"noiseX": {
+						"type": "integer",
+						"description": "ENAO X coordinate (0=left/organic, 1=right/mechanical)"
+					},
+					"noiseY": {
+						"type": "integer",
+						"description": "ENAO Y coordinate (0=top/atmospheric, 1=bottom/energetic)"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"trackCount",
+					"artistCount",
+					"albumCount"
+				]
+			},
+			"LandscapeArtistNode": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/ID"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name"
+					},
+					"albumCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Album Count"
+					},
+					"trackCount": {
+						"type": "integer",
+						"minimum": 0,
+						"description": "Track Count"
+					},
+					"genreIDs": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ID"
+						}
+					},
+					"noiseX": {
+						"type": "integer",
+						"description": "Computed X position (centroid of genre noise coords + jitter)"
+					},
+					"noiseY": {
+						"type": "integer",
+						"description": "Computed Y position (centroid of genre noise coords + jitter)"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"albumCount",
+					"trackCount",
+					"genreIDs"
+				]
+			},
+			"LandscapeData": {
+				"type": "object",
+				"properties": {
+					"genres": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/LandscapeGenreNode"
+						}
+					},
+					"artists": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/LandscapeArtistNode"
+						}
+					},
+					"noiseMatchRate": {
+						"type": "integer",
+						"description": "Fraction of genres matched to ENAO coordinate data (0-1)"
+					}
+				},
+				"required": [
+					"genres",
+					"artists",
+					"noiseMatchRate"
 				]
 			},
 			"LastFMLookupType": {

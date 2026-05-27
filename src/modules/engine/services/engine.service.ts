@@ -30,6 +30,7 @@ import { PlaylistService } from '../../../entity/playlist/playlist.service.js';
 import { StreamService } from '../../../entity/stream/stream.service.js';
 import { TransformService } from './transform.service.js';
 import { BookmarkService } from '../../../entity/bookmark/bookmark.service.js';
+import { LandscapeService } from '../../../entity/landscape/landscape.service.js';
 import { RateLimitService } from './ratelimit.service.js';
 
 const log = logger('Engine');
@@ -65,6 +66,9 @@ export class EngineService {
 
 	@inject(IoService)
 	public io!: IoService;
+
+	@inject(LandscapeService)
+	public landscape!: LandscapeService;
 
 	@inject(MetaDataService)
 	public metadata!: MetaDataService;
@@ -123,7 +127,7 @@ export class EngineService {
 	}
 
 	private async afterRefresh(): Promise<void> {
-		// nop
+		this.landscape.clearCache();
 	}
 
 	private resolveCachePaths(): Array<string> {
