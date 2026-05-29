@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.9](https://github.com/ffalt/jamserve/compare/v0.6.8...v0.6.9) (2026-05-29)
+
+
+### Features
+
+* **folder:** add inSubtreeOfID filter for folder queries to include the folder and all its subfolders ([e8f59a3](https://github.com/ffalt/jamserve/commit/e8f59a3b730ee6191356c413295e8e734e750530))
+
+
+### Bug Fixes
+
+* **coverart:** handle 404 errors by returning empty images array ([75a914a](https://github.com/ffalt/jamserve/commit/75a914a2834a47cd1b1912aecc970e78077d488f))
+
 ## [0.6.8](https://github.com/ffalt/jamserve/compare/v0.6.7...v0.6.8) (2026-05-27)
 
 
