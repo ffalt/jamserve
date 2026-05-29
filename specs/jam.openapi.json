@@ -10266,7 +10266,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TrackPage"
+									"$ref": "#/components/schemas/FolderPage"
 								}
 							}
 						}
@@ -26132,10 +26132,7 @@
 						"type": "integer",
 						"description": "File Size"
 					}
-				},
-				"required": [
-					"bitRate"
-				]
+				}
 			},
 			"GenreBase": {
 				"allOf": [
@@ -27459,7 +27456,8 @@
 						"$ref": "#/components/schemas/ID"
 					},
 					"position": {
-						"$ref": "#/components/schemas/ID"
+						"type": "integer",
+						"description": "Position in Audio"
 					},
 					"comment": {
 						"type": "string",
@@ -27478,8 +27476,6 @@
 				},
 				"required": [
 					"id",
-					"trackID",
-					"episodeID",
 					"position",
 					"comment",
 					"created",
@@ -27596,6 +27592,51 @@
 					"tar"
 				]
 			},
+			"PodcastBase": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Base"
+					},
+					{
+						"properties": {
+							"url": {
+								"type": "string",
+								"description": "Podcast Feed URL"
+							},
+							"status": {
+								"$ref": "#/components/schemas/PodcastStatus"
+							},
+							"lastCheck": {
+								"type": "integer",
+								"description": "Last Check Timestamp"
+							},
+							"error": {
+								"type": "string",
+								"description": "Podcast Download Error (if any)"
+							},
+							"description": {
+								"type": "string",
+								"description": "Podcast Summary"
+							},
+							"episodeIDs": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/ID"
+								}
+							},
+							"episodeCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Number of Episode"
+							}
+						},
+						"required": [
+							"url",
+							"status"
+						]
+					}
+				]
+			},
 			"Episode": {
 				"allOf": [
 					{
@@ -27604,7 +27645,7 @@
 					{
 						"properties": {
 							"podcast": {
-								"$ref": "#/components/schemas/ID"
+								"$ref": "#/components/schemas/PodcastBase"
 							}
 						}
 					}
@@ -28391,8 +28432,7 @@
 							"created",
 							"changed",
 							"duration",
-							"entriesCount",
-							"entriesIDs"
+							"entriesCount"
 						]
 					}
 				]
@@ -28637,51 +28677,6 @@
 								}
 							}
 						}
-					}
-				]
-			},
-			"PodcastBase": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/Base"
-					},
-					{
-						"properties": {
-							"url": {
-								"type": "string",
-								"description": "Podcast Feed URL"
-							},
-							"status": {
-								"$ref": "#/components/schemas/PodcastStatus"
-							},
-							"lastCheck": {
-								"type": "integer",
-								"description": "Last Check Timestamp"
-							},
-							"error": {
-								"type": "string",
-								"description": "Podcast Download Error (if any)"
-							},
-							"description": {
-								"type": "string",
-								"description": "Podcast Summary"
-							},
-							"episodeIDs": {
-								"type": "array",
-								"items": {
-									"$ref": "#/components/schemas/ID"
-								}
-							},
-							"episodeCount": {
-								"type": "integer",
-								"minimum": 0,
-								"description": "Number of Episode"
-							}
-						},
-						"required": [
-							"url",
-							"status"
-						]
 					}
 				]
 			},

@@ -179,6 +179,27 @@ type Query {
 
   """Get Extended Info for Series by Id"""
   seriesInfo(id: ID!): ExtendedInfoResultQL!
+
+  """Get Music Collection Landscape Data for visualization"""
+  landscape(
+    """Ignore genre entries with no ENAO coordinate match"""
+    ignoreUnknownGenres: Boolean
+
+    """Include only artists that have at least one album"""
+    artistsWithAlbumsOnly: Boolean
+
+    """Exclude artists that have no computed noise position"""
+    ignoreUnpositionedArtists: Boolean
+
+    """Minimum track count for a genre to be included"""
+    minGenreTrackCount: Int
+
+    """Minimum artist count for a genre to be included"""
+    minGenreArtistCount: Int
+
+    """Minimum track count for an artist to be included"""
+    minArtistTrackCount: Int
+  ): LandscapeData!
 }
 
 type UserQL {
@@ -1473,6 +1494,47 @@ type ExtendedInfoQL {
   license: String!
   url: String!
   licenseUrl: String!
+}
+
+type LandscapeData {
+  """All genres as scatter plot nodes"""
+  genres: [LandscapeGenreNode!]!
+
+  """All artists as scatter plot dots"""
+  artists: [LandscapeArtistNode!]!
+
+  """Fraction of genres matched to ENAO coordinate data (0-1)"""
+  noiseMatchRate: Float!
+}
+
+type LandscapeGenreNode {
+  id: ID!
+  name: String!
+  trackCount: Int!
+  artistCount: Int!
+  albumCount: Int!
+
+  """ENAO X coordinate (0=left/organic, 1=right/mechanical)"""
+  noiseX: Float
+
+  """ENAO Y coordinate (0=top/atmospheric, 1=bottom/energetic)"""
+  noiseY: Float
+}
+
+type LandscapeArtistNode {
+  id: ID!
+  name: String!
+  albumCount: Int!
+  trackCount: Int!
+
+  """Genre IDs this artist belongs to"""
+  genreIDs: [ID!]!
+
+  """Computed X position (centroid of genre noise coords + jitter)"""
+  noiseX: Float
+
+  """Computed Y position (centroid of genre noise coords + jitter)"""
+  noiseY: Float
 }
 
 type Mutation {

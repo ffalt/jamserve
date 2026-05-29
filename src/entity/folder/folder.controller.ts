@@ -100,7 +100,7 @@ export class FolderController {
 
 	@Get(
 		'/subfolders',
-		() => TrackPage,
+		() => FolderPage,
 		{ description: 'Get Child Folders of Folders', summary: 'Get Sub-Folders' }
 	)
 	async subfolders(

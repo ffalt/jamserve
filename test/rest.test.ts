@@ -79,6 +79,8 @@ describe.each(DBConfigs)('REST with %o', db => {
 		const joi = (jestOpenAPI as any).default ?? (jestOpenAPI as any);
 		joi(openapi as OpenAPISpecObject);
 
+		const isBinaryResponse = (type: string): boolean => /^(image|audio|video)\/|^application\/(zip|binary|octet-stream|vnd\.apple\.mpegurl)/.test(type);
+
 		const get = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
 			let url = apiPrefix + mock.apiName;
 			if (mock.params) {
@@ -103,6 +105,9 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(response.text));
 					}
 					expect(response.status).toBe(expected);
+					if (expected === 200 && !isBinaryResponse(response.type)) {
+						expect(response).toSatisfyApiSpec();
+					}
 				});
 		};
 		const post = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
@@ -130,6 +135,9 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(res.text));
 					}
 					expect(res.status).toBe(expected);
+					if (expected === 200 && !isBinaryResponse(res.type)) {
+						expect(res).toSatisfyApiSpec();
+					}
 				});
 		};
 		mockCall = (mock, expected, token): supertest.Test => {

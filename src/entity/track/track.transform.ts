@@ -33,7 +33,7 @@ export class TrackTransformService extends BaseTransformService {
 			artistID: o.artist.id(),
 			albumArtistID: o.albumArtist.id(),
 			albumID: o.album.id(),
-			seriesID: o.series.id(),
+			seriesID: o.series.id() ?? undefined,
 			genres: trackParameters.trackIncGenres ? await this.Genre.genreBases(orm, await o.genres.getItems(), {}, user) : undefined,
 			tag: trackParameters.trackIncTag ? await this.mediaTag(orm, tag) : undefined,
 			media: trackParameters.trackIncMedia ? await this.trackMedia(tag, o.fileSize) : undefined,

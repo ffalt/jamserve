@@ -10,13 +10,13 @@ export class BookmarkBase {
 	@ObjectField({ description: 'ID', isID: true })
 	id!: string;
 
-	@ObjectField({ description: 'Track Id', isID: true })
+	@ObjectField({ nullable: true, description: 'Track Id', isID: true })
 	trackID?: string;
 
-	@ObjectField({ description: 'Episode Id', isID: true })
+	@ObjectField({ nullable: true, description: 'Episode Id', isID: true })
 	episodeID?: string;
 
-	@ObjectField({ description: 'Position in Audio', isID: true })
+	@ObjectField({ description: 'Position in Audio' })
 	position!: number;
 
 	@ObjectField({ description: 'Comment', example: 'awesome!' })

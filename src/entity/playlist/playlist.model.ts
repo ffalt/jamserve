@@ -30,7 +30,7 @@ export class PlaylistBase extends Base {
 	@ObjectField({ description: 'Number of Entries', min: 0, example: 5 })
 	entriesCount!: number;
 
-	@ObjectField(() => [String], { description: 'List of Media Base IDs', isID: true })
+	@ObjectField(() => [String], { nullable: true, description: 'List of Media Base IDs', isID: true })
 	entriesIDs?: Array<string>;
 }
 

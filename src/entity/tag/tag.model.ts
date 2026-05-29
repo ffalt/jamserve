@@ -23,7 +23,7 @@ export class MediaIDTagRaw extends MediaTagRaw {
 
 @ResultType({ description: 'Media Audio Info' })
 export class MediaInfo {
-	@ObjectField({ description: 'Bit Rate', example: 320_000 })
+	@ObjectField({ nullable: true, description: 'Bit Rate', example: 320_000 })
 	bitRate?: number;
 
 	@ObjectField({ nullable: true, description: 'Media Format', example: 'flac' })

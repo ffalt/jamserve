@@ -53,7 +53,7 @@ export class EpisodeBase extends MediaBase {
 
 @ResultType({ description: 'Episode' })
 export class Episode extends EpisodeBase {
-	@ObjectField(() => PodcastBase, { nullable: true, description: 'Podcast', isID: true })
+	@ObjectField(() => PodcastBase, { nullable: true, description: 'Podcast' })
 	podcast?: PodcastBase;
 }
 

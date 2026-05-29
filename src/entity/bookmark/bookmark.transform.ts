@@ -9,8 +9,8 @@ export class BookmarkTransformService extends BaseTransformService {
 	async bookmarkBase(_orm: Orm, o: ORMBookmark): Promise<BookmarkBase> {
 		return {
 			id: o.id,
-			trackID: o.track.id(),
-			episodeID: o.episode.id(),
+			trackID: o.track.id() ?? undefined,
+			episodeID: o.episode.id() ?? undefined,
 			position: o.position,
 			comment: o.comment,
 			created: o.createdAt.valueOf(),

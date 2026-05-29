@@ -43,7 +43,7 @@ export class FolderTransformService extends BaseTransformService {
 			created: o.createdAt.valueOf(),
 			type: o.folderType,
 			level: o.level,
-			parentID: o.parent.id(),
+			parentID: o.parent.id() ?? undefined,
 			genres: folderParameters.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
 			trackCount: folderParameters.folderIncTrackCount ? await o.tracks.count() : undefined,
 			folderCount: folderParameters.folderIncChildFolderCount ? await o.children.count() : undefined,
