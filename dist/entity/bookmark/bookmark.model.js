@@ -20,15 +20,15 @@ __decorate([
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "id", void 0);
 __decorate([
-    ObjectField({ description: 'Track Id', isID: true }),
+    ObjectField({ nullable: true, description: 'Track Id', isID: true }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "trackID", void 0);
 __decorate([
-    ObjectField({ description: 'Episode Id', isID: true }),
+    ObjectField({ nullable: true, description: 'Episode Id', isID: true }),
     __metadata("design:type", String)
 ], BookmarkBase.prototype, "episodeID", void 0);
 __decorate([
-    ObjectField({ description: 'Position in Audio', isID: true }),
+    ObjectField({ description: 'Position in Audio' }),
     __metadata("design:type", Number)
 ], BookmarkBase.prototype, "position", void 0);
 __decorate([

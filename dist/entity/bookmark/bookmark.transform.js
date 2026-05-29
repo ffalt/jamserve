@@ -10,8 +10,8 @@ let BookmarkTransformService = class BookmarkTransformService extends BaseTransf
     async bookmarkBase(_orm, o) {
         return {
             id: o.id,
-            trackID: o.track.id(),
-            episodeID: o.episode.id(),
+            trackID: o.track.id() ?? undefined,
+            episodeID: o.episode.id() ?? undefined,
             position: o.position,
             comment: o.comment,
             created: o.createdAt.valueOf(),

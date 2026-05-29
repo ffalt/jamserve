@@ -38,6 +38,7 @@ import { StateResolver } from '../../../entity/state/state.resolver.js';
 import { NowPlayingResolver } from '../../../entity/nowplaying/nowplaying.resolver.js';
 import { AdminResolver } from '../../../entity/admin/admin.resolver.js';
 import { MetadataResolver } from '../../../entity/metadata/metadata.resolver.js';
+import { LandscapeResolver } from '../../../entity/landscape/landscape.resolver.js';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { expressMiddleware } from '@as-integrations/express5';
@@ -116,7 +117,8 @@ export async function buildGraphQlSchema() {
             EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
             PlaylistResolver, PlaylistEntryResolver, PlayQueueResolver, PodcastResolver, RadioResolver,
             RootResolver, RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
-            SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver
+            SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver,
+            LandscapeResolver
         ],
         validate: { forbidUnknownValues: false },
         authChecker: customAuthChecker,

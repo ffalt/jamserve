@@ -7,91 +7,112 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+import { Field, Float, ID, Int, ObjectType } from 'type-graphql';
 import { ResultType } from '../../modules/rest/decorators/result-type.js';
 import { ObjectField } from '../../modules/rest/decorators/object-field.js';
 let LandscapeGenreNode = class LandscapeGenreNode {
 };
 __decorate([
+    Field(() => ID),
     ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], LandscapeGenreNode.prototype, "id", void 0);
 __decorate([
+    Field(() => String),
     ObjectField({ description: 'Name' }),
     __metadata("design:type", String)
 ], LandscapeGenreNode.prototype, "name", void 0);
 __decorate([
+    Field(() => Int),
     ObjectField({ description: 'Track Count', min: 0 }),
     __metadata("design:type", Number)
 ], LandscapeGenreNode.prototype, "trackCount", void 0);
 __decorate([
+    Field(() => Int),
     ObjectField({ description: 'Artist Count', min: 0 }),
     __metadata("design:type", Number)
 ], LandscapeGenreNode.prototype, "artistCount", void 0);
 __decorate([
+    Field(() => Int),
     ObjectField({ description: 'Album Count', min: 0 }),
     __metadata("design:type", Number)
 ], LandscapeGenreNode.prototype, "albumCount", void 0);
 __decorate([
+    Field(() => Float, { nullable: true, description: 'ENAO X coordinate (0=left/organic, 1=right/mechanical)' }),
     ObjectField({ nullable: true, description: 'ENAO X coordinate (0=left/organic, 1=right/mechanical)' }),
     __metadata("design:type", Number)
 ], LandscapeGenreNode.prototype, "noiseX", void 0);
 __decorate([
+    Field(() => Float, { nullable: true, description: 'ENAO Y coordinate (0=top/atmospheric, 1=bottom/energetic)' }),
     ObjectField({ nullable: true, description: 'ENAO Y coordinate (0=top/atmospheric, 1=bottom/energetic)' }),
     __metadata("design:type", Number)
 ], LandscapeGenreNode.prototype, "noiseY", void 0);
 LandscapeGenreNode = __decorate([
+    ObjectType(),
     ResultType({ description: 'Landscape Genre Node' })
 ], LandscapeGenreNode);
 export { LandscapeGenreNode };
 let LandscapeArtistNode = class LandscapeArtistNode {
 };
 __decorate([
+    Field(() => ID),
     ObjectField({ description: 'ID', isID: true }),
     __metadata("design:type", String)
 ], LandscapeArtistNode.prototype, "id", void 0);
 __decorate([
+    Field(() => String),
     ObjectField({ description: 'Name' }),
     __metadata("design:type", String)
 ], LandscapeArtistNode.prototype, "name", void 0);
 __decorate([
+    Field(() => Int),
     ObjectField({ description: 'Album Count', min: 0 }),
     __metadata("design:type", Number)
 ], LandscapeArtistNode.prototype, "albumCount", void 0);
 __decorate([
+    Field(() => Int),
     ObjectField({ description: 'Track Count', min: 0 }),
     __metadata("design:type", Number)
 ], LandscapeArtistNode.prototype, "trackCount", void 0);
 __decorate([
+    Field(() => [ID], { description: 'Genre IDs this artist belongs to' }),
     ObjectField(() => [String], { description: 'Genre IDs this artist belongs to', isID: true }),
     __metadata("design:type", Array)
 ], LandscapeArtistNode.prototype, "genreIDs", void 0);
 __decorate([
+    Field(() => Float, { nullable: true, description: 'Computed X position (centroid of genre noise coords + jitter)' }),
     ObjectField({ nullable: true, description: 'Computed X position (centroid of genre noise coords + jitter)' }),
     __metadata("design:type", Number)
 ], LandscapeArtistNode.prototype, "noiseX", void 0);
 __decorate([
+    Field(() => Float, { nullable: true, description: 'Computed Y position (centroid of genre noise coords + jitter)' }),
     ObjectField({ nullable: true, description: 'Computed Y position (centroid of genre noise coords + jitter)' }),
     __metadata("design:type", Number)
 ], LandscapeArtistNode.prototype, "noiseY", void 0);
 LandscapeArtistNode = __decorate([
+    ObjectType(),
     ResultType({ description: 'Landscape Artist Node' })
 ], LandscapeArtistNode);
 export { LandscapeArtistNode };
 let LandscapeData = class LandscapeData {
 };
 __decorate([
+    Field(() => [LandscapeGenreNode], { description: 'All genres as scatter plot nodes' }),
     ObjectField(() => [LandscapeGenreNode], { description: 'All genres as scatter plot nodes' }),
     __metadata("design:type", Array)
 ], LandscapeData.prototype, "genres", void 0);
 __decorate([
+    Field(() => [LandscapeArtistNode], { description: 'All artists as scatter plot dots' }),
     ObjectField(() => [LandscapeArtistNode], { description: 'All artists as scatter plot dots' }),
     __metadata("design:type", Array)
 ], LandscapeData.prototype, "artists", void 0);
 __decorate([
+    Field(() => Float, { description: 'Fraction of genres matched to ENAO coordinate data (0-1)' }),
     ObjectField({ description: 'Fraction of genres matched to ENAO coordinate data (0-1)' }),
     __metadata("design:type", Number)
 ], LandscapeData.prototype, "noiseMatchRate", void 0);
 LandscapeData = __decorate([
+    ObjectType(),
     ResultType({ description: 'Music Collection Landscape Data' })
 ], LandscapeData);
 export { LandscapeData };

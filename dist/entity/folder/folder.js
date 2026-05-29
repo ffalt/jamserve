@@ -186,6 +186,10 @@ __decorate([
 __decorate([
     Field(() => Int),
     __metadata("design:type", Number)
+], FolderQL.prototype, "tracksInSubtreeCount", void 0);
+__decorate([
+    Field(() => Int),
+    __metadata("design:type", Number)
 ], FolderQL.prototype, "albumsCount", void 0);
 __decorate([
     Field(() => Int),

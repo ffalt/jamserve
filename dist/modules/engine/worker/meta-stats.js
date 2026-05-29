@@ -74,7 +74,7 @@ export class MatchNodeMetaStats {
             await MatchNodeMetaStats.buildTrackSlugs(await track.get(), builder);
         }
     }
-    static buildSubFolderSlugs(folder, builder) {
+    static async buildSubFolderSlugs(folder, builder) {
         builder.statSlugValue('artist', folder.artist);
         builder.statSlugValue('artistSort', folder.artistSort);
         builder.statSlugValue('album', folder.album ? extractAlbumName(folder.album) : undefined);
@@ -83,6 +83,10 @@ export class MatchNodeMetaStats {
         builder.statID('mbArtistID', folder.mbArtistID);
         builder.statID('mbReleaseID', folder.mbReleaseID);
         builder.statID('mbReleaseGroupID', folder.mbReleaseGroupID);
+        const genres = await folder.genres.getItems();
+        for (const genre of genres) {
+            builder.statSlugValue('genre', genre.name);
+        }
     }
     static recursiveCount(dir) {
         let subFolderTrackCount = 0;
@@ -100,7 +104,7 @@ export class MatchNodeMetaStats {
     static async buildSubFoldersSlugs(dir, builder) {
         for (const child of dir.children) {
             if (child.folder.folderType !== FolderType.extras) {
-                MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
+                await MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
             }
         }
     }

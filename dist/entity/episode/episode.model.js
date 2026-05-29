@@ -81,7 +81,7 @@ export { EpisodeBase };
 let Episode = class Episode extends EpisodeBase {
 };
 __decorate([
-    ObjectField(() => PodcastBase, { nullable: true, description: 'Podcast', isID: true }),
+    ObjectField(() => PodcastBase, { nullable: true, description: 'Podcast' }),
     __metadata("design:type", PodcastBase)
 ], Episode.prototype, "podcast", void 0);
 Episode = __decorate([

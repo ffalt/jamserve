@@ -93,6 +93,10 @@ __decorate([
     __metadata("design:type", Number)
 ], FolderBase.prototype, "trackCount", void 0);
 __decorate([
+    ObjectField({ nullable: true, description: 'Number of Tracks in Subtree', min: 0, example: 5 }),
+    __metadata("design:type", Number)
+], FolderBase.prototype, "trackInSubtreeCount", void 0);
+__decorate([
     ObjectField({ nullable: true, description: 'Number of Folders', min: 0, example: 5 }),
     __metadata("design:type", Number)
 ], FolderBase.prototype, "folderCount", void 0);

@@ -166,7 +166,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FolderController.prototype, "tracks", null);
 __decorate([
-    Get('/subfolders', () => TrackPage, { description: 'Get Child Folders of Folders', summary: 'Get Sub-Folders' }),
+    Get('/subfolders', () => FolderPage, { description: 'Get Child Folders of Folders', summary: 'Get Sub-Folders' }),
     __param(0, QueryParameters()),
     __param(1, QueryParameters()),
     __param(2, QueryParameters()),

@@ -47,7 +47,7 @@ __decorate([
     __metadata("design:type", Number)
 ], PlaylistBase.prototype, "entriesCount", void 0);
 __decorate([
-    ObjectField(() => [String], { description: 'List of Media Base IDs', isID: true }),
+    ObjectField(() => [String], { nullable: true, description: 'List of Media Base IDs', isID: true }),
     __metadata("design:type", Array)
 ], PlaylistBase.prototype, "entriesIDs", void 0);
 PlaylistBase = __decorate([

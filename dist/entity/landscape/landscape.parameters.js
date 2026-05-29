@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ObjectParametersType } from '../../modules/rest/decorators/object-parameters-type.js';
 import { ObjectField } from '../../modules/rest/decorators/object-field.js';
+import { ArgsType, Field, Int } from 'type-graphql';
 let LandscapeParameters = class LandscapeParameters {
 };
 __decorate([
@@ -39,4 +40,34 @@ LandscapeParameters = __decorate([
     ObjectParametersType()
 ], LandscapeParameters);
 export { LandscapeParameters };
+let LandscapeParametersQL = class LandscapeParametersQL {
+};
+__decorate([
+    Field(() => Boolean, { nullable: true, description: 'Ignore genre entries with no ENAO coordinate match' }),
+    __metadata("design:type", Boolean)
+], LandscapeParametersQL.prototype, "ignoreUnknownGenres", void 0);
+__decorate([
+    Field(() => Boolean, { nullable: true, description: 'Include only artists that have at least one album' }),
+    __metadata("design:type", Boolean)
+], LandscapeParametersQL.prototype, "artistsWithAlbumsOnly", void 0);
+__decorate([
+    Field(() => Boolean, { nullable: true, description: 'Exclude artists that have no computed noise position' }),
+    __metadata("design:type", Boolean)
+], LandscapeParametersQL.prototype, "ignoreUnpositionedArtists", void 0);
+__decorate([
+    Field(() => Int, { nullable: true, description: 'Minimum track count for a genre to be included' }),
+    __metadata("design:type", Number)
+], LandscapeParametersQL.prototype, "minGenreTrackCount", void 0);
+__decorate([
+    Field(() => Int, { nullable: true, description: 'Minimum artist count for a genre to be included' }),
+    __metadata("design:type", Number)
+], LandscapeParametersQL.prototype, "minGenreArtistCount", void 0);
+__decorate([
+    Field(() => Int, { nullable: true, description: 'Minimum track count for an artist to be included' }),
+    __metadata("design:type", Number)
+], LandscapeParametersQL.prototype, "minArtistTrackCount", void 0);
+LandscapeParametersQL = __decorate([
+    ArgsType()
+], LandscapeParametersQL);
+export { LandscapeParametersQL };
 //# sourceMappingURL=landscape.parameters.js.map

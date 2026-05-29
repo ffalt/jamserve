@@ -70,6 +70,9 @@ let FolderResolver = class FolderResolver {
     async tracksCount(folder) {
         return folder.tracks.count();
     }
+    async tracksInSubtreeCount(folder, { orm }) {
+        return orm.Track.countFilter({ childOfID: folder.id });
+    }
     async artworks(folder) {
         return folder.artworks.getItems();
     }
@@ -197,6 +200,14 @@ __decorate([
     __metadata("design:paramtypes", [Folder]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "tracksCount", null);
+__decorate([
+    FieldResolver(() => Int),
+    __param(0, GQLRoot()),
+    __param(1, Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Folder, Object]),
+    __metadata("design:returntype", Promise)
+], FolderResolver.prototype, "tracksInSubtreeCount", null);
 __decorate([
     FieldResolver(() => [ArtworkQL], { nullable: true }),
     __param(0, GQLRoot()),

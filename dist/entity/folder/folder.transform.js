@@ -24,6 +24,9 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
     async folderGenres(orm, o, user) {
         return this.Genre.genreBases(orm, await o.genres.getItems(), {}, user);
     }
+    async trackInSubtreeCount(orm, o) {
+        return orm.Track.countFilter({ childOfID: o.id });
+    }
     async folderBase(orm, o, folderParameters, user) {
         return {
             id: o.id,
@@ -32,9 +35,10 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
             created: o.createdAt.valueOf(),
             type: o.folderType,
             level: o.level,
-            parentID: o.parent.id(),
+            parentID: o.parent.id() ?? undefined,
             genres: folderParameters.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
             trackCount: folderParameters.folderIncTrackCount ? await o.tracks.count() : undefined,
+            trackInSubtreeCount: folderParameters.folderIncTrackInSubtreeCount ? await this.trackInSubtreeCount(orm, o) : undefined,
             folderCount: folderParameters.folderIncChildFolderCount ? await o.children.count() : undefined,
             artworkCount: folderParameters.folderIncArtworkCount ? await o.children.count() : undefined,
             tag: folderParameters.folderIncTag ? await this.folderTag(o) : undefined,

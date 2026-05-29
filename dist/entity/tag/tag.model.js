@@ -41,7 +41,7 @@ export { MediaIDTagRaw };
 let MediaInfo = class MediaInfo {
 };
 __decorate([
-    ObjectField({ description: 'Bit Rate', example: 320000 }),
+    ObjectField({ nullable: true, description: 'Bit Rate', example: 320000 }),
     __metadata("design:type", Number)
 ], MediaInfo.prototype, "bitRate", void 0);
 __decorate([

@@ -28,6 +28,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], IncludesFolderParameters.prototype, "folderIncChildFolderCount", void 0);
 __decorate([
+    ObjectField({ nullable: true, description: 'include child track count on folder subtree(s)', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], IncludesFolderParameters.prototype, "folderIncTrackInSubtreeCount", void 0);
+__decorate([
     ObjectField({ nullable: true, description: 'include track count on folder(s)', defaultValue: false, example: false }),
     __metadata("design:type", Boolean)
 ], IncludesFolderParameters.prototype, "folderIncTrackCount", void 0);

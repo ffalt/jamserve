@@ -13,11 +13,11 @@ export class CoverArtArchiveClient extends WebserviceJSONClient {
         }
         return super.parseResult(response);
     }
+    async getJson(url) {
+        return super.getJson(url, true);
+    }
     async processError(error, req) {
         if (error instanceof SyntaxError) {
-            return { images: [] };
-        }
-        if (error instanceof Error && error.message.includes('404')) {
             return { images: [] };
         }
         return super.processError(error, req);
