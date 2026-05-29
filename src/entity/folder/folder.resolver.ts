@@ -91,6 +91,11 @@ export class FolderResolver {
 		return folder.tracks.count();
 	}
 
+	@FieldResolver(() => Int)
+	async tracksInSubtreeCount(@GQLRoot() folder: Folder, @Ctx() { orm }: Context): Promise<number> {
+		return orm.Track.countFilter({ childOfID: folder.id });
+	}
+
 	@FieldResolver(() => [ArtworkQL], { nullable: true })
 	async artworks(@GQLRoot() folder: Folder): Promise<Array<Artwork>> {
 		return folder.artworks.getItems();

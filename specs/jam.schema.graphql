@@ -486,6 +486,7 @@ type FolderQL {
   childrenCount: Int!
   artworksCount: Int!
   tracksCount: Int!
+  tracksInSubtreeCount: Int!
   albumsCount: Int!
   artistsCount: Int!
   genresCount: Int!

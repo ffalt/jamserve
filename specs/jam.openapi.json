@@ -4884,6 +4884,18 @@
 							"default": false,
 							"description": "include track Ids on folder(s)"
 						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
+						}
 					}
 				],
 				"responses": {
@@ -5122,6 +5134,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
 						}
 					},
 					{
@@ -7734,6 +7758,18 @@
 					},
 					{
 						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "folderIncTracks",
 						"description": "include tracks on folder(s)",
 						"required": false,
@@ -8710,6 +8746,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
 						}
 					},
 					{
@@ -9949,6 +9997,18 @@
 					},
 					{
 						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "folderTypes",
 						"description": "filter by Folder Types",
 						"required": false,
@@ -11057,6 +11117,18 @@
 					},
 					{
 						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
+						}
+					},
+					{
+						"in": "query",
 						"name": "skip",
 						"description": "return items starting from offset position",
 						"required": false,
@@ -11525,6 +11597,18 @@
 							"type": "boolean",
 							"default": false,
 							"description": "include track Ids on folder(s)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "folderIncTrackInSubtreeCount",
+						"description": "include child track count on folder subtree(s)",
+						"required": false,
+						"example": false,
+						"schema": {
+							"type": "boolean",
+							"default": false,
+							"description": "include child track count on folder subtree(s)"
 						}
 					},
 					{
@@ -26965,6 +27049,11 @@
 								"type": "integer",
 								"minimum": 0,
 								"description": "Number of Tracks"
+							},
+							"trackInSubtreeCount": {
+								"type": "integer",
+								"minimum": 0,
+								"description": "Number of Tracks in Subtree"
 							},
 							"folderCount": {
 								"type": "integer",

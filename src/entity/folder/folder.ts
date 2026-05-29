@@ -132,6 +132,9 @@ export class FolderQL extends Folder {
 	tracksCount!: number;
 
 	@Field(() => Int)
+	tracksInSubtreeCount!: number;
+
+	@Field(() => Int)
 	albumsCount!: number;
 
 	@Field(() => Int)

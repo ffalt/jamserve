@@ -35,6 +35,10 @@ export class FolderTransformService extends BaseTransformService {
 		return this.Genre.genreBases(orm, await o.genres.getItems(), {}, user);
 	}
 
+	async trackInSubtreeCount(orm: Orm, o: ORMFolder): Promise<number> {
+		return orm.Track.countFilter({ childOfID: o.id });
+	}
+
 	async folderBase(orm: Orm, o: ORMFolder, folderParameters: IncludesFolderParameters, user: User): Promise<FolderBase> {
 		return {
 			id: o.id,
@@ -46,6 +50,7 @@ export class FolderTransformService extends BaseTransformService {
 			parentID: o.parent.id() ?? undefined,
 			genres: folderParameters.folderIncGenres ? await this.folderGenres(orm, o, user) : undefined,
 			trackCount: folderParameters.folderIncTrackCount ? await o.tracks.count() : undefined,
+			trackInSubtreeCount: folderParameters.folderIncTrackInSubtreeCount ? await this.trackInSubtreeCount(orm, o) : undefined,
 			folderCount: folderParameters.folderIncChildFolderCount ? await o.children.count() : undefined,
 			artworkCount: folderParameters.folderIncArtworkCount ? await o.children.count() : undefined,
 			tag: folderParameters.folderIncTag ? await this.folderTag(o) : undefined,

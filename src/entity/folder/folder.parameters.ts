@@ -16,6 +16,9 @@ export class IncludesFolderParameters {
 	@ObjectField({ nullable: true, description: 'include child folder count on folder(s)', defaultValue: false, example: false })
 	folderIncChildFolderCount?: boolean;
 
+	@ObjectField({ nullable: true, description: 'include child track count on folder subtree(s)', defaultValue: false, example: false })
+	folderIncTrackInSubtreeCount?: boolean;
+
 	@ObjectField({ nullable: true, description: 'include track count on folder(s)', defaultValue: false, example: false })
 	folderIncTrackCount?: boolean;
 

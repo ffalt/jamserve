@@ -62,6 +62,9 @@ export class FolderBase extends Base {
 	@ObjectField({ nullable: true, description: 'Number of Tracks', min: 0, example: 5 })
 	trackCount?: number;
 
+	@ObjectField({ nullable: true, description: 'Number of Tracks in Subtree', min: 0, example: 5 })
+	trackInSubtreeCount?: number;
+
 	@ObjectField({ nullable: true, description: 'Number of Folders', min: 0, example: 5 })
 	folderCount?: number;
 
