@@ -208,6 +208,11 @@ __decorate([
     __metadata("design:type", String)
 ], FolderFilterParameters.prototype, "childOfID", void 0);
 __decorate([
+    Field(() => ID, { nullable: true }),
+    ObjectField({ nullable: true, description: 'filter by folder id and all its sub folders', isID: true }),
+    __metadata("design:type", String)
+], FolderFilterParameters.prototype, "inSubtreeOfID", void 0);
+__decorate([
     Field(() => Int, { nullable: true }),
     ObjectField({ nullable: true, description: 'filter by Folder Tree Level', min: 0, example: 4 }),
     __metadata("design:type", Number)

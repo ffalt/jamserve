@@ -2,6 +2,7 @@ import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType, FolderOrderFields } from '../../types/enums.js';
 import { OrderHelper } from '../base/base.js';
 import { QHelper } from '../../modules/orm/index.js';
+import { Op } from 'sequelize';
 export class FolderRepository extends BaseRepository {
     constructor() {
         super(...arguments);
@@ -74,6 +75,17 @@ export class FolderRepository extends BaseRepository {
             { createdAt: QHelper.gte(filter.since) },
             ...QHelper.inStringArray('genres', filter.genres)
         ]);
+        if (filter.inSubtreeOfID) {
+            const folder = await this.oneOrFailByID(filter.inSubtreeOfID);
+            const subtreeParentIDs = await this.findAllDescendantsIds(folder);
+            const subtreeWhere = {
+                [Op.or]: [
+                    { id: filter.inSubtreeOfID },
+                    { parent: QHelper.inOrEqual(subtreeParentIDs.length > 0 ? subtreeParentIDs : ['__non_existing_']) }
+                ]
+            };
+            result.where = result.where ? { [Op.and]: [result.where, subtreeWhere] } : subtreeWhere;
+        }
         result.include = QHelper.includeQueries([
             { tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
             { artworks: [{ id: QHelper.inOrEqual(filter.artworksIDs) }] },

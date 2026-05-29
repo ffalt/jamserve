@@ -17,6 +17,9 @@ export class CoverArtArchiveClient extends WebserviceJSONClient {
         if (error instanceof SyntaxError) {
             return { images: [] };
         }
+        if (error instanceof Error && error.message.includes('404')) {
+            return { images: [] };
+        }
         return super.processError(error, req);
     }
     async releaseImages(mbid) {
