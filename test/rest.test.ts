@@ -105,7 +105,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(response.text));
 					}
 					expect(response.status).toBe(expected);
-					if (expected === 200 && !isBinaryResponse(response.type)) {
+					if (expected === 200 && !isBinaryResponse(response.type) && process.env.API_SPEC_TEST !== 'false') {
 						expect(response).toSatisfyApiSpec();
 					}
 				});
@@ -135,7 +135,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(res.text));
 					}
 					expect(res.status).toBe(expected);
-					if (expected === 200 && !isBinaryResponse(res.type)) {
+					if (expected === 200 && !isBinaryResponse(res.type) && process.env.API_SPEC_TEST !== 'false') {
 						expect(res).toSatisfyApiSpec();
 					}
 				});
