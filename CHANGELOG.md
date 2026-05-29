@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.10](https://github.com/ffalt/jamserve/compare/v0.6.9...v0.6.10) (2026-05-29)
+
+
+### Features
+
+* **folder:** add folderIncTrackInSubtreeCount parameter and tracksInSubtreeCount field ([b2b8bd3](https://github.com/ffalt/jamserve/commit/b2b8bd3871d47de8daeda1e68302d0b53a6e622c))
+* **landscape:** add landscape data model and resolver with query parameters ([66f16f6](https://github.com/ffalt/jamserve/commit/66f16f66ee8a94196b9e8ddea434cb0ff7eb78ac))
+* upgrade Node.js version to 26.x in CI and package configuration ([11eefae](https://github.com/ffalt/jamserve/commit/11eefae7dc166418f774d4781a0dfc25ca137867))
+
+
+### Bug Fixes
+
+* **coverart:** handle 404 errors by returning empty images array ([3392f23](https://github.com/ffalt/jamserve/commit/3392f23ab1a3560794c6a5d151a41cb80d164fb2))
+* **dependencies:** force supported graphql package ([3c6b007](https://github.com/ffalt/jamserve/commit/3c6b00714bf004615f980d253a6b9a4b97cbce5c))
+* **merge-scan:** update albumTrackCount calculation and genre assignments ([6966317](https://github.com/ffalt/jamserve/commit/6966317a09d9cc64d69c0f51e9e218c190307344))
+
 ## [0.6.9](https://github.com/ffalt/jamserve/compare/v0.6.8...v0.6.9) (2026-05-29)
 
 
