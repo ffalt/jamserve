@@ -31,6 +31,9 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			// */
 			return { images: [] };
 		}
+		if (error instanceof Error && error.message.includes('404')) {
+			return { images: [] };
+		}
 		return super.processError(error, req);
 	}
 
