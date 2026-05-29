@@ -170,7 +170,7 @@ export class WorkerMergeScan {
 		folder.mbReleaseGroupID = metaStat.mbReleaseGroupID;
 		folder.mbAlbumType = metaStat.mbAlbumType;
 		folder.mbArtistID = metaStat.mbArtistID;
-		folder.albumTrackCount = metaStat.trackCount;
+		folder.albumTrackCount = (metaStat.trackCount || 0) + (metaStat.subFolderTrackCount || 0);
 		folder.year = (year !== undefined && year > 0) ? year : metaStat.year;
 		folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
 

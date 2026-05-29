@@ -104,7 +104,7 @@ export class MatchNodeMetaStats {
 		}
 	}
 
-	private static buildSubFolderSlugs(folder: Folder, builder: MetaStatBuilder): void {
+	private static async buildSubFolderSlugs(folder: Folder, builder: MetaStatBuilder): Promise<void> {
 		builder.statSlugValue('artist', folder.artist);
 		builder.statSlugValue('artistSort', folder.artistSort);
 		builder.statSlugValue('album', folder.album ? extractAlbumName(folder.album) : undefined);
@@ -113,6 +113,10 @@ export class MatchNodeMetaStats {
 		builder.statID('mbArtistID', folder.mbArtistID);
 		builder.statID('mbReleaseID', folder.mbReleaseID);
 		builder.statID('mbReleaseGroupID', folder.mbReleaseGroupID);
+		const genres = await folder.genres.getItems();
+		for (const genre of genres) {
+			builder.statSlugValue('genre', genre.name);
+		}
 	}
 
 	private static recursiveCount(dir: MergeNode): { subFolderTrackCount: number; subFolderCount: number } {
@@ -132,7 +136,7 @@ export class MatchNodeMetaStats {
 	private static async buildSubFoldersSlugs(dir: MergeNode, builder: MetaStatBuilder): Promise<void> {
 		for (const child of dir.children) {
 			if (child.folder.folderType !== FolderType.extras) {
-				MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
+				await MatchNodeMetaStats.buildSubFolderSlugs(child.folder, builder);
 			}
 		}
 	}
