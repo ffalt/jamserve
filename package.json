@@ -35,7 +35,8 @@
     "axios": "1.16.0",
     "brace-expansion": "5.0.6",
     "@tootallnate/once": "3.0.1",
-    "glob": "13.0.6"
+    "glob": "13.0.6",
+    "graphql": "16.14.0"
   },
   "dependencies": {
     "@apollo/server": "5.5.1",
