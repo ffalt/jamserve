@@ -146,6 +146,10 @@ export class FolderFilterParameters {
 	@ObjectField({ nullable: true, description: 'filter if folder is in folder id (or its child folders)', isID: true })
 	childOfID?: string;
 
+	@Field(() => ID, { nullable: true })
+	@ObjectField({ nullable: true, description: 'filter by folder id and all its sub folders', isID: true })
+	inSubtreeOfID?: string;
+
 	@Field(() => Int, { nullable: true })
 	@ObjectField({ nullable: true, description: 'filter by Folder Tree Level', min: 0, example: 4 })
 	level?: number;

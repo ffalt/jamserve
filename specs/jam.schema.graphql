@@ -924,6 +924,7 @@ input FolderFilterParametersQL {
   since: Int
   parentIDs: [ID!]
   childOfID: ID
+  inSubtreeOfID: ID
   level: Int
   albumTypes: [AlbumType!]
   folderTypes: [FolderType!]

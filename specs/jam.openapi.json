@@ -8035,6 +8035,16 @@
 					},
 					{
 						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
+						}
+					},
+					{
+						"in": "query",
 						"name": "level",
 						"description": "filter by Folder Tree Level",
 						"required": false,
@@ -8785,6 +8795,16 @@
 					},
 					{
 						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
+						}
+					},
+					{
+						"in": "query",
 						"name": "level",
 						"description": "filter by Folder Tree Level",
 						"required": false,
@@ -9321,6 +9341,16 @@
 							"items": {
 								"$ref": "#/components/schemas/ID"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
 						}
 					},
 					{
@@ -9988,6 +10018,16 @@
 					},
 					{
 						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
+						}
+					},
+					{
+						"in": "query",
 						"name": "level",
 						"description": "filter by Folder Tree Level",
 						"required": false,
@@ -10455,6 +10495,16 @@
 							"items": {
 								"$ref": "#/components/schemas/ID"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
 						}
 					},
 					{
@@ -11544,6 +11594,16 @@
 							"items": {
 								"$ref": "#/components/schemas/ID"
 							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "inSubtreeOfID",
+						"description": "filter by folder id and all its sub folders",
+						"required": false,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
 						}
 					},
 					{

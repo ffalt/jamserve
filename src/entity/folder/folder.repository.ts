@@ -5,7 +5,7 @@ import { OrderHelper } from '../base/base.js';
 import { FolderFilterParameters, FolderOrderParameters } from './folder.parameters.js';
 import { User } from '../user/user.js';
 import { QHelper } from '../../modules/orm/index.js';
-import { FindOptions, OrderItem } from 'sequelize';
+import { FindOptions, Op, OrderItem } from 'sequelize';
 
 export class FolderRepository extends BaseRepository<Folder, FolderFilterParameters, FolderOrderParameters> {
 	objType = DBObjectType.folder;
@@ -80,6 +80,17 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterParamet
 				...QHelper.inStringArray('genres', filter.genres)
 			]
 		);
+		if (filter.inSubtreeOfID) {
+			const folder = await this.oneOrFailByID(filter.inSubtreeOfID);
+			const subtreeParentIDs = await this.findAllDescendantsIds(folder);
+			const subtreeWhere = {
+				[Op.or]: [
+					{ id: filter.inSubtreeOfID },
+					{ parent: QHelper.inOrEqual(subtreeParentIDs.length > 0 ? subtreeParentIDs : ['__non_existing_']) }
+				]
+			};
+			result.where = result.where ? { [Op.and]: [result.where, subtreeWhere] } : subtreeWhere;
+		}
 		result.include = QHelper.includeQueries([
 			{ tracks: [{ id: QHelper.inOrEqual(filter.trackIDs) }] },
 			{ artworks: [{ id: QHelper.inOrEqual(filter.artworksIDs) }] },

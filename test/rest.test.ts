@@ -233,6 +233,9 @@ describe.each(DBConfigs)('REST with %o', db => {
 						if (call.data.childOfID) {
 							call.data.childOfID = folder.id;
 						}
+						if (call.data.inSubtreeOfID) {
+							call.data.inSubtreeOfID = folder.id;
+						}
 						break;
 					}
 					case 'folder/search':
@@ -243,6 +246,9 @@ describe.each(DBConfigs)('REST with %o', db => {
 					case 'track/rawTag/get': {
 						if (call.data.childOfID) {
 							call.data.childOfID = folder.id;
+						}
+						if (call.data.inSubtreeOfID) {
+							call.data.inSubtreeOfID = folder.id;
 						}
 						break;
 					}
