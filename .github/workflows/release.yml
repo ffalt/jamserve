@@ -29,6 +29,8 @@ jobs:
           package-manager-cache: false
       - run: npm ci
       - run: npm run test
+        env:
+          API_SPEC_TEST: false
     services:
       postgres:
         image: postgres

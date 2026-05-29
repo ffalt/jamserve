@@ -25,7 +25,6 @@ jobs:
     env:
       JAM_DB_HOST: postgres
       NODE_ENV: development
-      API_SPEC_TEST: false
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -39,6 +38,8 @@ jobs:
         run: npm run build
       - name: Test with coverage
         run: npm run coverage
+        env:
+          API_SPEC_TEST: false
       - uses: qltysh/qlty-action/coverage@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}

@@ -16,7 +16,6 @@ jobs:
       image: ffalt/jam-test
     env:
       JAM_DB_HOST: postgres
-      API_SPEC_TEST: false
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -28,6 +27,8 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test
+        env:
+          API_SPEC_TEST: false
     services:
       postgres:
         image: postgres
