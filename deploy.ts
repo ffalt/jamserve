@@ -32,7 +32,7 @@ async function start(): Promise<void> {
 		type: pack.type,
 		repository: pack.repository,
 		scripts: {
-			start: 'node --experimental-modules --es-module-specifier-resolution=node dist/index.js'
+			start: 'node dist/index.js'
 		},
 		engines: pack.engines,
 		dependencies: pack.dependencies
