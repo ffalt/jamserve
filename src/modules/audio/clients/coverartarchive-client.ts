@@ -21,6 +21,10 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 		return super.parseResult<T>(response);
 	}
 
+	protected override async getJson<T>(url: string): Promise<T> {
+		return super.getJson<T>(url, true);
+	}
+
 	protected async processError(error: unknown, req: JSONRequest): Promise<CoverArtArchive.Response> {
 		if (error instanceof SyntaxError) {
 			// coverartarchive response may be code 200 with html on empty data
@@ -29,9 +33,6 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			// <h1>Not Found</h1>
 			// <p>No cover art found for release {{mbid}}</p>
 			// */
-			return { images: [] };
-		}
-		if (error instanceof Error && error.message.includes('404')) {
 			return { images: [] };
 		}
 		return super.processError(error, req);
