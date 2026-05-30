@@ -21,7 +21,7 @@ export class DiscogsClient extends WebserviceClient {
 		this.token = options.apiToken ?? '';
 	}
 
-	headers(): Record<string, string> {
+	private headers(): Record<string, string> {
 		const h: Record<string, string> = { 'User-Agent': this.ua };
 		if (this.token) {
 			h.Authorization = `Discogs token=${this.token}`;
