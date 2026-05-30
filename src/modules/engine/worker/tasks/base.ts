@@ -18,13 +18,14 @@ export class BaseWorker {
 		if (containsFolderSystemChars(newName)) {
 			return Promise.reject(new Error('Invalid Name'));
 		}
-		const name = replaceFolderSystemChars(newName, '').trim();
+		const extension2 = fileExtension(oldName);
+		const rawName = replaceFolderSystemChars(newName, '').trim();
+		const name = fileExtension(rawName) ? rawName : rawName + extension2;
 		const extension = fileExtension(name);
 		const basename = path.basename(name, extension);
 		if (basename.length === 0) {
 			return Promise.reject(new Error('Invalid Name'));
 		}
-		const extension2 = fileExtension(oldName);
 		if (extension !== extension2) {
 			return Promise.reject(new Error(`Changing File extension not supported "${extension2}"=>"${extension}"`));
 		}
