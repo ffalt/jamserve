@@ -199,4 +199,38 @@ WikidataLookupParameters = __decorate([
     ObjectParametersType()
 ], WikidataLookupParameters);
 export { WikidataLookupParameters };
+let DiscogsSearchParameters = class DiscogsSearchParameters {
+};
+__decorate([
+    ObjectField({ description: 'Artist Name', example: 'Nirvana' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "artist", void 0);
+__decorate([
+    ObjectField({ description: 'Release Title', example: 'Nevermind' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "title", void 0);
+DiscogsSearchParameters = __decorate([
+    ObjectParametersType()
+], DiscogsSearchParameters);
+export { DiscogsSearchParameters };
+let DiscogsArtistSearchParameters = class DiscogsArtistSearchParameters {
+};
+__decorate([
+    ObjectField({ description: 'Artist Name', example: 'Nirvana' }),
+    __metadata("design:type", String)
+], DiscogsArtistSearchParameters.prototype, "query", void 0);
+DiscogsArtistSearchParameters = __decorate([
+    ObjectParametersType()
+], DiscogsArtistSearchParameters);
+export { DiscogsArtistSearchParameters };
+let DiscogsImageParameters = class DiscogsImageParameters {
+};
+__decorate([
+    ObjectField({ description: 'Discogs Image URL' }),
+    __metadata("design:type", String)
+], DiscogsImageParameters.prototype, "url", void 0);
+DiscogsImageParameters = __decorate([
+    ObjectParametersType()
+], DiscogsImageParameters);
+export { DiscogsImageParameters };
 //# sourceMappingURL=metadata.parameters.js.map

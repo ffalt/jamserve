@@ -15,16 +15,20 @@ import { AudioModule } from '../../../audio/audio.module.js';
 import { injectable, inject } from 'inversify';
 let BaseWorker = class BaseWorker {
     async renameFile(dir, oldName, newName) {
-        if (containsFolderSystemChars(newName)) {
+        if (containsFolderSystemChars(newName) || newName.trim().length === 0) {
             return Promise.reject(new Error('Invalid Name'));
         }
-        const name = replaceFolderSystemChars(newName, '').trim();
+        const extension2 = fileExtension(oldName);
+        const rawName = replaceFolderSystemChars(newName, '').trim();
+        if (['.', '..'].includes(rawName)) {
+            return Promise.reject(new Error('Invalid Name'));
+        }
+        const name = fileExtension(rawName) ? rawName : rawName + extension2;
         const extension = fileExtension(name);
         const basename = path.basename(name, extension);
         if (basename.length === 0) {
             return Promise.reject(new Error('Invalid Name'));
         }
-        const extension2 = fileExtension(oldName);
         if (extension !== extension2) {
             return Promise.reject(new Error(`Changing File extension not supported "${extension2}"=>"${extension}"`));
         }

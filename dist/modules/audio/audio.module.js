@@ -28,6 +28,7 @@ import { ConfigService } from '../engine/services/config.service.js';
 import { injectable, inject, postConstruct } from 'inversify';
 import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
+import { DiscogsClient } from './clients/discogs-client.js';
 export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 let AudioModule = class AudioModule {
     postConstruct() {
@@ -42,6 +43,7 @@ let AudioModule = class AudioModule {
         this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
         this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
         this.coverArtArchive = new CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
+        this.discogs = new DiscogsClient({ userAgent: this.configService.tools.discogs.userAgent, apiToken: this.configService.tools.discogs.apiToken });
         this.transcoder = new TranscoderModule(this.transcodeCachePath);
         this.mp3 = new AudioModuleMP3();
         this.flac = new AudioModuleFLAC(this.imageModule);
@@ -62,6 +64,7 @@ let AudioModule = class AudioModule {
         this.coverArtArchive.enabled = enabled;
         this.wikipedia.enabled = enabled;
         this.gpodder.enabled = enabled;
+        this.discogs.enabled = enabled;
     }
     async read(filename) {
         const suffix = fileSuffix(filename);

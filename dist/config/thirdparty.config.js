@@ -10,6 +10,7 @@ export const ThirdPartyConfig = {
     wikipedia: { userAgent: `${userAgent} ( ${contact} )` },
     lyricsovh: { userAgent: `${userAgent} ( ${contact} )` },
     gpodder: { userAgent: `${userAgent} ( ${contact} )` },
-    lrclib: { userAgent: `${userAgent} ( ${contact} )` }
+    lrclib: { userAgent: `${userAgent} ( ${contact} )` },
+    discogs: { apiToken: '', userAgent: `${userAgent} ( ${contact} )` }
 };
 //# sourceMappingURL=thirdparty.config.js.map

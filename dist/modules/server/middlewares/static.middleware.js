@@ -5,7 +5,7 @@ export function staticMiddleware(configService) {
     const router = express.Router();
     router.use(RateLimit(configService.rateLimits.frontend));
     router.use((_req, res, next) => {
-        res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob: https:; media-src \'self\' blob: https:; connect-src \'self\' https: wss:; font-src \'self\' data:; object-src \'none\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'none\'; upgrade-insecure-requests;');
+        res.setHeader('Content-Security-Policy', 'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob: https:; media-src \'self\' data: blob: https:; connect-src \'self\' https: wss:; font-src \'self\' data:; object-src \'none\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'none\'; upgrade-insecure-requests;');
         next();
     });
     const jamberry_config = `document.jamberry_config = ${JSON.stringify({ name: 'Jam', fixed: { server: configService.env.domain } })}`;

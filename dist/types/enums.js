@@ -73,6 +73,7 @@ export var MetaDataType;
     MetaDataType["coverartarchive"] = "coverartarchive";
     MetaDataType["lastfm"] = "lastfm";
     MetaDataType["lyrics"] = "lyrics";
+    MetaDataType["discogs"] = "discogs";
 })(MetaDataType || (MetaDataType = {}));
 export var SessionMode;
 (function (SessionMode) {

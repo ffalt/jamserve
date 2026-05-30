@@ -238,6 +238,29 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
             buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
         };
     }
+    async discogsReleaseSearch(orm, artist, title) {
+        return this.searchInStore(orm, `discogs-search-${artist}/${title}`, MetaDataType.discogs, async () => this.audioModule.discogs.searchRelease(artist, title));
+    }
+    async discogsArtistSearch(orm, query) {
+        return this.searchInStore(orm, `discogs-artist-${query}`, MetaDataType.discogs, async () => this.audioModule.discogs.searchArtist(query));
+    }
+    async discogsImage(url) {
+        if (!this.audioModule.discogs.enabled) {
+            throw new Error('External service is disabled');
+        }
+        const pattern = /^https?:\/\/i\.discogs\.com\//;
+        if (!url || !pattern.test(url)) {
+            return Promise.reject(invalidParameterError('url'));
+        }
+        const response = await fetch(url);
+        if (!response.ok)
+            throw new Error(`Unexpected discogs response ${response.statusText}`);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        return {
+            buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
+        };
+    }
 };
 __decorate([
     inject(AudioModule),
