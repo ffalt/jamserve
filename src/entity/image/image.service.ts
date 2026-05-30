@@ -13,6 +13,7 @@ import { Album } from '../album/album.js';
 import { Artist } from '../artist/artist.js';
 import { User } from '../user/user.js';
 import { Root } from '../root/root.js';
+import { Genre } from '../genre/genre.js';
 import { PodcastService } from '../podcast/podcast.service.js';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
@@ -124,6 +125,9 @@ export class ImageService {
 			}
 			case DBObjectType.root: {
 				return (o as Root).name;
+			}
+			case DBObjectType.genre: {
+				return (o as Genre).name;
 			}
 		}
 		return type;
