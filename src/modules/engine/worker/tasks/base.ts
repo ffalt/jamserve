@@ -15,11 +15,14 @@ export class BaseWorker {
 	protected imageModule!: ImageModule;
 
 	async renameFile(dir: string, oldName: string, newName: string): Promise<string> {
-		if (containsFolderSystemChars(newName)) {
+		if (containsFolderSystemChars(newName) || newName.trim().length === 0) {
 			return Promise.reject(new Error('Invalid Name'));
 		}
 		const extension2 = fileExtension(oldName);
 		const rawName = replaceFolderSystemChars(newName, '').trim();
+		if (['.', '..'].includes(rawName)) {
+			return Promise.reject(new Error('Invalid Name'));
+		}
 		const name = fileExtension(rawName) ? rawName : rawName + extension2;
 		const extension = fileExtension(name);
 		const basename = path.basename(name, extension);

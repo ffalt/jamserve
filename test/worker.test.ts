@@ -901,7 +901,8 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					const artwork = await orm.Artwork.oneOrFailFilter({ name: 'front.png' });
 					const extension = path.extname(artwork.name);
 					await expect(workerService.artwork.rename({ ...options, newName: '' })).rejects.toThrow('Invalid Name');
-					await expect(workerService.artwork.rename({ ...options, newName: '.' })).rejects.toThrow(/Changing File extension not supported/);
+					await expect(workerService.artwork.rename({ ...options, newName: '.' })).rejects.toThrow('Invalid Name');
+					await expect(workerService.artwork.rename({ ...options, newName: '.. ' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.artwork.rename({ ...options, newName: '/' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.artwork.rename({ ...options, newName: '\\' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.artwork.rename({ ...options, newName: `*${extension}` })).rejects.toThrow('Invalid Name');
@@ -1147,7 +1148,10 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should handle invalid parameters', async () => {
 					const extension = path.extname(track.fileName);
 					await expect(workerService.track.rename({ ...options, newName: '' })).rejects.toThrow('Invalid Name');
-					await expect(workerService.track.rename({ ...options, newName: '.' })).rejects.toThrow(/Changing File extension not supported/);
+					await expect(workerService.track.rename({ ...options, newName: '.' })).rejects.toThrow('Invalid Name');
+					await expect(workerService.track.rename({ ...options, newName: '. ' })).rejects.toThrow('Invalid Name');
+					await expect(workerService.track.rename({ ...options, newName: '..' })).rejects.toThrow('Invalid Name');
+					await expect(workerService.track.rename({ ...options, newName: ' .. ' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.track.rename({ ...options, newName: '/' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.track.rename({ ...options, newName: '\\' })).rejects.toThrow('Invalid Name');
 					await expect(workerService.track.rename({ ...options, newName: `*${extension}` })).rejects.toThrow('Invalid Name');

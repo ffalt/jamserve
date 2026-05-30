@@ -43,6 +43,7 @@ interface MockEntities {
 interface MockCase {
 	apiName: string;
 	expected: number;
+	binary?: boolean;
 	setup?: (call: RequestMock, entities: MockEntities) => void;
 }
 
@@ -104,19 +105,19 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'episode/id', expected: 200, setup: (call, entities) => { call.data.id = entities.episode.id; } },
 	{ apiName: 'podcast/status', expected: 200, setup: (call, entities) => { call.data.id = entities.podcast.id; } },
 	{ apiName: 'podcast/id', expected: 200, setup: (call, entities) => { call.data.id = entities.podcast.id; } },
-	{ apiName: 'stream/{id}_{maxBitRate}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}_{maxBitRate}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'download/{id}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'download/{id}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}_{width}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}_{size}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}_{size}.{format}', expected: 200, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'stream/{id}_{maxBitRate}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'stream/{id}_{maxBitRate}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'stream/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'stream/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'download/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'download/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'waveform/{id}_{width}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'waveform/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'waveform/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'image/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'image/{id}_{size}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'image/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
+	{ apiName: 'image/{id}_{size}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
 	{ apiName: 'artist/similar/tracks', expected: 500, setup: (call, entities) => { call.data.id = entities.artist.id; } },
 	{ apiName: 'artist/similar', expected: 500, setup: (call, entities) => { call.data.id = entities.artist.id; } },
 	{ apiName: 'album/similar/tracks', expected: 500, setup: (call, entities) => { call.data.id = entities.album.id; } },
@@ -138,8 +139,8 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'metadata/discogs/search/release', expected: 500 },
 	{ apiName: 'metadata/discogs/search/artist', expected: 500 },
 	{ apiName: 'metadata/lastfm/lookup', expected: 500 },
-	{ apiName: 'metadata/coverartarchive/image', expected: 500, setup: call => { call.data.url = 'https://coverartarchive.org/invalid.png'; } },
-	{ apiName: 'metadata/discogs/image', expected: 500, setup: call => { call.data.url = 'https://i.discogs.com/invalid.png'; } },
+	{ apiName: 'metadata/coverartarchive/image', expected: 500, binary: true, setup: call => { call.data.url = 'https://coverartarchive.org/invalid.png'; } },
+	{ apiName: 'metadata/discogs/image', expected: 500, binary: true, setup: call => { call.data.url = 'https://i.discogs.com/invalid.png'; } },
 	{ apiName: 'admin/queue/id', expected: 200 },
 	{ apiName: 'admin/settings/get', expected: 200 },
 	{ apiName: 'album/index', expected: 200 },
@@ -160,7 +161,6 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'genre/search', expected: 200 },
 	{ apiName: 'genre/tracks', expected: 200 },
 	{ apiName: 'landscape', expected: 200 },
-	{ apiName: 'metadata/discogs/image', expected: 200 },
 	{ apiName: 'nowPlaying/list', expected: 200 },
 	{ apiName: 'ping', expected: 200 },
 	{ apiName: 'playlist/entries', expected: 200 },
@@ -190,7 +190,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 	let dir: tmp.DirResult;
 	let openapi: OpenAPIObject;
 	let request: TestAgent<supertest.Test>;
-	let mockCall: (mock: RequestMock, expected: number, token?: string) => supertest.Test;
+	let mockCall: (mock: RequestMock, expected: number, token?: string, binary?: boolean) => supertest.Test;
 	let mockRoot: MockRoot;
 	const tokens: Record<string, string> = {
 		admin: '',
@@ -243,9 +243,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 		const joi = (jestOpenAPI as any).default ?? (jestOpenAPI as any);
 		joi(openapi as OpenAPISpecObject);
 
-		const isBinaryResponse = (type: string): boolean => /^(image|audio|video)\/|^application\/(zip|binary|octet-stream|vnd\.apple\.mpegurl)/.test(type);
-
-		const get = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
+		const get = (mock: RequestMock, expected: number, token?: string, binary?: boolean): supertest.Test => {
 			let url = apiPrefix + mock.apiName;
 			if (mock.params) {
 				const split = mock.apiName.split('/');
@@ -269,12 +267,12 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(response.text));
 					}
 					expect(response.status).toBe(expected);
-					if (expected === 200 && !isBinaryResponse(response.type) && process.env.API_SPEC_TEST !== 'false') {
+					if (expected === 200 && !binary && process.env.API_SPEC_TEST !== 'false') {
 						expect(response).toSatisfyApiSpec();
 					}
 				});
 		};
-		const post = (mock: RequestMock, expected: number, token?: string): supertest.Test => {
+		const post = (mock: RequestMock, expected: number, token?: string, binary?: boolean): supertest.Test => {
 			let url = apiPrefix + mock.apiName;
 			if (mock.params) {
 				const split = mock.apiName.split('/');
@@ -299,13 +297,13 @@ describe.each(DBConfigs)('REST with %o', db => {
 						console.error(message + JSON.stringify(res.text));
 					}
 					expect(res.status).toBe(expected);
-					if (expected === 200 && !isBinaryResponse(res.type) && process.env.API_SPEC_TEST !== 'false') {
+					if (expected === 200 && !binary && process.env.API_SPEC_TEST !== 'false') {
 						expect(res).toSatisfyApiSpec();
 					}
 				});
 		};
-		mockCall = (mock, expected, token): supertest.Test => {
-			return mock.method === 'get' ? get(mock, expected, token) : post(mock, expected, token);
+		mockCall = (mock, expected, token, binary): supertest.Test => {
+			return mock.method === 'get' ? get(mock, expected, token, binary) : post(mock, expected, token, binary);
 		};
 		mocks = await MockRequests.generateRequestMocks(openapi);
 		validMocks = [];
@@ -396,7 +394,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 			if (!call) {
 				return;
 			}
-			await mockCall(call, testCase.expected, tokens.all);
+			await mockCall(call, testCase.expected, tokens.all, testCase.binary);
 		});
 	});
 });
