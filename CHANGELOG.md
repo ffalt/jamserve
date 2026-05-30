@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.11](https://github.com/ffalt/jamserve/compare/v0.6.10...v0.6.11) (2026-05-30)
+
+
+### Features
+
+* **discogs:** add Discogs client and search functionality ([56b6ce5](https://github.com/ffalt/jamserve/commit/56b6ce5903c90765e7a3de5353fecc20ff6cbdd2))
+
+
+### Bug Fixes
+
+* **base:** enhance renameFile method to reject invalid names including empty and folder references ([ef0e8ed](https://github.com/ffalt/jamserve/commit/ef0e8ed3b689c90f63e28697df1dda51745ac009))
+* **base:** ensure file name retains original extension when no one provided ([8198d89](https://github.com/ffalt/jamserve/commit/8198d89bd0c74e75073daa19dfaf1d3bb2f932a5))
+* **config:** increase API request limit to 2000 requests per window ([a9035c8](https://github.com/ffalt/jamserve/commit/a9035c892c1a5b7dd961991a5e2f916a061171ce))
+* **csp:** allow 'data:' on media-src in Content Security Policy ([9af6a33](https://github.com/ffalt/jamserve/commit/9af6a33f2e60a63810e69a65ab501362a0028e5a))
+
 ## [0.6.10](https://github.com/ffalt/jamserve/compare/v0.6.9...v0.6.10) (2026-05-29)
 
 
