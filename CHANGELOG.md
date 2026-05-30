@@ -487,7 +487,7 @@ All notable changes to this project will be documented in this file. See [commit
 
 ### Bug Fixes
 
-* **csp:** disallow everthing on default-src; allow 'data:' on media-src ([b558402](https://github.com/ffalt/jamserve/commit/b558402a9f70e66ff4fda61cf6406adc79f6cff5))
+* **csp:** disallow everything on default-src; allow 'data:' on media-src ([b558402](https://github.com/ffalt/jamserve/commit/b558402a9f70e66ff4fda61cf6406adc79f6cff5))
 * **csp:** parse content security protection json ([37ed73c](https://github.com/ffalt/jamserve/commit/37ed73ce43307f9cbed45e14f81900816b49e237))
 * **scan:** refreshMeta must not include tracks from other roots ([7d3d587](https://github.com/ffalt/jamserve/commit/7d3d587f4ce00f4d569b930d3a14328ea6851b5c))
 * **scan:** update track if already in change list (added by forced rescanning) ([71dd383](https://github.com/ffalt/jamserve/commit/71dd383eb203f555bbd548689f986d5e70546dc7))
