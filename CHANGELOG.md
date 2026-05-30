@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.13](https://github.com/ffalt/jamserve/compare/v0.6.12...v0.6.13) (2026-05-30)
+
+
+### Bug Fixes
+
+* **discogs:** remove custom headers from image fetch request ([a585131](https://github.com/ffalt/jamserve/commit/a5851311e732823196e63fccaa81b61ba03b39a3))
+
 ## [0.6.12](https://github.com/ffalt/jamserve/compare/v0.6.11...v0.6.12) (2026-05-30)
 
 
