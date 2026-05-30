@@ -18,6 +18,7 @@ export interface JSONOptions {
 	retryOn?: boolean;
 	retryDelay?: number;
 	retryCount?: number;
+	timeout?: number;
 }
 
 export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceClient {
@@ -35,6 +36,9 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			retryCount: 3
 		};
 		this.options = { ...defaultOptions, ...options };
+		if (this.options.timeout !== undefined) {
+			this.timeout = this.options.timeout;
+		}
 	}
 
 	protected reqToHost(_req: T): string {
@@ -70,6 +74,9 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	protected async processError(error: unknown, req: T): Promise<R> {
 		const statusCode = errorStatusCode(error);
 		if (statusCode === 502 || statusCode === 503) {
+			return this.retry(error, req);
+		}
+		if (error instanceof Error && error.name === 'AbortError') {
 			return this.retry(error, req);
 		}
 		return Promise.reject(error);

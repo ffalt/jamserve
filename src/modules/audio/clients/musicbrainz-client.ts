@@ -8,7 +8,10 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	constructor(options: MusicbrainzClientApi.Options) {
 		const defaultOptions = {
 			host: 'https://musicbrainz.org',
-			basePath: '/ws/2/'
+			basePath: '/ws/2/',
+			retryOn: true,
+			retryCount: 3,
+			timeout: 60_000
 		};
 		// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
 		super(1, 1000, options.userAgent, { ...defaultOptions, ...options });

@@ -5,6 +5,7 @@ type WebserviceClientParameters = Record<string, string | number | undefined> | 
 
 export class WebserviceClient {
 	enabled = false;
+	protected timeout = 30_000;
 	private readonly limiter: RateLimiter;
 	private readonly userAgent: string;
 
@@ -60,7 +61,7 @@ export class WebserviceClient {
 		const urlParameters = parameters ? this.formatParams<P>(parameters) : '';
 		const response = await fetch(url + urlParameters, {
 			headers: { 'User-Agent': this.userAgent },
-			signal: AbortSignal.timeout(30_000)
+			signal: AbortSignal.timeout(this.timeout)
 		});
 		if (!ignoreStatus && response.status !== 200) {
 			return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));
