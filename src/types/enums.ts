@@ -73,7 +73,8 @@ export enum MetaDataType {
 	acousticbrainz = 'acousticbrainz',
 	coverartarchive = 'coverartarchive',
 	lastfm = 'lastfm',
-	lyrics = 'lyrics'
+	lyrics = 'lyrics',
+	discogs = 'discogs'
 }
 
 export enum SessionMode {

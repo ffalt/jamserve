@@ -14480,6 +14480,203 @@
 				]
 			}
 		},
+		"/metadata/discogs/search/release": {
+			"get": {
+				"operationId": "MetaDataController.discogsReleaseSearch",
+				"summary": "Search Discogs",
+				"description": "Search Discogs release data",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"description": "Artist Name",
+						"required": true,
+						"example": "Nirvana",
+						"schema": {
+							"type": "string",
+							"description": "Artist Name"
+						}
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"description": "Release Title",
+						"required": true,
+						"example": "Nevermind",
+						"schema": {
+							"type": "string",
+							"description": "Release Title"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/search/artist": {
+			"get": {
+				"operationId": "MetaDataController.discogsArtistSearch",
+				"summary": "Search Discogs Artist",
+				"description": "Search Discogs artist data",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"description": "Artist Name",
+						"required": true,
+						"example": "Nirvana",
+						"schema": {
+							"type": "string",
+							"description": "Artist Name"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/image": {
+			"get": {
+				"operationId": "MetaDataController.discogsImage",
+				"summary": "Request Discogs Image",
+				"description": "Get Discogs image",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "url",
+						"description": "Discogs Image URL",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"description": "Discogs Image URL"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "binary data",
+						"content": {
+							"image/jpeg": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/png": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/tiff": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							},
+							"image/webp": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/nowPlaying/list": {
 			"get": {
 				"operationId": "NowPlayingController.list",

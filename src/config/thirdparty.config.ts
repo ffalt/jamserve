@@ -14,6 +14,7 @@ export interface ThirdpartyToolsConfig {
 	gpodder: { userAgent: string };
 	lyricsovh: { userAgent: string };
 	lrclib: { userAgent: string };
+	discogs: { apiToken: string; userAgent: string };
 }
 
 export const userAgent = `JamServe/${JAMSERVE_VERSION}`;
@@ -69,5 +70,10 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		Lrclib
 		https://lrclib.net/
     */
-	lrclib: { userAgent: `${userAgent} ( ${contact} )` }
+	lrclib: { userAgent: `${userAgent} ( ${contact} )` },
+	/*
+		Discogs
+		https://www.discogs.com/developers/
+	*/
+	discogs: { apiToken: '', userAgent: `${userAgent} ( ${contact} )` }
 };

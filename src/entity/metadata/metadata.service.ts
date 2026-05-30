@@ -23,6 +23,7 @@ import fetch from 'node-fetch';
 import { invalidParameterError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
+import { Discogs } from '../../modules/audio/clients/discogs-rest-data.js';
 import { Tag } from '../tag/tag.js';
 import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
 
@@ -292,6 +293,41 @@ export class MetaDataService {
 		}
 		const response = await fetch(url);
 		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
+		return {
+			buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
+		};
+	}
+
+	async discogsReleaseSearch(orm: Orm, artist: string, title: string): Promise<Discogs.SearchResponse | undefined> {
+		return this.searchInStore<Discogs.SearchResponse>(
+			orm,
+			`discogs-search-${artist}/${title}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.search(artist, title)
+		);
+	}
+
+	async discogsArtistSearch(orm: Orm, query: string): Promise<Discogs.SearchResponse | undefined> {
+		return this.searchInStore<Discogs.SearchResponse>(
+			orm,
+			`discogs-artist-${query}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.searchArtist(query)
+		);
+	}
+
+	async discogsImage(url?: string): Promise<ApiBinaryResult | undefined> {
+		if (!this.audioModule.discogs.enabled) {
+			throw new Error('External service is disabled');
+		}
+		const pattern = /^https?:\/\/i\.discogs\.com\//;
+		if (!url || !pattern.test(url)) {
+			return Promise.reject(invalidParameterError('url'));
+		}
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`Unexpected discogs response ${response.statusText}`);
 		const arrayBuffer = await response.arrayBuffer();
 		const buffer = Buffer.from(arrayBuffer);
 		return {

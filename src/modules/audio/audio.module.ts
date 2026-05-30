@@ -20,6 +20,7 @@ import { injectable, inject, postConstruct } from 'inversify';
 import { AdminSettingsExternal } from '../../entity/admin/admin.js';
 import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
+import { DiscogsClient } from './clients/discogs-client.js';
 import { MediaTagRaw } from '../../entity/tag/tag.model.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
@@ -38,6 +39,7 @@ export class AudioModule {
 	coverArtArchive!: CoverArtArchiveClient;
 	wikipedia!: WikipediaClient;
 	gpodder!: GpodderClient;
+	discogs!: DiscogsClient;
 	mp3!: AudioModuleMP3;
 	flac!: AudioModuleFLAC;
 	transcoder!: TranscoderModule;
@@ -67,6 +69,7 @@ export class AudioModule {
 		this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
 
 		this.coverArtArchive = new CoverArtArchiveClient({ userAgent: this.configService.tools.coverartarchive.userAgent, retryOn: true });
+		this.discogs = new DiscogsClient({ userAgent: this.configService.tools.discogs.userAgent, apiToken: this.configService.tools.discogs.apiToken });
 		this.transcoder = new TranscoderModule(this.transcodeCachePath);
 		this.mp3 = new AudioModuleMP3();
 		this.flac = new AudioModuleFLAC(this.imageModule);
@@ -88,6 +91,7 @@ export class AudioModule {
 		this.coverArtArchive.enabled = enabled;
 		this.wikipedia.enabled = enabled;
 		this.gpodder.enabled = enabled;
+		this.discogs.enabled = enabled;
 	}
 
 	async read(filename: string): Promise<AudioScanResult> {

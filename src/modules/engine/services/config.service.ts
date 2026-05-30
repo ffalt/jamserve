@@ -112,6 +112,7 @@ export class ConfigService {
 
 		this.tools.acoustid.apiKey = process.env.JAM_ACOUSTID_API_KEY ?? '';
 		this.tools.lastfm.apiKey = process.env.JAM_LASTFM_API_KEY ?? '';
+		this.tools.discogs.apiToken = process.env.JAM_DISCOGS_API_TOKEN ?? '';
 
 		const configFirstStartFile = path.resolve(this.getDataPath(['config']), 'firststart.config.json');
 		try {

@@ -143,3 +143,24 @@ export class WikidataLookupParameters {
 	@ObjectField({ description: 'WikiData ID' })
 	wikiDataID!: string;
 }
+
+@ObjectParametersType()
+export class DiscogsSearchParameters {
+	@ObjectField({ description: 'Artist Name', example: 'Nirvana' })
+	artist!: string;
+
+	@ObjectField({ description: 'Release Title', example: 'Nevermind' })
+	title!: string;
+}
+
+@ObjectParametersType()
+export class DiscogsArtistSearchParameters {
+	@ObjectField({ description: 'Artist Name', example: 'Nirvana' })
+	query!: string;
+}
+
+@ObjectParametersType()
+export class DiscogsImageParameters {
+	@ObjectField({ description: 'Discogs Image URL' })
+	url!: string;
+}

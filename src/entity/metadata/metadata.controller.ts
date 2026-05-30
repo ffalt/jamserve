@@ -5,6 +5,9 @@ import {
 	AcoustidLookupParameters,
 	CoverArtArchiveImageParameters,
 	CoverArtArchiveLookupParameters,
+	DiscogsArtistSearchParameters,
+	DiscogsImageParameters,
+	DiscogsSearchParameters,
 	LastFMLookupParameters,
 	LyricsOVHSearchParameters,
 	LrclibSearchParameters,
@@ -133,5 +136,34 @@ export class MetaDataController {
 		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
 		return { data: await engine.metadata.wikidataLookup(orm, wikiDataID) };
+	}
+
+	@Get('/discogs/search/release', () => MetaDataResult,
+		{ description: 'Search Discogs release data', summary: 'Search Discogs' })
+	async discogsReleaseSearch(
+		@QueryParameters() { artist, title }: DiscogsSearchParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsReleaseSearch(orm, artist, title) };
+	}
+
+	@Get('/discogs/search/artist', () => MetaDataResult,
+		{ description: 'Search Discogs artist data', summary: 'Search Discogs Artist' })
+	async discogsArtistSearch(
+		@QueryParameters() { query }: DiscogsArtistSearchParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsArtistSearch(orm, query) };
+	}
+
+	@Get('/discogs/image', {
+		binary: ApiImageTypes,
+		description: 'Get Discogs image', summary: 'Request Discogs Image'
+	})
+	async discogsImage(
+		@QueryParameters() { url }: DiscogsImageParameters,
+		@RestContext() { engine }: Context
+	): Promise<ApiBinaryResult | undefined> {
+		return engine.metadata.discogsImage(url);
 	}
 }

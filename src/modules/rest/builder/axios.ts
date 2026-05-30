@@ -124,6 +124,7 @@ export async function buildAxiosClientZip(): Promise<ApiBinaryResult> {
 		'acousticbrainz-rest-data.ts',
 		'acoustid-rest-data.ts',
 		'coverartarchive-rest-data.ts',
+		'discogs-rest-data.ts',
 		'lastfm-rest-data.ts',
 		'musicbrainz-rest-data.ts',
 		'lyricsovh-rest-data.ts',
