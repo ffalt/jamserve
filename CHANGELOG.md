@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.12](https://github.com/ffalt/jamserve/compare/v0.6.11...v0.6.12) (2026-05-30)
+
+
+### Bug Fixes
+
+* **discogs:** add headers to fetch request ([788e2f7](https://github.com/ffalt/jamserve/commit/788e2f7557d3b5e24fc7ae10794719e5633b97df))
+
 ## [0.6.11](https://github.com/ffalt/jamserve/compare/v0.6.10...v0.6.11) (2026-05-30)
 
 
