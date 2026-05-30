@@ -43,6 +43,23 @@ export class MetaDataService {
 		await orm.MetaData.persistAndFlush(item);
 	}
 
+	private static async fetchExternalImage(url: string, serviceName: string): Promise<ApiBinaryResult> {
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`Unexpected ${serviceName} response ${response.statusText}`);
+		const buffer = Buffer.from(await response.arrayBuffer());
+		return { buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' } };
+	}
+
+	private async searchInStore<T>(orm: Orm, name: string, dataType: MetaDataType, generate: () => Promise<any>): Promise<T> {
+		const result = await orm.MetaData.findOne({ where: { name, dataType } });
+		if (result) {
+			return JSON.parse(result.data) as T;
+		}
+		const data = (await generate()) ?? {};
+		await MetaDataService.addToStore(orm, name, dataType, JSON.stringify(data));
+		return data as T;
+	}
+
 	async cleanUp(orm: Orm): Promise<void> {
 		const olderThan = Date.now() - durationToMilliseconds(1, 'd');
 		const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [Op.lt]: new Date(olderThan) } } });
@@ -54,18 +71,6 @@ export class MetaDataService {
 	async clear(orm: Orm): Promise<void> {
 		await orm.MetaData.removeByQueryAndFlush({});
 	}
-
-	async searchInStore<T>(orm: Orm, name: string, dataType: MetaDataType, generate: () => Promise<any>): Promise<T> {
-		const result = await orm.MetaData.findOne({ where: { name, dataType } });
-		if (result) {
-			return JSON.parse(result.data) as T;
-		}
-		const data = (await generate()) ?? {};
-		await MetaDataService.addToStore(orm, name, dataType, JSON.stringify(data));
-		return data as T;
-	}
-
-	// searches
 
 	async musicbrainzSearch(orm: Orm, type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response | undefined> {
 		return this.searchInStore<MusicBrainz.Response>(orm, `search-${type}${JSON.stringify(query)}`,
@@ -287,17 +292,10 @@ export class MetaDataService {
 		if (!this.audioModule.coverArtArchive.enabled) {
 			throw new Error('External service is disabled');
 		}
-		const pattern = /^http(s)?:\/\/coverartarchive.org/;
-		if (!url || !pattern.test(url)) {
+		if (!url || !/^http(s)?:\/\/coverartarchive.org/.test(url)) {
 			return Promise.reject(invalidParameterError('url'));
 		}
-		const response = await fetch(url);
-		if (!response.ok) throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
-		const arrayBuffer = await response.arrayBuffer();
-		const buffer = Buffer.from(arrayBuffer);
-		return {
-			buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
-		};
+		return MetaDataService.fetchExternalImage(url, 'coverartarchive');
 	}
 
 	async discogsReleaseSearch(orm: Orm, artist: string, title: string): Promise<Discogs.SearchResponse | undefined> {
@@ -322,16 +320,9 @@ export class MetaDataService {
 		if (!this.audioModule.discogs.enabled) {
 			throw new Error('External service is disabled');
 		}
-		const pattern = /^https?:\/\/i\.discogs\.com\//;
-		if (!url || !pattern.test(url)) {
+		if (!url || !/^https?:\/\/i\.discogs\.com\//.test(url)) {
 			return Promise.reject(invalidParameterError('url'));
 		}
-		const response = await fetch(url);
-		if (!response.ok) throw new Error(`Unexpected discogs response ${response.statusText}`);
-		const arrayBuffer = await response.arrayBuffer();
-		const buffer = Buffer.from(arrayBuffer);
-		return {
-			buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
-		};
+		return MetaDataService.fetchExternalImage(url, 'discogs');
 	}
 }
