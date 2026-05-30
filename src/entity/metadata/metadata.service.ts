@@ -305,7 +305,7 @@ export class MetaDataService {
 			orm,
 			`discogs-search-${artist}/${title}`,
 			MetaDataType.discogs,
-			async () => this.audioModule.discogs.search(artist, title)
+			async () => this.audioModule.discogs.searchRelease(artist, title)
 		);
 	}
 

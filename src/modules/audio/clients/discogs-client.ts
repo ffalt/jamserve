@@ -46,7 +46,7 @@ export class DiscogsClient extends WebserviceClient {
 		return response.json() as Promise<Discogs.SearchResponse>;
 	}
 
-	async search(artist: string, title: string): Promise<Discogs.SearchResponse | undefined> {
+	async searchRelease(artist: string, title: string): Promise<Discogs.SearchResponse | undefined> {
 		return this.doSearch({ type: 'release', artist, release_title: title });
 	}
 
