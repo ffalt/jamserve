@@ -252,7 +252,7 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         if (!url || !pattern.test(url)) {
             return Promise.reject(invalidParameterError('url'));
         }
-        const response = await fetch(url, { headers: this.audioModule.discogs.headers() });
+        const response = await fetch(url);
         if (!response.ok)
             throw new Error(`Unexpected discogs response ${response.statusText}`);
         const arrayBuffer = await response.arrayBuffer();
