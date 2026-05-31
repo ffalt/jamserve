@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.14](https://github.com/ffalt/jamserve/compare/v0.6.13...v0.6.14) (2026-05-31)
+
+
+### Features
+
+* **client:** add timeout and retry options to web service clients ([fe814ce](https://github.com/ffalt/jamserve/commit/fe814ce3ca3df61c1e4bb23528e6d1d8641a2a9f))
+* **image.service:** add genre handling to object type name retrieval ([2cf285d](https://github.com/ffalt/jamserve/commit/2cf285d40b74aa2205e5bcf437b29dfb6c0c1b03))
+* **metadata:** add Discogs release, artist, and master lookup endpoints ([7312a4e](https://github.com/ffalt/jamserve/commit/7312a4e1ce9cd6fc607c5ecadb6e75f7fca5c48f))
+
 ## [0.6.13](https://github.com/ffalt/jamserve/compare/v0.6.12...v0.6.13) (2026-05-30)
 
 
