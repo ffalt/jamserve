@@ -145,12 +145,60 @@ export class WikidataLookupParameters {
 }
 
 @ObjectParametersType()
-export class DiscogsSearchParameters {
-	@ObjectField({ description: 'Artist Name', example: 'Nirvana' })
-	artist!: string;
+export class DiscogsReleaseLookupParameters {
+	@ObjectField({ description: 'Discogs Release ID', example: 249_504 })
+	id!: number;
+}
 
-	@ObjectField({ description: 'Release Title', example: 'Nevermind' })
-	title!: string;
+@ObjectParametersType()
+export class DiscogsArtistLookupParameters {
+	@ObjectField({ description: 'Discogs Artist ID', example: 108_713 })
+	id!: number;
+}
+
+@ObjectParametersType()
+export class DiscogsMasterLookupParameters {
+	@ObjectField({ description: 'Discogs Master Release ID', example: 1000 })
+	id!: number;
+}
+
+@ObjectParametersType()
+export class DiscogsSearchParameters {
+	@ObjectField({ nullable: true, description: 'General search query', example: 'Nevermind' })
+	q?: string;
+
+	@ObjectField({ nullable: true, description: 'Artist Name', example: 'Nirvana' })
+	artist?: string;
+
+	@ObjectField({ nullable: true, description: 'Release Title', example: 'Nevermind' })
+	title?: string;
+
+	@ObjectField({ nullable: true, description: 'Release Year', example: '1991' })
+	year?: string;
+
+	@ObjectField({ nullable: true, description: 'Release Format (e.g. Vinyl, CD)', example: 'Vinyl' })
+	format?: string;
+
+	@ObjectField({ nullable: true, description: 'Record Label', example: 'DGC Records' })
+	label?: string;
+
+	@ObjectField({ nullable: true, description: 'Country of Release', example: 'US' })
+	country?: string;
+
+	@ObjectField({ nullable: true, description: 'Catalog Number', example: 'DGCD-24425' })
+	catno?: string;
+
+	@ObjectField({ nullable: true, description: 'Barcode' })
+	barcode?: string;
+
+	@ObjectField({ nullable: true, description: 'Genre', example: 'Rock' })
+	genre?: string;
+
+	@ObjectField({ nullable: true, description: 'Style', example: 'Grunge' })
+	style?: string;
+
+	@ObjectField({ nullable: true, description: 'Track Title' })
+	track?: string;
 }
 
 @ObjectParametersType()

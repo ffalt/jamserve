@@ -5,8 +5,11 @@ import {
 	AcoustidLookupParameters,
 	CoverArtArchiveImageParameters,
 	CoverArtArchiveLookupParameters,
+	DiscogsArtistLookupParameters,
 	DiscogsArtistSearchParameters,
 	DiscogsImageParameters,
+	DiscogsMasterLookupParameters,
+	DiscogsReleaseLookupParameters,
 	DiscogsSearchParameters,
 	LastFMLookupParameters,
 	LyricsOVHSearchParameters,
@@ -141,10 +144,10 @@ export class MetaDataController {
 	@Get('/discogs/search/release', () => MetaDataResult,
 		{ description: 'Search Discogs release data', summary: 'Search Discogs' })
 	async discogsReleaseSearch(
-		@QueryParameters() { artist, title }: DiscogsSearchParameters,
+		@QueryParameters() parameters: DiscogsSearchParameters,
 		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
-		return { data: await engine.metadata.discogsReleaseSearch(orm, artist, title) };
+		return { data: await engine.metadata.discogsReleaseSearch(orm, parameters) };
 	}
 
 	@Get('/discogs/search/artist', () => MetaDataResult,
@@ -154,6 +157,42 @@ export class MetaDataController {
 		@RestContext() { orm, engine }: Context
 	): Promise<MetaDataResult> {
 		return { data: await engine.metadata.discogsArtistSearch(orm, query) };
+	}
+
+	@Get('/discogs/release', () => MetaDataResult,
+		{ description: 'Lookup Discogs release by ID', summary: 'Lookup Discogs Release' })
+	async discogsReleaseLookup(
+		@QueryParameters() { id }: DiscogsReleaseLookupParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsRelease(orm, id) };
+	}
+
+	@Get('/discogs/artist', () => MetaDataResult,
+		{ description: 'Lookup Discogs artist by ID', summary: 'Lookup Discogs Artist' })
+	async discogsArtistLookup(
+		@QueryParameters() { id }: DiscogsArtistLookupParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsArtist(orm, id) };
+	}
+
+	@Get('/discogs/master', () => MetaDataResult,
+		{ description: 'Lookup Discogs master release by ID', summary: 'Lookup Discogs Master' })
+	async discogsMasterLookup(
+		@QueryParameters() { id }: DiscogsMasterLookupParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsMaster(orm, id) };
+	}
+
+	@Get('/discogs/master/versions', () => MetaDataResult,
+		{ description: 'Lookup Discogs master release versions by ID', summary: 'Lookup Discogs Master Versions' })
+	async discogsMasterVersionsLookup(
+		@QueryParameters() { id }: DiscogsMasterLookupParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<MetaDataResult> {
+		return { data: await engine.metadata.discogsMasterVersions(orm, id) };
 	}
 
 	@Get('/discogs/image', {

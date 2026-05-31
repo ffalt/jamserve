@@ -14493,7 +14493,7 @@
 						"in": "query",
 						"name": "artist",
 						"description": "Artist Name",
-						"required": true,
+						"required": false,
 						"example": "Nirvana",
 						"schema": {
 							"type": "string",
@@ -14502,13 +14502,121 @@
 					},
 					{
 						"in": "query",
+						"name": "barcode",
+						"description": "Barcode",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Barcode"
+						}
+					},
+					{
+						"in": "query",
+						"name": "catno",
+						"description": "Catalog Number",
+						"required": false,
+						"example": "DGCD-24425",
+						"schema": {
+							"type": "string",
+							"description": "Catalog Number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "country",
+						"description": "Country of Release",
+						"required": false,
+						"example": "US",
+						"schema": {
+							"type": "string",
+							"description": "Country of Release"
+						}
+					},
+					{
+						"in": "query",
+						"name": "format",
+						"description": "Release Format (e.g. Vinyl, CD)",
+						"required": false,
+						"example": "Vinyl",
+						"schema": {
+							"type": "string",
+							"description": "Release Format (e.g. Vinyl, CD)"
+						}
+					},
+					{
+						"in": "query",
+						"name": "genre",
+						"description": "Genre",
+						"required": false,
+						"example": "Rock",
+						"schema": {
+							"type": "string",
+							"description": "Genre"
+						}
+					},
+					{
+						"in": "query",
+						"name": "label",
+						"description": "Record Label",
+						"required": false,
+						"example": "DGC Records",
+						"schema": {
+							"type": "string",
+							"description": "Record Label"
+						}
+					},
+					{
+						"in": "query",
+						"name": "q",
+						"description": "General search query",
+						"required": false,
+						"example": "Nevermind",
+						"schema": {
+							"type": "string",
+							"description": "General search query"
+						}
+					},
+					{
+						"in": "query",
+						"name": "style",
+						"description": "Style",
+						"required": false,
+						"example": "Grunge",
+						"schema": {
+							"type": "string",
+							"description": "Style"
+						}
+					},
+					{
+						"in": "query",
 						"name": "title",
 						"description": "Release Title",
-						"required": true,
+						"required": false,
 						"example": "Nevermind",
 						"schema": {
 							"type": "string",
 							"description": "Release Title"
+						}
+					},
+					{
+						"in": "query",
+						"name": "track",
+						"description": "Track Title",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Track Title"
+						}
+					},
+					{
+						"in": "query",
+						"name": "year",
+						"description": "Release Year",
+						"required": false,
+						"example": "1991",
+						"schema": {
+							"type": "string",
+							"description": "Release Year"
 						}
 					}
 				],
@@ -14522,9 +14630,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Missing parameter"
 					},
 					"401": {
 						"description": "Unauthorized"
@@ -14565,6 +14670,230 @@
 						"schema": {
 							"type": "string",
 							"description": "Artist Name"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/release": {
+			"get": {
+				"operationId": "MetaDataController.discogsReleaseLookup",
+				"summary": "Lookup Discogs Release",
+				"description": "Lookup Discogs release by ID",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Discogs Release ID",
+						"required": true,
+						"example": 249504,
+						"schema": {
+							"type": "integer",
+							"description": "Discogs Release ID"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/artist": {
+			"get": {
+				"operationId": "MetaDataController.discogsArtistLookup",
+				"summary": "Lookup Discogs Artist",
+				"description": "Lookup Discogs artist by ID",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Discogs Artist ID",
+						"required": true,
+						"example": 108713,
+						"schema": {
+							"type": "integer",
+							"description": "Discogs Artist ID"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/master": {
+			"get": {
+				"operationId": "MetaDataController.discogsMasterLookup",
+				"summary": "Lookup Discogs Master",
+				"description": "Lookup Discogs master release by ID",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Discogs Master Release ID",
+						"required": true,
+						"example": 1000,
+						"schema": {
+							"type": "integer",
+							"description": "Discogs Master Release ID"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaDataResult"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
+		"/metadata/discogs/master/versions": {
+			"get": {
+				"operationId": "MetaDataController.discogsMasterVersionsLookup",
+				"summary": "Lookup Discogs Master Versions",
+				"description": "Lookup Discogs master release versions by ID",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Discogs Master Release ID",
+						"required": true,
+						"example": 1000,
+						"schema": {
+							"type": "integer",
+							"description": "Discogs Master Release ID"
 						}
 					}
 				],

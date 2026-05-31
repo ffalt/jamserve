@@ -26,6 +26,7 @@ import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
 import { Discogs } from '../../modules/audio/clients/discogs-rest-data.js';
 import { Tag } from '../tag/tag.js';
 import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
+import { DiscogsSearchParameters } from './metadata.parameters.js';
 
 const log = logger('Metadata');
 
@@ -298,12 +299,13 @@ export class MetaDataService {
 		return MetaDataService.fetchExternalImage(url, 'coverartarchive');
 	}
 
-	async discogsReleaseSearch(orm: Orm, artist: string, title: string): Promise<Discogs.SearchResponse | undefined> {
+	async discogsReleaseSearch(orm: Orm, parameters: DiscogsSearchParameters): Promise<Discogs.SearchResponse | undefined> {
+		const cacheKey = `discogs-search-${JSON.stringify(parameters)}`;
 		return this.searchInStore<Discogs.SearchResponse>(
 			orm,
-			`discogs-search-${artist}/${title}`,
+			cacheKey,
 			MetaDataType.discogs,
-			async () => this.audioModule.discogs.searchRelease(artist, title)
+			async () => this.audioModule.discogs.searchRelease(parameters)
 		);
 	}
 
@@ -313,6 +315,42 @@ export class MetaDataService {
 			`discogs-artist-${query}`,
 			MetaDataType.discogs,
 			async () => this.audioModule.discogs.searchArtist(query)
+		);
+	}
+
+	async discogsRelease(orm: Orm, id: number): Promise<Discogs.Release | undefined> {
+		return this.searchInStore<Discogs.Release>(
+			orm,
+			`discogs-release-${id}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.releaseById(id)
+		);
+	}
+
+	async discogsArtist(orm: Orm, id: number): Promise<Discogs.Artist | undefined> {
+		return this.searchInStore<Discogs.Artist>(
+			orm,
+			`discogs-artist-id-${id}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.artistById(id)
+		);
+	}
+
+	async discogsMaster(orm: Orm, id: number): Promise<Discogs.Master | undefined> {
+		return this.searchInStore<Discogs.Master>(
+			orm,
+			`discogs-master-${id}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.masterById(id)
+		);
+	}
+
+	async discogsMasterVersions(orm: Orm, id: number): Promise<Discogs.MasterVersionsResponse | undefined> {
+		return this.searchInStore<Discogs.MasterVersionsResponse>(
+			orm,
+			`discogs-master-versions-${id}`,
+			MetaDataType.discogs,
+			async () => this.audioModule.discogs.masterVersionsById(id)
 		);
 	}
 
