@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole } from '../../types/enums.js';
 import { MetaDataResult, MetaDataTrackLyricsResult } from './metadata.model.js';
-import { AcousticBrainzLookupParameters, AcoustidLookupParameters, CoverArtArchiveImageParameters, CoverArtArchiveLookupParameters, DiscogsArtistSearchParameters, DiscogsImageParameters, DiscogsSearchParameters, LastFMLookupParameters, LyricsOVHSearchParameters, LrclibSearchParameters, MusicBrainzLookupParameters, MusicBrainzSearchParameters, WikidataLookupParameters, WikidataSummaryParameters, WikipediaSummaryParameters } from './metadata.parameters.js';
+import { AcousticBrainzLookupParameters, AcoustidLookupParameters, CoverArtArchiveImageParameters, CoverArtArchiveLookupParameters, DiscogsArtistLookupParameters, DiscogsArtistSearchParameters, DiscogsImageParameters, DiscogsMasterLookupParameters, DiscogsReleaseLookupParameters, DiscogsSearchParameters, LastFMLookupParameters, LyricsOVHSearchParameters, LrclibSearchParameters, MusicBrainzLookupParameters, MusicBrainzSearchParameters, WikidataLookupParameters, WikidataSummaryParameters, WikipediaSummaryParameters } from './metadata.parameters.js';
 import { ApiImageTypes } from '../../types/consts.js';
 import { Controller } from '../../modules/rest/decorators/controller.js';
 import { Get } from '../../modules/rest/decorators/get.js';
@@ -56,11 +56,23 @@ let MetaDataController = class MetaDataController {
     async wikidataLookup({ wikiDataID }, { orm, engine }) {
         return { data: await engine.metadata.wikidataLookup(orm, wikiDataID) };
     }
-    async discogsReleaseSearch({ artist, title }, { orm, engine }) {
-        return { data: await engine.metadata.discogsReleaseSearch(orm, artist, title) };
+    async discogsReleaseSearch(parameters, { orm, engine }) {
+        return { data: await engine.metadata.discogsReleaseSearch(orm, parameters) };
     }
     async discogsArtistSearch({ query }, { orm, engine }) {
         return { data: await engine.metadata.discogsArtistSearch(orm, query) };
+    }
+    async discogsReleaseLookup({ id }, { orm, engine }) {
+        return { data: await engine.metadata.discogsRelease(orm, id) };
+    }
+    async discogsArtistLookup({ id }, { orm, engine }) {
+        return { data: await engine.metadata.discogsArtist(orm, id) };
+    }
+    async discogsMasterLookup({ id }, { orm, engine }) {
+        return { data: await engine.metadata.discogsMaster(orm, id) };
+    }
+    async discogsMasterVersionsLookup({ id }, { orm, engine }) {
+        return { data: await engine.metadata.discogsMasterVersions(orm, id) };
     }
     async discogsImage({ url }, { engine }) {
         return engine.metadata.discogsImage(url);
@@ -181,6 +193,38 @@ __decorate([
     __metadata("design:paramtypes", [DiscogsArtistSearchParameters, Object]),
     __metadata("design:returntype", Promise)
 ], MetaDataController.prototype, "discogsArtistSearch", null);
+__decorate([
+    Get('/discogs/release', () => MetaDataResult, { description: 'Lookup Discogs release by ID', summary: 'Lookup Discogs Release' }),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [DiscogsReleaseLookupParameters, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "discogsReleaseLookup", null);
+__decorate([
+    Get('/discogs/artist', () => MetaDataResult, { description: 'Lookup Discogs artist by ID', summary: 'Lookup Discogs Artist' }),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [DiscogsArtistLookupParameters, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "discogsArtistLookup", null);
+__decorate([
+    Get('/discogs/master', () => MetaDataResult, { description: 'Lookup Discogs master release by ID', summary: 'Lookup Discogs Master' }),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [DiscogsMasterLookupParameters, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "discogsMasterLookup", null);
+__decorate([
+    Get('/discogs/master/versions', () => MetaDataResult, { description: 'Lookup Discogs master release versions by ID', summary: 'Lookup Discogs Master Versions' }),
+    __param(0, QueryParameters()),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [DiscogsMasterLookupParameters, Object]),
+    __metadata("design:returntype", Promise)
+], MetaDataController.prototype, "discogsMasterVersionsLookup", null);
 __decorate([
     Get('/discogs/image', {
         binary: ApiImageTypes,

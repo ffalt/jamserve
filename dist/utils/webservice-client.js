@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 export class WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent) {
         this.enabled = false;
+        this.timeout = 30000;
         this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS, fireImmediately: true });
         this.userAgent = userAgent;
     }
@@ -47,7 +48,7 @@ export class WebserviceClient {
         const urlParameters = parameters ? this.formatParams(parameters) : '';
         const response = await fetch(url + urlParameters, {
             headers: { 'User-Agent': this.userAgent },
-            signal: AbortSignal.timeout(30000)
+            signal: AbortSignal.timeout(this.timeout)
         });
         if (!ignoreStatus && response.status !== 200) {
             return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));

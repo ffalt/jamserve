@@ -33,15 +33,12 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         const item = orm.MetaData.create({ name, dataType, data });
         await orm.MetaData.persistAndFlush(item);
     }
-    async cleanUp(orm) {
-        const olderThan = Date.now() - durationToMilliseconds(1, 'd');
-        const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [Op.lt]: new Date(olderThan) } } });
-        if (removed > 0) {
-            log.info(`Removed meta data cache entries: ${removed} `);
-        }
-    }
-    async clear(orm) {
-        await orm.MetaData.removeByQueryAndFlush({});
+    static async fetchExternalImage(url, serviceName) {
+        const response = await fetch(url);
+        if (!response.ok)
+            throw new Error(`Unexpected ${serviceName} response ${response.statusText}`);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        return { buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' } };
     }
     async searchInStore(orm, name, dataType, generate) {
         const result = await orm.MetaData.findOne({ where: { name, dataType } });
@@ -51,6 +48,16 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         const data = (await generate()) ?? {};
         await MetaDataService_1.addToStore(orm, name, dataType, JSON.stringify(data));
         return data;
+    }
+    async cleanUp(orm) {
+        const olderThan = Date.now() - durationToMilliseconds(1, 'd');
+        const removed = await orm.MetaData.removeByQueryAndFlush({ where: { createdAt: { [Op.lt]: new Date(olderThan) } } });
+        if (removed > 0) {
+            log.info(`Removed meta data cache entries: ${removed} `);
+        }
+    }
+    async clear(orm) {
+        await orm.MetaData.removeByQueryAndFlush({});
     }
     async musicbrainzSearch(orm, type, query) {
         return this.searchInStore(orm, `search-${type}${JSON.stringify(query)}`, MetaDataType.musicbrainz, async () => {
@@ -225,41 +232,38 @@ let MetaDataService = MetaDataService_1 = class MetaDataService {
         if (!this.audioModule.coverArtArchive.enabled) {
             throw new Error('External service is disabled');
         }
-        const pattern = /^http(s)?:\/\/coverartarchive.org/;
-        if (!url || !pattern.test(url)) {
+        if (!url || !/^http(s)?:\/\/coverartarchive.org/.test(url)) {
             return Promise.reject(invalidParameterError('url'));
         }
-        const response = await fetch(url);
-        if (!response.ok)
-            throw new Error(`Unexpected coverartarchive response ${response.statusText}`);
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        return {
-            buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
-        };
+        return MetaDataService_1.fetchExternalImage(url, 'coverartarchive');
     }
-    async discogsReleaseSearch(orm, artist, title) {
-        return this.searchInStore(orm, `discogs-search-${artist}/${title}`, MetaDataType.discogs, async () => this.audioModule.discogs.searchRelease(artist, title));
+    async discogsReleaseSearch(orm, parameters) {
+        const cacheKey = `discogs-search-${JSON.stringify(parameters)}`;
+        return this.searchInStore(orm, cacheKey, MetaDataType.discogs, async () => this.audioModule.discogs.searchRelease(parameters));
     }
     async discogsArtistSearch(orm, query) {
         return this.searchInStore(orm, `discogs-artist-${query}`, MetaDataType.discogs, async () => this.audioModule.discogs.searchArtist(query));
+    }
+    async discogsRelease(orm, id) {
+        return this.searchInStore(orm, `discogs-release-${id}`, MetaDataType.discogs, async () => this.audioModule.discogs.releaseById(id));
+    }
+    async discogsArtist(orm, id) {
+        return this.searchInStore(orm, `discogs-artist-id-${id}`, MetaDataType.discogs, async () => this.audioModule.discogs.artistById(id));
+    }
+    async discogsMaster(orm, id) {
+        return this.searchInStore(orm, `discogs-master-${id}`, MetaDataType.discogs, async () => this.audioModule.discogs.masterById(id));
+    }
+    async discogsMasterVersions(orm, id) {
+        return this.searchInStore(orm, `discogs-master-versions-${id}`, MetaDataType.discogs, async () => this.audioModule.discogs.masterVersionsById(id));
     }
     async discogsImage(url) {
         if (!this.audioModule.discogs.enabled) {
             throw new Error('External service is disabled');
         }
-        const pattern = /^https?:\/\/i\.discogs\.com\//;
-        if (!url || !pattern.test(url)) {
+        if (!url || !/^https?:\/\/i\.discogs\.com\//.test(url)) {
             return Promise.reject(invalidParameterError('url'));
         }
-        const response = await fetch(url);
-        if (!response.ok)
-            throw new Error(`Unexpected discogs response ${response.statusText}`);
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        return {
-            buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' }
-        };
+        return MetaDataService_1.fetchExternalImage(url, 'discogs');
     }
 };
 __decorate([

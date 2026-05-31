@@ -5,7 +5,10 @@ export class MusicbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
             host: 'https://musicbrainz.org',
-            basePath: '/ws/2/'
+            basePath: '/ws/2/',
+            retryOn: true,
+            retryCount: 3,
+            timeout: 60000
         };
         super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
     }

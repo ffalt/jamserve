@@ -15,6 +15,9 @@ export class WebserviceJSONClient extends WebserviceClient {
             retryCount: 3
         };
         this.options = { ...defaultOptions, ...options };
+        if (this.options.timeout !== undefined) {
+            this.timeout = this.options.timeout;
+        }
     }
     reqToHost(_req) {
         const port = this.options.port === 80 ? '' : `:${this.options.port}`;
@@ -46,6 +49,9 @@ export class WebserviceJSONClient extends WebserviceClient {
     async processError(error, req) {
         const statusCode = errorStatusCode(error);
         if (statusCode === 502 || statusCode === 503) {
+            return this.retry(error, req);
+        }
+        if (error instanceof Error && error.name === 'AbortError') {
             return this.retry(error, req);
         }
         return Promise.reject(error);

@@ -86,6 +86,9 @@ let ImageService = ImageService_1 = class ImageService {
             case DBObjectType.root: {
                 return o.name;
             }
+            case DBObjectType.genre: {
+                return o.name;
+            }
         }
         return type;
     }

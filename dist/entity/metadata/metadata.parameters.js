@@ -199,16 +199,86 @@ WikidataLookupParameters = __decorate([
     ObjectParametersType()
 ], WikidataLookupParameters);
 export { WikidataLookupParameters };
+let DiscogsReleaseLookupParameters = class DiscogsReleaseLookupParameters {
+};
+__decorate([
+    ObjectField({ description: 'Discogs Release ID', example: 249504 }),
+    __metadata("design:type", Number)
+], DiscogsReleaseLookupParameters.prototype, "id", void 0);
+DiscogsReleaseLookupParameters = __decorate([
+    ObjectParametersType()
+], DiscogsReleaseLookupParameters);
+export { DiscogsReleaseLookupParameters };
+let DiscogsArtistLookupParameters = class DiscogsArtistLookupParameters {
+};
+__decorate([
+    ObjectField({ description: 'Discogs Artist ID', example: 108713 }),
+    __metadata("design:type", Number)
+], DiscogsArtistLookupParameters.prototype, "id", void 0);
+DiscogsArtistLookupParameters = __decorate([
+    ObjectParametersType()
+], DiscogsArtistLookupParameters);
+export { DiscogsArtistLookupParameters };
+let DiscogsMasterLookupParameters = class DiscogsMasterLookupParameters {
+};
+__decorate([
+    ObjectField({ description: 'Discogs Master Release ID', example: 1000 }),
+    __metadata("design:type", Number)
+], DiscogsMasterLookupParameters.prototype, "id", void 0);
+DiscogsMasterLookupParameters = __decorate([
+    ObjectParametersType()
+], DiscogsMasterLookupParameters);
+export { DiscogsMasterLookupParameters };
 let DiscogsSearchParameters = class DiscogsSearchParameters {
 };
 __decorate([
-    ObjectField({ description: 'Artist Name', example: 'Nirvana' }),
+    ObjectField({ nullable: true, description: 'General search query', example: 'Nevermind' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "q", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Artist Name', example: 'Nirvana' }),
     __metadata("design:type", String)
 ], DiscogsSearchParameters.prototype, "artist", void 0);
 __decorate([
-    ObjectField({ description: 'Release Title', example: 'Nevermind' }),
+    ObjectField({ nullable: true, description: 'Release Title', example: 'Nevermind' }),
     __metadata("design:type", String)
 ], DiscogsSearchParameters.prototype, "title", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Release Year', example: '1991' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "year", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Release Format (e.g. Vinyl, CD)', example: 'Vinyl' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "format", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Record Label', example: 'DGC Records' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "label", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Country of Release', example: 'US' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "country", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Catalog Number', example: 'DGCD-24425' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "catno", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Barcode' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "barcode", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Genre', example: 'Rock' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "genre", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Style', example: 'Grunge' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "style", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Track Title' }),
+    __metadata("design:type", String)
+], DiscogsSearchParameters.prototype, "track", void 0);
 DiscogsSearchParameters = __decorate([
     ObjectParametersType()
 ], DiscogsSearchParameters);

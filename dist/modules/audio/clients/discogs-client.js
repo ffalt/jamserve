@@ -15,6 +15,18 @@ export class DiscogsClient extends WebserviceClient {
         }
         return h;
     }
+    async doGet(path) {
+        this.checkDisabled();
+        await this.limit();
+        const url = `https://api.discogs.com${path}`;
+        log.info('requesting', url);
+        const response = await fetch(url, { headers: this.headers(), signal: AbortSignal.timeout(30000) });
+        if (!response.ok) {
+            log.error(`Discogs request failed: ${response.status} ${response.statusText}`);
+            return undefined;
+        }
+        return response.json();
+    }
     async doSearch(parameters) {
         this.checkDisabled();
         await this.limit();
@@ -31,11 +43,31 @@ export class DiscogsClient extends WebserviceClient {
         }
         return response.json();
     }
-    async searchRelease(artist, title) {
-        return this.doSearch({ type: 'release', artist, release_title: title });
+    async searchRelease(parameters) {
+        const { title, ...rest } = parameters;
+        const search = { type: 'release' };
+        for (const [key, value] of Object.entries(rest)) {
+            if (value)
+                search[key] = value;
+        }
+        if (title)
+            search.release_title = title;
+        return this.doSearch(search);
     }
     async searchArtist(query) {
         return this.doSearch({ type: 'artist', q: query });
+    }
+    async releaseById(id) {
+        return this.doGet(`/releases/${id}`);
+    }
+    async artistById(id) {
+        return this.doGet(`/artists/${id}`);
+    }
+    async masterById(id) {
+        return this.doGet(`/masters/${id}`);
+    }
+    async masterVersionsById(id) {
+        return this.doGet(`/masters/${id}/versions`);
     }
 }
 //# sourceMappingURL=discogs-client.js.map
