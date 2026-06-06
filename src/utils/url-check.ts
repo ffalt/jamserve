@@ -64,10 +64,18 @@ function isBlockedIPv6(ip: string): boolean {
 	if (normalized === '::' || normalized === '0000:0000:0000:0000:0000:0000:0000:0000') {
 		return true;
 	}
-	// IPv4-mapped IPv6  (::ffff:x.x.x.x)
+	// IPv4-mapped IPv6, dotted form (::ffff:127.0.0.1)
 	const v4MappedMatch = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/.exec(normalized);
 	if (v4MappedMatch) {
 		return isBlockedIPv4(v4MappedMatch.at(1)!);
+	}
+	// IPv4-mapped IPv6, hex-compressed form produced by `new URL` (::ffff:7f00:1, ::ffff:a9fe:a9fe)
+	const v4MappedHexMatch = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(normalized);
+	if (v4MappedHexMatch) {
+		const high = Number.parseInt(v4MappedHexMatch.at(1)!, 16);
+		const low = Number.parseInt(v4MappedHexMatch.at(2)!, 16);
+		const mapped = `${(high >> 8) & 0xFF}.${high & 0xFF}.${(low >> 8) & 0xFF}.${low & 0xFF}`;
+		return isBlockedIPv4(mapped);
 	}
 	// Link-local (fe80::/10)
 	if (normalized.startsWith('fe80:') || normalized.startsWith('fe8') || normalized.startsWith('fe9') || normalized.startsWith('fea') || normalized.startsWith('feb')) {
