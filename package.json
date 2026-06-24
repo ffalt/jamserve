@@ -36,7 +36,7 @@
     "brace-expansion": "5.0.6",
     "@tootallnate/once": "3.0.1",
     "glob": "13.0.6",
-    "graphql": "16.14.0"
+    "graphql": "16.14.2"
   },
   "dependencies": {
     "@apollo/server": "5.5.1",
@@ -58,7 +58,7 @@
     "express-useragent": "2.2.0",
     "feedparser": "2.6.0",
     "fs-extra": "11.3.5",
-    "graphql": "16.14.0",
+    "graphql": "16.14.2",
     "graphql-type-json": "0.3.2",
     "helmet": "8.2.0",
     "iconv-lite": "0.7.2",
