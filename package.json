@@ -82,7 +82,7 @@
     "reflect-metadata": "0.2.2",
     "rotating-file-stream": "3.2.9",
     "seedrandom": "3.0.5",
-    "semver": "7.8.1",
+    "semver": "7.8.4",
     "sequelize": "6.37.8",
     "sharp": "0.34.5",
     "shuffle-seed": "1.1.6",
