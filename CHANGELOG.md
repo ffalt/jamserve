@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.15](https://github.com/ffalt/jamserve/compare/v0.6.14...v0.6.15) (2026-07-04)
+
+
+### Features
+
+* **api:** add mbTrackIDs query parameter for filtering by MusicBrainz Track Ids ([cf47b7e](https://github.com/ffalt/jamserve/commit/cf47b7ef8b076e7182d0ec5ec37711596b3647dc))
+
+
+### Bug Fixes
+
+* **lint:** updated unicorn rules ([2db2c43](https://github.com/ffalt/jamserve/commit/2db2c435a8024755cdd161268a6b8613b945e2af))
+* **track:** adjust broken similar tracks function ([8ebf167](https://github.com/ffalt/jamserve/commit/8ebf167076378899987d38cb3c6282526916a201))
+
 ## [0.6.14](https://github.com/ffalt/jamserve/compare/v0.6.13...v0.6.14) (2026-05-31)
 
 
