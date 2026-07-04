@@ -44,7 +44,7 @@ export class MetadataServiceSimilarTracks {
 		}
 		const result = new Set<string>();
 		const mbTrackIDs = ids.map(track => track.mbid || '-').filter(id => id !== '-');
-		const list = await orm.Track.find({ where: { tag: { mbTrackID: mbTrackIDs } } });
+		const list = mbTrackIDs.length > 0 ? await orm.Track.findFilter({ mbTrackIDs }) : [];
 		for (const sim of ids) {
 			const t = await findAsyncSequential(list, async tr => {
 				const entry = await tr.tag.get();
@@ -57,7 +57,7 @@ export class MetadataServiceSimilarTracks {
 			}
 		}
 		for (const sim of vals) {
-			const id = await orm.Track.findOneID({ where: { name: sim.name, artist: { name: sim.artist } } });
+			const id = await orm.Track.findOneIDFilter({ name: sim.name, artist: sim.artist });
 			if (id) {
 				result.add(id);
 			}

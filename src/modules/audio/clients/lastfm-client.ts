@@ -21,8 +21,11 @@ class LastFMClientBeautify {
 				break;
 			}
 			case '@attr': {
+				// @attr echoes query metadata (e.g. { artist, track }); never let it clobber real data already collected
 				for (const subkey of Object.keys(sub as Record<string, any>)) {
-					result[subkey] = sub[subkey];
+					if (result[subkey] === undefined) {
+						result[subkey] = sub[subkey];
+					}
 				}
 				break;
 			}

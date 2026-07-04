@@ -141,6 +141,10 @@ export class TrackFilterParameters {
 	@ObjectField(() => [String], { nullable: true, description: 'filter by Bookmark Ids', isID: true })
 	bookmarkIDs?: Array<string>;
 
+	@Field(() => [String], { nullable: true })
+	@ObjectField(() => [String], { nullable: true, description: 'filter by MusicBrainz Track Ids', example: [examples.mbTrackID] })
+	mbTrackIDs?: Array<string>;
+
 	@Field(() => Int, { nullable: true })
 	@ObjectField({ nullable: true, description: 'filter by since year', min: 0, example: examples.year })
 	fromYear?: number;

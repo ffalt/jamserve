@@ -209,6 +209,10 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 		return await this.findIDs(await this.buildFilter(filter, user));
 	}
 
+	async findOneIDFilter(filter: Filter | undefined, user?: User): Promise<string | undefined> {
+		return await this.findOneID(await this.buildFilter(filter, user));
+	}
+
 	async findListFilter(list: ListType, seed: string | undefined, filter: Filter | undefined, order: Array<OrderBy> | undefined, page: PageParameters | undefined, user: User): Promise<PageResult<Entity>> {
 		return await this.findList(list, seed, await this.buildFindOptions(filter, order, user, page), user.id);
 	}
