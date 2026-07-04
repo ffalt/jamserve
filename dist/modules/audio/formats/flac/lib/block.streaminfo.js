@@ -1,5 +1,5 @@
-import { MetaDataBlock } from './block.js';
-export class MetaDataBlockStreamInfo extends MetaDataBlock {
+import { MetadataBlock } from './block.js';
+export class MetadataBlockStreamInfo extends MetadataBlock {
     constructor(isLast) {
         super(isLast, 0);
         this.minBlockSize = 0;

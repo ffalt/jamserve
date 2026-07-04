@@ -57,13 +57,13 @@ let DocsMiddleware = class DocsMiddleware {
             res.sendFile(explorerJS);
         });
         api.get('/subsonic.js', (req, res) => {
-            const safeUserName = JSON.stringify(req.user?.name ?? '')
+            const safeUsername = JSON.stringify(req.user?.name ?? '')
                 .replaceAll('</', String.raw `<\/`)
                 .replaceAll('<!--', String.raw `<\!--`);
             const subsonic_config = `document.addEventListener('DOMContentLoaded', (event) => {
 const explorer = document.getElementsByTagName('openapi-explorer')[0];  
 setTimeout(() => {
-	explorer.setAuthenticationConfiguration('UserAuth', {token: ${safeUserName}});
+	explorer.setAuthenticationConfiguration('UserAuth', {token: ${safeUsername}});
 	// explorer.setAuthenticationConfiguration('PasswordAuth', {token: 'dev'}); 
 	explorer.setAuthenticationConfiguration('VersionAuth', {token: '1.16.0'});
 	explorer.setAuthenticationConfiguration('ClientAuth', {token: 'Api Docs Test Client'});

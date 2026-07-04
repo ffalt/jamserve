@@ -75,7 +75,7 @@ export const QHelper = {
                 return false;
             }
             const array = q[key];
-            const result = this.cleanList(array) ?? [];
+            const result = QHelper.cleanList(array) ?? [];
             if (result.length === 0) {
                 return false;
             }
@@ -94,7 +94,7 @@ export const QHelper = {
         if (!list || list.length === 0) {
             return {};
         }
-        const result = this.cleanList(list) ?? [];
+        const result = QHelper.cleanList(list) ?? [];
         if (result.length === 0) {
             return {};
         }

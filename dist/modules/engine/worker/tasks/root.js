@@ -19,13 +19,13 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
     static async appendRemovedIDsInBatches(fetchIDs, append) {
         let offset = 0;
         for (;;) {
-            const ids = await fetchIDs(offset, RootWorker_1.REMOVE_BATCH_SIZE);
+            const ids = await fetchIDs(offset, this.REMOVE_BATCH_SIZE);
             if (ids.length === 0) {
                 break;
             }
             append(ids);
             offset += ids.length;
-            if (ids.length < RootWorker_1.REMOVE_BATCH_SIZE) {
+            if (ids.length < this.REMOVE_BATCH_SIZE) {
                 break;
             }
         }
@@ -46,7 +46,7 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
             resolvedDir = d;
         }
         const normalizedPath = removeTrailingPathSeparator(resolvedDir);
-        for (const deniedPath of RootWorker_1.DENIED_ROOT_PATHS) {
+        for (const deniedPath of this.DENIED_ROOT_PATHS) {
             if (normalizedPath === deniedPath || normalizedPath.startsWith(`${deniedPath}/`)) {
                 throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
             }
@@ -168,27 +168,30 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         const artworks = await orm.Artwork.findFilter({ folderIDs: folders.map(f => f.id) });
         let updatedFolders = 0;
         for (const folder of folders) {
-            if (folder.path.startsWith(oldPath)) {
-                folder.path = newPath + folder.path.slice(oldPath.length);
-                orm.Folder.persistLater(folder);
-                updatedFolders++;
+            if (!folder.path.startsWith(oldPath)) {
+                continue;
             }
+            folder.path = newPath + folder.path.slice(oldPath.length);
+            orm.Folder.persistLater(folder);
+            updatedFolders++;
         }
         let updatedTracks = 0;
         for (const track of tracks) {
-            if (track.path.startsWith(oldPath)) {
-                track.path = newPath + track.path.slice(oldPath.length);
-                orm.Track.persistLater(track);
-                updatedTracks++;
+            if (!track.path.startsWith(oldPath)) {
+                continue;
             }
+            track.path = newPath + track.path.slice(oldPath.length);
+            orm.Track.persistLater(track);
+            updatedTracks++;
         }
         let updatedArtworks = 0;
         for (const artwork of artworks) {
-            if (artwork.path.startsWith(oldPath)) {
-                artwork.path = newPath + artwork.path.slice(oldPath.length);
-                orm.Artwork.persistLater(artwork);
-                updatedArtworks++;
+            if (!artwork.path.startsWith(oldPath)) {
+                continue;
             }
+            artwork.path = newPath + artwork.path.slice(oldPath.length);
+            orm.Artwork.persistLater(artwork);
+            updatedArtworks++;
         }
         log.info(`Migrated ${updatedFolders} folders, ${updatedTracks} tracks, ${updatedArtworks} artworks`);
         await orm.em.flush();
@@ -221,17 +224,15 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
     }
     logNode(node) {
         let stat = [`${' '.repeat(node?.folder.level ?? 0)}${node?.changed ? '** ' : '|- '}${node?.folder.path}`];
-        for (const n of (node?.children ?? [])) {
+        const children = node?.children ?? [];
+        for (const n of children) {
             stat = [...stat, ...this.logNode(n)];
         }
         return stat;
     }
     static async buildMergeTracks(folder) {
         const tracks = await folder.tracks.getItems();
-        const list = [];
-        for (const track of tracks) {
-            list.push(new ObjLoadTrackMatch(track));
-        }
+        const list = Array.from(tracks, track => new ObjLoadTrackMatch(track));
         return list;
     }
 };

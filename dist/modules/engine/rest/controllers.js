@@ -25,7 +25,7 @@ import { StateController } from '../../../entity/state/state.controller.js';
 import { WaveformController } from '../../../entity/waveform/waveform.controller.js';
 import { StreamController } from '../../../entity/stream/stream.controller.js';
 import { ArtworkController } from '../../../entity/artwork/artwork.controller.js';
-import { MetaDataController } from '../../../entity/metadata/metadata.controller.js';
+import { MetadataController } from '../../../entity/metadata/metadata.controller.js';
 import { AdminController } from '../../../entity/admin/admin.controller.js';
 import { NowPlayingController } from '../../../entity/nowplaying/nowplaying.controller.js';
 export function RestControllers() {
@@ -45,7 +45,7 @@ export function RestControllers() {
         ImageController,
         LandscapeController,
         RootController,
-        MetaDataController,
+        MetadataController,
         NowPlayingController,
         PingController,
         PlaylistController,

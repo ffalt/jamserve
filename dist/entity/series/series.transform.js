@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 let SeriesTransformService = class SeriesTransformService extends BaseTransformService {
     async seriesBases(orm, list, seriesParameters, user) {
         return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesParameters, user)));
@@ -44,8 +44,8 @@ let SeriesTransformService = class SeriesTransformService extends BaseTransformS
     }
 };
 __decorate([
-    inject(MetaDataService),
-    __metadata("design:type", MetaDataService)
+    inject(MetadataService),
+    __metadata("design:type", MetadataService)
 ], SeriesTransformService.prototype, "metaData", void 0);
 SeriesTransformService = __decorate([
     injectable()

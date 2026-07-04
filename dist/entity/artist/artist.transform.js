@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType } from '../../types/enums.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let ArtistTransformService = class ArtistTransformService extends BaseTransformService {
     async artistBases(orm, list, artistParameters, user) {
@@ -46,8 +46,8 @@ let ArtistTransformService = class ArtistTransformService extends BaseTransformS
     }
 };
 __decorate([
-    inject(MetaDataService),
-    __metadata("design:type", MetaDataService)
+    inject(MetadataService),
+    __metadata("design:type", MetadataService)
 ], ArtistTransformService.prototype, "metaData", void 0);
 __decorate([
     inject(GenreTransformService),

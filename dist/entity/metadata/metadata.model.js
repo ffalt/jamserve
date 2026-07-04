@@ -67,24 +67,24 @@ ExtendedInfoResultQL = __decorate([
     ObjectType()
 ], ExtendedInfoResultQL);
 export { ExtendedInfoResultQL };
-let MetaDataResult = class MetaDataResult {
+let MetadataResult = class MetadataResult {
 };
 __decorate([
     ObjectField(() => Object, { nullable: true, description: 'MetaData' }),
     __metadata("design:type", Object)
-], MetaDataResult.prototype, "data", void 0);
-MetaDataResult = __decorate([
+], MetadataResult.prototype, "data", void 0);
+MetadataResult = __decorate([
     ResultType({ description: 'Metadata Result' })
-], MetaDataResult);
-export { MetaDataResult };
-let MetaDataTrackLyricsResult = class MetaDataTrackLyricsResult {
+], MetadataResult);
+export { MetadataResult };
+let MetadataTrackLyricsResult = class MetadataTrackLyricsResult {
 };
 __decorate([
     ObjectField(() => TrackLyrics, { nullable: true, description: 'MetaData' }),
     __metadata("design:type", TrackLyrics)
-], MetaDataTrackLyricsResult.prototype, "data", void 0);
-MetaDataTrackLyricsResult = __decorate([
+], MetadataTrackLyricsResult.prototype, "data", void 0);
+MetadataTrackLyricsResult = __decorate([
     ResultType({ description: 'Metadata TrackLyrics Result' })
-], MetaDataTrackLyricsResult);
-export { MetaDataTrackLyricsResult };
+], MetadataTrackLyricsResult);
+export { MetadataTrackLyricsResult };
 //# sourceMappingURL=metadata.model.js.map

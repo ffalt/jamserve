@@ -34,8 +34,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
             }
             if (typeof o === 'object') {
                 const result = {};
-                for (const key of Object.keys(o)) {
-                    const value = o[key];
+                for (const [key, value] of Object.entries(o)) {
                     const sub = walk(value);
                     if (sub !== undefined) {
                         result[this.formatKey(key)] = sub;

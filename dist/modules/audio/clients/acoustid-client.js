@@ -9,7 +9,7 @@ export class AcoustidClient extends WebserviceClient {
         this.options = options;
     }
     async get(fp, includes) {
-        includes = includes ?? this.options.meta ?? META_DEFAULT;
+        includes ?? (includes = this.options.meta ?? META_DEFAULT);
         log.info('requesting by fingerprint', includes);
         const data = await this.getJsonWithParameters('https://api.acoustid.org/v2/lookup', {
             format: 'json',

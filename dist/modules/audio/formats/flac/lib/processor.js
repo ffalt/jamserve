@@ -1,7 +1,7 @@
 import { Transform } from 'node:stream';
-import { MetaDataBlock } from './block.js';
-import { MetaDataBlockPicture } from './block.picture.js';
-import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
+import { MetadataBlock } from './block.js';
+import { MetadataBlockPicture } from './block.picture.js';
+import { MetadataBlockStreamInfo } from './block.streaminfo.js';
 import { BlockVorbiscomment } from './block.vorbiscomment.js';
 var STATE;
 (function (STATE) {
@@ -24,10 +24,10 @@ export var MDB_TYPE;
     MDB_TYPE[MDB_TYPE["INVALID"] = 127] = "INVALID";
 })(MDB_TYPE || (MDB_TYPE = {}));
 export class FlacProcessorStream extends Transform {
-    constructor(reportID3 = false, parseMetaDataBlocks = false, options) {
+    constructor(reportID3 = false, parseMetadataBlocks = false, options) {
         super(options);
         this.reportID3 = reportID3;
-        this.parseMetaDataBlocks = parseMetaDataBlocks;
+        this.parseMetadataBlocks = parseMetadataBlocks;
         this.hasError = false;
         this.hasID3 = false;
         this.isFlac = false;
@@ -106,7 +106,7 @@ export class FlacProcessorStream extends Transform {
     }
     safePushIncomplete(chunk, minCapacity, persist, validate) {
         if (persist) {
-            this.buf = this.buf ?? Buffer.alloc(minCapacity);
+            this.buf ?? (this.buf = Buffer.alloc(minCapacity));
             chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
         }
         else {
@@ -163,7 +163,7 @@ export class FlacProcessorStream extends Transform {
         }
     }
     processMDB(chunk) {
-        if (this.safePush(chunk, this.mdbLen, this.parseMetaDataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
+        if (this.safePush(chunk, this.mdbLen, this.parseMetadataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
             if (!this.mdb) {
                 return;
             }
@@ -224,16 +224,16 @@ export class FlacProcessorStream extends Transform {
     initMDB(type) {
         switch (type) {
             case MDB_TYPE.STREAMINFO: {
-                return new MetaDataBlockStreamInfo(this.mdbLast);
+                return new MetadataBlockStreamInfo(this.mdbLast);
             }
             case MDB_TYPE.VORBIS_COMMENT: {
                 return new BlockVorbiscomment(this.mdbLast);
             }
             case MDB_TYPE.PICTURE: {
-                return new MetaDataBlockPicture(this.mdbLast);
+                return new MetadataBlockPicture(this.mdbLast);
             }
             default: {
-                return new MetaDataBlock(this.mdbLast, type);
+                return new MetadataBlock(this.mdbLast, type);
             }
         }
     }
@@ -266,7 +266,7 @@ export class FlacProcessorStream extends Transform {
         return this.preProcess(slice, header);
     }
     validateMDB(slice, isDone) {
-        if (this.parseMetaDataBlocks && isDone) {
+        if (this.parseMetadataBlocks && isDone) {
             if (!this.mdb) {
                 return false;
             }

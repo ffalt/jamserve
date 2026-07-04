@@ -1,13 +1,13 @@
 import fse from 'fs-extra';
 import { parentPort } from 'node:worker_threads';
-import { mp3val } from '../tools/mp3val.js';
+import { mp3val as mp3value } from '../tools/mp3val.js';
 export async function fixMP3(filename) {
     const backupFile = `${filename}.bak`;
     const exits = await fse.pathExists(backupFile);
     if (!exits) {
         await fse.copy(filename, backupFile);
     }
-    await mp3val(filename, true);
+    await mp3value(filename, true);
 }
 if (parentPort && process.env.JAM_USE_TASKS) {
     const caller = parentPort;

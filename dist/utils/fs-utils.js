@@ -24,7 +24,7 @@ export function basenameStripExtension(filename) {
 export function replaceFileSystemChars(s, replace) {
     return s
         .replaceAll(':', ' - ')
-        .replaceAll(/[?/!\\"|*]/g, replace);
+        .replaceAll(/[?/!\\"|*]/g, () => replace);
 }
 const FolderSystemCharsRegEx = /[<>:"/\\|?*]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
 export function containsFolderSystemChars(s) {
@@ -33,7 +33,7 @@ export function containsFolderSystemChars(s) {
 export function replaceFolderSystemChars(s, replace) {
     return s
         .replaceAll(':', ' -')
-        .replaceAll(/[|*?/!\\<>"]/g, replace);
+        .replaceAll(/[|*?/!\\<>"]/g, () => replace);
 }
 export function ensureTrailingPathSeparator(s) {
     if (!s.endsWith(path.sep)) {

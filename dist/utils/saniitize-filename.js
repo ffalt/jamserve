@@ -1,5 +1,5 @@
 export function sanitizeFilename(s) {
     return s.replaceAll(/["\\]/g, '_')
-        .replaceAll(/[\u0000-\u001F\u007F]/g, '');
+        .replaceAll(/[\u{0}-\u{1F}\u{7F}]/gu, '');
 }
 //# sourceMappingURL=saniitize-filename.js.map

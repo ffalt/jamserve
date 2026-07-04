@@ -25,7 +25,7 @@ export class DebouncePromises {
         this.pendingPromises.set(id, []);
     }
     isPending(id) {
-        return !!this.pendingPromises.get(id);
+        return this.pendingPromises.has(id);
     }
     resolve(id, result) {
         const pending = this.getPendingArray(id);

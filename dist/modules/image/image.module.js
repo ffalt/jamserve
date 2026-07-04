@@ -60,7 +60,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
     async storeImage(filepath, name, imageUrl) {
         log.debug('Requesting image', imageUrl);
         await validateExternalUrl(imageUrl);
-        const urlExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase().slice(1);
+        const urlExtension = (path.extname(imageUrl).split('?', 1).at(0) ?? '').trim().toLowerCase().slice(1);
         if (urlExtension.length > 0 && !SupportedReadImageFormat.includes(urlExtension)) {
             return Promise.reject(new Error(`Unsupported image format in URL: ${urlExtension}`));
         }
@@ -74,7 +74,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
             await fileDeleteIfExists(temporaryFilename);
             throw error;
         }
-        const mimeFromHeader = contentType?.split(';').at(0)?.trim().toLowerCase();
+        const mimeFromHeader = contentType?.split(';', 1).at(0)?.trim().toLowerCase();
         const allowedMimes = new Set(SupportedReadImageFormat.map(extension => mimeTypes.lookup(extension)).filter(Boolean));
         if (mimeFromHeader && !allowedMimes.has(mimeFromHeader)) {
             await fileDeleteIfExists(temporaryFilename);
@@ -98,7 +98,7 @@ let ImageModule = ImageModule_1 = class ImageModule {
         return filename;
     }
     async paint(text, size, format) {
-        size = size ?? 320;
+        size ?? (size = 320);
         const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
         this.font ?? (this.font = await loadFont(SANS_32_WHITE));
         image.print({
@@ -265,9 +265,9 @@ let ImageModule = ImageModule_1 = class ImageModule {
         try {
             const metadata = await sharpy.metadata();
             return {
-                width: metadata.width || 0,
-                height: metadata.height || 0,
-                format: metadata.format || 'unknown',
+                width: metadata.width,
+                height: metadata.height,
+                format: metadata.format,
                 colorDepth: metadata.density ?? 0,
                 colors: 0
             };

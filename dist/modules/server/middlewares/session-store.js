@@ -71,11 +71,12 @@ export class ExpressSessionStore extends Store {
         this.accessOrder.push(sid);
     }
     evictLRU() {
-        if (this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0) {
-            const lruSid = this.accessOrder.shift();
-            if (lruSid) {
-                this.cache.delete(lruSid);
-            }
+        if (!(this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0)) {
+            return;
+        }
+        const lruSid = this.accessOrder.shift();
+        if (lruSid) {
+            this.cache.delete(lruSid);
         }
     }
     static expired(data) {

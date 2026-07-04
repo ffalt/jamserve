@@ -202,6 +202,11 @@ __decorate([
     __metadata("design:type", Array)
 ], TrackFilterParameters.prototype, "bookmarkIDs", void 0);
 __decorate([
+    Field(() => [String], { nullable: true }),
+    ObjectField(() => [String], { nullable: true, description: 'filter by MusicBrainz Track Ids', example: [examples.mbTrackID] }),
+    __metadata("design:type", Array)
+], TrackFilterParameters.prototype, "mbTrackIDs", void 0);
+__decorate([
     Field(() => Int, { nullable: true }),
     ObjectField({ nullable: true, description: 'filter by since year', min: 0, example: examples.year }),
     __metadata("design:type", Number)

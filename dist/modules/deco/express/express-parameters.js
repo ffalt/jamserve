@@ -40,9 +40,9 @@ export class ExpressParameters {
     static validateNumber(value, typeOptions, parameter) {
         if (typeOptions.array) {
             const array = Array.isArray(value) ? value : [value];
-            return array.map(v => ExpressParameters.validateNumberPart(v, typeOptions, parameter));
+            return array.map(v => this.validateNumberPart(v, typeOptions, parameter));
         }
-        return ExpressParameters.validateNumberPart(value, typeOptions, parameter);
+        return this.validateNumberPart(value, typeOptions, parameter);
     }
     validateString(value, typeOptions, parameter) {
         if (typeOptions.array) {
@@ -80,14 +80,14 @@ export class ExpressParameters {
             const array = Array.isArray(value) ? value : [value];
             const result = array.map(String).filter(s => s.length > 0);
             for (const arrayValue of result) {
-                if (!enumValues[arrayValue]) {
+                if (!Object.hasOwn(enumValues, arrayValue)) {
                     throw invalidParameterError(parameter.name, 'Enum value not valid');
                 }
             }
             return result;
         }
         const result = String(value);
-        if (!enumValues[result]) {
+        if (!Object.hasOwn(enumValues, result)) {
             throw invalidParameterError(parameter.name, 'Enum value not valid');
         }
         return result;

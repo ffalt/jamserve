@@ -3,8 +3,9 @@ import { WebserviceClient } from '../../../utils/webservice-client.js';
 const log = logger('LastFM');
 class LastFMClientBeautify {
     static ensureList(name, sub) {
-        if (sub[name]) {
-            return Array.isArray(sub[name]) ? sub[name] : [sub[name]];
+        const value = sub[name];
+        if (value) {
+            return Array.isArray(value) ? value : [value];
         }
         return sub;
     }
@@ -15,13 +16,15 @@ class LastFMClientBeautify {
                 break;
             }
             case '@attr': {
-                for (const subkey of Object.keys(sub)) {
-                    result[subkey] = sub[subkey];
+                for (const [subkey, value] of Object.entries(sub)) {
+                    if (result[subkey] === undefined) {
+                        result[subkey] = value;
+                    }
                 }
                 break;
             }
             case 'tags': {
-                result[key] = LastFMClientBeautify.ensureList('tag', sub);
+                result[key] = this.ensureList('tag', sub);
                 break;
             }
             case 'streamable': {
@@ -34,11 +37,11 @@ class LastFMClientBeautify {
                 break;
             }
             case 'tracks': {
-                result[key] = LastFMClientBeautify.ensureList('track', sub);
+                result[key] = this.ensureList('track', sub);
                 break;
             }
             case 'links': {
-                result[key] = LastFMClientBeautify.ensureList('link', sub);
+                result[key] = this.ensureList('link', sub);
                 break;
             }
             default: {
@@ -48,10 +51,10 @@ class LastFMClientBeautify {
     }
     static walkBeautifyObject(o) {
         const result = {};
-        for (const key of Object.keys(o)) {
-            const sub = LastFMClientBeautify.walk(o[key], o);
+        for (const [key, value] of Object.entries(o)) {
+            const sub = this.walk(value, o);
             if (sub !== undefined) {
-                LastFMClientBeautify.buildSubValue(key, sub, result);
+                this.buildSubValue(key, sub, result);
             }
         }
         return result;
@@ -62,16 +65,16 @@ class LastFMClientBeautify {
         }
         if (Array.isArray(o)) {
             return o
-                .map((sub) => LastFMClientBeautify.walk(sub, parent))
+                .map((sub) => this.walk(sub, parent))
                 .filter((sub) => sub !== undefined);
         }
         if (typeof o === 'object') {
-            return LastFMClientBeautify.walkBeautifyObject(o);
+            return this.walkBeautifyObject(o);
         }
         return o;
     }
     static beautify(obj) {
-        return LastFMClientBeautify.walk(obj, {});
+        return this.walk(obj, {});
     }
 }
 export class LastFMClient extends WebserviceClient {
@@ -97,8 +100,8 @@ export class LastFMClient extends WebserviceClient {
         log.info('requesting', api, JSON.stringify(parameters));
         parameters.method = api;
         const sortedParameters = { method: api };
-        for (const key of Object.keys(parameters)) {
-            sortedParameters[key] = parameters[key];
+        for (const [key, value] of Object.entries(parameters)) {
+            sortedParameters[key] = value;
         }
         sortedParameters.api_key = this.options.key;
         sortedParameters.format = 'json';

@@ -145,7 +145,7 @@ const trackRules = [
         mp3: true,
         run: async (_folder, _track, _tag, tagCache) => {
             if (tagCache.mp3Warnings?.xing) {
-                const warning = tagCache.mp3Warnings.xing.find(m => {
+                const warning = tagCache.mp3Warnings.xing.some(m => {
                     return analyzeErrors.xingMissing.includes(m.msg);
                 });
                 if (warning) {
@@ -250,15 +250,16 @@ export class TrackRulesChecker {
         const mp3 = isMP3(track, tag);
         const flac = isFlac(track, tag);
         for (const rule of trackRules) {
-            if (rule.all || (rule.mp3 && mp3) || (rule.flac && flac)) {
-                const match = await rule.run(folder, track, tag, mediaCache);
-                if (match) {
-                    result.push({
-                        id: rule.id,
-                        name: rule.name,
-                        details: match.details
-                    });
-                }
+            if (!(rule.all || (rule.mp3 && mp3) || (rule.flac && flac))) {
+                continue;
+            }
+            const match = await rule.run(folder, track, tag, mediaCache);
+            if (match) {
+                result.push({
+                    id: rule.id,
+                    name: rule.name,
+                    details: match.details
+                });
             }
         }
         return result;

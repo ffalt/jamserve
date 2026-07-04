@@ -38,8 +38,8 @@ let RateLimitService = class RateLimitService {
                 const responsePenalty = await this.limiterConsecutiveOutOfLimits.penalty(key);
                 await this.loginLimiter.block(key, 60 * getFibonacciBlockDurationMinutes(responsePenalty.consumedPoints));
             }
-            res.set('X-RateLimit-Limit', `${this.loginLimiterOption.points}`);
-            res.set('X-RateLimit-Remaining', `${responseConsume.remainingPoints}`);
+            res.set('X-RateLimit-Limit', String(this.loginLimiterOption.points));
+            res.set('X-RateLimit-Remaining', String(responseConsume.remainingPoints));
             return false;
         }
         catch (error) {
@@ -48,7 +48,7 @@ let RateLimitService = class RateLimitService {
             }
             if (error && typeof error === 'object' && Object.hasOwn(error, 'msBeforeNext')) {
                 const seconds = Math.round(error.msBeforeNext / 1000) || 1;
-                res.set('Retry-After', `${seconds}`);
+                res.set('Retry-After', String(seconds));
                 res.status(429).send(`Too Many Requests, try again in ${seconds} seconds`);
                 return true;
             }

@@ -1,6 +1,6 @@
 import { BaseRepository } from '../base/base.repository.js';
 import { DBObjectType } from '../../types/enums.js';
-export class MetaDataRepository extends BaseRepository {
+export class MetadataRepository extends BaseRepository {
     constructor() {
         super(...arguments);
         this.objType = DBObjectType.metadata;

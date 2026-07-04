@@ -30,7 +30,7 @@ export const jamProviders: Array<Provider> =
 export class JamModule {
 	static forRoot(provider: Provider): ModuleWithProviders<JamModule> {
 		return {
-			ngModule: JamModule,
+			ngModule: this,
 			providers: [provider, ...jamProviders]
 		};
 	}

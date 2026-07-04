@@ -11,7 +11,7 @@ var IoService_1;
 import { WorkerService } from './worker.service.js';
 import { OrmService } from './orm.service.js';
 import { IoRequest } from './io/io.types.js';
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { IoCommandsArtwork } from './io/io.commands.artwork.js';
 import { IoCommandsFolder } from './io/io.commands.folder.js';
@@ -150,10 +150,7 @@ let IoService = IoService_1 = class IoService {
     getRootStatus(id) {
         let status = this.rootStatus.get(id);
         status ?? (status = { lastScan: Date.now() });
-        if (!status.scanning) {
-            const cmd = this.queue.find(c => c.parameters.rootID === id);
-            status.scanning = !!cmd;
-        }
+        status.scanning ?? (status.scanning = this.queue.some(c => c.parameters.rootID === id));
         return status;
     }
     registerAfterRefresh(listener) {

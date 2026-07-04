@@ -88,16 +88,18 @@ export class MetaMerger {
         await this.flush('Track/Folder');
     }
     async flush(section) {
-        if (this.orm.em.hasChanges()) {
-            log.debug(`Syncing ${section} Meta to DB`);
-            await this.orm.em.flush();
+        if (!this.orm.em.hasChanges()) {
+            return;
         }
+        log.debug(`Syncing ${section} Meta to DB`);
+        await this.orm.em.flush();
     }
     async flushIfNeeded(section) {
-        if (this.orm.em.changesCount() > 500) {
-            log.debug(`Syncing ${section} Meta to DB`);
-            await this.orm.em.flush();
+        if (this.orm.em.changesCount() <= 500) {
+            return;
         }
+        log.debug(`Syncing ${section} Meta to DB`);
+        await this.orm.em.flush();
     }
     async applyChangedTrackMeta(id, folderCache) {
         const track = await this.orm.Track.oneOrFailByID(id);
@@ -150,16 +152,20 @@ export class MetaMerger {
         const albums = artistAlbums.filter(t => t.artist.id() === artist.id && !this.changes.albums.removed.has(t));
         await artist.albums.set(albums);
         const folders = [];
-        for (const folder of (await artist.folders.getItems())) {
+        let queue = await artist.folders.getItems();
+        for (const folder of queue) {
             const folderAlbums = await folder.albums.getItems();
             if (folderAlbums.some(a => (a.artist.id() === artist.id) && !this.changes.folders.removed.has(folder))) {
                 folders.push(folder);
             }
         }
-        for (const folder of folders) {
-            const parent = await folder.parent.get();
-            if (parent?.folderType === FolderType.artist && !folders.some(f => f.id === parent.id)) {
+        queue = [...folders];
+        while (queue.length > 0) {
+            const folder = queue.shift();
+            const parent = await folder?.parent.get();
+            if (parent?.folderType === FolderType.artist && folders.every(f => f.id !== parent.id)) {
                 folders.push(parent);
+                queue.push(parent);
             }
         }
         await artist.folders.set(folders);
@@ -170,7 +176,7 @@ export class MetaMerger {
                 genreMap.set(genre.id, genre);
             }
         }
-        await artist.genres.set([...genreMap.values()]);
+        await artist.genres.set(genreMap.values().toArray());
         artist.albumTypes = await MetaMerger.collectArtistAlbumTypes(artist);
         this.orm.Artist.persistLater(artist);
     }
@@ -204,7 +210,7 @@ export class MetaMerger {
                     genreMap.set(genre.id, genre);
                 }
             }
-            await series.genres.set([...genreMap.values()]);
+            await series.genres.set(genreMap.values().toArray());
             series.albumTypes = [...albumTypes];
             this.orm.Series.persistLater(series);
         }
@@ -270,7 +276,7 @@ export class MetaMerger {
         album.duration = duration;
         album.seriesNr = metaStatBuilder.mostUsed('seriesNr');
         album.year = metaStatBuilder.mostUsedNumber('year');
-        await album.genres.set([...genreMap.values()]);
+        await album.genres.set(genreMap.values().toArray());
         this.orm.Album.persistLater(album);
     }
     async applyChangedAlbumsMeta() {

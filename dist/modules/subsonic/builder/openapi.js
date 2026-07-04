@@ -27,17 +27,19 @@ class OpenApiBuilder extends BaseOpenApiBuilder {
         this.fillXMLResponses(type, method, schemas, responses);
     }
     buildPaths(schemas, openapi) {
+        var _a;
         const paths = openapi.paths;
         const methods = this.metadata.all;
         for (const method of methods) {
             const isPost = false;
             const mode = 'post';
             const { path, o } = this.buildOpenApiMethod(method, schemas, isPost);
-            paths[path] = paths[path] ?? {};
+            paths[path] ?? (paths[path] = {});
             paths[path][mode] = o;
-            for (const alias of (method.aliasRoutes ?? [])) {
+            const aliasRoutes = method.aliasRoutes ?? [];
+            for (const alias of aliasRoutes) {
                 const aliasMethod = this.buildOpenApiMethod(method, schemas, isPost, alias);
-                paths[aliasMethod.path] = paths[aliasMethod.path] ?? {};
+                paths[_a = aliasMethod.path] ?? (paths[_a] = {});
                 paths[aliasMethod.path][mode] = aliasMethod.o;
             }
         }

@@ -129,16 +129,17 @@ let ConfigService = class ConfigService {
         }
     }
     validateSessionCookieSecure() {
-        if (!this.env.session.secure) {
-            const domain = this.env.domain.toLowerCase();
-            const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
-            if (!isLocalhost) {
-                log.warn([
-                    'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false).',
-                    'Cookies will be sent over plain HTTP, which may expose sessions to hijacking.',
-                    'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
-                ].join('\n'));
-            }
+        if (this.env.session.secure) {
+            return;
+        }
+        const domain = this.env.domain.toLowerCase();
+        const isLocalhost = domain.includes('localhost') || domain.includes('127.0.0.1');
+        if (!isLocalhost) {
+            log.warn([
+                'WARNING: Session cookie "secure" flag is disabled (JAM_SESSION_COOKIE_SECURE=false).',
+                'Cookies will be sent over plain HTTP, which may expose sessions to hijacking.',
+                'Set JAM_SESSION_COOKIE_SECURE to "true" or remove it (defaults to true) for production deployments.'
+            ].join('\n'));
         }
     }
 };

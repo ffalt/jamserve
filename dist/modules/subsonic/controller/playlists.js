@@ -21,10 +21,10 @@ import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { SubsonicHelper } from '../helper.js';
 let SubsonicPlaylistsApi = class SubsonicPlaylistsApi {
     async createPlaylist(query, context) {
-        let playlist;
         if (!query.playlistId && !query.name) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
+        let playlist;
         if (query.playlistId) {
             const playlistId = query.playlistId;
             const updateQuery = {
@@ -64,11 +64,11 @@ let SubsonicPlaylistsApi = class SubsonicPlaylistsApi {
         }
         const entries = await playlist.entries.getItems();
         let trackIDs = entries.map(entry => entry.track.id());
-        let removeTracks = [];
+        let removableTracks = [];
         if (query.songIndexToRemove !== undefined) {
-            removeTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
+            removableTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
         }
-        trackIDs = trackIDs.filter((_id, index) => !removeTracks.includes(index));
+        trackIDs = trackIDs.filter((_id, index) => !removableTracks.includes(index));
         if (query.songIdToAdd) {
             const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
             trackIDs = [...trackIDs, ...songAdd];

@@ -14,7 +14,6 @@ export class ModelBuilder {
     async buildColumnAttributeModel(field, entity) {
         const type = field.getType();
         const options = field.typeOptions;
-        const allowNull = options.nullable === true;
         if (type === ORM_ID && options.primaryKey) {
             return {
                 type: DataTypes.UUID,
@@ -24,6 +23,7 @@ export class ModelBuilder {
                 primaryKey: true
             };
         }
+        const allowNull = options.nullable === true;
         if (type === ORM_ID) {
             return { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull };
         }

@@ -1,4 +1,4 @@
-import { MetaDataBlock } from './block.js';
-export class MetaWriteableDataBlock extends MetaDataBlock {
+import { MetadataBlock } from './block.js';
+export class MetaWriteableDataBlock extends MetadataBlock {
 }
 //# sourceMappingURL=block.writeable.js.map

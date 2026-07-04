@@ -1,4 +1,4 @@
-export class MetaDataBlock {
+export class MetadataBlock {
     constructor(isLast, type) {
         this.isLast = isLast;
         this.type = type;

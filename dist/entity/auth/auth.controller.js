@@ -78,7 +78,7 @@ let AuthController = AuthController_1 = class AuthController {
     }
     static buildSessionResult(req, credentials, user, engine) {
         const rawClient = req.body?.client;
-        const client = (typeof rawClient === 'string' ? rawClient.trim().slice(0, AuthController_1.MAX_CLIENT_LENGTH) : '') || 'Unknown Client';
+        const client = (typeof rawClient === 'string' ? rawClient.trim().slice(0, this.MAX_CLIENT_LENGTH) : '') || 'Unknown Client';
         const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
         if (req.session) {
             const session = req.session;

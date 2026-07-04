@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import { FORMAT } from '../audio.format.js';
-import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js';
+import { flacToRawTag, id3v2ToFlacMetadata, rawTagToID3v2 } from '../metadata.js';
 import { Flac } from './flac/index.js';
 import { TagFormatType } from '../../../types/enums.js';
 import { logger } from '../../../utils/logger.js';
@@ -34,7 +34,7 @@ export class AudioModuleFLAC {
     }
     async write(filename, tag) {
         const id3 = rawTagToID3v2(tag);
-        const flacBlocks = await id3v2ToFlacMetaData(id3, this.imageModule);
+        const flacBlocks = await id3v2ToFlacMetadata(id3, this.imageModule);
         const flac = new Flac();
         const exits = await fse.pathExists(`${filename}.bak`);
         if (!exits) {

@@ -73,7 +73,6 @@ export class Feed {
             }
             let feed;
             return new Promise((resolve, reject) => {
-                let received = 0;
                 const done = (error) => {
                     if (error) {
                         reject(error);
@@ -98,6 +97,7 @@ export class Feed {
                     done(new Error('Bad feed stream'));
                     return;
                 }
+                let received = 0;
                 const body = result.body;
                 body.on('data', (chunk) => {
                     received += chunk.length;
@@ -149,7 +149,9 @@ export class Feed {
                 guid: post.guid || post.link,
                 summary: post.summary,
                 enclosures: post.enclosures.map(enclosure => {
-                    return { ...enclosure, length: enclosure.length === undefined ? undefined : Number(enclosure.length) };
+                    const rawLength = enclosure.length;
+                    const length = rawLength ? Number(rawLength) : undefined;
+                    return { ...enclosure, length: length !== undefined && Number.isFinite(length) ? length : undefined };
                 }),
                 date: post.date ?? undefined,
                 name: post.title,

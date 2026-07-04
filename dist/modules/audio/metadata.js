@@ -1,10 +1,10 @@
 import { ID3v2, ID3V24TagBuilder, ITagID } from 'jamp3';
 import { parseDateToTimestamp } from '../../utils/date-time.js';
-import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
+import { MetadataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 function prepareFrame(frame) {
     if (frame.value.bin) {
-        frame.value.bin = frame.value.bin.toString('base64');
+        frame.value.bin = frame.value.bin.toBase64();
     }
     if (frame.subframes) {
         for (const subframe of frame.subframes) {
@@ -13,8 +13,9 @@ function prepareFrame(frame) {
     }
 }
 export function prepareResponseTag(tag) {
-    for (const key of Object.keys(tag.frames)) {
-        for (const frame of tag.frames[key] ?? []) {
+    for (const value of Object.values(tag.frames)) {
+        const list = value ?? [];
+        for (const frame of list) {
             prepareFrame(frame);
         }
     }
@@ -118,7 +119,7 @@ export function flacToRawTagChapters(builder, simple) {
     const pad = '000';
     let nr = 1;
     let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
-    while (simple[id]) {
+    while (Object.hasOwn(simple, id)) {
         const chapterTime = parseDateToTimestamp(simple[id]);
         const chapterID = simple[`${id}ID`] || id;
         const chapterName = simple[`${id}NAME`];
@@ -163,24 +164,22 @@ export async function id3v2ToRawTag(id3v2tag) {
     prepareResponseTag(tag);
     return tag;
 }
-export async function id3v2ToFlacMetaData(tag, imageModule) {
+export async function id3v2ToFlacMetadata(tag, imageModule) {
     const DropFramesList = [
         'TSIZ',
         'APIC'
     ];
     const simple = ID3v2.simplify(tag, DropFramesList);
-    const comments = [];
-    for (const key of Object.keys(simple)) {
-        comments.push(`${key}=${String(simple[key])}`);
-    }
+    const comments = Array.from(Object.keys(simple), key => `${key}=${String(simple[key])}`);
     const result = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
     const pics = tag.frames.filter(frame => frame.id === 'APIC');
     for (const pic of pics) {
-        if (pic.value.bin && pic.value.mimeType) {
-            const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
-            const picBlock = MetaDataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description, imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
-            result.push(picBlock);
+        if (!(pic.value.bin && pic.value.mimeType)) {
+            continue;
         }
+        const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
+        const picBlock = MetadataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description, imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
+        result.push(picBlock);
     }
     return result;
 }
@@ -199,7 +198,7 @@ function rawFrameToID3v2(frame) {
     if (frame.value && frame.value.bin) {
         const bin = frame.value.bin;
         if (typeof bin === 'string') {
-            frame.value.bin = Buffer.from(bin, 'base64');
+            frame.value.bin = Buffer.from(Uint8Array.fromBase64(bin));
         }
     }
     if (frame.subframes) {
@@ -210,8 +209,9 @@ function rawFrameToID3v2(frame) {
 }
 export function rawTagToID3v2(tag) {
     const frames = [];
-    for (const id of Object.keys(tag.frames)) {
-        for (const frame of tag.frames[id] ?? []) {
+    for (const value of Object.values(tag.frames)) {
+        const list = value ?? [];
+        for (const frame of list) {
             rawFrameToID3v2(frame);
             frames.push(frame);
         }

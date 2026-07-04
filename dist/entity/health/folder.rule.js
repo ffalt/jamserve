@@ -109,7 +109,7 @@ const folderRules = [
                 return s
                     .replaceAll(/[!?]/g, '_')
                     .replaceAll(/< ?>/g, ' - ')
-                    .replaceAll(/[/]/g, '-')
+                    .replaceAll('/', '-')
                     .replaceAll('...', '…')
                     .replaceAll(/ {2}/g, ' ')
                     .trim();
@@ -138,7 +138,7 @@ const folderRules = [
                 return;
             }
             if (isAlbumTopMostFolder(orm, folder, parents)) {
-                const hasArtist = parents.find(p => p.folderType === FolderType.artist);
+                const hasArtist = parents.some(p => p.folderType === FolderType.artist);
                 if (hasArtist && (folder.album) && (folder.year) && (folder.year > 0)) {
                     return checkNiceName(getNiceAlbumFolderName());
                 }

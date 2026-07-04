@@ -1,5 +1,5 @@
 import { MetaWriteableDataBlock } from './block.writeable.js';
-export class MetaDataBlockPicture extends MetaWriteableDataBlock {
+export class MetadataBlockPicture extends MetaWriteableDataBlock {
     constructor(isLast) {
         super(isLast, 6);
         this.pictureType = 0;
@@ -11,7 +11,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
         this.colors = 0;
     }
     static createPictureBlock(pictureType, mimeType, description, width, height, bitsPerPixel, colors, pictureData) {
-        const mdb = new MetaDataBlockPicture(false);
+        const mdb = new MetadataBlockPicture(false);
         mdb.pictureType = pictureType;
         mdb.mimeType = mimeType;
         mdb.description = description;
@@ -57,7 +57,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
             let header = size;
             header |= (this.type << 24);
             header |= (this.isLast ? 2147483648 : 0);
-            header = header >>> 0;
+            header >>>= 0;
             buffer.writeUInt32BE(header, pos);
             pos += 4;
             buffer.writeUInt32BE(this.pictureType, pos);

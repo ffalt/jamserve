@@ -23,10 +23,7 @@ import { SubsonicHelper } from '../helper.js';
 const log = logger('SubsonicApi');
 let SubsonicPodcastApi = class SubsonicPodcastApi {
     async getPodcasts(query, { orm, engine, user }) {
-        let includeEpisodes = true;
-        if (query.includeEpisodes !== undefined) {
-            includeEpisodes = query.includeEpisodes;
-        }
+        const includeEpisodes = query.includeEpisodes ?? true;
         let podcastList = [];
         if (query.id) {
             const podcast = await orm.Podcast.findOneOrFailByID(query.id);

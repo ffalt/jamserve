@@ -40,14 +40,16 @@ export class EntityManager {
         return this.sequelize.getDialect();
     }
     getRepository(entityName) {
-        entityName = typeof entityName === 'string' ? entityName : entityName.name;
-        if (!this.repositoryMap[entityName]) {
-            const RepositoryClass = this.config.repositories[entityName];
-            this.repositoryMap[entityName] = RepositoryClass ?
-                new RepositoryClass(this, entityName) :
-                new EntityRepository(this, entityName);
+        const name = typeof entityName === 'string' ? entityName : entityName.name;
+        let repository = this.repositoryMap[name];
+        if (!repository) {
+            const RepositoryClass = this.config.repositories[name];
+            repository = RepositoryClass ?
+                new RepositoryClass(this, name) :
+                new EntityRepository(this, name);
+            this.repositoryMap[name] = repository;
         }
-        return this.repositoryMap[entityName];
+        return repository;
     }
     persistAndFlush(entityName, entity) {
         this.persistLater(entityName, entity);
@@ -55,7 +57,7 @@ export class EntityManager {
     }
     persistLater(entityName, entity) {
         let entities = Array.isArray(entity) ? entity : [entity];
-        entities = entities.filter(entry => !this.changeSet.some(c => c.persist === entry));
+        entities = entities.filter(entry => this.changeSet.every(c => c.persist !== entry));
         this.changeSet.push(...(entities.map(entry => ({ entityName: entityName, persist: entry }))));
     }
     async flush() {
@@ -85,10 +87,11 @@ export class EntityManager {
                 }
             }
             for (const change of this.changeSet) {
-                if (change.persist) {
-                    cleanManagedEntityRelations(change.persist);
-                    this.parent.cache.remove(change.entityName, change.persist);
+                if (!change.persist) {
+                    continue;
                 }
+                cleanManagedEntityRelations(change.persist);
+                this.parent.cache.remove(change.entityName, change.persist);
             }
             this.changeSet = [];
             await t.commit();

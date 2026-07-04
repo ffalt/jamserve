@@ -54,7 +54,7 @@ export class TranscoderStream {
     }
     static async transcodeToFile(source, destination, format, maxBitRate) {
         return new Promise((resolve, reject) => {
-            const proc = TranscoderStream.getTranscodeProc(source, format, maxBitRate);
+            const proc = this.getTranscodeProc(source, format, maxBitRate);
             proc
                 .on('start', cmd => {
                 log.debug(`ffmpeg started with ${cmd}`);

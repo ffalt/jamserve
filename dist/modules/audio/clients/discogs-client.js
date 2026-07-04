@@ -35,8 +35,8 @@ export class DiscogsClient extends WebserviceClient {
         for (const [key, value] of Object.entries(parameters)) {
             url.searchParams.set(key, value);
         }
-        log.info('requesting', url.toString());
-        const response = await fetch(url.toString(), { headers: this.headers(), signal: AbortSignal.timeout(30000) });
+        log.info('requesting', url.href);
+        const response = await fetch(url.href, { headers: this.headers(), signal: AbortSignal.timeout(30000) });
         if (!response.ok) {
             log.error(`Discogs search failed: ${response.status} ${response.statusText}`);
             return undefined;

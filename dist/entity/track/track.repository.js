@@ -82,6 +82,7 @@ export class TrackRepository extends BaseRepository {
                     ...QHelper.inStringArray('genres', filter.genres),
                     { title: QHelper.like(filter.query, this.em.dialect) },
                     { title: QHelper.eq(filter.name) },
+                    { mbTrackID: QHelper.inOrEqual(filter.mbTrackIDs) },
                     { year: QHelper.lte(filter.toYear) },
                     { year: QHelper.gte(filter.fromYear) }
                 ]

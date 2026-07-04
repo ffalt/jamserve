@@ -119,7 +119,7 @@ let UserService = UserService_1 = class UserService {
         await orm.User.persistAndFlush(user);
     }
     static isValidEmail(email) {
-        return UserService_1.EMAIL_REGEX.test(email);
+        return this.EMAIL_REGEX.test(email);
     }
     async setUserEmail(orm, user, email) {
         if (!email?.trim().length) {
@@ -195,14 +195,14 @@ let UserService = UserService_1 = class UserService {
     }
     async authSubsonicToken(orm, name, token, salt) {
         const normalizedName = Array.isArray(name) ? name.at(0) : name;
-        const normalizedToken = Array.isArray(token) ? token.at(0) : token;
-        const normalizedSalt = Array.isArray(salt) ? salt.at(0) : salt;
         if (!normalizedName?.trim().length) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
+        const normalizedToken = Array.isArray(token) ? token.at(0) : token;
         if (!normalizedToken?.length) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
         }
+        const normalizedSalt = Array.isArray(salt) ? salt.at(0) : salt;
         const user = await orm.User.findOne({ where: { name: normalizedName } });
         if (!user) {
             return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.LOGIN_FAILED));

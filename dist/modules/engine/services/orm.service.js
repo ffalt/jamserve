@@ -23,7 +23,7 @@ import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
 import { Tag } from '../../../entity/tag/tag.js';
 import { injectable } from 'inversify';
-import { MetaData } from '../../../entity/metadata/metadata.js';
+import { Metadata } from '../../../entity/metadata/metadata.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
 import path from 'node:path';
@@ -45,7 +45,7 @@ export class Orm {
         this.Episode = em.getRepository(Episode);
         this.Folder = em.getRepository(Folder);
         this.Root = em.getRepository(Root);
-        this.MetaData = em.getRepository(MetaData);
+        this.MetaData = em.getRepository(Metadata);
         this.PlayQueue = em.getRepository(PlayQueue);
         this.PlayQueueEntry = em.getRepository(PlayQueueEntry);
         this.Playlist = em.getRepository(Playlist);

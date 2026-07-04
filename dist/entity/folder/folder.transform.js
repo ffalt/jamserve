@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { injectable, inject } from 'inversify';
 import { BaseTransformService } from '../base/base.transform.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 let FolderTransformService = class FolderTransformService extends BaseTransformService {
     async folderBases(orm, list, folderParameters, user) {
@@ -103,8 +103,8 @@ let FolderTransformService = class FolderTransformService extends BaseTransformS
     }
 };
 __decorate([
-    inject(MetaDataService),
-    __metadata("design:type", MetaDataService)
+    inject(MetadataService),
+    __metadata("design:type", MetadataService)
 ], FolderTransformService.prototype, "metaData", void 0);
 __decorate([
     inject(GenreTransformService),

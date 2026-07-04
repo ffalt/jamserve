@@ -57,16 +57,16 @@ let ImageService = ImageService_1 = class ImageService {
     static async getCoverArtText(o, type) {
         switch (type) {
             case DBObjectType.track: {
-                return await ImageService_1.getCoverArtTextTrack(o);
+                return await this.getCoverArtTextTrack(o);
             }
             case DBObjectType.folder: {
-                return ImageService_1.getCoverArtTextFolder(o);
+                return this.getCoverArtTextFolder(o);
             }
             case DBObjectType.episode: {
-                return await ImageService_1.getCoverArtTextEpisode(o);
+                return await this.getCoverArtTextEpisode(o);
             }
             case DBObjectType.podcast: {
-                return ImageService_1.getCoverArtTextPodcast(o);
+                return this.getCoverArtTextPodcast(o);
             }
             case DBObjectType.playlist: {
                 return o.name;

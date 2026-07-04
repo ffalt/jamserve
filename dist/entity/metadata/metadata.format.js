@@ -1,4 +1,4 @@
-export const MetaDataFormat = {
+export const MetadataFormat = {
     stripInlineLastFM(content) {
         return (content || '')
             .replaceAll(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
@@ -14,7 +14,7 @@ export const MetaDataFormat = {
     formatWikipediaExtendedInfo(url, description) {
         return {
             url,
-            description: MetaDataFormat.stripInlineWikipediaHTML(description),
+            description: MetadataFormat.stripInlineWikipediaHTML(description),
             source: 'Wikipedia',
             license: 'Creative Commons BY-SA license',
             licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
@@ -23,7 +23,7 @@ export const MetaDataFormat = {
     formatLastFMExtendedInfo(url, description) {
         return {
             url,
-            description: MetaDataFormat.stripInlineLastFM(description),
+            description: MetadataFormat.stripInlineLastFM(description),
             source: 'LastFM',
             license: 'Creative Commons BY-SA license',
             licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'

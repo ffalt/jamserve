@@ -90,7 +90,7 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
             log.debug('Syncing Removal Dependend Updates to DB');
             await orm.em.flush();
         }
-        await ChangesWorker_1.updateAffectedPlaylists(orm, affectedPlaylistIDs);
+        await this.updateAffectedPlaylists(orm, affectedPlaylistIDs);
     }
     static async updateAffectedPlaylists(orm, affectedPlaylistIDs) {
         if (affectedPlaylistIDs.length === 0) {

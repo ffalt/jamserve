@@ -40,7 +40,7 @@ export class Collection {
         }
         const entity = this.owner;
         const sourceFunction = this.getSourceFunction('get');
-        options = options ?? this.getOrderOptions();
+        options ?? (options = this.getOrderOptions());
         const sources = await sourceFunction(options);
         let list = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name ?? '', source));
         if (this.changeSet) {
@@ -52,7 +52,7 @@ export class Collection {
             }
             const removed = this.changeSet.remove;
             if (removed) {
-                list = list.filter(item => !removed.some(p => p.id === item.id));
+                list = list.filter(item => removed.every(p => p.id !== item.id));
             }
         }
         this.list = list;
@@ -68,26 +68,28 @@ export class Collection {
         return `${mode}${capitalize(this.field.name)}ORM${plural ? 's' : ''}`;
     }
     async flush(transaction) {
-        if (this.changeSet) {
-            if (this.changeSet.set) {
-                const sourceFunction = this.getSourceFunction('set');
-                await sourceFunction(this.changeSet.set.map(d => d._source), { transaction });
-            }
-            if (this.changeSet.add) {
-                const sourceFunction = this.getSourceFunction('add');
-                await sourceFunction(this.changeSet.add.map(d => d._source), { transaction });
-            }
-            if (this.changeSet.remove) {
-                const sourceFunction = this.getSourceFunction('remove');
-                await sourceFunction(this.changeSet.remove.map(d => d._source), { transaction });
-            }
-            this.changeSet = undefined;
+        if (!this.changeSet) {
+            return;
         }
+        if (this.changeSet.set) {
+            const sourceFunction = this.getSourceFunction('set');
+            await sourceFunction(this.changeSet.set.map(d => d._source), { transaction });
+        }
+        if (this.changeSet.add) {
+            const sourceFunction = this.getSourceFunction('add');
+            await sourceFunction(this.changeSet.add.map(d => d._source), { transaction });
+        }
+        if (this.changeSet.remove) {
+            const sourceFunction = this.getSourceFunction('remove');
+            await sourceFunction(this.changeSet.remove.map(d => d._source), { transaction });
+        }
+        this.changeSet = undefined;
     }
     async add(item) {
-        this.changeSet = this.changeSet ?? {};
-        this.changeSet.add = this.changeSet.add ?? [];
-        if (!this.changeSet.add.some(entry => entry.id === item.id)) {
+        var _a;
+        this.changeSet ?? (this.changeSet = {});
+        (_a = this.changeSet).add ?? (_a.add = []);
+        if (this.changeSet.add.every(entry => entry.id !== item.id)) {
             this.changeSet.add.push(item);
             if (this.list) {
                 this.list.push(item);

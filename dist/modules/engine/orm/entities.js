@@ -6,7 +6,7 @@ import { Bookmark } from '../../../entity/bookmark/bookmark.js';
 import { Episode } from '../../../entity/episode/episode.js';
 import { Folder } from '../../../entity/folder/folder.js';
 import { Root } from '../../../entity/root/root.js';
-import { MetaData } from '../../../entity/metadata/metadata.js';
+import { Metadata } from '../../../entity/metadata/metadata.js';
 import { Playlist } from '../../../entity/playlist/playlist.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueue } from '../../../entity/playqueue/playqueue.js';
@@ -31,7 +31,7 @@ export const ORMEntities = [
     Folder,
     Genre,
     Root,
-    MetaData,
+    Metadata,
     Playlist,
     PlaylistEntry,
     PlayQueue,

@@ -89,9 +89,9 @@ let EpisodeService = class EpisodeService {
         }
     }
     async removeEpisodes(orm, podcastID) {
-        const removeEpisodes = await orm.Episode.find({ where: { podcast: podcastID } });
-        await this.imageModule.clearImageCacheByIDs(removeEpisodes.map(it => it.id));
-        for (const episode of removeEpisodes) {
+        const removableEpisodes = await orm.Episode.find({ where: { podcast: podcastID } });
+        await this.imageModule.clearImageCacheByIDs(removableEpisodes.map(it => it.id));
+        for (const episode of removableEpisodes) {
             orm.Episode.removeLater(episode);
             if (episode.path) {
                 await fileDeleteIfExists(episode.path);

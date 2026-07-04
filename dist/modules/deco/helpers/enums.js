@@ -1,5 +1,5 @@
 export function getEnumReverseValuesMap(enumObject) {
-    const enumKeys = Object.keys(enumObject).filter(key => Number.isNaN(Number.parseInt(key, 10)));
+    const enumKeys = Object.keys(enumObject).filter(key => Number.isNaN(Math.trunc(Number(key))));
     const map = {};
     for (const key of enumKeys) {
         const value = String(enumObject[key]);

@@ -43,10 +43,11 @@ export async function buildPartService(template, key, part, calls) {
 }
 export function buildCallSections(calls, method, sections, generateClientCalls) {
     for (const call of calls) {
-        if (call.controllerClassMetadata) {
-            const tag = call.controllerClassMetadata.name.replace('Controller', '');
-            sections[tag] = [...(sections[tag] ?? []), ...generateClientCalls(call, method)];
+        if (!call.controllerClassMetadata) {
+            continue;
         }
+        const tag = call.controllerClassMetadata.name.replace('Controller', '');
+        sections[tag] = [...(sections[tag] ?? []), ...generateClientCalls(call, method)];
     }
 }
 export function wrapLong(s) {

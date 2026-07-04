@@ -9,12 +9,12 @@ export const defaultAvatarSettings = {
 };
 export class AvatarGenerator {
     constructor(settings = {}) {
-        const cfg = {
+        const config = {
             ...defaultAvatarSettings,
             ...settings
         };
-        this._variants = AvatarGenerator.BuildVariantsMap(cfg);
-        this._parts = cfg.parts;
+        this._variants = AvatarGenerator.BuildVariantsMap(config);
+        this._parts = config.parts;
     }
     static BuildVariantsMap({ parts, partsLocation, imageExtension }) {
         const fileRegex = new RegExp(String.raw `(${parts.join('|')})(\d+)${imageExtension}`);

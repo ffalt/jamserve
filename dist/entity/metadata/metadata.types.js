@@ -1,12 +1,12 @@
-export var MetaDataType;
-(function (MetaDataType) {
-    MetaDataType[MetaDataType["musicbrainz"] = 0] = "musicbrainz";
-    MetaDataType[MetaDataType["wikipedia"] = 1] = "wikipedia";
-    MetaDataType[MetaDataType["wikidata"] = 2] = "wikidata";
-    MetaDataType[MetaDataType["acoustid"] = 3] = "acoustid";
-    MetaDataType[MetaDataType["acousticbrainz"] = 4] = "acousticbrainz";
-    MetaDataType[MetaDataType["coverartarchive"] = 5] = "coverartarchive";
-    MetaDataType[MetaDataType["lastfm"] = 6] = "lastfm";
-    MetaDataType[MetaDataType["lyrics"] = 7] = "lyrics";
-})(MetaDataType || (MetaDataType = {}));
+export var MetadataType;
+(function (MetadataType) {
+    MetadataType[MetadataType["musicbrainz"] = 0] = "musicbrainz";
+    MetadataType[MetadataType["wikipedia"] = 1] = "wikipedia";
+    MetadataType[MetadataType["wikidata"] = 2] = "wikidata";
+    MetadataType[MetadataType["acoustid"] = 3] = "acoustid";
+    MetadataType[MetadataType["acousticbrainz"] = 4] = "acousticbrainz";
+    MetadataType[MetadataType["coverartarchive"] = 5] = "coverartarchive";
+    MetadataType[MetadataType["lastfm"] = 6] = "lastfm";
+    MetadataType[MetadataType["lyrics"] = 7] = "lyrics";
+})(MetadataType || (MetadataType = {}));
 //# sourceMappingURL=metadata.types.js.map

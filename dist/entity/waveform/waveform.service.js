@@ -18,7 +18,7 @@ const log = logger('Waveform');
 export const WaveformDefaultFormat = WaveformFormatType.svg;
 let WaveformService = class WaveformService {
     async getWaveform(obj, objType, format, width) {
-        format = (format ?? WaveformDefaultFormat);
+        format ?? (format = WaveformDefaultFormat);
         switch (objType) {
             case DBObjectType.track: {
                 return this.getTrackWaveform(obj, format, width);

@@ -17,14 +17,14 @@ export class JamBaseService {
 
 	buildRequest(view: string, params: GenericParameters = {}): { url: string; parameters: HttpParams } {
 		let result = new HttpParams();
-		for (const key of Object.keys(params)) {
-			if (params[key] !== undefined) {
-				if (Array.isArray(params[key])) {
-					for (const sub of params[key]) {
+		for (const [key, value] of Object.entries(params)) {
+			if (value !== undefined) {
+				if (Array.isArray(value)) {
+					for (const sub of value) {
 						result = result.append(key, sub);
 					}
 				} else {
-					result = result.append(key, params[key]);
+					result = result.append(key, value);
 				}
 			}
 		}
@@ -94,8 +94,8 @@ export class JamBaseService {
 	upload<T>(path: string, params: unknown, name: string, file: File): Observable<HttpEvent<T>> {
 		const formData = new FormData();
 		const data = params as Record<string, string>;
-		for (const key of Object.keys(data)) {
-			formData.append(key, data[key]);
+		for (const [key, value] of Object.entries(data)) {
+			formData.append(key, value);
 		}
 		formData.append(name, file);
 		const url = this.buildUrl(path, {});

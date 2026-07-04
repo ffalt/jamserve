@@ -80,17 +80,17 @@ export class FORMAT {
             return { format: TagFormatType.none };
         }
         const simple = {};
-        for (const key of Object.keys(data.format.tags)) {
-            simple[key.toUpperCase().replaceAll(' ', '_')] = FORMAT.cleanText(data.format.tags[key]);
+        for (const [key, value] of Object.entries(data.format.tags)) {
+            simple[key.toUpperCase().replaceAll(' ', '_')] = this.cleanText(value);
         }
         return {
             format: TagFormatType.ffmpeg,
             artist: simple.ARTIST,
             title: simple.TITLE,
             album: simple.ALBUM,
-            year: FORMAT.parseNum(simple.DATE),
-            trackNr: FORMAT.parseNum(simple.TRACK),
-            disc: FORMAT.parseNum(simple.DISC),
+            year: this.parseNum(simple.DATE),
+            trackNr: this.parseNum(simple.TRACK),
+            disc: this.parseNum(simple.DISC),
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,
@@ -117,13 +117,13 @@ export class FORMAT {
             return;
         }
         const simple = data.value;
-        const genre = (simple.genreIndex !== undefined && !!ID3v1_GENRES[simple.genreIndex]) ? ID3v1_GENRES[simple.genreIndex] : undefined;
+        const genre = (simple.genreIndex !== undefined && Object.hasOwn(ID3v1_GENRES, simple.genreIndex)) ? ID3v1_GENRES[simple.genreIndex] : undefined;
         return {
             format: TagFormatType.id3v1,
-            artist: FORMAT.cleanText(simple.artist),
-            title: FORMAT.cleanText(simple.title),
-            album: FORMAT.cleanText(simple.album),
-            year: FORMAT.parseNum(simple.year),
+            artist: this.cleanText(simple.artist),
+            title: this.cleanText(simple.title),
+            album: this.cleanText(simple.album),
+            year: this.parseNum(simple.year),
             trackNr: simple.track,
             genres: genre ? [genre] : undefined
         };
@@ -137,23 +137,23 @@ export class FORMAT {
         const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
         return {
             format,
-            album: FORMAT.cleanText(simple.ALBUM),
-            albumSort: FORMAT.cleanText(simple.ALBUMSORT),
-            albumArtist: FORMAT.cleanText(simple.ALBUMARTIST),
-            albumArtistSort: FORMAT.cleanText(simple.ALBUMARTISTSORT),
-            artist: FORMAT.cleanText(simple.ARTIST),
-            artistSort: FORMAT.cleanText(simple.ARTISTSORT),
-            title: FORMAT.cleanText(simple.TITLE),
-            titleSort: FORMAT.cleanText(simple.TITLESORT),
+            album: this.cleanText(simple.ALBUM),
+            albumSort: this.cleanText(simple.ALBUMSORT),
+            albumArtist: this.cleanText(simple.ALBUMARTIST),
+            albumArtistSort: this.cleanText(simple.ALBUMARTISTSORT),
+            artist: this.cleanText(simple.ARTIST),
+            artistSort: this.cleanText(simple.ARTISTSORT),
+            title: this.cleanText(simple.TITLE),
+            titleSort: this.cleanText(simple.TITLESORT),
             genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
-            disc: FORMAT.parseNum(simple.DISCNUMBER),
-            discTotal: FORMAT.parseNum(simple.DISCTOTAL),
-            trackNr: FORMAT.parseNum(simple.TRACKNUMBER),
-            trackTotal: FORMAT.parseNum(simple.TRACKTOTAL),
+            disc: this.parseNum(simple.DISCNUMBER),
+            discTotal: this.parseNum(simple.DISCTOTAL),
+            trackNr: this.parseNum(simple.TRACKNUMBER),
+            trackTotal: this.parseNum(simple.TRACKTOTAL),
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,
-            year: FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE) ?? FORMAT.parseYear(simple.RELEASETIME),
+            year: this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE) ?? this.parseYear(simple.RELEASETIME),
             mbTrackID: simple.MUSICBRAINZ_TRACKID,
             mbAlbumType: simple.RELEASETYPE,
             mbAlbumArtistID: simple.MUSICBRAINZ_ALBUMARTISTID,
@@ -184,13 +184,13 @@ export class FORMAT {
             artist: simple.ARTIST,
             artistSort: simple.ARTISTSORT,
             genres: simple.GENRE ? cleanGenre(simple.GENRE) : undefined,
-            disc: FORMAT.parseNum(simple.DISCNUMBER),
-            discTotal: FORMAT.parseNum(simple.DISCTOTAL) ?? FORMAT.parseNum(simple.TOTALDISCS),
+            disc: this.parseNum(simple.DISCNUMBER),
+            discTotal: this.parseNum(simple.DISCTOTAL) ?? this.parseNum(simple.TOTALDISCS),
             title: simple.TITLE,
             titleSort: simple.TITLESORT,
-            trackNr: FORMAT.parseNum(simple.TRACKNUMBER) ?? FORMAT.parseNum(simple.TRACK),
-            trackTotal: FORMAT.parseNum(simple.TRACKTOTAL) ?? FORMAT.parseNum(simple.TOTALTRACKS),
-            year: FORMAT.parseYear(simple.ORIGINALYEAR) ?? FORMAT.parseYear(simple.ORIGINALDATE) ?? FORMAT.parseYear(simple.DATE),
+            trackNr: this.parseNum(simple.TRACKNUMBER) ?? this.parseNum(simple.TRACK),
+            trackTotal: this.parseNum(simple.TRACKTOTAL) ?? this.parseNum(simple.TOTALTRACKS),
+            year: this.parseYear(simple.ORIGINALYEAR) ?? this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE),
             lyrics: simple.LYRICS,
             seriesNr: simple.WORK,
             series: simple.GROUPING,

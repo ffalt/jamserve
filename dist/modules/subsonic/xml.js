@@ -7,9 +7,9 @@ function xmlString(s) {
         .replaceAll('\'', '&apos;');
 }
 function xmlContent(o) {
-    for (const key of Object.keys(o)) {
+    for (const [key, value] of Object.entries(o)) {
         if (key === 'value') {
-            return o[key];
+            return value;
         }
     }
     return '';
@@ -19,20 +19,19 @@ function xmlTag(key, value, parameter) {
 }
 function xmlParameters(o) {
     const sl = [];
-    for (const key of Object.keys(o)) {
-        if ((key !== 'value')) {
-            const sub = o[key];
-            if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
-                sl.push(` ${key}="${xmlString(sub.toString())}"`);
-            }
+    for (const [key, sub] of Object.entries(o)) {
+        if (key === 'value') {
+            continue;
+        }
+        if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
+            sl.push(` ${key}="${xmlString(sub.toString())}"`);
         }
     }
     return sl.join('');
 }
 function xmlObject(o) {
     const sl = [];
-    for (const key of Object.keys(o)) {
-        const sub = o[key];
+    for (const [key, sub] of Object.entries(o)) {
         if (Array.isArray(sub)) {
             for (const entry of sub) {
                 const value = xmlContent(entry) + xmlObject(entry);
@@ -48,8 +47,7 @@ function xmlObject(o) {
 }
 export function xml(o) {
     const sl = [];
-    for (const key of Object.keys(o)) {
-        const element = o[key];
+    for (const [key, element] of Object.entries(o)) {
         const value = xmlObject(element);
         sl.push(xmlTag(key, value, xmlParameters(element)));
     }

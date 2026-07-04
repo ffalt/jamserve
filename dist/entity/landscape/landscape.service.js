@@ -36,16 +36,16 @@ let LandscapeService = class LandscapeService {
     }
     matchNoiseCoord(name, noiseMap) {
         const normalized = normalizeGenreName(name);
-        if (normalized in noiseMap) {
+        if (Object.hasOwn(noiseMap, normalized)) {
             return noiseMap[normalized];
         }
         const singular = normalized.slice(0, -1);
-        if (normalized.endsWith('s') && singular in noiseMap) {
+        if (normalized.endsWith('s') && Object.hasOwn(noiseMap, singular)) {
             return noiseMap[singular];
         }
-        for (const key of Object.keys(noiseMap)) {
+        for (const [key, value] of Object.entries(noiseMap)) {
             if (key.includes(normalized)) {
-                return noiseMap[key];
+                return value;
             }
         }
         return undefined;

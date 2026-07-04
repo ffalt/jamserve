@@ -63,18 +63,18 @@ export var FolderType;
     FolderType["extras"] = "extras";
 })(FolderType || (FolderType = {}));
 export const FolderTypesAlbum = [FolderType.album, FolderType.multialbum];
-export var MetaDataType;
-(function (MetaDataType) {
-    MetaDataType["musicbrainz"] = "musicbrainz";
-    MetaDataType["wikipedia"] = "wikipedia";
-    MetaDataType["wikidata"] = "wikidata";
-    MetaDataType["acoustid"] = "acoustid";
-    MetaDataType["acousticbrainz"] = "acousticbrainz";
-    MetaDataType["coverartarchive"] = "coverartarchive";
-    MetaDataType["lastfm"] = "lastfm";
-    MetaDataType["lyrics"] = "lyrics";
-    MetaDataType["discogs"] = "discogs";
-})(MetaDataType || (MetaDataType = {}));
+export var MetadataType;
+(function (MetadataType) {
+    MetadataType["musicbrainz"] = "musicbrainz";
+    MetadataType["wikipedia"] = "wikipedia";
+    MetadataType["wikidata"] = "wikidata";
+    MetadataType["acoustid"] = "acoustid";
+    MetadataType["acousticbrainz"] = "acousticbrainz";
+    MetadataType["coverartarchive"] = "coverartarchive";
+    MetadataType["lastfm"] = "lastfm";
+    MetadataType["lyrics"] = "lyrics";
+    MetadataType["discogs"] = "discogs";
+})(MetadataType || (MetadataType = {}));
 export var SessionMode;
 (function (SessionMode) {
     SessionMode["browser"] = "browser";

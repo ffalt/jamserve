@@ -25,7 +25,7 @@ import { PodcastService } from '../../../entity/podcast/podcast.service.js';
 import { EpisodeService } from '../../../entity/episode/episode.service.js';
 import { GenreService } from '../../../entity/genre/genre.service.js';
 import { StatsService } from '../../../entity/stats/stats.service.js';
-import { MetaDataService } from '../../../entity/metadata/metadata.service.js';
+import { MetadataService } from '../../../entity/metadata/metadata.service.js';
 import { AudioModule } from '../../audio/audio.module.js';
 import { StateService } from '../../../entity/state/state.service.js';
 import { NowPlayingService } from '../../../entity/nowplaying/nowplaying.service.js';
@@ -180,8 +180,8 @@ __decorate([
     __metadata("design:type", LandscapeService)
 ], EngineService.prototype, "landscape", void 0);
 __decorate([
-    inject(MetaDataService),
-    __metadata("design:type", MetaDataService)
+    inject(MetadataService),
+    __metadata("design:type", MetadataService)
 ], EngineService.prototype, "metadata", void 0);
 __decorate([
     inject(NowPlayingService),

@@ -175,6 +175,9 @@ export class BaseRepository extends EntityRepository {
     async findIDsFilter(filter, user) {
         return await this.findIDs(await this.buildFilter(filter, user));
     }
+    async findOneIDFilter(filter, user) {
+        return await this.findOneID(await this.buildFilter(filter, user));
+    }
     async findListFilter(list, seed, filter, order, page, user) {
         return await this.findList(list, seed, await this.buildFindOptions(filter, order, user, page), user.id);
     }
@@ -205,7 +208,7 @@ export class BaseRepository extends EntityRepository {
             case ListType.random: {
                 ids = await this.findIDs(options);
                 let s = seed;
-                s ?? (s = `${userID}_${new Date().toISOString().split('T').at(0)}`);
+                s ?? (s = `${userID}_${new Date().toISOString().split('T', 1).at(0)}`);
                 ids.sort((a, b) => a.localeCompare(b));
                 ids = shuffleSeed.shuffle(ids, s);
                 break;
@@ -276,11 +279,12 @@ export class BaseRepository extends EntityRepository {
         return this.getFilteredIDs(ids, options);
     }
     async removeLaterByIDs(ids) {
-        if (ids.length > 0) {
-            const items = await this.findByIDs(ids);
-            for (const item of items) {
-                this.removeLater(item);
-            }
+        if (ids.length === 0) {
+            return;
+        }
+        const items = await this.findByIDs(ids);
+        for (const item of items) {
+            this.removeLater(item);
         }
     }
 }

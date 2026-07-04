@@ -7,10 +7,7 @@ const log = logger('Audio:Waveform');
 export class WaveformModule {
     constructor(waveformCachePath) {
         this.waveformCache = new IDFolderCache(waveformCachePath, 'waveform', (parameters) => {
-            let suffix = '';
-            if (parameters.width !== undefined) {
-                suffix = `-${parameters.width}`;
-            }
+            const suffix = parameters.width === undefined ? '' : `-${parameters.width}`;
             return `${suffix}.${parameters.format}`;
         });
     }

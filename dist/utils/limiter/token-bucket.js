@@ -38,7 +38,7 @@ export class TokenBucket {
     }
     async removeTokens(count) {
         if (this.bucketSize === 0) {
-            return Number.POSITIVE_INFINITY;
+            return Infinity;
         }
         if (count > this.bucketSize) {
             throw new Error(`Requested tokens ${count} exceeds bucket size ${this.bucketSize}`);

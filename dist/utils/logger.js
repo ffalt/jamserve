@@ -22,10 +22,11 @@ export function configureLogger(level, logfile) {
     });
     const transports = [console_logger];
     if (logfile) {
+        const format = winston.format.combine(winston.format.simple());
         transports.push(new WinstonRotatingFile({
             filename: logfile,
             level: 'info',
-            format: winston.format.combine(winston.format.simple()),
+            format,
             rfsOptions: {
                 size: '10M',
                 interval: '1d',
@@ -58,11 +59,12 @@ export class Logger {
         this.applyLog('error', `${message}:${errorToString(format)}`, ...parameters);
     }
     table(items, columns) {
-        if (winston.level === 'info') {
-            const p = new Table({ columns });
-            p.addRows(items);
-            p.printTable();
+        if (winston.level !== 'info') {
+            return;
         }
+        const p = new Table({ columns });
+        p.addRows(items);
+        p.printTable();
     }
     access(format, ...parameters) {
         this.applyLog('debug', format, ...parameters);

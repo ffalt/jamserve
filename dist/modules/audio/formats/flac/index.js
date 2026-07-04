@@ -15,7 +15,7 @@ export class Flac {
                     result.comment = this.formatMediaComment(mdb);
                 }
                 else if (mdb.type === MDB_TYPE.PICTURE && mdb.pictureData) {
-                    result.pictures = result.pictures ?? [];
+                    result.pictures ?? (result.pictures = []);
                     result.pictures.push(Flac.formatMediaPicture(mdb));
                 }
             });
@@ -52,7 +52,7 @@ export class Flac {
         const processor = new FlacProcessorStream(false, false);
         return new Promise((resolve, reject) => {
             processor.on('preprocess', (mdb) => {
-                if (mdb.type === MDB_TYPE.VORBIS_COMMENT || mdb.type === MDB_TYPE.PICTURE || mdb.type === MDB_TYPE.PADDING) {
+                if ([MDB_TYPE.VORBIS_COMMENT, MDB_TYPE.PICTURE, MDB_TYPE.PADDING].includes(mdb.type)) {
                     mdb.remove();
                 }
                 if (mdb.isLast) {
@@ -108,7 +108,7 @@ export class Flac {
             const key = line.slice(0, pos).toUpperCase().replaceAll(' ', '_');
             let index = 1;
             let suffix = '';
-            while (tag[key + suffix]) {
+            while (Object.hasOwn(tag, key + suffix)) {
                 index++;
                 suffix = `|${index}`;
             }

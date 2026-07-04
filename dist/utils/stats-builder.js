@@ -4,13 +4,13 @@ export class MetaStatBuilder {
         this.stats = {};
     }
     static convert2Numlist(o) {
-        return Object.keys(o)
-            .map(key => ({ count: o[key].count, val: Number(o[key].val) }))
+        return Object.values(o)
+            .map(value => ({ count: value.count, val: Number(value.val) }))
             .sort((a, b) => a.count - b.count);
     }
     static convert2list(o) {
-        return Object.keys(o)
-            .map(key => o[key])
+        return Object.values(o)
+            .map(value => value)
             .sort((a, b) => a.count - b.count);
     }
     static getMostUsedTagValue(list, multi) {
@@ -43,41 +43,49 @@ export class MetaStatBuilder {
         return item0.val;
     }
     statID(name, value) {
-        if (value && value.trim().length > 0) {
-            let slug = value.split(' ').at(0) ?? value;
-            slug = slug.trim();
-            this.stats[name] = this.stats[name] ?? {};
-            const stat = this.stats[name];
-            stat[slug] = stat[slug] ?? { count: 0, val: slug };
-            stat[slug].count += 1;
+        var _a;
+        if (!(value && value.trim().length > 0)) {
+            return;
         }
+        let slug = value.split(' ', 1).at(0) ?? value;
+        slug = slug.trim();
+        (_a = this.stats)[name] ?? (_a[name] = {});
+        const stat = this.stats[name];
+        stat[slug] ?? (stat[slug] = { count: 0, val: slug });
+        stat[slug].count += 1;
     }
     statNumber(name, value) {
-        if (value !== undefined && value !== null) {
-            const slug = value.toString();
-            this.stats[name] = this.stats[name] ?? {};
-            const stat = this.stats[name];
-            stat[slug] = stat[slug] ?? { count: 0, val: value };
-            stat[slug].count += 1;
+        var _a;
+        if (value === undefined || value === null) {
+            return;
         }
+        const slug = value.toString();
+        (_a = this.stats)[name] ?? (_a[name] = {});
+        const stat = this.stats[name];
+        stat[slug] ?? (stat[slug] = { count: 0, val: value });
+        stat[slug].count += 1;
     }
     statSlugValue(name, value) {
-        if (value && value.trim().length > 0) {
-            const slug = slugify(value);
-            this.stats[name] = this.stats[name] ?? {};
-            const stat = this.stats[name];
-            stat[slug] = stat[slug] ?? { count: 0, val: value.trim() };
-            stat[slug].count += 1;
+        var _a;
+        if (!(value && value.trim().length > 0)) {
+            return;
         }
+        const slug = slugify(value);
+        (_a = this.stats)[name] ?? (_a[name] = {});
+        const stat = this.stats[name];
+        stat[slug] ?? (stat[slug] = { count: 0, val: value.trim() });
+        stat[slug].count += 1;
     }
     statTrackCount(name, trackTotal, disc) {
-        if (trackTotal !== undefined) {
-            const slug = `${(disc ?? 1)}-${trackTotal}`;
-            this.stats[name] = this.stats[name] ?? {};
-            const stat = this.stats[name];
-            stat[slug] = stat[slug] ?? { count: 0, val: trackTotal };
-            stat[slug].count += 1;
+        var _a;
+        if (trackTotal === undefined) {
+            return;
         }
+        const slug = `${(disc ?? 1)}-${trackTotal}`;
+        (_a = this.stats)[name] ?? (_a[name] = {});
+        const stat = this.stats[name];
+        stat[slug] ?? (stat[slug] = { count: 0, val: trackTotal });
+        stat[slug].count += 1;
     }
     asList(name) {
         return MetaStatBuilder.convert2list(this.stats[name] ?? {});
