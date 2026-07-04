@@ -378,6 +378,7 @@ input TrackFilterParametersQL {
   rootIDs: [ID!]
   folderIDs: [ID!]
   bookmarkIDs: [ID!]
+  mbTrackIDs: [String!]
   fromYear: Int
   toYear: Int
 }

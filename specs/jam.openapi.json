@@ -22049,6 +22049,22 @@
 					},
 					{
 						"in": "query",
+						"name": "mbTrackIDs",
+						"description": "filter by MusicBrainz Track Ids",
+						"required": false,
+						"example": [
+							"0eee4027-47fc-4993-b389-edb1d82a73a9"
+						],
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"description": "filter by MusicBrainz Track Ids"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "name",
 						"description": "filter by Track Title",
 						"required": false,
@@ -22634,6 +22650,22 @@
 					},
 					{
 						"in": "query",
+						"name": "mbTrackIDs",
+						"description": "filter by MusicBrainz Track Ids",
+						"required": false,
+						"example": [
+							"0eee4027-47fc-4993-b389-edb1d82a73a9"
+						],
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"description": "filter by MusicBrainz Track Ids"
+							}
+						}
+					},
+					{
+						"in": "query",
 						"name": "name",
 						"description": "filter by Track Title",
 						"required": false,
@@ -22912,6 +22944,22 @@
 							"type": "array",
 							"items": {
 								"$ref": "#/components/schemas/ID"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "mbTrackIDs",
+						"description": "filter by MusicBrainz Track Ids",
+						"required": false,
+						"example": [
+							"0eee4027-47fc-4993-b389-edb1d82a73a9"
+						],
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string",
+								"description": "filter by MusicBrainz Track Ids"
 							}
 						}
 					},
