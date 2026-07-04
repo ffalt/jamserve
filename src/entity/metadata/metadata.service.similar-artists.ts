@@ -1,4 +1,4 @@
-import { MetaDataService } from './metadata.service.js';
+import { MetadataService } from './metadata.service.js';
 import { Folder } from '../folder/folder.js';
 import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
 import { FolderType, LastFMLookupType } from '../../types/enums.js';
@@ -9,7 +9,7 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import SimilarArtist = LastFM.SimilarArtist;
 
 export class MetadataServiceSimilarArtists {
-	constructor(private readonly service: MetaDataService) {
+	constructor(private readonly service: MetadataService) {
 
 	}
 

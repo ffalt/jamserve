@@ -65,7 +65,7 @@ export enum FolderType {
 
 export const FolderTypesAlbum = [FolderType.album, FolderType.multialbum];
 
-export enum MetaDataType {
+export enum MetadataType {
 	musicbrainz = 'musicbrainz',
 	wikipedia = 'wikipedia',
 	wikidata = 'wikidata',

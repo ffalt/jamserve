@@ -26,11 +26,13 @@ export class ExpressSessionStore extends Store implements SessionNotifyEventObje
 	}
 
 	private evictLRU(): void {
-		if (this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0) {
-			const lruSid = this.accessOrder.shift();
-			if (lruSid) {
-				this.cache.delete(lruSid);
-			}
+		if (!(this.cache.size >= this.maxCacheSize && this.accessOrder.length > 0)) {
+			return;
+		}
+
+		const lruSid = this.accessOrder.shift();
+		if (lruSid) {
+			this.cache.delete(lruSid);
 		}
 	}
 

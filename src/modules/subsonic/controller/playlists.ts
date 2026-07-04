@@ -30,10 +30,10 @@ export class SubsonicPlaylistsApi {
 		 name 	Yes (if creating) 		The human-readable name of the playlist.
 		 songId 	Yes 		ID of a song in the playlist. Use one songId parameter for each song in the playlist.
 		 */
-		let playlist: Playlist | undefined;
 		if (!query.playlistId && !query.name) {
 			return Promise.reject(new SubsonicApiError(SubsonicFormatter.ERRORS.PARAM_MISSING));
 		}
+		let playlist: Playlist | undefined;
 		if (query.playlistId) {
 			const playlistId = query.playlistId;
 			const updateQuery: SubsonicParameterPlaylistUpdate = {
@@ -92,11 +92,11 @@ export class SubsonicPlaylistsApi {
 		}
 		const entries = await playlist.entries.getItems();
 		let trackIDs = entries.map(entry => entry.track.id());
-		let removeTracks: Array<any> = [];
+		let removableTracks: Array<any> = [];
 		if (query.songIndexToRemove !== undefined) {
-			removeTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
+			removableTracks = Array.isArray(query.songIndexToRemove) ? query.songIndexToRemove : [query.songIndexToRemove];
 		}
-		trackIDs = trackIDs.filter((_id, index) => !removeTracks.includes(index));
+		trackIDs = trackIDs.filter((_id, index) => !removableTracks.includes(index));
 		if (query.songIdToAdd) {
 			const songAdd = (Array.isArray(query.songIdToAdd) ? query.songIdToAdd : [query.songIdToAdd]);
 			trackIDs = [...trackIDs, ...songAdd];

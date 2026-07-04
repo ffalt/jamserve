@@ -48,7 +48,6 @@ export class EntityRepository<Entity extends IDEntity<Entity>> {
 	}
 
 	async find(options: FindOptions<Entity>): Promise<Array<Entity>> {
-		// eslint-disable-next-line unicorn/no-array-callback-reference, unicorn/no-array-method-this-argument
 		return this.em.find<Entity>(this.entityName, options);
 	}
 

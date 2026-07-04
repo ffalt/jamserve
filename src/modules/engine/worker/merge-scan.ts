@@ -46,7 +46,7 @@ export class WorkerMergeScan {
 
 	private static getMultiAlbumFolderType(node: MergeNode): FolderType {
 		// Multi-Album ( eg. Album with CD1, CD2, etc)
-		const a = node.children.find(d => d.folder.folderType === FolderType.artist);
+		const a = node.children.some(d => d.folder.folderType === FolderType.artist);
 		return a ? FolderType.collection : FolderType.multialbum;
 	}
 
@@ -56,7 +56,7 @@ export class WorkerMergeScan {
 	}
 
 	private static getMixedFolderType(node: MergeNode, _: MetaStat, __: RootScanStrategy): FolderType {
-		return WorkerMergeScan.getMultiAlbumFolderType(node);
+		return this.getMultiAlbumFolderType(node);
 	}
 
 	private static getTrackFolderType(node: MergeNode, metaStat: MetaStat, strategy: RootScanStrategy): FolderType {
@@ -65,7 +65,7 @@ export class WorkerMergeScan {
 		}
 		const dirCount = node.children.filter(d => d.folder.folderType !== FolderType.extras).length;
 		if (dirCount > 0) {
-			return WorkerMergeScan.getMixedFolderType(node, metaStat, strategy);
+			return this.getMixedFolderType(node, metaStat, strategy);
 		}
 		return FolderType.album;
 	}
@@ -81,7 +81,7 @@ export class WorkerMergeScan {
 		}
 		if (metaStat.trackCount > 0) {
 			// has tracks
-			return WorkerMergeScan.getTrackFolderType(node, metaStat, strategy);
+			return this.getTrackFolderType(node, metaStat, strategy);
 		}
 		if (node.children.length === 0) {
 			// no tracks, no children folder
@@ -89,7 +89,7 @@ export class WorkerMergeScan {
 		}
 		// no tracks, has children folder
 		if (metaStat.hasMultipleAlbums) {
-			return WorkerMergeScan.getMultipleAlbumFolderType(metaStat, strategy);
+			return this.getMultipleAlbumFolderType(metaStat, strategy);
 		}
 		if (node.children.length === 1) {
 			return (strategy === RootScanStrategy.compilation) ? FolderType.collection : FolderType.artist;
@@ -98,7 +98,7 @@ export class WorkerMergeScan {
 			// choose artist folder, if it's not an pure album (without artist folders in children nodes)
 			return FolderType.artist;
 		}
-		return WorkerMergeScan.getMultiAlbumFolderType(node);
+		return this.getMultiAlbumFolderType(node);
 	}
 
 	private static setFolderType(node: MergeNode, type: FolderType): void {
@@ -132,7 +132,7 @@ export class WorkerMergeScan {
 
 	private static markMultiAlbumChildDirs(node: MergeNode): void {
 		if (node.folder.folderType !== FolderType.extras) {
-			WorkerMergeScan.setFolderType(node, FolderType.multialbum);
+			this.setFolderType(node, FolderType.multialbum);
 		}
 		for (const child of node.children) {
 			if (child.folder.folderType !== FolderType.extras &&
@@ -141,16 +141,16 @@ export class WorkerMergeScan {
 				node.folder.albumType = child.folder.albumType;
 				node.changed = true;
 			}
-			WorkerMergeScan.markMultiAlbumChildDirs(child);
+			this.markMultiAlbumChildDirs(child);
 		}
 	}
 
 	private static markArtistChildDirs(node: MergeNode): void {
 		if (node.folder.folderType === FolderType.artist) {
-			WorkerMergeScan.setFolderType(node, FolderType.collection);
+			this.setFolderType(node, FolderType.collection);
 		}
 		for (const child of node.children) {
-			WorkerMergeScan.markArtistChildDirs(child);
+			this.markArtistChildDirs(child);
 		}
 	}
 
@@ -175,10 +175,9 @@ export class WorkerMergeScan {
 		folder.folderType = WorkerMergeScan.getFolderType(node, metaStat, this.strategy);
 
 		const genreNames = metaStat.genres ?? [];
-		let genres: Array<Genre> = [];
-		if (genreNames.length > 0) {
-			genres = await this.orm.Genre.find({ where: { name: QHelper.inOrEqual(genreNames) } });
-		}
+		const genres: Array<Genre> = genreNames.length > 0 ?
+			(await this.orm.Genre.find({ where: { name: QHelper.inOrEqual(genreNames) } })) :
+			[];
 		await folder.genres.set(genres);
 
 		WorkerMergeScan.setFolderType(node, folder.folderType);
@@ -219,7 +218,7 @@ export class WorkerMergeScan {
 	private static buildNodes(node: MatchNode): MergeNode {
 		return {
 			path: node.scan.path,
-			children: node.children.map(c => WorkerMergeScan.buildNodes(c)),
+			children: node.children.map(c => this.buildNodes(c)),
 			tracks: node.tracks,
 			nrOfTracks: node.tracks.length,
 			folder: node.folder,

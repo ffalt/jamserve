@@ -27,7 +27,7 @@ export class AcoustidClient extends WebserviceClient {
 	}
 
 	private async get(fp: FPCalcResult, includes: string | undefined): Promise<Array<Acoustid.Result>> {
-		includes = includes ?? this.options.meta ?? META_DEFAULT;
+		includes ??= this.options.meta ?? META_DEFAULT;
 		log.info('requesting by fingerprint', includes);
 		const data = await this.getJsonWithParameters<Acoustid.Results, {
 			format: string;

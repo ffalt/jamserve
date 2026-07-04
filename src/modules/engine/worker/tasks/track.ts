@@ -34,7 +34,7 @@ export class TrackUpdater {
 		await track.tag.set(tag);
 		const genres = await this.findOrCreateGenres(tag);
 		const ids = await track.genres.getIDs();
-		const removedGenreIDs = ids.filter(id => !genres.some(g => g.id === id));
+		const removedGenreIDs = ids.filter(id => genres.every(g => g.id !== id));
 		this.changes.genres.updated.appendIDs(removedGenreIDs);
 		await track.genres.set(genres);
 	}

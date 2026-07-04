@@ -3,7 +3,7 @@ import { Album } from '../album/album.js';
 import { Artist } from '../artist/artist.js';
 import { Folder } from '../folder/folder.js';
 import { Track } from '../track/track.js';
-import { MetaDataService } from './metadata.service.js';
+import { MetadataService } from './metadata.service.js';
 import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
 import { PageResult } from '../base/base.js';
 import { PageParameters } from '../base/base.parameters.js';
@@ -29,7 +29,7 @@ async function findAsyncSequential<T>(
 }
 
 export class MetadataServiceSimilarTracks {
-	constructor(private readonly service: MetaDataService) {
+	constructor(private readonly service: MetadataService) {
 	}
 
 	async findSongTrackIDs(orm: Orm, songs: Array<Song>): Promise<Array<string>> {

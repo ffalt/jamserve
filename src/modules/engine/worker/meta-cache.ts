@@ -189,10 +189,9 @@ export class MetaMergerCache {
 	}
 
 	private async findArtistInCache(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist | undefined> {
-		let aa = { mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist };
-		if (albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist)) {
-			aa = { mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist };
-		}
+		const aa = albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist) ?
+			{ mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist } :
+			{ mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist };
 		const slug = slugify(aa.name ?? cUnknownArtist);
 		if (aa.mbArtistID) {
 			const artist = this.artistCache.find(a => a.artist.mbArtistID === aa.mbArtistID);
@@ -240,11 +239,10 @@ export class MetaMergerCache {
 	}
 
 	private async buildArtist(trackInfo: MetaMergeTrackInfo, albumArtist: boolean): Promise<Artist> {
-		let aa = { mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist, nameSort: trackInfo.tag.artistSort };
-		if (albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist)) {
-			aa = { mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist, nameSort: trackInfo.tag.albumArtistSort };
-		}
-		aa.name = aa.name ?? cUnknownArtist;
+		const aa = albumArtist && (trackInfo.tag.mbAlbumArtistID || trackInfo.tag.albumArtist) ?
+			{ mbArtistID: trackInfo.tag.mbAlbumArtistID, name: trackInfo.tag.albumArtist, nameSort: trackInfo.tag.albumArtistSort } :
+			{ mbArtistID: trackInfo.tag.mbArtistID, name: trackInfo.tag.artist, nameSort: trackInfo.tag.artistSort };
+		aa.name ??= cUnknownArtist;
 		const artist = this.orm.Artist.create({
 			slug: slugify(aa.name),
 			name: aa.name,

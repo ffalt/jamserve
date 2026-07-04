@@ -1,6 +1,6 @@
 import { MetaWriteableDataBlock } from './block.writeable.js';
 
-export class MetaDataBlockPicture extends MetaWriteableDataBlock {
+export class MetadataBlockPicture extends MetaWriteableDataBlock {
 	pictureType = 0;
 	mimeType = '';
 	description = '';
@@ -14,8 +14,8 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 		super(isLast, 6);
 	}
 
-	public static createPictureBlock(pictureType: number, mimeType: string, description: string, width: number, height: number, bitsPerPixel: number, colors: number, pictureData: Buffer): MetaDataBlockPicture {
-		const mdb = new MetaDataBlockPicture(false);
+	public static createPictureBlock(pictureType: number, mimeType: string, description: string, width: number, height: number, bitsPerPixel: number, colors: number, pictureData: Buffer): MetadataBlockPicture {
+		const mdb = new MetadataBlockPicture(false);
 		mdb.pictureType = pictureType;
 		mdb.mimeType = mimeType;
 		mdb.description = description;
@@ -69,7 +69,7 @@ export class MetaDataBlockPicture extends MetaWriteableDataBlock {
 			let header = size;
 			header |= (this.type << 24);
 			header |= (this.isLast ? 0x80_00_00_00 : 0);
-			header = header >>> 0;
+			header >>>= 0;
 			buffer.writeUInt32BE(header, pos);
 			pos += 4;
 

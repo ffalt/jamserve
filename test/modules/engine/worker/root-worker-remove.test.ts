@@ -27,9 +27,9 @@ describe('RootWorker.remove', () => {
 		expect(trackFindIDs.mock.calls.at(0)?.at(0)).toEqual({ where: { root: 'root-1' }, offset: 0, limit: 1000 });
 		expect(folderFindIDs.mock.calls.at(0)?.at(0)).toEqual({ where: { root: 'root-1' }, offset: 0, limit: 1000 });
 		expect(artworkFindIDs.mock.calls.at(0)?.at(0)).toEqual({ where: { folder: ['f1', 'f2'] } });
-		expect(changes.tracks.removed.ids().sort()).toEqual(['t1', 't2']);
-		expect(changes.folders.removed.ids().sort()).toEqual(['f1', 'f2']);
-		expect(changes.artworks.removed.ids().sort()).toEqual(['a1', 'a2']);
+		expect(changes.tracks.removed.ids().sort((a, b) => a.localeCompare(b))).toEqual(['t1', 't2']);
+		expect(changes.folders.removed.ids().sort((a, b) => a.localeCompare(b))).toEqual(['f1', 'f2']);
+		expect(changes.artworks.removed.ids().sort((a, b) => a.localeCompare(b))).toEqual(['a1', 'a2']);
 		expect(changes.roots.removed.ids()).toEqual(['root-1']);
 	});
 
@@ -75,6 +75,6 @@ describe('RootWorker.remove', () => {
 		expect(artworkCall1.where.folder.at(0)).toBe('f1001');
 		expect(changes.tracks.removed.ids()).toHaveLength(1001);
 		expect(changes.folders.removed.ids()).toHaveLength(1001);
-		expect(changes.artworks.removed.ids().sort()).toEqual(['a1', 'a2']);
+		expect(changes.artworks.removed.ids().sort((a, b) => a.localeCompare(b))).toEqual(['a1', 'a2']);
 	});
 });

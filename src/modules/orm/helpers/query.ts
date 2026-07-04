@@ -96,7 +96,7 @@ export const QHelper = {
 			}
 			const array = (q as any)[key];
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			const result = this.cleanList(array) ?? [];
+			const result = QHelper.cleanList(array) ?? [];
 			if (result.length === 0) {
 				return false;
 			}
@@ -117,7 +117,7 @@ export const QHelper = {
 		if (!list || list.length === 0) {
 			return {};
 		}
-		const result = this.cleanList(list) ?? [];
+		const result = QHelper.cleanList(list) ?? [];
 		if (result.length === 0) {
 			return {};
 		}

@@ -24,10 +24,7 @@ export class WaveformModule {
 			waveformCachePath,
 			'waveform',
 			(parameters: { width?: number; format: string }) => {
-				let suffix = '';
-				if (parameters.width !== undefined) {
-					suffix = `-${parameters.width}`;
-				}
+				const suffix = parameters.width === undefined ? '' : `-${parameters.width}`;
 				return `${suffix}.${parameters.format}`;
 			}
 		);

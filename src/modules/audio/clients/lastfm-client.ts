@@ -8,8 +8,9 @@ const log = logger('LastFM');
 
 class LastFMClientBeautify {
 	private static ensureList(name: string, sub: any): any {
-		if (sub[name]) {
-			return Array.isArray(sub[name]) ? sub[name] : [sub[name]];
+		const value = sub[name];
+		if (value) {
+			return Array.isArray(value) ? value : [value];
 		}
 		return sub;
 	}
@@ -22,15 +23,15 @@ class LastFMClientBeautify {
 			}
 			case '@attr': {
 				// @attr echoes query metadata (e.g. { artist, track }); never let it clobber real data already collected
-				for (const subkey of Object.keys(sub as Record<string, any>)) {
+				for (const [subkey, value] of Object.entries(sub as Record<string, any>)) {
 					if (result[subkey] === undefined) {
-						result[subkey] = sub[subkey];
+						result[subkey] = value;
 					}
 				}
 				break;
 			}
 			case 'tags': {
-				result[key] = LastFMClientBeautify.ensureList('tag', sub);
+				result[key] = this.ensureList('tag', sub);
 				break;
 			}
 			case 'streamable': {
@@ -43,11 +44,11 @@ class LastFMClientBeautify {
 				break;
 			}
 			case 'tracks': {
-				result[key] = LastFMClientBeautify.ensureList('track', sub);
+				result[key] = this.ensureList('track', sub);
 				break;
 			}
 			case 'links': {
-				result[key] = LastFMClientBeautify.ensureList('link', sub);
+				result[key] = this.ensureList('link', sub);
 				break;
 			}
 			default: {
@@ -58,10 +59,10 @@ class LastFMClientBeautify {
 
 	private static walkBeautifyObject(o: Record<string, any>): any {
 		const result: any = {};
-		for (const key of Object.keys(o)) {
-			const sub = LastFMClientBeautify.walk(o[key], o);
+		for (const [key, value] of Object.entries(o)) {
+			const sub = this.walk(value, o);
 			if (sub !== undefined) {
-				LastFMClientBeautify.buildSubValue(key, sub, result);
+				this.buildSubValue(key, sub, result);
 			}
 		}
 		return result;
@@ -73,17 +74,17 @@ class LastFMClientBeautify {
 		}
 		if (Array.isArray(o)) {
 			return o
-				.map((sub: Array<object | undefined | null>) => LastFMClientBeautify.walk(sub, parent))
+				.map((sub: Array<object | undefined | null>) => this.walk(sub, parent))
 				.filter((sub: any) => sub !== undefined);
 		}
 		if (typeof o === 'object') {
-			return LastFMClientBeautify.walkBeautifyObject(o);
+			return this.walkBeautifyObject(o);
 		}
 		return o;
 	}
 
 	static beautify<T>(obj: unknown): T {
-		return LastFMClientBeautify.walk(obj, {}) as T;
+		return this.walk(obj, {}) as T;
 	}
 }
 
@@ -114,8 +115,8 @@ export class LastFMClient extends WebserviceClient {
 		log.info('requesting', api, JSON.stringify(parameters));
 		parameters.method = api;
 		const sortedParameters: Record<string, string | number | undefined> = { method: api };
-		for (const key of Object.keys(parameters)) {
-			sortedParameters[key] = parameters[key];
+		for (const [key, value] of Object.entries(parameters)) {
+			sortedParameters[key] = value;
 		}
 		sortedParameters.api_key = this.options.key;
 		sortedParameters.format = 'json';

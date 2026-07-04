@@ -11,7 +11,7 @@ export interface TokenBucketOptions {
 
 /**
  * A hierarchical token bucket for rate limiting. See
- * http://en.wikipedia.org/wiki/Token_bucket for more information.
+ * https://en.wikipedia.org/wiki/Token_bucket for more information.
  *
  * @param options
  * @param options.bucketSize Maximum number of tokens to hold in the bucket.
@@ -79,7 +79,7 @@ export class TokenBucket {
 	async removeTokens(count: number): Promise<number> {
 		// Is this an infinite size bucket?
 		if (this.bucketSize === 0) {
-			return Number.POSITIVE_INFINITY;
+			return Infinity;
 		}
 
 		// Make sure the bucket can hold the requested number of tokens

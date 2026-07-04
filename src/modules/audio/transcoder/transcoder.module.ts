@@ -21,10 +21,7 @@ export class TranscoderModule {
 			transcodeCachePath,
 			'transcode',
 			(parameters: { maxBitRate?: number; format: string }) => {
-				let suffix = '';
-				if (parameters.maxBitRate) {
-					suffix = `-${parameters.maxBitRate}`;
-				}
+				const suffix = parameters.maxBitRate ? `-${parameters.maxBitRate}` : '';
 				return `${suffix}.${parameters.format}`;
 			}
 		);

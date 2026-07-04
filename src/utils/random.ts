@@ -3,7 +3,9 @@ import crypto from 'node:crypto';
 export function shuffle<T>(list: Array<T>): Array<T> {
 	for (let index = list.length - 1; index > 0; index--) {
 		const pos = crypto.randomInt(index + 1);
-		[list[index], list[pos]] = [list[pos], list[index]];
+		const temporary = list[index];
+		list[index] = list[pos];
+		list[pos] = temporary;
 	}
 	return list;
 }
@@ -19,7 +21,9 @@ export function randomItems<T>(list: Array<T>, amount?: number): Array<T> {
 	const copy = [...list];
 	for (let index = 0; index < amount; index++) {
 		const pos = crypto.randomInt(index, copy.length);
-		[copy[index], copy[pos]] = [copy[pos], copy[index]];
+		const temporary = copy[index];
+		copy[index] = copy[pos];
+		copy[pos] = temporary;
 	}
 	return copy.slice(0, amount);
 }

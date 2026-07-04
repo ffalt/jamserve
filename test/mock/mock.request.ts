@@ -79,7 +79,7 @@ export const InvalidData = {
 			{ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' }
 		];
 		let number_ = 0;
-		while (Number.isInteger(number_)) {
+		while (Number.isSafeInteger(number_)) {
 			number_ = chance.floating({ min: schema.minimum ?? 1, max: schema.maximum ?? 100, fixed: 2 });
 		}
 		result.push({ data: number_, invalid: 'float' });
@@ -223,20 +223,17 @@ export class MockRequests {
 	static async generateRequestMock(apiName: string, method: string, op: OperationObject): Promise<Array<RequestMock>> {
 		let mocks: Array<RequestMock> = [];
 		const sec = (op.security ?? [])[0];
-		let roles: Array<string> = [];
-		if (sec) {
-			roles = (sec[Object.keys(sec)[0]]) ?? [];
-		}
+		const roles: Array<string> = sec ? (sec[Object.keys(sec)[0]]) ?? [] : [];
 		const parameters: Array<ParameterObject> = (op.parameters ?? []) as Array<ParameterObject>;
 		const queryParameters = parameters.filter(p => p.in === 'query');
 		const pathParameters = parameters.filter(p => p.in === 'path');
 		if (queryParameters.length > 0) {
-			mocks = MockRequests.generateQueryParameterMocks(queryParameters, pathParameters, mocks, apiName, method, roles);
+			mocks = this.generateQueryParameterMocks(queryParameters, pathParameters, mocks, apiName, method, roles);
 		} else if (pathParameters.length === 0) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, []));
+			mocks.push(this.generateValidRequestMock(apiName, method, roles, []));
 		}
 		if (pathParameters.length > 0) {
-			mocks = MockRequests.generatePathParameterMocks(pathParameters, mocks, apiName, method, roles);
+			mocks = this.generatePathParameterMocks(pathParameters, mocks, apiName, method, roles);
 		}
 		return mocks;
 	}
@@ -244,15 +241,15 @@ export class MockRequests {
 	private static generatePathParameterMocks(pathParameters: Array<ParameterObject>, mocks: Array<RequestMock>, apiName: string, method: string, roles: Array<string>) {
 		const minRequired: Array<ParameterObject> = pathParameters.filter(p => p.required);
 		const optional: Array<ParameterObject> = pathParameters.filter(p => !p.required);
-		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired));
+		mocks.push(this.generateValidRequestMock(apiName, method, roles, minRequired));
 		for (const item of optional) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
+			mocks.push(this.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
 		}
 		if (pathParameters.length !== minRequired.length) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, pathParameters));
+			mocks.push(this.generateValidRequestMock(apiName, method, roles, pathParameters));
 		}
 		for (const item of minRequired) {
-			const parameterMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, minRequired, item);
+			const parameterMocks = this.generateInvalidRequestMocks(apiName, method, false, roles, minRequired, item);
 			for (const p of parameterMocks) {
 				p.params = p.data;
 				p.data = undefined;
@@ -260,7 +257,7 @@ export class MockRequests {
 			mocks = [...mocks, ...parameterMocks];
 		}
 		for (const item of optional) {
-			const parameterMocks = MockRequests.generateInvalidRequestMocks(apiName, method, false, roles, [...minRequired, item], item);
+			const parameterMocks = this.generateInvalidRequestMocks(apiName, method, false, roles, [...minRequired, item], item);
 			for (const p of parameterMocks) {
 				p.params = p.data;
 				p.data = undefined;
@@ -274,16 +271,16 @@ export class MockRequests {
 		const minRequiredPath: Array<ParameterObject> = pathParameters.filter(p => p.required);
 		const minRequired: Array<ParameterObject> = [...queryParameters.filter(p => p.required), ...minRequiredPath];
 		const optional: Array<ParameterObject> = queryParameters.filter(p => !p.required);
-		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, minRequired));
+		mocks.push(this.generateValidRequestMock(apiName, method, roles, minRequired));
 		for (const item of optional) {
-			mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
+			mocks.push(this.generateValidRequestMock(apiName, method, roles, [...minRequired, item], item.name));
 		}
-		mocks.push(MockRequests.generateValidRequestMock(apiName, method, roles, [...queryParameters, ...minRequiredPath]));
+		mocks.push(this.generateValidRequestMock(apiName, method, roles, [...queryParameters, ...minRequiredPath]));
 		for (const item of minRequired) {
-			mocks = [...mocks, ...MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, minRequired, item)];
+			mocks = [...mocks, ...this.generateInvalidRequestMocks(apiName, method, true, roles, minRequired, item)];
 		}
 		for (const item of optional) {
-			mocks = [...mocks, ...MockRequests.generateInvalidRequestMocks(apiName, method, true, roles, [...minRequired, item], item)];
+			mocks = [...mocks, ...this.generateInvalidRequestMocks(apiName, method, true, roles, [...minRequired, item], item)];
 		}
 		return mocks;
 	}
@@ -297,7 +294,7 @@ export class MockRequests {
 			const operations = Object.keys(derefSpec.paths[apiPath]);
 			for (const operation of operations) {
 				const path = derefSpec.paths[apiPath];
-				requestMocks = [...requestMocks, ...await MockRequests.generateRequestMock(api, operation, (path as any)[operation] as OperationObject)];
+				requestMocks = [...requestMocks, ...await this.generateRequestMock(api, operation, (path as any)[operation] as OperationObject)];
 			}
 		}
 		return requestMocks;

@@ -3,14 +3,14 @@ const FEED1_HEADER = `<?xml version="1.0" encoding="UTF-8"?>
   <channel>
     <atom:link href="https://feeds.megaphone.fm/replyall" rel="self" type="application/rss+xml"/>
     <title>Reply All</title>
-    <link>http://gimletmedia.com/shows/reply-all</link>
+    <link>https://gimletmedia.com/shows/reply-all</link>
     <language>en</language>
     <copyright>All rights reserved</copyright>
     <description>"'A podcast about the internet' that is actually an unfailingly original exploration of modern life and how to survive it." - The Guardian. Hosted by PJ Vogt and Alex Goldman, from Gimlet.</description>
     <image>
       <url>https://images.megaphone.fm/_FDido6HoKbp_S5zoGyfMNxqbNgd4Qkn3IUnuObAV5A/plain/s3://megaphone-prod/podcasts/05f71746-a825-11e5-aeb5-a7a572df575e/image/uploads_2F1591157139331-y9ku7q9xzyq-9ab64ecee1420b68b238691e2d35b287_2FReplyAll-2019.jpg</url>
       <title>Reply All</title>
-      <link>http://gimletmedia.com/shows/reply-all</link>
+      <link>https://gimletmedia.com/shows/reply-all</link>
     </image>
     <itunes:explicit>yes</itunes:explicit>
     <itunes:type>episodic</itunes:type>
@@ -93,7 +93,7 @@ export const MockFeed1 = {
 			author: 'Gimlet',
 			description: `"'A podcast about the internet' that is actually an unfailingly original exploration of modern life and how to survive it." - The Guardian. Hosted by PJ Vogt and Alex Goldman, from Gimlet.`,
 			title: 'Reply All',
-			link: 'http://gimletmedia.com/shows/reply-all'
+			link: 'https://gimletmedia.com/shows/reply-all'
 		},
 		episode1: {
 			name: '#163 Candidate One',

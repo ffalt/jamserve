@@ -41,12 +41,11 @@ export function configureLogger(level: string, logfile?: string): void {
 	});
 	const transports: Array<TransportStream> = [console_logger];
 	if (logfile) {
+		const format = winston.format.combine(winston.format.simple());
 		transports.push(new WinstonRotatingFile({
 			filename: logfile,
 			level: 'info',
-			format: winston.format.combine(
-				winston.format.simple()
-			),
+			format,
 			rfsOptions: {
 				size: '10M', // rotate every 10 MegaBytes written
 				interval: '1d', // rotate daily
@@ -89,11 +88,13 @@ export class Logger {
 	}
 
 	table(items: Array<Dictionary>, columns?: Array<{ name: string; alignment: 'left' | 'right' }>): void {
-		if (winston.level === 'info') {
-			const p = new Table({ columns });
-			p.addRows(items);
-			p.printTable();
+		if (winston.level !== 'info') {
+			return;
 		}
+
+		const p = new Table({ columns });
+		p.addRows(items);
+		p.printTable();
 	}
 
 	access(format: string, ...parameters: Array<string>): void {

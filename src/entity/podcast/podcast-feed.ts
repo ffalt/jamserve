@@ -116,7 +116,6 @@ export class Feed {
 			}
 			let feed: FeedParser.Meta;
 			return new Promise<{ feed: FeedParser.Meta; posts: Array<FeedParser.Item> }>((resolve, reject) => {
-				let received = 0;
 				const done = (error?: unknown): void => {
 					if (error) {
 						reject(error as unknown);
@@ -140,6 +139,7 @@ export class Feed {
 					done(new Error('Bad feed stream'));
 					return;
 				}
+				let received = 0;
 				const body = result.body as unknown as Readable;
 				body.on('data', (chunk: Buffer) => {
 					received += chunk.length;
@@ -193,7 +193,9 @@ export class Feed {
 				guid: post.guid || post.link,
 				summary: post.summary,
 				enclosures: post.enclosures.map(enclosure => {
-					return { ...enclosure, length: enclosure.length === undefined ? undefined : Number(enclosure.length) };
+					const rawLength = enclosure.length;
+					const length = rawLength ? Number(rawLength) : undefined;
+					return { ...enclosure, length: length !== undefined && Number.isFinite(length) ? length : undefined };
 				}),
 				date: post.date ?? undefined,
 				name: post.title,

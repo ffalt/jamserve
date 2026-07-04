@@ -13,10 +13,9 @@ export class PlaylistTransformService extends BaseTransformService {
 	async playlistBase(orm: Orm, o: ORMPlaylist, playlistParameters: IncludesPlaylistParameters, user: User): Promise<PlaylistBase> {
 		const u = await o.user.getOrFail();
 		const entries = playlistParameters.playlistIncEntriesIDs || playlistParameters.playlistIncEntries ? await o.entries.getItems() : [];
-		let entriesIDs: Array<string> | undefined = undefined;
-		if (playlistParameters.playlistIncEntriesIDs) {
-			entriesIDs = entries.map(t => (t.track.id()) ?? (t.episode.id())).filter(id => id !== undefined);
-		}
+		const entriesIDs: Array<string> | undefined = playlistParameters.playlistIncEntriesIDs ?
+			entries.map(t => (t.track.id()) ?? (t.episode.id())).filter(id => id !== undefined) :
+			undefined;
 		return {
 			id: o.id,
 			name: o.name,

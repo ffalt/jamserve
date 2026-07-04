@@ -1,4 +1,4 @@
-export class MetaDataBlock {
+export class MetadataBlock {
 	error: any = null;
 	hasData: boolean = false;
 	removed: boolean = false;

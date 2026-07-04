@@ -97,16 +97,16 @@ export class ImageService {
 	private static async getCoverArtText(o: Base, type: DBObjectType): Promise<string> {
 		switch (type) {
 			case DBObjectType.track: {
-				return await ImageService.getCoverArtTextTrack(o as Track);
+				return await this.getCoverArtTextTrack(o as Track);
 			}
 			case DBObjectType.folder: {
-				return ImageService.getCoverArtTextFolder(o as Folder);
+				return this.getCoverArtTextFolder(o as Folder);
 			}
 			case DBObjectType.episode: {
-				return await ImageService.getCoverArtTextEpisode(o as Episode);
+				return await this.getCoverArtTextEpisode(o as Episode);
 			}
 			case DBObjectType.podcast: {
-				return ImageService.getCoverArtTextPodcast(o as Podcast);
+				return this.getCoverArtTextPodcast(o as Podcast);
 			}
 			case DBObjectType.playlist: {
 				return (o as Playlist).name;

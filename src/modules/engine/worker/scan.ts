@@ -215,10 +215,12 @@ export class WorkerScan {
 	}
 
 	private async flushIfEnough(): Promise<void> {
-		if (this.orm.em.changesCount() > 1000) {
-			log.debug('Syncing Track/Artwork Changes to DB');
-			await this.orm.em.flush();
+		if (this.orm.em.changesCount() <= 1000) {
+			return;
 		}
+
+		log.debug('Syncing Track/Artwork Changes to DB');
+		await this.orm.em.flush();
 	}
 
 	private async removeFolder(folder: Folder): Promise<void> {
@@ -245,13 +247,15 @@ export class WorkerScan {
 		const folders = await folder.children.getItems();
 		const folderMap = new Map(folders.map(f => [f.path, f]));
 		for (const subDir of dir.directories) {
-			if (subDir.path !== folder.path) {
-				const subFolder = folderMap.get(subDir.path);
-				result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
+			if (subDir.path === folder.path) {
+				continue;
 			}
+
+			const subFolder = folderMap.get(subDir.path);
+			result.children.push(subFolder ? await this.scanNode(subDir, subFolder) : await this.buildNode(subDir, folder));
 		}
 		for (const child of folders) {
-			const subf = result.children.find(f => f.scan.path === child.path);
+			const subf = result.children.some(f => f.scan.path === child.path);
 			if (!subf) {
 				await this.removeFolder(child);
 				this.changes.folders.updated.add(folder);

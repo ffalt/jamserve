@@ -44,13 +44,13 @@ export class ExtendedInfoResultQL extends ExtendedInfoResult {
 }
 
 @ResultType({ description: 'Metadata Result' })
-export class MetaDataResult {
+export class MetadataResult {
 	@ObjectField(() => Object, { nullable: true, description: 'MetaData' })
 	data?: any;
 }
 
 @ResultType({ description: 'Metadata TrackLyrics Result' })
-export class MetaDataTrackLyricsResult {
+export class MetadataTrackLyricsResult {
 	@ObjectField(() => TrackLyrics, { nullable: true, description: 'MetaData' })
 	data?: TrackLyrics;
 }

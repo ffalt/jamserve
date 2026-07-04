@@ -7,12 +7,12 @@ import { User } from '../user/user.js';
 import { SeriesBase, SeriesIndex } from './series.model.js';
 import { DBObjectType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 
 @injectable()
 export class SeriesTransformService extends BaseTransformService {
-	@inject(MetaDataService)
-	public metaData!: MetaDataService;
+	@inject(MetadataService)
+	public metaData!: MetadataService;
 
 	async seriesBases(orm: Orm, list: Array<ORMSeries>, seriesParameters: IncludesSeriesParameters, user: User): Promise<Array<SeriesBase>> {
 		return await Promise.all(list.map(t => this.seriesBase(orm, t, seriesParameters, user)));

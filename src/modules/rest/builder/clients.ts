@@ -100,10 +100,12 @@ export function buildCallSections(
 	generateClientCalls: (call: MethodMetadata, method: 'post' | 'get') => Array<MustacheDataClientCallFunction>
 ): void {
 	for (const call of calls) {
-		if (call.controllerClassMetadata) {
-			const tag = call.controllerClassMetadata.name.replace('Controller', '');
-			sections[tag] = [...(sections[tag] ?? []), ...generateClientCalls(call, method)];
+		if (!call.controllerClassMetadata) {
+			continue;
 		}
+
+		const tag = call.controllerClassMetadata.name.replace('Controller', '');
+		sections[tag] = [...(sections[tag] ?? []), ...generateClientCalls(call, method)];
 	}
 }
 

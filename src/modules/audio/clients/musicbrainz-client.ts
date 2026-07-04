@@ -39,8 +39,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 			}
 			if (typeof o === 'object') {
 				const result: Record<string, any> = {};
-				for (const key of Object.keys(o)) {
-					const value: Record<string, any> = o[key];
+				for (const [key, value] of Object.entries(o) as Array<[string, Record<string, any>]>) {
 					const sub = walk(value);
 					if (sub !== undefined) {
 						result[this.formatKey(key)] = sub;
@@ -73,7 +72,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 	}
 
 	protected isRateLimitError(body?: { error?: string }): boolean {
-		// "error":"Your requests are exceeding the allowable rate limit. Please see http://wiki.musicbrainz.org/XMLWebService for more information."
+		// "error":"Your requests are exceeding the allowable rate limit. Please see https://wiki.musicbrainz.org/XMLWebService for more information."
 		return !!(body?.error?.includes('allowable rate limit'));
 	}
 

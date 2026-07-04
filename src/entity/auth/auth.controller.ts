@@ -81,7 +81,7 @@ export class AuthController {
 
 	private static buildSessionResult(req: express.Request, credentials: CredentialsParameters, user: User, engine: EngineService): Session {
 		const rawClient: unknown = req.body?.client;
-		const client: string = (typeof rawClient === 'string' ? rawClient.trim().slice(0, AuthController.MAX_CLIENT_LENGTH) : '') || 'Unknown Client';
+		const client: string = (typeof rawClient === 'string' ? rawClient.trim().slice(0, this.MAX_CLIENT_LENGTH) : '') || 'Unknown Client';
 		const token = credentials.jwt ? generateJWT(user.id, client, engine.config.env.jwt.secret, engine.config.env.jwt.maxAge) : undefined;
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (req.session) { // express session data obj

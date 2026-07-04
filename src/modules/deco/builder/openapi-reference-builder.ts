@@ -164,7 +164,7 @@ export class OpenApiReferenceBuilder {
 		if (!parameterType) {
 			return SCHEMA_JSON;
 		}
-		if (!schemas[parameterType.name]) {
+		if (!Object.hasOwn(schemas, parameterType.name)) {
 			this.buildRef(parameterType, schemas, this.getParamRef.bind(this));
 		}
 		return `#/components/schemas/${parameterType.name}`;
@@ -178,7 +178,7 @@ export class OpenApiReferenceBuilder {
 			}
 			throw new Error(`Missing ReturnType for method ${name}`);
 		}
-		if (!schemas[parameterType.name]) {
+		if (!Object.hasOwn(schemas, parameterType.name)) {
 			this.buildRef(parameterType, schemas, this.getResultRef.bind(this));
 		}
 		return `#/components/schemas/${parameterType.name}`;

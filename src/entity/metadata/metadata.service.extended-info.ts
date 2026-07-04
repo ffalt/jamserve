@@ -3,8 +3,8 @@ import { Album } from '../album/album.js';
 import { Artist } from '../artist/artist.js';
 import { Folder } from '../folder/folder.js';
 import { Series } from '../series/series.js';
-import { MetaDataService } from './metadata.service.js';
-import { MetaDataFormat } from './metadata.format.js';
+import { MetadataService } from './metadata.service.js';
+import { MetadataFormat } from './metadata.format.js';
 import { ExtendedInfo } from './metadata.model.js';
 import { LastFMLookupType, MusicBrainzLookupType, MusicBrainzSearchType } from '../../types/enums.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
@@ -12,13 +12,13 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 const log = logger('Metadata');
 
 export class MetadataServiceExtendedInfo {
-	constructor(private readonly service: MetaDataService) {
+	constructor(private readonly service: MetadataService) {
 	}
 
 	private async getWikiDataExtendedInfo(orm: Orm, id: string, lang: string): Promise<ExtendedInfo | undefined> {
 		const wiki = await this.service.wikidataSummary(orm, id, lang);
 		if (wiki?.summary) {
-			return MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
+			return MetadataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
 		}
 		return;
 	}
@@ -39,10 +39,10 @@ export class MetadataServiceExtendedInfo {
 			if (relation?.url?.resource) {
 				const list = relation.url.resource.split('/');
 				const title = list.at(-1) ?? '';
-				const lang = (list.at(2) ?? '').split('.').at(0);
+				const lang = (list.at(2) ?? '').split('.', 1).at(0);
 				const wiki = await this.service.wikipediaSummary(orm, title, lang);
 				if (wiki?.summary) {
-					return MetaDataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
+					return MetadataFormat.formatWikipediaExtendedInfo(wiki.summary.url, wiki.summary.summary);
 				}
 			}
 		}
@@ -65,7 +65,7 @@ export class MetadataServiceExtendedInfo {
 	private async getLastFMArtistInfo(orm: Orm, mbArtistID: string): Promise<ExtendedInfo | undefined> {
 		const lookup = await this.service.lastFMLookup(orm, LastFMLookupType.artist, mbArtistID);
 		if (lookup?.artist?.bio?.content) {
-			return MetaDataFormat.formatLastFMExtendedInfo(lookup.artist.url, lookup.artist.bio.content);
+			return MetadataFormat.formatLastFMExtendedInfo(lookup.artist.url, lookup.artist.bio.content);
 		}
 		return;
 	}
@@ -73,7 +73,7 @@ export class MetadataServiceExtendedInfo {
 	private async getLastFMAlbumInfo(orm: Orm, mbReleaseID: string): Promise<ExtendedInfo | undefined> {
 		const lookup = await this.service.lastFMLookup(orm, LastFMLookupType.album, mbReleaseID);
 		if (lookup?.album?.wiki?.content) {
-			return MetaDataFormat.formatLastFMExtendedInfo(lookup.album.url, lookup.album.wiki.content);
+			return MetadataFormat.formatLastFMExtendedInfo(lookup.album.url, lookup.album.wiki.content);
 		}
 		return;
 	}

@@ -57,7 +57,7 @@ export class Collection<T extends IDEntity<T>> {
 		}
 		const entity = this.owner as ManagedEntity;
 		const sourceFunction = this.getSourceFunction('get');
-		options = options ?? this.getOrderOptions();
+		options ??= this.getOrderOptions();
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		const sources: Array<Model<T>> = await sourceFunction(options);
 		let list: Array<T> = sources.map(source => entity._em.mapEntity(this.field.linkedEntity?.name ?? '', source));
@@ -70,7 +70,7 @@ export class Collection<T extends IDEntity<T>> {
 			}
 			const removed = this.changeSet.remove;
 			if (removed) {
-				list = list.filter(item => !removed.some(p => p.id === item.id));
+				list = list.filter(item => removed.every(p => p.id !== item.id));
 			}
 		}
 		this.list = list;
@@ -89,30 +89,32 @@ export class Collection<T extends IDEntity<T>> {
 	}
 
 	async flush(transaction?: Transaction): Promise<void> {
-		if (this.changeSet) {
-			if (this.changeSet.set) {
-				const sourceFunction = this.getSourceFunction('set');
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-				await sourceFunction(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), { transaction });
-			}
-			if (this.changeSet.add) {
-				const sourceFunction = this.getSourceFunction('add');
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-				await sourceFunction(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), { transaction });
-			}
-			if (this.changeSet.remove) {
-				const sourceFunction = this.getSourceFunction('remove');
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-				await sourceFunction(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), { transaction });
-			}
-			this.changeSet = undefined;
+		if (!this.changeSet) {
+			return;
 		}
+
+		if (this.changeSet.set) {
+			const sourceFunction = this.getSourceFunction('set');
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			await sourceFunction(this.changeSet.set.map(d => (d as any as ManagedEntity)._source), { transaction });
+		}
+		if (this.changeSet.add) {
+			const sourceFunction = this.getSourceFunction('add');
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			await sourceFunction(this.changeSet.add.map(d => (d as any as ManagedEntity)._source), { transaction });
+		}
+		if (this.changeSet.remove) {
+			const sourceFunction = this.getSourceFunction('remove');
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			await sourceFunction(this.changeSet.remove.map(d => (d as any as ManagedEntity)._source), { transaction });
+		}
+		this.changeSet = undefined;
 	}
 
 	async add(item: T): Promise<void> {
-		this.changeSet = this.changeSet ?? {};
-		this.changeSet.add = this.changeSet.add ?? [];
-		if (!this.changeSet.add.some(entry => entry.id === item.id)) {
+		this.changeSet ??= {};
+		this.changeSet.add ??= [];
+		if (this.changeSet.add.every(entry => entry.id !== item.id)) {
 			this.changeSet.add.push(item);
 			if (this.list) {
 				this.list.push(item);

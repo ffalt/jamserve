@@ -7,13 +7,13 @@ import { User } from '../user/user.js';
 import { ArtistBase, ArtistIndex } from './artist.model.js';
 import { DBObjectType } from '../../types/enums.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 
 @injectable()
 export class ArtistTransformService extends BaseTransformService {
-	@inject(MetaDataService)
-	public metaData!: MetaDataService;
+	@inject(MetadataService)
+	public metaData!: MetadataService;
 
 	@inject(GenreTransformService)
 	public Genre!: GenreTransformService;

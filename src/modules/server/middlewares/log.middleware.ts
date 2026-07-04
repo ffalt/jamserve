@@ -8,7 +8,7 @@ export function useLogMiddleware(): express.RequestHandler {
 		// log all requests
 		let info = '';
 		if (req.originalUrl === '/graphql') {
-			const query = `${req.body?.query}`.slice(0, 50);
+			const query = String(req.body?.query).slice(0, 50);
 			info = query.slice(0, query.indexOf('{'));
 		}
 		log.access(`${req.ip} ${req.method} ${req.originalUrl} ${info}`);

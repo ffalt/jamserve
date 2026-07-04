@@ -95,7 +95,7 @@ export class ChangesWorker extends BaseWorker {
 			log.debug('Syncing Removal Dependend Updates to DB');
 			await orm.em.flush();
 		}
-		await ChangesWorker.updateAffectedPlaylists(orm, affectedPlaylistIDs);
+		await this.updateAffectedPlaylists(orm, affectedPlaylistIDs);
 	}
 
 	private static async updateAffectedPlaylists(orm: Orm, affectedPlaylistIDs: Array<string>): Promise<void> {

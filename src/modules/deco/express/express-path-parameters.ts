@@ -33,8 +33,8 @@ function validateCustomPathParameterValue(rElement: string | undefined, group: C
 		default: {
 			const enumInfo = options.enums.find(entry => entry.enumObj === type);
 			if (enumInfo) {
-				const enumObj: any = enumInfo.enumObj;
-				if (!enumObj[value]) {
+				const enumObj = enumInfo.enumObj;
+				if (!Object.hasOwn(enumObj, value)) {
 					throw invalidParameterError(group.name, 'Enum value not valid');
 				}
 				return value;

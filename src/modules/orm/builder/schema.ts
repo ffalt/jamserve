@@ -20,7 +20,6 @@ export class ModelBuilder {
 	private async buildColumnAttributeModel(field: PropertyMetadata, entity: EntityMetadata): Promise<DataType | ModelAttributeColumnOptions | undefined> {
 		const type = field.getType();
 		const options = field.typeOptions;
-		const allowNull = options.nullable === true;
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (type === ORM_ID && (options as PrimaryFieldOptions).primaryKey) {
 			return {
@@ -31,6 +30,7 @@ export class ModelBuilder {
 				primaryKey: true
 			};
 		}
+		const allowNull = options.nullable === true;
 		if (type === ORM_ID) {
 			return { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, allowNull };
 		}

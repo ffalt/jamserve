@@ -3,7 +3,7 @@ import { WorkerService } from './worker.service.js';
 import { OrmService } from './orm.service.js';
 import { AdminChangeQueueInfo, IoRequest, RootStatus, WorkerRequestMode } from './io/io.types.js';
 import { WorkerRequestParameters } from './worker/worker.types.js';
-import { injectable, inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { logger } from '../../../utils/logger.js';
 import { IoCommandsArtwork } from './io/io.commands.artwork.js';
 import { IoCommandsFolder } from './io/io.commands.folder.js';
@@ -171,10 +171,7 @@ export class IoService {
 	getRootStatus(id: string): RootStatus {
 		let status = this.rootStatus.get(id);
 		status ??= { lastScan: Date.now() };
-		if (!status.scanning) {
-			const cmd = this.queue.find(c => c.parameters.rootID === id);
-			status.scanning = !!cmd;
-		}
+		status.scanning ??= this.queue.some(c => c.parameters.rootID === id);
 		return status;
 	}
 

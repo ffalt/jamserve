@@ -19,6 +19,7 @@ export interface FindTypeParameters {
 
 export function findType({ metadataKey, prototype, propertyKey, returnTypeFunc, typeOptions = {}, parameterIndex }: FindTypeParameters): TypeInfo {
 	const options: TypeOptions = { ...typeOptions };
+	// eslint-disable-next-line unicorn/no-nonstandard-builtin-properties
 	const reflectedType: Array<Function> | Function | undefined = Reflect.getMetadata(metadataKey, prototype, propertyKey);
 	const metadataDesignType = metadataKey === 'design:paramtypes' ?
 		(reflectedType as Array<Function>)[parameterIndex ?? -1] :

@@ -50,18 +50,18 @@ export class LandscapeService {
 	private matchNoiseCoord(name: string, noiseMap: Record<string, NoiseCoord>): NoiseCoord | undefined {
 		const normalized = normalizeGenreName(name);
 		// exact match
-		if (normalized in noiseMap) {
+		if (Object.hasOwn(noiseMap, normalized)) {
 			return noiseMap[normalized];
 		}
 		// strip trailing "s" (plural)
 		const singular = normalized.slice(0, -1);
-		if (normalized.endsWith('s') && singular in noiseMap) {
+		if (normalized.endsWith('s') && Object.hasOwn(noiseMap, singular)) {
 			return noiseMap[singular];
 		}
 		// check if any ENAO name contains the local name
-		for (const key of Object.keys(noiseMap)) {
+		for (const [key, value] of Object.entries(noiseMap)) {
 			if (key.includes(normalized)) {
-				return noiseMap[key];
+				return value;
 			}
 		}
 		return undefined;

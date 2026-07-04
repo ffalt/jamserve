@@ -18,7 +18,7 @@ import { PlaylistEntryRepository } from '../../../entity/playlistentry/playlist-
 import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.repository.js';
 import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository.js';
 import { SettingsRepository } from '../../../entity/settings/settings.repository.js';
-import { MetaDataRepository } from '../../../entity/metadata/metadata.repository.js';
+import { MetadataRepository } from '../../../entity/metadata/metadata.repository.js';
 import { ORMConfigRepositories } from '../../orm/definitions/config.js';
 import { GenreRepository } from '../../../entity/genre/genre.repository.js';
 
@@ -43,6 +43,6 @@ export const ORMRepositories: ORMConfigRepositories = {
 	PlayQueue: PlayQueueRepository,
 	PlayQueueEntry: PlayQueueEntryRepository,
 	Settings: SettingsRepository,
-	MetaData: MetaDataRepository,
+	MetaData: MetadataRepository,
 	Genre: GenreRepository
 };

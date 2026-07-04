@@ -26,15 +26,17 @@ export class MetadataStorage {
 	}
 
 	build(): void {
-		if (!this.initialized) {
-			this.buildClassMetadata(this.resultTypes);
-			this.buildClassMetadata(this.inputTypes);
-			this.buildClassMetadata(this.parameterTypes);
-			this.buildControllersMetadata(this.all);
-			this.buildControllersMetadata(this.gets);
-			this.buildControllersMetadata(this.posts);
-			this.initialized = true;
+		if (this.initialized) {
+			return;
 		}
+
+		this.buildClassMetadata(this.resultTypes);
+		this.buildClassMetadata(this.inputTypes);
+		this.buildClassMetadata(this.parameterTypes);
+		this.buildControllersMetadata(this.all);
+		this.buildControllersMetadata(this.gets);
+		this.buildControllersMetadata(this.posts);
+		this.initialized = true;
 	}
 
 	enumInfo(type: TypeValue): EnumMetadata | undefined {
@@ -47,15 +49,17 @@ export class MetadataStorage {
 
 	private buildClassMetadata(definitions: Array<ClassMetadata>): void {
 		for (const definition of definitions) {
-			if (definition.fields.length === 0) {
-				const fields = this.fields.filter(field => field.target === definition.target);
-				for (const field of fields) {
-					field.params = this.parameters.filter(
-						parameter => parameter.target === field.target && field.name === parameter.methodName
-					);
-				}
-				definition.fields = fields;
+			if (definition.fields.length > 0) {
+				continue;
 			}
+
+			const fields = this.fields.filter(field => field.target === definition.target);
+			for (const field of fields) {
+				field.params = this.parameters.filter(
+					parameter => parameter.target === field.target && field.name === parameter.methodName
+				);
+			}
+			definition.fields = fields;
 		}
 	}
 

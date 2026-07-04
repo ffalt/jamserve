@@ -20,7 +20,7 @@ function transformValueForDB(value: any, field: PropertyMetadata): any {
 
 function transformValueForUse(value: any, field: PropertyMetadata): any {
 	if (field.typeOptions.array) {
-		const arrayValue = `${(value ?? '')}`;
+		const arrayValue = String(value ?? '');
 		return arrayValue.split('|').filter(s => s.length > 0);
 	}
 	return value === null ? undefined : value;
@@ -39,36 +39,42 @@ export function mapManagedToSource(instance: ManagedEntity): void {
 
 export function cleanManagedEntityRelations(instance: ManagedEntity): void {
 	for (const field of instance._meta.fields) {
-		if (field.isRelation) {
-			const referenceOrCollection = instance[field.name];
-			if (referenceOrCollection instanceof Reference) {
-				const reference: Reference<any> = referenceOrCollection;
-				reference.clear();
-			} else if (referenceOrCollection instanceof Collection) {
-				const collection: Collection<any> = referenceOrCollection;
-				collection.clear();
-			}
+		if (!field.isRelation) {
+			continue;
+		}
+
+		const referenceOrCollection = instance[field.name];
+		if (referenceOrCollection instanceof Reference) {
+			const reference: Reference<any> = referenceOrCollection;
+			reference.clear();
+		} else if (referenceOrCollection instanceof Collection) {
+			const collection: Collection<any> = referenceOrCollection;
+			collection.clear();
 		}
 	}
 }
 
 export async function saveManagedEntityRelations(instance: ManagedEntity, transaction?: Transaction): Promise<void> {
 	for (const field of instance._meta.fields) {
-		if (field.isRelation) {
-			const referenceOrCollection = instance[field.name];
-			if (referenceOrCollection instanceof Collection) {
-				const collection: Collection<any> = referenceOrCollection;
-				await collection.flush(transaction);
-			}
+		if (!field.isRelation) {
+			continue;
+		}
+
+		const referenceOrCollection = instance[field.name];
+		if (referenceOrCollection instanceof Collection) {
+			const collection: Collection<any> = referenceOrCollection;
+			await collection.flush(transaction);
 		}
 	}
 }
 
 export function createManagedEntity<T extends AnyEntity<T>>(meta: EntityMetadata, source: Model, em: EntityManager): T {
 	const entity = new (meta.target as new () => Record<string, unknown>)();
-	Object.defineProperty(entity, '_em', { enumerable: false, value: em, writable: false });
-	Object.defineProperty(entity, '_source', { enumerable: false, value: source, writable: false });
-	Object.defineProperty(entity, '_meta', { enumerable: false, value: meta, writable: false });
+	Object.defineProperties(entity, {
+		_em: { enumerable: false, value: em, writable: false },
+		_source: { enumerable: false, value: source, writable: false },
+		_meta: { enumerable: false, value: meta, writable: false }
+	});
 	for (const field of meta.fields) {
 		if (field.isRelation) {
 			const referenceOrCollection = entity[field.name];

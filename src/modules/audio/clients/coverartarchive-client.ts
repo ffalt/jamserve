@@ -9,7 +9,7 @@ export class CoverArtArchiveClient extends WebserviceJSONClient<JSONRequest, Cov
 			basePath: '/'
 		};
 		// https://musicbrainz.org/doc/Cover_Art_Archive/API#Rate_limiting_rules
-		// there are currently no rate limiting rules in place at http://coverartarchive.org.
+		// there are currently no rate limiting rules in place at https://coverartarchive.org.
 		// nevertheless, we limit this to 10 per second
 		super(10, 1000, options.userAgent, { ...defaultOptions, ...options });
 	}

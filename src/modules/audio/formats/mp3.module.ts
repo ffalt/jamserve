@@ -28,7 +28,7 @@ const log = logger('Audio:MP3');
 export class AudioModuleMP3 {
 	private analyzeMp3Pool?: StaticPool<(filename: string) => IMP3Analyzer.Report>;
 	private rewriteAudioPool?: StaticPool<(filename: string) => void>;
-	private removeID3v1Pool?: StaticPool<(filename: string) => void>;
+	private toRemoveID3v1Pool?: StaticPool<(filename: string) => void>;
 	private fixMP3Pool?: StaticPool<(filename: string) => void>;
 
 	async read(filename: string): Promise<AudioScanResult> {
@@ -77,9 +77,9 @@ export class AudioModuleMP3 {
 			await removeID3v1(filename);
 			return;
 		}
-		this.removeID3v1Pool ??= new StaticPool({ size: 3, task: taskRemoveID3v1 });
+		this.toRemoveID3v1Pool ??= new StaticPool({ size: 3, task: taskRemoveID3v1 });
 		log.debug('remove ID3v1 Tag', filename);
-		await this.removeID3v1Pool.exec(filename);
+		await this.toRemoveID3v1Pool.exec(filename);
 	}
 
 	async fixAudio(filename: string): Promise<void> {

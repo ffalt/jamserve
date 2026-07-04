@@ -31,7 +31,7 @@ async function environment(envName: string): Promise<string | undefined> {
 }
 
 export async function getBinPath(name: string, envName: string): Promise<string | undefined> {
-	if (name in cache) {
+	if (Object.hasOwn(cache, name)) {
 		return cache[name];
 	}
 	try {

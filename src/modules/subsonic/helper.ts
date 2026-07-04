@@ -38,32 +38,32 @@ export const SubsonicHelper = {
 	},
 
 	async prepareAlbums(orm: Orm, albums: Array<Album>, user: User): Promise<Array<SubsonicAlbumID3>> {
-		return this.prepareList<Album, SubsonicAlbumID3>(orm, DBObjectType.album, albums,
+		return SubsonicHelper.prepareList<Album, SubsonicAlbumID3>(orm, DBObjectType.album, albums,
 			(o, state) => SubsonicFormatter.packAlbum(o, state), user);
 	},
 
 	async prepareArtists(orm: Orm, artists: Array<Artist>, user: User): Promise<Array<SubsonicArtistID3>> {
-		return this.prepareList<Artist, SubsonicArtistID3>(orm, DBObjectType.artist, artists,
+		return SubsonicHelper.prepareList<Artist, SubsonicArtistID3>(orm, DBObjectType.artist, artists,
 			(o, state) => SubsonicFormatter.packArtist(o, state), user);
 	},
 
 	async prepareFolders(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicChild>> {
-		return this.prepareList<Folder, SubsonicChild>(orm, DBObjectType.folder, folders,
+		return SubsonicHelper.prepareList<Folder, SubsonicChild>(orm, DBObjectType.folder, folders,
 			(o, state) => SubsonicFormatter.packFolder(o, state), user);
 	},
 
 	async prepareFolderArtists(orm: Orm, folders: Array<Folder>, user: User): Promise<Array<SubsonicArtist>> {
-		return this.prepareList<Folder, SubsonicArtist>(orm, DBObjectType.folder, folders,
+		return SubsonicHelper.prepareList<Folder, SubsonicArtist>(orm, DBObjectType.folder, folders,
 			(o, state) => SubsonicFormatter.packFolderArtist(o, state), user);
 	},
 
 	async prepareTrack(orm: Orm, track: Track, user: User): Promise<SubsonicChild> {
-		return this.prepareObj<Track, SubsonicChild>(orm, DBObjectType.track, track,
+		return SubsonicHelper.prepareObj<Track, SubsonicChild>(orm, DBObjectType.track, track,
 			(o, state) => SubsonicFormatter.packTrack(o, state), user);
 	},
 
 	async prepareTracks(orm: Orm, tracks: Array<Track>, user: User): Promise<Array<SubsonicChild>> {
-		return this.prepareList<Track, SubsonicChild>(orm, DBObjectType.track, tracks,
+		return SubsonicHelper.prepareList<Track, SubsonicChild>(orm, DBObjectType.track, tracks,
 			(o, state) => SubsonicFormatter.packTrack(o, state), user);
 	},
 
@@ -77,7 +77,7 @@ export const SubsonicHelper = {
 		const trackIDs = removeDups(bookmarks.map(bookmark => bookmarkDestinationID(bookmark)));
 		const userIds = removeDups(bookmarks.map(bookmark => bookmark.user.id()));
 		const tracks = await orm.Track.findByIDs(trackIDs);
-		const childs = await this.prepareTracks(orm, tracks, user);
+		const childs = await SubsonicHelper.prepareTracks(orm, tracks, user);
 		const users = await orm.User.findByIDs(userIds);
 		const result: Array<SubsonicBookmark> = [];
 		for (const bookmark of bookmarks) {

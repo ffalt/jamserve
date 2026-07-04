@@ -32,10 +32,7 @@ export class SubsonicPodcastApi {
 		 includeEpisodes 	No 	true 	(Since 1.9.0) Whether to include Podcast episodes in the returned result.
 		 id 	No 		(Since 1.9.0) If specified, only return the Podcast channel with this ID.
 		 */
-		let includeEpisodes = true;
-		if (query.includeEpisodes !== undefined) {
-			includeEpisodes = query.includeEpisodes;
-		}
+		const includeEpisodes = query.includeEpisodes ?? true;
 		let podcastList: Array<Podcast> = [];
 		if (query.id) {
 			const podcast = await orm.Podcast.findOneOrFailByID(query.id);

@@ -264,7 +264,7 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 				// to avoid duplicate entries, shuffle MUST be seeded
 				// if the api caller does not specify a seed, the random list will be "random" only per day for a user
 				// (dups can still occur on day change between two requests)
-				s ??= `${userID}_${new Date().toISOString().split('T').at(0)}`;
+				s ??= `${userID}_${new Date().toISOString().split('T', 1).at(0)}`;
 				ids.sort((a, b) => a.localeCompare(b));
 				ids = shuffleSeed.shuffle(ids, s);
 				break;
@@ -342,11 +342,13 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 	}
 
 	async removeLaterByIDs(ids: Array<string>): Promise<void> {
-		if (ids.length > 0) {
-			const items = await this.findByIDs(ids);
-			for (const item of items) {
-				this.removeLater(item);
-			}
+		if (ids.length === 0) {
+			return;
+		}
+
+		const items = await this.findByIDs(ids);
+		for (const item of items) {
+			this.removeLater(item);
 		}
 	}
 }

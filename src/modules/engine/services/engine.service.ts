@@ -15,7 +15,7 @@ import { PodcastService } from '../../../entity/podcast/podcast.service.js';
 import { EpisodeService } from '../../../entity/episode/episode.service.js';
 import { GenreService } from '../../../entity/genre/genre.service.js';
 import { StatsService } from '../../../entity/stats/stats.service.js';
-import { MetaDataService } from '../../../entity/metadata/metadata.service.js';
+import { MetadataService } from '../../../entity/metadata/metadata.service.js';
 import { AudioModule } from '../../audio/audio.module.js';
 import { StateService } from '../../../entity/state/state.service.js';
 import { NowPlayingService } from '../../../entity/nowplaying/nowplaying.service.js';
@@ -70,8 +70,8 @@ export class EngineService {
 	@inject(LandscapeService)
 	public landscape!: LandscapeService;
 
-	@inject(MetaDataService)
-	public metadata!: MetaDataService;
+	@inject(MetadataService)
+	public metadata!: MetadataService;
 
 	@inject(NowPlayingService)
 	public nowPlaying!: NowPlayingService;

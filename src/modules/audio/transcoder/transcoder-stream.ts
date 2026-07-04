@@ -61,7 +61,7 @@ export abstract class TranscoderStream implements StreamData {
 
 	static async transcodeToFile(source: string, destination: string, format: string, maxBitRate: number): Promise<void> {
 		return new Promise((resolve, reject) => {
-			const proc = TranscoderStream.getTranscodeProc(source, format, maxBitRate);
+			const proc = this.getTranscodeProc(source, format, maxBitRate);
 			proc
 				.on('start', cmd => {
 					log.debug(`ffmpeg started with ${cmd}`);

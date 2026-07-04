@@ -1,5 +1,5 @@
-import { MetaDataBlock } from './block.js';
+import { MetadataBlock } from './block.js';
 
-export abstract class MetaWriteableDataBlock extends MetaDataBlock {
+export abstract class MetaWriteableDataBlock extends MetadataBlock {
 	abstract publish(): Buffer;
 }

@@ -1,12 +1,12 @@
 import { Track } from '../track/track.js';
-import { MetaDataService } from './metadata.service.js';
+import { MetadataService } from './metadata.service.js';
 import { Song } from './metadata.service.similar-tracks.js';
 import { PageResult } from '../base/base.js';
 import { PageParameters } from '../base/base.parameters.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 
 export class MetadataServiceTopTracks {
-	constructor(private readonly service: MetaDataService) {
+	constructor(private readonly service: MetadataService) {
 	}
 
 	async byArtistName(orm: Orm, artist: string, page?: PageParameters): Promise<PageResult<Track>> {

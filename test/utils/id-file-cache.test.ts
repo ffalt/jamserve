@@ -70,21 +70,21 @@ describe('IDFolderCache', () => {
 			await fse.writeFile(cachefile, 'test content');
 
 			// Mock the debounce isPending and append methods
-			const isPendingSpy = jest.spyOn(cache['cacheDebounce'], 'isPending').mockReturnValue(true);
+			const pendingSpy = jest.spyOn(cache['cacheDebounce'], 'isPending').mockReturnValue(true);
 			const appendSpy = jest.spyOn(cache['cacheDebounce'], 'append').mockResolvedValue({
 				file: { filename: cachefile, name: cacheID }
 			});
 
 			const result = await cache.getExisting('123', { size: 100, format: 'jpg' });
 
-			expect(isPendingSpy).toHaveBeenCalledWith(cacheID);
+			expect(pendingSpy).toHaveBeenCalledWith(cacheID);
 			expect(appendSpy).toHaveBeenCalledWith(cacheID);
 			expect(result).toBeDefined();
 			expect(result?.file.filename).toBe(cachefile);
 			expect(result?.file.name).toBe(cacheID);
 
 			// Restore the original methods
-			isPendingSpy.mockRestore();
+			pendingSpy.mockRestore();
 			appendSpy.mockRestore();
 		});
 	});
@@ -136,7 +136,7 @@ describe('IDFolderCache', () => {
 			const cachefile = path.join(temporaryDir.name, cacheID);
 
 			// Mock the debounce methods
-			const isPendingSpy = jest.spyOn(cache['cacheDebounce'], 'isPending').mockReturnValue(true);
+			const pendingSpy = jest.spyOn(cache['cacheDebounce'], 'isPending').mockReturnValue(true);
 			const appendSpy = jest.spyOn(cache['cacheDebounce'], 'append').mockResolvedValue({
 				file: { filename: cachefile, name: cacheID }
 			});
@@ -148,7 +148,7 @@ describe('IDFolderCache', () => {
 
 			const result = await cache.get('123', { size: 100, format: 'jpg' }, build);
 
-			expect(isPendingSpy).toHaveBeenCalledWith(cacheID);
+			expect(pendingSpy).toHaveBeenCalledWith(cacheID);
 			expect(appendSpy).toHaveBeenCalledWith(cacheID);
 			expect(build).not.toHaveBeenCalled();
 			expect(result).toBeDefined();
@@ -156,7 +156,7 @@ describe('IDFolderCache', () => {
 			expect(result.file.name).toBe(cacheID);
 
 			// Restore the original methods
-			isPendingSpy.mockRestore();
+			pendingSpy.mockRestore();
 			appendSpy.mockRestore();
 		});
 

@@ -1,5 +1,5 @@
 // generate timestamp or delta
-// see http://nodejs.org/api/process.html#process_process_hrtime
+// see https://nodejs.org/api/process.html#process_process_hrtime
 function hrtime(previousTimestamp?: [number, number]): [number, number] {
 	const clocktime = Date.now() * 1e-3;
 	let seconds = Math.floor(clocktime);
@@ -7,8 +7,8 @@ function hrtime(previousTimestamp?: [number, number]): [number, number] {
 	const previousSeconds = previousTimestamp?.at(0);
 	const previousNanoSeconds = previousTimestamp?.at(1);
 	if (previousSeconds !== undefined && previousNanoSeconds !== undefined) {
-		seconds = seconds - previousSeconds;
-		nanoSeconds = nanoSeconds - previousNanoSeconds;
+		seconds -= previousSeconds;
+		nanoSeconds -= previousNanoSeconds;
 		if (nanoSeconds < 0) {
 			seconds--;
 			nanoSeconds += 1e9;

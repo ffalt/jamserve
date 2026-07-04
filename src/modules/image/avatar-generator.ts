@@ -11,7 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import seedrandom from 'seedrandom';
-import sharp from 'sharp';
+import sharp, { Sharp } from 'sharp';
 
 export type AvatarPart = 'background' | 'face' | 'clothes' | 'head' | 'hair' | 'eye' | 'mouth';
 
@@ -35,12 +35,12 @@ export class AvatarGenerator {
 	private readonly _parts: Array<AvatarPart>;
 
 	constructor(settings: Partial<AvatarGenearatorSettings> = {}) {
-		const cfg = {
+		const config = {
 			...defaultAvatarSettings,
 			...settings
 		};
-		this._variants = AvatarGenerator.BuildVariantsMap(cfg);
-		this._parts = cfg.parts;
+		this._variants = AvatarGenerator.BuildVariantsMap(config);
+		this._parts = config.parts;
 	}
 
 	private static BuildVariantsMap({ parts, partsLocation, imageExtension }: AvatarGenearatorSettings): VariantsMap {
@@ -92,7 +92,7 @@ export class AvatarGenerator {
 			.filter(Boolean);
 	}
 
-	public async generate(id: string, variant: string): Promise<sharp.Sharp> {
+	public async generate(id: string, variant: string): Promise<Sharp> {
 		const parts = this.getParts(id, variant);
 		const part = parts.at(0);
 		if (!part) {

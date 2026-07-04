@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import { ImageModule } from '../../image/image.module.js';
 import { FORMAT } from '../audio.format.js';
 import { AudioScanResult } from '../audio.module.js';
-import { flacToRawTag, id3v2ToFlacMetaData, rawTagToID3v2 } from '../metadata.js';
+import { flacToRawTag, id3v2ToFlacMetadata, rawTagToID3v2 } from '../metadata.js';
 import { Flac } from './flac/index.js';
 import { MetaWriteableDataBlock } from './flac/lib/block.writeable.js';
 import { TagFormatType } from '../../../types/enums.js';
@@ -41,7 +41,7 @@ export class AudioModuleFLAC {
 
 	async write(filename: string, tag: MediaTagRaw): Promise<void> {
 		const id3 = rawTagToID3v2(tag);
-		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetaData(id3, this.imageModule);
+		const flacBlocks: Array<MetaWriteableDataBlock> = await id3v2ToFlacMetadata(id3, this.imageModule);
 		const flac = new Flac();
 		const exits = await fse.pathExists(`${filename}.bak`);
 		if (!exits) {

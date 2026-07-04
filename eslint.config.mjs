@@ -14,10 +14,15 @@ const unicornRules = {
 	"unicorn/no-useless-promise-resolve-reject": "off",
 	"unicorn/no-useless-undefined": "off",
 	"unicorn/prefer-top-level-await": "off",
-
-	"unicorn/prevent-abbreviations": ["error", {
+	"unicorn/consistent-boolean-name": "off",
+	"unicorn/consistent-class-member-order": "off",
+	"unicorn/prefer-await": "off",
+	"unicorn/no-top-level-assignment-in-function": "off",
+	"unicorn/no-top-level-side-effects": "off",
+	"unicorn/prefer-private-class-fields": "off",
+	"unicorn/name-replacements": ["error", {
 		replacements: {
-			docs: false, req: false, res: false, env: false, dir: false, db: false, obj: false, utils: false
+			docs: false, req: false, res: false, env: false, dir: false, db: false, obj: false, utils: false, repository: false, cmd: false
 		}
 	}],
 	"unicorn/prefer-at": ["error", { checkAllIndexAccess: true }]
@@ -138,6 +143,9 @@ export default ts.config(
 			"unicorn/consistent-function-scoping": "off",
 			"unicorn/prefer-string-raw": "off",
 			"unicorn/prefer-at": "off",
+			"unicorn/prefer-string-repeat": "off",
+			"unicorn/consistent-boolean-name": "off",
+			"unicorn/consistent-compound-words": "off",
 
 			"@typescript-eslint/no-useless-constructor": "off",
 			"@typescript-eslint/no-misused-promises": "off",

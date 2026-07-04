@@ -13,14 +13,14 @@ export class MetaStatBuilder {
 	stats: Record<string, Record<string, { count: number; val: string | number }>> = {};
 
 	private static convert2Numlist(o: Record<string, { count: number; val: string | number }>): Array<MetaStatNumber> {
-		return Object.keys(o)
-			.map(key => ({ count: o[key].count, val: Number(o[key].val) }))
+		return Object.values(o)
+			.map(value => ({ count: value.count, val: Number(value.val) }))
 			.sort((a, b) => a.count - b.count);
 	}
 
 	private static convert2list(o: Record<string, { count: number; val: string | number }>): Array<MetaStatString | MetaStatNumber> {
-		return Object.keys(o)
-			.map(key => o[key])
+		return Object.values(o)
+			.map(value => value)
 			.sort((a, b) => a.count - b.count) as Array<MetaStatString | MetaStatNumber>;
 	}
 
@@ -55,44 +55,52 @@ export class MetaStatBuilder {
 	}
 
 	statID(name: string, value?: string): void {
-		if (value && value.trim().length > 0) {
-			let slug = value.split(' ').at(0) ?? value;
-			slug = slug.trim();
-			this.stats[name] = this.stats[name] ?? {};
-			const stat = this.stats[name];
-			stat[slug] = stat[slug] ?? { count: 0, val: slug };
-			stat[slug].count += 1;
+		if (!(value && value.trim().length > 0)) {
+			return;
 		}
+
+		let slug = value.split(' ', 1).at(0) ?? value;
+		slug = slug.trim();
+		this.stats[name] ??= {};
+		const stat = this.stats[name];
+		stat[slug] ??= { count: 0, val: slug };
+		stat[slug].count += 1;
 	}
 
 	statNumber(name: string, value?: number | null): void {
-		if (value !== undefined && value !== null) {
-			const slug = value.toString();
-			this.stats[name] = this.stats[name] ?? {};
-			const stat = this.stats[name];
-			stat[slug] = stat[slug] ?? { count: 0, val: value };
-			stat[slug].count += 1;
+		if (value === undefined || value === null) {
+			return;
 		}
+
+		const slug = value.toString();
+		this.stats[name] ??= {};
+		const stat = this.stats[name];
+		stat[slug] ??= { count: 0, val: value };
+		stat[slug].count += 1;
 	}
 
 	statSlugValue(name: string, value?: string): void {
-		if (value && value.trim().length > 0) {
-			const slug = slugify(value);
-			this.stats[name] = this.stats[name] ?? {};
-			const stat = this.stats[name];
-			stat[slug] = stat[slug] ?? { count: 0, val: value.trim() };
-			stat[slug].count += 1;
+		if (!(value && value.trim().length > 0)) {
+			return;
 		}
+
+		const slug = slugify(value);
+		this.stats[name] ??= {};
+		const stat = this.stats[name];
+		stat[slug] ??= { count: 0, val: value.trim() };
+		stat[slug].count += 1;
 	}
 
 	statTrackCount(name: string, trackTotal?: number, disc?: number): void {
-		if (trackTotal !== undefined) {
-			const slug = `${(disc ?? 1)}-${trackTotal}`;
-			this.stats[name] = this.stats[name] ?? {};
-			const stat = this.stats[name];
-			stat[slug] = stat[slug] ?? { count: 0, val: trackTotal };
-			stat[slug].count += 1;
+		if (trackTotal === undefined) {
+			return;
 		}
+
+		const slug = `${(disc ?? 1)}-${trackTotal}`;
+		this.stats[name] ??= {};
+		const stat = this.stats[name];
+		stat[slug] ??= { count: 0, val: trackTotal };
+		stat[slug].count += 1;
 	}
 
 	asList(name: string): Array<MetaStatString | MetaStatNumber> {

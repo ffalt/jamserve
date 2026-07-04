@@ -17,7 +17,7 @@ import { Track } from '../../../entity/track/track.js';
 import { User } from '../../../entity/user/user.js';
 import { Tag } from '../../../entity/tag/tag.js';
 import { injectable } from 'inversify';
-import { MetaData } from '../../../entity/metadata/metadata.js';
+import { Metadata } from '../../../entity/metadata/metadata.js';
 import { PlaylistEntry } from '../../../entity/playlistentry/playlist-entry.js';
 import { PlayQueueEntry } from '../../../entity/playqueueentry/playqueue-entry.js';
 import { Base } from '../../../entity/base/base.js';
@@ -39,7 +39,7 @@ import { BookmarkRepository } from '../../../entity/bookmark/bookmark.repository
 import { ArtworkRepository } from '../../../entity/artwork/artwork.repository.js';
 import { ArtistRepository } from '../../../entity/artist/artist.repository.js';
 import { StateRepository } from '../../../entity/state/state.repository.js';
-import { MetaDataRepository } from '../../../entity/metadata/metadata.repository.js';
+import { MetadataRepository } from '../../../entity/metadata/metadata.repository.js';
 import { PlayQueueRepository } from '../../../entity/playqueue/playqueue.repository.js';
 import { PlayQueueEntryRepository } from '../../../entity/playqueueentry/playqueue-entry.repository.js';
 import { PodcastRepository } from '../../../entity/podcast/podcast.repository.js';
@@ -79,7 +79,7 @@ export class Orm {
 	public PlayQueue!: PlayQueueRepository;
 	public PlayQueueEntry!: PlayQueueEntryRepository;
 	public Settings!: SettingsRepository;
-	public MetaData!: MetaDataRepository;
+	public MetaData!: MetadataRepository;
 
 	constructor(public em: EntityManager) {
 		this.State = em.getRepository<State, StateRepository>(State);
@@ -90,7 +90,7 @@ export class Orm {
 		this.Episode = em.getRepository<Episode, EpisodeRepository>(Episode);
 		this.Folder = em.getRepository<Folder, FolderRepository>(Folder);
 		this.Root = em.getRepository<Root, RootRepository>(Root);
-		this.MetaData = em.getRepository<MetaData, MetaDataRepository>(MetaData);
+		this.MetaData = em.getRepository<Metadata, MetadataRepository>(Metadata);
 		this.PlayQueue = em.getRepository<PlayQueue, PlayQueueRepository>(PlayQueue);
 		this.PlayQueueEntry = em.getRepository<PlayQueueEntry, PlayQueueEntryRepository>(PlayQueueEntry);
 		this.Playlist = em.getRepository<Playlist, PlaylistRepository>(Playlist);

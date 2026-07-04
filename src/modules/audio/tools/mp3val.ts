@@ -1,4 +1,4 @@
-// eslint-disable-next-line unicorn/prevent-abbreviations
+// eslint-disable-next-line unicorn/name-replacements
 import { spawnTool } from '../../../utils/tool.js';
 
 export interface MP3ValueWarning {
@@ -50,7 +50,7 @@ function parseMP3ValueResult(data: string): MP3ValueResult {
 	return result;
 }
 
-// eslint-disable-next-line unicorn/prevent-abbreviations
+// eslint-disable-next-line unicorn/name-replacements
 export async function mp3val(filename: string, fix: boolean): Promise<MP3ValueResult> {
 	const cmds = ['-si'];
 	if (fix) {

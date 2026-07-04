@@ -1,7 +1,7 @@
 import fse from 'fs-extra';
 import mimeTypes from 'mime-types';
 import path from 'node:path';
-import sharp, { FormatEnum } from 'sharp';
+import sharp, { FormatEnum, Sharp } from 'sharp';
 import { downloadFile } from '../../utils/download.js';
 import { SupportedReadImageFormat, SupportedWriteImageFormat } from '../../utils/filetype.js';
 import { validateExternalUrl } from '../../utils/url-check.js';
@@ -83,7 +83,7 @@ export class ImageModule {
 		await validateExternalUrl(imageUrl);
 
 		// Stage 1: cheap URL-extension pre-flight — catches obvious non-images early.
-		const urlExtension = (path.extname(imageUrl).split('?').at(0) ?? '').trim().toLowerCase().slice(1);
+		const urlExtension = (path.extname(imageUrl).split('?', 1).at(0) ?? '').trim().toLowerCase().slice(1);
 		if (urlExtension.length > 0 && !SupportedReadImageFormat.includes(urlExtension)) {
 			return Promise.reject(new Error(`Unsupported image format in URL: ${urlExtension}`));
 		}
@@ -103,7 +103,7 @@ export class ImageModule {
 
 		// Stage 2a: verify Content-Type header against allowed MIME types.
 		// Strip parameters like "; charset=utf-8" before comparing.
-		const mimeFromHeader = contentType?.split(';').at(0)?.trim().toLowerCase();
+		const mimeFromHeader = contentType?.split(';', 1).at(0)?.trim().toLowerCase();
 		const allowedMimes = new Set(
 			SupportedReadImageFormat.map(extension => mimeTypes.lookup(extension) as string).filter(Boolean)
 		);
@@ -135,7 +135,7 @@ export class ImageModule {
 	}
 
 	async paint(text: string, size: number | undefined, format: string | undefined): Promise<ImageResult> {
-		size = size ?? 320;
+		size ??= 320;
 		const image = new Jimp({ width: 360, height: 360, color: '#0f1217' });
 		this.font ??= await loadFont(SANS_32_WHITE);
 		image.print({
@@ -308,15 +308,13 @@ export class ImageModule {
 		await fse.writeFile(destination, avatar);
 	}
 
-	private static async formatImageInfo(sharpy: sharp.Sharp): Promise<ImageInfo> {
+	private static async formatImageInfo(sharpy: Sharp): Promise<ImageInfo> {
 		try {
 			const metadata = await sharpy.metadata();
 			return {
-				width: metadata.width || 0,
-				height: metadata.height || 0,
-				// defensive: sharp can return undefined for corrupt images
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				format: metadata.format || 'unknown',
+				width: metadata.width,
+				height: metadata.height,
+				format: metadata.format,
 				colorDepth: metadata.density ?? 0,
 				colors: 0
 			};

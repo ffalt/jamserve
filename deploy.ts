@@ -1,14 +1,14 @@
 import fse from 'fs-extra';
 import { exec } from 'node:child_process';
 
-export async function spawnNPM(): Promise<void> {
+async function spawnNPM(): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		exec('npm i -q', {
 			cwd: './deploy'
 		}, (error, stdout, _stderr) => {
 			console.log(stdout);
 			if (error) {
-				reject(error);
+				reject(error as Error);
 			} else {
 				resolve();
 			}

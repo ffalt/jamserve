@@ -4,7 +4,7 @@ export declare namespace AcousticBrainz {
 
 	export interface Response {
 		highlevel?: HighLevel;
-		metadata?: MetaData;
+		metadata?: Metadata;
 	}
 
 	export type KnownSections =
@@ -67,7 +67,7 @@ export declare namespace AcousticBrainz {
 		voice_instrumental?: HighLevelSection;
 	}
 
-	export interface MetaData {
+	export interface Metadata {
 		audio_properties: {
 			analysis_sample_rate: number;
 			bit_rate: number;

@@ -67,12 +67,36 @@ const setupFolderSubtreeOnly = (call: RequestMock, entities: MockEntities): void
 };
 
 const MOCK_CASES: Array<MockCase> = [
-	{ apiName: 'album/info', expected: 200, setup: (call, entities) => { call.data.id = entities.album.id; } },
-	{ apiName: 'album/id', expected: 200, setup: (call, entities) => { call.data.id = entities.album.id; } },
-	{ apiName: 'artist/info', expected: 200, setup: (call, entities) => { call.data.id = entities.artist.id; } },
-	{ apiName: 'artist/id', expected: 200, setup: (call, entities) => { call.data.id = entities.artist.id; } },
-	{ apiName: 'artwork/id', expected: 200, setup: (call, entities) => { call.data.id = entities.artwork.id; } },
-	{ apiName: 'genre/id', expected: 200, setup: (call, entities) => { call.data.id = entities.genre.id; } },
+	{
+		apiName: 'album/info', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.album.id;
+		}
+	},
+	{
+		apiName: 'album/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.album.id;
+		}
+	},
+	{
+		apiName: 'artist/info', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.artist.id;
+		}
+	},
+	{
+		apiName: 'artist/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.artist.id;
+		}
+	},
+	{
+		apiName: 'artwork/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.artwork.id;
+		}
+	},
+	{
+		apiName: 'genre/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.genre.id;
+		}
+	},
 	{ apiName: 'folder/artworks', expected: 200, setup: setupFolderWithSubtree },
 	{ apiName: 'folder/health', expected: 200, setup: setupFolderWithSubtree },
 	{ apiName: 'folder/subfolders', expected: 200, setup: setupFolderWithSubtree },
@@ -83,46 +107,206 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'artwork/search', expected: 200, setup: setupFolderSubtreeOnly },
 	{ apiName: 'track/health', expected: 200, setup: setupFolderSubtreeOnly },
 	{ apiName: 'track/rawTag/get', expected: 200, setup: setupFolderSubtreeOnly },
-	{ apiName: 'folder/artist/similar/tracks', expected: 500, setup: (call, entities) => { call.data.id = entities.artistFolder.id; } },
-	{ apiName: 'folder/artist/similar', expected: 500, setup: (call, entities) => { call.data.id = entities.artistFolder.id; } },
-	{ apiName: 'folder/artist/info', expected: 200, setup: (call, entities) => { call.data.id = entities.artistFolder.id; } },
-	{ apiName: 'folder/album/info', expected: 200, setup: (call, entities) => { call.data.id = entities.albumFolder.id; } },
-	{ apiName: 'folder/id', expected: 200, setup: (call, entities) => { call.data.id = entities.folder.id; } },
-	{ apiName: 'series/info', expected: 200, setup: (call, entities) => { call.data.id = entities.series.id; } },
-	{ apiName: 'series/id', expected: 200, setup: (call, entities) => { call.data.id = entities.series.id; } },
-	{ apiName: 'radio/id', expected: 200, setup: (call, entities) => { call.data.id = entities.radio.id; } },
-	{ apiName: 'root/status', expected: 200, setup: (call, entities) => { call.data.id = entities.mockRoot.id; } },
-	{ apiName: 'root/id', expected: 200, setup: (call, entities) => { call.data.id = entities.mockRoot.id; } },
-	{ apiName: 'playlist/id', expected: 200, setup: (call, entities) => { call.data.id = entities.playlist.id; } },
-	{ apiName: 'bookmark/id', expected: 200, setup: (call, entities) => { call.data.id = entities.bookmark.id; } },
-	{ apiName: 'user/id', expected: 200, setup: (call, entities) => { call.data.id = entities.user.id; } },
-	{ apiName: 'state/id', expected: 200, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'waveform/json', expected: 200, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'waveform/svg', expected: 200, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'track/lyrics', expected: 200, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'track/id', expected: 200, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'episode/status', expected: 200, setup: (call, entities) => { call.data.id = entities.episode.id; } },
-	{ apiName: 'episode/id', expected: 200, setup: (call, entities) => { call.data.id = entities.episode.id; } },
-	{ apiName: 'podcast/status', expected: 200, setup: (call, entities) => { call.data.id = entities.podcast.id; } },
-	{ apiName: 'podcast/id', expected: 200, setup: (call, entities) => { call.data.id = entities.podcast.id; } },
-	{ apiName: 'stream/{id}_{maxBitRate}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}_{maxBitRate}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'stream/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'download/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'download/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}_{width}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'waveform/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}_{size}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'image/{id}_{size}.{format}', expected: 200, binary: true, setup: (call, entities) => { call.params.id = entities.track.id; } },
-	{ apiName: 'artist/similar/tracks', expected: 500, setup: (call, entities) => { call.data.id = entities.artist.id; } },
-	{ apiName: 'artist/similar', expected: 500, setup: (call, entities) => { call.data.id = entities.artist.id; } },
-	{ apiName: 'album/similar/tracks', expected: 500, setup: (call, entities) => { call.data.id = entities.album.id; } },
-	{ apiName: 'track/similar', expected: 500, setup: (call, entities) => { call.data.id = entities.track.id; } },
-	{ apiName: 'metadata/acoustid/lookup', expected: 500, setup: (call, entities) => { call.data.trackID = entities.track.id; } },
+	{
+		apiName: 'folder/artist/similar/tracks', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.artistFolder.id;
+		}
+	},
+	{
+		apiName: 'folder/artist/similar', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.artistFolder.id;
+		}
+	},
+	{
+		apiName: 'folder/artist/info', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.artistFolder.id;
+		}
+	},
+	{
+		apiName: 'folder/album/info', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.albumFolder.id;
+		}
+	},
+	{
+		apiName: 'folder/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.folder.id;
+		}
+	},
+	{
+		apiName: 'series/info', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.series.id;
+		}
+	},
+	{
+		apiName: 'series/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.series.id;
+		}
+	},
+	{
+		apiName: 'radio/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.radio.id;
+		}
+	},
+	{
+		apiName: 'root/status', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.mockRoot.id;
+		}
+	},
+	{
+		apiName: 'root/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.mockRoot.id;
+		}
+	},
+	{
+		apiName: 'playlist/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.playlist.id;
+		}
+	},
+	{
+		apiName: 'bookmark/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.bookmark.id;
+		}
+	},
+	{
+		apiName: 'user/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.user.id;
+		}
+	},
+	{
+		apiName: 'state/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'waveform/json', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'waveform/svg', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'track/lyrics', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'track/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'episode/status', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.episode.id;
+		}
+	},
+	{
+		apiName: 'episode/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.episode.id;
+		}
+	},
+	{
+		apiName: 'podcast/status', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.podcast.id;
+		}
+	},
+	{
+		apiName: 'podcast/id', expected: 200, setup: (call, entities) => {
+			call.data.id = entities.podcast.id;
+		}
+	},
+	{
+		apiName: 'stream/{id}_{maxBitRate}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'stream/{id}_{maxBitRate}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'stream/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'stream/{id}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'download/{id}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'download/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'waveform/{id}_{width}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'waveform/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'waveform/{id}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'image/{id}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'image/{id}_{size}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'image/{id}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'image/{id}_{size}.{format}', expected: 200, binary: true, setup: (call, entities) => {
+			call.params.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'artist/similar/tracks', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.artist.id;
+		}
+	},
+	{
+		apiName: 'artist/similar', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.artist.id;
+		}
+	},
+	{
+		apiName: 'album/similar/tracks', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.album.id;
+		}
+	},
+	{
+		apiName: 'track/similar', expected: 500, setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
+		apiName: 'metadata/acoustid/lookup', expected: 500, setup: (call, entities) => {
+			call.data.trackID = entities.track.id;
+		}
+	},
 	{ apiName: 'podcast/discover/top', expected: 500 },
 	{ apiName: 'podcast/discover/byTag', expected: 500 },
 	{ apiName: 'podcast/discover/tags', expected: 500 },
@@ -143,8 +327,16 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'metadata/discogs/master', expected: 500 },
 	{ apiName: 'metadata/discogs/master/versions', expected: 500 },
 	{ apiName: 'metadata/lastfm/lookup', expected: 500 },
-	{ apiName: 'metadata/coverartarchive/image', expected: 500, binary: true, setup: call => { call.data.url = 'https://coverartarchive.org/invalid.png'; } },
-	{ apiName: 'metadata/discogs/image', expected: 500, binary: true, setup: call => { call.data.url = 'https://i.discogs.com/invalid.png'; } },
+	{
+		apiName: 'metadata/coverartarchive/image', expected: 500, binary: true, setup: call => {
+			call.data.url = 'https://coverartarchive.org/invalid.png';
+		}
+	},
+	{
+		apiName: 'metadata/discogs/image', expected: 500, binary: true, setup: call => {
+			call.data.url = 'https://i.discogs.com/invalid.png';
+		}
+	},
 	{ apiName: 'admin/queue/id', expected: 200 },
 	{ apiName: 'admin/settings/get', expected: 200 },
 	{ apiName: 'album/index', expected: 200 },
@@ -252,9 +444,8 @@ describe.each(DBConfigs)('REST with %o', db => {
 			if (mock.params) {
 				const split = mock.apiName.split('/');
 				let api = split.at(-1) ?? '';
-				for (const key of Object.keys(mock.params)) {
-					const value = mock.params[key];
-					api = api.replace(`{${key}}`, encodeURIComponent(`${value}`));
+				for (const [key, value] of Object.entries(mock.params)) {
+					api = api.replace(`{${key}}`, () => encodeURIComponent(String(value)));
 				}
 				if (api.trim().length === 0) {
 					expected = 404;
@@ -281,9 +472,8 @@ describe.each(DBConfigs)('REST with %o', db => {
 			if (mock.params) {
 				const split = mock.apiName.split('/');
 				let api = split.at(-1) ?? '';
-				for (const key of Object.keys(mock.params)) {
-					const value = mock.params[key];
-					api = api.replace(`{${key}}`, value);
+				for (const [key, value] of Object.entries(mock.params)) {
+					api = api.replace(`{${key}}`, () => String(value));
 				}
 				if (api.trim().length === 0) {
 					expected = 404;
@@ -312,7 +502,7 @@ describe.each(DBConfigs)('REST with %o', db => {
 		mocks = await MockRequests.generateRequestMocks(openapi);
 		validMocks = [];
 		for (const call of mocks) {
-			if (call.valid && !validMocks.some(c => c.apiName === call.apiName)) {
+			if (call.valid && validMocks.every(c => c.apiName !== call.apiName)) {
 				validMocks.push(call);
 			}
 		}

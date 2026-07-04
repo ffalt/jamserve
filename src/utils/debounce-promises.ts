@@ -25,7 +25,7 @@ export class DebouncePromises<T> {
 	}
 
 	isPending(id: string): boolean {
-		return !!this.pendingPromises.get(id);
+		return this.pendingPromises.has(id);
 	}
 
 	resolve(id: string, result: T): void {

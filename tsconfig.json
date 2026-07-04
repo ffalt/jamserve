@@ -21,8 +21,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "lib": [
-      "es2022",
-      "es2020"
+      "esnext"
     ],
     "types": [
       "node"

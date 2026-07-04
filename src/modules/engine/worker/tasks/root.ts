@@ -47,13 +47,13 @@ export class RootWorker extends BaseWorker {
 	): Promise<void> {
 		let offset = 0;
 		for (;;) {
-			const ids = await fetchIDs(offset, RootWorker.REMOVE_BATCH_SIZE);
+			const ids = await fetchIDs(offset, this.REMOVE_BATCH_SIZE);
 			if (ids.length === 0) {
 				break;
 			}
 			append(ids);
 			offset += ids.length;
-			if (ids.length < RootWorker.REMOVE_BATCH_SIZE) {
+			if (ids.length < this.REMOVE_BATCH_SIZE) {
 				break;
 			}
 		}
@@ -76,7 +76,7 @@ export class RootWorker extends BaseWorker {
 		}
 		// Check against deny-list of sensitive system paths
 		const normalizedPath = removeTrailingPathSeparator(resolvedDir);
-		for (const deniedPath of RootWorker.DENIED_ROOT_PATHS) {
+		for (const deniedPath of this.DENIED_ROOT_PATHS) {
 			if (normalizedPath === deniedPath || normalizedPath.startsWith(`${deniedPath}/`)) {
 				throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
 			}
@@ -216,29 +216,35 @@ export class RootWorker extends BaseWorker {
 
 		let updatedFolders = 0;
 		for (const folder of folders) {
-			if (folder.path.startsWith(oldPath)) {
-				folder.path = newPath + folder.path.slice(oldPath.length);
-				orm.Folder.persistLater(folder);
-				updatedFolders++;
+			if (!folder.path.startsWith(oldPath)) {
+				continue;
 			}
+
+			folder.path = newPath + folder.path.slice(oldPath.length);
+			orm.Folder.persistLater(folder);
+			updatedFolders++;
 		}
 
 		let updatedTracks = 0;
 		for (const track of tracks) {
-			if (track.path.startsWith(oldPath)) {
-				track.path = newPath + track.path.slice(oldPath.length);
-				orm.Track.persistLater(track);
-				updatedTracks++;
+			if (!track.path.startsWith(oldPath)) {
+				continue;
 			}
+
+			track.path = newPath + track.path.slice(oldPath.length);
+			orm.Track.persistLater(track);
+			updatedTracks++;
 		}
 
 		let updatedArtworks = 0;
 		for (const artwork of artworks) {
-			if (artwork.path.startsWith(oldPath)) {
-				artwork.path = newPath + artwork.path.slice(oldPath.length);
-				orm.Artwork.persistLater(artwork);
-				updatedArtworks++;
+			if (!artwork.path.startsWith(oldPath)) {
+				continue;
 			}
+
+			artwork.path = newPath + artwork.path.slice(oldPath.length);
+			orm.Artwork.persistLater(artwork);
+			updatedArtworks++;
 		}
 		log.info(`Migrated ${updatedFolders} folders, ${updatedTracks} tracks, ${updatedArtworks} artworks`);
 		await orm.em.flush();
@@ -273,7 +279,8 @@ export class RootWorker extends BaseWorker {
 
 	private logNode(node?: MergeNode): Array<string> {
 		let stat = [`${' '.repeat(node?.folder.level ?? 0)}${node?.changed ? '** ' : '|- '}${node?.folder.path}`];
-		for (const n of (node?.children ?? [])) {
+		const children = node?.children ?? [];
+		for (const n of children) {
 			stat = [...stat, ...this.logNode(n)];
 		}
 		return stat;
@@ -281,10 +288,7 @@ export class RootWorker extends BaseWorker {
 
 	private static async buildMergeTracks(folder: Folder): Promise<Array<OnDemandTrackMatch>> {
 		const tracks = await folder.tracks.getItems();
-		const list: Array<OnDemandTrackMatch> = [];
-		for (const track of tracks) {
-			list.push(new ObjLoadTrackMatch(track));
-		}
+		const list: Array<OnDemandTrackMatch> = Array.from(tracks, track => new ObjLoadTrackMatch(track));
 		return list;
 	}
 }

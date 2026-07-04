@@ -8,9 +8,9 @@ function xmlString(s: string): string {
 }
 
 function xmlContent(o: Record<string, any>): string {
-	for (const key of Object.keys(o)) {
+	for (const [key, value] of Object.entries(o)) {
 		if (key === 'value') {
-			return o[key] as string;
+			return value as string;
 		}
 	}
 	return '';
@@ -22,12 +22,13 @@ function xmlTag(key: string, value: string, parameter: string): string {
 
 function xmlParameters(o: Record<string, any>): string {
 	const sl: Array<string> = [];
-	for (const key of Object.keys(o)) {
-		if ((key !== 'value')) {
-			const sub = o[key];
-			if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
-				sl.push(` ${key}="${xmlString((sub as string | number | boolean).toString())}"`);
-			}
+	for (const [key, sub] of Object.entries(o)) {
+		if (key === 'value') {
+			continue;
+		}
+
+		if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
+			sl.push(` ${key}="${xmlString((sub as string | number | boolean).toString())}"`);
 		}
 	}
 	return sl.join('');
@@ -35,8 +36,7 @@ function xmlParameters(o: Record<string, any>): string {
 
 function xmlObject(o: Record<string, any>): string {
 	const sl: Array<string> = [];
-	for (const key of Object.keys(o)) {
-		const sub = o[key] as object | undefined;
+	for (const [key, sub] of Object.entries(o) as Array<[string, object | undefined]>) {
 		if (Array.isArray(sub)) {
 			for (const entry of (sub as Array<Record<string, any>>)) {
 				const value = xmlContent(entry) + xmlObject(entry);
@@ -52,8 +52,7 @@ function xmlObject(o: Record<string, any>): string {
 
 export function xml(o: Record<string, any>): string {
 	const sl: Array<string> = [];
-	for (const key of Object.keys(o)) {
-		const element = o[key] as Record<string, any>;
+	for (const [key, element] of Object.entries(o) as Array<[string, Record<string, any>]>) {
 		const value = xmlObject(element);
 		sl.push(xmlTag(key, value, xmlParameters(element)));
 	}

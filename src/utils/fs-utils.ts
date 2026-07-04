@@ -30,7 +30,7 @@ export function basenameStripExtension(filename: string): string {
 export function replaceFileSystemChars(s: string, replace: string): string {
 	return s
 		.replaceAll(':', ' - ')
-		.replaceAll(/[?/!\\"|*]/g, replace);
+		.replaceAll(/[?/!\\"|*]/g, () => replace);
 }
 
 const FolderSystemCharsRegEx = /[<>:"/\\|?*]|^(?:aux|con|clock\$|nul|prn|com[1-9]|lpt[1-9])$/i;
@@ -53,7 +53,7 @@ export function replaceFolderSystemChars(s: string, replace: string): string {
 	 */
 	return s
 		.replaceAll(':', ' -')
-		.replaceAll(/[|*?/!\\<>"]/g, replace);
+		.replaceAll(/[|*?/!\\<>"]/g, () => replace);
 }
 
 export function ensureTrailingPathSeparator(s: string): string {

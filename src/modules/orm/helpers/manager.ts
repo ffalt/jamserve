@@ -55,15 +55,17 @@ export class EntityManager {
 	}
 
 	getRepository<T extends IDEntity<T>, U extends EntityRepository<T> = EntityRepository<T>>(entityName: EntityName<T>): U {
-		entityName = typeof entityName === 'string' ? entityName : entityName.name;
-		if (!this.repositoryMap[entityName]) {
-			const RepositoryClass = this.config.repositories[entityName];
-			this.repositoryMap[entityName] = RepositoryClass ?
-				new RepositoryClass(this, entityName) as EntityRepository<IDEntity> :
-				new EntityRepository<IDEntity>(this, entityName);
+		const name = typeof entityName === 'string' ? entityName : entityName.name;
+		let repository = this.repositoryMap[name];
+		if (!repository) {
+			const RepositoryClass = this.config.repositories[name];
+			repository = RepositoryClass ?
+				new RepositoryClass(this, name) as EntityRepository<IDEntity> :
+				new EntityRepository<IDEntity>(this, name);
+			this.repositoryMap[name] = repository;
 		}
 
-		return this.repositoryMap[entityName] as unknown as U;
+		return repository as unknown as U;
 	}
 
 	persistAndFlush<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): Promise<void> {
@@ -73,7 +75,7 @@ export class EntityManager {
 
 	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
 		let entities: Array<AnyEntity> = Array.isArray(entity) ? entity : [entity];
-		entities = entities.filter(entry => !this.changeSet.some(c => c.persist === entry));
+		entities = entities.filter(entry => this.changeSet.every(c => c.persist !== entry));
 		this.changeSet.push(...(entities.map(entry => ({ entityName: entityName as string, persist: entry as ManagedEntity }))));
 	}
 
@@ -102,10 +104,12 @@ export class EntityManager {
 				}
 			}
 			for (const change of this.changeSet) {
-				if (change.persist) {
-					cleanManagedEntityRelations(change.persist);
-					this.parent.cache.remove(change.entityName, change.persist);
+				if (!change.persist) {
+					continue;
 				}
+
+				cleanManagedEntityRelations(change.persist);
+				this.parent.cache.remove(change.entityName, change.persist);
 			}
 			this.changeSet = [];
 			await t.commit();
@@ -207,7 +211,6 @@ export class EntityManager {
 	}
 
 	async all<T extends IDEntity<T>>(entityName: EntityName<T>): Promise<Array<T>> {
-		// eslint-disable-next-line unicorn/no-array-method-this-argument
 		return this.find(entityName, {});
 	}
 
@@ -228,7 +231,6 @@ export class EntityManager {
 	}
 
 	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<Array<T>> {
-		// eslint-disable-next-line unicorn/no-array-method-this-argument
 		return this.find(entityName, { where: { id: ids } as any });
 	}
 

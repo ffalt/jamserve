@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import fse from 'fs-extra';
-import { MetaDataBlock } from './lib/block.js';
-import { MetaDataBlockPicture } from './lib/block.picture.js';
-import { MetaDataBlockStreamInfo } from './lib/block.streaminfo.js';
+import { MetadataBlock } from './lib/block.js';
+import { MetadataBlockPicture } from './lib/block.picture.js';
+import { MetadataBlockStreamInfo } from './lib/block.streaminfo.js';
 import { BlockVorbiscomment } from './lib/block.vorbiscomment.js';
 import { MetaWriteableDataBlock } from './lib/block.writeable.js';
 import { FlacProcessorStream, MDB_TYPE } from './lib/processor.js';
@@ -48,14 +48,14 @@ export class Flac {
 		return new Promise<FlacInfo>((resolve, reject) => {
 			const reader = fs.createReadStream(filename);
 			const processor = new FlacProcessorStream(true, true);
-			processor.on('postprocess', (mdb: MetaDataBlock) => {
+			processor.on('postprocess', (mdb: MetadataBlock) => {
 				if (mdb.type === MDB_TYPE.STREAMINFO) {
-					result.media = Flac.formatMediaBlock(mdb as MetaDataBlockStreamInfo);
+					result.media = Flac.formatMediaBlock(mdb as MetadataBlockStreamInfo);
 				} else if (mdb.type === MDB_TYPE.VORBIS_COMMENT) {
 					result.comment = this.formatMediaComment(mdb as BlockVorbiscomment);
-				} else if (mdb.type === MDB_TYPE.PICTURE && (mdb as MetaDataBlockPicture).pictureData) {
-					result.pictures = result.pictures ?? [];
-					result.pictures.push(Flac.formatMediaPicture(mdb as MetaDataBlockPicture));
+				} else if (mdb.type === MDB_TYPE.PICTURE && (mdb as MetadataBlockPicture).pictureData) {
+					result.pictures ??= [];
+					result.pictures.push(Flac.formatMediaPicture(mdb as MetadataBlockPicture));
 				}
 			});
 			processor.on('id3', (buffer: Buffer) => {
@@ -90,8 +90,8 @@ export class Flac {
 		const writer = fs.createWriteStream(destination);
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
-			processor.on('preprocess', (mdb: MetaDataBlock) => {
-				if (mdb.type === MDB_TYPE.VORBIS_COMMENT || mdb.type === MDB_TYPE.PICTURE || mdb.type === MDB_TYPE.PADDING) {
+			processor.on('preprocess', (mdb: MetadataBlock) => {
+				if ([MDB_TYPE.VORBIS_COMMENT, MDB_TYPE.PICTURE, MDB_TYPE.PADDING].includes(mdb.type)) {
 					mdb.remove();
 				}
 				if (mdb.isLast) {
@@ -148,7 +148,7 @@ export class Flac {
 			const key = line.slice(0, pos).toUpperCase().replaceAll(' ', '_');
 			let index = 1;
 			let suffix = '';
-			while (tag[key + suffix]) {
+			while (Object.hasOwn(tag, key + suffix)) {
 				index++;
 				suffix = `|${index}`;
 			}
@@ -157,7 +157,7 @@ export class Flac {
 		return { vendor: mdb.vendor, tag };
 	}
 
-	private static formatMediaBlock(mdb: MetaDataBlockStreamInfo): FlacMedia {
+	private static formatMediaBlock(mdb: MetadataBlockStreamInfo): FlacMedia {
 		return {
 			duration: mdb.duration,
 			channels: mdb.channels + 1,
@@ -171,7 +171,7 @@ export class Flac {
 		};
 	}
 
-	private static formatMediaPicture(mdb: MetaDataBlockPicture): FlacPicture {
+	private static formatMediaPicture(mdb: MetadataBlockPicture): FlacPicture {
 		return {
 			pictureType: mdb.pictureType,
 			mimeType: mdb.mimeType,

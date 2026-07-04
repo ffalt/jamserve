@@ -1,14 +1,14 @@
-import { MetaDataType } from '../../types/enums.js';
+import { MetadataType } from '../../types/enums.js';
 import { Entity, Property } from '../../modules/orm/index.js';
 import { Base } from '../base/base.js';
 
 @Entity()
-export class MetaData extends Base {
+export class Metadata extends Base {
 	@Property(() => String)
 	name!: string;
 
-	@Property(() => MetaDataType)
-	dataType!: MetaDataType;
+	@Property(() => MetadataType)
+	dataType!: MetadataType;
 
 	@Property(() => String)
 	data!: string;

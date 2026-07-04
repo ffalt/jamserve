@@ -2,7 +2,7 @@ import { ID3v2, ID3V24TagBuilder, IID3V2, ITagID } from 'jamp3';
 import { parseDateToTimestamp } from '../../utils/date-time.js';
 import { ImageModule } from '../image/image.module.js';
 import { FlacInfo } from './formats/flac/index.js';
-import { MetaDataBlockPicture } from './formats/flac/lib/block.picture.js';
+import { MetadataBlockPicture } from './formats/flac/lib/block.picture.js';
 import { BlockVorbiscomment } from './formats/flac/lib/block.vorbiscomment.js';
 import { MetaWriteableDataBlock } from './formats/flac/lib/block.writeable.js';
 import { TrackTag } from './audio.format.js';
@@ -11,7 +11,7 @@ import { MediaTagRawFrame, MediaTagRawFrameBin } from '../../entity/tag/raw.mode
 
 function prepareFrame(frame: IID3V2.Frame): void {
 	if ((frame.value as any).bin) {
-		(frame.value as any).bin = ((frame.value as any).bin as Buffer).toString('base64');
+		(frame.value as any).bin = ((frame.value as any).bin as Buffer).toBase64();
 	}
 	if (frame.subframes) {
 		for (const subframe of frame.subframes) {
@@ -21,8 +21,9 @@ function prepareFrame(frame: IID3V2.Frame): void {
 }
 
 export function prepareResponseTag(tag: MediaTagRaw): void {
-	for (const key of Object.keys(tag.frames)) {
-		for (const frame of tag.frames[key] ?? []) {
+	for (const value of Object.values(tag.frames)) {
+		const list = value ?? [];
+		for (const frame of list) {
 			prepareFrame(frame as IID3V2.Frame);
 		}
 	}
@@ -131,7 +132,7 @@ export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<s
 	const pad = '000';
 	let nr = 1;
 	let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
-	while (simple[id]) {
+	while (Object.hasOwn(simple, id)) {
 		const chapterTime = parseDateToTimestamp(simple[id]);
 		const chapterID = simple[`${id}ID`] || id;
 		const chapterName = simple[`${id}NAME`];
@@ -180,25 +181,24 @@ export async function id3v2ToRawTag(id3v2tag: IID3V2.Tag): Promise<MediaTagRaw |
 	return tag;
 }
 
-export async function id3v2ToFlacMetaData(tag: IID3V2.Tag, imageModule: ImageModule): Promise<Array<MetaWriteableDataBlock>> {
+export async function id3v2ToFlacMetadata(tag: IID3V2.Tag, imageModule: ImageModule): Promise<Array<MetaWriteableDataBlock>> {
 	const DropFramesList = [
 		'TSIZ',
 		'APIC'
 	];
 	const simple = ID3v2.simplify(tag, DropFramesList);
-	const comments: Array<string> = [];
-	for (const key of Object.keys(simple)) {
-		comments.push(`${key}=${String(simple[key])}`);
-	}
+	const comments: Array<string> = Array.from(Object.keys(simple), key => `${key}=${String(simple[key])}`);
 	const result: Array<MetaWriteableDataBlock> = [BlockVorbiscomment.createVorbisCommentBlock('jamserve', comments)];
 	const pics = tag.frames.filter(frame => frame.id === 'APIC') as Array<{ id: string; value: IID3V2.FrameValue.Pic }>;
 	for (const pic of pics) {
-		if (pic.value.bin && pic.value.mimeType) {
-			const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
-			const picBlock = MetaDataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description,
-				imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
-			result.push(picBlock);
+		if (!(pic.value.bin && pic.value.mimeType)) {
+			continue;
 		}
+
+		const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
+		const picBlock = MetadataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description,
+			imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
+		result.push(picBlock);
 	}
 	return result;
 }
@@ -219,7 +219,7 @@ function rawFrameToID3v2(frame: MediaTagRawFrame): void {
 	if (frame.value && (frame as MediaTagRawFrameBin).value.bin) {
 		const bin = (frame as MediaTagRawFrameBin).value.bin as any;
 		if (typeof bin === 'string') {
-			(frame as IID3V2.Frames.IdBinFrame).value.bin = Buffer.from(bin, 'base64');
+			(frame as IID3V2.Frames.IdBinFrame).value.bin = Buffer.from(Uint8Array.fromBase64(bin));
 		}
 	}
 	if (frame.subframes) {
@@ -231,8 +231,9 @@ function rawFrameToID3v2(frame: MediaTagRawFrame): void {
 
 export function rawTagToID3v2(tag: MediaTagRaw): IID3V2.Tag {
 	const frames: Array<MediaTagRawFrame> = [];
-	for (const id of Object.keys(tag.frames)) {
-		for (const frame of tag.frames[id] ?? []) {
+	for (const value of Object.values(tag.frames)) {
+		const list = value ?? [];
+		for (const frame of list) {
 			rawFrameToID3v2(frame);
 			frames.push(frame);
 		}

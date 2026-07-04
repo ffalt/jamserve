@@ -83,7 +83,7 @@ export class ExpressMethod {
 				responder.sendString(context.req, context.res, result);
 				return;
 			}
-			const resultType = resultTypes.find(it => it.target === target);
+			const resultType = resultTypes.some(it => it.target === target);
 			if (!resultType) {
 				throw genericError(
 					`The value used as a result type of '@${name}' for '${JSON.stringify(method.getReturnType())}' of '${
@@ -105,7 +105,7 @@ export class ExpressMethod {
 	): RouteInfo {
 		let route = (post.route ?? '/');
 		if (post.customPathParameters) {
-			route = (post.route) ? `${post.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
+			route = (post.route) ? `${post.route.split('{', 1).at(0)}:pathParameters` : '/:pathParameters';
 		}
 		const roles = post.roles ?? ctrl?.roles ?? [];
 		const handlers: Array<express.RequestHandler> = [];
@@ -148,7 +148,7 @@ export class ExpressMethod {
 	public GET(get: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
 		let route = (get.route ?? '/');
 		if (get.customPathParameters) {
-			route = (get.route) ? `${get.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
+			route = (get.route) ? `${get.route.split('{', 1).at(0)}:pathParameters` : '/:pathParameters';
 		}
 		const roles = get.roles ?? ctrl?.roles ?? [];
 		router.get(route, async (req, res, next) => {
@@ -183,7 +183,7 @@ export class ExpressMethod {
 	public SUBSONIC(get: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions, metadata: MetadataStorage): RouteInfo {
 		let route = (get.route ?? '/');
 		if (get.customPathParameters) {
-			route = (get.route) ? `${get.route.split('{').at(0)}:pathParameters` : '/:pathParameters';
+			route = (get.route) ? `${get.route.split('{', 1).at(0)}:pathParameters` : '/:pathParameters';
 		}
 		const roles = get.roles ?? ctrl?.roles ?? [];
 		router.all(`${route}{.view}`, async (req, res, next) => {

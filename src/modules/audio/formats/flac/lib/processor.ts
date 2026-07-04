@@ -4,9 +4,9 @@
  **/
 
 import { Transform, TransformCallback, TransformOptions } from 'node:stream';
-import { MetaDataBlock } from './block.js';
-import { MetaDataBlockPicture } from './block.picture.js';
-import { MetaDataBlockStreamInfo } from './block.streaminfo.js';
+import { MetadataBlock } from './block.js';
+import { MetadataBlockPicture } from './block.picture.js';
+import { MetadataBlockStreamInfo } from './block.streaminfo.js';
 import { BlockVorbiscomment } from './block.vorbiscomment.js';
 
 enum STATE {
@@ -44,7 +44,7 @@ export class FlacProcessorStream extends Transform {
 	private buf?: Buffer;
 	private bufPos = 0;
 
-	private mdb?: MetaDataBlock;
+	private mdb?: MetadataBlock;
 	private mdbLen = 0;
 	private mdbLast = false;
 	private mdbPush = false;
@@ -52,7 +52,7 @@ export class FlacProcessorStream extends Transform {
 
 	constructor(
 		private readonly reportID3: boolean = false,
-		private readonly parseMetaDataBlocks: boolean = false,
+		private readonly parseMetadataBlocks: boolean = false,
 		options?: TransformOptions
 	) {
 		super(options);
@@ -138,7 +138,7 @@ export class FlacProcessorStream extends Transform {
 		// Not enough data available
 		if (persist) {
 			// Copy/append incomplete block to backup buffer
-			this.buf = this.buf ?? Buffer.alloc(minCapacity);
+			this.buf ??= Buffer.alloc(minCapacity);
 			chunk.buffer.copy(this.buf, this.bufPos, chunk.pos, chunk.length);
 		} else {
 			// Push incomplete block after validation
@@ -196,7 +196,7 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private processMDB(chunk: Chunk): void {
-		if (this.safePush(chunk, this.mdbLen, this.parseMetaDataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
+		if (this.safePush(chunk, this.mdbLen, this.parseMetadataBlocks, (slice, isDone) => this.validateMDB(slice, isDone))) {
 			if (!this.mdb) {
 				return;
 			}
@@ -260,18 +260,18 @@ export class FlacProcessorStream extends Transform {
 		return true;
 	}
 
-	private initMDB(type: MDB_TYPE): MetaDataBlock {
+	private initMDB(type: MDB_TYPE): MetadataBlock {
 		// Create appropriate MDB object
-		// (data is injected later in _validateMDB, if parseMetaDataBlocks option is set to true)
+		// (data is injected later in _validateMDB, if parseMetadataBlocks option is set to true)
 		switch (type) {
 			case MDB_TYPE.STREAMINFO: {
-				return new MetaDataBlockStreamInfo(this.mdbLast);
+				return new MetadataBlockStreamInfo(this.mdbLast);
 			}
 			case MDB_TYPE.VORBIS_COMMENT: {
 				return new BlockVorbiscomment(this.mdbLast);
 			}
 			case MDB_TYPE.PICTURE: {
-				return new MetaDataBlockPicture(this.mdbLast);
+				return new MetadataBlockPicture(this.mdbLast);
 			}
 			// case MDB_TYPE.PADDING:
 			// case MDB_TYPE.APPLICATION:
@@ -279,7 +279,7 @@ export class FlacProcessorStream extends Transform {
 			// case MDB_TYPE.CUESHEET:
 			// case MDB_TYPE.INVALID:
 			default: {
-				return new MetaDataBlock(this.mdbLast, type);
+				return new MetadataBlock(this.mdbLast, type);
 			}
 		}
 	}
@@ -318,8 +318,8 @@ export class FlacProcessorStream extends Transform {
 	}
 
 	private validateMDB(slice: Buffer, isDone: boolean): boolean {
-		// Parse the MDB if parseMetaDataBlocks option is set to true
-		if (this.parseMetaDataBlocks && isDone) {
+		// Parse the MDB if parseMetadataBlocks option is set to true
+		if (this.parseMetadataBlocks && isDone) {
 			if (!this.mdb) {
 				return false;
 			}

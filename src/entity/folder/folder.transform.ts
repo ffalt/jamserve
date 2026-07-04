@@ -6,7 +6,7 @@ import { IncludesFolderParameters, IncludesFolderChildrenParameters } from './fo
 import { User } from '../user/user.js';
 import { FolderIndex } from './folder.model.js';
 import { DBObjectType, FolderType } from '../../types/enums.js';
-import { MetaDataService } from '../metadata/metadata.service.js';
+import { MetadataService } from '../metadata/metadata.service.js';
 import { IndexResult, IndexResultGroup } from '../base/base.js';
 import { GenreTransformService } from '../genre/genre.transform.js';
 import { ExtendedInfo } from '../metadata/metadata.model.js';
@@ -15,8 +15,8 @@ import { FolderBase, FolderParent, FolderTag } from './folder-base.model.js';
 
 @injectable()
 export class FolderTransformService extends BaseTransformService {
-	@inject(MetaDataService)
-	public metaData!: MetaDataService;
+	@inject(MetadataService)
+	public metaData!: MetadataService;
 
 	@inject(GenreTransformService)
 	public Genre!: GenreTransformService;

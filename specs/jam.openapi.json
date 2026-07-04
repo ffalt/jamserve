@@ -13614,7 +13614,7 @@
 		},
 		"/metadata/lastfm/lookup": {
 			"get": {
-				"operationId": "MetaDataController.lastfmLookup",
+				"operationId": "MetadataController.lastfmLookup",
 				"summary": "Lookup LastFM",
 				"description": "Lookup LastFM data",
 				"tags": [
@@ -13649,7 +13649,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -13680,7 +13680,7 @@
 		},
 		"/metadata/lyricsovh/search": {
 			"get": {
-				"operationId": "MetaDataController.lyricsovhSearch",
+				"operationId": "MetadataController.lyricsovhSearch",
 				"summary": "Search Lyrics on lyrics.ovh",
 				"description": "Search Lyrics.ovh data",
 				"tags": [
@@ -13716,7 +13716,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataTrackLyricsResult"
+									"$ref": "#/components/schemas/MetadataTrackLyricsResult"
 								}
 							}
 						}
@@ -13747,7 +13747,7 @@
 		},
 		"/metadata/lrclib/get": {
 			"get": {
-				"operationId": "MetaDataController.lcrlibSearch",
+				"operationId": "MetadataController.lcrlibSearch",
 				"summary": "Get Lyrics on lrclib.net",
 				"description": "Get Lrclib.net data",
 				"tags": [
@@ -13805,7 +13805,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -13836,7 +13836,7 @@
 		},
 		"/metadata/acoustid/lookup": {
 			"get": {
-				"operationId": "MetaDataController.acoustidLookup",
+				"operationId": "MetadataController.acoustidLookup",
 				"summary": "Lookup AcoustId",
 				"description": "Lookup AcoustId data",
 				"tags": [
@@ -13872,7 +13872,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -13903,7 +13903,7 @@
 		},
 		"/metadata/musicbrainz/lookup": {
 			"get": {
-				"operationId": "MetaDataController.musicbrainzLookup",
+				"operationId": "MetadataController.musicbrainzLookup",
 				"summary": "Lookup MusicBrainz",
 				"description": "Lookup MusicBrainz data",
 				"tags": [
@@ -13948,7 +13948,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -13979,7 +13979,7 @@
 		},
 		"/metadata/musicbrainz/search": {
 			"get": {
-				"operationId": "MetaDataController.musicbrainzSearch",
+				"operationId": "MetadataController.musicbrainzSearch",
 				"summary": "Search MusicBrainz",
 				"description": "Search MusicBrainz data",
 				"tags": [
@@ -14054,7 +14054,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14085,7 +14085,7 @@
 		},
 		"/metadata/acousticbrainz/lookup": {
 			"get": {
-				"operationId": "MetaDataController.acousticbrainzLookup",
+				"operationId": "MetadataController.acousticbrainzLookup",
 				"summary": "Lookup AcousticBrainz",
 				"description": "Lookup AcousticBrainz data",
 				"tags": [
@@ -14121,7 +14121,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14152,7 +14152,7 @@
 		},
 		"/metadata/coverartarchive/lookup": {
 			"get": {
-				"operationId": "MetaDataController.coverartarchiveLookup",
+				"operationId": "MetadataController.coverartarchiveLookup",
 				"summary": "Lookup CoverArtArchive",
 				"description": "Lookup CoverArtArchive data",
 				"tags": [
@@ -14187,7 +14187,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14218,7 +14218,7 @@
 		},
 		"/metadata/coverartarchive/image": {
 			"get": {
-				"operationId": "MetaDataController.coverartarchiveImage",
+				"operationId": "MetadataController.coverartarchiveImage",
 				"summary": "Request CoverArtArchive Image",
 				"description": "Get CoverArtArchive image",
 				"tags": [
@@ -14292,7 +14292,7 @@
 		},
 		"/metadata/wikipedia/summary": {
 			"get": {
-				"operationId": "MetaDataController.wikipediaSummarySearch",
+				"operationId": "MetadataController.wikipediaSummarySearch",
 				"summary": "Search Wikipedia",
 				"description": "Search Wikipedia Summary data",
 				"tags": [
@@ -14329,7 +14329,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14360,7 +14360,7 @@
 		},
 		"/metadata/wikidata/summary": {
 			"get": {
-				"operationId": "MetaDataController.wikidataSummarySearch",
+				"operationId": "MetadataController.wikidataSummarySearch",
 				"summary": "Search Wikidata",
 				"description": "Search WikiData summary data",
 				"tags": [
@@ -14396,7 +14396,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14427,7 +14427,7 @@
 		},
 		"/metadata/wikidata/lookup": {
 			"get": {
-				"operationId": "MetaDataController.wikidataLookup",
+				"operationId": "MetadataController.wikidataLookup",
 				"summary": "Lookup WikiData",
 				"description": "Lookup WikiData summary data",
 				"tags": [
@@ -14451,7 +14451,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14482,7 +14482,7 @@
 		},
 		"/metadata/discogs/search/release": {
 			"get": {
-				"operationId": "MetaDataController.discogsReleaseSearch",
+				"operationId": "MetadataController.discogsReleaseSearch",
 				"summary": "Search Discogs",
 				"description": "Search Discogs release data",
 				"tags": [
@@ -14626,7 +14626,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14654,7 +14654,7 @@
 		},
 		"/metadata/discogs/search/artist": {
 			"get": {
-				"operationId": "MetaDataController.discogsArtistSearch",
+				"operationId": "MetadataController.discogsArtistSearch",
 				"summary": "Search Discogs Artist",
 				"description": "Search Discogs artist data",
 				"tags": [
@@ -14679,7 +14679,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14710,7 +14710,7 @@
 		},
 		"/metadata/discogs/release": {
 			"get": {
-				"operationId": "MetaDataController.discogsReleaseLookup",
+				"operationId": "MetadataController.discogsReleaseLookup",
 				"summary": "Lookup Discogs Release",
 				"description": "Lookup Discogs release by ID",
 				"tags": [
@@ -14735,7 +14735,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14766,7 +14766,7 @@
 		},
 		"/metadata/discogs/artist": {
 			"get": {
-				"operationId": "MetaDataController.discogsArtistLookup",
+				"operationId": "MetadataController.discogsArtistLookup",
 				"summary": "Lookup Discogs Artist",
 				"description": "Lookup Discogs artist by ID",
 				"tags": [
@@ -14791,7 +14791,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14822,7 +14822,7 @@
 		},
 		"/metadata/discogs/master": {
 			"get": {
-				"operationId": "MetaDataController.discogsMasterLookup",
+				"operationId": "MetadataController.discogsMasterLookup",
 				"summary": "Lookup Discogs Master",
 				"description": "Lookup Discogs master release by ID",
 				"tags": [
@@ -14847,7 +14847,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14878,7 +14878,7 @@
 		},
 		"/metadata/discogs/master/versions": {
 			"get": {
-				"operationId": "MetaDataController.discogsMasterVersionsLookup",
+				"operationId": "MetadataController.discogsMasterVersionsLookup",
 				"summary": "Lookup Discogs Master Versions",
 				"description": "Lookup Discogs master release versions by ID",
 				"tags": [
@@ -14903,7 +14903,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MetaDataResult"
+									"$ref": "#/components/schemas/MetadataResult"
 								}
 							}
 						}
@@ -14934,7 +14934,7 @@
 		},
 		"/metadata/discogs/image": {
 			"get": {
-				"operationId": "MetaDataController.discogsImage",
+				"operationId": "MetadataController.discogsImage",
 				"summary": "Request Discogs Image",
 				"description": "Get Discogs image",
 				"tags": [
@@ -28854,7 +28854,7 @@
 					"artist-toptracks"
 				]
 			},
-			"MetaDataResult": {
+			"MetadataResult": {
 				"type": "object",
 				"properties": {
 					"data": {
@@ -28883,7 +28883,7 @@
 					}
 				}
 			},
-			"MetaDataTrackLyricsResult": {
+			"MetadataTrackLyricsResult": {
 				"type": "object",
 				"properties": {
 					"data": {
