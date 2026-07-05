@@ -14,7 +14,6 @@ import path from 'node:path';
 import sharp from 'sharp';
 import { downloadFile } from '../../utils/download.js';
 import { SupportedReadImageFormat, SupportedWriteImageFormat } from '../../utils/filetype.js';
-import { validateExternalUrl } from '../../utils/url-check.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { IDFolderCache } from '../../utils/id-file-cache.js';
 import { logger } from '../../utils/logger.js';
@@ -59,7 +58,6 @@ let ImageModule = ImageModule_1 = class ImageModule {
     }
     async storeImage(filepath, name, imageUrl) {
         log.debug('Requesting image', imageUrl);
-        await validateExternalUrl(imageUrl);
         const urlExtension = (path.extname(imageUrl).split('?', 1).at(0) ?? '').trim().toLowerCase().slice(1);
         if (urlExtension.length > 0 && !SupportedReadImageFormat.includes(urlExtension)) {
             return Promise.reject(new Error(`Unsupported image format in URL: ${urlExtension}`));
