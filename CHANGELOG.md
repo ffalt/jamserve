@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.16](https://github.com/ffalt/jamserve/compare/v0.6.15...v0.6.16) (2026-07-05)
+
+
+### Features
+
+* **SSRF:** integrate request-filtering-agent for SSRF URL handling instead of the hand-rolled code ([c0b6b5e](https://github.com/ffalt/jamserve/commit/c0b6b5e0c1bd511b94c07e891dacbd71257ad6b7))
+
+
+### Bug Fixes
+
+* **ssrf:** block hex-compressed IPv4-mapped IPv6 hosts in isBlockedIPv6 ([2302efd](https://github.com/ffalt/jamserve/commit/2302efd5792222b493baa551a702ef0547bfd1d3))
+
 ## [0.6.15](https://github.com/ffalt/jamserve/compare/v0.6.14...v0.6.15) (2026-07-04)
 
 
