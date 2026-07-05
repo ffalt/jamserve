@@ -2,11 +2,11 @@ import FeedParser from 'feedparser';
 import iconvDefault, { Iconv as IconvType } from 'iconv-lite';
 import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
+import { useAgent } from 'request-filtering-agent';
 import { Readable } from 'node:stream';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
 import { EpisodeChapter } from '../episode/episode.js';
-import { validateExternalUrl } from '../../utils/url-check.js';
 
 const iconv = iconvDefault as unknown as typeof IconvType;
 
@@ -100,8 +100,8 @@ export class Feed {
 
 	private async fetch(url: string): Promise<{ feed: FeedParser.Meta; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
-		await validateExternalUrl(url);
 		const result = await fetch(url, {
+			agent: parsedUrl => useAgent(parsedUrl.href),
 			signal: AbortSignal.timeout(30_000),
 			headers: {
 				// Some feeds do not respond without user-agent and accept headers.

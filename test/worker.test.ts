@@ -970,7 +970,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				it('should handle invalid parameters', async () => {
 					await expect(workerService.artwork.download({ ...options, artworkURL: '' })).rejects.toThrow('Invalid URL');
-					await expect(workerService.artwork.download({ ...options, artworkURL: 'http://127.0.0.1/somefile.png' })).rejects.toThrow('URL targets a blocked network address');
+					await expect(workerService.artwork.download({ ...options, artworkURL: 'http://127.0.0.1/somefile.png' })).rejects.toThrow('Disallowed net connect for "127.0.0.1:80/somefile.png"');
 					await expect(workerService.artwork.download({ ...options, folderID: UNKNOWN_UUID, artworkURL: mockNockURL('nonexisting.png') })).rejects.toThrow('Folder not found');
 					const scope = mockNock()
 						.get('/invalid').reply(200, '', { 'Content-Type': '' });
