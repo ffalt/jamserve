@@ -7,7 +7,7 @@ import 'passport';
 import { ConfigService } from '../modules/engine/services/config.service.js';
 import { Validator } from '../modules/engine/orm/validator.js';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 configureLogger('debug');
 
