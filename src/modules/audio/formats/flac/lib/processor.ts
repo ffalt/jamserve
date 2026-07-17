@@ -319,7 +319,7 @@ export class FlacProcessorStream extends Transform {
 
 	private validateMDB(slice: Buffer, isDone: boolean): boolean {
 		// Parse the MDB if parseMetadataBlocks option is set to true
-		if (this.parseMetadataBlocks && isDone) {
+		if (isDone && this.parseMetadataBlocks) {
 			if (!this.mdb) {
 				return false;
 			}

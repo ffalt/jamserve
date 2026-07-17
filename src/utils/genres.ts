@@ -1121,7 +1121,7 @@ function cleanGenrePart(part: string): Array<string> | undefined {
 			part = part.slice(0, numpart.index) + part.slice(numpart.index + numpart0.length);
 		}
 	}
-	if (part.length === 0 && (value !== undefined)) {
+	if ((value !== undefined) && part.length === 0) {
 		const s = genreData.id3v1[value];
 		if (s) {
 			part = s;

@@ -107,7 +107,7 @@ export const InvalidData = {
 
 	generateInvalidStringData(schema: SchemaObject, isField: boolean, required: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		if (schema.default === undefined && isField && required) { // if the default value available, these parameter are always valid to omit
+		if (isField && required && schema.default === undefined) { // if the default value available, these parameter are always valid to omit
 			result.push({ data: '', invalid: 'empty string' });
 		}
 		if (schema.enum) {
@@ -127,7 +127,7 @@ export const InvalidData = {
 
 	generateInvalidArrayData(schema: SchemaObject, isField: boolean): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [];
-		if (schema.required && isField) {
+		if (isField && schema.required) {
 			result.push({ data: null, invalid: 'null' });
 		}
 		const array = [ValidData.generateValidDataSchema(schema.items as SchemaObject).data];

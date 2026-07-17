@@ -37,11 +37,11 @@ export class MetaStatBuilder {
 		if (item0.count - item1.count > 4) {
 			return item0.val;
 		}
-		if (list.length > 3 && multi !== undefined) {
+		if (multi !== undefined && list.length > 3) {
 			return multi;
 		}
 		const cleaned = list.filter(o => o.count > 1);
-		if (cleaned.length > 1 && multi !== undefined) {
+		if (multi !== undefined && cleaned.length > 1) {
 			return multi;
 		}
 		const cleaned0 = cleaned.at(0);

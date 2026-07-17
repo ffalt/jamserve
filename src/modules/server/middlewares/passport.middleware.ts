@@ -25,7 +25,7 @@ function passPortAuth(name: string, next: express.NextFunction, req: UserRequest
 			next();
 			return;
 		}
-		if (info instanceof Error || !user) {
+		if (!user || info instanceof Error) {
 			next();
 			return;
 		}

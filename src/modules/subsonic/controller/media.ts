@@ -150,11 +150,11 @@ export class SubsonicMediaRetrievalApi {
 		}
 		if (tag?.artist && tag.title) {
 			const trackLyrics = await engine.metadata.lyricsLrcLibByTrackTag(orm, track, tag);
-			if (trackLyrics.syncedLyrics && !hasSynced) {
+			if (!hasSynced && trackLyrics.syncedLyrics) {
 				structuredLyrics.push(splitLyrics(trackLyrics.syncedLyrics));
 				hasUnssynced = true;
 			}
-			if (trackLyrics.lyrics && !hasUnssynced) {
+			if (!hasUnssynced && trackLyrics.lyrics) {
 				structuredLyrics.push(splitLyrics(trackLyrics.lyrics));
 			}
 			if (!hasSynced && !hasUnssynced) {

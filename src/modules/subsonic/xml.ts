@@ -27,7 +27,7 @@ function xmlParameters(o: Record<string, any>): string {
 			continue;
 		}
 
-		if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
+		if (sub !== undefined && (typeof sub !== 'object') && !Array.isArray(sub)) {
 			sl.push(` ${key}="${xmlString((sub as string | number | boolean).toString())}"`);
 		}
 	}

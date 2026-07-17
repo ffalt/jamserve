@@ -108,7 +108,7 @@ export class LandscapeService {
 				matchedCount++;
 				genreNoiseMap.set(g.id, coord);
 			}
-			if (parameters?.ignoreUnknownGenres && !coord) {
+			if (!coord && parameters?.ignoreUnknownGenres) {
 				continue;
 			}
 			if (parameters?.minGenreTrackCount !== undefined && trackCount < parameters.minGenreTrackCount) {
@@ -139,7 +139,7 @@ export class LandscapeService {
 			const albumCount = await a.albums.count();
 			const trackCount = await a.tracks.count();
 
-			if (parameters?.artistsWithAlbumsOnly && albumCount === 0) {
+			if (albumCount === 0 && parameters?.artistsWithAlbumsOnly) {
 				continue;
 			}
 			if (parameters?.minArtistTrackCount !== undefined && trackCount < parameters.minArtistTrackCount) {
@@ -162,7 +162,7 @@ export class LandscapeService {
 				noiseY = cy + (((hash >> 10) % 1000) / 1000 - 0.5) * jitter * 2;
 			}
 
-			if (parameters?.ignoreUnpositionedArtists && noiseX === undefined) {
+			if (noiseX === undefined && parameters?.ignoreUnpositionedArtists) {
 				continue;
 			}
 

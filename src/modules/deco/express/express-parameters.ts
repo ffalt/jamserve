@@ -139,7 +139,7 @@ export class ExpressParameters {
 		}
 		const typeOptions: FieldOptions & TypeOptions = parameter.typeOptions;
 		const isNull = (value === undefined || value === null);
-		if (!typeOptions.nullable && isNull) {
+		if (isNull && !typeOptions.nullable) {
 			throw missingParameterError(parameter.name);
 		}
 		if (isNull) {

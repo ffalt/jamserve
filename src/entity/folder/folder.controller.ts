@@ -252,7 +252,7 @@ export class FolderController {
 		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		const id = parameters.ids.at(0);
-		if (parameters.ids.length === 0 || !id) {
+		if (!id || parameters.ids.length === 0) {
 			throw invalidParameterError('ids', 'Must have entries');
 		}
 		const folder = await orm.Folder.oneOrFailByID(id);

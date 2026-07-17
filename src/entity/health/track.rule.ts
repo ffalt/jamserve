@@ -295,7 +295,7 @@ export class TrackRulesChecker {
 		const mp3 = isMP3(track, tag);
 		const flac = isFlac(track, tag);
 		for (const rule of trackRules) {
-			if (!(rule.all || (rule.mp3 && mp3) || (rule.flac && flac))) {
+			if (!(rule.all || (mp3 && rule.mp3) || (flac && rule.flac))) {
 				continue;
 			}
 

@@ -166,7 +166,7 @@ export class MetadataServiceExtendedInfo {
 				info = await this.getAlbumInfoByMusicBrainzID(orm, album.mbReleaseID);
 			}
 			const artist = await album.artist.get();
-			if (!info && album.name && artist) {
+			if (artist && !info && album.name) {
 				info = await this.getAlbumInfoByName(orm, album.name, artist.name);
 			}
 		} catch (error: unknown) {
