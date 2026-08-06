@@ -10,7 +10,7 @@ function xmlString(s: string): string {
 function xmlContent(o: Record<string, any>): string {
 	for (const [key, value] of Object.entries(o)) {
 		if (key === 'value') {
-			return value as string;
+			return value === undefined || value === null ? '' : xmlString(String(value));
 		}
 	}
 	return '';
