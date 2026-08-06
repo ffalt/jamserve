@@ -114,6 +114,16 @@ export class ExpressMethod {
 				handlers.push(uploadHandler(parameter.name));
 			}
 		}
+		if (handlers.length > 0) {
+			// authorize before the upload middleware writes untrusted data to disk
+			handlers.unshift((req, res, next) => {
+				if (options.validateRoles(req.user, roles)) {
+					next();
+					return;
+				}
+				options.responder.sendError(req, res, unauthError());
+			});
+		}
 
 		router.post(route, ...handlers, async (req, res, next) => {
 			try {

@@ -48,7 +48,7 @@ export function restRouter(api: express.Router, options: RestOptions): Array<Rou
 
 	const registerAutoClean = (req: express.Request, res: express.Response): void => {
 		finishedRequest(res, error => {
-			if (error && req.file?.path) {
+			if ((error || res.statusCode >= 400) && req.file?.path) {
 				fileDeleteIfExists(req.file.path)
 					.catch((removeError: unknown) => {
 						log.error(removeError);
