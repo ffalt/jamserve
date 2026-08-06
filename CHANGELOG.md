@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.17](https://github.com/ffalt/jamserve/compare/v0.6.16...v0.6.17) (2026-08-06)
+
+### Features
+
+* **xml:** content escaping in subsonic xml responses ([0fc7b90](https://github.com/ffalt/jamserve/commit/0fc7b905cd75cef6194fc9dc983e43157801950e))
+
+### Bug Fixes
+
+* **express:** authorize before upload to tmp ([bbe80db](https://github.com/ffalt/jamserve/commit/bbe80db329d43ea113c8e50ad92f38a3540cbd99))
+* **lint:** follow unicorn rules ([85f7d38](https://github.com/ffalt/jamserve/commit/85f7d38ed4768d5d8598869ea8d3bce9838c039c))
 ## [0.6.16](https://github.com/ffalt/jamserve/compare/v0.6.15...v0.6.16) (2026-07-05)
 
 
