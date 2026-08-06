@@ -70,7 +70,7 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 		jsDocument.push(`@default ${typeOptions.defaultValue}`);
 	}
 	if (jsDocument.length === 1) {
-		sl.push(`${tabtab}/** ${jsDocument.at(0) ?? ''} */`);
+		sl.push(`${tabtab}// ${jsDocument.at(0) ?? ''}`);
 	} else if (jsDocument.length > 1) {
 		const value = jsDocument.map(s => `${tabtab} * ${s}`).join('\n');
 		sl.push(`${tabtab}/**\n${value}\n${tabtab} */`);
