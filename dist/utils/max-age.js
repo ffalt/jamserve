@@ -7,7 +7,7 @@ export function getMaxAge(maxAgeSpec, defaultMs = 0) {
     const split = maxAgeSpec.split(' ');
     const value = Number(split.at(0));
     const unit = split.at(1);
-    if (value > 0 && unit) {
+    if (unit && value > 0) {
         const ms = durationToMilliseconds(value, unit);
         if (ms > 0) {
             return ms;

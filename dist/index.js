@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { configureLogger, logger } from './utils/logger.js';
 import { Server } from './modules/server/server.js';
 import { container } from './container.js';
-dotenv.config();
+dotenv.config({ quiet: true });
 configureLogger(process.env.JAM_LOG_LEVEL ?? 'info', process.env.JAM_LOG_FILE);
 const log = logger('Server');
 const server = container.get(Server);

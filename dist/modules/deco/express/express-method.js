@@ -80,6 +80,15 @@ export class ExpressMethod {
                 handlers.push(uploadHandler(parameter.name));
             }
         }
+        if (handlers.length > 0) {
+            handlers.unshift((req, res, next) => {
+                if (options.validateRoles(req.user, roles)) {
+                    next();
+                    return;
+                }
+                options.responder.sendError(req, res, unauthError());
+            });
+        }
         router.post(route, ...handlers, async (req, res, next) => {
             try {
                 if (!options.validateRoles(req.user, roles)) {

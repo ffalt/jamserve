@@ -9,7 +9,7 @@ function xmlString(s) {
 function xmlContent(o) {
     for (const [key, value] of Object.entries(o)) {
         if (key === 'value') {
-            return value;
+            return value === undefined || value === null ? '' : xmlString(String(value));
         }
     }
     return '';
@@ -23,7 +23,7 @@ function xmlParameters(o) {
         if (key === 'value') {
             continue;
         }
-        if (sub !== undefined && !Array.isArray(sub) && (typeof sub !== 'object')) {
+        if (sub !== undefined && (typeof sub !== 'object') && !Array.isArray(sub)) {
             sl.push(` ${key}="${xmlString(sub.toString())}"`);
         }
     }

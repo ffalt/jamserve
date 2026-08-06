@@ -11,7 +11,7 @@ function passPortAuth(name, next, req, jwth, res) {
             next();
             return;
         }
-        if (info instanceof Error || !user) {
+        if (!user || info instanceof Error) {
             next();
             return;
         }

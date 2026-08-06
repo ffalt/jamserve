@@ -13,11 +13,11 @@ export declare namespace WikiData {
 		datatype: string;
 		datavalue: {
 			type: string;
-			value: {
+			value: string | {
 				'id': string;
 				'entity-type': string;
 				'numeric-id': number;
-			} | string;
+			};
 		};
 	}
 

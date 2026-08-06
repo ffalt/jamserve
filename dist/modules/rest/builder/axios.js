@@ -28,11 +28,11 @@ function generateUrlClientCall(call, name, parametersType) {
     return {
         name: `${name}Url`,
         paramName: 'params',
-        paramsType: `${parametersType ?? '{}'}, forDom: boolean`,
+        paramsType: (parametersType ?? '{}'),
         resultType: 'string',
         baseFuncResultType: '',
         baseFunc: 'buildRequestUrl',
-        baseFuncParameters: `${baseParameter}, forDom`,
+        baseFuncParameters: baseParameter,
         tick: call.customPathParameters ? '`' : '\'',
         validate,
         apiPath: (call.controllerClassMetadata?.route ?? '') + route,

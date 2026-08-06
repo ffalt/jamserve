@@ -35,7 +35,7 @@ export function restRouter(api, options) {
     const method = new ExpressMethod();
     const registerAutoClean = (req, res) => {
         finishedRequest(res, error => {
-            if (error && req.file?.path) {
+            if ((error || res.statusCode >= 400) && req.file?.path) {
                 fileDeleteIfExists(req.file.path)
                     .catch((removeError) => {
                     log.error(removeError);

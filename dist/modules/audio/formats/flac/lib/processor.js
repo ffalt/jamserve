@@ -266,7 +266,7 @@ export class FlacProcessorStream extends Transform {
         return this.preProcess(slice, header);
     }
     validateMDB(slice, isDone) {
-        if (this.parseMetadataBlocks && isDone) {
+        if (isDone && this.parseMetadataBlocks) {
             if (!this.mdb) {
                 return false;
             }
