@@ -106,8 +106,8 @@ export class JamBaseService {
 	async upload<T>(path: string, params: unknown, name: string, file: any, onUploadProgress: (progressEvent: any) => void): Promise<T> {
 		const formData = new FormData();
 		const data = params as Record<string, string>;
-		for (const key of Object.keys(data)) {
-			formData.append(key, data[key]);
+		for (const [key, value] of Object.entries(data)) {
+			formData.append(key, value);
 		}
 		formData.append(name, file);
 		const url = this.buildUrl(path, {});
