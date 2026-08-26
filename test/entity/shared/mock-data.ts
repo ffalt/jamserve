@@ -1,9 +1,9 @@
 export const mockUser = { id: 'user-1' };
 
-/** State with activity data — used in resolver tests */
+// State with activity data — used in resolver tests
 export const mockState = { played: 3, lastPlayed: undefined as undefined, faved: undefined as undefined, rated: 4 };
 
-/** Empty/default state — used in transform tests */
+// Empty/default state — used in transform tests
 export const mockStateEmpty = { played: 0, lastPlayed: undefined as undefined, faved: undefined as undefined, rated: undefined as undefined };
 
 export const mockTracks = [{ id: 'track-1' }, { id: 'track-2' }];

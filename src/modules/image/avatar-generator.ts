@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-/* This is included because jamserve uses a newer version of sharp */
+// This is included because jamserve uses a newer version of sharp
 
 import fs from 'node:fs';
 import path from 'node:path';

@@ -34,6 +34,7 @@ export class ApiResponder extends ApiBaseResponder {
 		} else if (parameters.format === 'json') {
 			this.sendJSON(req, res, data);
 		} else {
+			// eslint-disable-next-line unicorn/prefer-https
 			data['subsonic-response'].xmlns = 'http://subsonic.org/restapi';
 			this.sendXML(req, res, xml(data));
 		}

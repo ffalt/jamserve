@@ -1,6 +1,6 @@
 import { durationToMilliseconds } from './date-time.js';
 
-/** One year expressed in milliseconds, used as the JWT default max-age. */
+// One year expressed in milliseconds, used as the JWT default max-age.
 export const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 /**

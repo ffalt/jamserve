@@ -44,6 +44,7 @@ describe('$args', () => {
 
 	test('should handle function with multi-line comments', () => {
 		function multiCommentFunction(
+			// eslint-disable-next-line unicorn/single-line-block-comment-style
 			/* First parameter */
 			_parameter1: string,
 			/* Second

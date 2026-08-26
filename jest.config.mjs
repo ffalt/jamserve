@@ -25,6 +25,7 @@ export default {
 	],
 	testPathIgnorePatterns: [
 		"/node_modules/",
+		"/deploy/",
 		"/dist/"
 	],
 	transform: {

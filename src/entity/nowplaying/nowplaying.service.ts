@@ -11,7 +11,7 @@ import { notFoundError } from '../../modules/deco/express/express-error.js';
 
 const log = logger('NowPlayingService');
 
-/** Entries older than this are considered stale and removed automatically. */
+// Entries older than this are considered stale and removed automatically.
 const NOW_PLAYING_TTL_MS = 120 * 60 * 1000; // 120 minutes
 
 @injectable()
