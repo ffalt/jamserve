@@ -99,7 +99,7 @@
     "yauzl": "3.4.0"
   },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "16.0.1",
+    "@apidevtools/json-schema-ref-parser": "16.0.2",
     "@eslint/js": "10.0.1",
     "@jest/globals": "30.5.0",
     "@stylistic/eslint-plugin": "5.10.0",
