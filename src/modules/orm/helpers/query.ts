@@ -24,20 +24,6 @@ export const QHelper = {
 		return { [Op.like]: `%${escaped}%` };
 	},
 
-	/**
-	 * Build a LIKE clause without escaping wildcards.
-	 * Only use this for trusted/internal values (e.g. folder paths), never for user input.
-	 */
-	likeRaw(value?: string, dialect?: string): WhereAttributeHashValue<string> | undefined {
-		if (!value) {
-			return undefined;
-		}
-		if (dialect === 'postgres') {
-			return { [Op.iLike]: `%${value}%` };
-		}
-		return { [Op.like]: `%${value}%` };
-	},
-
 	gte(value?: number): WhereAttributeHashValue<number> | undefined {
 		return (value === undefined) ? undefined : { [Op.gte]: value };
 	},

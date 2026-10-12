@@ -102,13 +102,40 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterParamet
 		return result;
 	}
 
+	/**
+	 * Collect the folder and all folders below it, by walking the parent relation level by level.
+	 * Matching on the path with LIKE is not used: path separators and folder names may contain
+	 * LIKE wildcards, and a path prefix can be shared by folders of an unrelated root.
+	 */
 	async findAllDescendants(folder: Folder): Promise<Array<Folder>> {
-		const options = QHelper.buildQuery<Folder>([{ path: QHelper.likeRaw(folder.path) }]);
-		return this.find(options);
+		const result: Array<Folder> = [folder];
+		const seen = new Set<string>([folder.id]);
+		let parentIDs: Array<string> = [folder.id];
+		while (parentIDs.length > 0) {
+			const children = await this.find({ where: { parent: QHelper.inOrEqual(parentIDs) } });
+			const unseen = children.filter(child => !seen.has(child.id));
+			for (const child of unseen) {
+				seen.add(child.id);
+				result.push(child);
+			}
+			parentIDs = unseen.map(child => child.id);
+		}
+		return result;
 	}
 
 	async findAllDescendantsIds(folder: Folder): Promise<Array<string>> {
-		const options = QHelper.buildQuery<Folder>([{ path: QHelper.likeRaw(folder.path) }]);
-		return this.findIDs(options);
+		const result: Array<string> = [folder.id];
+		const seen = new Set<string>([folder.id]);
+		let parentIDs: Array<string> = [folder.id];
+		while (parentIDs.length > 0) {
+			const ids = await this.findIDs({ where: { parent: QHelper.inOrEqual(parentIDs) } });
+			const unseen = ids.filter(id => !seen.has(id));
+			for (const id of unseen) {
+				seen.add(id);
+			}
+			result.push(...unseen);
+			parentIDs = unseen;
+		}
+		return result;
 	}
 }
