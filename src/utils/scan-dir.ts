@@ -8,6 +8,9 @@ import { getFileType } from './filetype.js';
 
 const log = logger('IO.DirScanner');
 const MAX_RECURSION_DEPTH = 50;
+// Directories read at the same time, for the whole walk. Reading them recursively with
+// a queue of its own per directory multiplies the limit with every level of the tree.
+const MAX_CONCURRENT_DIRS = 10;
 
 export interface ScanDir {
 	path: string;
@@ -27,9 +30,8 @@ export interface ScanFile {
 }
 
 export class DirScanner {
-	private async scanDirR(dir: string, stat: fse.Stats, level: number): Promise<ScanDir> {
-		log.debug('Scanning:', dir);
-		const result: ScanDir = {
+	private static createDir(dir: string, stat: fse.Stats, level: number): ScanDir {
+		return {
 			path: ensureTrailingPathSeparator(dir),
 			level,
 			ctime: stat.ctime,
@@ -37,22 +39,31 @@ export class DirScanner {
 			directories: [],
 			files: []
 		};
+	}
+
+	/**
+	 * Read the entries of one directory into it and return the sub directories to be read next.
+	 */
+	private async readDir(node: ScanDir): Promise<Array<ScanDir>> {
+		log.debug('Scanning:', node.path);
 		// Check recursion depth limit to prevent stack overflow
-		if (level >= MAX_RECURSION_DEPTH) {
-			log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${dir}, stopping scan`);
-			return result;
+		if (node.level >= MAX_RECURSION_DEPTH) {
+			log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${node.path}, stopping scan`);
+			return [];
 		}
-		const folders: Array<{ dir: string; stat: fse.Stats }> = [];
-		const list = await fse.readdir(dir);
+		const subDirectories: Array<ScanDir> = [];
+		const list = await fse.readdir(node.path);
 		for (const filename of list) {
 			if (filename.startsWith('.')) {
 				continue;
 			}
 
-			const sub = path.join(dir, filename);
+			const sub = path.join(node.path, filename);
 			const subStat = await fse.stat(sub);
 			if (subStat.isDirectory()) {
-				folders.push({ dir: sub, stat: subStat });
+				const subDir = DirScanner.createDir(sub, subStat, node.level + 1);
+				node.directories.push(subDir);
+				subDirectories.push(subDir);
 			} else {
 				const file: ScanFile = {
 					path: sub,
@@ -61,21 +72,25 @@ export class DirScanner {
 					mtime: subStat.mtime,
 					size: subStat.size
 				};
-				result.files.push(file);
+				node.files.push(file);
 			}
 		}
-		if (folders.length > 0) {
-			await processQueue<{ dir: string; stat: fse.Stats }>(3, folders, async folder => {
-				const sub = await this.scanDirR(folder.dir, folder.stat, level + 1);
-				result.directories.push(sub);
-			});
-		}
-		return result;
+		return subDirectories;
 	}
 
 	public async scan(dir: string): Promise<ScanDir> {
 		log.info('Scanning Directory', dir);
 		const stat = await fse.stat(dir);
-		return this.scanDirR(dir, stat, 0);
+		const root = DirScanner.createDir(dir, stat, 0);
+		// walk level by level, so the number of directories read at the same time stays limited
+		let level = [root];
+		while (level.length > 0) {
+			const next: Array<ScanDir> = [];
+			await processQueue<ScanDir>(MAX_CONCURRENT_DIRS, level, async node => {
+				next.push(...await this.readDir(node));
+			});
+			level = next;
+		}
+		return root;
 	}
 }
