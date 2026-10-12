@@ -13,6 +13,8 @@ export interface MockSpecTrack {
 	album: string;
 	mbAlbumID?: string;
 	mbArtistID?: string;
+	mbAlbumArtistID?: string;
+	mbReleaseGroupID?: string;
 	mbTrackID?: string;
 	group?: string;
 	groupNr?: string;
@@ -53,6 +55,8 @@ export async function writeMockTrack(mock: MockTrack): Promise<void> {
 		.track(mock.number)
 		.mbAlbumID(mock.mbAlbumID)
 		.mbArtistID(mock.mbArtistID)
+		.mbAlbumArtistID(mock.mbAlbumArtistID)
+		.mbReleaseGroupID(mock.mbReleaseGroupID)
 		.mbTrackID(mock.mbTrackID)
 		.albumArtist(mock.albumArtist)
 		.work(mock.groupNr)

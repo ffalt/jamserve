@@ -122,8 +122,9 @@ export class WorkerScan {
 			discTotal: tag?.discTotal,
 			disc: tag?.disc,
 			track: tag?.trackNr,
-			mbArtistID: tag?.mbArtistID,
+			mbArtistID: tag?.mbAlbumArtistID ?? tag?.mbArtistID,
 			mbReleaseID: tag?.mbReleaseID,
+			mbReleaseGroupID: tag?.mbReleaseGroupID,
 			mbAlbumType: `${tag?.mbAlbumType ?? ''}/${tag?.mbAlbumStatus ?? ''}`
 		};
 	}

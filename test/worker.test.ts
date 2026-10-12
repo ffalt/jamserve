@@ -31,7 +31,7 @@ import {
 import { Track } from '../src/entity/track/track.js';
 import { mockImage, writeMockImage } from './mock/mock.image.js';
 import { buildMockRoot, buildSeriesMockRoot, buildSoundtrackMockRoot, extendSpecMockRoot, MockRoot, MockSpecRoot, validateMock, writeAndStoreMock, writeMockRoot } from './mock/mock.root.js';
-import { writeMockFolder } from './mock/mock.folder.js';
+import { extendSpecMockFolder, writeMockFolder } from './mock/mock.folder.js';
 import { expectChanges, validateMockRoot } from './mock/mock.changes.js';
 import { Orm } from '../src/modules/engine/services/orm.service.js';
 import { v4 } from 'uuid';
@@ -195,6 +195,37 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					genresNew: mockRoot.expected.genres
 				});
 				await validateMock(mockRoot, workerService, orm);
+			});
+			it('should store the musicbrainz ids of the tracks in the folder', async () => {
+				// Arrange
+				const mbReleaseGroupID = '11111111-1111-4111-8111-111111111111';
+				const mbAlbumArtistID = '22222222-2222-4222-8222-222222222222';
+				const mbArtistID = '33333333-3333-4333-8333-333333333333';
+				const folderMock = extendSpecMockFolder(mockRoot.path, {
+					name: 'mb album',
+					images: [],
+					expected: {},
+					tracks: [1, 2].map(number => ({
+						name: `${number} - mb title.mp3`,
+						number,
+						genre: 'mb genre',
+						artist: 'mb track artist',
+						albumArtist: 'mb album artist',
+						album: 'mb album',
+						mbArtistID,
+						mbAlbumArtistID,
+						mbReleaseGroupID
+					}))
+				});
+				await writeMockFolder(folderMock);
+
+				// Act
+				await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				const folder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: 'mb album' });
+				expect(folder.mbReleaseGroupID).toBe(mbReleaseGroupID);
+				expect(folder.mbArtistID).toBe(mbAlbumArtistID); // the album artist id, not the track artist id
 			});
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
