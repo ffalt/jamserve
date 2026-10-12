@@ -13,6 +13,7 @@ import { Genre } from '../../../entity/genre/genre.js';
 import { extractAlbumName } from '../../../utils/album-name.js';
 import { Album } from '../../../entity/album/album.js';
 import { Track } from '../../../entity/track/track.js';
+import { collectChunked } from '../../../utils/chunks.js';
 
 const log = logger('Worker.MetaMerger');
 
@@ -98,15 +99,15 @@ export class MetaMerger {
 		if (trackIDs.length > 0) {
 			log.info('Updating Metadata');
 			// Load all artists/albums/series for track, in case track artist changed
-			const artists = await this.orm.Artist.findIDsFilter({ trackIDs });
+			const artists = await collectChunked(trackIDs, chunk => this.orm.Artist.findIDsFilter({ trackIDs: chunk }));
 			this.changes.artists.updated.appendIDs(artists);
-			const albumArtists = await this.orm.Artist.findIDsFilter({ albumTrackIDs: trackIDs });
+			const albumArtists = await collectChunked(trackIDs, chunk => this.orm.Artist.findIDsFilter({ albumTrackIDs: chunk }));
 			this.changes.artists.updated.appendIDs(albumArtists);
-			const albums = await this.orm.Album.findIDsFilter({ trackIDs });
+			const albums = await collectChunked(trackIDs, chunk => this.orm.Album.findIDsFilter({ trackIDs: chunk }));
 			this.changes.albums.updated.appendIDs(albums);
-			const series = await this.orm.Series.findIDsFilter({ trackIDs });
+			const series = await collectChunked(trackIDs, chunk => this.orm.Series.findIDsFilter({ trackIDs: chunk }));
 			this.changes.series.updated.appendIDs(series);
-			const genres = await this.orm.Genre.findIDsFilter({ trackIDs });
+			const genres = await collectChunked(trackIDs, chunk => this.orm.Genre.findIDsFilter({ trackIDs: chunk }));
 			this.changes.genres.updated.appendIDs(genres.filter(id => !this.changes.genres.added.hasID(id)));
 		}
 		await this.flush('Track/Folder');
@@ -341,7 +342,7 @@ export class MetaMerger {
 
 	private async applyChangedGenresMeta(): Promise<void> {
 		const trackIDs = this.changes.tracks.removed.ids();
-		const updateGenreIDs = trackIDs.length === 0 ? [] : await this.orm.Genre.findIDsFilter({ trackIDs });
+		const updateGenreIDs = await collectChunked(trackIDs, chunk => this.orm.Genre.findIDsFilter({ trackIDs: chunk }));
 		this.changes.genres.updated.appendIDs(updateGenreIDs);
 		const genreIDs = this.changes.genres.updated.ids();
 		for (const id of genreIDs) {

@@ -7,6 +7,7 @@ import { Base } from '../../../entity/base/base.js';
 import { Changes, ChangeSet, IdSet } from './changes.js';
 import { logger } from '../../../utils/logger.js';
 import { formatElapsedDuration } from '../../../utils/date-time.js';
+import { collectChunked } from '../../../utils/chunks.js';
 
 const log = logger('IO.Changes');
 
@@ -71,12 +72,12 @@ export class ChangesWorker extends BaseWorker {
 		stateCleanIds.appendIDs(changes.roots.removed.ids());
 		stateCleanIds.appendIDs(changes.series.removed.ids());
 
-		const stateBookmarkIDs = await orm.Bookmark.findIDs({ where: { track: trackIDs } });
+		const stateBookmarkIDs = await collectChunked(trackIDs, chunk => orm.Bookmark.findIDs({ where: { track: chunk } }));
 		if (stateBookmarkIDs.length > 0) {
 			await orm.Bookmark.removeLaterByIDs(stateBookmarkIDs);
 			stateCleanIds.appendIDs(stateBookmarkIDs);
 		}
-		const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
+		const playlistEntryIDs = await collectChunked(trackIDs, chunk => orm.PlaylistEntry.findIDs({ where: { track: chunk } }));
 		let affectedPlaylistIDs: Array<string> = [];
 		if (playlistEntryIDs.length > 0) {
 			const entries = await orm.PlaylistEntry.findByIDs(playlistEntryIDs);
@@ -88,7 +89,7 @@ export class ChangesWorker extends BaseWorker {
 		}
 		const stateDestinationIDs = stateCleanIds.ids();
 		if (stateDestinationIDs.length > 0) {
-			const states = await orm.State.findIDs({ where: { destID: stateDestinationIDs } });
+			const states = await collectChunked(stateDestinationIDs, chunk => orm.State.findIDs({ where: { destID: chunk } }));
 			await orm.State.removeLaterByIDs(states);
 		}
 		if (orm.em.hasChanges()) {

@@ -10,7 +10,7 @@ import { randomString } from '../src/utils/random.js';
 import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { Folder } from '../src/entity/folder/folder.js';
-import { Collection } from '../src/modules/orm/index.js';
+import { Collection, EntityManager } from '../src/modules/orm/index.js';
 import { Model } from 'sequelize';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Artwork } from '../src/entity/artwork/artwork.js';
@@ -230,6 +230,20 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				expect(bulkCalls).toBeGreaterThan(0);
 				// every new row used to need a statement of its own, which was more saves than rows
 				expect(saveCalls).toBeLessThan(rows);
+			});
+			it('should split a large id list into several queries', async () => {
+				// Arrange: more ids than fit into one IN(…) list
+				const ids = Array.from({ length: 1200 }, () => v4());
+				const spy = jest.spyOn(EntityManager.prototype, 'find');
+
+				// Act
+				const result = await orm.Track.findByIDs(ids);
+
+				// Assert
+				const calls = spy.mock.calls.length;
+				spy.mockRestore();
+				expect(result).toEqual([]);
+				expect(calls).toBe(3); // 500 + 500 + 200
 			});
 			it('should refresh the meta data of all tracks', async () => {
 				// Arrange

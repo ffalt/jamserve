@@ -3,6 +3,7 @@ import { EntityRepository } from './repository.js';
 import { MetadataStorage } from '../metadata/metadata-storage.js';
 import { ORMConfig } from '../definitions/config.js';
 import { RelationOptions } from '../definitions/types.js';
+import { collectChunked } from '../../../utils/chunks.js';
 import { FindOptions, Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
 import { ManagedEntity } from '../definitions/managed-entity.js';
 import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity.js';
@@ -323,8 +324,8 @@ export class EntityManager {
 		return result;
 	}
 
-	public findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<Array<T>> {
-		return this.find(entityName, { where: { id: ids } as any });
+	public async findByIDs<T extends IDEntity>(entityName: EntityName<T>, ids: Array<string>): Promise<Array<T>> {
+		return await collectChunked<string, T>(ids, chunk => this.find(entityName, { where: { id: chunk } as any }));
 	}
 
 	async findOneID<T extends IDEntity<T>>(entityName: EntityName<T>, options: FindOptions<T>): Promise<string | undefined> {
