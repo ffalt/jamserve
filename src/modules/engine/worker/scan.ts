@@ -160,14 +160,12 @@ export class WorkerScan {
 	}
 
 	private async updateTrack(file: ScanFile, track: Track): Promise<MatchTrack | undefined> {
-		if (!this.changes.tracks.removed.has(track)) {
-			log.info('Updating Track', file.path);
-			this.changes.tracks.updated.add(track);
+		if (this.changes.tracks.removed.has(track)) {
+			return;
 		}
-		if (this.changes.tracks.updated.has(track)) {
-			return await this.setTrackValues(file, track);
-		}
-		return;
+		log.info('Updating Track', file.path);
+		this.changes.tracks.updated.add(track);
+		return await this.setTrackValues(file, track);
 	}
 
 	private async buildFolder(dir: ScanDir, parent?: Folder): Promise<Folder> {

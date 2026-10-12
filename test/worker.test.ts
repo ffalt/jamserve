@@ -144,6 +144,18 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				const updated = await orm.Folder.oneOrFailByID(folder.id);
 				expect(updated.statModified.getTime()).toBe(modified.getTime());
 			});
+			it('should refresh the meta data of all tracks', async () => {
+				// Arrange
+
+				// Act
+				const changes = await workerService.root.refreshMeta({ rootID: mockRoot.id });
+
+				// Assert
+				expect(changes.tracks.updated.size).toBe(mockRoot.expected.tracks);
+				expect(changes.tracks.added.size).toBe(0);
+				expect(changes.tracks.removed.size).toBe(0);
+				await validateMock(mockRoot, workerService, orm);
+			});
 			it('should remove missing in the root', async () => {
 				// Arrange
 				await fse.remove(mockRoot.path);
