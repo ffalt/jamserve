@@ -92,7 +92,6 @@ export class MatchNodeMetaStats {
 		builder.statSlugValue('series', match.series);
 		builder.statSlugValue('album', match.album ? extractAlbumName(match.album) : undefined);
 		builder.statNumber('year', match.year);
-		builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
 		builder.statSlugValue('mbAlbumType', match.mbAlbumType);
 		builder.statID('mbArtistID', match.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
 		builder.statID('mbReleaseID', match.mbReleaseID);

@@ -24,10 +24,6 @@ export interface MatchTrack {
 	artistSort?: string;
 	album?: string;
 	year?: number;
-	trackTotal?: number;
-	discTotal?: number;
-	disc?: number;
-	track?: number;
 	series?: string;
 	mbAlbumType?: string;
 	mbArtistID?: string;
@@ -126,10 +122,6 @@ export class WorkerScan {
 			album: tag?.album,
 			series: tag?.series,
 			year: tag?.year,
-			trackTotal: tag?.trackTotal,
-			discTotal: tag?.discTotal,
-			disc: tag?.disc,
-			track: tag?.trackNr,
 			mbArtistID: tag?.mbAlbumArtistID ?? tag?.mbArtistID,
 			mbReleaseID: tag?.mbReleaseID,
 			mbReleaseGroupID: tag?.mbReleaseGroupID,
