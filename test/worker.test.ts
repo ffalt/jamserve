@@ -4,7 +4,8 @@ import tmp from 'tmp';
 import fse from 'fs-extra';
 import { WorkerService } from '../src/modules/engine/services/worker.service.js';
 import { ensureTrailingPathSeparator } from '../src/utils/fs-utils.js';
-import { AlbumType, ArtworkImageType, DBObjectType, FolderType, RootScanStrategy } from '../src/types/enums.js';
+import { AlbumType, ArtworkImageType, DBObjectType, FolderHealthID, FolderType, RootScanStrategy } from '../src/types/enums.js';
+import { FolderRulesChecker } from '../src/entity/health/folder.rule.js';
 import { randomString } from '../src/utils/random.js';
 import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
@@ -290,6 +291,45 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				// Assert
 				const folder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: 'mb mixed album' });
 				expect(folder.mbReleaseID).toBeUndefined(); // and not an empty string
+			});
+			it('should not count the tracks of an extras folder as album tracks', async () => {
+				// Arrange
+				const folderMock = extendSpecMockFolder(mockRoot.path, {
+					name: 'album with extras',
+					images: [],
+					expected: {},
+					tracks: [1, 2, 3, 4].map(number => ({
+						name: `${number} - extras album title.mp3`,
+						number,
+						genre: 'extras genre',
+						artist: 'extras artist',
+						album: 'extras album'
+					})),
+					folders: [{
+						name: 'extra',
+						images: [],
+						expected: {},
+						tracks: [1, 2].map(number => ({
+							name: `${number} - bonus title.mp3`,
+							number,
+							genre: 'extras genre',
+							artist: 'extras artist',
+							album: 'extras bonus'
+						}))
+					}]
+				});
+				await writeMockFolder(folderMock);
+
+				// Act
+				await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				const folder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: 'album with extras' });
+				expect(folder.folderType).toBe(FolderType.album);
+				expect(folder.albumTrackCount).toBe(4); // and not 6
+				// the health check must agree, or it reports the album as incomplete
+				const hints = await new FolderRulesChecker().run(orm, folder, []);
+				expect(hints.map(hint => hint.id)).not.toContain(FolderHealthID.albumTracksComplete);
 			});
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();

@@ -100,9 +100,10 @@ const folderRules: Array<FolderRuleInfo> = [
 	{
 		id: FolderHealthID.albumTracksComplete,
 		name: 'Album folder seems to be incomplete',
-		run: async (orm, folder): Promise<RuleResult | undefined> => {
+		run: async (_orm, folder): Promise<RuleResult | undefined> => {
 			if ((folder.folderType === FolderType.album) && (folder.albumTrackCount)) {
-				const trackCount = await orm.Track.countFilter({ childOfID: folder.id });
+				// an album folder has no sub folders but extras, and their tracks are not counted as album tracks
+				const trackCount = await folder.tracks.count();
 				if (trackCount !== folder.albumTrackCount) {
 					return {
 						details: [

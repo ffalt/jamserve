@@ -123,12 +123,14 @@ export class MatchNodeMetaStats {
 		let subFolderTrackCount = 0;
 		let subFolderCount = 0;
 		for (const child of dir.children) {
-			if (child.folder.folderType !== FolderType.extras) {
-				const result = this.recursiveCount(child);
-				subFolderCount += result.subFolderCount + 1;
-				subFolderTrackCount += result.subFolderTrackCount;
+			// tracks in an extras folder (bonus material, samples, ...) do not belong to the album
+			if (child.folder.folderType === FolderType.extras) {
+				continue;
 			}
-			subFolderTrackCount += child.nrOfTracks;
+
+			const result = this.recursiveCount(child);
+			subFolderCount += result.subFolderCount + 1;
+			subFolderTrackCount += result.subFolderTrackCount + child.nrOfTracks;
 		}
 		return { subFolderTrackCount, subFolderCount };
 	}
