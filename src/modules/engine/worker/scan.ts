@@ -6,6 +6,7 @@ import { Changes } from './changes.js';
 import { FileTyp, FolderType } from '../../../types/enums.js';
 import { splitDirectoryName } from '../../../utils/dir-name.js';
 import { Track } from '../../../entity/track/track.js';
+import { Tag } from '../../../entity/tag/tag.js';
 import path from 'node:path';
 import { basenameStripExtension, ensureTrailingPathSeparator } from '../../../utils/fs-utils.js';
 import { AudioModule } from '../../audio/audio.module.js';
@@ -109,6 +110,13 @@ export class WorkerScan {
 		this.changes.artworks.updated.add(artwork);
 	}
 
+	private static buildMbAlbumType(tag?: Tag): string | undefined {
+		if (!tag?.mbAlbumType && !tag?.mbAlbumStatus) {
+			return;
+		}
+		return `${tag.mbAlbumType ?? ''}/${tag.mbAlbumStatus ?? ''}`;
+	}
+
 	static async buildTrackMatch(track: Track): Promise<MatchTrack> {
 		const tag = await track.tag.get();
 		return {
@@ -125,7 +133,7 @@ export class WorkerScan {
 			mbArtistID: tag?.mbAlbumArtistID ?? tag?.mbArtistID,
 			mbReleaseID: tag?.mbReleaseID,
 			mbReleaseGroupID: tag?.mbReleaseGroupID,
-			mbAlbumType: `${tag?.mbAlbumType ?? ''}/${tag?.mbAlbumStatus ?? ''}`
+			mbAlbumType: this.buildMbAlbumType(tag)
 		};
 	}
 

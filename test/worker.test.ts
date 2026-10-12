@@ -227,6 +227,33 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				expect(folder.mbReleaseGroupID).toBe(mbReleaseGroupID);
 				expect(folder.mbArtistID).toBe(mbAlbumArtistID); // the album artist id, not the track artist id
 			});
+			it('should not let tracks without musicbrainz tags out-vote the album type', async () => {
+				// Arrange
+				const folderMock = extendSpecMockFolder(mockRoot.path, {
+					name: 'mb type album',
+					images: [],
+					expected: {},
+					// the majority of the tracks carries no musicbrainz tags at all
+					tracks: [1, 2, 3, 4, 5, 6, 7, 8].map(number => ({
+						name: `${number} - mb type title.mp3`,
+						number,
+						genre: 'mb type genre',
+						artist: 'mb type artist',
+						album: 'mb type album',
+						mbAlbumType: number > 5 ? 'soundtrack' : undefined,
+						mbAlbumStatus: number > 5 ? 'official' : undefined
+					}))
+				});
+				await writeMockFolder(folderMock);
+
+				// Act
+				await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				const folder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: 'mb type album' });
+				expect(folder.mbAlbumType).toBe('soundtrack/official');
+				expect(folder.albumType).toBe(AlbumType.soundtrack);
+			});
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
 				const mockRoot2 = buildMockRoot(dir2.name, 2, RootScanStrategy.auto);
