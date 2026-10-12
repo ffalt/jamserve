@@ -8,7 +8,7 @@ import { injectable, injectFromBase } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 import { MergeNode, WorkerMergeScan } from '../merge-scan.js';
 import { Folder } from '../../../../entity/folder/folder.js';
-import { ensureTrailingPathSeparator, removeTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { logger } from '../../../../utils/logger.js';
@@ -19,25 +19,57 @@ const log = logger('RootWorker');
 @injectFromBase()
 export class RootWorker extends BaseWorker {
 	// System directories that must not be used as media roots
-	private static readonly DENIED_ROOT_PATHS = [
-		'/', // filesystem root
+	private static readonly DENIED_ROOT_PATHS_POSIX = [
 		'/bin', // system binaries
 		'/boot', // boot files
 		'/dev', // device files
 		'/etc', // system configuration
 		'/lib', // system libraries
 		'/lib64', // 64-bit system libraries
+		'/opt', // optional software (usually system)
 		'/proc', // kernel process info
-		'/root', // root home (in some contexts)
+		'/root', // root home directory
 		'/run', // runtime data
 		'/sbin', // system binaries
+		'/srv', // service data (usually system)
 		'/sys', // kernel sysfs
 		'/usr', // user programs and data
-		'/var', // variable data (logs, caches, etc.)
-		'/opt', // optional software (usually system)
-		'/srv', // service data (usually system)
-		'/root' // root home directory
+		'/var' // variable data (logs, caches, etc.)
 	];
+
+	// Path comparison follows the file system of the platform
+	private static readonly CASE_INSENSITIVE_PATHS = ['win32', 'darwin'].includes(process.platform);
+
+	// System directories of a windows installation, the install location is taken from the environment
+	private static deniedRootPaths(): Array<string> {
+		if (process.platform !== 'win32') {
+			return this.DENIED_ROOT_PATHS_POSIX;
+		}
+		return [
+			process.env.SystemRoot ?? process.env.windir ?? String.raw`C:\Windows`,
+			process.env.ProgramFiles ?? String.raw`C:\Program Files`,
+			process.env['ProgramFiles(x86)'] ?? String.raw`C:\Program Files (x86)`,
+			process.env.ProgramData ?? String.raw`C:\ProgramData`
+		];
+	}
+
+	private static denySystemPath(candidate: string): void {
+		if (candidate === path.parse(candidate).root) {
+			throw new Error('Root Directory cannot be the file system root');
+		}
+		for (const deniedPath of this.deniedRootPaths()) {
+			if (this.isInsideOrEqual(candidate, deniedPath)) {
+				throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
+			}
+		}
+	}
+
+	private static isInsideOrEqual(dir: string, parent: string): boolean {
+		const from = this.CASE_INSENSITIVE_PATHS ? parent.toLowerCase() : parent;
+		const to = this.CASE_INSENSITIVE_PATHS ? dir.toLowerCase() : dir;
+		const relative = path.relative(from, to);
+		return relative.length === 0 || (!relative.startsWith('..') && !path.isAbsolute(relative));
+	}
 
 	private static readonly REMOVE_BATCH_SIZE = 1000;
 
@@ -74,12 +106,11 @@ export class RootWorker extends BaseWorker {
 		} catch {
 			resolvedDir = d;
 		}
-		// Check against deny-list of sensitive system paths
-		const normalizedPath = removeTrailingPathSeparator(resolvedDir);
-		for (const deniedPath of this.DENIED_ROOT_PATHS) {
-			if (normalizedPath === deniedPath || normalizedPath.startsWith(`${deniedPath}/`)) {
-				throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
-			}
+		// Check the deny-list of sensitive system paths, as given and with symlinks resolved:
+		// a symlink can point into a system path, and a system path can be a symlink itself (/etc on macOS)
+		const candidates = new Set([path.resolve(d), path.resolve(resolvedDir)]);
+		for (const candidate of candidates) {
+			this.denySystemPath(candidate);
 		}
 		const roots = (await orm.Root.all()).filter(r => r.id !== rootIdToIgnore);
 		const newPath = ensureTrailingPathSeparator(path.isAbsolute(resolvedDir) ? resolvedDir : path.resolve(resolvedDir));

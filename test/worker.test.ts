@@ -984,6 +984,25 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					expectChanges(changes, {});
 				});
 
+				it('should not allow the file system root', async () => {
+					const fsRoot = path.parse(process.cwd()).root;
+					await expect(workerService.root.create({ ...options, path: fsRoot })).rejects.toThrow('Root Directory cannot be the file system root');
+				});
+
+				it('should not allow a system path', async () => {
+					const denied = process.platform === 'win32' ?
+						[process.env.SystemRoot ?? 'C:\\Windows'] :
+						['/etc', '/etc/', '/usr/share/media', '/var/lib/music/'];
+					for (const deniedPath of denied) {
+						await expect(workerService.root.create({ ...options, path: deniedPath })).rejects.toThrow(/cannot be a sensitive system path/);
+					}
+				});
+
+				it('should not reject a path which only starts like a system path', async () => {
+					const changes = await workerService.root.create({ ...options, path: '/etcetera/media/' });
+					expectChanges(changes, {});
+				});
+
 				it('should create a root with inaccessible path', async () => {
 					const changes = await workerService.root.create({ ...options, path: '/invalid/test/path/' });
 					expectChanges(changes, {});
