@@ -2,6 +2,7 @@ import path from 'node:path';
 import fse from 'fs-extra';
 import { SettingsService } from '../../../entity/settings/settings.service.js';
 import { IoService } from './io.service.js';
+import { AdminChangeQueueInfo } from './io/io.types.js';
 import { ConfigService } from './config.service.js';
 import { JAMSERVE_VERSION } from '../../../version.js';
 import { Orm, OrmService } from './orm.service.js';
@@ -150,13 +151,37 @@ export class EngineService {
 		if (forceRescan || this.settings.settings.library.scanAtStart) {
 			log.info('Starting rescan');
 			this.io.root.startUpRefresh(orm, forceRescan)
-				.then(() => {
-					return forceRescan ? this.settings.saveSettings(orm) : undefined;
+				.then(requests => {
+					if (forceRescan) {
+						this.saveVersionAfterRescan(orm, requests);
+					}
 				})
 				.catch((error: unknown) => {
 					log.error(error, 'Error on startup scanning');
 				});
 		}
+	}
+
+	private saveVersionAfterRescan(orm: Orm, requests: Array<AdminChangeQueueInfo>): void {
+		if (requests.length === 0) {
+			this.settings.saveSettings(orm)
+				.catch((error: unknown) => {
+					log.error(error, 'Error on storing the settings version');
+				});
+			return;
+		}
+		const listener = async (): Promise<void> => {
+			this.io.removeAfterRefresh(listener);
+			const errors = requests
+				.map(request => this.io.getAdminChangeQueueInfoStatus(request.id).error)
+				.filter((error): error is string => error !== undefined);
+			if (errors.length > 0) {
+				log.error('Update rescan failed, it will be repeated on the next start:', errors.join(', '));
+				return;
+			}
+			await this.settings.saveSettings(orm);
+		};
+		this.io.registerAfterRefresh(listener);
 	}
 
 	private async checkDataPaths(): Promise<void> {

@@ -38,8 +38,10 @@ import { Orm } from '../src/modules/engine/services/orm.service.js';
 import { v4 } from 'uuid';
 import nock from 'nock';
 import { StateHelper } from '../src/entity/state/state.helper.js';
+import { JAMSERVE_VERSION } from '../src/version.js';
 
 const UNKNOWN_UUID = v4();
+const OLD_VERSION = '0.0.0-old';
 
 describe.each(DBConfigs)('WorkerService with %o', db => {
 	let engine: EngineService;
@@ -70,6 +72,28 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 		for (const id of ids) {
 			expect(await orm.State.count({ where: { destID: id } })).toBe(0); // 'Removed Fav count doesnt match'
 		}
+	};
+
+	// requests are queued asynchronously, so the scan has to be awaited from its start, not from the call
+	const waitScanStarted = async (): Promise<void> => {
+		for (let tries = 0; tries < 300; tries++) {
+			if (engine.io.scanning) {
+				return;
+			}
+			await new Promise(resolve => setTimeout(resolve, 10));
+		}
+		throw new Error('Scan did not start');
+	};
+
+	// the version is stored by an after-refresh listener, which runs delayed once the scan queue is empty
+	const waitForVersion = async (expected: string): Promise<void> => {
+		for (let tries = 0; tries < 300; tries++) {
+			if ((await engine.settings.settingsVersion(engine.orm.fork())) === expected) {
+				return;
+			}
+			await new Promise(resolve => setTimeout(resolve, 100));
+		}
+		throw new Error(`Version was not stored as ${expected}`);
 	};
 
 	const expectFolderDatesInSync = async (folderID: string): Promise<void> => {
@@ -330,6 +354,22 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				// the health check must agree, or it reports the album as incomplete
 				const hints = await new FolderRulesChecker().run(orm, folder, []);
 				expect(hints.map(hint => hint.id)).not.toContain(FolderHealthID.albumTracksComplete);
+			});
+			it('should store the version only after the update rescan has run', async () => {
+				// Arrange: the library has been scanned by an older version
+				const settings = (await orm.Settings.findOne({ where: { section: 'jamserve' } })) ??
+					orm.Settings.create({ section: 'jamserve', data: '{}', version: OLD_VERSION });
+				settings.version = OLD_VERSION;
+				await orm.Settings.persistAndFlush(settings);
+
+				// Act
+				await (engine as unknown as { checkRescan(orm: Orm): Promise<void> }).checkRescan(orm);
+				await waitScanStarted();
+				await waitEngineStart(engine);
+
+				// Assert
+				expect(await engine.settings.settingsVersion(engine.orm.fork())).toBe(OLD_VERSION);
+				await waitForVersion(JAMSERVE_VERSION);
 			});
 			it('should combine/remove artists and albums from different roots', async () => {
 				const dir2 = tmp.dirSync();
