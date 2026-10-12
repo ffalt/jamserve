@@ -66,6 +66,10 @@ export interface MatchNode {
 export class WorkerScan {
 	root!: Root;
 	trackUpdater: TrackUpdater;
+	private static readonly LOAD_BATCH_SIZE = 500;
+	private childFolders = new Map<string, Array<Folder>>();
+	private folderTracks = new Map<string, Array<Track>>();
+	private folderArtworks = new Map<string, Array<Artwork>>();
 
 	constructor(
 		private readonly orm: Orm,
@@ -253,7 +257,7 @@ export class WorkerScan {
 	}
 
 	private async scanSubfolders(folder: Folder, dir: ScanDir, result: MatchNode) {
-		const folders = await folder.children.getItems();
+		const folders = this.childFolders.get(folder.id) ?? [];
 		const folderMap = new Map(folders.map(f => [f.path, f]));
 		for (const subDir of dir.directories) {
 			if (subDir.path === folder.path) {
@@ -275,7 +279,7 @@ export class WorkerScan {
 	private async scanArtworks(dir: ScanDir, folder: Folder, result: MatchNode) {
 		const scanArtworks = dir.files.filter(f => f.type === FileTyp.image);
 		const foundScanArtworks: Array<ScanFile> = [];
-		const artworks = await folder.artworks.getItems();
+		const artworks = this.folderArtworks.get(folder.id) ?? [];
 		for (const artwork of artworks) {
 			await this.scanArtwork(artwork, scanArtworks, foundScanArtworks, result);
 		}
@@ -311,7 +315,7 @@ export class WorkerScan {
 	private async scanTracks(dir: ScanDir, folder: Folder, result: MatchNode) {
 		const scanTracks = dir.files.filter(f => f.type === FileTyp.audio);
 		const foundScanTracks: Array<ScanFile> = [];
-		const tracks = await folder.tracks.getItems();
+		const tracks = this.folderTracks.get(folder.id) ?? [];
 		for (const track of tracks) {
 			await this.scanTrack(track, scanTracks, foundScanTracks, result);
 		}
@@ -347,8 +351,49 @@ export class WorkerScan {
 		}
 	}
 
+	private static groupByID<T>(items: Array<T>, id: (item: T) => string | undefined): Map<string, Array<T>> {
+		const result = new Map<string, Array<T>>();
+		for (const item of items) {
+			const key = id(item);
+			if (!key) {
+				continue;
+			}
+			const list = result.get(key);
+			if (list) {
+				list.push(item);
+			} else {
+				result.set(key, [item]);
+			}
+		}
+		return result;
+	}
+
+	private async loadArtworks(folderIDs: Array<string>): Promise<Array<Artwork>> {
+		const result: Array<Artwork> = [];
+		for (let start = 0; start < folderIDs.length; start += WorkerScan.LOAD_BATCH_SIZE) {
+			const ids = folderIDs.slice(start, start + WorkerScan.LOAD_BATCH_SIZE);
+			result.push(...await this.orm.Artwork.find({ where: { folder: ids } }));
+		}
+		return result;
+	}
+
+	/**
+	 * Load the stored folders, tracks and artworks of the root up front.
+	 * Asking the collections of each folder instead costs three queries per folder of the library,
+	 * on every scan, even if nothing has changed.
+	 */
+	private async preload(): Promise<void> {
+		const folders = await this.orm.Folder.find({ where: { root: this.root.id } });
+		this.childFolders = WorkerScan.groupByID(folders, folder => folder.parent.id());
+		const tracks = await this.orm.Track.find({ where: { root: this.root.id } });
+		this.folderTracks = WorkerScan.groupByID(tracks, track => track.folder.id());
+		const artworks = await this.loadArtworks(folders.map(folder => folder.id));
+		this.folderArtworks = WorkerScan.groupByID(artworks, artwork => artwork.folder.id());
+	}
+
 	async match(dir: ScanDir): Promise<MatchNode> {
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
+		await this.preload();
 		const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
 		if (!parent) {
 			const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });

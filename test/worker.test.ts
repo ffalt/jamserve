@@ -10,6 +10,7 @@ import { randomString } from '../src/utils/random.js';
 import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.js';
 import { waitEngineStart } from './mock/mock.engine.js';
 import { Folder } from '../src/entity/folder/folder.js';
+import { Collection } from '../src/modules/orm/index.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Artwork } from '../src/entity/artwork/artwork.js';
 import { describe, jest, expect, afterEach, it, beforeEach } from '@jest/globals';
@@ -168,6 +169,20 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				expectChanges(changes, {}); // a directory date alone must not trigger a meta rebuild
 				const updated = await orm.Folder.oneOrFailByID(folder.id);
 				expect(updated.statModified.getTime()).toBe(modified.getTime());
+			});
+			it('should not load the collections of every folder on a rescan', async () => {
+				// Arrange
+				const folderCount = await orm.Folder.count({ where: { root: mockRoot.id } });
+				expect(folderCount).toBeGreaterThan(3);
+				const spy = jest.spyOn(Collection.prototype, 'getItems');
+
+				// Act
+				await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				const calls = spy.mock.calls.length;
+				spy.mockRestore();
+				expect(calls).toBe(0); // it used to load children, tracks and artworks of every folder
 			});
 			it('should refresh the meta data of all tracks', async () => {
 				// Arrange
