@@ -146,7 +146,7 @@ export class MatchNodeMetaStats {
 		// somewhat heuristically most used values
 		const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
 		const genre = builder.mostUsed('genre');
-		const mbAlbumType = builder.mostUsed('mbAlbumType', '');
+		const mbAlbumType = builder.mostUsedOrNone('mbAlbumType');
 		// determinate album type
 		const hasMultipleArtists = artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME;
 		let albumType = genre ? this.getGenreAlbumType(genre) : AlbumType.unknown;
@@ -187,9 +187,9 @@ export class MatchNodeMetaStats {
 			hasMultipleAlbums: builder.asList('album').length > 1,
 			album: builder.mostUsed('album', extractAlbumName(path.basename(node.path))),
 			artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
-			mbReleaseID: builder.mostUsed('mbReleaseID', ''),
-			mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),
-			mbArtistID: builder.mostUsed('mbArtistID', ''),
+			mbReleaseID: builder.mostUsedOrNone('mbReleaseID'),
+			mbReleaseGroupID: builder.mostUsedOrNone('mbReleaseGroupID'),
+			mbArtistID: builder.mostUsedOrNone('mbArtistID'),
 			year: builder.mostUsedNumber('year')
 		};
 	}

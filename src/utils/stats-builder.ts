@@ -122,6 +122,12 @@ export class MetaStatBuilder {
 		return MetaStatBuilder.getMostUsedTagValue<string>(list, multi);
 	}
 
+	mostUsedOrNone(name: string): undefined | string {
+		// values are never collected empty, so an empty result is the "they disagree" marker
+		const value = this.mostUsed(name, '');
+		return value === '' ? undefined : value;
+	}
+
 	mostUsedNumber(name: string): undefined | number {
 		const list = this.asNumberList(name);
 		return MetaStatBuilder.getMostUsedTagValue<number>(list);
