@@ -11,6 +11,7 @@ import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.
 import { waitEngineStart } from './mock/mock.engine.js';
 import { Folder } from '../src/entity/folder/folder.js';
 import { Collection } from '../src/modules/orm/index.js';
+import { Model } from 'sequelize';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Artwork } from '../src/entity/artwork/artwork.js';
 import { describe, jest, expect, afterEach, it, beforeEach } from '@jest/globals';
@@ -205,6 +206,30 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 				// Assert
 				expect(await orm.Track.count({ where: { fileName: track.fileName, path: track.path } })).toBe(1);
+			});
+			it('should write new rows in batches', async () => {
+				// Arrange: an empty root, then the whole library appears at once
+				await fse.remove(mockRoot.path);
+				await fse.ensureDir(mockRoot.path);
+				await workerService.root.refresh({ rootID: mockRoot.id });
+				await writeMockRoot(mockRoot);
+				const bulk = jest.spyOn(Model, 'bulkCreate');
+				const save = jest.spyOn(Model.prototype, 'save');
+
+				// Act
+				const changes = await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				const bulkCalls = bulk.mock.calls.length;
+				const saveCalls = save.mock.calls.length;
+				bulk.mockRestore();
+				save.mockRestore();
+				const rows = changes.tracks.added.size + changes.folders.added.size + changes.artworks.added.size +
+					changes.albums.added.size + changes.artists.added.size + changes.genres.added.size;
+				expect(rows).toBeGreaterThan(20);
+				expect(bulkCalls).toBeGreaterThan(0);
+				// every new row used to need a statement of its own, which was more saves than rows
+				expect(saveCalls).toBeLessThan(rows);
 			});
 			it('should refresh the meta data of all tracks', async () => {
 				// Arrange

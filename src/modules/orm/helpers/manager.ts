@@ -2,7 +2,8 @@ import { AnyEntity, Dictionary, EntityData, EntityName, IDEntity } from '../typi
 import { EntityRepository } from './repository.js';
 import { MetadataStorage } from '../metadata/metadata-storage.js';
 import { ORMConfig } from '../definitions/config.js';
-import { FindOptions, Model, ModelStatic, Sequelize } from 'sequelize';
+import { RelationOptions } from '../definitions/types.js';
+import { FindOptions, Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
 import { ManagedEntity } from '../definitions/managed-entity.js';
 import { cleanManagedEntityRelations, createManagedEntity, mapManagedToSource, saveManagedEntityRelations } from './entity.js';
 import { v4 } from 'uuid';
@@ -38,8 +39,11 @@ export class EntityCache {
 }
 
 export class EntityManager {
+	private static readonly INSERT_BATCH_SIZE = 500;
 	private readonly repositoryMap: Dictionary<EntityRepository<IDEntity> | undefined> = {};
 	private changeSet: Array<{ entityName: string; persist?: ManagedEntity; remove?: { entity?: ManagedEntity; query?: FindOptions; resultCount?: number } }> = [];
+	private readonly pendingPersist = new Set<AnyEntity>();
+	private insertOrder?: Array<string>;
 
 	constructor(
 		public readonly sequelize: Sequelize,
@@ -74,9 +78,109 @@ export class EntityManager {
 	}
 
 	persistLater<T extends AnyEntity<T>>(entityName: EntityName<T>, entity: AnyEntity | Array<AnyEntity>): void {
-		let entities: Array<AnyEntity> = Array.isArray(entity) ? entity : [entity];
-		entities = entities.filter(entry => this.changeSet.every(c => c.persist !== entry));
-		this.changeSet.push(...(entities.map(entry => ({ entityName: entityName as string, persist: entry as ManagedEntity }))));
+		const entities: Array<AnyEntity> = Array.isArray(entity) ? entity : [entity];
+		for (const entry of entities) {
+			if (this.pendingPersist.has(entry)) {
+				continue;
+			}
+			this.pendingPersist.add(entry);
+			this.changeSet.push({ entityName: entityName as string, persist: entry as ManagedEntity });
+		}
+	}
+
+	/**
+	 * Entity names ordered so an entity comes after everything it points to with a foreign key.
+	 * Rows have to be written in that order, the database checks the keys row by row.
+	 */
+	private entityInsertOrder(): Array<string> {
+		if (this.insertOrder) {
+			return this.insertOrder;
+		}
+		const order: Array<string> = [];
+		const visiting = new Set<string>();
+		const visit = (name: string): void => {
+			if (order.includes(name) || visiting.has(name)) {
+				return;
+			}
+			visiting.add(name);
+			const fields = this.metadata.entityInfoByName(name)?.fields ?? [];
+			for (const field of fields) {
+				const relation = (field.typeOptions as RelationOptions).relation;
+				if (field.isRelation && field.linkedEntity && (relation === 'many2one' || relation === 'one2one')) {
+					visit(field.linkedEntity.name);
+				}
+			}
+			visiting.delete(name);
+			order.push(name);
+		};
+		for (const entity of this.metadata.entities) {
+			visit(entity.name);
+		}
+		this.insertOrder = order;
+		return order;
+	}
+
+	private async persistGroup(entityName: string, entities: Array<ManagedEntity>, transaction: Transaction): Promise<void> {
+		const created: Array<ManagedEntity> = [];
+		const updated: Array<ManagedEntity> = [];
+		for (const entity of entities) {
+			mapManagedToSource(entity);
+			(entity._source.isNewRecord ? created : updated).push(entity);
+		}
+		// new rows go in with one statement instead of one per row, in the order they were added
+		for (let start = 0; start < created.length; start += EntityManager.INSERT_BATCH_SIZE) {
+			const batch = created.slice(start, start + EntityManager.INSERT_BATCH_SIZE);
+			const values = batch.map(entity => entity._source.get({ plain: true }) as Dictionary);
+			await this.model(entityName).bulkCreate(values, { transaction, validate: true });
+			for (const entity of batch) {
+				entity._source.isNewRecord = false;
+			}
+		}
+		for (const entity of updated) {
+			await entity._source.save({ transaction });
+		}
+	}
+
+	private async persistEntities(list: Array<{ entityName: string; entity: ManagedEntity }>, transaction: Transaction): Promise<void> {
+		if (list.length === 0) {
+			return;
+		}
+		const groups = new Map<string, Array<ManagedEntity>>();
+		for (const item of list) {
+			const group = groups.get(item.entityName);
+			if (group) {
+				group.push(item.entity);
+			} else {
+				groups.set(item.entityName, [item.entity]);
+			}
+		}
+		const order = this.entityInsertOrder();
+		const names = groups.keys().toArray().sort((a, b) => order.indexOf(a) - order.indexOf(b));
+		for (const name of names) {
+			await this.persistGroup(name, groups.get(name) ?? [], transaction);
+		}
+	}
+
+	private async applyChangeSet(transaction: Transaction): Promise<void> {
+		let persists: Array<{ entityName: string; entity: ManagedEntity }> = [];
+		for (const change of this.changeSet) {
+			if (change.persist) {
+				persists.push({ entityName: change.entityName, entity: change.persist });
+				continue;
+			}
+			// a removal may depend on the writes before it, so they are applied first
+			await this.persistEntities(persists, transaction);
+			persists = [];
+			if (change.remove?.entity) {
+				await change.remove.entity._source.destroy({ transaction });
+				this.parent.cache.remove(change.entityName, change.remove.entity);
+			} else if (change.remove?.query) {
+				const model = this.model(change.entityName);
+				change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction });
+				this.parent.cache.removePrefixed(change.entityName);
+			}
+		}
+		await this.persistEntities(persists, transaction);
 	}
 
 	async flush(): Promise<void> {
@@ -85,19 +189,7 @@ export class EntityManager {
 		}
 		const t = await this.sequelize.transaction();
 		try {
-			for (const change of this.changeSet) {
-				if (change.persist) {
-					mapManagedToSource(change.persist);
-					await change.persist._source.save({ transaction: t });
-				} else if (change.remove?.entity) {
-					await change.remove.entity._source.destroy({ transaction: t });
-					this.parent.cache.remove(change.entityName, change.remove.entity);
-				} else if (change.remove?.query) {
-					const model = this.model(change.entityName);
-					change.remove.resultCount = await model.destroy({ where: change.remove.query.where, transaction: t });
-					this.parent.cache.removePrefixed(change.entityName);
-				}
-			}
+			await this.applyChangeSet(t);
 			for (const change of this.changeSet) {
 				if (change.persist) {
 					await saveManagedEntityRelations(change.persist, t);
@@ -112,6 +204,7 @@ export class EntityManager {
 				this.parent.cache.remove(change.entityName, change.persist);
 			}
 			this.changeSet = [];
+			this.pendingPersist.clear();
 			await t.commit();
 		} catch (error: unknown) {
 			await t.rollback();
