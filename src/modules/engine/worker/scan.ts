@@ -256,6 +256,16 @@ export class WorkerScan {
 		return result;
 	}
 
+	private static filesByPath(dir: ScanDir, type: FileTyp): Map<string, ScanFile> {
+		const result = new Map<string, ScanFile>();
+		for (const file of dir.files) {
+			if (file.type === type) {
+				result.set(file.path, file);
+			}
+		}
+		return result;
+	}
+
 	private async scanSubfolders(folder: Folder, dir: ScanDir, result: MatchNode) {
 		const folders = this.childFolders.get(folder.id) ?? [];
 		const folderMap = new Map(folders.map(f => [f.path, f]));
@@ -277,30 +287,29 @@ export class WorkerScan {
 	}
 
 	private async scanArtworks(dir: ScanDir, folder: Folder, result: MatchNode) {
-		const scanArtworks = dir.files.filter(f => f.type === FileTyp.image);
-		const foundScanArtworks: Array<ScanFile> = [];
+		const scanArtworks = WorkerScan.filesByPath(dir, FileTyp.image);
 		const artworks = this.folderArtworks.get(folder.id) ?? [];
 		for (const artwork of artworks) {
-			await this.scanArtwork(artwork, scanArtworks, foundScanArtworks, result);
+			await this.scanArtwork(artwork, scanArtworks, result);
 		}
-		const newArtworks = scanArtworks.filter(t => !foundScanArtworks.includes(t));
-		for (const newArtwork of newArtworks) {
+		// what is left has no artwork entry yet
+		for (const newArtwork of scanArtworks.values()) {
 			result.changed = true;
 			result.artworksCount += 1;
 			await this.buildArtwork(newArtwork, folder);
 		}
 	}
 
-	private async scanArtwork(artwork: Artwork, scanArtworks: Array<ScanFile>, foundScanArtworks: Array<ScanFile>, result: MatchNode): Promise<void> {
+	private async scanArtwork(artwork: Artwork, scanArtworks: Map<string, ScanFile>, result: MatchNode): Promise<void> {
 		const filename = path.join(artwork.path, artwork.name);
-		const scanArtwork = scanArtworks.find(t => t.path === filename);
+		const scanArtwork = scanArtworks.get(filename);
 		if (!scanArtwork) {
 			log.info('Artwork has been removed', filename);
 			result.changed = true;
 			this.changes.artworks.removed.add(artwork);
 			return;
 		}
-		foundScanArtworks.push(scanArtwork);
+		scanArtworks.delete(filename);
 		result.artworksCount += 1;
 		if (
 			scanArtwork.size !== artwork.fileSize ||
@@ -313,29 +322,28 @@ export class WorkerScan {
 	}
 
 	private async scanTracks(dir: ScanDir, folder: Folder, result: MatchNode) {
-		const scanTracks = dir.files.filter(f => f.type === FileTyp.audio);
-		const foundScanTracks: Array<ScanFile> = [];
+		const scanTracks = WorkerScan.filesByPath(dir, FileTyp.audio);
 		const tracks = this.folderTracks.get(folder.id) ?? [];
 		for (const track of tracks) {
-			await this.scanTrack(track, scanTracks, foundScanTracks, result);
+			await this.scanTrack(track, scanTracks, result);
 		}
-		const newTracks = scanTracks.filter(t => !foundScanTracks.includes(t));
-		for (const newTrack of newTracks) {
+		// what is left has no track entry yet
+		for (const newTrack of scanTracks.values()) {
 			result.changed = true;
 			result.tracks.push(new ObjTrackMatch(await this.buildTrack(newTrack, folder)));
 		}
 	}
 
-	private async scanTrack(track: Track, scanTracks: Array<ScanFile>, foundScanTracks: Array<ScanFile>, result: MatchNode) {
+	private async scanTrack(track: Track, scanTracks: Map<string, ScanFile>, result: MatchNode) {
 		const filename = path.join(track.path, track.fileName);
-		const scanTrack = scanTracks.find(t => t.path === filename);
+		const scanTrack = scanTracks.get(filename);
 		if (!scanTrack) {
 			log.info('Track has been removed', filename);
 			result.changed = true;
 			this.changes.tracks.removed.add(track);
 			return;
 		}
-		foundScanTracks.push(scanTrack);
+		scanTracks.delete(filename);
 		if (this.changes.tracks.updated.has(track) ||
 			scanTrack.size !== track.fileSize ||
 			!isSameDate(scanTrack.ctime, track.statCreated) ||

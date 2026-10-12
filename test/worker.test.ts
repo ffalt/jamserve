@@ -184,6 +184,28 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				spy.mockRestore();
 				expect(calls).toBe(0); // it used to load children, tracks and artworks of every folder
 			});
+			it('should remove a second track entry pointing at the same file', async () => {
+				// Arrange: a duplicate as an earlier version of jam could leave behind
+				const track = await orm.Track.findOneOrFail({ where: { fileName: '2 - title 2 - artist 1.mp3' } });
+				const duplicate = orm.Track.create({
+					name: track.name,
+					fileName: track.fileName,
+					path: track.path,
+					fileSize: track.fileSize,
+					statCreated: track.statCreated,
+					statModified: track.statModified
+				});
+				await duplicate.folder.set(await track.folder.getOrFail());
+				await duplicate.root.set(await track.root.getOrFail());
+				await orm.Track.persistAndFlush(duplicate);
+				expect(await orm.Track.count({ where: { fileName: track.fileName, path: track.path } })).toBe(2);
+
+				// Act
+				await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				expect(await orm.Track.count({ where: { fileName: track.fileName, path: track.path } })).toBe(1);
+			});
 			it('should refresh the meta data of all tracks', async () => {
 				// Arrange
 
