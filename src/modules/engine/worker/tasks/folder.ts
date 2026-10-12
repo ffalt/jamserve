@@ -39,6 +39,7 @@ export class FolderWorker extends BaseWorker {
 			return Promise.reject(new Error('Folder moving failed'));
 		}
 		await FolderWorker.updateFolder(orm, folder, newParent, newPath, changes);
+		await this.refreshFolderStats(orm, [folder, oldParent, newParent]);
 	}
 
 	private static async updateFolder(orm: Orm, folder: Folder, newParent: Folder, newPath: string, changes: Changes): Promise<void> {
@@ -96,11 +97,13 @@ export class FolderWorker extends BaseWorker {
 		orm.Folder.persistLater(folder);
 		changes.folders.added.add(folder);
 		changes.folders.updated.add(parent);
+		await this.refreshFolderStats(orm, [parent]);
 	}
 
 	async delete(orm: Orm, root: Root, folderIDs: Array<string>, changes: Changes): Promise<void> {
 		const folders = await orm.Folder.findByIDs(folderIDs);
 		const trashPath = path.join(root.path, '.trash');
+		const parents: Array<Folder | undefined> = [];
 		for (const folder of folders) {
 			if (folder.level === 0) {
 				return Promise.reject(new Error('Root folder can not be deleted'));
@@ -119,9 +122,11 @@ export class FolderWorker extends BaseWorker {
 			const parent = await folder.parent.get();
 			if (parent) {
 				changes.folders.updated.add(parent);
+				parents.push(parent);
 			}
 			changes.folders.removed.add(folder);
 		}
+		await this.refreshFolderStats(orm, parents);
 	}
 
 	async rename(orm: Orm, folderID: string, newName: string, changes: Changes): Promise<void> {
@@ -158,6 +163,7 @@ export class FolderWorker extends BaseWorker {
 				orm.Artwork.persistLater(artwork);
 			}
 		}
+		await this.refreshFolderStats(orm, [folder, await folder.parent.get()]);
 	}
 
 	async move(orm: Orm, newParentID: string, moveFolderIDs: Array<string>, changes: Changes): Promise<void> {

@@ -71,6 +71,13 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 		}
 	};
 
+	const expectFolderDatesInSync = async (folderID: string): Promise<void> => {
+		const folder = await orm.Folder.oneOrFailByID(folderID);
+		const stat = await fse.stat(folder.path);
+		expect(folder.statModified.getTime()).toBe(stat.mtime.getTime());
+		expect(folder.statCreated.getTime()).toBe(stat.ctime.getTime());
+	};
+
 	const findWithParent = async (folders: Array<Folder>): Promise<Folder | undefined> => {
 		for (const f of folders) {
 			if (await f.parent.get()) {
@@ -122,6 +129,20 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				// Assert
 				expectChanges(changes, {});
 				await validateMock(mockRoot, workerService, orm);
+			});
+			it('should update folder stat dates on rescan', async () => {
+				// Arrange
+				const folder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], level: 1 });
+				const modified = new Date('2001-02-03T04:05:06.000Z');
+				await fse.utimes(folder.path, modified, modified);
+
+				// Act
+				const changes = await workerService.root.refresh({ rootID: mockRoot.id });
+
+				// Assert
+				expectChanges(changes, {}); // a directory date alone must not trigger a meta rebuild
+				const updated = await orm.Folder.oneOrFailByID(folder.id);
+				expect(updated.statModified.getTime()).toBe(modified.getTime());
 			});
 			it('should remove missing in the root', async () => {
 				// Arrange
@@ -580,6 +601,12 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 						foldersNew: 1
 					});
 				});
+
+				it('should update the parent folder dates', async () => {
+					const parent = await orm.Folder.findOneOrFail({ where: { root: mockRoot.id } });
+					await workerService.folder.create({ rootID: mockRoot.id, parentID: parent.id, name: randomString(10) });
+					await expectFolderDatesInSync(parent.id);
+				});
 			});
 
 			describe('rename folders', () => {
@@ -1034,6 +1061,11 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					expect((await orm.Artwork.oneOrFailByID(changes.artworks.added.ids()[0])).name).toBe('front.png');
 				});
 
+				it('should update the folder dates', async () => {
+					await workerService.artwork.create(options);
+					await expectFolderDatesInSync(folder.id);
+				});
+
 				it('should create & auto name an artwork', async () => {
 					const changes = await workerService.artwork.create({ ...options, types: [] });
 					expectChanges(changes, { foldersUpdate: 1, artworksNew: 1 });
@@ -1178,6 +1210,12 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 						artistsUpdate: 1,
 						genresUpdate: 1
 					});
+				});
+
+				it('should update the folder dates', async () => {
+					const folderID = track.folder.idOrFail();
+					await workerService.track.rename(options);
+					await expectFolderDatesInSync(folderID);
 				});
 			});
 

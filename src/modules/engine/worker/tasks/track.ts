@@ -7,6 +7,7 @@ import { Root } from '../../../../entity/root/root.js';
 import { Changes } from '../changes.js';
 import { BaseWorker } from './base.js';
 import { Track } from '../../../../entity/track/track.js';
+import { Folder } from '../../../../entity/folder/folder.js';
 import { injectable, injectFromBase } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 import { AudioModule } from '../../../audio/audio.module.js';
@@ -71,6 +72,7 @@ export class TrackUpdater {
 export class TrackWorker extends BaseWorker {
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: MediaTagRaw }>, changes: Changes): Promise<void> {
 		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
+		const folders: Array<Folder | undefined> = [];
 		for (const writeTag of tags) {
 			const track = await orm.Track.findOneByID(writeTag.trackID);
 			if (track) {
@@ -81,16 +83,21 @@ export class TrackWorker extends BaseWorker {
 				orm.Track.persistLater(track);
 				changes.tracks.updated.add(track);
 				changes.folders.updated.addID(track.folder.id());
+				folders.push(await track.folder.get());
 			}
 		}
+		await this.refreshFolderStats(orm, folders);
 	}
 
 	public async fix(orm: Orm, fixes: Array<{ trackID: string; fixID: TrackHealthID }>, changes: Changes): Promise<void> {
 		const tracks = await orm.Track.findByIDs(fixes.map(t => t.trackID));
 		const fixTasks: Array<{ filename: string; fixIDs: Array<TrackHealthID> }> = [];
+		const folders: Array<Folder | undefined> = [];
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
-			changes.folders.updated.add(await track.folder.get());
+			const folder = await track.folder.get();
+			changes.folders.updated.add(folder);
+			folders.push(folder);
 			fixTasks.push({
 				filename: path.join(track.path, track.fileName),
 				fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
@@ -107,6 +114,7 @@ export class TrackWorker extends BaseWorker {
 				}
 			}
 		});
+		await this.refreshFolderStats(orm, folders);
 	}
 
 	private static async updateTrackStats(track: Track): Promise<void> {
@@ -125,7 +133,9 @@ export class TrackWorker extends BaseWorker {
 		await TrackWorker.updateTrackStats(track);
 		orm.Track.persistLater(track);
 		changes.tracks.updated.add(track);
-		changes.folders.updated.add(await track.folder.get());
+		const folder = await track.folder.get();
+		changes.folders.updated.add(folder);
+		await this.refreshFolderStats(orm, [folder]);
 	}
 
 	public async remove(orm: Orm, root: Root, trackIDs: Array<string>, changes: Changes): Promise<void> {
@@ -133,11 +143,15 @@ export class TrackWorker extends BaseWorker {
 		if (removedTracks.length !== trackIDs.length) {
 			return Promise.reject(new Error('Track not found'));
 		}
+		const folders: Array<Folder | undefined> = [];
 		for (const track of removedTracks) {
 			await this.moveToTrash(root, track.path, track.fileName);
-			changes.folders.updated.add(await track.folder.get());
+			const folder = await track.folder.get();
+			changes.folders.updated.add(folder);
+			folders.push(folder);
 			changes.tracks.removed.add(track);
 		}
+		await this.refreshFolderStats(orm, folders);
 	}
 
 	public async move(orm: Orm, trackIDs: Array<string>, newParentID: string, changes: Changes): Promise<void> {
@@ -155,11 +169,13 @@ export class TrackWorker extends BaseWorker {
 			}
 		}
 		changes.folders.updated.add(newParent);
+		const folders: Array<Folder | undefined> = [newParent];
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
 			const oldParent = await track.folder.get();
 			if (oldParent?.id !== newParentID) {
 				changes.folders.updated.add(oldParent);
+				folders.push(oldParent);
 				await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
 				track.path = ensureTrailingPathSeparator(newParent.path);
 				await track.root.set(await newParent.root.getOrFail());
@@ -168,6 +184,7 @@ export class TrackWorker extends BaseWorker {
 				orm.Track.persistLater(track);
 			}
 		}
+		await this.refreshFolderStats(orm, folders);
 	}
 
 	public async refresh(orm: Orm, trackIDs: Array<string>, changes: Changes): Promise<void> {

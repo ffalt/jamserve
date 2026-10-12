@@ -233,9 +233,19 @@ export class WorkerScan {
 		this.changes.tracks.removed.append(removedTracks);
 	}
 
+	private updateFolderStats(dir: ScanDir, folder: Folder): void {
+		if (isSameDate(dir.ctime, folder.statCreated) && isSameDate(dir.mtime, folder.statModified)) {
+			return;
+		}
+		folder.statCreated = dir.ctime;
+		folder.statModified = dir.mtime;
+		this.orm.Folder.persistLater(folder);
+	}
+
 	private async scanNode(dir: ScanDir, folder: Folder): Promise<MatchNode> {
 		log.debug('Matching:', dir.path);
 		const result = WorkerScan.createNode(dir, folder);
+		this.updateFolderStats(dir, folder);
 		await this.scanSubfolders(folder, dir, result);
 		await this.scanTracks(dir, folder, result);
 		await this.scanArtworks(dir, folder, result);

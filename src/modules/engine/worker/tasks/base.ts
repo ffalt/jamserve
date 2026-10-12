@@ -4,7 +4,13 @@ import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
 import { AudioModule } from '../../../audio/audio.module.js';
 import { Root } from '../../../../entity/root/root.js';
+import { Folder } from '../../../../entity/folder/folder.js';
+import { Orm } from '../../services/orm.service.js';
+import { logger } from '../../../../utils/logger.js';
+import { errorToString } from '../../../../utils/error.js';
 import { injectable, inject } from 'inversify';
+
+const log = logger('Worker');
 
 @injectable()
 export class BaseWorker {
@@ -13,6 +19,24 @@ export class BaseWorker {
 
 	@inject(ImageModule)
 	protected imageModule!: ImageModule;
+
+	async refreshFolderStats(orm: Orm, folders: Array<Folder | undefined>): Promise<void> {
+		const done = new Set<string>();
+		for (const folder of folders) {
+			if (!folder || done.has(folder.id)) {
+				continue;
+			}
+			done.add(folder.id);
+			try {
+				const stat = await fse.stat(folder.path);
+				folder.statCreated = stat.ctime;
+				folder.statModified = stat.mtime;
+				orm.Folder.persistLater(folder);
+			} catch (error: unknown) {
+				log.debug(`Updating folder dates failed: ${folder.path}`, errorToString(error));
+			}
+		}
+	}
 
 	async renameFile(dir: string, oldName: string, newName: string): Promise<string> {
 		if (containsFolderSystemChars(newName) || newName.trim().length === 0) {
