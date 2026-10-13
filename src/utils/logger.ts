@@ -1,3 +1,4 @@
+import path from 'node:path';
 import winston from 'winston';
 import { Table } from 'console-table-printer';
 import { createStream, Generator, Options, RotatingFileStream } from 'rotating-file-stream';
@@ -17,7 +18,10 @@ export class WinstonRotatingFile extends TransportStream {
 	public constructor(options: WinstonRotatingFileOptions) {
 		super(options);
 
-		this.stream = createStream(options.filename, options.rfsOptions);
+		const { filename, rfsOptions } = options;
+		this.stream = typeof filename === 'string' ?
+			createStream(path.basename(filename), { ...rfsOptions, path: path.dirname(filename) }) :
+			createStream(filename, rfsOptions);
 	}
 
 	public close(): void {
