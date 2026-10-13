@@ -17,6 +17,10 @@ import { collectChunked } from '../../../utils/chunks.js';
 
 const log = logger('Worker.MetaMerger');
 
+function isAlbumType(value?: string): value is AlbumType {
+	return (Object.values(AlbumType) as Array<string>).includes(value ?? '');
+}
+
 export class MetaMerger {
 	cache!: MetaMergerCache;
 	root!: Root;
@@ -37,10 +41,12 @@ export class MetaMerger {
 				metaStatBuilder.statSlugValue('artist', tag.artist);
 				metaStatBuilder.statSlugValue('artistSort', tag.artistSort);
 			}
-			if (track.albumArtist.id() === artist.id) {
-				metaStatBuilder.statSlugValue('artist', tag.albumArtist);
-				metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
+			if (track.albumArtist.id() !== artist.id) {
+				continue;
 			}
+
+			metaStatBuilder.statSlugValue('artist', tag.albumArtist);
+			metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
 		}
 		const artistName = metaStatBuilder.mostUsed('artist') ?? cUnknownArtist;
 		return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') ?? artist.name };
@@ -139,10 +145,11 @@ export class MetaMerger {
 			folderCache.set(folder.id, folder);
 		}
 		const tag = await track.tag.get();
-		if (tag) {
-			const trackInfo: MetaMergeTrackInfo = { track, tag, folder };
-			await this.addMeta(trackInfo);
+		if (!tag) {
+			return;
 		}
+		const trackInfo: MetaMergeTrackInfo = { track, tag, folder };
+		await this.addMeta(trackInfo);
 	}
 
 	private async applyChangedTracksMeta(): Promise<void> {
@@ -195,10 +202,12 @@ export class MetaMerger {
 		while (queue.length > 0) {
 			const folder = queue.shift();
 			const parent = await folder?.parent.get();
-			if (parent?.folderType === FolderType.artist && folders.every(f => f.id !== parent.id)) {
-				folders.push(parent);
-				queue.push(parent);
+			if (!(parent?.folderType === FolderType.artist && folders.every(f => f.id !== parent.id))) {
+				continue;
 			}
+
+			folders.push(parent);
+			queue.push(parent);
 		}
 		await artist.folders.set(folders);
 		const genreMap = new Map<string, Genre>();
@@ -289,7 +298,8 @@ export class MetaMerger {
 			metaStatBuilder.statID('mbArtistID', folder.mbArtistID);
 			metaStatBuilder.statID('mbReleaseID', folder.mbReleaseID);
 		}
-		album.albumType = (metaStatBuilder.mostUsed('albumType') as AlbumType | undefined) ?? AlbumType.unknown;
+		const mostUsedAlbumType = metaStatBuilder.mostUsed('albumType');
+		album.albumType = isAlbumType(mostUsedAlbumType) ? mostUsedAlbumType : AlbumType.unknown;
 		let duration = 0;
 		const genreMap = new Map<string, Genre>();
 		for (const track of tracks) {

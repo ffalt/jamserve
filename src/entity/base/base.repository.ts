@@ -57,16 +57,17 @@ export abstract class BaseRepository<Entity extends IDEntity, Filter, OrderBy ex
 			for (const o of (options.order as Array<OrderItem>)) {
 				const array = o as Array<any>;
 				hasOrder = true;
-				if (array.length === 3) {
-					const key = array.at(0);
-					const list: Array<Includeable> = (options.include as Array<Includeable> | undefined) ?? [];
-					const includeEntry: any = list.find((entry: any) => entry.association === key);
-					if (includeEntry) {
-						(includeEntry.attributes as Array<any>).push(array.at(1));
-					} else {
-						list.push({ association: key, attributes: [array.at(1)] });
-						options.include = list;
-					}
+				if (array.length !== 3) {
+					continue;
+				}
+				const key = array.at(0);
+				const list: Array<Includeable> = (options.include as Array<Includeable> | undefined) ?? [];
+				const includeEntry: any = list.find((entry: any) => entry.association === key);
+				if (includeEntry) {
+					(includeEntry.attributes as Array<any>).push(array.at(1));
+				} else {
+					list.push({ association: key, attributes: [array.at(1)] });
+					options.include = list;
 				}
 			}
 		}

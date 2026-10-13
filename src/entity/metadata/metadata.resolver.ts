@@ -8,9 +8,7 @@ export class MetadataResolver {
 	@Query(() => ExtendedInfoResultQL, { description: 'Get Extended Info for Folder by Id' })
 	async folderInfo(@Arg('id', () => ID!) id: string, @Ctx() { orm, engine }: Context): Promise<ExtendedInfoResult> {
 		const folder = await orm.Folder.oneOrFailByID(id);
-		return folder.folderType === FolderType.artist ?
-			{ info: await engine.metadata.extInfo.byFolderArtist(orm, folder) } :
-			{ info: await engine.metadata.extInfo.byFolderAlbum(orm, folder) };
+		return ({ info: folder.folderType === FolderType.artist ? await engine.metadata.extInfo.byFolderArtist(orm, folder) : await engine.metadata.extInfo.byFolderAlbum(orm, folder) });
 	}
 
 	@Query(() => ExtendedInfoResultQL, { description: 'Get Extended Info for Artist by Id' })

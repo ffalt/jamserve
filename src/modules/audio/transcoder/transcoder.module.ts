@@ -2,7 +2,6 @@ import { TranscoderStream } from './transcoder-stream.js';
 import { LiveTranscoderStream } from './transcoder-live-stream.js';
 import { IDFolderCache } from '../../../utils/id-file-cache.js';
 import { logger } from '../../../utils/logger.js';
-import { AudioFormatType } from '../../../types/enums.js';
 
 const log = logger('Audio:Transcoder');
 
@@ -28,7 +27,7 @@ export class TranscoderModule {
 	}
 
 	async get(filename: string, id: string, format: string, maxBitRate: number): Promise<TranscoderResult> {
-		if (!TranscoderStream.validTranscoding(format as AudioFormatType)) {
+		if (!TranscoderStream.validTranscoding(format)) {
 			return Promise.reject(new Error('Unsupported transcoding format'));
 		}
 		return this.transcodeCache.get(id, { format, maxBitRate }, async cacheFilename => {

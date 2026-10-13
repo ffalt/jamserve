@@ -11,9 +11,9 @@ import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 @SubsonicController()
 export class SubsonicSharingApi {
 	/**
-	 * Returns information about shared media this user is allowed to manage. Takes no extra parameters.
-	 * Since 1.6.0
-	 */
+	Returns information about shared media this user is allowed to manage. Takes no extra parameters.
+	Since 1.6.0
+	*/
 	@SubsonicRoute('/getShares', () => SubsonicResponseShares, {
 		summary: 'Get Shares',
 		description: 'Returns information about shared media this user is allowed to manage.',
@@ -24,10 +24,10 @@ export class SubsonicSharingApi {
 	}
 
 	/**
-	 * Creates a public URL that can be used by anyone to stream music or video from the Subsonic server.
-	 * The URL is short and suitable for posting on Facebook, Twitter etc. Note: The user must be authorized to share (see Settings > Users > user is allowed to share files with anyone).
-	 * Since 1.6.0
-	 */
+	Creates a public URL that can be used by anyone to stream music or video from the Subsonic server.
+	The URL is short and suitable for posting on Facebook, Twitter etc. Note: The user must be authorized to share (see Settings > Users > user is allowed to share files with anyone).
+	Since 1.6.0
+	*/
 	@SubsonicRoute('/createShare', () => SubsonicOKResponse, {
 		summary: 'Create Share',
 		description: 'Creates a public URL that can be used by anyone to stream music or video from the Subsonic server.',
@@ -44,9 +44,9 @@ export class SubsonicSharingApi {
 	}
 
 	/**
-	 * Updates the description and/or expiration date for an existing share.
-	 * Since 1.6.0
-	 */
+	Updates the description and/or expiration date for an existing share.
+	Since 1.6.0
+	*/
 	@SubsonicRoute('/updateShare', () => SubsonicOKResponse, {
 		summary: 'Update Share',
 		description: 'Updates the description and/or expiration date for an existing share.',
@@ -63,9 +63,9 @@ export class SubsonicSharingApi {
 	}
 
 	/**
-	 * Deletes an existing share.
-	 * Since 1.6.0
-	 */
+	Deletes an existing share.
+	Since 1.6.0
+	*/
 	@SubsonicRoute('/deleteShare', () => SubsonicOKResponse, {
 		summary: 'Delete Share',
 		description: 'Deletes an existing share.',

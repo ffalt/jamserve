@@ -226,13 +226,15 @@ export class ApolloMiddleware {
 										}
 
 										// Sanitize the error returned to client in production
-										if (process.env.NODE_ENV === 'production') {
-											error.message = 'An error occurred processing your request';
-											// Extensions always exist on GraphQL errors
-											(error.extensions as any).code = 'INTERNAL_SERVER_ERROR';
-											// Remove sensitive stack trace and internal details
-											(error.extensions as any).exception = undefined;
+										if (process.env.NODE_ENV !== 'production') {
+											continue;
 										}
+
+										error.message = 'An error occurred processing your request';
+										// Extensions always exist on GraphQL errors
+										(error.extensions as any).code = 'INTERNAL_SERVER_ERROR';
+										// Remove sensitive stack trace and internal details
+										(error.extensions as any).exception = undefined;
 									}
 								}
 							}

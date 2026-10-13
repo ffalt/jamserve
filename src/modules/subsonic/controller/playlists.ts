@@ -15,9 +15,9 @@ import { Track } from '../../../entity/track/track.js';
 @SubsonicController()
 export class SubsonicPlaylistsApi {
 	/**
-	 * Creates (or updates) a playlist.
-	 * Since 1.2.0
-	 */
+	Creates (or updates) a playlist.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/createPlaylist', () => SubsonicResponsePlaylistWithSongs, {
 		summary: 'Create Playlists',
 		description: 'Creates (or updates) a playlist.',
@@ -68,9 +68,9 @@ export class SubsonicPlaylistsApi {
 	}
 
 	/**
-	 * Updates a playlist. Only the owner of a playlist is allowed to update it.
-	 * Since 1.8.0
-	 */
+	Updates a playlist. Only the owner of a playlist is allowed to update it.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/updatePlaylist', () => SubsonicOKResponse, {
 		summary: 'Update Playlists',
 		description: 'Updates a playlist. Only the owner of a playlist is allowed to update it.',
@@ -112,9 +112,9 @@ export class SubsonicPlaylistsApi {
 	}
 
 	/**
-	 * Deletes a saved playlist.
-	 * Since 1.2.0
-	 */
+	Deletes a saved playlist.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/deletePlaylist', () => SubsonicOKResponse, {
 		summary: 'Delete Playlists',
 		description: 'Deletes a saved playlist.',
@@ -134,9 +134,9 @@ export class SubsonicPlaylistsApi {
 	}
 
 	/**
-	 * Returns all playlists a user is allowed to play.
-	 * Since 1.0.0
-	 */
+	Returns all playlists a user is allowed to play.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getPlaylists', () => SubsonicResponsePlaylists, {
 		summary: 'Get Playlists',
 		description: 'Returns all playlists a user is allowed to play.',
@@ -167,9 +167,9 @@ export class SubsonicPlaylistsApi {
 	}
 
 	/**
-	 * Returns a listing of files in a saved playlist.
-	 * Since 1.0.0
-	 */
+	Returns a listing of files in a saved playlist.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getPlaylist', () => SubsonicResponsePlaylist, {
 		summary: 'Get Playlist',
 		description: 'Returns a listing of files in a saved playlist.',

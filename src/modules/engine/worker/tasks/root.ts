@@ -181,20 +181,22 @@ export class RootWorker extends BaseWorker {
 		for (const folder of folders) {
 			const parents = await this.getParents(folder);
 			const parent = parents.at(0);
-			if (parent) {
-				if (!rootMatch) {
-					const tracks = await RootWorker.buildMergeTracks(parent);
-					rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
-				}
-				const pathToChild = [...parents.slice(1), folder];
-				await this.buildMergeNode(pathToChild, rootMatch);
+			if (!parent) {
+				continue;
 			}
+			if (!rootMatch) {
+				const tracks = await RootWorker.buildMergeTracks(parent);
+				rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
+			}
+			const pathToChild = [...parents.slice(1), folder];
+			await this.buildMergeNode(pathToChild, rootMatch);
 		}
-		if (rootMatch) {
-			await this.loadEmptyUnchanged(rootMatch);
-			const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
-			await scanMerger.merge(rootMatch);
+		if (!rootMatch) {
+			return;
 		}
+		await this.loadEmptyUnchanged(rootMatch);
+		const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
+		await scanMerger.merge(rootMatch);
 	}
 
 	private async buildMergeNode(pathToChild: Array<Folder>, merge: MergeNode) {

@@ -1,11 +1,7 @@
-/**
- * Centralized date/time helpers.
- */
+// Centralized date/time helpers.
 
-/**
- * Map of time-unit strings (including moment.js-style abbreviations) to
- * their multiplier in milliseconds.
- */
+// Map of time-unit strings (including moment.js-style abbreviations) to
+// their multiplier in milliseconds.
 const UNIT_MS: Record<string, number> = {
 	ms: 1, millisecond: 1, milliseconds: 1,
 	s: 1000, second: 1000, seconds: 1000,
@@ -17,11 +13,8 @@ const UNIT_MS: Record<string, number> = {
 	y: 31_536_000_000, year: 31_536_000_000, years: 31_536_000_000
 };
 
-/**
- * Convert a numeric value with a time-unit string to milliseconds.
- *
- * Example: `durationToMilliseconds(2, 'hours')` → 7200000
- */
+// Convert a numeric value with a time-unit string to milliseconds.
+// Example: `durationToMilliseconds(2, 'hours')` → 7200000
 export function durationToMilliseconds(value: number, unit: string): number {
 	const multiplier = UNIT_MS[unit] as number | undefined;
 	if (multiplier === undefined) {
@@ -30,13 +23,11 @@ export function durationToMilliseconds(value: number, unit: string): number {
 	return value * multiplier;
 }
 
-/**
- * Parse a colon-separated duration string (e.g. "01:23:45" or "01:23:45.678")
- * and return the total number of **milliseconds**.
- *
- * Two-part strings (e.g. "05:30") are treated as hours:minutes (matching
- * the behaviour of the previous moment.js-based implementation).
- */
+// Parse a colon-separated duration string (e.g. "01:23:45" or "01:23:45.678")
+// and return the total number of **milliseconds**.
+//
+// Two-part strings (e.g. "05:30") are treated as hours:minutes (matching
+// the behaviour of the previous moment.js-based implementation).
 export function parseDurationToMilliseconds(s: string): number {
 	const parts = s.split(':');
 	if (parts.length === 2) {
@@ -57,24 +48,18 @@ export function parseDurationToMilliseconds(s: string): number {
 	return 0;
 }
 
-/**
- * Parse a colon-separated duration string (e.g. "01:23:45") and return
- * the total number of **seconds**.
- */
+// Parse a colon-separated duration string (e.g. "01:23:45") and return
+// the total number of **seconds**.
 export function parseDurationToSeconds(s: string): number {
 	return parseDurationToMilliseconds(s) / 1000;
 }
 
-/**
- * Return `true` when two date-like values represent the same instant.
- */
+// Return `true` when two date-like values represent the same instant.
 export function isSameDate(a: Date | number, b: Date | number): boolean {
 	return toDateNumber(a) === toDateNumber(b);
 }
 
-/**
- * Return the date as a number
- */
+// Return the date as a number
 export function toDateNumber(a: Date | number | string): number {
 	if (a instanceof Date) {
 		return a.getTime();
@@ -85,11 +70,8 @@ export function toDateNumber(a: Date | number | string): number {
 	return new Date(a as string).getTime();
 }
 
-/**
- * Format a duration given in milliseconds as `"HH:mm:ss.SSS"`.
- *
- * Example: `formatElapsedDuration(3661001)` → `"01:01:01.001"`
- */
+// Format a duration given in milliseconds as `"HH:mm:ss.SSS"`.
+// Example: `formatElapsedDuration(3661001)` → `"01:01:01.001"`
 export function formatElapsedDuration(ms: number): string {
 	const totalSeconds = Math.floor(ms / 1000);
 	const hours = Math.floor(totalSeconds / 3600);
@@ -99,33 +81,24 @@ export function formatElapsedDuration(ms: number): string {
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }
 
-/**
- * Calculate how many whole minutes have elapsed since `time`.
- */
+// Calculate how many whole minutes have elapsed since `time`.
 export function minutesAgo(time: number | Date): number {
 	const timeMs = time instanceof Date ? time.getTime() : time;
 	return Math.round((Date.now() - timeMs) / 60_000);
 }
 
-/**
- * Format a `Date` as an ISO-8601 UTC string (e.g. `"2025-06-15T12:00:00Z"`).
- */
+// Format a `Date` as an ISO-8601 UTC string (e.g. `"2025-06-15T12:00:00Z"`).
 export function formatDateToUTC(date: Date): string {
 	return date.toISOString().replace('.000Z', '+00:00').replace(/\.\d{3}Z$/, '+00:00');
 }
 
-/**
- * Parse a date/time string and return its ms-since-epoch value, or `0` when
- * the string cannot be parsed.
- */
+// Parse a date/time string and return its ms-since-epoch value, or `0` when the string cannot be parsed.
 export function parseDateToTimestamp(value: string): number {
 	const ms = new Date(value).getTime();
 	return Number.isNaN(ms) ? 0 : ms;
 }
 
-/**
- * Return the epoch-ms value of "now minus `ms` milliseconds".
- */
+// Return the epoch-ms value of "now minus `ms` milliseconds".
 export function nowMinusMilliseconds(ms: number): number {
 	return Date.now() - ms;
 }

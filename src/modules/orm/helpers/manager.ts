@@ -90,9 +90,9 @@ export class EntityManager {
 	}
 
 	/**
-	 * Entity names ordered so an entity comes after everything it points to with a foreign key.
-	 * Rows have to be written in that order, the database checks the keys row by row.
-	 */
+	Entity names ordered so an entity comes after everything it points to with a foreign key.
+	Rows have to be written in that order, the database checks the keys row by row.
+	*/
 	private entityInsertOrder(): Array<string> {
 		if (this.insertOrder) {
 			return this.insertOrder;

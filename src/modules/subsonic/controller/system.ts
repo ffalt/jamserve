@@ -14,9 +14,9 @@ const log = logger('SubsonicApi');
 @SubsonicController()
 export class SubsonicSystemApi {
 	/**
-	 * Get details about the software license. Takes no extra parameters.
-	 * Since 1.0.0
-	 */
+	Get details about the software license. Takes no extra parameters.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getLicense', () => SubsonicResponseLicense, {
 		summary: 'Get License',
 		description: 'Get details about the software license.',
@@ -27,9 +27,9 @@ export class SubsonicSystemApi {
 	}
 
 	/**
-	 * Used to test connectivity with the server. Takes no extra parameters.
-	 * Since 1.0.0
-	 */
+	Used to test connectivity with the server. Takes no extra parameters.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/ping', () => SubsonicOKResponse, {
 		summary: 'Ping',
 		description: 'Used to test connectivity with the server.',
@@ -40,8 +40,8 @@ export class SubsonicSystemApi {
 	}
 
 	/**
-	 * https://opensubsonic.netlify.app/docs/endpoints/getopensubsonicextensions/
-	 */
+	https://opensubsonic.netlify.app/docs/endpoints/getopensubsonicextensions/
+	*/
 	@SubsonicRoute('/getOpenSubsonicExtensions', () => SubsonicOpenSubsonicResponse, {
 		summary: 'OpenSubsonic Extensions',
 		description: 'List the OpenSubsonic extensions supported by this server.',
@@ -58,9 +58,9 @@ export class SubsonicSystemApi {
 	}
 
 	/**
-	 * Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox (see Settings > Users > user is allowed to play files in jukebox mode).
-	 * Since 1.2.0
-	 */
+	Controls the jukebox, i.e., playback directly on the server's audio hardware. Note: The user must be authorized to control the jukebox (see Settings > Users > user is allowed to play files in jukebox mode).
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/jukeboxControl', () => SubsonicResponseJukeboxStatus, {
 		summary: 'Jukebox Control',
 		description: 'Controls the jukebox, i.e., playback directly on the server\'s audio hardware.',
@@ -82,9 +82,9 @@ export class SubsonicSystemApi {
 	}
 
 	/**
-	 * Returns the current status for media library scanning. Takes no extra parameters.
-	 * Since 1.15.0
-	 */
+	Returns the current status for media library scanning. Takes no extra parameters.
+	Since 1.15.0
+	*/
 	@SubsonicRoute('/getScanStatus', () => SubsonicResponseScanStatus, {
 		summary: 'Scan Status',
 		description: 'Returns the current status for media library scanning.',
@@ -95,9 +95,9 @@ export class SubsonicSystemApi {
 	}
 
 	/**
-	 * Initiates a rescan of the media libraries. Takes no extra parameters.
-	 * Since 1.15.0
-	 */
+	Initiates a rescan of the media libraries. Takes no extra parameters.
+	Since 1.15.0
+	*/
 	@SubsonicRoute('/startScan', () => SubsonicOKResponse, {
 		summary: 'Start Status',
 		description: 'Initiates a rescan of the media libraries. Takes no extra parameters.',

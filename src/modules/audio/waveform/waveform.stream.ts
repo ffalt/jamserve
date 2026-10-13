@@ -24,10 +24,10 @@ export class WaveformStream extends Transform {
 	_samples = 0;
 	_total = 0;
 
-	constructor(atSamplesPerPixel?: number, atSampleRate?: number) {
+	constructor(atSamplesPerPixel?: number, atSampleRate: number = 44_100) {
 		super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
 		this._samplesPerPixel = atSamplesPerPixel ?? 256;
-		this._sampleRate = atSampleRate ?? 44_100;
+		this._sampleRate = atSampleRate;
 		const options: FfmpegCommandOptions = {
 			source: this._buffer as Readable
 		};

@@ -91,21 +91,23 @@ export class Flac {
 		const processor = new FlacProcessorStream(false, false);
 		return new Promise<void>((resolve, reject) => {
 			processor.on('preprocess', (mdb: MetadataBlock) => {
-				if ([MDB_TYPE.VORBIS_COMMENT, MDB_TYPE.PICTURE, MDB_TYPE.PADDING].includes(mdb.type)) {
+				if (([MDB_TYPE.VORBIS_COMMENT, MDB_TYPE.PICTURE, MDB_TYPE.PADDING] as Array<number>).includes(mdb.type)) {
 					mdb.remove();
 				}
-				if (mdb.isLast) {
-					if (mdb.removed) {
-						const lastBlock = flacBlocks.at(-1);
-						if (lastBlock) {
-							lastBlock.isLast = true;
-						}
-					}
-					for (const block of flacBlocks) {
-						processor.push(block.publish());
-					}
-					flacBlocks = [];
+				if (!mdb.isLast) {
+					return;
 				}
+
+				if (mdb.removed) {
+					const lastBlock = flacBlocks.at(-1);
+					if (lastBlock) {
+						lastBlock.isLast = true;
+					}
+				}
+				for (const block of flacBlocks) {
+					processor.push(block.publish());
+				}
+				flacBlocks = [];
 			});
 			reader.on('error', (error: unknown) => {
 				reject(error);

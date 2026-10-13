@@ -12,8 +12,8 @@ export abstract class TranscoderStream implements StreamData {
 		return (format !== mediaFormat) || (maxBitRate > 0);
 	}
 
-	static validTranscoding(format: AudioFormatType): boolean {
-		return SupportedTranscodeAudioFormat.includes(format);
+	static validTranscoding(format: string): boolean {
+		return (SupportedTranscodeAudioFormat as Array<string>).includes(format);
 	}
 
 	static getTranscodeProc(source: string, format: string, maxBitRate: number, timeOffset?: number): FfmpegCommand {

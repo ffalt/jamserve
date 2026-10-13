@@ -10,9 +10,9 @@ import { SubsonicFormatter } from '../formatter.js';
 @SubsonicController()
 export class SubsonicChatApi {
 	/**
-	 * Adds a message to the chat log.
-	 * Since 1.2.0
-	 */
+	Adds a message to the chat log.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/addChatMessage', () => SubsonicOKResponse, {
 		summary: 'Add Chat Messages',
 		description: 'Adds a message to the chat log.',
@@ -28,9 +28,9 @@ export class SubsonicChatApi {
 	}
 
 	/**
-	 * Returns the current visible (non-expired) chat messages.
-	 * Since 1.2.0
-	 */
+	Returns the current visible (non-expired) chat messages.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/getChatMessages', () => SubsonicResponseChatMessages, {
 		summary: 'Get Chat Messages',
 		description: 'Returns the current visible (non-expired) chat messages.',

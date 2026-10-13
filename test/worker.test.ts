@@ -942,12 +942,13 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 					for (const id of folderIds) {
 						const folder = await orm.Folder.oneOrFailByID(id);
-						if (folder.parent.id()) {
-							const name = path.basename(folder.path);
-							const updatedFolder = await testRename(folder, `${name}_renamed`);
-							if (updatedFolder) {
-								await testRename(updatedFolder, name);
-							}
+						if (!folder.parent.id()) {
+							continue;
+						}
+						const name = path.basename(folder.path);
+						const updatedFolder = await testRename(folder, `${name}_renamed`);
+						if (updatedFolder) {
+							await testRename(updatedFolder, name);
 						}
 					}
 				});

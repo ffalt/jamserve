@@ -1,15 +1,15 @@
 import { ExtendedInfo } from './metadata.model.js';
 
 export const MetadataFormat = {
-	stripInlineLastFM(content: string): string {
-		return (content || '')
+	stripInlineLastFM(content: string = ''): string {
+		return (content)
 			.replaceAll(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
 			.replaceAll(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
 			.replaceAll('User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.', '');
 	},
 
-	stripInlineWikipediaHTML(content: string): string {
-		return (content || '')
+	stripInlineWikipediaHTML(content: string = ''): string {
+		return (content)
 			.replaceAll(/<p class="mw-empty-elt">\s*<\/p>/g, '')
 			.replaceAll('<p>', '')
 			.replaceAll('</p>', '\n');

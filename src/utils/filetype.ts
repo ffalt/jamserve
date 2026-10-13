@@ -28,12 +28,20 @@ export const SupportedTranscodeAudioFormat: Array<AudioFormatType> = [
 	AudioFormatType.m4a
 ];
 
+export function isAudioFormatType(suffix: string): suffix is AudioFormatType {
+	return (Object.values(AudioFormatType) as Array<string>).includes(suffix);
+}
+
+export function isSupportedAudioFormat(suffix: string): suffix is AudioFormatType {
+	return (SupportedAudioFormat as Array<string>).includes(suffix);
+}
+
 export function getFileType(filename: string): FileTyp {
 	const suffix = fileSuffix(filename);
 	if (SupportedReadImageFormat.includes(suffix)) {
 		return FileTyp.image;
 	}
-	if (SupportedAudioFormat.includes(suffix as AudioFormatType)) {
+	if (isSupportedAudioFormat(suffix)) {
 		return FileTyp.audio;
 	}
 	if (['tag'].includes(suffix)) {

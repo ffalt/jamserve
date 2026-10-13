@@ -279,10 +279,12 @@ export class WorkerScan {
 		}
 		for (const child of folders) {
 			const subf = result.children.some(f => f.scan.path === child.path);
-			if (!subf) {
-				await this.removeFolder(child);
-				this.changes.folders.updated.add(folder);
+			if (subf) {
+				continue;
 			}
+
+			await this.removeFolder(child);
+			this.changes.folders.updated.add(folder);
 		}
 	}
 
@@ -311,14 +313,12 @@ export class WorkerScan {
 		}
 		scanArtworks.delete(filename);
 		result.artworksCount += 1;
-		if (
-			scanArtwork.size !== artwork.fileSize ||
-			!isSameDate(scanArtwork.ctime, artwork.statCreated) ||
-			!isSameDate(scanArtwork.mtime, artwork.statModified)
-		) {
-			result.changed = true;
-			await this.updateArtwork(scanArtwork, artwork);
+		if (scanArtwork.size === artwork.fileSize && isSameDate(scanArtwork.ctime, artwork.statCreated) && isSameDate(scanArtwork.mtime, artwork.statModified)) {
+			return;
 		}
+
+		result.changed = true;
+		await this.updateArtwork(scanArtwork, artwork);
 	}
 
 	private async scanTracks(dir: ScanDir, folder: Folder, result: MatchNode) {
@@ -386,10 +386,10 @@ export class WorkerScan {
 	}
 
 	/**
-	 * Load the stored folders, tracks and artworks of the root up front.
-	 * Asking the collections of each folder instead costs three queries per folder of the library,
-	 * on every scan, even if nothing has changed.
-	 */
+	Load the stored folders, tracks and artworks of the root up front.
+	Asking the collections of each folder instead costs three queries per folder of the library,
+	on every scan, even if nothing has changed.
+	*/
 	private async preload(): Promise<void> {
 		const folders = await this.orm.Folder.find({ where: { root: this.root.id } });
 		this.childFolders = WorkerScan.groupByID(folders, folder => folder.parent.id());

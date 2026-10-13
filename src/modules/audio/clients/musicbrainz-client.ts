@@ -28,10 +28,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 
 	private beautify(obj: Record<string, any>): Record<string, any> | undefined {
 		const walk = (o: Record<string, any> | undefined | null): Record<string, any> | undefined => {
-			if (o === null) {
-				return;
-			}
-			if (o === undefined) {
+			if ((o === null) || (o === undefined)) {
 				return;
 			}
 			if (Array.isArray(o)) {

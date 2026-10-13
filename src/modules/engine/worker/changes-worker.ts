@@ -55,10 +55,12 @@ export class ChangesWorker extends BaseWorker {
 		trackCleanIds.appendIDs(changes.tracks.updated.ids());
 
 		const trackIDs = trackCleanIds.ids();
-		if (trackIDs.length > 0) {
-			log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
-			await this.audioModule.clearCacheByIDs(trackIDs);
+		if (trackIDs.length === 0) {
+			return;
 		}
+
+		log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
+		await this.audioModule.clearCacheByIDs(trackIDs);
 	}
 
 	private static async mergeDependendRemovals(orm: Orm, changes: Changes): Promise<void> {
@@ -124,10 +126,12 @@ export class ChangesWorker extends BaseWorker {
 			playlist.duration = duration;
 			orm.Playlist.persistLater(playlist);
 		}
-		if (orm.em.hasChanges()) {
-			log.debug('Syncing Playlist Duration Updates to DB');
-			await orm.em.flush();
+		if (!orm.em.hasChanges()) {
+			return;
 		}
+
+		log.debug('Syncing Playlist Duration Updates to DB');
+		await orm.em.flush();
 	}
 
 	private static async mergeRemovals(orm: Orm, changes: Changes): Promise<void> {
@@ -139,10 +143,12 @@ export class ChangesWorker extends BaseWorker {
 		await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
 		await orm.Series.removeLaterByIDs(changes.series.removed.ids());
 
-		if (orm.em.hasChanges()) {
-			log.debug('Syncing Removal Updates to DB');
-			await orm.em.flush();
+		if (!orm.em.hasChanges()) {
+			return;
 		}
+
+		log.debug('Syncing Removal Updates to DB');
+		await orm.em.flush();
 	}
 
 	private logChanges(changes: Changes): void {

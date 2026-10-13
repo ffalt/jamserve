@@ -28,7 +28,7 @@ export class BookmarkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Bookmark> {
 		return engine.transform.bookmark(
-			orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }),
+			orm, await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id } : { id, user: user.id } }),
 			childrenParameters, trackParameters, episodeParameters, user
 		);
 	}

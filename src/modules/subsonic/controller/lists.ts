@@ -25,9 +25,9 @@ import { SubsonicHelper } from '../helper.js';
 @SubsonicController()
 export class SubsonicListsApi {
 	/**
-	 * Returns what is currently being played by all users. Takes no extra parameters.
-	 * Since 1.0.0
-	 */
+	Returns what is currently being played by all users. Takes no extra parameters.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getNowPlaying', () => SubsonicResponseNowPlaying, {
 		summary: 'Now Playing',
 		description: 'Returns what is currently being played by all users.',
@@ -45,9 +45,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Returns random songs matching the given criteria.
-	 * Since 1.2.0
-	 */
+	Returns random songs matching the given criteria.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/getRandomSongs', () => SubsonicResponseRandomSongs, {
 		summary: 'Random Songs',
 		description: 'Returns random songs matching the given criteria.',
@@ -80,9 +80,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.
-	 * Since 1.2.0
-	 */
+	Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/getAlbumList', () => SubsonicResponseAlbumList, {
 		summary: 'Album List',
 		description: 'Returns a list of random, newest, highest rated etc. albums. Similar to the album lists on the home page of the Subsonic web interface.',
@@ -217,9 +217,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Similar to getAlbumList, but organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Similar to getAlbumList, but organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getAlbumList2', () => SubsonicResponseAlbumList2, {
 		summary: 'Album List 2',
 		description: 'Similar to getAlbumList, but organizes music according to ID3 tags.',
@@ -350,9 +350,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Returns songs in a given genre.
-	 * Since 1.9.0
-	 */
+	Returns songs in a given genre.
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/getSongsByGenre', () => SubsonicResponseSongsByGenre, {
 		summary: 'Songs By Genre',
 		description: 'Returns songs in a given genre.',
@@ -378,9 +378,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Returns starred songs, albums and artists.
-	 * Since 1.8.0
-	 */
+	Returns starred songs, albums and artists.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getStarred', () => SubsonicResponseStarred, {
 		summary: 'Starred',
 		description: 'Returns starred songs, albums and artists.',
@@ -409,9 +409,9 @@ export class SubsonicListsApi {
 	}
 
 	/**
-	 * Similar to getStarred, but organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Similar to getStarred, but organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getStarred2', () => SubsonicResponseStarred2, {
 		summary: 'Starred 2',
 		description: 'Similar to getStarred, but organizes music according to ID3 tags.',

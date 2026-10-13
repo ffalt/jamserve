@@ -103,10 +103,10 @@ export class FolderRepository extends BaseRepository<Folder, FolderFilterParamet
 	}
 
 	/**
-	 * Collect the folder and all folders below it, by walking the parent relation level by level.
-	 * Matching on the path with LIKE is not used: path separators and folder names may contain
-	 * LIKE wildcards, and a path prefix can be shared by folders of an unrelated root.
-	 */
+	Collect the folder and all folders below it, by walking the parent relation level by level.
+	Matching on the path with LIKE is not used: path separators and folder names may contain
+	LIKE wildcards, and a path prefix can be shared by folders of an unrelated root.
+	*/
 	async findAllDescendants(folder: Folder): Promise<Array<Folder>> {
 		const result: Array<Folder> = [folder];
 		const seen = new Set<string>([folder.id]);

@@ -61,10 +61,11 @@ export async function saveManagedEntityRelations(instance: ManagedEntity, transa
 		}
 
 		const referenceOrCollection = instance[field.name];
-		if (referenceOrCollection instanceof Collection) {
-			const collection: Collection<any> = referenceOrCollection;
-			await collection.flush(transaction);
+		if (!(referenceOrCollection instanceof Collection)) {
+			continue;
 		}
+		const collection: Collection<any> = referenceOrCollection;
+		await collection.flush(transaction);
 	}
 }
 

@@ -22,7 +22,7 @@ describe('TranscoderStream static utilities', () => {
 		expect(TranscoderStream.validTranscoding(AudioFormatType.mp3)).toBe(true);
 		expect(TranscoderStream.validTranscoding(AudioFormatType.flv)).toBe(true);
 		// an unknown value should not be considered valid
-		expect(TranscoderStream.validTranscoding('invalid' as any)).toBe(false);
+		expect(TranscoderStream.validTranscoding('invalid')).toBe(false);
 	});
 });
 

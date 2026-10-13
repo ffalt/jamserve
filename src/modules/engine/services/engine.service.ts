@@ -148,18 +148,20 @@ export class EngineService {
 		if (forceRescan) {
 			log.info(`Updating from version ${version || '-'}`);
 		}
-		if (forceRescan || this.settings.settings.library.scanAtStart) {
-			log.info('Starting rescan');
-			this.io.root.startUpRefresh(orm, forceRescan)
-				.then(requests => {
-					if (forceRescan) {
-						this.saveVersionAfterRescan(orm, requests);
-					}
-				})
-				.catch((error: unknown) => {
-					log.error(error, 'Error on startup scanning');
-				});
+		if (!(forceRescan || this.settings.settings.library.scanAtStart)) {
+			return;
 		}
+
+		log.info('Starting rescan');
+		this.io.root.startUpRefresh(orm, forceRescan)
+			.then(requests => {
+				if (forceRescan) {
+					this.saveVersionAfterRescan(orm, requests);
+				}
+			})
+			.catch((error: unknown) => {
+				log.error(error, 'Error on startup scanning');
+			});
 	}
 
 	private saveVersionAfterRescan(orm: Orm, requests: Array<AdminChangeQueueInfo>): void {
@@ -241,11 +243,12 @@ export class EngineService {
 				await this.buildAdminUser(orm, this.config.firstStart.adminUser);
 			}
 		}
-		if (this.config.firstStart.roots) {
-			const count = await orm.Root.count();
-			if (count === 0) {
-				await EngineService.buildRoots(orm, this.config.firstStart.roots);
-			}
+		if (!this.config.firstStart.roots) {
+			return;
+		}
+		const count = await orm.Root.count();
+		if (count === 0) {
+			await EngineService.buildRoots(orm, this.config.firstStart.roots);
 		}
 	}
 }

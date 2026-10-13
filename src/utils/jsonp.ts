@@ -7,6 +7,7 @@ export function validJSONP(callback?: string | Array<string>): boolean {
 		return false;
 	}
 	// Allow only valid JavaScript identifiers: alphanumeric, underscore, and dollar sign (no dots)
+	// eslint-disable-next-line unicorn/prefer-combined-guards
 	if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(normalizedCallback)) {
 		return false;
 	}

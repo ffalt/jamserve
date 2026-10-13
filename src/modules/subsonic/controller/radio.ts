@@ -11,9 +11,9 @@ import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 @SubsonicController()
 export class SubsonicInternetRadioApi {
 	/**
-	 * Returns all internet radio stations. Takes no extra parameters.
-	 * Since 1.9.0
-	 */
+	Returns all internet radio stations. Takes no extra parameters.
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/getInternetRadioStations', () => SubsonicResponseInternetRadioStations, {
 		summary: 'Get Radios',
 		description: 'Returns all internet radio stations.',
@@ -29,9 +29,9 @@ export class SubsonicInternetRadioApi {
 	}
 
 	/**
-	 * Adds a new internet radio station. Only users with admin privileges are allowed to call this method.
-	 * Since 1.16.0
-	 */
+	Adds a new internet radio station. Only users with admin privileges are allowed to call this method.
+	Since 1.16.0
+	*/
 	@SubsonicRoute('/createInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Create Radios',
 		description: 'Adds a new internet radio station. Only users with admin privileges are allowed to call this method.',
@@ -53,9 +53,9 @@ export class SubsonicInternetRadioApi {
 	}
 
 	/**
-	 * Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.
-	 * Since 1.16.0
-	 */
+	Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.
+	Since 1.16.0
+	*/
 	@SubsonicRoute('/updateInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Update Radios',
 		description: 'Updates an existing internet radio station. Only users with admin privileges are allowed to call this method.',
@@ -83,9 +83,9 @@ export class SubsonicInternetRadioApi {
 	}
 
 	/**
-	 * Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.
-	 * Since 1.16.0
-	 */
+	Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.
+	Since 1.16.0
+	*/
 	@SubsonicRoute('/deleteInternetRadioStation', () => SubsonicOKResponse, {
 		summary: 'Delete Radios',
 		description: 'Deletes an existing internet radio station. Only users with admin privileges are allowed to call this method.',

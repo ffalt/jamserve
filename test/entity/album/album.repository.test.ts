@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import { AlbumRepository } from '../../../src/entity/album/album.repository.js';
-import { AlbumOrderFields } from '../../../src/types/enums.js';
+import { AlbumOrderFields, AlbumType } from '../../../src/types/enums.js';
 import { AlbumFilterParameters, AlbumOrderParameters } from '../../../src/entity/album/album.parameters.js';
 import { flattenWhere } from '../shared/query-helpers.js';
 import { makeRepo as makeBaseRepo } from '../shared/make-repo.js';
@@ -17,6 +17,7 @@ describe('AlbumRepository.buildOrder', () => {
 
 	test('returns empty array for unknown orderBy value', () => {
 		const repo = makeRepo();
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-assignment -- the test checks a value outside of AlbumOrderFields
 		expect(repo.buildOrder({ orderBy: 'unknown' as AlbumOrderFields, orderDesc: false })).toEqual([]);
 	});
 
@@ -138,7 +139,7 @@ describe('AlbumRepository.buildFilter', () => {
 
 	test('includes albumTypes filter', async () => {
 		const repo = makeRepo();
-		const filter: AlbumFilterParameters = { albumTypes: ['album'] as AlbumFilterParameters['albumTypes'] };
+		const filter: AlbumFilterParameters = { albumTypes: [AlbumType.album] };
 		const result = await repo.buildFilter(filter, undefined);
 		const conditions = flattenWhere(result.where);
 		const typeCondition = conditions.find(c => 'albumType' in c);

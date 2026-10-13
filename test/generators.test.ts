@@ -57,10 +57,11 @@ function downloadZip(req: TestAgent<supertest.Test>, url: string, done: (error?:
 						return;
 					}
 					const errorMessage = yauzl.validateFileName(entry.fileName);
-					if (errorMessage) {
-						isClosedByError = true;
-						done(new Error(`Unexpected Zip Content ${entry.fileName}`));
+					if (!errorMessage) {
+						return;
 					}
+					isClosedByError = true;
+					done(new Error(`Unexpected Zip Content ${entry.fileName}`));
 				});
 			});
 		});

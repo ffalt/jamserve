@@ -75,16 +75,17 @@ export class TrackWorker extends BaseWorker {
 		const folders: Array<Folder | undefined> = [];
 		for (const writeTag of tags) {
 			const track = await orm.Track.findOneByID(writeTag.trackID);
-			if (track) {
-				const filename = path.join(track.path, track.fileName);
-				await this.audioModule.writeRawTag(filename, writeTag.tag);
-				await trackUpdater.updateTrackValues(track, filename);
-				await TrackWorker.updateTrackStats(track);
-				orm.Track.persistLater(track);
-				changes.tracks.updated.add(track);
-				changes.folders.updated.addID(track.folder.id());
-				folders.push(await track.folder.get());
+			if (!track) {
+				continue;
 			}
+			const filename = path.join(track.path, track.fileName);
+			await this.audioModule.writeRawTag(filename, writeTag.tag);
+			await trackUpdater.updateTrackValues(track, filename);
+			await TrackWorker.updateTrackStats(track);
+			orm.Track.persistLater(track);
+			changes.tracks.updated.add(track);
+			changes.folders.updated.addID(track.folder.id());
+			folders.push(await track.folder.get());
 		}
 		await this.refreshFolderStats(orm, folders);
 	}
@@ -173,16 +174,18 @@ export class TrackWorker extends BaseWorker {
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
 			const oldParent = await track.folder.get();
-			if (oldParent?.id !== newParentID) {
-				changes.folders.updated.add(oldParent);
-				folders.push(oldParent);
-				await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
-				track.path = ensureTrailingPathSeparator(newParent.path);
-				await track.root.set(await newParent.root.getOrFail());
-				await track.folder.set(newParent);
-				await TrackWorker.updateTrackStats(track);
-				orm.Track.persistLater(track);
+			if (oldParent?.id === newParentID) {
+				continue;
 			}
+
+			changes.folders.updated.add(oldParent);
+			folders.push(oldParent);
+			await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
+			track.path = ensureTrailingPathSeparator(newParent.path);
+			await track.root.set(await newParent.root.getOrFail());
+			await track.folder.set(newParent);
+			await TrackWorker.updateTrackStats(track);
+			orm.Track.persistLater(track);
 		}
 		await this.refreshFolderStats(orm, folders);
 	}

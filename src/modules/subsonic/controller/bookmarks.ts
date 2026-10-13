@@ -12,9 +12,8 @@ import { Track } from '../../../entity/track/track.js';
 @SubsonicController()
 export class SubsonicBookmarkApi {
 	/**
-	 *
-	 * Since 1.9.0
-	 */
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/createBookmark', () => SubsonicOKResponse,
 		{
 			summary: 'Create Bookmarks',
@@ -33,9 +32,9 @@ export class SubsonicBookmarkApi {
 	}
 
 	/**
-	 * Returns all bookmarks for this user. A bookmark is a position within a certain media file.
-	 * Since 1.9.0
-	 */
+	Returns all bookmarks for this user. A bookmark is a position within a certain media file.
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/getBookmarks', () => SubsonicResponseBookmarks,
 		{
 			summary: 'Get Bookmarks',
@@ -51,9 +50,9 @@ export class SubsonicBookmarkApi {
 	}
 
 	/**
-	 * Deletes the bookmark for a given file.
-	 * Since 1.9.0
-	 */
+	Deletes the bookmark for a given file.
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/deleteBookmark', () => SubsonicOKResponse,
 		{ summary: 'Delete Bookmarks', description: 'Deletes the bookmark for a given media file.', tags: ['Bookmarks'] })
 	async deleteBookmark(@SubsonicParameters() query: SubsonicParameterID, @SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicOKResponse> {
@@ -68,11 +67,11 @@ export class SubsonicBookmarkApi {
 	}
 
 	/**
-	 * Returns the state of the play queue for this user (as set by savePlayQueue).
-	 * This includes the tracks in the play queue, the currently playing track, and the position within this track.
-	 * Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).
-	 * Since 1.12.0
-	 */
+	Returns the state of the play queue for this user (as set by savePlayQueue).
+	This includes the tracks in the play queue, the currently playing track, and the position within this track.
+	Typically used to allow a user to move between different clients/apps while retaining the same play queue (for instance when listening to an audio book).
+	Since 1.12.0
+	*/
 	@SubsonicRoute('/getPlayQueue', () => SubsonicResponsePlayQueue,
 		{ summary: 'Get Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
 	async getPlayQueue(@SubsonicContext() { engine, orm, user }: Context): Promise<SubsonicResponsePlayQueue> {
@@ -90,14 +89,14 @@ export class SubsonicBookmarkApi {
 	}
 
 	/**
-	 * Saves the state of the play queue for this user. This includes the tracks in the play queue,
-	 * the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps
-	 * while retaining the same play queue (for instance when listening to an audio book).
-	 * Since 1.12.0
-	 */
+	Saves the state of the play queue for this user. This includes the tracks in the play queue,
+	the currently playing track, and the position within this track. Typically used to allow a user to move between different clients/apps
+	while retaining the same play queue (for instance when listening to an audio book).
+	Since 1.12.0
+	*/
 	@SubsonicRoute('/savePlayQueue', () => SubsonicOKResponse,
 		{ summary: 'Save Play Queue', description: 'Returns the state of the play queue for this user (as set by savePlayQueue).', tags: ['PlayQueue'] })
-	async savePlayQueue(@SubsonicParameters() query: SubsonicParameterPlayQueue, @SubsonicContext() { engine, orm, user, client }: Context): Promise<SubsonicOKResponse> {
+	async savePlayQueue(@SubsonicParameters() query: SubsonicParameterPlayQueue, @SubsonicContext() { engine, orm, user, client = 'unknown' }: Context): Promise<SubsonicOKResponse> {
 		/*
 		Parameter 	Required 	Default 	Comment
 		id 	Yes 		ID of a song in the play queue. Use one id parameter for each song in the play queue.
@@ -112,7 +111,7 @@ export class SubsonicBookmarkApi {
 			mediaIDs,
 			currentID: query.current,
 			position: query.position
-		}, user, client ?? 'unknown');
+		}, user, client);
 		return {};
 	}
 }

@@ -1,7 +1,7 @@
 export class ApiError extends Error {
 	failCode: number;
 
-	constructor(message: string, failCode: number) {
+	constructor(message: string, failCode: number = 500) {
 		// Calling parent constructor of base Error class.
 		super(message);
 
@@ -11,7 +11,7 @@ export class ApiError extends Error {
 		// You can use any additional properties you want.
 		// I'm going to use preferred HTTP status for this error types.
 		// `500` is the default value if not specified.
-		this.failCode = failCode || 500;
+		this.failCode = failCode;
 	}
 }
 
@@ -51,6 +51,6 @@ export function unauthError(message?: string): ApiError {
 	return new ApiError(value, 401);
 }
 
-export function genericError(message?: string): ApiError {
-	return new ApiError(message ?? 'Guru Meditation', 500);
+export function genericError(message: string = 'Guru Meditation'): ApiError {
+	return new ApiError(message, 500);
 }

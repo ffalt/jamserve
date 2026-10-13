@@ -10,9 +10,9 @@ import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 @SubsonicController()
 export class SubsonicUserApi {
 	/**
-	 * Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
-	 * Since 1.3.0
-	 */
+	Get details about a given user, including which authorization roles it has. Can be used to enable/disable certain features in the client, such as jukebox control.
+	Since 1.3.0
+	*/
 	@SubsonicRoute('/getUser', () => SubsonicResponseUser, {
 		summary: 'Get User',
 		description: 'Get details about a given user, including which authorization roles it has.',
@@ -37,9 +37,9 @@ export class SubsonicUserApi {
 	}
 
 	/**
-	 * Get details about all users, including which authorization roles they have. Only users with admin privileges are allowed to req this method.
-	 * Since 1.8.0
-	 */
+	Get details about all users, including which authorization roles they have. Only users with admin privileges are allowed to req this method.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getUsers', () => SubsonicResponseUsers, {
 		summary: 'Get Users',
 		description: 'Get details about all users, including which authorization roles they have.',
@@ -54,9 +54,9 @@ export class SubsonicUserApi {
 	}
 
 	/**
-	 * Creates a new Subsonic user
-	 * Since 1.1.0
-	 */
+	Creates a new Subsonic user
+	Since 1.1.0
+	*/
 	@SubsonicRoute('/createUser', () => SubsonicOKResponse, {
 		summary: 'Create User',
 		description: 'Creates a new Subsonic user',
@@ -87,9 +87,9 @@ export class SubsonicUserApi {
 	}
 
 	/**
-	 * Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
-	 * Since 1.1.0
-	 */
+	Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.
+	Since 1.1.0
+	*/
 	@SubsonicRoute('/changePassword', () => SubsonicOKResponse, {
 		summary: 'Change Password',
 		description: 'Changes the password of an existing Subsonic user. You can only change your own password unless you have admin privileges.',
@@ -105,9 +105,9 @@ export class SubsonicUserApi {
 	}
 
 	/**
-	 * Modifies an existing Subsonic user
-	 * Since 1.10.1
-	 */
+	Modifies an existing Subsonic user
+	Since 1.10.1
+	*/
 	@SubsonicRoute('/updateUser', () => SubsonicOKResponse, {
 		summary: 'Update User',
 		description: 'Modifies an existing Subsonic user',
@@ -138,9 +138,9 @@ export class SubsonicUserApi {
 	}
 
 	/**
-	 * Deletes an existing Subsonic user
-	 * Since 1.3.0
-	 */
+	Deletes an existing Subsonic user
+	Since 1.3.0
+	*/
 	@SubsonicRoute('/deleteUser', () => SubsonicOKResponse, {
 		summary: 'Delete User',
 		description: 'Deletes an existing Subsonic user',

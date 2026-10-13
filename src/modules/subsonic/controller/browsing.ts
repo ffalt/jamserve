@@ -38,9 +38,9 @@ import { LastFM } from '../../audio/clients/lastfm-rest-data.js';
 @SubsonicController()
 export class SubsonicBrowsingApi {
 	/**
-	 * Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getArtist', () => SubsonicResponseArtistWithAlbumsID3, {
 		summary: 'Artist',
 		description: 'Returns details for an artist, including a list of albums. This method organizes music according to ID3 tags.',
@@ -65,9 +65,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getAlbum', () => SubsonicResponseAlbumWithSongsID3, {
 		summary: 'Album',
 		description: 'Returns details for an album, including a list of songs. This method organizes music according to ID3 tags.',
@@ -89,9 +89,8 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 *
-	 * Since 1.11.0
-	 */
+	Since 1.11.0
+	*/
 	@SubsonicRoute('/getArtistInfo', () => SubsonicResponseArtistInfo, {
 		summary: 'Artist Info',
 		description: 'Returns artist info with biography, image URLs and similar artists, using data from last.fm.',
@@ -154,9 +153,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Similar to getArtistInfo, but organizes music according to ID3 tags.
-	 * Since 1.11.0
-	 */
+	Similar to getArtistInfo, but organizes music according to ID3 tags.
+	Since 1.11.0
+	*/
 	@SubsonicRoute('/getArtistInfo2', () => SubsonicResponseArtistInfo2, {
 		summary: 'Artist Info 2',
 		description: 'Similar to getArtistInfo, but organizes music according to ID3 tags.',
@@ -219,9 +218,8 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 *
-	 * Since 1.14.0
-	 */
+	Since 1.14.0
+	*/
 	@SubsonicRoute('/getAlbumInfo', () => SubsonicResponseAlbumInfo, {
 		summary: 'Album Info',
 		description: 'Returns album notes, image URLs etc, using data from last.fm.',
@@ -251,9 +249,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Similar to getAlbumInfo, but organizes music according to ID3 tags.
-	 * Since 1.14.0
-	 */
+	Similar to getAlbumInfo, but organizes music according to ID3 tags.
+	Since 1.14.0
+	*/
 	@SubsonicRoute('/getAlbumInfo2', () => SubsonicResponseAlbumInfo, {
 		summary: 'Album Info 2',
 		description: 'Similar to getAlbumInfo, but organizes music according to ID3 tags.',
@@ -284,9 +282,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns an indexed structure of all artists.
-	 * Since 1.0.0
-	 */
+	Returns an indexed structure of all artists.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getIndexes', () => SubsonicResponseIndexes, {
 		summary: 'Artist Indexes',
 		description: 'Returns an indexed structure of all artists.',
@@ -323,9 +321,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Similar to getIndexes, but organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Similar to getIndexes, but organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getArtists', () => SubsonicResponseArtistsID3, {
 		summary: 'Artist Indexes 2',
 		description: 'Similar to getIndexes, but organizes music according to ID3 tags.',
@@ -354,9 +352,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.
-	 * Since 1.0.0
-	 */
+	Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getMusicDirectory', () => SubsonicResponseDirectory, {
 		summary: 'Music Directory',
 		description: 'Returns a listing of all files in a music directory. Typically used to get list of albums for an artist, or list of songs for an album.',
@@ -382,9 +380,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns all configured top-level music folders. Takes no extra parameters.
-	 * Since 1.0.0
-	 */
+	Returns all configured top-level music folders. Takes no extra parameters.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getMusicFolders', () => SubsonicResponseMusicFolders, {
 		summary: 'Music Folders',
 		description: 'Returns all configured top-level music folders.',
@@ -400,9 +398,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns all genres.
-	 * Since 1.9.0
-	 */
+	Returns all genres.
+	Since 1.9.0
+	*/
 	@SubsonicRoute('/getGenres', () => SubsonicResponseGenres, {
 		summary: 'Genres',
 		description: 'Returns all genres.',
@@ -427,9 +425,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.
-	 * Since 1.11.0
-	 */
+	Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.
+	Since 1.11.0
+	*/
 	@SubsonicRoute('/getSimilarSongs', () => SubsonicResponseSimilarSongs, {
 		summary: 'Similar Songs',
 		description: 'Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features.',
@@ -471,9 +469,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Similar to getSimilarSongs, but organizes music according to ID3 tags.
-	 * Since 1.11.0
-	 */
+	Similar to getSimilarSongs, but organizes music according to ID3 tags.
+	Since 1.11.0
+	*/
 	@SubsonicRoute('/getSimilarSongs2', () => SubsonicResponseSimilarSongs2, {
 		summary: 'Similar Songs 2',
 		description: 'Similar to getSimilarSongs, but organizes music according to ID3 tags.',
@@ -493,9 +491,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns details for a song.
-	 * Since 1.8.0
-	 */
+	Returns details for a song.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getSong', () => SubsonicResponseSong, {
 		summary: 'Songs',
 		description: 'Returns details for a song.',
@@ -512,9 +510,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns top songs for the given artist, using data from last.fm.
-	 * Since 1.13.0
-	 */
+	Returns top songs for the given artist, using data from last.fm.
+	Since 1.13.0
+	*/
 	@SubsonicRoute('/getTopSongs', () => SubsonicResponseTopSongs, {
 		summary: 'Top Songs',
 		description: 'Returns top songs for the given artist, using data from last.fm.',
@@ -533,9 +531,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns all video files.
-	 * Since 1.8.0
-	 */
+	Returns all video files.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getVideos', () => SubsonicResponseVideos, {
 		summary: 'Videos',
 		description: 'Returns all video files.',
@@ -546,9 +544,9 @@ export class SubsonicBrowsingApi {
 	}
 
 	/**
-	 * Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.
-	 * Since 1.14.0
-	 */
+	Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.
+	Since 1.14.0
+	*/
 	@SubsonicRoute('/getVideoInfo', () => SubsonicResponseVideoInfo, {
 		summary: 'Video Infos',
 		description: 'Returns details for a video, including information about available audio tracks, subtitles (captions) and conversions.',

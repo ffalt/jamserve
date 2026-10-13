@@ -3,14 +3,14 @@ import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { downloadFile } from '../../utils/download.js';
-import { SupportedAudioFormat } from '../../utils/filetype.js';
+import { isSupportedAudioFormat } from '../../utils/filetype.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
 import { injectable, inject, postConstruct } from 'inversify';
 import { DebouncePromises } from '../../utils/debounce-promises.js';
 import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Episode, EpisodeEnclosure } from './episode.js';
-import { AudioFormatType, PodcastStatus } from '../../types/enums.js';
+import { PodcastStatus } from '../../types/enums.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 import { errorToString } from '../../utils/error.js';
@@ -49,7 +49,7 @@ export class EpisodeService {
 		if (suffix.includes('?')) {
 			suffix = suffix.slice(0, suffix.indexOf('?'));
 		}
-		if (!SupportedAudioFormat.includes(suffix as AudioFormatType)) {
+		if (!isSupportedAudioFormat(suffix)) {
 			throw new Error(`Unsupported Podcast audio format .${suffix}`);
 		}
 		const podcastID = episode.podcast.idOrFail();

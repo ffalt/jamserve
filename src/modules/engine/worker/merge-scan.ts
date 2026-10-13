@@ -38,10 +38,12 @@ export class WorkerMergeScan {
 	async merge(mergeRoot: MergeNode): Promise<void> {
 		this.markChangedParents(mergeRoot);
 		await this.mergeNode(mergeRoot);
-		if (this.orm.em.hasChanges()) {
-			log.debug('Syncing Folder Changes to DB');
-			await this.orm.em.flush();
+		if (!this.orm.em.hasChanges()) {
+			return;
 		}
+
+		log.debug('Syncing Folder Changes to DB');
+		await this.orm.em.flush();
 	}
 
 	private static getMultiAlbumFolderType(node: MergeNode): FolderType {

@@ -31,10 +31,7 @@ export class MetaStatBuilder {
 			return;
 		}
 		const item1 = list.at(1);
-		if (!item1) {
-			return item0.val;
-		}
-		if (item0.count - item1.count > 4) {
+		if (!item1 || (item0.count - item1.count > 4)) {
 			return item0.val;
 		}
 		if (multi !== undefined && list.length > 3) {

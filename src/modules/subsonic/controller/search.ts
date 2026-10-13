@@ -13,9 +13,9 @@ import { SubsonicHelper } from '../helper.js';
 @SubsonicController()
 export class SubsonicSearchApi {
 	/**
-	 * Returns a listing of files matching the given search criteria. Supports paging through the result. Deprecated since 1.4.0, use search2 instead.
-	 * Since 1.0.0
-	 */
+	Returns a listing of files matching the given search criteria. Supports paging through the result. Deprecated since 1.4.0, use search2 instead.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/search', () => SubsonicResponseSearchResult, {
 		summary: 'Search',
 		description: 'Returns a listing of files matching the given search criteria.',
@@ -51,9 +51,9 @@ export class SubsonicSearchApi {
 	}
 
 	/**
-	 * Returns albums, artists and songs matching the given search criteria. Supports paging through the result.
-	 * Since 1.4.0
-	 */
+	Returns albums, artists and songs matching the given search criteria. Supports paging through the result.
+	Since 1.4.0
+	*/
 	@SubsonicRoute('/search2', () => SubsonicResponseSearchResult2, {
 		summary: 'Search 2',
 		description: 'Returns albums, artists and songs matching the given search criteria.',
@@ -93,9 +93,9 @@ export class SubsonicSearchApi {
 	}
 
 	/**
-	 * Similar to search2, but organizes music according to ID3 tags.
-	 * Since 1.8.0
-	 */
+	Similar to search2, but organizes music according to ID3 tags.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/search3', () => SubsonicResponseSearchResult3, {
 		summary: 'Search 3',
 		description: 'Similar to search2, but organizes music according to ID3 tags.',

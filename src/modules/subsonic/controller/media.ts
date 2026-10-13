@@ -30,9 +30,9 @@ const log = logger('SubsonicApi');
 @SubsonicController()
 export class SubsonicMediaRetrievalApi {
 	/**
-	 * Streams a given media file.
-	 * Since 1.0.0
-	 */
+	Streams a given media file.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/stream', {
 		summary: 'Stream',
 		description: 'Streams a given media file.',
@@ -82,9 +82,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
-	 * Since 1.0.0
-	 */
+	Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/download', {
 		summary: 'Download',
 		description: 'Downloads a given media file. Similar to stream, but this method returns the original media data without transcoding or downsampling.',
@@ -107,9 +107,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Add support for synchronized lyrics, multiple languages, and retrieval by song ID
-	 * https://opensubsonic.netlify.app/docs/endpoints/getlyricsbysongid/
-	 */
+	Add support for synchronized lyrics, multiple languages, and retrieval by song ID
+	https://opensubsonic.netlify.app/docs/endpoints/getlyricsbysongid/
+	*/
 	@SubsonicRoute('/getLyricsBySongId', () => SubsonicResponseLyricsList, {
 		summary: 'Synchronized Lyrics',
 		description: 'Searches for and returns lyrics for a given song.',
@@ -168,9 +168,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Searches for and returns lyrics for a given song.
-	 * Since 1.2.0
-	 */
+	Searches for and returns lyrics for a given song.
+	Since 1.2.0
+	*/
 	@SubsonicRoute('/getLyrics', () => SubsonicResponseLyrics, {
 		summary: 'Lyrics',
 		description: 'Searches for and returns lyrics for a given song.',
@@ -193,9 +193,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Returns a cover art image.
-	 * Since 1.0.0
-	 */
+	Returns a cover art image.
+	Since 1.0.0
+	*/
 	@SubsonicRoute('/getCoverArt', {
 		summary: 'Cover Art',
 		description: 'Returns a cover art image.',
@@ -216,9 +216,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Returns the avatar (personal image) for a user.
-	 * Since 1.8.0
-	 */
+	Returns the avatar (personal image) for a user.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/getAvatar', {
 		summary: 'Avatar',
 		description: 'Returns the avatar (personal image) for a user.',
@@ -239,9 +239,9 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.
-	 * Since 1.14.0
-	 */
+	Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.
+	Since 1.14.0
+	*/
 	@SubsonicRoute('/getCaptions', {
 		summary: 'Captions',
 		description: 'Returns captions (subtitles) for a video. Use getVideoInfo to get a list of available captions.',
@@ -257,10 +257,10 @@ export class SubsonicMediaRetrievalApi {
 	}
 
 	/**
-	 * Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio. HLS is a streaming protocol implemented by Apple and works by breaking the overall stream
-	 * into a sequence of small HTTP-based file downloads. It's supported by iOS and newer versions of Android. This method also supports adaptive bitrate streaming, see the bitRate parameter.
-	 * Since 1.8.0
-	 */
+	Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio. HLS is a streaming protocol implemented by Apple and works by breaking the overall stream
+	into a sequence of small HTTP-based file downloads. It's supported by iOS and newer versions of Android. This method also supports adaptive bitrate streaming, see the bitRate parameter.
+	Since 1.8.0
+	*/
 	@SubsonicRoute('/hls.m3u8', {
 		summary: 'HLS',
 		description: 'Creates an HLS (HTTP Live Streaming) playlist used for streaming video or audio.',

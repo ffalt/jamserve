@@ -176,14 +176,16 @@ export class ArtworkWorker extends BaseWorker {
 		for (const artwork of artworks) {
 			changes.artworks.updated.add(artwork);
 			const oldParent = await artwork.folder.get();
-			if (oldParent?.id !== newParentID) {
-				changes.folders.updated.add(oldParent);
-				folders.push(oldParent);
-				await fse.move(path.join(artwork.path, artwork.name), path.join(newParent.path, artwork.name));
-				artwork.path = ensureTrailingPathSeparator(newParent.path);
-				await artwork.folder.set(newParent);
-				orm.Artwork.persistLater(artwork);
+			if (oldParent?.id === newParentID) {
+				continue;
 			}
+
+			changes.folders.updated.add(oldParent);
+			folders.push(oldParent);
+			await fse.move(path.join(artwork.path, artwork.name), path.join(newParent.path, artwork.name));
+			artwork.path = ensureTrailingPathSeparator(newParent.path);
+			await artwork.folder.set(newParent);
+			orm.Artwork.persistLater(artwork);
 		}
 		await this.refreshFolderStats(orm, folders);
 	}

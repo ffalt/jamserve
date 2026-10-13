@@ -12,9 +12,9 @@ export abstract class BaseCompressStream implements StreamData {
 	public streaming = true;
 	public format: string;
 
-	protected constructor(filename: string, format?: string) {
+	protected constructor(filename: string, format: string = 'zip') {
 		this.filename = replaceFileSystemChars(filename, '_').replaceAll(' ', '_');
-		this.format = format ?? 'zip';
+		this.format = format;
 		if (!BaseCompressStream.isSupportedFormat(this.format)) {
 			throw new Error('Unsupported Download Format');
 		}

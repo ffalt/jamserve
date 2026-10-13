@@ -33,9 +33,7 @@ import { SubsonicApiError, SubsonicFormatter } from './formatter.js';
 import { SubsonicError } from './model/subsonic-rest-data.js';
 import { hexDecode } from '../../utils/hex-decode.js';
 
-/**
- * Fill user into req.user express requests
- */
+// Fill user into req.user express requests
 export interface SubsonicRequest extends SubsonicParameterRequest {
 	user: User;
 	client: string;
@@ -103,10 +101,7 @@ export async function subsonicLoginRateLimited(req: SubsonicRequest, res: expres
 		return;
 	}
 	const handled = await req.engine.rateLimit.loginSlowDown(req, res);
-	if (handled) {
-		return;
-	}
-	if (!validateSubsonicParameters(req, res)) {
+	if (handled || !validateSubsonicParameters(req, res)) {
 		return;
 	}
 	const user = await validateCredentials(req);

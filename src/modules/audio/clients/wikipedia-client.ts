@@ -5,9 +5,9 @@ import { WikiData } from './wikidata-rest-data.js';
 const log = logger('Wikipedia');
 
 /**
- * Validate language code against ISO 639 pattern (2-3 lowercase letters)
- * Examples: 'en', 'de', 'fr', 'zh', 'pt', 'es', etc.
- */
+Validate language code against ISO 639 pattern (2-3 lowercase letters)
+Examples: 'en', 'de', 'fr', 'zh', 'pt', 'es', etc.
+*/
 function isValidLanguageCode(lang: string | undefined): boolean {
 	if (!lang) {
 		return true; // undefined/null defaults to 'en', which is valid

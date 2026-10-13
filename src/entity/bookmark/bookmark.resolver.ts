@@ -9,7 +9,7 @@ import { BookmarksParameters } from './bookmark.parameters.js';
 export class BookmarkResolver {
 	@Query(() => BookmarkQL, { description: 'Get a Bookmark by Id' })
 	async bookmark(@Arg('id', () => ID!) id: string, @Ctx() { orm, user }: Context): Promise<Bookmark> {
-		return await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id: id } } : { where: { id: id, user: user.id } });
+		return await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id: id } : { id: id, user: user.id } });
 	}
 
 	@Query(() => BookmarkPageQL, { description: 'Search Bookmarks' })

@@ -19,11 +19,12 @@ export class ApiResponder extends ApiBaseResponder {
 		// Validate the requesting origin against the configured allowlist,
 		// applying the same CORS policy as the main REST API.
 		const origin = req.headers.origin;
-		if (origin && this.allowedOrigins.includes(origin)) {
-			res.setHeader('Access-Control-Allow-Origin', origin);
-			res.setHeader('Access-Control-Allow-Credentials', 'true');
-			res.setHeader('Vary', 'Origin');
+		if (!(origin && this.allowedOrigins.includes(origin))) {
+			return;
 		}
+		res.setHeader('Access-Control-Allow-Origin', origin);
+		res.setHeader('Access-Control-Allow-Credentials', 'true');
+		res.setHeader('Vary', 'Origin');
 	}
 
 	private send(req: express.Request, res: express.Response, data: Record<string, any>): void {

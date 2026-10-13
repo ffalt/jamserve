@@ -22,6 +22,7 @@ import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
 import { DiscogsClient } from './clients/discogs-client.js';
 import { MediaTagRaw } from '../../entity/tag/tag.model.js';
+import { isAudioFormatType } from '../../utils/filetype.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
 }
@@ -106,7 +107,8 @@ export class AudioModule {
 		if (!probeResult) {
 			return { format: TagFormatType.none };
 		}
-		return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, suffix as AudioFormatType) };
+		const format = isAudioFormatType(suffix) ? suffix : undefined;
+		return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, format) };
 	}
 
 	async readRawTag(filename: string): Promise<MediaTagRaw | undefined> {

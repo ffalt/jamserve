@@ -41,9 +41,7 @@ export class DirScanner {
 		};
 	}
 
-	/**
-	 * Read the entries of one directory into it and return the sub directories to be read next.
-	 */
+	// Read the entries of one directory into it and return the sub directories to be read next.
 	private async readDir(node: ScanDir): Promise<Array<ScanDir>> {
 		log.debug('Scanning:', node.path);
 		// Check recursion depth limit to prevent stack overflow

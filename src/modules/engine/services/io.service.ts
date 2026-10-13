@@ -117,8 +117,8 @@ export class IoService {
 	}
 
 	/**
-	 * Drop the pending after-refresh timer, so a stopped engine leaves nothing running.
-	 */
+	Drop the pending after-refresh timer, so a stopped engine leaves nothing running.
+	*/
 	stop(): void {
 		this.clearAfterRefresh();
 	}
@@ -166,10 +166,7 @@ export class IoService {
 		if (done) {
 			return { id, error: done.error, done: done.date };
 		}
-		if (this.track.delayedTrackTagWrite.findbyID(id)) {
-			return { id };
-		}
-		if (this.track.delayedTrackFix.findbyID(id)) {
+		if (this.track.delayedTrackTagWrite.findbyID(id) || this.track.delayedTrackFix.findbyID(id)) {
 			return { id };
 		}
 		return { id, error: 'ID not found', done: Date.now() };

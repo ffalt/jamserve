@@ -29,15 +29,16 @@ export async function downloadFile(url: string, filename: string, maxSize: numbe
 		let aborted = false;
 		body.on('data', (chunk: Buffer) => {
 			received += chunk.length;
-			if (!aborted && received > maxSize) {
-				aborted = true;
-				body.destroy();
-				destination.destroy();
-				fileDeleteIfExists(filename).catch(() => {
-					// ignore cleanup errors
-				});
-				reject(new Error(`Response too large: exceeded limit of ${maxSize} bytes`));
+			if (aborted || !(received > maxSize)) {
+				return;
 			}
+			aborted = true;
+			body.destroy();
+			destination.destroy();
+			fileDeleteIfExists(filename).catch(() => {
+				// ignore cleanup errors
+			});
+			reject(new Error(`Response too large: exceeded limit of ${maxSize} bytes`));
 		});
 		body.pipe(destination);
 		destination.on('close', () => {

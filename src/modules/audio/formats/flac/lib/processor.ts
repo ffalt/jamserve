@@ -260,7 +260,7 @@ export class FlacProcessorStream extends Transform {
 		return true;
 	}
 
-	private initMDB(type: MDB_TYPE): MetadataBlock {
+	private initMDB(type: number): MetadataBlock {
 		// Create appropriate MDB object
 		// (data is injected later in _validateMDB, if parseMetadataBlocks option is set to true)
 		switch (type) {

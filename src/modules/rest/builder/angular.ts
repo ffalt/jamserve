@@ -22,7 +22,7 @@ function generateUploadClientCalls(call: MethodMetadata, name: string, parameter
 	}];
 }
 
-function generateUrlClientCall(call: MethodMetadata, name: string, parametersType?: string): MustacheDataClientCallFunction {
+function generateUrlClientCall(call: MethodMetadata, name: string, parametersType: string = '{}'): MustacheDataClientCallFunction {
 	let route = call.route ?? '';
 	let validate = undefined;
 	if (call.customPathParameters) {
@@ -33,7 +33,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, parametersTyp
 	return {
 		name: `${name}Url`,
 		paramName: 'params',
-		paramsType: parametersType ?? '{}',
+		paramsType: parametersType,
 		resultType: 'string',
 		baseFuncResultType: '',
 		baseFunc: 'buildRequestUrl',
@@ -46,7 +46,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, parametersTyp
 	};
 }
 
-function generateBinClientCall(call: MethodMetadata, name: string, parametersType?: string): MustacheDataClientCallFunction {
+function generateBinClientCall(call: MethodMetadata, name: string, parametersType: string = '{}'): MustacheDataClientCallFunction {
 	let route = call.route ?? '';
 	let validate = undefined;
 	if (call.customPathParameters) {
@@ -57,7 +57,7 @@ function generateBinClientCall(call: MethodMetadata, name: string, parametersTyp
 	return {
 		name: `${name}Binary`,
 		paramName: 'params',
-		paramsType: parametersType ?? '{}',
+		paramsType: parametersType,
 		resultType: '{ buffer: ArrayBuffer; contentType: string }',
 		baseFuncResultType: '',
 		baseFunc: 'binary',

@@ -16,10 +16,10 @@ import { User } from '../src/entity/user/user.js';
 import { randomString } from '../src/utils/random.js';
 import { describe, beforeEach, afterEach, expect, it } from '@jest/globals';
 
-/**
- * Generate a cryptographically secure random salt string for testing.
- * Uses randomString utility instead of Math.random() to ensure proper entropy.
- */
+/*
+Generate a cryptographically secure random salt string for testing.
+Uses randomString utility instead of Math.random() to ensure proper entropy.
+*/
 function salt(length: number): string {
 	return randomString(length);
 }

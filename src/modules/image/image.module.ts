@@ -32,8 +32,8 @@ sharp.cache(false);
 sharp.simd(false);
 
 /**
- * Handles image access/reading/writing/transforming
- */
+Handles image access/reading/writing/transforming
+*/
 
 @injectable()
 export class ImageModule {
@@ -266,10 +266,12 @@ export class ImageModule {
 				const result = format ?
 					await ImageModule.getImageAs(filename, format, size, name) :
 					await this.getImage(filename, size, name);
-				if (result.buffer) {
-					log.debug('Writing image cache file', cachefile);
-					await fse.writeFile(cachefile, result.buffer.buffer);
+				if (!result.buffer) {
+					return;
 				}
+
+				log.debug('Writing image cache file', cachefile);
+				await fse.writeFile(cachefile, result.buffer.buffer);
 			});
 		}
 		return this.getImage(filename, size, `${id}.${this.format}`);

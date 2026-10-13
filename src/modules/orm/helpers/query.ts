@@ -1,9 +1,9 @@
 import { Op, FindOptions, Includeable, WhereOptions, WhereAttributeHashValue } from 'sequelize';
 
 /**
- * Escape special SQL LIKE pattern characters (`%`, `_`, `\`) in a user-supplied
- * value so they are matched literally instead of acting as wildcards.
- */
+Escape special SQL LIKE pattern characters (`%`, `_`, `\`) in a user-supplied
+value so they are matched literally instead of acting as wildcards.
+*/
 function escapeLikeValue(value: string): string {
 	return value.replaceAll(/[%_\\]/g, String.raw`\$&`);
 }

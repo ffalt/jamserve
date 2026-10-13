@@ -79,7 +79,7 @@ export class FORMAT {
 		};
 	}
 
-	static packProbeJamServeMedia(data: ProbeResult, format: AudioFormatType): TrackMedia {
+	static packProbeJamServeMedia(data: ProbeResult, format?: AudioFormatType): TrackMedia {
 		if (!data.streams) {
 			return {};
 		}

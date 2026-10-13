@@ -114,11 +114,13 @@ export class Collection<T extends IDEntity<T>> {
 	async add(item: T): Promise<void> {
 		this.changeSet ??= {};
 		this.changeSet.add ??= [];
-		if (this.changeSet.add.every(entry => entry.id !== item.id)) {
-			this.changeSet.add.push(item);
-			if (this.list) {
-				this.list.push(item);
-			}
+		if (this.changeSet.add.some(entry => entry.id === item.id)) {
+			return;
+		}
+
+		this.changeSet.add.push(item);
+		if (this.list) {
+			this.list.push(item);
 		}
 	}
 

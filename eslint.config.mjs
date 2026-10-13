@@ -20,9 +20,13 @@ const unicornRules = {
 	"unicorn/no-top-level-assignment-in-function": "off",
 	"unicorn/no-top-level-side-effects": "off",
 	"unicorn/prefer-private-class-fields": "off",
+	"unicorn/prefer-ternary": "off",
+	"unicorn/no-unnecessary-parameters": "off",
+	"unicorn/prefer-logical-operator-over-ternary": "off",
 	"unicorn/name-replacements": ["error", {
 		replacements: {
-			docs: false, req: false, res: false, env: false, dir: false, db: false, obj: false, utils: false, repository: false, cmd: false
+			docs: false, req: false, res: false, env: false, dir: false, repo: false,
+			db: false, obj: false, utils: false, repository: false, cmd: false
 		}
 	}],
 	"unicorn/prefer-at": ["error", { checkAllIndexAccess: true }]

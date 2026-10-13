@@ -194,13 +194,11 @@ export class FfmpegCommand extends EventTarget {
 		if (this.audioBitrate) arguments_.push('-b:a', this.audioBitrate);
 		if (this.formatName) arguments_.push('-f', this.formatName);
 
-		if (this.addedOptions.length > 0) {
-			for (const opt of this.addedOptions) {
-				if (opt.includes(' ')) {
-					arguments_.push(...this.tokenizeOptionString(opt));
-				} else {
-					arguments_.push(opt);
-				}
+		for (const opt of this.addedOptions) {
+			if (opt.includes(' ')) {
+				arguments_.push(...this.tokenizeOptionString(opt));
+			} else {
+				arguments_.push(opt);
 			}
 		}
 
