@@ -11,6 +11,8 @@ import { bindMockConfig, DBConfigs, getTestContainer } from './mock/mock.config.
 import { waitEngineStart } from './mock/mock.engine.js';
 import { Folder } from '../src/entity/folder/folder.js';
 import { Collection, EntityManager } from '../src/modules/orm/index.js';
+import { WorkerRequestMode } from '../src/modules/engine/services/io/io.types.js';
+import { Changes } from '../src/modules/engine/worker/changes.js';
 import { Model } from 'sequelize';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Artwork } from '../src/entity/artwork/artwork.js';
@@ -821,6 +823,55 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 		afterEach(async () => {
 			const mediaPath = ensureTrailingPathSeparator(path.join(dir.name, 'audio'));
 			await fse.remove(mediaPath);
+		});
+
+		describe('request queue', () => {
+			it('should run every queued request, in order', async () => {
+				// Arrange
+				const done: Array<string> = [];
+				const ids = Array.from({ length: 25 }, (_, nr) => engine.io.newRequest(
+					WorkerRequestMode.refreshRoot,
+					async () => {
+						done.push(`job${nr}`);
+						return new Changes();
+					},
+					{ rootID: mockRoot.id }
+				).id);
+
+				// Act
+				await waitEngineStart(engine);
+
+				// Assert
+				expect(done).toEqual(Array.from({ length: 25 }, (_, nr) => `job${nr}`));
+				for (const id of ids) {
+					expect(engine.io.getAdminChangeQueueInfoStatus(id).error).toBeUndefined();
+				}
+			});
+
+			it('should keep running when a request fails', async () => {
+				// Arrange
+				const done: Array<string> = [];
+				const failing = engine.io.newRequest(
+					WorkerRequestMode.refreshRoot,
+					async () => Promise.reject(new Error('Some worker error')),
+					{ rootID: mockRoot.id }
+				).id;
+				engine.io.newRequest(
+					WorkerRequestMode.refreshRoot,
+					async () => {
+						done.push('after');
+						return new Changes();
+					},
+					{ rootID: mockRoot.id }
+				);
+
+				// Act
+				await waitEngineStart(engine);
+
+				// Assert
+				expect(engine.io.getAdminChangeQueueInfoStatus(failing).error).toBe('Some worker error');
+				expect(done).toEqual(['after']);
+			});
 		});
 
 		describe('folder tasks', () => {

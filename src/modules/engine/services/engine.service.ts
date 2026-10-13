@@ -212,6 +212,7 @@ export class EngineService {
 	}
 
 	async stop(): Promise<void> {
+		this.io.stop();
 		await this.orm.stop();
 	}
 

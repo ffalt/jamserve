@@ -92,10 +92,10 @@ export class IoService {
 	}
 
 	private async next(): Promise<void> {
-		const cmd = this.queue.shift();
-		if (cmd) {
+		let cmd = this.queue.shift();
+		while (cmd) {
 			await this.runRequest(cmd);
-			await this.next();
+			cmd = this.queue.shift();
 		}
 	}
 
@@ -114,6 +114,13 @@ export class IoService {
 				this.scanning = false;
 				log.error(error);
 			});
+	}
+
+	/**
+	 * Drop the pending after-refresh timer, so a stopped engine leaves nothing running.
+	 */
+	stop(): void {
+		this.clearAfterRefresh();
 	}
 
 	generateRequestID(): string {
