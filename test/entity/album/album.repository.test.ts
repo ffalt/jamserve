@@ -171,6 +171,23 @@ describe('AlbumRepository.buildFilter', () => {
 		expect(gteValues).toContain(2000);
 	});
 
+	test.each([
+		['both bounds omitted', {}, undefined, undefined],
+		['fromYear given, toYear omitted', { fromYear: 1980 }, 1980, undefined],
+		['fromYear given, toYear explicitly null', { fromYear: 1980, toYear: null }, 1980, undefined],
+		['fromYear explicitly null, toYear given', { fromYear: null, toYear: 1989 }, undefined, 1989],
+		['both bounds explicitly null', { fromYear: null, toYear: null }, undefined, undefined]
+	])('year bounds: %s', async (_label, years, expectedGte, expectedLte) => {
+		const repo = makeRepo();
+		const filter = { albumTypes: [AlbumType.album], ...years } as AlbumFilterParameters;
+		const result = await repo.buildFilter(filter, undefined);
+		const yearConditions = flattenWhere(result.where).filter(c => 'year' in c);
+		const bounds = yearConditions.map(c => c.year as Record<symbol, unknown>);
+		expect(bounds.map(b => b[Op.gte]).filter(v => v !== undefined)).toEqual(expectedGte === undefined ? [] : [expectedGte]);
+		expect(bounds.map(b => b[Op.lte]).filter(v => v !== undefined)).toEqual(expectedLte === undefined ? [] : [expectedLte]);
+		expect(bounds.some(b => b[Op.gte] === null || b[Op.lte] === null)).toBe(false);
+	});
+
 	test('includes notMbArtistID exclusion using Op.ne', async () => {
 		const repo = makeRepo();
 		const filter: AlbumFilterParameters = { notMbArtistID: 'excluded-artist' };

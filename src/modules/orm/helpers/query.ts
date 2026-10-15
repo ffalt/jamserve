@@ -24,12 +24,12 @@ export const QHelper = {
 		return { [Op.like]: `%${escaped}%` };
 	},
 
-	gte(value?: number): WhereAttributeHashValue<number> | undefined {
-		return (value === undefined) ? undefined : { [Op.gte]: value };
+	gte(value?: number | null): WhereAttributeHashValue<number> | undefined {
+		return (value === undefined || value === null) ? undefined : { [Op.gte]: value };
 	},
 
-	lte(value?: number): WhereAttributeHashValue<number> | undefined {
-		return (value === undefined) ? undefined : { [Op.lte]: value };
+	lte(value?: number | null): WhereAttributeHashValue<number> | undefined {
+		return (value === undefined || value === null) ? undefined : { [Op.lte]: value };
 	},
 
 	inStringArray<Entity>(propertyName: keyof Entity, list?: Array<string>): Array<WhereOptions<Entity>> {
@@ -45,8 +45,8 @@ export const QHelper = {
 		return [{ [Op.or]: expressions }];
 	},
 
-	neq(value?: string): WhereAttributeHashValue<string> | undefined {
-		return (value === undefined) ? undefined : { [Op.ne]: value };
+	neq(value?: string | null): WhereAttributeHashValue<string> | undefined {
+		return (value === undefined || value === null) ? undefined : { [Op.ne]: value };
 	},
 
 	or<T>(list: Array<WhereOptions<T>>): WhereAttributeHashValue<T> {
@@ -66,7 +66,11 @@ export const QHelper = {
 				return false;
 			}
 			const key = Object.keys(q).at(0);
-			return (key !== undefined) && (q as any)[key] !== undefined;
+			if (key === undefined) {
+				return false;
+			}
+			const value = (q as any)[key];
+			return value !== undefined && value !== null;
 		});
 		return result.length > 0 ? result : undefined;
 	},
