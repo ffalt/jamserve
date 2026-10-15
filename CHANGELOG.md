@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.18](https://github.com/ffalt/jamserve/compare/v0.6.17...v0.6.18) (2026-10-15)
+
+### Features
+
+* **graphql:** add episode retrieval mutation ([c2aa854](https://github.com/ffalt/jamserve/commit/c2aa8542d90ba71e94c8c10a76d01ad7ae2cf111))
+* **graphql:** report unauthenticated errors ([84fd1e7](https://github.com/ffalt/jamserve/commit/84fd1e77cc57315fc5991ff45c9b28b7b967dce0))
+
+### Bug Fixes
+
+* **engine:** save the version marker after the forced rescan finished ([07c19e6](https://github.com/ffalt/jamserve/commit/07c19e6365b919e6541f09a2623a624614a5e6e4))
+* **folder:** match descendants by parent relation instead of path LIKE ([769cb3a](https://github.com/ffalt/jamserve/commit/769cb3a3af45167322926340ea1746a7ecad91d6))
+* **logger:** improve stream creation with path handling ([b01a322](https://github.com/ffalt/jamserve/commit/b01a322284aaf23056891b706c5027ff7a99a24b))
+* **queue:** honour the concurrency argument and share one pool per dir scan ([812d2a6](https://github.com/ffalt/jamserve/commit/812d2a66cfb66576012f68249baf3a2cf0a7a3a1))
+* **root:** dedupe the root path deny-list and match per platform ([8805c1e](https://github.com/ffalt/jamserve/commit/8805c1eb025d9b517535cddcefa7efc6c9738af4))
+* **scan:** exclude extras folders from the subfolder track count ([b89f391](https://github.com/ffalt/jamserve/commit/b89f3916de6d37d2c9e459851e80a59e7093e169))
+* **scan:** ignore empty musicbrainz album type in folder stats ([6224109](https://github.com/ffalt/jamserve/commit/6224109949d12865aae99130ceeca6d831f8f091))
+* **scan:** keep ambiguous musicbrainz folder ids undefined instead of empty ([5e9b4c5](https://github.com/ffalt/jamserve/commit/5e9b4c5f51f12f6fc402fb3f991103fc2434afb2))
+* **scan:** read mbReleaseGroupID and mbAlbumArtistID into the track match ([08c879b](https://github.com/ffalt/jamserve/commit/08c879b74782b341666c811a52b9f269d25a9455))
+* **scan:** update folder stat dates on rescan and after worker tasks ([a36b43d](https://github.com/ffalt/jamserve/commit/a36b43d559209b510990dd7210d64e2e468281bb))
+* **worker:** chunk id lists used in removal and meta queries ([8fe3b78](https://github.com/ffalt/jamserve/commit/8fe3b783447a82128738833d278c6bd8ee67de4c))
+* **worker:** improve error message for disallowed URL connections ([63e8d55](https://github.com/ffalt/jamserve/commit/63e8d55843bd47ac876bb7fd90bc2493754d0b29))
+
 ## [0.6.17](https://github.com/ffalt/jamserve/compare/v0.6.16...v0.6.17) (2026-08-06)
 
 ### Features
