@@ -64,7 +64,6 @@ export class MatchNodeMetaStats {
         builder.statSlugValue('series', match.series);
         builder.statSlugValue('album', match.album ? extractAlbumName(match.album) : undefined);
         builder.statNumber('year', match.year);
-        builder.statTrackCount('totalTrackCount', match.trackTotal, match.disc);
         builder.statSlugValue('mbAlbumType', match.mbAlbumType);
         builder.statID('mbArtistID', match.artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME ? MUSICBRAINZ_VARIOUS_ARTISTS_ID : match.mbArtistID);
         builder.statID('mbReleaseID', match.mbReleaseID);
@@ -93,12 +92,12 @@ export class MatchNodeMetaStats {
         let subFolderTrackCount = 0;
         let subFolderCount = 0;
         for (const child of dir.children) {
-            if (child.folder.folderType !== FolderType.extras) {
-                const result = this.recursiveCount(child);
-                subFolderCount += result.subFolderCount + 1;
-                subFolderTrackCount += result.subFolderTrackCount;
+            if (child.folder.folderType === FolderType.extras) {
+                continue;
             }
-            subFolderTrackCount += child.nrOfTracks;
+            const result = this.recursiveCount(child);
+            subFolderCount += result.subFolderCount + 1;
+            subFolderTrackCount += result.subFolderTrackCount + child.nrOfTracks;
         }
         return { subFolderTrackCount, subFolderCount };
     }
@@ -112,7 +111,7 @@ export class MatchNodeMetaStats {
     static getAlbumInfo(builder, strategy) {
         const artist = builder.mostUsed('artist', MUSICBRAINZ_VARIOUS_ARTISTS_NAME);
         const genre = builder.mostUsed('genre');
-        const mbAlbumType = builder.mostUsed('mbAlbumType', '');
+        const mbAlbumType = builder.mostUsedOrNone('mbAlbumType');
         const hasMultipleArtists = artist === MUSICBRAINZ_VARIOUS_ARTISTS_NAME;
         let albumType = genre ? this.getGenreAlbumType(genre) : AlbumType.unknown;
         if (mbAlbumType && albumType === AlbumType.unknown) {
@@ -151,9 +150,9 @@ export class MatchNodeMetaStats {
             hasMultipleAlbums: builder.asList('album').length > 1,
             album: builder.mostUsed('album', extractAlbumName(path.basename(node.path))),
             artistSort: hasMultipleArtists ? undefined : builder.mostUsed('artistSort'),
-            mbReleaseID: builder.mostUsed('mbReleaseID', ''),
-            mbReleaseGroupID: builder.mostUsed('mbReleaseGroupID', ''),
-            mbArtistID: builder.mostUsed('mbArtistID', ''),
+            mbReleaseID: builder.mostUsedOrNone('mbReleaseID'),
+            mbReleaseGroupID: builder.mostUsedOrNone('mbReleaseGroupID'),
+            mbArtistID: builder.mostUsedOrNone('mbArtistID'),
             year: builder.mostUsedNumber('year')
         };
     }

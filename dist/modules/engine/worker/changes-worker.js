@@ -15,6 +15,7 @@ import { MetaMerger } from './merge-meta.js';
 import { Changes, IdSet } from './changes.js';
 import { logger } from '../../../utils/logger.js';
 import { formatElapsedDuration } from '../../../utils/date-time.js';
+import { collectChunked } from '../../../utils/chunks.js';
 const log = logger('IO.Changes');
 let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     async start(rootID) {
@@ -51,10 +52,11 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         trackCleanIds.appendIDs(changes.tracks.removed.ids());
         trackCleanIds.appendIDs(changes.tracks.updated.ids());
         const trackIDs = trackCleanIds.ids();
-        if (trackIDs.length > 0) {
-            log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
-            await this.audioModule.clearCacheByIDs(trackIDs);
+        if (trackIDs.length === 0) {
+            return;
         }
+        log.debug('Cleaning Audio Cache IDs:', trackIDs.length.toString());
+        await this.audioModule.clearCacheByIDs(trackIDs);
     }
     static async mergeDependendRemovals(orm, changes) {
         const stateCleanIds = new IdSet();
@@ -66,12 +68,12 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         stateCleanIds.appendIDs(changes.genres.removed.ids());
         stateCleanIds.appendIDs(changes.roots.removed.ids());
         stateCleanIds.appendIDs(changes.series.removed.ids());
-        const stateBookmarkIDs = await orm.Bookmark.findIDs({ where: { track: trackIDs } });
+        const stateBookmarkIDs = await collectChunked(trackIDs, chunk => orm.Bookmark.findIDs({ where: { track: chunk } }));
         if (stateBookmarkIDs.length > 0) {
             await orm.Bookmark.removeLaterByIDs(stateBookmarkIDs);
             stateCleanIds.appendIDs(stateBookmarkIDs);
         }
-        const playlistEntryIDs = await orm.PlaylistEntry.findIDs({ where: { track: trackIDs } });
+        const playlistEntryIDs = await collectChunked(trackIDs, chunk => orm.PlaylistEntry.findIDs({ where: { track: chunk } }));
         let affectedPlaylistIDs = [];
         if (playlistEntryIDs.length > 0) {
             const entries = await orm.PlaylistEntry.findByIDs(playlistEntryIDs);
@@ -83,7 +85,7 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         }
         const stateDestinationIDs = stateCleanIds.ids();
         if (stateDestinationIDs.length > 0) {
-            const states = await orm.State.findIDs({ where: { destID: stateDestinationIDs } });
+            const states = await collectChunked(stateDestinationIDs, chunk => orm.State.findIDs({ where: { destID: chunk } }));
             await orm.State.removeLaterByIDs(states);
         }
         if (orm.em.hasChanges()) {
@@ -118,10 +120,11 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
             playlist.duration = duration;
             orm.Playlist.persistLater(playlist);
         }
-        if (orm.em.hasChanges()) {
-            log.debug('Syncing Playlist Duration Updates to DB');
-            await orm.em.flush();
+        if (!orm.em.hasChanges()) {
+            return;
         }
+        log.debug('Syncing Playlist Duration Updates to DB');
+        await orm.em.flush();
     }
     static async mergeRemovals(orm, changes) {
         await orm.Track.removeLaterByIDs(changes.tracks.removed.ids());
@@ -131,10 +134,11 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
         await orm.Album.removeLaterByIDs(changes.albums.removed.ids());
         await orm.Artist.removeLaterByIDs(changes.artists.removed.ids());
         await orm.Series.removeLaterByIDs(changes.series.removed.ids());
-        if (orm.em.hasChanges()) {
-            log.debug('Syncing Removal Updates to DB');
-            await orm.em.flush();
+        if (!orm.em.hasChanges()) {
+            return;
         }
+        log.debug('Syncing Removal Updates to DB');
+        await orm.em.flush();
     }
     logChanges(changes) {
         function logChange(name, list) {

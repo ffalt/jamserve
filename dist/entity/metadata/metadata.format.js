@@ -1,12 +1,12 @@
 export const MetadataFormat = {
-    stripInlineLastFM(content) {
-        return (content || '')
+    stripInlineLastFM(content = '') {
+        return (content)
             .replaceAll(/<a href=".*">Read more on Last\.fm<\/a>\.?/g, '')
             .replaceAll(/<a .* href=".*">Read more on Last\.fm<\/a>\.?/g, '')
             .replaceAll('User-contributed text is available under the Creative Commons By-SA License; additional terms may apply.', '');
     },
-    stripInlineWikipediaHTML(content) {
-        return (content || '')
+    stripInlineWikipediaHTML(content = '') {
+        return (content)
             .replaceAll(/<p class="mw-empty-elt">\s*<\/p>/g, '')
             .replaceAll('<p>', '')
             .replaceAll('</p>', '\n');

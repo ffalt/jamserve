@@ -4,10 +4,10 @@ import { sanitizeFilename } from './saniitize-filename.js';
 import { archive } from './archive.js';
 const log = logger('BaseCompressStream');
 export class BaseCompressStream {
-    constructor(filename, format) {
+    constructor(filename, format = 'zip') {
         this.streaming = true;
         this.filename = replaceFileSystemChars(filename, '_').replaceAll(' ', '_');
-        this.format = format ?? 'zip';
+        this.format = format;
         if (!BaseCompressStream.isSupportedFormat(this.format)) {
             throw new Error('Unsupported Download Format');
         }

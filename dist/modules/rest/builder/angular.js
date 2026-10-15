@@ -17,7 +17,7 @@ function generateUploadClientCalls(call, name, parameterType, upload) {
             sync: true
         }];
 }
-function generateUrlClientCall(call, name, parametersType) {
+function generateUrlClientCall(call, name, parametersType = '{}') {
     let route = call.route ?? '';
     let validate = undefined;
     if (call.customPathParameters) {
@@ -28,7 +28,7 @@ function generateUrlClientCall(call, name, parametersType) {
     return {
         name: `${name}Url`,
         paramName: 'params',
-        paramsType: parametersType ?? '{}',
+        paramsType: parametersType,
         resultType: 'string',
         baseFuncResultType: '',
         baseFunc: 'buildRequestUrl',
@@ -40,7 +40,7 @@ function generateUrlClientCall(call, name, parametersType) {
         sync: true
     };
 }
-function generateBinClientCall(call, name, parametersType) {
+function generateBinClientCall(call, name, parametersType = '{}') {
     let route = call.route ?? '';
     let validate = undefined;
     if (call.customPathParameters) {
@@ -51,7 +51,7 @@ function generateBinClientCall(call, name, parametersType) {
     return {
         name: `${name}Binary`,
         paramName: 'params',
-        paramsType: parametersType ?? '{}',
+        paramsType: parametersType,
         resultType: '{ buffer: ArrayBuffer; contentType: string }',
         baseFuncResultType: '',
         baseFunc: 'binary',

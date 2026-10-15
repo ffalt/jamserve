@@ -25,12 +25,18 @@ export const SupportedTranscodeAudioFormat = [
     AudioFormatType.m4b,
     AudioFormatType.m4a
 ];
+export function isAudioFormatType(suffix) {
+    return Object.values(AudioFormatType).includes(suffix);
+}
+export function isSupportedAudioFormat(suffix) {
+    return SupportedAudioFormat.includes(suffix);
+}
 export function getFileType(filename) {
     const suffix = fileSuffix(filename);
     if (SupportedReadImageFormat.includes(suffix)) {
         return FileTyp.image;
     }
-    if (SupportedAudioFormat.includes(suffix)) {
+    if (isSupportedAudioFormat(suffix)) {
         return FileTyp.audio;
     }
     if (['tag'].includes(suffix)) {

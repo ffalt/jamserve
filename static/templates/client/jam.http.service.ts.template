@@ -38,12 +38,17 @@ export class JamHttpService {
 					withCredentials: options.withCredentials,
 					observe: 'response'
 				})
-					.subscribe(result => {
-						if (!result.body) {
-							reject(new Error('Invalid Binary Server Response'));
-							return;
+					.subscribe({
+						next: result => {
+							if (!result.body) {
+								reject(new Error('Invalid Binary Server Response'));
+								return;
+							}
+							resolve({ buffer: result.body, contentType: result.headers.get('content-type') ?? 'invalid' });
+						},
+						error: (error: unknown) => {
+							reject(error);
 						}
-						resolve({ buffer: result.body, contentType: result.headers.get('content-type') ?? 'invalid' });
 					});
 			});
 		} catch (error: unknown) {

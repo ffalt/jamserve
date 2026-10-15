@@ -89,11 +89,12 @@ export class Collection {
         var _a;
         this.changeSet ?? (this.changeSet = {});
         (_a = this.changeSet).add ?? (_a.add = []);
-        if (this.changeSet.add.every(entry => entry.id !== item.id)) {
-            this.changeSet.add.push(item);
-            if (this.list) {
-                this.list.push(item);
-            }
+        if (this.changeSet.add.some(entry => entry.id === item.id)) {
+            return;
+        }
+        this.changeSet.add.push(item);
+        if (this.list) {
+            this.list.push(item);
         }
     }
     getOrderOptions() {

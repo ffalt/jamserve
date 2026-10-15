@@ -97,12 +97,34 @@ export class FolderRepository extends BaseRepository {
         return result;
     }
     async findAllDescendants(folder) {
-        const options = QHelper.buildQuery([{ path: QHelper.likeRaw(folder.path) }]);
-        return this.find(options);
+        const result = [folder];
+        const seen = new Set([folder.id]);
+        let parentIDs = [folder.id];
+        while (parentIDs.length > 0) {
+            const children = await this.find({ where: { parent: QHelper.inOrEqual(parentIDs) } });
+            const unseen = children.filter(child => !seen.has(child.id));
+            for (const child of unseen) {
+                seen.add(child.id);
+                result.push(child);
+            }
+            parentIDs = unseen.map(child => child.id);
+        }
+        return result;
     }
     async findAllDescendantsIds(folder) {
-        const options = QHelper.buildQuery([{ path: QHelper.likeRaw(folder.path) }]);
-        return this.findIDs(options);
+        const result = [folder.id];
+        const seen = new Set([folder.id]);
+        let parentIDs = [folder.id];
+        while (parentIDs.length > 0) {
+            const ids = await this.findIDs({ where: { parent: QHelper.inOrEqual(parentIDs) } });
+            const unseen = ids.filter(id => !seen.has(id));
+            for (const id of unseen) {
+                seen.add(id);
+            }
+            result.push(...unseen);
+            parentIDs = unseen;
+        }
+        return result;
     }
 }
 //# sourceMappingURL=folder.repository.js.map

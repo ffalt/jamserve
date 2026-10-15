@@ -31,6 +31,9 @@ export class WorkerScan {
         this.rootID = rootID;
         this.imageModule = imageModule;
         this.changes = changes;
+        this.childFolders = new Map();
+        this.folderTracks = new Map();
+        this.folderArtworks = new Map();
         this.trackUpdater = new TrackUpdater(orm, audioModule, changes);
     }
     async setArtworkValues(file, artwork) {
@@ -59,6 +62,12 @@ export class WorkerScan {
         await this.setArtworkValues(file, artwork);
         this.changes.artworks.updated.add(artwork);
     }
+    static buildMbAlbumType(tag) {
+        if (!tag?.mbAlbumType && !tag?.mbAlbumStatus) {
+            return;
+        }
+        return `${tag.mbAlbumType ?? ''}/${tag.mbAlbumStatus ?? ''}`;
+    }
     static async buildTrackMatch(track) {
         const tag = await track.tag.get();
         return {
@@ -68,13 +77,10 @@ export class WorkerScan {
             album: tag?.album,
             series: tag?.series,
             year: tag?.year,
-            trackTotal: tag?.trackTotal,
-            discTotal: tag?.discTotal,
-            disc: tag?.disc,
-            track: tag?.trackNr,
-            mbArtistID: tag?.mbArtistID,
+            mbArtistID: tag?.mbAlbumArtistID ?? tag?.mbArtistID,
             mbReleaseID: tag?.mbReleaseID,
-            mbAlbumType: `${tag?.mbAlbumType ?? ''}/${tag?.mbAlbumStatus ?? ''}`
+            mbReleaseGroupID: tag?.mbReleaseGroupID,
+            mbAlbumType: this.buildMbAlbumType(tag)
         };
     }
     async setTrackValues(file, track) {
@@ -98,14 +104,12 @@ export class WorkerScan {
         return await this.setTrackValues(file, track);
     }
     async updateTrack(file, track) {
-        if (!this.changes.tracks.removed.has(track)) {
-            log.info('Updating Track', file.path);
-            this.changes.tracks.updated.add(track);
+        if (this.changes.tracks.removed.has(track)) {
+            return;
         }
-        if (this.changes.tracks.updated.has(track)) {
-            return await this.setTrackValues(file, track);
-        }
-        return;
+        log.info('Updating Track', file.path);
+        this.changes.tracks.updated.add(track);
+        return await this.setTrackValues(file, track);
     }
     async buildFolder(dir, parent) {
         log.info('New Folder', dir.path);
@@ -174,17 +178,35 @@ export class WorkerScan {
         this.changes.artworks.removed.append(removedArtworks);
         this.changes.tracks.removed.append(removedTracks);
     }
+    updateFolderStats(dir, folder) {
+        if (isSameDate(dir.ctime, folder.statCreated) && isSameDate(dir.mtime, folder.statModified)) {
+            return;
+        }
+        folder.statCreated = dir.ctime;
+        folder.statModified = dir.mtime;
+        this.orm.Folder.persistLater(folder);
+    }
     async scanNode(dir, folder) {
         log.debug('Matching:', dir.path);
         const result = WorkerScan.createNode(dir, folder);
+        this.updateFolderStats(dir, folder);
         await this.scanSubfolders(folder, dir, result);
         await this.scanTracks(dir, folder, result);
         await this.scanArtworks(dir, folder, result);
         await this.flushIfEnough();
         return result;
     }
+    static filesByPath(dir, type) {
+        const result = new Map();
+        for (const file of dir.files) {
+            if (file.type === type) {
+                result.set(file.path, file);
+            }
+        }
+        return result;
+    }
     async scanSubfolders(folder, dir, result) {
-        const folders = await folder.children.getItems();
+        const folders = this.childFolders.get(folder.id) ?? [];
         const folderMap = new Map(folders.map(f => [f.path, f]));
         for (const subDir of dir.directories) {
             if (subDir.path === folder.path) {
@@ -195,67 +217,63 @@ export class WorkerScan {
         }
         for (const child of folders) {
             const subf = result.children.some(f => f.scan.path === child.path);
-            if (!subf) {
-                await this.removeFolder(child);
-                this.changes.folders.updated.add(folder);
+            if (subf) {
+                continue;
             }
+            await this.removeFolder(child);
+            this.changes.folders.updated.add(folder);
         }
     }
     async scanArtworks(dir, folder, result) {
-        const scanArtworks = dir.files.filter(f => f.type === FileTyp.image);
-        const foundScanArtworks = [];
-        const artworks = await folder.artworks.getItems();
+        const scanArtworks = WorkerScan.filesByPath(dir, FileTyp.image);
+        const artworks = this.folderArtworks.get(folder.id) ?? [];
         for (const artwork of artworks) {
-            await this.scanArtwork(artwork, scanArtworks, foundScanArtworks, result);
+            await this.scanArtwork(artwork, scanArtworks, result);
         }
-        const newArtworks = scanArtworks.filter(t => !foundScanArtworks.includes(t));
-        for (const newArtwork of newArtworks) {
+        for (const newArtwork of scanArtworks.values()) {
             result.changed = true;
             result.artworksCount += 1;
             await this.buildArtwork(newArtwork, folder);
         }
     }
-    async scanArtwork(artwork, scanArtworks, foundScanArtworks, result) {
+    async scanArtwork(artwork, scanArtworks, result) {
         const filename = path.join(artwork.path, artwork.name);
-        const scanArtwork = scanArtworks.find(t => t.path === filename);
+        const scanArtwork = scanArtworks.get(filename);
         if (!scanArtwork) {
             log.info('Artwork has been removed', filename);
             result.changed = true;
             this.changes.artworks.removed.add(artwork);
             return;
         }
-        foundScanArtworks.push(scanArtwork);
+        scanArtworks.delete(filename);
         result.artworksCount += 1;
-        if (scanArtwork.size !== artwork.fileSize ||
-            !isSameDate(scanArtwork.ctime, artwork.statCreated) ||
-            !isSameDate(scanArtwork.mtime, artwork.statModified)) {
-            result.changed = true;
-            await this.updateArtwork(scanArtwork, artwork);
+        if (scanArtwork.size === artwork.fileSize && isSameDate(scanArtwork.ctime, artwork.statCreated) && isSameDate(scanArtwork.mtime, artwork.statModified)) {
+            return;
         }
+        result.changed = true;
+        await this.updateArtwork(scanArtwork, artwork);
     }
     async scanTracks(dir, folder, result) {
-        const scanTracks = dir.files.filter(f => f.type === FileTyp.audio);
-        const foundScanTracks = [];
-        const tracks = await folder.tracks.getItems();
+        const scanTracks = WorkerScan.filesByPath(dir, FileTyp.audio);
+        const tracks = this.folderTracks.get(folder.id) ?? [];
         for (const track of tracks) {
-            await this.scanTrack(track, scanTracks, foundScanTracks, result);
+            await this.scanTrack(track, scanTracks, result);
         }
-        const newTracks = scanTracks.filter(t => !foundScanTracks.includes(t));
-        for (const newTrack of newTracks) {
+        for (const newTrack of scanTracks.values()) {
             result.changed = true;
             result.tracks.push(new ObjTrackMatch(await this.buildTrack(newTrack, folder)));
         }
     }
-    async scanTrack(track, scanTracks, foundScanTracks, result) {
+    async scanTrack(track, scanTracks, result) {
         const filename = path.join(track.path, track.fileName);
-        const scanTrack = scanTracks.find(t => t.path === filename);
+        const scanTrack = scanTracks.get(filename);
         if (!scanTrack) {
             log.info('Track has been removed', filename);
             result.changed = true;
             this.changes.tracks.removed.add(track);
             return;
         }
-        foundScanTracks.push(scanTrack);
+        scanTracks.delete(filename);
         if (this.changes.tracks.updated.has(track) ||
             scanTrack.size !== track.fileSize ||
             !isSameDate(scanTrack.ctime, track.statCreated) ||
@@ -270,8 +288,42 @@ export class WorkerScan {
             result.tracks.push(new ObjLoadTrackMatch(track));
         }
     }
+    static groupByID(items, id) {
+        const result = new Map();
+        for (const item of items) {
+            const key = id(item);
+            if (!key) {
+                continue;
+            }
+            const list = result.get(key);
+            if (list) {
+                list.push(item);
+            }
+            else {
+                result.set(key, [item]);
+            }
+        }
+        return result;
+    }
+    async loadArtworks(folderIDs) {
+        const result = [];
+        for (let start = 0; start < folderIDs.length; start += WorkerScan.LOAD_BATCH_SIZE) {
+            const ids = folderIDs.slice(start, start + WorkerScan.LOAD_BATCH_SIZE);
+            result.push(...await this.orm.Artwork.find({ where: { folder: ids } }));
+        }
+        return result;
+    }
+    async preload() {
+        const folders = await this.orm.Folder.find({ where: { root: this.root.id } });
+        this.childFolders = WorkerScan.groupByID(folders, folder => folder.parent.id());
+        const tracks = await this.orm.Track.find({ where: { root: this.root.id } });
+        this.folderTracks = WorkerScan.groupByID(tracks, track => track.folder.id());
+        const artworks = await this.loadArtworks(folders.map(folder => folder.id));
+        this.folderArtworks = WorkerScan.groupByID(artworks, artwork => artwork.folder.id());
+    }
     async match(dir) {
         this.root = await this.orm.Root.oneOrFailByID(this.rootID);
+        await this.preload();
         const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
         if (!parent) {
             const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });
@@ -287,4 +339,5 @@ export class WorkerScan {
         return rootMatch;
     }
 }
+WorkerScan.LOAD_BATCH_SIZE = 500;
 //# sourceMappingURL=scan.js.map

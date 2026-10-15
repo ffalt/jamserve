@@ -173,11 +173,15 @@ let ApolloMiddleware = class ApolloMiddleware {
                                         else {
                                             log.error(error);
                                         }
-                                        if (process.env.NODE_ENV === 'production') {
-                                            error.message = 'An error occurred processing your request';
-                                            error.extensions.code = 'INTERNAL_SERVER_ERROR';
-                                            error.extensions.exception = undefined;
+                                        if (error.extensions?.code === 'UNAUTHENTICATED') {
+                                            continue;
                                         }
+                                        if (process.env.NODE_ENV !== 'production') {
+                                            continue;
+                                        }
+                                        error.message = 'An error occurred processing your request';
+                                        error.extensions.code = 'INTERNAL_SERVER_ERROR';
+                                        error.extensions.exception = undefined;
                                     }
                                 }
                             }
@@ -192,8 +196,11 @@ let ApolloMiddleware = class ApolloMiddleware {
         await apollo.start();
         return expressMiddleware(apollo, {
             context: async ({ req, res }) => {
-                if (!req.user)
-                    throw new Error('you must be logged in');
+                if (!req.user) {
+                    throw new GraphQLError('you must be logged in', {
+                        extensions: { code: 'UNAUTHENTICATED', http: { status: 401 } }
+                    });
+                }
                 return {
                     req, res,
                     orm: this.orm.fork(),

@@ -101,10 +101,11 @@ export class Feed {
                 const body = result.body;
                 body.on('data', (chunk) => {
                     received += chunk.length;
-                    if (received > Feed.MAX_FEED_SIZE) {
-                        body.destroy();
-                        reject(new Error(`Feed response too large: exceeded limit of ${Feed.MAX_FEED_SIZE} bytes`));
+                    if (!(received > Feed.MAX_FEED_SIZE)) {
+                        return;
                     }
+                    body.destroy();
+                    reject(new Error(`Feed response too large: exceeded limit of ${Feed.MAX_FEED_SIZE} bytes`));
                 });
                 body.pipe(feedParser);
             });

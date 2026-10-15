@@ -20,10 +20,7 @@ export class MetaStatBuilder {
             return;
         }
         const item1 = list.at(1);
-        if (!item1) {
-            return item0.val;
-        }
-        if (item0.count - item1.count > 4) {
+        if (!item1 || (item0.count - item1.count > 4)) {
             return item0.val;
         }
         if (multi !== undefined && list.length > 3) {
@@ -76,17 +73,6 @@ export class MetaStatBuilder {
         stat[slug] ?? (stat[slug] = { count: 0, val: value.trim() });
         stat[slug].count += 1;
     }
-    statTrackCount(name, trackTotal, disc) {
-        var _a;
-        if (trackTotal === undefined) {
-            return;
-        }
-        const slug = `${(disc ?? 1)}-${trackTotal}`;
-        (_a = this.stats)[name] ?? (_a[name] = {});
-        const stat = this.stats[name];
-        stat[slug] ?? (stat[slug] = { count: 0, val: trackTotal });
-        stat[slug].count += 1;
-    }
     asList(name) {
         return MetaStatBuilder.convert2list(this.stats[name] ?? {});
     }
@@ -101,6 +87,10 @@ export class MetaStatBuilder {
     mostUsed(name, multi) {
         const list = this.asList(name);
         return MetaStatBuilder.getMostUsedTagValue(list, multi);
+    }
+    mostUsedOrNone(name) {
+        const value = this.mostUsed(name, '');
+        return value === '' ? undefined : value;
     }
     mostUsedNumber(name) {
         const list = this.asNumberList(name);

@@ -16,12 +16,13 @@ export class IDFolderCache {
     }
     async removeByIDs(ids) {
         const searches = ids.filter(id => id.length > 0).map(id => this.prefixCacheFilename(id));
-        if (searches.length > 0) {
-            let list = await fse.readdir(this.dataPath);
-            list = list.filter(name => searches.some(s => name.startsWith(s)));
-            for (const filename of list) {
-                await fse.unlink(path.resolve(this.dataPath, filename));
-            }
+        if (searches.length === 0) {
+            return;
+        }
+        let list = await fse.readdir(this.dataPath);
+        list = list.filter(name => searches.some(s => name.startsWith(s)));
+        for (const filename of list) {
+            await fse.unlink(path.resolve(this.dataPath, filename));
         }
     }
     async getExisting(id, parameters) {

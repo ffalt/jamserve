@@ -81,10 +81,10 @@ let IoService = IoService_1 = class IoService {
         this.afterScanTimeout = undefined;
     }
     async next() {
-        const cmd = this.queue.shift();
-        if (cmd) {
+        let cmd = this.queue.shift();
+        while (cmd) {
             await this.runRequest(cmd);
-            await this.next();
+            cmd = this.queue.shift();
         }
     }
     run() {
@@ -102,6 +102,9 @@ let IoService = IoService_1 = class IoService {
             this.scanning = false;
             log.error(error);
         });
+    }
+    stop() {
+        this.clearAfterRefresh();
     }
     generateRequestID() {
         this.nextID += 1;
@@ -139,10 +142,7 @@ let IoService = IoService_1 = class IoService {
         if (done) {
             return { id, error: done.error, done: done.date };
         }
-        if (this.track.delayedTrackTagWrite.findbyID(id)) {
-            return { id };
-        }
-        if (this.track.delayedTrackFix.findbyID(id)) {
+        if (this.track.delayedTrackTagWrite.findbyID(id) || this.track.delayedTrackFix.findbyID(id)) {
             return { id };
         }
         return { id, error: 'ID not found', done: Date.now() };

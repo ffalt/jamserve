@@ -66,16 +66,40 @@ let EngineService = EngineService_1 = class EngineService {
         if (forceRescan) {
             log.info(`Updating from version ${version || '-'}`);
         }
-        if (forceRescan || this.settings.settings.library.scanAtStart) {
-            log.info('Starting rescan');
-            this.io.root.startUpRefresh(orm, forceRescan)
-                .then(() => {
-                return forceRescan ? this.settings.saveSettings(orm) : undefined;
-            })
-                .catch((error) => {
-                log.error(error, 'Error on startup scanning');
-            });
+        if (!(forceRescan || this.settings.settings.library.scanAtStart)) {
+            return;
         }
+        log.info('Starting rescan');
+        this.io.root.startUpRefresh(orm, forceRescan)
+            .then(requests => {
+            if (forceRescan) {
+                this.saveVersionAfterRescan(orm, requests);
+            }
+        })
+            .catch((error) => {
+            log.error(error, 'Error on startup scanning');
+        });
+    }
+    saveVersionAfterRescan(orm, requests) {
+        if (requests.length === 0) {
+            this.settings.saveSettings(orm)
+                .catch((error) => {
+                log.error(error, 'Error on storing the settings version');
+            });
+            return;
+        }
+        const listener = async () => {
+            this.io.removeAfterRefresh(listener);
+            const errors = requests
+                .map(request => this.io.getAdminChangeQueueInfoStatus(request.id).error)
+                .filter((error) => error !== undefined);
+            if (errors.length > 0) {
+                log.error('Update rescan failed, it will be repeated on the next start:', errors.join(', '));
+                return;
+            }
+            await this.settings.saveSettings(orm);
+        };
+        this.io.registerAfterRefresh(listener);
     }
     async checkDataPaths() {
         await fse.ensureDir(path.resolve(this.config.env.paths.data));
@@ -102,6 +126,7 @@ let EngineService = EngineService_1 = class EngineService {
         await this.checkRescan(orm);
     }
     async stop() {
+        this.io.stop();
         await this.orm.stop();
     }
     async buildAdminUser(orm, admin) {
@@ -127,11 +152,12 @@ let EngineService = EngineService_1 = class EngineService {
                 await this.buildAdminUser(orm, this.config.firstStart.adminUser);
             }
         }
-        if (this.config.firstStart.roots) {
-            const count = await orm.Root.count();
-            if (count === 0) {
-                await EngineService_1.buildRoots(orm, this.config.firstStart.roots);
-            }
+        if (!this.config.firstStart.roots) {
+            return;
+        }
+        const count = await orm.Root.count();
+        if (count === 0) {
+            await EngineService_1.buildRoots(orm, this.config.firstStart.roots);
         }
     }
 };

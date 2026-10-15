@@ -5,7 +5,11 @@ import { AlbumType, FolderType } from '../../../types/enums.js';
 import { MetaStatBuilder } from '../../../utils/stats-builder.js';
 import { slugify } from '../../../utils/slug.js';
 import { extractAlbumName } from '../../../utils/album-name.js';
+import { collectChunked } from '../../../utils/chunks.js';
 const log = logger('Worker.MetaMerger');
+function isAlbumType(value) {
+    return Object.values(AlbumType).includes(value ?? '');
+}
 export class MetaMerger {
     constructor(orm, changes, rootID) {
         this.orm = orm;
@@ -21,10 +25,11 @@ export class MetaMerger {
                 metaStatBuilder.statSlugValue('artist', tag.artist);
                 metaStatBuilder.statSlugValue('artistSort', tag.artistSort);
             }
-            if (track.albumArtist.id() === artist.id) {
-                metaStatBuilder.statSlugValue('artist', tag.albumArtist);
-                metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
+            if (track.albumArtist.id() !== artist.id) {
+                continue;
             }
+            metaStatBuilder.statSlugValue('artist', tag.albumArtist);
+            metaStatBuilder.statSlugValue('artistSort', tag.albumArtistSort);
         }
         const artistName = metaStatBuilder.mostUsed('artist') ?? cUnknownArtist;
         return { artistName, slug: slugify(artistName), artistSortName: metaStatBuilder.mostUsed('artistSort') ?? artist.name };
@@ -74,15 +79,15 @@ export class MetaMerger {
         const trackIDs = [...this.changes.tracks.updated.ids(), ...this.changes.tracks.removed.ids()];
         if (trackIDs.length > 0) {
             log.info('Updating Metadata');
-            const artists = await this.orm.Artist.findIDsFilter({ trackIDs });
+            const artists = await collectChunked(trackIDs, chunk => this.orm.Artist.findIDsFilter({ trackIDs: chunk }));
             this.changes.artists.updated.appendIDs(artists);
-            const albumArtists = await this.orm.Artist.findIDsFilter({ albumTrackIDs: trackIDs });
+            const albumArtists = await collectChunked(trackIDs, chunk => this.orm.Artist.findIDsFilter({ albumTrackIDs: chunk }));
             this.changes.artists.updated.appendIDs(albumArtists);
-            const albums = await this.orm.Album.findIDsFilter({ trackIDs });
+            const albums = await collectChunked(trackIDs, chunk => this.orm.Album.findIDsFilter({ trackIDs: chunk }));
             this.changes.albums.updated.appendIDs(albums);
-            const series = await this.orm.Series.findIDsFilter({ trackIDs });
+            const series = await collectChunked(trackIDs, chunk => this.orm.Series.findIDsFilter({ trackIDs: chunk }));
             this.changes.series.updated.appendIDs(series);
-            const genres = await this.orm.Genre.findIDsFilter({ trackIDs });
+            const genres = await collectChunked(trackIDs, chunk => this.orm.Genre.findIDsFilter({ trackIDs: chunk }));
             this.changes.genres.updated.appendIDs(genres.filter(id => !this.changes.genres.added.hasID(id)));
         }
         await this.flush('Track/Folder');
@@ -109,10 +114,11 @@ export class MetaMerger {
             folderCache.set(folder.id, folder);
         }
         const tag = await track.tag.get();
-        if (tag) {
-            const trackInfo = { track, tag, folder };
-            await this.addMeta(trackInfo);
+        if (!tag) {
+            return;
         }
+        const trackInfo = { track, tag, folder };
+        await this.addMeta(trackInfo);
     }
     async applyChangedTracksMeta() {
         const changedTracks = [...this.changes.tracks.added.ids(), ...this.changes.tracks.updated.ids()];
@@ -163,10 +169,11 @@ export class MetaMerger {
         while (queue.length > 0) {
             const folder = queue.shift();
             const parent = await folder?.parent.get();
-            if (parent?.folderType === FolderType.artist && folders.every(f => f.id !== parent.id)) {
-                folders.push(parent);
-                queue.push(parent);
+            if (!(parent?.folderType === FolderType.artist && folders.every(f => f.id !== parent.id))) {
+                continue;
             }
+            folders.push(parent);
+            queue.push(parent);
         }
         await artist.folders.set(folders);
         const genreMap = new Map();
@@ -253,7 +260,8 @@ export class MetaMerger {
             metaStatBuilder.statID('mbArtistID', folder.mbArtistID);
             metaStatBuilder.statID('mbReleaseID', folder.mbReleaseID);
         }
-        album.albumType = metaStatBuilder.mostUsed('albumType') ?? AlbumType.unknown;
+        const mostUsedAlbumType = metaStatBuilder.mostUsed('albumType');
+        album.albumType = isAlbumType(mostUsedAlbumType) ? mostUsedAlbumType : AlbumType.unknown;
         let duration = 0;
         const genreMap = new Map();
         for (const track of tracks) {
@@ -304,7 +312,7 @@ export class MetaMerger {
     }
     async applyChangedGenresMeta() {
         const trackIDs = this.changes.tracks.removed.ids();
-        const updateGenreIDs = trackIDs.length === 0 ? [] : await this.orm.Genre.findIDsFilter({ trackIDs });
+        const updateGenreIDs = await collectChunked(trackIDs, chunk => this.orm.Genre.findIDsFilter({ trackIDs: chunk }));
         this.changes.genres.updated.appendIDs(updateGenreIDs);
         const genreIDs = this.changes.genres.updated.ids();
         for (const id of genreIDs) {

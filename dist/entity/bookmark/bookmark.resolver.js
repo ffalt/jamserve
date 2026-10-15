@@ -17,7 +17,7 @@ import { EpisodeQL } from '../episode/episode.js';
 import { BookmarksParameters } from './bookmark.parameters.js';
 let BookmarkResolver = class BookmarkResolver {
     async bookmark(id, { orm, user }) {
-        return await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id: id } } : { where: { id: id, user: user.id } });
+        return await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id: id } : { id: id, user: user.id } });
     }
     async bookmarks({ filter, page, order }, { orm, user }) {
         return await orm.Bookmark.searchFilter(filter, order, page, user);

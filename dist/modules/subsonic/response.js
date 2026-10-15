@@ -9,11 +9,12 @@ export class ApiResponder extends ApiBaseResponder {
     }
     setSubsonicCors(req, res) {
         const origin = req.headers.origin;
-        if (origin && this.allowedOrigins.includes(origin)) {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-            res.setHeader('Access-Control-Allow-Credentials', 'true');
-            res.setHeader('Vary', 'Origin');
+        if (!(origin && this.allowedOrigins.includes(origin))) {
+            return;
         }
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Vary', 'Origin');
     }
     send(req, res, data) {
         this.setSubsonicCors(req, res);

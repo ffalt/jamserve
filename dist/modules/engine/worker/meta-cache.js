@@ -23,7 +23,7 @@ export class MetaMergerCache {
     async buildSeries(trackInfo, artist) {
         const result = this.orm.Series.create({
             name: trackInfo.tag.series ?? '',
-            albumTypes: trackInfo.folder.albumType ? [trackInfo.folder.albumType] : [AlbumType.unknown]
+            albumTypes: [trackInfo.folder.albumType ?? AlbumType.unknown]
         });
         await result.artist.set(artist);
         await result.roots.add(this.root);

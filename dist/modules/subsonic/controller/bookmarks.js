@@ -49,7 +49,7 @@ let SubsonicBookmarkApi = class SubsonicBookmarkApi {
         const childs = await SubsonicHelper.prepareTracks(orm, tracks, user);
         return { playQueue: SubsonicFormatter.packPlayQueue(playqueue, user, childs) };
     }
-    async savePlayQueue(query, { engine, orm, user, client }) {
+    async savePlayQueue(query, { engine, orm, user, client = 'unknown' }) {
         let mediaIDs = [];
         if (query.id) {
             mediaIDs = Array.isArray(query.id) ? query.id : [query.id];
@@ -58,7 +58,7 @@ let SubsonicBookmarkApi = class SubsonicBookmarkApi {
             mediaIDs,
             currentID: query.current,
             position: query.position
-        }, user, client ?? 'unknown');
+        }, user, client);
         return {};
     }
 };

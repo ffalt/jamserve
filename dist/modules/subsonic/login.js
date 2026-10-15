@@ -56,10 +56,7 @@ export async function subsonicLoginRateLimited(req, res, next) {
         return;
     }
     const handled = await req.engine.rateLimit.loginSlowDown(req, res);
-    if (handled) {
-        return;
-    }
-    if (!validateSubsonicParameters(req, res)) {
+    if (handled || !validateSubsonicParameters(req, res)) {
         return;
     }
     const user = await validateCredentials(req);

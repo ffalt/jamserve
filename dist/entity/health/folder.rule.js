@@ -87,9 +87,9 @@ const folderRules = [
     {
         id: FolderHealthID.albumTracksComplete,
         name: 'Album folder seems to be incomplete',
-        run: async (orm, folder) => {
+        run: async (_orm, folder) => {
             if ((folder.folderType === FolderType.album) && (folder.albumTrackCount)) {
-                const trackCount = await orm.Track.countFilter({ childOfID: folder.id });
+                const trackCount = await folder.tracks.count();
                 if (trackCount !== folder.albumTrackCount) {
                     return {
                         details: [

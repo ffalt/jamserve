@@ -12,7 +12,7 @@ import path from 'node:path';
 import { AudioModule } from '../../modules/audio/audio.module.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 import { downloadFile } from '../../utils/download.js';
-import { SupportedAudioFormat } from '../../utils/filetype.js';
+import { isSupportedAudioFormat } from '../../utils/filetype.js';
 import { fileDeleteIfExists, fileSuffix } from '../../utils/fs-utils.js';
 import { logger } from '../../utils/logger.js';
 import { injectable, inject, postConstruct } from 'inversify';
@@ -41,7 +41,7 @@ let EpisodeService = class EpisodeService {
         if (suffix.includes('?')) {
             suffix = suffix.slice(0, suffix.indexOf('?'));
         }
-        if (!SupportedAudioFormat.includes(suffix)) {
+        if (!isSupportedAudioFormat(suffix)) {
             throw new Error(`Unsupported Podcast audio format .${suffix}`);
         }
         const podcastID = episode.podcast.idOrFail();

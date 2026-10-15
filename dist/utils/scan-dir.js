@@ -6,10 +6,10 @@ import { processQueue } from './queue.js';
 import { getFileType } from './filetype.js';
 const log = logger('IO.DirScanner');
 const MAX_RECURSION_DEPTH = 50;
+const MAX_CONCURRENT_DIRS = 10;
 export class DirScanner {
-    async scanDirR(dir, stat, level) {
-        log.debug('Scanning:', dir);
-        const result = {
+    static createDir(dir, stat, level) {
+        return {
             path: ensureTrailingPathSeparator(dir),
             level,
             ctime: stat.ctime,
@@ -17,20 +17,25 @@ export class DirScanner {
             directories: [],
             files: []
         };
-        if (level >= MAX_RECURSION_DEPTH) {
-            log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${dir}, stopping scan`);
-            return result;
+    }
+    async readDir(node) {
+        log.debug('Scanning:', node.path);
+        if (node.level >= MAX_RECURSION_DEPTH) {
+            log.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached at ${node.path}, stopping scan`);
+            return [];
         }
-        const folders = [];
-        const list = await fse.readdir(dir);
+        const subDirectories = [];
+        const list = await fse.readdir(node.path);
         for (const filename of list) {
             if (filename.startsWith('.')) {
                 continue;
             }
-            const sub = path.join(dir, filename);
+            const sub = path.join(node.path, filename);
             const subStat = await fse.stat(sub);
             if (subStat.isDirectory()) {
-                folders.push({ dir: sub, stat: subStat });
+                const subDir = DirScanner.createDir(sub, subStat, node.level + 1);
+                node.directories.push(subDir);
+                subDirectories.push(subDir);
             }
             else {
                 const file = {
@@ -40,21 +45,24 @@ export class DirScanner {
                     mtime: subStat.mtime,
                     size: subStat.size
                 };
-                result.files.push(file);
+                node.files.push(file);
             }
         }
-        if (folders.length > 0) {
-            await processQueue(3, folders, async (folder) => {
-                const sub = await this.scanDirR(folder.dir, folder.stat, level + 1);
-                result.directories.push(sub);
-            });
-        }
-        return result;
+        return subDirectories;
     }
     async scan(dir) {
         log.info('Scanning Directory', dir);
         const stat = await fse.stat(dir);
-        return this.scanDirR(dir, stat, 0);
+        const root = DirScanner.createDir(dir, stat, 0);
+        let level = [root];
+        while (level.length > 0) {
+            const next = [];
+            await processQueue(MAX_CONCURRENT_DIRS, level, async (node) => {
+                next.push(...await this.readDir(node));
+            });
+            level = next;
+        }
+        return root;
     }
 }
 //# sourceMappingURL=scan-dir.js.map

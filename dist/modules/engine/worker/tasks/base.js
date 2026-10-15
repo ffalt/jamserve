@@ -12,8 +12,29 @@ import path from 'node:path';
 import fse from 'fs-extra';
 import { ImageModule } from '../../../image/image.module.js';
 import { AudioModule } from '../../../audio/audio.module.js';
+import { logger } from '../../../../utils/logger.js';
+import { errorToString } from '../../../../utils/error.js';
 import { injectable, inject } from 'inversify';
+const log = logger('Worker');
 let BaseWorker = class BaseWorker {
+    async refreshFolderStats(orm, folders) {
+        const done = new Set();
+        for (const folder of folders) {
+            if (!folder || done.has(folder.id)) {
+                continue;
+            }
+            done.add(folder.id);
+            try {
+                const stat = await fse.stat(folder.path);
+                folder.statCreated = stat.ctime;
+                folder.statModified = stat.mtime;
+                orm.Folder.persistLater(folder);
+            }
+            catch (error) {
+                log.debug(`Updating folder dates failed: ${folder.path}`, errorToString(error));
+            }
+        }
+    }
     async renameFile(dir, oldName, newName) {
         if (containsFolderSystemChars(newName) || newName.trim().length === 0) {
             return Promise.reject(new Error('Invalid Name'));

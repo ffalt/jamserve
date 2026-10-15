@@ -19,10 +19,11 @@ export class WorkerMergeScan {
     async merge(mergeRoot) {
         this.markChangedParents(mergeRoot);
         await this.mergeNode(mergeRoot);
-        if (this.orm.em.hasChanges()) {
-            log.debug('Syncing Folder Changes to DB');
-            await this.orm.em.flush();
+        if (!this.orm.em.hasChanges()) {
+            return;
         }
+        log.debug('Syncing Folder Changes to DB');
+        await this.orm.em.flush();
     }
     static getMultiAlbumFolderType(node) {
         const a = node.children.some(d => d.folder.folderType === FolderType.artist);

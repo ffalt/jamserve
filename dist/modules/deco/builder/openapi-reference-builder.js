@@ -116,16 +116,17 @@ export class OpenApiReferenceBuilder {
             required: required.length > 0 ? required : undefined
         };
         const superClass = Object.getPrototypeOf(parameterType.target);
-        if (superClass.prototype !== undefined) {
-            const allOf = [{ $ref: recursiveBuild(superClass, parameterType.name, schemas) }];
-            if (Object.keys(properties).length > 0) {
-                allOf.push({
-                    properties,
-                    required: required.length > 0 ? required : undefined
-                });
-            }
-            schemas[parameterType.name] = { allOf };
+        if (superClass.prototype === undefined) {
+            return;
         }
+        const allOf = [{ $ref: recursiveBuild(superClass, parameterType.name, schemas) }];
+        if (Object.keys(properties).length > 0) {
+            allOf.push({
+                properties,
+                required: required.length > 0 ? required : undefined
+            });
+        }
+        schemas[parameterType.name] = { allOf };
     }
     getParamRef(parameterClass, _name, schemas) {
         const parameterType = this.metadata.parameterTypes.find(it => it.target === parameterClass);

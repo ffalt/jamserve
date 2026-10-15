@@ -4,7 +4,7 @@ import { logger } from '../../../utils/logger.js';
 import { errorStringCode } from '../../../utils/error.js';
 const log = logger('waveform.stream');
 export class WaveformStream extends Transform {
-    constructor(atSamplesPerPixel, atSampleRate) {
+    constructor(atSamplesPerPixel, atSampleRate = 44100) {
         super({ writableObjectMode: false, readableObjectMode: true, highWaterMark: 1024 });
         this._buffer = new PassThrough();
         this._out = new PassThrough();
@@ -14,7 +14,7 @@ export class WaveformStream extends Transform {
         this._samples = 0;
         this._total = 0;
         this._samplesPerPixel = atSamplesPerPixel ?? 256;
-        this._sampleRate = atSampleRate ?? 44100;
+        this._sampleRate = atSampleRate;
         const options = {
             source: this._buffer
         };

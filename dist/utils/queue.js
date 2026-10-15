@@ -1,10 +1,10 @@
 import asyncPool from 'tiny-async-pool';
-export async function processQueue(_concurrent, list, process) {
+export async function processQueue(concurrent, list, process) {
     if (list.length === 0) {
         return;
     }
-    const maxConcurrent = 10;
-    for await (const _ of asyncPool(maxConcurrent, list, process)) {
+    const pool = asyncPool(Math.max(1, concurrent), list, process);
+    for await (const _ of pool) {
     }
 }
 //# sourceMappingURL=queue.js.map

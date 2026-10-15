@@ -50,10 +50,11 @@ export async function saveManagedEntityRelations(instance, transaction) {
             continue;
         }
         const referenceOrCollection = instance[field.name];
-        if (referenceOrCollection instanceof Collection) {
-            const collection = referenceOrCollection;
-            await collection.flush(transaction);
+        if (!(referenceOrCollection instanceof Collection)) {
+            continue;
         }
+        const collection = referenceOrCollection;
+        await collection.flush(transaction);
     }
 }
 export function createManagedEntity(meta, source, em) {

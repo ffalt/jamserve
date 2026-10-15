@@ -26,7 +26,7 @@ import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js
 import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 let BookmarkController = class BookmarkController {
     async id(id, childrenParameters, trackParameters, episodeParameters, { orm, engine, user }) {
-        return engine.transform.bookmark(orm, await orm.Bookmark.oneOrFail(user.roleAdmin ? { where: { id } } : { where: { id, user: user.id } }), childrenParameters, trackParameters, episodeParameters, user);
+        return engine.transform.bookmark(orm, await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id } : { id, user: user.id } }), childrenParameters, trackParameters, episodeParameters, user);
     }
     async search(page, childrenParameters, trackParameters, episodeParameters, filter, order, { orm, engine, user }) {
         return await orm.Bookmark.searchTransformFilter(filter, [order], page, user, o => engine.transform.bookmark(orm, o, childrenParameters, trackParameters, episodeParameters, user));

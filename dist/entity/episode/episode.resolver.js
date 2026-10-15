@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType, PodcastStatus } from '../../types/enums.js';
-import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { DBObjectType, PodcastStatus, UserRole } from '../../types/enums.js';
+import { Arg, Args, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { StateQL } from '../state/state.js';
 import { WaveformQL } from '../waveform/waveform.js';
 import { Episode, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL } from './episode.js';
@@ -19,9 +19,21 @@ import { TagQL } from '../tag/tag.js';
 import { PodcastQL } from '../podcast/podcast.js';
 import { BookmarkQL } from '../bookmark/bookmark.js';
 import { EpisodesParametersQL } from './episode.parameters.js';
+import { logger } from '../../utils/logger.js';
+const log = logger('EpisodeResolver');
 let EpisodeResolver = class EpisodeResolver {
     async episode(id, { orm }) {
         return await orm.Episode.oneOrFailByID(id);
+    }
+    async episodeRetrieve(id, { engine, orm }) {
+        const episode = await orm.Episode.oneOrFailByID(id);
+        if (!episode.path) {
+            engine.episode.downloadEpisode(orm, episode)
+                .catch((error) => {
+                log.error(error);
+            });
+        }
+        return episode;
     }
     async episodes({ page, filter, order, list, seed }, { orm, user }) {
         if (list) {
@@ -74,6 +86,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], EpisodeResolver.prototype, "episode", null);
+__decorate([
+    Authorized(UserRole.podcast),
+    Mutation(() => EpisodeQL, { description: 'Retrieve a Podcast Episode Media File' }),
+    __param(0, Arg('id', () => ID)),
+    __param(1, Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], EpisodeResolver.prototype, "episodeRetrieve", null);
 __decorate([
     Query(() => EpisodePageQL, { description: 'Search Episodes' }),
     __param(0, Args()),

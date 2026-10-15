@@ -84,26 +84,27 @@ export class ModelBuilder {
     buildRelation(options, sourceEntity, sourceField, sourceModel) {
         const type = sourceField.getType();
         const destinationEntity = this.metadata.entityInfo(type);
-        if (destinationEntity) {
-            const destinationModel = this.modelMap.get(destinationEntity.name);
-            if (destinationModel) {
-                switch (options.relation) {
-                    case 'one2many': {
-                        this.oneToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
-                        break;
-                    }
-                    case 'many2one': {
-                        this.manyToOne(options, sourceEntity, sourceField, destinationEntity);
-                        break;
-                    }
-                    case 'many2many': {
-                        this.manyToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
-                        break;
-                    }
-                    case 'one2one': {
-                        this.oneToOne(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
-                        break;
-                    }
+        if (!destinationEntity) {
+            return;
+        }
+        const destinationModel = this.modelMap.get(destinationEntity.name);
+        if (destinationModel) {
+            switch (options.relation) {
+                case 'one2many': {
+                    this.oneToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
+                    break;
+                }
+                case 'many2one': {
+                    this.manyToOne(options, sourceEntity, sourceField, destinationEntity);
+                    break;
+                }
+                case 'many2many': {
+                    this.manyToMany(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
+                    break;
+                }
+                case 'one2one': {
+                    this.oneToOne(options, sourceEntity, sourceField, destinationEntity, sourceModel, destinationModel);
+                    break;
                 }
             }
         }

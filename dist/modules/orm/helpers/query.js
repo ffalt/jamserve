@@ -16,15 +16,6 @@ export const QHelper = {
         }
         return { [Op.like]: `%${escaped}%` };
     },
-    likeRaw(value, dialect) {
-        if (!value) {
-            return undefined;
-        }
-        if (dialect === 'postgres') {
-            return { [Op.iLike]: `%${value}%` };
-        }
-        return { [Op.like]: `%${value}%` };
-    },
     gte(value) {
         return (value === undefined) ? undefined : { [Op.gte]: value };
     },

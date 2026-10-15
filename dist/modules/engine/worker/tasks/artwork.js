@@ -41,7 +41,9 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         await this.updateArtworkImageFile(artwork);
         orm.Artwork.persistLater(artwork);
         changes.artworks.updated.add(artwork);
-        changes.folders.updated.add(await artwork.folder.get());
+        const folder = await artwork.folder.get();
+        changes.folders.updated.add(folder);
+        await this.refreshFolderStats(orm, [folder]);
     }
     static getArtworkName(folder, types) {
         let name = [...types].sort((a, b) => a.localeCompare(b)).join('-');
@@ -94,6 +96,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         changes.artworks.added.add(artwork);
         await this.updateArtworkImageFile(artwork);
         orm.Artwork.persistLater(artwork);
+        await this.refreshFolderStats(orm, [folder]);
     }
     async replace(orm, artworkID, artworkFilename, changes) {
         if (!artworkFilename || !(await fse.pathExists(artworkFilename))) {
@@ -120,6 +123,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         await this.updateArtworkImageFile(artwork);
         changes.artworks.updated.add(artwork);
         orm.Artwork.persistLater(artwork);
+        await this.refreshFolderStats(orm, [await artwork.folder.get()]);
     }
     async download(orm, folderID, artworkURL, types, changes) {
         const folder = await orm.Folder.findOneOrFailByID(folderID);
@@ -131,6 +135,7 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         changes.artworks.added.add(artwork);
         await this.updateArtworkImageFile(artwork);
         orm.Artwork.persistLater(artwork);
+        await this.refreshFolderStats(orm, [folder]);
     }
     async remove(orm, root, artworkID, changes) {
         const artwork = await orm.Artwork.findOneByID(artworkID);
@@ -139,7 +144,9 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
         }
         await this.moveToTrash(root, artwork.path, artwork.name);
         changes.artworks.removed.add(artwork);
-        changes.folders.updated.add(await artwork.folder.get());
+        const folder = await artwork.folder.get();
+        changes.folders.updated.add(folder);
+        await this.refreshFolderStats(orm, [folder]);
     }
     async move(orm, artworkIDs, newParentID, changes) {
         const artworks = await orm.Artwork.findByIDs(artworkIDs);
@@ -156,17 +163,21 @@ let ArtworkWorker = ArtworkWorker_1 = class ArtworkWorker extends BaseWorker {
             }
         }
         changes.folders.updated.add(newParent);
+        const folders = [newParent];
         for (const artwork of artworks) {
             changes.artworks.updated.add(artwork);
             const oldParent = await artwork.folder.get();
-            if (oldParent?.id !== newParentID) {
-                changes.folders.updated.add(oldParent);
-                await fse.move(path.join(artwork.path, artwork.name), path.join(newParent.path, artwork.name));
-                artwork.path = ensureTrailingPathSeparator(newParent.path);
-                await artwork.folder.set(newParent);
-                orm.Artwork.persistLater(artwork);
+            if (oldParent?.id === newParentID) {
+                continue;
             }
+            changes.folders.updated.add(oldParent);
+            folders.push(oldParent);
+            await fse.move(path.join(artwork.path, artwork.name), path.join(newParent.path, artwork.name));
+            artwork.path = ensureTrailingPathSeparator(newParent.path);
+            await artwork.folder.set(newParent);
+            orm.Artwork.persistLater(artwork);
         }
+        await this.refreshFolderStats(orm, folders);
     }
 };
 ArtworkWorker = ArtworkWorker_1 = __decorate([

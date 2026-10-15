@@ -1,8 +1,8 @@
 export class ApiError extends Error {
-    constructor(message, failCode) {
+    constructor(message, failCode = 500) {
         super(message);
         this.name = this.constructor.name;
-        this.failCode = failCode || 500;
+        this.failCode = failCode;
     }
 }
 export const Errors = {
@@ -36,7 +36,7 @@ export function unauthError(message) {
     }
     return new ApiError(value, 401);
 }
-export function genericError(message) {
-    return new ApiError(message ?? 'Guru Meditation', 500);
+export function genericError(message = 'Guru Meditation') {
+    return new ApiError(message, 500);
 }
 //# sourceMappingURL=express-error.js.map

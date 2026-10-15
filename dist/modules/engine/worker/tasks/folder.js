@@ -39,6 +39,7 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
             return Promise.reject(new Error('Folder moving failed'));
         }
         await FolderWorker_1.updateFolder(orm, folder, newParent, newPath, changes);
+        await this.refreshFolderStats(orm, [folder, oldParent, newParent]);
     }
     static async updateFolder(orm, folder, newParent, newPath, changes) {
         const source = ensureTrailingPathSeparator(folder.path);
@@ -94,10 +95,12 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
         orm.Folder.persistLater(folder);
         changes.folders.added.add(folder);
         changes.folders.updated.add(parent);
+        await this.refreshFolderStats(orm, [parent]);
     }
     async delete(orm, root, folderIDs, changes) {
         const folders = await orm.Folder.findByIDs(folderIDs);
         const trashPath = path.join(root.path, '.trash');
+        const parents = [];
         for (const folder of folders) {
             if (folder.level === 0) {
                 return Promise.reject(new Error('Root folder can not be deleted'));
@@ -117,9 +120,11 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
             const parent = await folder.parent.get();
             if (parent) {
                 changes.folders.updated.add(parent);
+                parents.push(parent);
             }
             changes.folders.removed.add(folder);
         }
+        await this.refreshFolderStats(orm, parents);
     }
     async rename(orm, folderID, newName, changes) {
         const folder = await orm.Folder.findOneByID(folderID);
@@ -156,6 +161,7 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
                 orm.Artwork.persistLater(artwork);
             }
         }
+        await this.refreshFolderStats(orm, [folder, await folder.parent.get()]);
     }
     async move(orm, newParentID, moveFolderIDs, changes) {
         const newParent = await orm.Folder.findOneByID(newParentID);

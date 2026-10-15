@@ -44,17 +44,18 @@ export class BaseRepository extends EntityRepository {
             for (const o of options.order) {
                 const array = o;
                 hasOrder = true;
-                if (array.length === 3) {
-                    const key = array.at(0);
-                    const list = options.include ?? [];
-                    const includeEntry = list.find((entry) => entry.association === key);
-                    if (includeEntry) {
-                        includeEntry.attributes.push(array.at(1));
-                    }
-                    else {
-                        list.push({ association: key, attributes: [array.at(1)] });
-                        options.include = list;
-                    }
+                if (array.length !== 3) {
+                    continue;
+                }
+                const key = array.at(0);
+                const list = options.include ?? [];
+                const includeEntry = list.find((entry) => entry.association === key);
+                if (includeEntry) {
+                    includeEntry.attributes.push(array.at(1));
+                }
+                else {
+                    list.push({ association: key, attributes: [array.at(1)] });
+                    options.include = list;
                 }
             }
         }

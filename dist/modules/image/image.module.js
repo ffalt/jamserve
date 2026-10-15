@@ -224,10 +224,11 @@ let ImageModule = ImageModule_1 = class ImageModule {
                 const result = format ?
                     await ImageModule_1.getImageAs(filename, format, size, name) :
                     await this.getImage(filename, size, name);
-                if (result.buffer) {
-                    log.debug('Writing image cache file', cachefile);
-                    await fse.writeFile(cachefile, result.buffer.buffer);
+                if (!result.buffer) {
+                    return;
                 }
+                log.debug('Writing image cache file', cachefile);
+                await fse.writeFile(cachefile, result.buffer.buffer);
             });
         }
         return this.getImage(filename, size, `${id}.${this.format}`);

@@ -28,15 +28,17 @@ export class AvatarGenerator {
             const files = fs.readdirSync(dir);
             for (const fileName of files) {
                 const match = fileRegex.exec(fileName);
-                if (match) {
-                    const match1 = match.at(1);
-                    const match2 = match.at(2);
-                    if (match1 && match2) {
-                        const part = match1;
-                        partsMap[part] ?? (partsMap[part] = []);
-                        partsMap[part][Number(match2)] = path.join(dir, fileName);
-                    }
+                if (!match) {
+                    continue;
                 }
+                const match1 = match.at(1);
+                const match2 = match.at(2);
+                if (!match1 || !match2) {
+                    continue;
+                }
+                const part = match1;
+                partsMap[part] ?? (partsMap[part] = []);
+                partsMap[part][Number(match2)] = path.join(dir, fileName);
             }
             variants[discriminator] = partsMap;
         }

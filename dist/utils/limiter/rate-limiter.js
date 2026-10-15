@@ -1,7 +1,7 @@
 import { TokenBucket } from './token-bucket.js';
 import { getMilliseconds, wait } from './clock.js';
 export class RateLimiter {
-    constructor({ tokensPerInterval, interval, fireImmediately }) {
+    constructor({ tokensPerInterval, interval, fireImmediately = false }) {
         this.tokenBucket = new TokenBucket({
             bucketSize: tokensPerInterval,
             tokensPerInterval,
@@ -10,7 +10,7 @@ export class RateLimiter {
         this.tokenBucket.content = tokensPerInterval;
         this.curIntervalStart = getMilliseconds();
         this.tokensThisInterval = 0;
-        this.fireImmediately = fireImmediately ?? false;
+        this.fireImmediately = fireImmediately;
     }
     async removeTokens(count) {
         if (count > this.tokenBucket.bucketSize) {

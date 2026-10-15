@@ -62,25 +62,32 @@ export class TrackUpdater {
 let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
     async writeTags(orm, tags, changes) {
         const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
+        const folders = [];
         for (const writeTag of tags) {
             const track = await orm.Track.findOneByID(writeTag.trackID);
-            if (track) {
-                const filename = path.join(track.path, track.fileName);
-                await this.audioModule.writeRawTag(filename, writeTag.tag);
-                await trackUpdater.updateTrackValues(track, filename);
-                await TrackWorker_1.updateTrackStats(track);
-                orm.Track.persistLater(track);
-                changes.tracks.updated.add(track);
-                changes.folders.updated.addID(track.folder.id());
+            if (!track) {
+                continue;
             }
+            const filename = path.join(track.path, track.fileName);
+            await this.audioModule.writeRawTag(filename, writeTag.tag);
+            await trackUpdater.updateTrackValues(track, filename);
+            await TrackWorker_1.updateTrackStats(track);
+            orm.Track.persistLater(track);
+            changes.tracks.updated.add(track);
+            changes.folders.updated.addID(track.folder.id());
+            folders.push(await track.folder.get());
         }
+        await this.refreshFolderStats(orm, folders);
     }
     async fix(orm, fixes, changes) {
         const tracks = await orm.Track.findByIDs(fixes.map(t => t.trackID));
         const fixTasks = [];
+        const folders = [];
         for (const track of tracks) {
             changes.tracks.updated.add(track);
-            changes.folders.updated.add(await track.folder.get());
+            const folder = await track.folder.get();
+            changes.folders.updated.add(folder);
+            folders.push(folder);
             fixTasks.push({
                 filename: path.join(track.path, track.fileName),
                 fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
@@ -99,6 +106,7 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
                 }
             }
         });
+        await this.refreshFolderStats(orm, folders);
     }
     static async updateTrackStats(track) {
         const stat = await fse.stat(path.join(track.path, track.fileName));
@@ -115,18 +123,24 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
         await TrackWorker_1.updateTrackStats(track);
         orm.Track.persistLater(track);
         changes.tracks.updated.add(track);
-        changes.folders.updated.add(await track.folder.get());
+        const folder = await track.folder.get();
+        changes.folders.updated.add(folder);
+        await this.refreshFolderStats(orm, [folder]);
     }
     async remove(orm, root, trackIDs, changes) {
         const removedTracks = await orm.Track.findByIDs(trackIDs);
         if (removedTracks.length !== trackIDs.length) {
             return Promise.reject(new Error('Track not found'));
         }
+        const folders = [];
         for (const track of removedTracks) {
             await this.moveToTrash(root, track.path, track.fileName);
-            changes.folders.updated.add(await track.folder.get());
+            const folder = await track.folder.get();
+            changes.folders.updated.add(folder);
+            folders.push(folder);
             changes.tracks.removed.add(track);
         }
+        await this.refreshFolderStats(orm, folders);
     }
     async move(orm, trackIDs, newParentID, changes) {
         const tracks = await orm.Track.findByIDs(trackIDs);
@@ -143,19 +157,23 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
             }
         }
         changes.folders.updated.add(newParent);
+        const folders = [newParent];
         for (const track of tracks) {
             changes.tracks.updated.add(track);
             const oldParent = await track.folder.get();
-            if (oldParent?.id !== newParentID) {
-                changes.folders.updated.add(oldParent);
-                await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
-                track.path = ensureTrailingPathSeparator(newParent.path);
-                await track.root.set(await newParent.root.getOrFail());
-                await track.folder.set(newParent);
-                await TrackWorker_1.updateTrackStats(track);
-                orm.Track.persistLater(track);
+            if (oldParent?.id === newParentID) {
+                continue;
             }
+            changes.folders.updated.add(oldParent);
+            folders.push(oldParent);
+            await fse.move(path.join(track.path, track.fileName), path.join(newParent.path, track.fileName));
+            track.path = ensureTrailingPathSeparator(newParent.path);
+            await track.root.set(await newParent.root.getOrFail());
+            await track.folder.set(newParent);
+            await TrackWorker_1.updateTrackStats(track);
+            orm.Track.persistLater(track);
         }
+        await this.refreshFolderStats(orm, folders);
     }
     async refresh(orm, trackIDs, changes) {
         const tracks = await orm.Track.findByIDs(trackIDs);

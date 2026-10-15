@@ -29,6 +29,7 @@ import { injectable, inject, postConstruct } from 'inversify';
 import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
 import { DiscogsClient } from './clients/discogs-client.js';
+import { isAudioFormatType } from '../../utils/filetype.js';
 export const ID3TrackTagRawFormatTypes = [TagFormatType.id3v20, TagFormatType.id3v21, TagFormatType.id3v22, TagFormatType.id3v23, TagFormatType.id3v24];
 let AudioModule = class AudioModule {
     postConstruct() {
@@ -78,7 +79,8 @@ let AudioModule = class AudioModule {
         if (!probeResult) {
             return { format: TagFormatType.none };
         }
-        return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, suffix) };
+        const format = isAudioFormatType(suffix) ? suffix : undefined;
+        return { ...FORMAT.packProbeJamServeTag(probeResult), ...FORMAT.packProbeJamServeMedia(probeResult, format) };
     }
     async readRawTag(filename) {
         const suffix = fileSuffix(filename);

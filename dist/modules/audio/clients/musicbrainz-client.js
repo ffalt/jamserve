@@ -23,10 +23,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
     ;
     beautify(obj) {
         const walk = (o) => {
-            if (o === null) {
-                return;
-            }
-            if (o === undefined) {
+            if ((o === null) || (o === undefined)) {
                 return;
             }
             if (Array.isArray(o)) {

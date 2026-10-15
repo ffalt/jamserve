@@ -10,12 +10,39 @@ import { ObjLoadTrackMatch, WorkerScan } from '../scan.js';
 import { BaseWorker } from './base.js';
 import { injectable, injectFromBase } from 'inversify';
 import { WorkerMergeScan } from '../merge-scan.js';
-import { ensureTrailingPathSeparator, removeTrailingPathSeparator } from '../../../../utils/fs-utils.js';
+import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { logger } from '../../../../utils/logger.js';
 const log = logger('RootWorker');
 let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
+    static deniedRootPaths() {
+        if (process.platform !== 'win32') {
+            return this.DENIED_ROOT_PATHS_POSIX;
+        }
+        return [
+            process.env.SystemRoot ?? process.env.windir ?? String.raw `C:\Windows`,
+            process.env.ProgramFiles ?? String.raw `C:\Program Files`,
+            process.env['ProgramFiles(x86)'] ?? String.raw `C:\Program Files (x86)`,
+            process.env.ProgramData ?? String.raw `C:\ProgramData`
+        ];
+    }
+    static denySystemPath(candidate) {
+        if (candidate === path.parse(candidate).root) {
+            throw new Error('Root Directory cannot be the file system root');
+        }
+        for (const deniedPath of this.deniedRootPaths()) {
+            if (this.isInsideOrEqual(candidate, deniedPath)) {
+                throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
+            }
+        }
+    }
+    static isInsideOrEqual(dir, parent) {
+        const from = this.CASE_INSENSITIVE_PATHS ? parent.toLowerCase() : parent;
+        const to = this.CASE_INSENSITIVE_PATHS ? dir.toLowerCase() : dir;
+        const relative = path.relative(from, to);
+        return relative.length === 0 || (!relative.startsWith('..') && !path.isAbsolute(relative));
+    }
     static async appendRemovedIDsInBatches(fetchIDs, append) {
         let offset = 0;
         for (;;) {
@@ -45,11 +72,9 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         catch {
             resolvedDir = d;
         }
-        const normalizedPath = removeTrailingPathSeparator(resolvedDir);
-        for (const deniedPath of this.DENIED_ROOT_PATHS) {
-            if (normalizedPath === deniedPath || normalizedPath.startsWith(`${deniedPath}/`)) {
-                throw new Error(`Root Directory cannot be a sensitive system path: ${deniedPath}`);
-            }
+        const candidates = new Set([path.resolve(d), path.resolve(resolvedDir)]);
+        for (const candidate of candidates) {
+            this.denySystemPath(candidate);
         }
         const roots = (await orm.Root.all()).filter(r => r.id !== rootIdToIgnore);
         const newPath = ensureTrailingPathSeparator(path.isAbsolute(resolvedDir) ? resolvedDir : path.resolve(resolvedDir));
@@ -107,20 +132,22 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         for (const folder of folders) {
             const parents = await this.getParents(folder);
             const parent = parents.at(0);
-            if (parent) {
-                if (!rootMatch) {
-                    const tracks = await RootWorker_1.buildMergeTracks(parent);
-                    rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
-                }
-                const pathToChild = [...parents.slice(1), folder];
-                await this.buildMergeNode(pathToChild, rootMatch);
+            if (!parent) {
+                continue;
             }
+            if (!rootMatch) {
+                const tracks = await RootWorker_1.buildMergeTracks(parent);
+                rootMatch = { changed: true, folder: parent, path: parent.path, children: [], tracks, nrOfTracks: tracks.length };
+            }
+            const pathToChild = [...parents.slice(1), folder];
+            await this.buildMergeNode(pathToChild, rootMatch);
         }
-        if (rootMatch) {
-            await this.loadEmptyUnchanged(rootMatch);
-            const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
-            await scanMerger.merge(rootMatch);
+        if (!rootMatch) {
+            return;
         }
+        await this.loadEmptyUnchanged(rootMatch);
+        const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
+        await scanMerger.merge(rootMatch);
     }
     async buildMergeNode(pathToChild, merge) {
         const folder = pathToChild.at(0);
@@ -236,25 +263,24 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         return list;
     }
 };
-RootWorker.DENIED_ROOT_PATHS = [
-    '/',
+RootWorker.DENIED_ROOT_PATHS_POSIX = [
     '/bin',
     '/boot',
     '/dev',
     '/etc',
     '/lib',
     '/lib64',
+    '/opt',
     '/proc',
     '/root',
     '/run',
     '/sbin',
+    '/srv',
     '/sys',
     '/usr',
-    '/var',
-    '/opt',
-    '/srv',
-    '/root'
+    '/var'
 ];
+RootWorker.CASE_INSENSITIVE_PATHS = ['win32', 'darwin'].includes(process.platform);
 RootWorker.REMOVE_BATCH_SIZE = 1000;
 RootWorker = RootWorker_1 = __decorate([
     injectable(),
