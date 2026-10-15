@@ -1,5 +1,5 @@
-import { DBObjectType, PodcastStatus } from '../../types/enums.js';
-import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { DBObjectType, PodcastStatus, UserRole } from '../../types/enums.js';
+import { Arg, Args, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { State, StateQL } from '../state/state.js';
 import { Waveform, WaveformQL } from '../waveform/waveform.js';
 import { Episode, EpisodeChapter, EpisodeChapterQL, EpisodeEnclosureQL, EpisodePageQL, EpisodeQL } from './episode.js';
@@ -8,12 +8,31 @@ import { Tag, TagQL } from '../tag/tag.js';
 import { Podcast, PodcastQL } from '../podcast/podcast.js';
 import { Bookmark, BookmarkQL } from '../bookmark/bookmark.js';
 import { EpisodesParametersQL } from './episode.parameters.js';
+import { logger } from '../../utils/logger.js';
+
+const log = logger('EpisodeResolver');
 
 @Resolver(EpisodeQL)
 export class EpisodeResolver {
 	@Query(() => EpisodeQL, { description: 'Get a Episode by Id' })
 	async episode(@Arg('id', () => ID!) id: string, @Ctx() { orm }: Context): Promise<Episode> {
 		return await orm.Episode.oneOrFailByID(id);
+	}
+
+	@Authorized(UserRole.podcast)
+	@Mutation(() => EpisodeQL, { description: 'Retrieve a Podcast Episode Media File' })
+	async episodeRetrieve(
+		@Arg('id', () => ID!) id: string,
+		@Ctx() { engine, orm }: Context
+	): Promise<Episode> {
+		const episode = await orm.Episode.oneOrFailByID(id);
+		if (!episode.path) {
+			engine.episode.downloadEpisode(orm, episode)
+				.catch((error: unknown) => {
+					log.error(error);
+				});
+		}
+		return episode;
 	}
 
 	@Query(() => EpisodePageQL, { description: 'Search Episodes' })
