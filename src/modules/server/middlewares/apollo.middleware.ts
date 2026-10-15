@@ -225,7 +225,13 @@ export class ApolloMiddleware {
 											log.error(error);
 										}
 
+										// If the error is an authentication error, we don't want to sanitize it
+										if ((error.extensions as any)?.code === 'UNAUTHENTICATED') {
+											continue;
+										}
+
 										// Sanitize the error returned to client in production
+										// eslint-disable-next-line unicorn/prefer-combined-guards
 										if (process.env.NODE_ENV !== 'production') {
 											continue;
 										}
@@ -249,7 +255,11 @@ export class ApolloMiddleware {
 		await apollo.start();
 		return expressMiddleware(apollo, {
 			context: async ({ req, res }) => {
-				if (!req.user) throw new Error('you must be logged in');
+				if (!req.user) {
+					throw new GraphQLError('you must be logged in', {
+						extensions: { code: 'UNAUTHENTICATED', http: { status: 401 } }
+					});
+				}
 				return {
 					req, res,
 					orm: this.orm.fork(),
