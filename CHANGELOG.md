@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.19](https://github.com/ffalt/jamserve/compare/v0.6.18...v0.6.19) (2026-10-24)
+
+### Features
+
+* **query:** handle null values in comparison methods ([0840841](https://github.com/ffalt/jamserve/commit/084084145abcd3fd3831fb0fbcd5e969540d2b8d))
+
 ## [0.6.18](https://github.com/ffalt/jamserve/compare/v0.6.17...v0.6.18) (2026-10-15)
 
 ### Features
