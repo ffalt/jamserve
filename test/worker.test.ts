@@ -850,6 +850,7 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 			it('should keep running when a request fails', async () => {
 				// Arrange
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 				const done: Array<string> = [];
 				const failing = engine.io.newRequest(
 					WorkerRequestMode.refreshRoot,
@@ -865,12 +866,16 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 					{ rootID: mockRoot.id }
 				);
 
-				// Act
-				await waitEngineStart(engine);
+				try {
+					// Act
+					await waitEngineStart(engine);
 
-				// Assert
-				expect(engine.io.getAdminChangeQueueInfoStatus(failing).error).toBe('Some worker error');
-				expect(done).toEqual(['after']);
+					// Assert
+					expect(engine.io.getAdminChangeQueueInfoStatus(failing).error).toBe('Some worker error');
+					expect(done).toEqual(['after']);
+				} finally {
+					consoleErrorSpy.mockRestore();
+				}
 			});
 		});
 
