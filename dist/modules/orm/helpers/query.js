@@ -17,10 +17,10 @@ export const QHelper = {
         return { [Op.like]: `%${escaped}%` };
     },
     gte(value) {
-        return (value === undefined) ? undefined : { [Op.gte]: value };
+        return (value === undefined || value === null) ? undefined : { [Op.gte]: value };
     },
     lte(value) {
-        return (value === undefined) ? undefined : { [Op.lte]: value };
+        return (value === undefined || value === null) ? undefined : { [Op.lte]: value };
     },
     inStringArray(propertyName, list) {
         if (!list || list.length === 0) {
@@ -35,7 +35,7 @@ export const QHelper = {
         return [{ [Op.or]: expressions }];
     },
     neq(value) {
-        return (value === undefined) ? undefined : { [Op.ne]: value };
+        return (value === undefined || value === null) ? undefined : { [Op.ne]: value };
     },
     or(list) {
         return { [Op.or]: QHelper.cleanList(list) };
@@ -52,7 +52,11 @@ export const QHelper = {
                 return false;
             }
             const key = Object.keys(q).at(0);
-            return (key !== undefined) && q[key] !== undefined;
+            if (key === undefined) {
+                return false;
+            }
+            const value = q[key];
+            return value !== undefined && value !== null;
         });
         return result.length > 0 ? result : undefined;
     },
