@@ -78,7 +78,7 @@
     "passport-local": "1.0.0",
     "pg": "8.23.1",
     "pg-hstore": "2.3.4",
-    "rate-limiter-flexible": "11.2.2",
+    "rate-limiter-flexible": "11.2.3",
     "reflect-metadata": "0.2.2",
     "request-filtering-agent": "^3.2.1",
     "rotating-file-stream": "3.2.10",
