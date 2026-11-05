@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.20](https://github.com/ffalt/jamserve/compare/v0.6.19...v0.6.20) (2026-11-05)
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([7212600](https://github.com/ffalt/jamserve/commit/7212600189e369fc5f7bcbc02388578ce0b8815a))
+
 ## [0.6.19](https://github.com/ffalt/jamserve/compare/v0.6.18...v0.6.19) (2026-10-24)
 
 ### Features
