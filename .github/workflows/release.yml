@@ -20,10 +20,10 @@ jobs:
     env:
       JAM_DB_HOST: postgres
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: 26.x
           package-manager-cache: false
@@ -54,13 +54,13 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Install Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: 26.x
           package-manager-cache: false
@@ -78,7 +78,7 @@ jobs:
           npm run releaselog
 
       - name: Deploy to Release Branch 🚀
-        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           token: ${{ github.token }}
           branch: release # The branch the action should deploy to.
