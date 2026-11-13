@@ -33,7 +33,7 @@ export class FORMAT {
             mediaBitRate: Number(data.format.bit_rate),
             mediaSampleRate: Number(stream.sample_rate),
             mediaBitDepth: Number(stream.bits_per_sample),
-            mediaChannels: stream.channels,
+            mediaChannels: Number(stream.channels),
             mediaMode: stream.channel_layout,
             mediaVersion: stream.codec_long_name
         };

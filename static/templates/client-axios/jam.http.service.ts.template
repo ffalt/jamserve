@@ -10,7 +10,7 @@ export interface HttpHeaders {
 export interface HTTPOptions {
 	headers?: HttpHeaders;
 	params?: unknown;
-	reportProgress?: boolean;
+	reportUploadProgress?: boolean;
 	withCredentials?: boolean;
 }
 

@@ -9,9 +9,10 @@ export class WinstonRotatingFile extends TransportStream {
     constructor(options) {
         super(options);
         const { filename, rfsOptions } = options;
+        const createRotatingStream = createStream;
         this.stream = typeof filename === 'string' ?
-            createStream(path.basename(filename), { ...rfsOptions, path: path.dirname(filename) }) :
-            createStream(filename, rfsOptions);
+            createRotatingStream(path.basename(filename), { ...rfsOptions, path: path.dirname(filename) }) :
+            createRotatingStream(filename, rfsOptions);
     }
     close() {
         this.stream.end();

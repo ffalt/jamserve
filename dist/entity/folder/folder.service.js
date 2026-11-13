@@ -13,9 +13,21 @@ import { injectable, inject } from 'inversify';
 import { FolderRulesChecker } from '../health/folder.rule.js';
 import { ImageModule } from '../../modules/image/image.module.js';
 export async function getFolderDisplayArtwork(_orm, folder) {
-    const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
-    const items = await folder.artworks.getItems();
-    return items.find(a => a.types.includes(search));
+    let current = folder;
+    while (current) {
+        const search = current.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
+        const items = await current.artworks.getItems();
+        const artwork = items.find(a => a.types.includes(search));
+        if (artwork) {
+            return artwork;
+        }
+        if (current.folderType !== FolderType.multialbum) {
+            break;
+        }
+        const parent = await current.parent.get();
+        current = parent?.folderType === FolderType.multialbum ? parent : undefined;
+    }
+    return;
 }
 let FolderService = class FolderService {
     constructor() {

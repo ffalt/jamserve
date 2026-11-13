@@ -7,18 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var AlbumService_1;
 import { injectable, inject } from 'inversify';
 import { TrackService } from '../track/track.service.js';
 import { FolderService } from '../folder/folder.service.js';
-let AlbumService = AlbumService_1 = class AlbumService {
-    static async getAlbumFolder(album) {
-        const folders = await album.folders.getItems();
-        if (folders.length > 0) {
-            return folders.sort((a, b) => b.level - a.level).at(0);
-        }
-        return;
-    }
+let AlbumService = class AlbumService {
     async getAlbumTrackImage(orm, album, size, format) {
         const tracks = await album.tracks.getItems();
         const track = tracks.at(0);
@@ -28,9 +20,13 @@ let AlbumService = AlbumService_1 = class AlbumService {
         return;
     }
     async getAlbumFolderImage(orm, album, size, format) {
-        const folder = await AlbumService_1.getAlbumFolder(album);
-        if (folder) {
-            return this.folderService.getImage(orm, folder, size, format);
+        const folders = await album.folders.getItems();
+        const sorted = folders.sort((a, b) => b.level - a.level);
+        for (const folder of sorted) {
+            const result = await this.folderService.getImage(orm, folder, size, format);
+            if (result) {
+                return result;
+            }
         }
         return;
     }
@@ -52,7 +48,7 @@ __decorate([
     inject(FolderService),
     __metadata("design:type", FolderService)
 ], AlbumService.prototype, "folderService", void 0);
-AlbumService = AlbumService_1 = __decorate([
+AlbumService = __decorate([
     injectable()
 ], AlbumService);
 export { AlbumService };

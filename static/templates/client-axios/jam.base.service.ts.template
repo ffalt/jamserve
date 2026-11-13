@@ -112,7 +112,7 @@ export class JamBaseService {
 		formData.append(name, file);
 		const url = this.buildUrl(path, {});
 		const options = this.authService.getHTTPOptions();
-		options.reportProgress = true;
+		options.reportUploadProgress = true;
 		return this.http.postObserve<T>(url, formData, options, onUploadProgress);
 	}
 }

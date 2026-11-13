@@ -10,7 +10,7 @@ export type HTTPResponseType = 'arraybuffer' | 'text' | 'json';
 export interface HTTPOptions {
 	headers?: HttpHeaders;
 	params?: HttpParams;
-	reportProgress?: boolean;
+	reportUploadProgress?: boolean;
 	withCredentials?: boolean;
 	responseType?: HTTPResponseType;
 }
