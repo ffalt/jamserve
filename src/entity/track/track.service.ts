@@ -61,8 +61,8 @@ export class TrackService {
 				if (buffer) {
 					return await this.imageModule.getBuffer(track.id, buffer, size, format);
 				}
-			} catch {
-				log.error('TrackService', `Extracting image from audio failed: ${path.join(track.path, track.fileName)}`);
+			} catch (error) {
+				log.error('TrackService', `Extracting image from audio failed: ${path.join(track.path, track.fileName)}: ${error}`);
 			}
 		}
 		const folder = await track.folder.get();
