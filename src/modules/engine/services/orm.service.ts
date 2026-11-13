@@ -234,7 +234,7 @@ export class OrmService {
 			password: config.env.db.password,
 			database: config.env.db.name,
 			host: config.env.db.socket ?? config.env.db.host,
-			port: config.env.db.port ? Number(config.env.db.port as unknown) : undefined
+			port: config.env.db.port ? Number(config.env.db.port) : undefined
 		};
 	}
 

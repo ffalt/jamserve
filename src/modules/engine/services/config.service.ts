@@ -16,7 +16,7 @@ export interface ENVConfigDB {
 	password?: string;
 	host?: string;
 	socket?: string;
-	port?: number;
+	port?: number | string;
 }
 
 export interface ENVConfig {

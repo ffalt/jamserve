@@ -43,8 +43,8 @@ export interface ProbeResult {
 		codec_time_base: string; // '1/44100',
 		codec_tag_string: string; //  '[0][0][0][0]',
 		mode: string;
-		channels: number;
-		bits_per_sample: number;
+		channels: number | string;
+		bits_per_sample: number | string;
 		codec_tag: string; //  '0x0000',
 		sample_fmt: string; //  'fltp',
 		sample_rate: string; //  '44100',

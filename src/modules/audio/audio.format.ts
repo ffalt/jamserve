@@ -92,8 +92,8 @@ export class FORMAT {
 			mediaDuration: Math.floor(Number(data.format.duration) * 1000),
 			mediaBitRate: Number(data.format.bit_rate),
 			mediaSampleRate: Number(stream.sample_rate),
-			mediaBitDepth: Number(stream.bits_per_sample as unknown),
-			mediaChannels: stream.channels,
+			mediaBitDepth: Number(stream.bits_per_sample),
+			mediaChannels: Number(stream.channels),
 			mediaMode: stream.channel_layout,
 			mediaVersion: stream.codec_long_name
 		};

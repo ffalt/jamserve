@@ -24,6 +24,9 @@ const unicornRules = {
 	"unicorn/no-unnecessary-parameters": "off",
 	"unicorn/prefer-logical-operator-over-ternary": "off",
 	"unicorn/name-replacements": ["error", {
+		allowList: {
+			mp3val: true
+		},
 		replacements: {
 			docs: false, req: false, res: false, env: false, dir: false, repo: false,
 			db: false, obj: false, utils: false, repository: false, cmd: false

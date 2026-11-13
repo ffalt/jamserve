@@ -19,9 +19,10 @@ export class WinstonRotatingFile extends TransportStream {
 		super(options);
 
 		const { filename, rfsOptions } = options;
+		const createRotatingStream = createStream as (name: string | Generator, opt?: Options) => RotatingFileStream;
 		this.stream = typeof filename === 'string' ?
-			createStream(path.basename(filename), { ...rfsOptions, path: path.dirname(filename) }) :
-			createStream(filename, rfsOptions);
+			createRotatingStream(path.basename(filename), { ...rfsOptions, path: path.dirname(filename) }) :
+			createRotatingStream(filename, rfsOptions);
 	}
 
 	public close(): void {
