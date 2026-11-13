@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.21](https://github.com/ffalt/jamserve/compare/v0.6.20...v0.6.21) (2026-11-13)
+
+### Bug Fixes
+
+* **multialbum:** look for the image in the parent folder of a mutlialbum ([a09093e](https://github.com/ffalt/jamserve/commit/a09093ef88d66acd5b586e4b2bb5d2341a3e72dd))
+* **track:** log image extraction error details ([e90413f](https://github.com/ffalt/jamserve/commit/e90413fcc32fdb381280b3a59918465c1132ed02))
+
 ## [0.6.20](https://github.com/ffalt/jamserve/compare/v0.6.19...v0.6.20) (2026-11-05)
 
 ### Bug Fixes
