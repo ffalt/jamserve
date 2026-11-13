@@ -9,9 +9,21 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
 
 export async function getFolderDisplayArtwork(_orm: Orm, folder: Folder): Promise<Artwork | undefined> {
-	const search = folder.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
-	const items = await folder.artworks.getItems();
-	return items.find(a => a.types.includes(search));
+	let current: Folder | undefined = folder;
+	while (current) {
+		const search = current.folderType === FolderType.artist ? ArtworkImageType.artist : ArtworkImageType.front;
+		const items = await current.artworks.getItems();
+		const artwork = items.find(a => a.types.includes(search));
+		if (artwork) {
+			return artwork;
+		}
+		if (current.folderType !== FolderType.multialbum) {
+			break;
+		}
+		const parent: Folder | undefined = await current.parent.get();
+		current = parent?.folderType === FolderType.multialbum ? parent : undefined;
+	}
+	return;
 }
 
 @injectable()

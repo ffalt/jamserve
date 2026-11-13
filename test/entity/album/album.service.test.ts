@@ -76,6 +76,26 @@ describe('AlbumService.getImage', () => {
 		expect(folderService.getImage).toHaveBeenCalledWith(mockOrm, deep, undefined, undefined);
 	});
 
+	test('falls back to parent folder if deeper folder has no image', async () => {
+		const folderImage = { file: { filename: 'folder.jpg' } };
+		const { service, folderService } = makeService();
+		const shallow = makeFolder(1);
+		const deep = makeFolder(2);
+		folderService.getImage.mockImplementation(((async (_orm: unknown, folder: unknown) => {
+			if (folder === shallow) {
+				return folderImage;
+			}
+			return;
+		}) as never));
+		const album = makeAlbum({ folders: [shallow, deep] }) as never;
+
+		const result = await service.getImage(mockOrm, album);
+
+		expect(folderService.getImage).toHaveBeenCalledWith(mockOrm, deep, undefined, undefined);
+		expect(folderService.getImage).toHaveBeenCalledWith(mockOrm, shallow, undefined, undefined);
+		expect(result).toBe(folderImage);
+	});
+
 	test('uses the single folder when only one folder exists', async () => {
 		const folderImage = { file: { filename: 'folder.jpg' } };
 		const { service, folderService } = makeService();

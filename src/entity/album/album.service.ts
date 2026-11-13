@@ -1,4 +1,3 @@
-import { Folder } from '../folder/folder.js';
 import { Album } from './album.js';
 import { injectable, inject } from 'inversify';
 import { TrackService } from '../track/track.service.js';
@@ -14,14 +13,6 @@ export class AlbumService {
 	@inject(FolderService)
 	private readonly folderService!: FolderService;
 
-	private static async getAlbumFolder(album: Album): Promise<Folder | undefined> {
-		const folders = await album.folders.getItems();
-		if (folders.length > 0) {
-			return folders.sort((a, b) => b.level - a.level).at(0);
-		}
-		return;
-	}
-
 	private async getAlbumTrackImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
 		const tracks = await album.tracks.getItems();
 		const track = tracks.at(0);
@@ -32,9 +23,13 @@ export class AlbumService {
 	}
 
 	private async getAlbumFolderImage(orm: Orm, album: Album, size?: number, format?: string): Promise<ApiBinaryResult | undefined> {
-		const folder = await AlbumService.getAlbumFolder(album);
-		if (folder) {
-			return this.folderService.getImage(orm, folder, size, format);
+		const folders = await album.folders.getItems();
+		const sorted = folders.sort((a, b) => b.level - a.level);
+		for (const folder of sorted) {
+			const result = await this.folderService.getImage(orm, folder, size, format);
+			if (result) {
+				return result;
+			}
 		}
 		return;
 	}
