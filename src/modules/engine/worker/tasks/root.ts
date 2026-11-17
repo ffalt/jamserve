@@ -157,13 +157,30 @@ export class RootWorker extends BaseWorker {
 		changes.roots.removed.add(root);
 	}
 
-	async scan(orm: Orm, root: Root, changes: Changes): Promise<void> {
+	async scan(orm: Orm, root: Root, changes: Changes, startFolder?: Folder): Promise<void> {
 		const dirScanner = new DirScanner();
-		const scanDir = await dirScanner.scan(root.path);
+		const scanDir = await dirScanner.scan(startFolder?.path ?? root.path, startFolder?.level ?? 0);
 		const scanMatcher = new WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
-		const rootMatch = await scanMatcher.match(scanDir);
+		const match = await scanMatcher.match(scanDir, startFolder);
+		const scanned = WorkerMergeScan.buildNodes(match);
+		const mergeRoot = startFolder ? await this.extendToRoot(scanned) : scanned;
 		const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
-		await scanMerger.mergeMatch(rootMatch);
+		await scanMerger.merge(mergeRoot);
+	}
+
+	/**
+	Wrap a scanned sub tree into its parent folders, so their meta data is rebuilt from the scan result
+	together with the unscanned parts of the library.
+	*/
+	private async extendToRoot(node: MergeNode): Promise<MergeNode> {
+		const parents = await this.getParents(node.folder);
+		let current = node;
+		for (const parent of parents.toReversed()) {
+			const tracks = await RootWorker.buildMergeTracks(parent);
+			current = { changed: true, folder: parent, path: parent.path, children: [current], tracks, nrOfTracks: tracks.length };
+			await this.loadUnchangedSiblings(current);
+		}
+		return current;
 	}
 
 	async refreshMeta(orm: Orm, root: Root, changes: Changes): Promise<void> {
@@ -292,22 +309,40 @@ export class RootWorker extends BaseWorker {
 	}
 
 	private async loadEmptyUnchanged(node: MergeNode): Promise<void> {
+		const known = [...node.children];
+		await this.loadUnchangedSiblings(node);
+		for (const child of known) {
+			await this.loadEmptyUnchanged(child);
+		}
+	}
+
+	private async loadUnchangedSiblings(node: MergeNode): Promise<void> {
 		const folders = await node.folder.children.getItems();
 		for (const folder of folders) {
-			const child = node.children.find(f => f.folder.id === folder.id);
-			if (child) {
-				await this.loadEmptyUnchanged(child);
-			} else {
-				node.children.push({
-					changed: false,
-					folder,
-					path: folder.path,
-					children: [],
-					nrOfTracks: await folder.tracks.count(),
-					tracks: []
-				});
+			if (node.children.some(f => f.folder.id === folder.id)) {
+				continue;
 			}
+			node.children.push(await this.loadUnchangedNode(folder));
 		}
+	}
+
+	/**
+	The track count of a folder sums up its whole sub tree, so an unscanned folder has to be loaded with all its children.
+	*/
+	private async loadUnchangedNode(folder: Folder): Promise<MergeNode> {
+		const node: MergeNode = {
+			changed: false,
+			folder,
+			path: folder.path,
+			children: [],
+			nrOfTracks: await folder.tracks.count(),
+			tracks: []
+		};
+		const children = await folder.children.getItems();
+		for (const child of children) {
+			node.children.push(await this.loadUnchangedNode(child));
+		}
+		return node;
 	}
 
 	private logNode(node?: MergeNode): Array<string> {

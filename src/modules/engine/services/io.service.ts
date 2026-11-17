@@ -145,7 +145,7 @@ export class IoService {
 
 	getRequestInfo<Y extends WorkerRequestParameters>(req: IoRequest<Y>): AdminChangeQueueInfo {
 		const pos = this.queue.indexOf(req as unknown as IoRequest<WorkerRequestParameters>);
-		return { id: req.id, pos: pos === -1 ? undefined : pos };
+		return { id: req.id, position: pos === -1 ? undefined : pos };
 	}
 
 	newRequest<Y extends WorkerRequestParameters>(mode: WorkerRequestMode, execute: (parameters: Y) => Promise<Changes>, parameters: Y): AdminChangeQueueInfo {
@@ -160,7 +160,7 @@ export class IoService {
 		const cmd = this.queue.find(c => c.id === id);
 		if (cmd) {
 			const pos = this.queue.indexOf(cmd);
-			return { id, pos: pos === -1 ? undefined : pos };
+			return { id, position: pos === -1 ? undefined : pos };
 		}
 		const done = this.history.find(c => c.id === id);
 		if (done) {

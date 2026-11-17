@@ -4,7 +4,7 @@ import { TrackPage } from '../track/track.model.js';
 import { ArtworkPage } from '../artwork/artwork.model.js';
 import { ExtendedInfoResult } from '../metadata/metadata.model.js';
 import { IncludesTrackParameters, TrackOrderParameters } from '../track/track.parameters.js';
-import { FolderCreateParameters, FolderFilterParameters, FolderMoveParameters, FolderOrderParameters, FolderRenameParameters, IncludesFolderParameters, IncludesFolderChildrenParameters } from './folder.parameters.js';
+import { FolderCreateParameters, FolderFilterParameters, FolderMoveParameters, FolderOrderParameters, FolderRefreshParameters, FolderRenameParameters, IncludesFolderParameters, IncludesFolderChildrenParameters } from './folder.parameters.js';
 import { ArtworkOrderParameters, IncludesArtworkParameters } from '../artwork/artwork.parameters.js';
 import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
@@ -227,6 +227,19 @@ export class FolderController {
 	): Promise<AdminChangeQueueInfo> {
 		const folder = await orm.Folder.oneOrFailByID(parameters.id);
 		return await engine.io.folder.create(folder.id, parameters.name, folder.root.idOrFail());
+	}
+
+	@Post(
+		'/refresh',
+		() => AdminChangeQueueInfo,
+		{ description: 'Check & update a folder for file system changes, with "withMetadata" also rebuild all its metadata', roles: [UserRole.admin], summary: 'Refresh Folder' }
+	)
+	async refresh(
+		@BodyParameters() parameters: FolderRefreshParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<AdminChangeQueueInfo> {
+		const folder = await orm.Folder.oneOrFailByID(parameters.id);
+		return await engine.io.folder.refresh(folder.id, folder.root.idOrFail(), parameters.withMetadata ?? false);
 	}
 
 	@Post(

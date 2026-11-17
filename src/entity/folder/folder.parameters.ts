@@ -105,6 +105,15 @@ export class FolderCreateParameters {
 }
 
 @ObjectParametersType()
+export class FolderRefreshParameters {
+	@ObjectField({ description: 'Folder Id', isID: true })
+	id!: string;
+
+	@ObjectField({ nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks', defaultValue: false, example: false })
+	withMetadata?: boolean;
+}
+
+@ObjectParametersType()
 export class FolderRenameParameters {
 	@ObjectField({ description: 'Folder Id', isID: true })
 	id!: string;

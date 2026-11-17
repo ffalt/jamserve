@@ -11965,6 +11965,54 @@
 				]
 			}
 		},
+		"/folder/refresh": {
+			"post": {
+				"operationId": "FolderController.refresh",
+				"summary": "Refresh Folder",
+				"description": "Check & update a folder for file system changes, with \"withMetadata\" also rebuild all its metadata",
+				"tags": [
+					"Folder"
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FolderRefreshParameters"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"admin"
+						]
+					},
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				]
+			}
+		},
 		"/folder/rename": {
 			"post": {
 				"operationId": "FolderController.rename",
@@ -19254,56 +19302,8 @@
 		"/root/refresh": {
 			"post": {
 				"operationId": "RootController.refresh",
-				"summary": "Check & update a root folder for file system changes",
-				"description": "Check & update a root folder for file system changes",
-				"tags": [
-					"Root"
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/RootRefreshParameters"
-							}
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "json data",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AdminChangeQueueInfo"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized"
-					}
-				},
-				"security": [
-					{
-						"cookieAuth": [
-							"admin"
-						]
-					},
-					{
-						"bearerAuth": [
-							"admin"
-						]
-					}
-				]
-			}
-		},
-		"/root/refreshMeta": {
-			"post": {
-				"operationId": "RootController.refreshMeta",
-				"summary": "Rebuild all metadata (Artists/Albums/...) for a root folder",
-				"description": "Rebuild all metadata (Artists/Albums/...) for a root folder",
+				"summary": "Check & update a root folder for file system changes, with \"withMetadata\" also rebuild all its metadata",
+				"description": "Check & update a root folder for file system changes, with \"withMetadata\" also rebuild all its metadata",
 				"tags": [
 					"Root"
 				],
@@ -28593,6 +28593,22 @@
 					"name"
 				]
 			},
+			"FolderRefreshParameters": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "#/components/schemas/ID"
+					},
+					"withMetadata": {
+						"type": "boolean",
+						"default": false,
+						"description": "Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks"
+					}
+				},
+				"required": [
+					"id"
+				]
+			},
 			"FolderRenameParameters": {
 				"type": "object",
 				"properties": {
@@ -29778,7 +29794,7 @@
 					},
 					"path": {
 						"type": "string",
-						"description": "Absolute Path for Root "
+						"description": "Absolute Path for Root"
 					},
 					"strategy": {
 						"$ref": "#/components/schemas/RootScanStrategy"
@@ -29795,6 +29811,11 @@
 				"properties": {
 					"id": {
 						"$ref": "#/components/schemas/ID"
+					},
+					"withMetadata": {
+						"type": "boolean",
+						"default": false,
+						"description": "Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks"
 					}
 				}
 			},

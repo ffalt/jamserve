@@ -30,11 +30,6 @@ export class WorkerMergeScan {
 	) {
 	}
 
-	async mergeMatch(matchRoot: MatchNode): Promise<void> {
-		const mergeRoot = WorkerMergeScan.buildNodes(matchRoot);
-		return this.merge(mergeRoot);
-	}
-
 	async merge(mergeRoot: MergeNode): Promise<void> {
 		this.markChangedParents(mergeRoot);
 		await this.mergeNode(mergeRoot);
@@ -217,7 +212,7 @@ export class WorkerMergeScan {
 		node.changed = changed;
 	}
 
-	private static buildNodes(node: MatchNode): MergeNode {
+	static buildNodes(node: MatchNode): MergeNode {
 		return {
 			path: node.scan.path,
 			children: node.children.map(c => this.buildNodes(c)),

@@ -1,5 +1,5 @@
 import { AdminChangeQueueInfo, WorkerRequestMode } from './io.types.js';
-import { WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRenameFolder } from '../worker/worker.types.js';
+import { WorkerRequestCreateFolder, WorkerRequestRemoveFolders, WorkerRequestMoveFolders, WorkerRequestRefreshFolders, WorkerRequestRenameFolder } from '../worker/worker.types.js';
 import { IoService } from '../io.service.js';
 
 export class IoCommandsFolder {
@@ -21,6 +21,23 @@ export class IoCommandsFolder {
 		}
 		return this.owner.newRequest<WorkerRequestMoveFolders>(
 			WorkerRequestMode.moveFolders, p => this.owner.workerService.folder.move(p), { rootID, newParentID, folderIDs }
+		);
+	}
+
+	async refresh(folderID: string, rootID: string, withMetadata: boolean): Promise<AdminChangeQueueInfo> {
+		const oldRequest = this.owner.find(c =>
+			(!!c.parameters.rootID) && (c.parameters.rootID === rootID) &&
+			(c.mode === WorkerRequestMode.refreshFolders) && ((c.parameters as WorkerRequestRefreshFolders).withMetadata === withMetadata)
+		);
+		if (oldRequest) {
+			const parameters = oldRequest.parameters as WorkerRequestRefreshFolders;
+			if (!parameters.folderIDs.includes(folderID)) {
+				parameters.folderIDs.push(folderID);
+			}
+			return this.owner.getRequestInfo(oldRequest);
+		}
+		return this.owner.newRequest<WorkerRequestRefreshFolders>(
+			WorkerRequestMode.refreshFolders, p => this.owner.workerService.folder.refresh(p), { rootID, folderIDs: [folderID], withMetadata }
 		);
 	}
 

@@ -25,6 +25,9 @@ export class RootMutateParameters {
 export class RootRefreshParameters {
 	@ObjectField({ nullable: true, description: 'Root ID to refresh (empty for refreshing all)', isID: true })
 	id?: string;
+
+	@ObjectField({ nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks', defaultValue: false, example: false })
+	withMetadata?: boolean;
 }
 
 @InputType()

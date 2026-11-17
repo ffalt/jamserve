@@ -58,6 +58,7 @@ export interface WorkerRequestRefreshRootMeta extends WorkerRequestParameters {
 
 export interface WorkerRequestRefreshFolders extends WorkerRequestParameters {
 	folderIDs: Array<string>;
+	withMetadata: boolean;
 }
 
 export interface WorkerRequestMoveFolders extends WorkerRequestParameters {

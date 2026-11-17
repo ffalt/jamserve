@@ -399,10 +399,10 @@ export class WorkerScan {
 		this.folderArtworks = WorkerScan.groupByID(artworks, artwork => artwork.folder.id());
 	}
 
-	async match(dir: ScanDir): Promise<MatchNode> {
+	async match(dir: ScanDir, startFolder?: Folder): Promise<MatchNode> {
 		this.root = await this.orm.Root.oneOrFailByID(this.rootID);
 		await this.preload();
-		const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
+		const parent = startFolder ?? await this.orm.Folder.findOne({ where: { path: dir.path } });
 		if (!parent) {
 			const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });
 			if (oldParent) {

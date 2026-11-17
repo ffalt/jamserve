@@ -76,10 +76,10 @@ export class DirScanner {
 		return subDirectories;
 	}
 
-	public async scan(dir: string): Promise<ScanDir> {
+	public async scan(dir: string, startLevel = 0): Promise<ScanDir> {
 		log.info('Scanning Directory', dir);
 		const stat = await fse.stat(dir);
-		const root = DirScanner.createDir(dir, stat, 0);
+		const root = DirScanner.createDir(dir, stat, startLevel);
 		// walk level by level, so the number of directories read at the same time stays limited
 		let level = [root];
 		while (level.length > 0) {

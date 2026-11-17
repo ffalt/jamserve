@@ -100,32 +100,16 @@ export class RootController {
 	@Post(
 		'/refresh',
 		() => AdminChangeQueueInfo,
-		{ description: 'Check & update a root folder for file system changes', roles: [UserRole.admin] }
+		{ description: 'Check & update a root folder for file system changes, with "withMetadata" also rebuild all its metadata', roles: [UserRole.admin] }
 	)
 	async refresh(
-		@BodyParameters() { id }: RootRefreshParameters,
+		@BodyParameters() { id, withMetadata }: RootRefreshParameters,
 		@RestContext() { orm, engine }: Context
 	): Promise<AdminChangeQueueInfo> {
 		if (id) {
-			return await engine.io.root.refresh(id);
+			return await (withMetadata ? engine.io.root.refreshMeta(id) : engine.io.root.refresh(id));
 		}
-		const result = await engine.io.root.refreshAll(orm);
-		return result.at(-1) ?? { id: '' };
-	}
-
-	@Post(
-		'/refreshMeta',
-		() => AdminChangeQueueInfo,
-		{ description: 'Rebuild all metadata (Artists/Albums/...) for a root folder', roles: [UserRole.admin] }
-	)
-	async refreshMeta(
-		@BodyParameters() { id }: RootRefreshParameters,
-		@RestContext() { orm, engine }: Context
-	): Promise<AdminChangeQueueInfo> {
-		if (id) {
-			return await engine.io.root.refreshMeta(id);
-		}
-		const result = await engine.io.root.refreshAll(orm);
+		const result = await (withMetadata ? engine.io.root.refreshAllMeta(orm) : engine.io.root.refreshAll(orm));
 		return result.at(-1) ?? { id: '' };
 	}
 }

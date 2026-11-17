@@ -1,5 +1,5 @@
-import { DBObjectType } from '../../types/enums.js';
-import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { DBObjectType, UserRole } from '../../types/enums.js';
+import { Arg, Args, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { State, StateQL } from '../state/state.js';
 import { Folder, FolderIndexQL, FolderPageQL, FolderQL } from './folder.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
@@ -10,6 +10,7 @@ import { Track, TrackQL } from '../track/track.js';
 import { Artwork, ArtworkQL } from '../artwork/artwork.js';
 import { FolderIndexParameters, FoldersParametersQL } from './folder.parameters.js';
 import { Genre, GenreQL } from '../genre/genre.js';
+import { AdminChangeQueueInfo, AdminChangeQueueInfoQL } from '../admin/admin.js';
 
 @Resolver(FolderQL)
 export class FolderResolver {
@@ -29,6 +30,17 @@ export class FolderResolver {
 	@Query(() => FolderIndexQL, { description: 'Get the Navigation Index for Folders' })
 	async folderIndex(@Args() { filter }: FolderIndexParameters, @Ctx() { orm, user }: Context): Promise<FolderIndexQL> {
 		return await orm.Folder.indexFilter(filter, user);
+	}
+
+	@Authorized(UserRole.admin)
+	@Mutation(() => AdminChangeQueueInfoQL, { description: 'Check & update a folder for file system changes, with "withMetadata" also rebuild all its metadata' })
+	async folderRefresh(
+		@Arg('id', () => ID!, { description: 'Folder Id' }) id: string,
+		@Arg('withMetadata', () => Boolean, { nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks' }) withMetadata: boolean | undefined,
+		@Ctx() { orm, engine }: Context
+	): Promise<AdminChangeQueueInfo> {
+		const folder = await orm.Folder.oneOrFailByID(id);
+		return await engine.io.folder.refresh(folder.id, folder.root.idOrFail(), withMetadata ?? false);
 	}
 
 	@FieldResolver(() => [FolderQL])

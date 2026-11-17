@@ -22,6 +22,15 @@ import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 
 const log = logger('Server');
 
+const SOCKET_TIMEOUT_MS = 4 * 60_000;
+// Must exceed the idle timeout of any reverse proxy in front of us, otherwise
+// the proxy reuses a pooled connection as this server is closing it and the
+// client sees a sporadic 502. nginx defaults its upstream keepalive_timeout
+// to 60s.
+const KEEP_ALIVE_TIMEOUT_MS = 65_000;
+// Node resets connections when this is not greater than keepAliveTimeout.
+const HEADERS_TIMEOUT_MS = KEEP_ALIVE_TIMEOUT_MS + 5000;
+
 @injectable()
 export class Server {
 	@inject(EngineService)
@@ -116,7 +125,9 @@ export class Server {
 	async start(): Promise<void> {
 		log.debug(`starting express on ${this.getURL()}`);
 		this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
-		this.server.setTimeout(4 * 60_000); // 4 minutes
+		this.server.setTimeout(SOCKET_TIMEOUT_MS);
+		this.server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT_MS;
+		this.server.headersTimeout = HEADERS_TIMEOUT_MS;
 		const domain = this.getDomain();
 		log.table([
 			{ Content: 'Frontend', URL: domain },

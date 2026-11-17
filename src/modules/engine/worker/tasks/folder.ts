@@ -185,10 +185,18 @@ export class FolderWorker extends BaseWorker {
 		}
 	}
 
-	async refresh(orm: Orm, folderIDs: Array<string>, changes: Changes): Promise<void> {
+	async refresh(orm: Orm, folderIDs: Array<string>, withMetadata: boolean, changes: Changes): Promise<Array<Folder>> {
+		const folders: Array<Folder> = [];
 		for (const id of folderIDs) {
 			const folder = await orm.Folder.findOneOrFailByID(id);
+			folders.push(folder);
 			changes.folders.updated.add(folder);
+			if (!withMetadata) {
+				continue;
+			}
+			const trackIDs = await orm.Track.findIDsFilter({ childOfID: folder.id });
+			changes.tracks.updated.appendIDs(trackIDs);
 		}
+		return folders;
 	}
 }

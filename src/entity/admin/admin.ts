@@ -151,15 +151,15 @@ export class AdminChangeQueueInfo {
 	id!: string;
 
 	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 })
-	@Field(() => Int, { description: AdminChangeQueueInfoDesc.position })
+	@Field(() => Int, { nullable: true, description: AdminChangeQueueInfoDesc.position })
 	position?: number;
 
 	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' })
-	@Field(() => String, { description: AdminChangeQueueInfoDesc.error })
+	@Field(() => String, { nullable: true, description: AdminChangeQueueInfoDesc.error })
 	error?: string;
 
 	@ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true })
-	@Field(() => Int, { description: AdminChangeQueueInfoDesc.done })
+	@Field(() => Int, { nullable: true, description: AdminChangeQueueInfoDesc.done })
 	done?: number;
 }
 

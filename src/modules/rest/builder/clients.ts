@@ -230,8 +230,8 @@ export function getCallParameterType(call: MethodMetadata): string {
 }
 
 export function callDescription(call: MethodMetadata): string | undefined {
-	const roles = call.controllerClassMetadata?.roles ?? call.roles ?? [];
-	const result = (call.description ?? '') + (roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
+	const roles = call.roles ?? call.controllerClassMetadata?.roles ?? [];
+	const result = (call.description ?? '') + (roles.length > 0 ? `; Rights needed: ${roles.join(',')}` : '');
 	return result.trim();
 }
 

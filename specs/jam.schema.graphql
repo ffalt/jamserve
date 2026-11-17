@@ -1477,13 +1477,13 @@ type AdminChangeQueueInfoQL {
   id: ID!
 
   """Waiting Position"""
-  position: Int!
+  position: Int
 
   """Error (if any)"""
-  error: String!
+  error: String
 
   """Changes Completed Timestamp"""
-  done: Int!
+  done: Int
 }
 
 type ExtendedInfoResultQL {
@@ -1540,6 +1540,34 @@ type LandscapeArtistNode {
 }
 
 type Mutation {
+  """Retrieve a Podcast Episode Media File"""
+  episodeRetrieve(id: ID!): EpisodeQL!
+
+  """
+  Check & update a folder for file system changes, with "withMetadata" also rebuild all its metadata
+  """
+  folderRefresh(
+    """
+    Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks
+    """
+    withMetadata: Boolean
+
+    """Folder Id"""
+    id: ID!
+  ): AdminChangeQueueInfoQL!
+
+  """
+  Check & update a root folder for file system changes, with "withMetadata" also rebuild all its metadata
+  """
+  rootRefresh(
+    """
+    Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks
+    """
+    withMetadata: Boolean
+
+    """Root Id to refresh (empty for refreshing all)"""
+    id: ID
+  ): AdminChangeQueueInfoQL!
   fav(remove: Boolean, id: ID!): StateQL!
   rate(rating: Int!, id: ID!): StateQL!
   scrobble(id: ID!): NowPlayingQL!

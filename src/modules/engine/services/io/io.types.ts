@@ -10,7 +10,7 @@ export interface RootStatus {
 
 export interface AdminChangeQueueInfo {
 	id: string;
-	pos?: number;
+	position?: number;
 	error?: string;
 	done?: number;
 }
@@ -32,6 +32,7 @@ export enum WorkerRequestMode {
 	deleteFolders,
 	moveFolders,
 	renameFolder,
+	refreshFolders,
 
 	deleteArtwork,
 	downloadArtwork,

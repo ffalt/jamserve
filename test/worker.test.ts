@@ -1074,11 +1074,15 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 
 			describe('refresh folders', () => {
 				let rootFolder!: Folder;
+				let artistFolder!: Folder;
+				let albumFolder!: Folder;
 				let options: WorkerRequestRefreshFolders;
 
 				beforeEach(async () => {
 					rootFolder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], level: 0 });
-					options = { rootID: mockRoot.id, folderIDs: [rootFolder.id] };
+					artistFolder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: mockRoot.folders[0].name });
+					albumFolder = await orm.Folder.oneOrFailFilter({ rootIDs: [mockRoot.id], name: mockRoot.folders[0].folders[0].name });
+					options = { rootID: mockRoot.id, folderIDs: [rootFolder.id], withMetadata: false };
 				});
 
 				it('should not refresh folders with invalid parameters', async () => {
@@ -1088,6 +1092,29 @@ describe.each(DBConfigs)('WorkerService with %o', db => {
 				it('should  refresh a folder', async () => {
 					const changes = await workerService.folder.refresh(options);
 					expectChanges(changes, { foldersUpdate: 1 });
+				});
+				it('should rebuild the metadata of a sub folder without touching the rest of the root', async () => {
+					const trackCount = mockRoot.folders[0].folders[0].tracks.length;
+
+					const changes = await workerService.folder.refresh({ rootID: mockRoot.id, folderIDs: [albumFolder.id], withMetadata: true });
+
+					expect(changes.tracks.updated.size).toBe(trackCount);
+					expect(changes.tracks.added.size).toBe(0);
+					expect(changes.tracks.removed.size).toBe(0);
+					await validateMock(mockRoot, workerService, orm);
+				});
+				it('should pick up a removed track and update the parent folders', async () => {
+					const removedTrack = mockRoot.folders[0].folders[0].tracks[0];
+					const trackCountBefore = (await orm.Folder.oneOrFailByID(artistFolder.id)).albumTrackCount ?? 0;
+					await fse.remove(removedTrack.path);
+
+					const changes = await workerService.folder.refresh({ rootID: mockRoot.id, folderIDs: [albumFolder.id], withMetadata: false });
+
+					expect(changes.tracks.removed.size).toBe(1);
+					expect(changes.folders.updated.hasID(artistFolder.id)).toBe(true);
+					expect(changes.folders.updated.hasID(rootFolder.id)).toBe(true);
+					const refetched = await engine.orm.fork().Folder.oneOrFailByID(artistFolder.id);
+					expect(refetched.albumTrackCount).toBe(trackCountBefore - 1);
 				});
 			});
 		});
