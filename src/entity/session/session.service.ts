@@ -1,4 +1,5 @@
 import { OrmService } from '../../modules/engine/services/orm.service.js';
+import { ConfigService } from '../../modules/engine/services/config.service.js';
 import { Session } from './session.js';
 import { SessionMode } from '../../types/enums.js';
 import { injectable, inject } from 'inversify';
@@ -14,6 +15,9 @@ export interface SessionNotifyEventObject {
 export class SessionService {
 	@inject(OrmService)
 	private readonly ormService!: OrmService;
+
+	@inject(ConfigService)
+	private readonly configService!: ConfigService;
 
 	private static readonly JWTH_CACHE_MAX = 10_000;
 	private readonly events: Array<SessionNotifyEventObject> = [];
@@ -36,7 +40,9 @@ export class SessionService {
 			}
 			return;
 		}
+		const isNewSession = !session;
 		session ??= orm.Session.create({ sessionID: sid });
+		session.expires = this.nextExpires(session, data);
 		session.jwth = data.jwth;
 		session.agent = data.userAgent || '';
 		session.client = data.client || '';
@@ -45,9 +51,22 @@ export class SessionService {
 		if (session.user.id() !== data.passport.user) {
 			await session.user.set(await orm.User.oneOrFailByID(data.passport.user));
 		}
-		// eslint-disable-next-line @typescript-eslint/no-deprecated
-		session.expires = data.cookie.expires ?? undefined;
 		await orm.Session.persistAndFlush(session);
+		if (isNewSession) {
+			await this.clearExpiredByUserID(data.passport.user);
+		}
+	}
+
+	private nextExpires(session: Session, data: SessionData): Date | undefined {
+		if (!data.jwth) {
+			// eslint-disable-next-line @typescript-eslint/no-deprecated
+			return data.cookie.expires ?? undefined;
+		}
+		if (session.jwth === data.jwth) {
+			return session.expires;
+		}
+		const { maxAge } = this.configService.env.jwt;
+		return maxAge > 0 ? new Date(Date.now() + maxAge) : undefined;
 	}
 
 	async all(): Promise<Array<SessionData>> {
@@ -57,18 +76,35 @@ export class SessionService {
 	}
 
 	async getSession(sessionID: string): Promise<Session | undefined> {
-		const orm = this.ormService.fork();
-		const session = await orm.Session.findOne({ where: { sessionID } });
+		const session = await this.findSession(sessionID);
 		if (session && this.expired(session)) {
 			await this.remove(sessionID);
 			return;
 		}
-		return session ?? undefined;
+		return session;
+	}
+
+	private async findSession(sessionID: string): Promise<Session | undefined> {
+		const orm = this.ormService.fork();
+		return (await orm.Session.findOne({ where: { sessionID } })) ?? undefined;
 	}
 
 	async clearExpired(): Promise<void> {
 		const orm = this.ormService.fork();
-		await orm.Session.removeByQueryAndFlush({ where: { expires: { [Op.lt]: Date.now() } } });
+		const removed = await orm.Session.removeByQueryAndFlush({ where: { expires: { [Op.lt]: new Date() } } });
+		await this.clearCacheIfRemoved(removed);
+	}
+
+	async clearExpiredByUserID(userID: string): Promise<void> {
+		const orm = this.ormService.fork();
+		const removed = await orm.Session.removeByQueryAndFlush({ where: { user: userID, expires: { [Op.lt]: new Date() } } });
+		await this.clearCacheIfRemoved(removed);
+	}
+
+	private async clearCacheIfRemoved(removed: number): Promise<void> {
+		if (removed > 0) {
+			await this.clearCache();
+		}
 	}
 
 	async byJwth(jwth: string): Promise<Session | undefined> {
@@ -87,8 +123,7 @@ export class SessionService {
 	}
 
 	async remove(sessionID: string): Promise<void> {
-		// Get the session to find its JWTH before removing
-		const session = await this.getSession(sessionID);
+		const session = await this.findSession(sessionID);
 		if (session?.jwth) {
 			this.jwthCache.delete(session.jwth);
 		}

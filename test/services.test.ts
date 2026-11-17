@@ -7,7 +7,7 @@ import { MockFeed1 } from './mock/mock.rss-feed.js';
 import { Podcast } from '../src/entity/podcast/podcast.js';
 import { mockNock, mockNockURL } from './mock/mock.nock.js';
 import { Orm } from '../src/modules/engine/services/orm.service.js';
-import { PodcastStatus, DBObjectType, ListType } from '../src/types/enums.js';
+import { PodcastStatus, DBObjectType, ListType, SessionMode } from '../src/types/enums.js';
 import nock from 'nock';
 import { Op } from 'sequelize';
 import { StateHelper } from '../src/entity/state/state.helper.js';
@@ -15,6 +15,8 @@ import { hashMD5 } from '../src/utils/md5.js';
 import { User } from '../src/entity/user/user.js';
 import { randomString } from '../src/utils/random.js';
 import { describe, beforeEach, afterEach, expect, it } from '@jest/globals';
+import { Cookie } from 'express-session';
+import { SessionData } from '../src/types/express.js';
 
 /*
 Generate a cryptographically secure random salt string for testing.
@@ -174,6 +176,84 @@ describe.each(DBConfigs)('Services with %o', db => {
 
 			expect(result.total).toBe(2);
 			expect(result.items.map(item => item.id)).toEqual([genreA.id]);
+		});
+	});
+
+	describe('sessionService', () => {
+		function makeCookie(expires: Date): Cookie {
+			return { expires, originalMaxAge: expires.valueOf() - Date.now(), path: '/', httpOnly: true } as unknown as Cookie;
+		}
+
+		function makeSessionData(sessionID: string, expiresInMs: number, jwth?: string): SessionData {
+			return {
+				sessionID,
+				client: 'test client',
+				userAgent: 'test agent',
+				jwth,
+				passport: { user: user.id },
+				cookie: makeCookie(new Date(Date.now() + expiresInMs))
+			};
+		}
+
+		async function createSession(sessionID: string, expires?: Date): Promise<void> {
+			const session = orm.Session.create({ sessionID, client: 'test client', agent: 'test agent', cookie: '{}', mode: SessionMode.browser });
+			session.expires = expires;
+			await session.user.set(user);
+			await orm.Session.persistAndFlush(session);
+		}
+
+		it('should remove expired sessions and keep the valid ones', async () => {
+			await createSession('expired-session', new Date(Date.now() - 1000));
+			await createSession('valid-session', new Date(Date.now() + 100_000));
+
+			await engine.session.clearExpired();
+
+			const sessions = await engine.session.byUserID(user.id);
+			expect(sessions.map(session => session.sessionID)).toEqual(['valid-session']);
+		});
+
+		it('should keep sessions without an expiry date', async () => {
+			await createSession('expired-session', new Date(Date.now() - 1000));
+			await engine.session.createSubsonic(user.id);
+
+			await engine.session.clearExpired();
+
+			const sessions = await engine.session.byUserID(user.id);
+			expect(sessions.map(session => session.mode)).toEqual([SessionMode.subsonic]);
+		});
+
+		it('should remove an expired session when it is requested', async () => {
+			await createSession('expired-session', new Date(Date.now() - 1000));
+
+			expect(await engine.session.getSession('expired-session')).toBeUndefined();
+			expect(await engine.session.count()).toBe(0);
+		});
+
+		it('should remove the expired sessions of the user when a session is created', async () => {
+			await createSession('expired-session', new Date(Date.now() - 1000));
+
+			await engine.session.set('new-session', makeSessionData('new-session', 100_000));
+
+			const sessions = await engine.session.byUserID(user.id);
+			expect(sessions.map(session => session.sessionID)).toEqual(['new-session']);
+		});
+
+		it('should expire a jwt session with the jwt max age instead of the cookie max age', async () => {
+			await engine.session.set('jwt-session', makeSessionData('jwt-session', 10 * engine.config.env.jwt.maxAge, 'jwt-hash'));
+
+			const session = await engine.session.getSession('jwt-session');
+			expect(session?.mode).toBe(SessionMode.jwt);
+			expect(session?.expires?.valueOf()).toBeGreaterThan(Date.now());
+			expect(session?.expires?.valueOf()).toBeLessThanOrEqual(Date.now() + engine.config.env.jwt.maxAge);
+		});
+
+		it('should keep the expiry of a jwt session when it is stored again', async () => {
+			await engine.session.set('jwt-session', makeSessionData('jwt-session', 100_000, 'jwt-hash'));
+			const expires = (await engine.session.getSession('jwt-session'))?.expires;
+
+			await engine.session.set('jwt-session', makeSessionData('jwt-session', 100_000, 'jwt-hash'));
+
+			expect((await engine.session.getSession('jwt-session'))?.expires?.valueOf()).toBe(expires?.valueOf());
 		});
 	});
 });
