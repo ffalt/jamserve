@@ -72,8 +72,8 @@ function buildTSField(field: FieldMetadata, metadata: MetadataStorage, sl: Array
 	if (jsDocument.length === 1) {
 		sl.push(`${tabtab}// ${jsDocument.at(0) ?? ''}`);
 	} else if (jsDocument.length > 1) {
-		const value = jsDocument.map(s => `${tabtab} * ${s}`).join('\n');
-		sl.push(`${tabtab}/**\n${value}\n${tabtab} */`);
+		const value = jsDocument.map(s => `${tabtab}${s}`).join('\n');
+		sl.push(`${tabtab}/**\n${value}\n${tabtab}*/`);
 	}
 	sl.push(`${tabtab}${field.name}${typeOptions.nullable ? '?' : ''}: ${fieldType};`);
 }
@@ -148,7 +148,7 @@ function getCombinedType(call: MethodMetadata) {
 export function buildTSParameterTypes(): string {
 	const metadata = metadataStorage();
 	const sl: Array<string> = [
-		'/* eslint-disable max-len */',
+		'/* eslint-disable max-len, max-lines */',
 		'// @generated',
 		'// This file was automatically generated and should not be edited.\n',
 		`import type * as JamEnums from './jam-enums';\n`,

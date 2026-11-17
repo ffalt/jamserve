@@ -14,7 +14,7 @@ export class RootMutateParameters {
 	@ObjectField({ description: 'Root Name', example: 'Compilations' })
 	name!: string;
 
-	@ObjectField({ description: 'Absolute Path for Root ', example: '/var/media/compilations' })
+	@ObjectField({ description: 'Absolute Path for Root', example: '/var/media/compilations' })
 	path!: string;
 
 	@ObjectField(() => RootScanStrategy, { description: 'Scan Strategy', example: RootScanStrategy.compilation })
