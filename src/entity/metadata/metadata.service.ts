@@ -27,8 +27,17 @@ import { Discogs } from '../../modules/audio/clients/discogs-rest-data.js';
 import { Tag } from '../tag/tag.js';
 import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
 import { DiscogsSearchParameters } from './metadata.parameters.js';
+import { lyricsSlug, shortenLyricsTitle } from '../../utils/lyrics-slug.js';
 
 const log = logger('Metadata');
+
+function hasLyrics(result?: TrackLyrics): boolean {
+	return Boolean(result?.lyrics) || Boolean(result?.syncedLyrics);
+}
+
+function lrclibStoreKey(prefix: string, track_name: string, artist_name: string, album_name?: string, duration?: number): string {
+	return [prefix, lyricsSlug(track_name), lyricsSlug(artist_name), album_name ? lyricsSlug(album_name) : '', duration ?? ''].join('/');
+}
 
 @injectable()
 export class MetadataService {
@@ -175,33 +184,26 @@ export class MetadataService {
 	}
 
 	async lyricsOVH(orm: Orm, artist: string, song: string): Promise<TrackLyrics | undefined> {
-		return this.searchInStore<TrackLyrics>(orm, `lyrics-${artist}/${song}`,
+		return this.searchInStore<TrackLyrics>(orm, `lyrics-${lyricsSlug(artist)}/${lyricsSlug(song)}`,
 			MetadataType.lyrics, async () => {
 				let result = await this.audioModule.lyricsOVH.search(artist, song);
-				const cutVariants = ['(', '/', '[', ':'];
-				for (const cut of cutVariants) {
-					if (result?.lyrics || !song.includes(cut)) {
-						continue;
-					}
-
-					const title = song.slice(0, song.indexOf(cut)).trim();
-					if (title.length > 0) {
-						result = await this.audioModule.lyricsOVH.search(artist, title);
-					}
+				const shortTitle = shortenLyricsTitle(song);
+				if (shortTitle && !hasLyrics(result)) {
+					result = await this.audioModule.lyricsOVH.search(artist, shortTitle);
 				}
 				return result;
 			});
 	}
 
 	async lrclibFind(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<TrackLyrics | undefined> {
-		return this.searchInStore<TrackLyrics>(orm, `lrclib-find-${track_name}/${artist_name}/${album_name}/${duration}`,
+		return this.searchInStore<TrackLyrics>(orm, lrclibStoreKey('lrclib-find', track_name, artist_name, album_name, duration),
 			MetadataType.lyrics, async () => {
 				return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
 			});
 	}
 
 	async lrclibGet(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<LrclibResult | undefined> {
-		return this.searchInStore<LrclibResult>(orm, `lrclib-get-${track_name}/${artist_name}/${album_name}/${duration}`,
+		return this.searchInStore<LrclibResult>(orm, lrclibStoreKey('lrclib-get', track_name, artist_name, album_name, duration),
 			MetadataType.lyrics, async () => {
 				return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
 			});
@@ -270,9 +272,14 @@ export class MetadataService {
 		if (!tag.title) {
 			return {};
 		}
-		let result = await this.lrclibFind(orm, tag.title, tag.artist ?? tag.albumArtist ?? '', tag.album);
-		if (!result || !(result.lyrics ?? result.syncedLyrics)) {
-			result = await this.lrclibFind(orm, tag.title || '', tag.artist ?? tag.albumArtist ?? '');
+		const artistName = tag.artist ?? tag.albumArtist ?? '';
+		let result = await this.lrclibFind(orm, tag.title, artistName, tag.album);
+		if (!hasLyrics(result)) {
+			result = await this.lrclibFind(orm, tag.title, artistName);
+		}
+		const shortTitle = shortenLyricsTitle(tag.title);
+		if (shortTitle && !hasLyrics(result)) {
+			result = await this.lrclibFind(orm, shortTitle, artistName);
 		}
 		return result ?? {};
 	}
