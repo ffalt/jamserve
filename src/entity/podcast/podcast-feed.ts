@@ -2,7 +2,7 @@ import FeedParser from 'feedparser';
 import iconvDefault, { Iconv as IconvType } from 'iconv-lite';
 import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
-import { useAgent } from 'request-filtering-agent';
+import { filteringAgent } from '../../utils/filtering-agent.js';
 import { Readable } from 'node:stream';
 import zlib from 'node:zlib';
 import { Podcast } from './podcast.js';
@@ -101,7 +101,7 @@ export class Feed {
 	private async fetch(url: string): Promise<{ feed: FeedParser.Meta; posts: Array<FeedParser.Item> }> {
 		const posts: Array<FeedParser.Item> = [];
 		const result = await fetch(url, {
-			agent: parsedUrl => useAgent(parsedUrl.href),
+			agent: filteringAgent,
 			signal: AbortSignal.timeout(30_000),
 			headers: {
 				// Some feeds do not respond without user-agent and accept headers.

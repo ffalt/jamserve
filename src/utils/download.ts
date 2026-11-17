@@ -1,13 +1,13 @@
 import fs from 'node:fs';
 import { Readable } from 'node:stream';
 import fetch from 'node-fetch';
-import { useAgent } from 'request-filtering-agent';
+import { filteringAgent } from './filtering-agent.js';
 import { fileDeleteIfExists } from './fs-utils.js';
 
 const DEFAULT_MAX_DOWNLOAD_SIZE = 500 * 1024 * 1024; // 500 MB
 
 export async function downloadFile(url: string, filename: string, maxSize: number = DEFAULT_MAX_DOWNLOAD_SIZE): Promise<string | undefined> {
-	const response = await fetch(url, { agent: parsedUrl => useAgent(parsedUrl.href) });
+	const response = await fetch(url, { agent: filteringAgent });
 	if (!response.ok) {
 		throw new Error(`Unexpected Response ${response.statusText || response.status}`);
 	}
