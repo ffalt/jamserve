@@ -14,6 +14,10 @@ import { AudioModule } from '../../../audio/audio.module.js';
 import { TrackTag } from '../../../audio/audio.format.js';
 import { Genre } from '../../../../entity/genre/genre.js';
 import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
+import { TrackLyrics } from '../../../../entity/track/track.model.js';
+import { logger } from '../../../../utils/logger.js';
+
+const log = logger('TrackWorker');
 
 export class TrackUpdater {
 	private readonly genresCache: Array<Genre> = [];
@@ -79,7 +83,35 @@ export class TrackWorker extends BaseWorker {
 				continue;
 			}
 			const filename = path.join(track.path, track.fileName);
+			if (!this.audioModule.isWriteSupported(filename)) {
+				log.warn(`Writing tags not supported for file: ${filename}`);
+				continue;
+			}
 			await this.audioModule.writeRawTag(filename, writeTag.tag);
+			await trackUpdater.updateTrackValues(track, filename);
+			await TrackWorker.updateTrackStats(track);
+			orm.Track.persistLater(track);
+			changes.tracks.updated.add(track);
+			changes.folders.updated.addID(track.folder.id());
+			folders.push(await track.folder.get());
+		}
+		await this.refreshFolderStats(orm, folders);
+	}
+
+	public async embedLyrics(orm: Orm, items: Array<{ trackID: string; lyrics: TrackLyrics }>, changes: Changes): Promise<void> {
+		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
+		const folders: Array<Folder | undefined> = [];
+		for (const item of items) {
+			const track = await orm.Track.findOneByID(item.trackID);
+			if (!track) {
+				continue;
+			}
+			const filename = path.join(track.path, track.fileName);
+			if (!this.audioModule.isWriteLyricsSupported(filename)) {
+				log.warn(`Embedding lyrics not supported for file: ${filename}`);
+				continue;
+			}
+			await this.audioModule.writeLyricsTag(filename, item.lyrics);
 			await trackUpdater.updateTrackValues(track, filename);
 			await TrackWorker.updateTrackStats(track);
 			orm.Track.persistLater(track);

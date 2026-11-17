@@ -1,5 +1,6 @@
 import { ArtworkImageType, RootScanStrategy, TrackHealthID } from '../../../../types/enums.js';
 import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
+import { TrackLyrics } from '../../../../entity/track/track.model.js';
 
 export interface WorkerRequestParameters {
 	rootID: string;
@@ -48,6 +49,10 @@ export interface WorkerRequestCreateRoot extends WorkerRequestParameters {
 
 export interface WorkerRequestWriteTrackTags extends WorkerRequestParameters {
 	tags: Array<{ trackID: string; tag: MediaTagRaw }>;
+}
+
+export interface WorkerRequestEmbedTrackLyrics extends WorkerRequestParameters {
+	lyrics: Array<{ trackID: string; lyrics: TrackLyrics }>;
 }
 
 export interface WorkerRequestRefreshRoot extends WorkerRequestParameters {

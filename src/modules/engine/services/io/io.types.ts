@@ -27,6 +27,7 @@ export enum WorkerRequestMode {
 	removeTracks,
 	renameTrack,
 	writeTrackTags,
+	embedTrackLyrics,
 
 	createFolder,
 	deleteFolders,

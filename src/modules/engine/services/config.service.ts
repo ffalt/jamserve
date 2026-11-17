@@ -39,6 +39,9 @@ export interface ENVConfig {
 		data: string;
 		frontend: string;
 	};
+	lyrics: {
+		writeSidecar: boolean;
+	};
 	db: ENVConfigDB;
 }
 
@@ -63,6 +66,9 @@ export class ConfigService {
 		paths: {
 			data: process.env.JAM_DATA_PATH ?? './data/',
 			frontend: process.env.JAM_FRONTEND_PATH ?? './static/jamberry/'
+		},
+		lyrics: {
+			writeSidecar: process.env.JAM_LYRICS_WRITE_SIDECAR !== 'false'
 		},
 		db: {
 			dialect: (process.env.JAM_DB_DIALECT as Dialect | undefined) ?? 'sqlite',

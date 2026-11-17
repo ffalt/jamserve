@@ -1,5 +1,5 @@
 import { WorkerService } from '../worker.service.js';
-import { WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRefreshTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from './worker.types.js';
+import { WorkerRequestEmbedTrackLyrics, WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRefreshTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from './worker.types.js';
 import { Changes } from '../../worker/changes.js';
 
 export class WorkerCommandsTrack {
@@ -33,6 +33,13 @@ export class WorkerCommandsTrack {
 	async fix(parameters: WorkerRequestFixTrack): Promise<Changes> {
 		const { root, orm, changes } = await this.owner.changes.start(parameters.rootID);
 		await this.owner.trackWorker.fix(orm, parameters.fixes, changes);
+		return this.owner.changes.finish(orm, changes, root);
+	}
+
+	async embedLyrics(parameters: WorkerRequestEmbedTrackLyrics): Promise<Changes> {
+		const { root, orm, changes } = await this.owner.changes.start(parameters.rootID);
+		await this.owner.trackWorker.embedLyrics(orm, parameters.lyrics, changes);
+		await this.owner.rootWorker.mergeChanges(orm, root, changes);
 		return this.owner.changes.finish(orm, changes, root);
 	}
 

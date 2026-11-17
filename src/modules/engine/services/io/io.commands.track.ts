@@ -1,9 +1,10 @@
 import { IoService } from '../io.service.js';
 import { AdminChangeQueueInfo, IoRequest, WorkerRequestMode } from './io.types.js';
-import { WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from '../worker/worker.types.js';
+import { WorkerRequestEmbedTrackLyrics, WorkerRequestFixTrack, WorkerRequestMoveTracks, WorkerRequestRemoveTracks, WorkerRequestRenameTrack, WorkerRequestWriteTrackTags } from '../worker/worker.types.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { DelayedRequests } from './io.helpers.js';
 import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
+import { TrackLyrics } from '../../../../entity/track/track.model.js';
 
 export class IoCommandsTrack {
 	readonly delayedTrackTagWrite = new DelayedRequests<WorkerRequestWriteTrackTags>();
@@ -68,6 +69,17 @@ export class IoCommandsTrack {
 		}
 		this.delayedTrackTagWrite.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
 		return this.owner.getRequestInfo(delayedCmd.request);
+	}
+
+	async embedLyrics(trackID: string, lyrics: TrackLyrics, rootID: string): Promise<AdminChangeQueueInfo> {
+		const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.embedTrackLyrics);
+		if (oldRequest) {
+			(oldRequest.parameters as WorkerRequestEmbedTrackLyrics).lyrics.push({ trackID, lyrics });
+			return this.owner.getRequestInfo(oldRequest);
+		}
+		return this.owner.newRequest<WorkerRequestEmbedTrackLyrics>(
+			WorkerRequestMode.embedTrackLyrics, p => this.owner.workerService.track.embedLyrics(p), { rootID, lyrics: [{ trackID, lyrics }] }
+		);
 	}
 
 	async fix(trackID: string, fixID: TrackHealthID, rootID: string): Promise<AdminChangeQueueInfo> {

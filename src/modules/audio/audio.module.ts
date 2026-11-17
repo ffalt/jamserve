@@ -22,6 +22,7 @@ import { GpodderClient } from './clients/gpodder-client.js';
 import { LrclibClient } from './clients/lrclib-client.js';
 import { DiscogsClient } from './clients/discogs-client.js';
 import { MediaTagRaw } from '../../entity/tag/tag.model.js';
+import { TrackLyrics } from '../../entity/track/track.model.js';
 import { isAudioFormatType } from '../../utils/filetype.js';
 
 export interface AudioScanResult extends TrackTag, TrackMedia {
@@ -137,6 +138,31 @@ export class AudioModule {
 		}
 	}
 
+	async writeLyricsTag(filename: string, lyrics: TrackLyrics): Promise<void> {
+		const suffix = fileSuffix(filename);
+		if (suffix === AudioFormatType.mp3) {
+			return this.mp3.writeLyrics(filename, lyrics);
+		}
+		if (suffix === AudioFormatType.flac) {
+			return this.flac.writeLyrics(filename, lyrics);
+		}
+		throw new Error(`Writing lyrics to format ${suffix} is currently not supported`);
+	}
+
+	isWriteSupported(filename: string): boolean {
+		const suffix = fileSuffix(filename) || filename;
+		return suffix === AudioFormatType.mp3 || suffix === AudioFormatType.flac;
+	}
+
+	isWriteRawTagSupported(filename: string): boolean {
+		return this.isWriteSupported(filename);
+	}
+
+	isWriteLyricsSupported(filename: string): boolean {
+		const suffix = fileSuffix(filename) || filename;
+		return suffix === AudioFormatType.mp3 || suffix === AudioFormatType.flac;
+	}
+
 	async extractTagImage(filename: string): Promise<Buffer | undefined> {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
@@ -152,6 +178,9 @@ export class AudioModule {
 		const suffix = fileSuffix(filename);
 		if (suffix === AudioFormatType.mp3) {
 			return this.mp3.extractTagSyncedLyrics(filename);
+		}
+		if (suffix === AudioFormatType.flac) {
+			return this.flac.extractTagSyncedLyrics(filename);
 		}
 		return;
 	}

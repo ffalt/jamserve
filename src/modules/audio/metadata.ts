@@ -1,5 +1,6 @@
 import { ID3v2, ID3V24TagBuilder, IID3V2, ITagID } from 'jamp3';
 import { parseDateToTimestamp } from '../../utils/date-time.js';
+import { parseSimplifiedSynchronisedLyrics } from '../../utils/lyrics-lrc.js';
 import { ImageModule } from '../image/image.module.js';
 import { FlacInfo } from './formats/flac/index.js';
 import { MetadataBlockPicture } from './formats/flac/lib/block.picture.js';
@@ -29,7 +30,15 @@ export function prepareResponseTag(tag: MediaTagRaw): void {
 	}
 }
 
-export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<string, string>): void {
+export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<string, string | undefined>): void {
+	const syncedRaw = simple.SYNCHRONISEDLYRICS ?? simple.SYNCEDLYRICS ?? simple.LYRICS;
+	if (syncedRaw) {
+		const parsed = parseSimplifiedSynchronisedLyrics(syncedRaw);
+		if (parsed && parsed.events.length > 0) {
+			builder.synchronisedLyrics(parsed.id, parsed.language, parsed.timestampFormat, parsed.contentType, parsed.events);
+		}
+	}
+
 	builder
 		.album(simple.ALBUM)
 		.albumSort(simple.ALBUMSORT)
@@ -60,7 +69,7 @@ export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<strin
 		.lyrics(simple.LYRICS)
 		.mediaType(simple.MEDIA)
 		.language(simple.LANGUAGE)
-		.encoder(simple.ENCODEDBY || simple['ENCODED-BY'])
+		.encoder(simple.ENCODEDBY ?? simple['ENCODED-BY'])
 		.encoderSettings(simple.ENCODERSETTINGS)
 		.initialKey(simple.KEY)
 		.copyright(simple.COPYRIGHT)
@@ -74,8 +83,8 @@ export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<strin
 		.movement(simple.MOVEMENTNAME)
 		.movementNr(simple.MOVEMENT, simple.MOVEMENTTOTAL)
 		.writer(simple.WRITER)
-		.track(simple.TRACKNUMBER, simple.TRACKTOTAL || simple.TOTALTRACKS)
-		.disc(simple.DISCNUMBER, simple.DISCTOTAL || simple.TOTALDISCS)
+		.track(simple.TRACKNUMBER, simple.TRACKTOTAL ?? simple.TOTALTRACKS)
+		.disc(simple.DISCNUMBER, simple.DISCTOTAL ?? simple.TOTALDISCS)
 		.musicianCredit('instrument', simple.PERFORMER)
 		.involved('arranger', simple.ARRANGER)
 		.involved('engineer', simple.ENGINEER)
@@ -128,13 +137,14 @@ export function flacToRawTagBase(builder: ID3V24TagBuilder, simple: Record<strin
 // builder.popm('POPM', simple['RATING:user@email']);
 // builder.idtext('TXXX', 'MusicMagic Fingerprint', simple.FINGERPRINT=MusicMagic Fingerprint);
 
-export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<string, string>): void {
+export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<string, string | undefined>): void {
 	const pad = '000';
 	let nr = 1;
 	let id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
-	while (Object.hasOwn(simple, id)) {
-		const chapterTime = parseDateToTimestamp(simple[id]);
-		const chapterID = simple[`${id}ID`] || id;
+	let value = simple[id];
+	while (value) {
+		const chapterTime = parseDateToTimestamp(value);
+		const chapterID = simple[`${id}ID`] ?? id;
 		const chapterName = simple[`${id}NAME`];
 		const chapterURL = simple[`${id}URL`];
 		const subframeBuilder = new ID3V24TagBuilder('utf8');
@@ -142,6 +152,7 @@ export function flacToRawTagChapters(builder: ID3V24TagBuilder, simple: Record<s
 		builder.chapter(chapterID, chapterTime, chapterTime, 0, 0, subframeBuilder.buildFrames());
 		nr++;
 		id = `CHAPTER${pad.slice(0, Math.max(0, pad.length - nr.toString().length))}${nr.toString()}`;
+		value = simple[id];
 	}
 }
 

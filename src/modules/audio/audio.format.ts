@@ -1,5 +1,6 @@
 import { ID3v1_GENRES, ID3v2, IID3V1, IID3V2, IMP3 } from 'jamp3';
 import { cleanGenre } from '../../utils/genres.js';
+import { eventsToLyrics, hasLyricsTimestamps, parseSimplifiedSynchronisedLyrics, plainLyrics } from '../../utils/lyrics-lrc.js';
 import { ID3TrackTagRawFormatTypes } from './audio.module.js';
 import { FlacComment, FlacMedia, FlacPicture } from './formats/flac/index.js';
 import { ProbeResult } from './tools/ffprobe.js';
@@ -201,6 +202,14 @@ export class FORMAT {
 		const simple = ID3v2.simplify(data, ['CHAP', 'APIC']);
 		const pics = data.frames.filter(f => f.id === 'APIC');
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
+		const syncedRaw = simple.SYNCHRONISEDLYRICS ?? (simple.LYRICS && hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : undefined);
+		let syncedlyrics: string | undefined;
+		if (syncedRaw) {
+			const parsed = parseSimplifiedSynchronisedLyrics(syncedRaw);
+			if (parsed) {
+				syncedlyrics = eventsToLyrics(parsed.events);
+			}
+		}
 		return {
 			format,
 			album: this.cleanText(simple.ALBUM),
@@ -216,7 +225,8 @@ export class FORMAT {
 			discTotal: this.parseNum(simple.DISCTOTAL),
 			trackNr: this.parseNum(simple.TRACKNUMBER),
 			trackTotal: this.parseNum(simple.TRACKTOTAL),
-			lyrics: simple.LYRICS,
+			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
+			syncedlyrics,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
 			year: this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE) ?? this.parseYear(simple.RELEASETIME),
@@ -244,6 +254,14 @@ export class FORMAT {
 			return;
 		}
 		const simple: Record<string, string | undefined> = comment.tag;
+		const syncedRaw = simple.SYNCHRONISEDLYRICS ?? simple.SYNCEDLYRICS ?? (simple.LYRICS && hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : undefined);
+		let syncedlyrics: string | undefined;
+		if (syncedRaw) {
+			const parsed = parseSimplifiedSynchronisedLyrics(syncedRaw);
+			if (parsed) {
+				syncedlyrics = eventsToLyrics(parsed.events);
+			}
+		}
 		return {
 			format: TagFormatType.vorbis,
 			album: simple.ALBUM,
@@ -260,7 +278,8 @@ export class FORMAT {
 			trackNr: this.parseNum(simple.TRACKNUMBER) ?? this.parseNum(simple.TRACK),
 			trackTotal: this.parseNum(simple.TRACKTOTAL) ?? this.parseNum(simple.TOTALTRACKS),
 			year: this.parseYear(simple.ORIGINALYEAR) ?? this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE),
-			lyrics: simple.LYRICS,
+			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
+			syncedlyrics,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,

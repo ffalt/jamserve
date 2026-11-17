@@ -23333,6 +23333,62 @@
 				]
 			}
 		},
+		"/track/lyrics/embed": {
+			"post": {
+				"operationId": "TrackController.lyricsEmbed",
+				"summary": "Embed Lyrics",
+				"description": "Embed the Lyrics of a Track into the Media File by Track Id",
+				"tags": [
+					"Track"
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"id": {
+										"$ref": "#/components/schemas/ID"
+									}
+								},
+								"description": "Track Id",
+								"required": [
+									"id"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AdminChangeQueueInfo"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"admin"
+						]
+					},
+					{
+						"bearerAuth": [
+							"admin"
+						]
+					}
+				]
+			}
+		},
 		"/track/rawTag/set": {
 			"post": {
 				"operationId": "TrackController.rawTagSet",

@@ -12,6 +12,8 @@ import { fixMP3 } from '../tasks/task-fix-mp3.js';
 import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
 import { fileURLToPath } from 'node:url';
 import { MediaTagRaw } from '../../../entity/tag/tag.model.js';
+import { TrackLyrics } from '../../../entity/track/track.model.js';
+import { lyricsLanguageCode, lyricsToEvents, plainLyrics } from '../../../utils/lyrics-lrc.js';
 
 const USE_TASKS = process.env.JAM_USE_TASKS;
 
@@ -24,6 +26,8 @@ export const taskRemoveID3v1 = path.join(taskPath, 'task-remove-id3v1.js');
 export const taskAnalyzeMp3 = path.join(taskPath, 'task-analyze-mp3.js');
 
 const log = logger('Audio:MP3');
+
+const LyricsFrameIDs = new Set(['ULT', 'USLT', 'SLT', 'SYLT']);
 
 export class AudioModuleMP3 {
 	private analyzeMp3Pool?: StaticPool<(filename: string) => IMP3Analyzer.Report>;
@@ -70,6 +74,30 @@ export class AudioModuleMP3 {
 		const id3 = rawTagToID3v2(tag);
 		const id3v2 = new ID3v2();
 		await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, { keepBackup: false, paddingSize: 10 });
+	}
+
+	async writeLyrics(filename: string, lyrics: TrackLyrics): Promise<void> {
+		const text = lyrics.lyrics ?? (lyrics.syncedLyrics ? plainLyrics(lyrics.syncedLyrics) : undefined);
+		if (!text) {
+			return;
+		}
+		const id3v2 = new ID3v2();
+		const tag = await id3v2.read(filename);
+		const language = lyricsLanguageCode(lyrics.language);
+		const frames: Array<IID3V2.Frame> = (tag?.frames ?? []).filter(frame => !LyricsFrameIDs.has(frame.id));
+		frames.push({ id: 'USLT', value: { id: 'lyrics', language, text } } as IID3V2.Frame);
+		if (lyrics.syncedLyrics) {
+			const events = lyricsToEvents(lyrics.syncedLyrics);
+			if (events.length > 0) {
+				frames.push({
+					id: 'SYLT',
+					value: { id: 'lyrics', language, timestampFormat: 2, contentType: 1, events }
+				} as IID3V2.Frame);
+			}
+		}
+		const version = tag?.head?.ver ?? 4;
+		const revision = tag?.head?.rev ?? 0;
+		await id3v2.write(filename, { head: tag?.head, frames }, version, revision, { keepBackup: false, paddingSize: 10 });
 	}
 
 	async removeID3v1(filename: string): Promise<void> {
@@ -164,7 +192,7 @@ export class AudioModuleMP3 {
 		const id3v2 = new ID3v2();
 		const tag = await id3v2.read(filename);
 		if (tag) {
-			const frames = tag.frames.filter(f => ['SLT'].includes(f.id)) as Array<IID3V2.Frames.SynchronisedLyricsFrame>;
+			const frames = tag.frames.filter(f => ['SLT', 'SYLT'].includes(f.id)) as Array<IID3V2.Frames.SynchronisedLyricsFrame>;
 			if (frames.length > 0) {
 				const frame = frames.find(f => f.value.contentType === 1);
 				if (frame) {
