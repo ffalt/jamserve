@@ -64,7 +64,13 @@ describe('AlbumController.id', () => {
 
 		expect(orm.Album.oneOrFailByID).toHaveBeenCalledWith('album-1');
 		expect(engine.transform.album).toHaveBeenCalledWith(
-			orm, mockAlbum, emptyAlbumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters, mockUser
+			orm,
+			mockAlbum,
+			emptyAlbumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			mockUser
 		);
 		expect(result).toBe(mockAlbumDTO);
 	});
@@ -77,7 +83,13 @@ describe('AlbumController.id', () => {
 		await controller.id('album-1', albumParameters, emptyChildParameters, emptyTrackParameters, artistParameters, ctx);
 
 		expect(engine.transform.album).toHaveBeenCalledWith(
-			orm, mockAlbum, albumParameters, emptyChildParameters, emptyTrackParameters, artistParameters, mockUser
+			orm,
+			mockAlbum,
+			albumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			artistParameters,
+			mockUser
 		);
 	});
 });
@@ -109,12 +121,23 @@ describe('AlbumController.search', () => {
 		const list: ListParameters = {};
 
 		const result = await controller.search(
-			emptyPage, emptyAlbumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyAlbumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		expect(orm.Album.searchTransformFilter).toHaveBeenCalledWith(
-			emptyFilter, [emptyOrder], emptyPage, mockUser, expect.any(Function)
+			emptyFilter,
+			[emptyOrder],
+			emptyPage,
+			mockUser,
+			expect.any(Function)
 		);
 		expect(orm.Album.findListTransformFilter).not.toHaveBeenCalled();
 		expect(result).toBe(mockAlbumPage);
@@ -125,12 +148,25 @@ describe('AlbumController.search', () => {
 		const list: ListParameters = { list: 'random' as never, seed: 'abc' };
 
 		const result = await controller.search(
-			emptyPage, emptyAlbumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyAlbumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		expect(orm.Album.findListTransformFilter).toHaveBeenCalledWith(
-			'random', 'abc', emptyFilter, [emptyOrder], emptyPage, mockUser, expect.any(Function)
+			'random',
+			'abc',
+			emptyFilter,
+			[emptyOrder],
+			emptyPage,
+			mockUser,
+			expect.any(Function)
 		);
 		expect(orm.Album.searchTransformFilter).not.toHaveBeenCalled();
 		expect(result).toBe(mockAlbumPage);
@@ -141,14 +177,27 @@ describe('AlbumController.search', () => {
 		const albumParameters: IncludesAlbumParameters = { albumIncState: true };
 
 		await controller.search(
-			emptyPage, albumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters,
-			emptyFilter, emptyOrder, {}, ctx
+			emptyPage,
+			albumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			emptyFilter,
+			emptyOrder,
+			{},
+			ctx
 		);
 
 		const callback = orm.Album.searchTransformFilter.mock.calls[0][4] as (o: unknown) => Promise<unknown>;
 		await callback(mockAlbum);
 		expect(engine.transform.album).toHaveBeenCalledWith(
-			orm, mockAlbum, albumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters, mockUser
+			orm,
+			mockAlbum,
+			albumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			mockUser
 		);
 	});
 
@@ -157,14 +206,27 @@ describe('AlbumController.search', () => {
 		const list: ListParameters = { list: 'random' as never };
 
 		await controller.search(
-			emptyPage, emptyAlbumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyAlbumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		const callback = orm.Album.findListTransformFilter.mock.calls[0][6] as (o: unknown) => Promise<unknown>;
 		await callback(mockAlbum);
 		expect(engine.transform.album).toHaveBeenCalledWith(
-			orm, mockAlbum, emptyAlbumParameters, emptyChildParameters, emptyTrackParameters, emptyArtistParameters, mockUser
+			orm,
+			mockAlbum,
+			emptyAlbumParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyArtistParameters,
+			mockUser
 		);
 	});
 });
@@ -249,7 +311,10 @@ describe('AlbumController.similarTracks', () => {
 		expect(orm.Album.oneOrFailByID).toHaveBeenCalledWith('album-1');
 		expect(engine.metadata.similarTracks.byAlbum).toHaveBeenCalledWith(orm, mockAlbum, emptyPage);
 		expect(engine.transform.Track.trackBases).toHaveBeenCalledWith(
-			orm, [mockTrackDTO], emptyTrackParameters, mockUser
+			orm,
+			[mockTrackDTO],
+			emptyTrackParameters,
+			mockUser
 		);
 		expect(result.items).toEqual([mockTrackDTO]);
 	});

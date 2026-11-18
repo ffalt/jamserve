@@ -25,7 +25,8 @@ export class TrackUpdater {
 	constructor(
 		private readonly orm: Orm,
 		private readonly audioModule: AudioModule,
-		private readonly changes: Changes) {
+		private readonly changes: Changes
+	) {
 	}
 
 	public async updateTrackValues(track: Track, filename: string): Promise<void> {

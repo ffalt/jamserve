@@ -29,8 +29,10 @@ export class TrackController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Track> {
 		return engine.transform.track(
-			orm, await orm.Track.oneOrFailByID(id),
-			trackParameters, user
+			orm,
+			await orm.Track.oneOrFailByID(id),
+			trackParameters,
+			user
 		);
 	}
 
@@ -48,12 +50,13 @@ export class TrackController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<TrackPage> {
 		if (list.list) {
-			return await orm.Track.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.track(orm, o, trackParameters, user)
-			);
+			return await orm.Track.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.track(orm, o, trackParameters, user));
 		}
 		return await orm.Track.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.track(orm, o, trackParameters, user)
 		);
 	}

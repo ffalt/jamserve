@@ -20,7 +20,8 @@ import {
 	SubsonicPlayQueue,
 	SubsonicPodcastChannel,
 	SubsonicPodcastEpisode,
-	SubsonicResponse, SubsonicResponseStatus,
+	SubsonicResponse,
+	SubsonicResponseStatus,
 	SubsonicSimilarSongs,
 	SubsonicSimilarSongs2,
 	SubsonicUser
@@ -138,7 +139,9 @@ export class SubsonicFormatter {
 
 		return {
 			'subsonic-response': {
-				...this.defaultProperties, status: 'failed', error: {
+				...this.defaultProperties,
+				status: 'failed',
+				error: {
 					code,
 					message: txt ?? codeStrings[code]
 				}

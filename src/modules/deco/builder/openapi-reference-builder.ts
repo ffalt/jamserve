@@ -2,8 +2,17 @@ import { MethodMetadata } from '../definitions/method-metadata.js';
 import { ControllerClassMetadata } from '../definitions/controller-metadata.js';
 import { CustomPathParameterAliasRouteOptions, FieldOptions, TypeOptions, TypeValue } from '../definitions/types.js';
 import {
-	exampleID, Properties, Property, SCHEMA_ID, SCHEMA_JSON, Schemas,
-	ParameterLocation, ParameterObject, ReferenceObject, SchemaObject, exampleIDInt
+	exampleID,
+	Properties,
+	Property,
+	SCHEMA_ID,
+	SCHEMA_JSON,
+	Schemas,
+	ParameterLocation,
+	ParameterObject,
+	ReferenceObject,
+	SchemaObject,
+	exampleIDInt
 } from './openapi-helpers.js';
 import { RestParameterMetadata, RestParametersMetadata } from '../definitions/parameter-metadata.js';
 import { MetadataStorage } from '../definitions/metadata-storage.js';
@@ -32,8 +41,12 @@ export class OpenApiReferenceBuilder {
 			}
 			case Number: {
 				return {
-					type: 'integer', default: typeOptions.defaultValue,
-					minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
+					type: 'integer',
+					default: typeOptions.defaultValue,
+					minimum: typeOptions.min,
+					maximum: typeOptions.max,
+					description: typeOptions.description,
+					deprecated: typeOptions.deprecationReason ? true : undefined
 				};
 			}
 			case Boolean: {
@@ -90,8 +103,11 @@ export class OpenApiReferenceBuilder {
 	}
 
 	private collectParameter(
-		parameter: RestParameterMetadata, parameters: Array<ParameterObject>,
-		ctrl: ControllerClassMetadata | undefined, schemas: Schemas, hideParameters?: Array<string>
+		parameter: RestParameterMetadata,
+		parameters: Array<ParameterObject>,
+		ctrl: ControllerClassMetadata | undefined,
+		schemas: Schemas,
+		hideParameters?: Array<string>
 	): void {
 		if (hideParameters?.includes(parameter.name)) {
 			return;
@@ -221,7 +237,9 @@ export class OpenApiReferenceBuilder {
 					},
 					required: ['type', 'file']
 				}
-			}, required: [parameter.name], description: 'Binary Part'
+			},
+			required: [parameter.name],
+			description: 'Binary Part'
 		};
 	}
 

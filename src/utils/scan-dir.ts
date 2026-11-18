@@ -85,7 +85,7 @@ export class DirScanner {
 		while (level.length > 0) {
 			const next: Array<ScanDir> = [];
 			await processQueue<ScanDir>(MAX_CONCURRENT_DIRS, level, async node => {
-				next.push(...await this.readDir(node));
+				next.push(...(await this.readDir(node)));
 			});
 			level = next;
 		}

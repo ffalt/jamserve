@@ -29,8 +29,13 @@ export class AlbumController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Album> {
 		return engine.transform.album(
-			orm, await orm.Album.oneOrFailByID(id),
-			albumParameters, albumChildrenParameters, trackParameters, artistParameters, user
+			orm,
+			await orm.Album.oneOrFailByID(id),
+			albumParameters,
+			albumChildrenParameters,
+			trackParameters,
+			artistParameters,
+			user
 		);
 	}
 
@@ -63,12 +68,13 @@ export class AlbumController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<AlbumPage> {
 		if (list.list) {
-			return await orm.Album.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.album(orm, o, albumParameters, albumChildrenParameters, trackParameters, artistParameters, user)
-			);
+			return await orm.Album.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.album(orm, o, albumParameters, albumChildrenParameters, trackParameters, artistParameters, user));
 		}
 		return await orm.Album.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.album(orm, o, albumParameters, albumChildrenParameters, trackParameters, artistParameters, user)
 		);
 	}
@@ -101,7 +107,10 @@ export class AlbumController {
 		const albumIDs = await orm.Album.findIDsFilter(filter, user);
 		const orders = [{ orderBy: order.orderBy ?? TrackOrderFields.default, orderDesc: order.orderDesc ?? false }];
 		return await orm.Track.searchTransformFilter(
-			{ albumIDs }, orders, page, user,
+			{ albumIDs },
+			orders,
+			page,
+			user,
 			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}

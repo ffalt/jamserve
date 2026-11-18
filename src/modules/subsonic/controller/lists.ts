@@ -9,10 +9,14 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { SubsonicParameterAlbumList, SubsonicParameterSongsByGenre, SubsonicParameterAlbumList2, SubsonicParameterRandomSong, SubsonicParameterMusicFolderID } from '../model/subsonic-rest-parameters.js';
 import {
-	SubsonicNowPlayingEntry, SubsonicResponseAlbumList,
+	SubsonicNowPlayingEntry,
+	SubsonicResponseAlbumList,
 	SubsonicResponseAlbumList2,
 	SubsonicResponseNowPlaying,
-	SubsonicResponseRandomSongs, SubsonicResponseSongsByGenre, SubsonicResponseStarred, SubsonicResponseStarred2,
+	SubsonicResponseRandomSongs,
+	SubsonicResponseSongsByGenre,
+	SubsonicResponseStarred,
+	SubsonicResponseStarred2,
 	SubsonicSongs,
 	SubsonicStarred,
 	SubsonicStarred2
@@ -37,8 +41,7 @@ export class SubsonicListsApi {
 		const list = await engine.nowPlaying.getNowPlaying();
 		const result: Array<SubsonicNowPlayingEntry> = [];
 		for (const entry of list) {
-			const state = await orm.State.findOrCreate((entry.episode?.id ?? entry.track?.id) ?? '',
-				entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
+			const state = await orm.State.findOrCreate((entry.episode?.id ?? entry.track?.id) ?? '', entry.episode?.id ? DBObjectType.episode : DBObjectType.track, user.id);
 			result.push(await SubsonicFormatter.packNowPlaying(entry, state));
 		}
 		return { nowPlaying: { entry: result } };

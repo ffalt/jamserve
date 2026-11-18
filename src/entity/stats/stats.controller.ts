@@ -14,8 +14,7 @@ export class StatsController {
 		return await engine.stats.getStats(orm, filter.rootID);
 	}
 
-	@Get('/user', () => UserStats,
-		{ description: 'Get count stats for the calling User: Playlists/Favorites/Played', summary: 'Get User Stats' })
+	@Get('/user', () => UserStats, { description: 'Get count stats for the calling User: Playlists/Favorites/Played', summary: 'Get User Stats' })
 	async user(@RestContext() { orm, engine, user }: Context
 	): Promise<UserStats> {
 		return engine.stats.getUserStats(orm, user);

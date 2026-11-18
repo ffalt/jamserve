@@ -42,7 +42,6 @@ export class LyricsOVHClient extends WebserviceClient {
 			.replaceAll(/[():]/g, ' ')
 			.replaceAll('‐', '-')
 			.normalize()
-			.trim()
-		);
+			.trim());
 	}
 }

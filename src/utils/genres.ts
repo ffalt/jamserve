@@ -191,7 +191,8 @@ const genreData = {
 		'G-Funk',
 		'Dubstep',
 		'Garage Rock',
-		'Psybient'],
+		'Psybient'
+	],
 	list: [
 		'2 Tone',
 		'2-Step Garage',

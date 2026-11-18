@@ -19,10 +19,7 @@ import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/playlist', { tags: ['Playlist'], roles: [UserRole.stream] })
 export class PlaylistController {
-	@Get('/id',
-		() => Playlist,
-		{ description: 'Get a Playlist by Id', summary: 'Get Playlist' }
-	)
+	@Get('/id', () => Playlist, { description: 'Get a Playlist by Id', summary: 'Get Playlist' })
 	async id(
 		@QueryParameter('id', { description: 'Playlist Id', isID: true }) id: string,
 		@QueryParameters() playlistParameters: IncludesPlaylistParameters,
@@ -35,8 +32,12 @@ export class PlaylistController {
 			throw notFoundError();
 		}
 		return engine.transform.playlist(
-			orm, list,
-			playlistParameters, trackParameters, episodeParameters, user
+			orm,
+			list,
+			playlistParameters,
+			trackParameters,
+			episodeParameters,
+			user
 		);
 	}
 
@@ -69,12 +70,13 @@ export class PlaylistController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<PlaylistPage> {
 		if (list.list) {
-			return await orm.Playlist.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.playlist(orm, o, playlistParameters, trackParameters, episodeParameters, user)
-			);
+			return await orm.Playlist.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.playlist(orm, o, playlistParameters, trackParameters, episodeParameters, user));
 		}
 		return await orm.Playlist.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.playlist(orm, o, playlistParameters, trackParameters, episodeParameters, user)
 		);
 	}
@@ -94,7 +96,10 @@ export class PlaylistController {
 	): Promise<PlaylistEntryPage> {
 		const playlistIDs = await orm.Playlist.findIDsFilter(filter, user);
 		return await orm.PlaylistEntry.searchTransformFilter(
-			{ playlistIDs }, [order], page, user,
+			{ playlistIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.playlistEntry(orm, o, trackParameters, episodeParameters, user)
 		);
 	}

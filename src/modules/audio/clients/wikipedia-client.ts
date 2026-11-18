@@ -112,16 +112,14 @@ export class WikipediaClient extends WebserviceClient {
 		log.info('requesting summary', title);
 		const safeLang = getSafeLanguageCode(lang);
 		const url = `https://${safeLang}.wikipedia.org/w/api.php`;
-		const data = await this.getJsonWithParameters<WikiPHPApiSummary | undefined,
-			{
-				action: string;
-				prop: string;
-				format: string;
-				exintro: number;
-				redirects: number;
-				titles: string;
-			}
-		>(url, {
+		const data = await this.getJsonWithParameters<WikiPHPApiSummary | undefined, {
+			action: string;
+			prop: string;
+			format: string;
+			exintro: number;
+			redirects: number;
+			titles: string;
+		}>(url, {
 			action: 'query',
 			prop: 'extracts',
 			format: 'json',

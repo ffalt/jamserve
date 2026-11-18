@@ -13,10 +13,7 @@ import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js
 
 @Controller('/playqueue', { tags: ['PlayQueue'], roles: [UserRole.stream] })
 export class PlayQueueController {
-	@Get('/get',
-		() => PlayQueue,
-		{ description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' }
-	)
+	@Get('/get', () => PlayQueue, { description: 'Get a PlayQueue for the calling user', summary: 'Get PlayQueue' })
 	async get(
 		@QueryParameters() queueParameters: IncludesPlayQueueParameters,
 		@QueryParameters() trackParameters: IncludesTrackParameters,
@@ -24,14 +21,16 @@ export class PlayQueueController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<PlayQueue> {
 		return engine.transform.playQueue(
-			orm, await engine.playQueue.get(orm, user),
-			queueParameters, trackParameters, episodeParameters, user
+			orm,
+			await engine.playQueue.get(orm, user),
+			queueParameters,
+			trackParameters,
+			episodeParameters,
+			user
 		);
 	}
 
-	@Post('/set',
-		{ description: 'Create/update the PlayQueue for the calling user', summary: 'Set PlayQueue' }
-	)
+	@Post('/set', { description: 'Create/update the PlayQueue for the calling user', summary: 'Set PlayQueue' })
 	async set(
 		@BodyParameters() parameters: PlayQueueSetParameters,
 		@RestContext() { req, engine, orm, user }: Context
@@ -39,9 +38,7 @@ export class PlayQueueController {
 		await engine.playQueue.set(orm, parameters, user, req.session.client ?? 'unknown');
 	}
 
-	@Post('/clear',
-		{ description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue' }
-	)
+	@Post('/clear', { description: 'Clear the PlayQueue for the calling user', summary: 'Clear PlayQueue' })
 	async clear(
 		@RestContext() { orm, engine, user }: Context
 	): Promise<void> {

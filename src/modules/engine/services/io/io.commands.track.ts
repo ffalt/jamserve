@@ -31,8 +31,7 @@ export class IoCommandsTrack {
 	async move(trackIDs: Array<string>, newParentID: string, rootID: string): Promise<AdminChangeQueueInfo> {
 		const oldRequest = this.owner.find(c => (
 			(!!c.parameters.rootID) && (c.parameters.rootID === rootID) &&
-			(c.mode === WorkerRequestMode.moveTracks) && (c.parameters as WorkerRequestMoveTracks).newParentID === newParentID)
-		);
+			(c.mode === WorkerRequestMode.moveTracks) && (c.parameters as WorkerRequestMoveTracks).newParentID === newParentID));
 		if (oldRequest) {
 			for (const id of trackIDs) {
 				if (!(oldRequest.parameters as WorkerRequestMoveTracks).trackIDs.includes(id)) {
@@ -42,13 +41,17 @@ export class IoCommandsTrack {
 			return this.owner.getRequestInfo(oldRequest);
 		}
 		return this.owner.newRequest<WorkerRequestMoveTracks>(
-			WorkerRequestMode.moveTracks, p => this.owner.workerService.track.move(p), { rootID, trackIDs, newParentID }
+			WorkerRequestMode.moveTracks,
+			p => this.owner.workerService.track.move(p),
+			{ rootID, trackIDs, newParentID }
 		);
 	}
 
 	async rename(trackID: string, newName: string, rootID: string): Promise<AdminChangeQueueInfo> {
 		return this.owner.newRequest<WorkerRequestRenameTrack>(
-			WorkerRequestMode.renameTrack, p => this.owner.workerService.track.rename(p), { rootID, trackID, newName }
+			WorkerRequestMode.renameTrack,
+			p => this.owner.workerService.track.rename(p),
+			{ rootID, trackID, newName }
 		);
 	}
 
@@ -62,10 +65,7 @@ export class IoCommandsTrack {
 		if (delayedCmd) {
 			delayedCmd.request.parameters.tags.push({ trackID, tag });
 		} else {
-			delayedCmd = this.delayedTrackTagWrite.register(rootID,
-				new IoRequest<WorkerRequestWriteTrackTags>(this.owner.generateRequestID(),
-					WorkerRequestMode.writeTrackTags, p => this.owner.workerService.track.writeTags(p), { rootID, tags: [{ trackID, tag }] })
-			);
+			delayedCmd = this.delayedTrackTagWrite.register(rootID, new IoRequest<WorkerRequestWriteTrackTags>(this.owner.generateRequestID(), WorkerRequestMode.writeTrackTags, p => this.owner.workerService.track.writeTags(p), { rootID, tags: [{ trackID, tag }] }));
 		}
 		this.delayedTrackTagWrite.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
 		return this.owner.getRequestInfo(delayedCmd.request);
@@ -78,7 +78,9 @@ export class IoCommandsTrack {
 			return this.owner.getRequestInfo(oldRequest);
 		}
 		return this.owner.newRequest<WorkerRequestEmbedTrackLyrics>(
-			WorkerRequestMode.embedTrackLyrics, p => this.owner.workerService.track.embedLyrics(p), { rootID, lyrics: [{ trackID, lyrics }] }
+			WorkerRequestMode.embedTrackLyrics,
+			p => this.owner.workerService.track.embedLyrics(p),
+			{ rootID, lyrics: [{ trackID, lyrics }] }
 		);
 	}
 
@@ -92,13 +94,12 @@ export class IoCommandsTrack {
 		if (delayedCmd) {
 			delayedCmd.request.parameters.fixes.push({ trackID, fixID });
 		} else {
-			delayedCmd = this.delayedTrackFix.register(rootID,
-				new IoRequest(
-					this.owner.generateRequestID(),
-					WorkerRequestMode.fixTrack, p => this.owner.workerService.track.fix(p),
-					{ rootID, fixes: [{ trackID, fixID }] }
-				)
-			);
+			delayedCmd = this.delayedTrackFix.register(rootID, new IoRequest(
+				this.owner.generateRequestID(),
+				WorkerRequestMode.fixTrack,
+				p => this.owner.workerService.track.fix(p),
+				{ rootID, fixes: [{ trackID, fixID }] }
+			));
 		}
 		this.delayedTrackFix.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
 		return this.owner.getRequestInfo<WorkerRequestFixTrack>(delayedCmd.request);

@@ -2,8 +2,15 @@ import { MethodMetadata } from '../definitions/method-metadata.js';
 import { Errors } from '../express/express-error.js';
 import { MetadataStorage } from '../definitions/metadata-storage.js';
 import {
-	SCHEMA_ID, Schemas, ContentObject, OpenAPIObject, ParameterObject, ReferenceObject,
-	ResponsesObject, RequestBodyObject, SchemaObject
+	SCHEMA_ID,
+	Schemas,
+	ContentObject,
+	OpenAPIObject,
+	ParameterObject,
+	ReferenceObject,
+	ResponsesObject,
+	RequestBodyObject,
+	SchemaObject
 } from './openapi-helpers.js';
 import { OpenApiReferenceBuilder } from './openapi-reference-builder.js';
 

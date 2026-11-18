@@ -89,10 +89,9 @@ export class MetadataService {
 	}
 
 	async musicbrainzSearch(orm: Orm, type: string, query: MusicbrainzClientApi.SearchQuery): Promise<MusicBrainz.Response | undefined> {
-		return this.searchInStore<MusicBrainz.Response>(orm, `search-${type}${JSON.stringify(query)}`,
-			MetadataType.musicbrainz, async () => {
-				return this.audioModule.musicbrainz.search({ type, query });
-			});
+		return this.searchInStore<MusicBrainz.Response>(orm, `search-${type}${JSON.stringify(query)}`, MetadataType.musicbrainz, async () => {
+			return this.audioModule.musicbrainz.search({ type, query });
+		});
 	}
 
 	async acoustidLookupTrack(track: Track, includes: string | undefined): Promise<Array<Acoustid.Result> | undefined> {
@@ -100,52 +99,45 @@ export class MetadataService {
 	}
 
 	async lastFMLookup(orm: Orm, type: string, mbid: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `lookup-${type}${mbid}`,
-			MetadataType.lastfm, async () => {
-				return this.audioModule.lastFM.lookup(type, mbid);
-			});
+		return this.searchInStore<LastFM.Result>(orm, `lookup-${type}${mbid}`, MetadataType.lastfm, async () => {
+			return this.audioModule.lastFM.lookup(type, mbid);
+		});
 	}
 
 	async lastFMAlbumSearch(orm: Orm, album: string, artist: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `search-album-${album}//${artist}`,
-			MetadataType.lastfm, async () => {
-				return { album: await this.audioModule.lastFM.album(album, artist) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `search-album-${album}//${artist}`, MetadataType.lastfm, async () => {
+			return { album: await this.audioModule.lastFM.album(album, artist) };
+		});
 	}
 
 	async lastFMArtistSearch(orm: Orm, artist: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `search-artist-${artist}`,
-			MetadataType.lastfm, async () => {
-				return { artist: await this.audioModule.lastFM.artist(artist) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `search-artist-${artist}`, MetadataType.lastfm, async () => {
+			return { artist: await this.audioModule.lastFM.artist(artist) };
+		});
 	}
 
 	async lastFMTopTracksArtist(orm: Orm, artist: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `toptracks-artist-${artist}`,
-			MetadataType.lastfm, async () => {
-				return { toptracks: await this.audioModule.lastFM.topArtistSongs(artist) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `toptracks-artist-${artist}`, MetadataType.lastfm, async () => {
+			return { toptracks: await this.audioModule.lastFM.topArtistSongs(artist) };
+		});
 	}
 
 	async lastFMTopTracksArtistID(orm: Orm, mbid: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `toptracks-artistid-${mbid}`,
-			MetadataType.lastfm, async () => {
-				return { toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `toptracks-artistid-${mbid}`, MetadataType.lastfm, async () => {
+			return { toptracks: await this.audioModule.lastFM.topArtistSongsID(mbid) };
+		});
 	}
 
 	async lastFMSimilarTracks(orm: Orm, mbid: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `similar-trackid-${mbid}`,
-			MetadataType.lastfm, async () => {
-				return { similartracks: await this.audioModule.lastFM.similarTrackID(mbid) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `similar-trackid-${mbid}`, MetadataType.lastfm, async () => {
+			return { similartracks: await this.audioModule.lastFM.similarTrackID(mbid) };
+		});
 	}
 
 	async lastFMSimilarTracksSearch(orm: Orm, name: string, artist: string): Promise<LastFM.Result | undefined> {
-		return this.searchInStore<LastFM.Result>(orm, `similar-search-track-${name}//${artist}`,
-			MetadataType.lastfm, async () => {
-				return { similartracks: await this.audioModule.lastFM.similarTrack(name, artist) };
-			});
+		return this.searchInStore<LastFM.Result>(orm, `similar-search-track-${name}//${artist}`, MetadataType.lastfm, async () => {
+			return { similartracks: await this.audioModule.lastFM.similarTrack(name, artist) };
+		});
 	}
 
 	async acousticbrainzLookup(orm: Orm, mbid: string, nr: number | undefined): Promise<AcousticBrainz.Response | undefined> {
@@ -157,7 +149,8 @@ export class MetadataService {
 			MetadataType.acousticbrainz,
 			async () => {
 				return this.audioModule.acousticbrainz.highLevel(mbid, nr);
-			});
+			}
+		);
 	}
 
 	async coverartarchiveLookup(orm: Orm, type: string, mbid: string): Promise<CoverArtArchive.Response | undefined> {
@@ -174,7 +167,8 @@ export class MetadataService {
 					return this.audioModule.coverArtArchive.releaseGroupImages(mbid);
 				}
 				return Promise.reject(new Error('Invalid CoverArtArchive Lookup Type'));
-			});
+			}
+		);
 	}
 
 	async musicbrainzLookup(orm: Orm, type: MusicBrainzLookupType, mbid: string, inc?: MusicBrainzLookupIncludes): Promise<MusicBrainz.Response | undefined> {
@@ -190,68 +184,62 @@ export class MetadataService {
 	}
 
 	async lyricsOVH(orm: Orm, artist: string, song: string): Promise<TrackLyrics | undefined> {
-		return this.searchInStore<TrackLyrics>(orm, `lyrics-${lyricsSlug(artist)}/${lyricsSlug(song)}`,
-			MetadataType.lyrics, async () => {
-				let result = await this.audioModule.lyricsOVH.search(artist, song);
-				const shortTitle = shortenLyricsTitle(song);
-				if (shortTitle && !hasLyrics(result)) {
-					result = await this.audioModule.lyricsOVH.search(artist, shortTitle);
-				}
-				return result;
-			});
+		return this.searchInStore<TrackLyrics>(orm, `lyrics-${lyricsSlug(artist)}/${lyricsSlug(song)}`, MetadataType.lyrics, async () => {
+			let result = await this.audioModule.lyricsOVH.search(artist, song);
+			const shortTitle = shortenLyricsTitle(song);
+			if (shortTitle && !hasLyrics(result)) {
+				result = await this.audioModule.lyricsOVH.search(artist, shortTitle);
+			}
+			return result;
+		});
 	}
 
 	async lrclibFind(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<TrackLyrics | undefined> {
-		return this.searchInStore<TrackLyrics>(orm, lrclibStoreKey('lrclib-find', track_name, artist_name, album_name, duration),
-			MetadataType.lyrics, async () => {
-				return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
-			});
+		return this.searchInStore<TrackLyrics>(orm, lrclibStoreKey('lrclib-find', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
+			return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
+		});
 	}
 
 	async lrclibGet(orm: Orm, track_name: string, artist_name: string, album_name?: string, duration?: number): Promise<LrclibResult | undefined> {
-		return this.searchInStore<LrclibResult>(orm, lrclibStoreKey('lrclib-get', track_name, artist_name, album_name, duration),
-			MetadataType.lyrics, async () => {
-				return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
-			});
+		return this.searchInStore<LrclibResult>(orm, lrclibStoreKey('lrclib-get', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
+			return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
+		});
 	}
 
 	async wikipediaSummary(orm: Orm, title: string, lang: string = 'en'): Promise<WikipediaSummaryResponse | undefined> {
-		return this.searchInStore<WikipediaSummaryResponse>(orm, `summary-${title}/${lang}`,
-			MetadataType.wikipedia, async () => {
-				return { summary: await this.audioModule.wikipedia.summary(title, lang) };
-			});
+		return this.searchInStore<WikipediaSummaryResponse>(orm, `summary-${title}/${lang}`, MetadataType.wikipedia, async () => {
+			return { summary: await this.audioModule.wikipedia.summary(title, lang) };
+		});
 	}
 
 	async wikidataLookup(orm: Orm, id: string): Promise<WikidataLookupResponse | undefined> {
-		return this.searchInStore<WikidataLookupResponse>(orm, `wikidata-entity-${id}`,
-			MetadataType.wikidata, async () => {
-				const entity = await this.audioModule.wikipedia.wikidata(id);
-				return { id, type: DBObjectType.metadata, dataType: MetadataType.wikidata, data: entity, date: Date.now() };
-			});
+		return this.searchInStore<WikidataLookupResponse>(orm, `wikidata-entity-${id}`, MetadataType.wikidata, async () => {
+			const entity = await this.audioModule.wikipedia.wikidata(id);
+			return { id, type: DBObjectType.metadata, dataType: MetadataType.wikidata, data: entity, date: Date.now() };
+		});
 	}
 
 	async wikidataSummary(orm: Orm, id: string, lang: string | undefined): Promise<WikipediaSummaryResponse | undefined> {
-		return this.searchInStore<WikipediaSummaryResponse>(orm, `wikidata-summary-${id}`,
-			MetadataType.wikidata, async () => {
-				const lookup = await this.wikidataLookup(orm, id);
-				if (!lookup) {
-					return {};
-				}
-				const obj = lookup.entity ?? lookup.data;
-				if (!obj) {
-					return {};
-				}
-				lang ??= 'en';
-				const site = `${lang}wiki`;
-				if (obj.sitelinks) {
-					const langSite = obj.sitelinks[site];
-					if (!langSite) {
-						return {};
-					}
-					return this.wikipediaSummary(orm, langSite.title, lang);
-				}
+		return this.searchInStore<WikipediaSummaryResponse>(orm, `wikidata-summary-${id}`, MetadataType.wikidata, async () => {
+			const lookup = await this.wikidataLookup(orm, id);
+			if (!lookup) {
 				return {};
-			});
+			}
+			const obj = lookup.entity ?? lookup.data;
+			if (!obj) {
+				return {};
+			}
+			lang ??= 'en';
+			const site = `${lang}wiki`;
+			if (obj.sitelinks) {
+				const langSite = obj.sitelinks[site];
+				if (!langSite) {
+					return {};
+				}
+				return this.wikipediaSummary(orm, langSite.title, lang);
+			}
+			return {};
+		});
 	}
 
 	static lyricsByTag(tag?: Tag): TrackLyrics | undefined {
@@ -279,9 +267,9 @@ export class MetadataService {
 			if (!tag) {
 				return {};
 			}
-			let result: TrackLyrics = { source: 'lrclib', ...await this.lyricsLrcLibByTrackTag(orm, track, tag) };
+			let result: TrackLyrics = { source: 'lrclib', ...(await this.lyricsLrcLibByTrackTag(orm, track, tag)) };
 			if (!hasLyrics(result)) {
-				result = { source: 'lyrics.ovh', ...await this.lyricsOVHByTrackTag(orm, track, tag) };
+				result = { source: 'lyrics.ovh', ...(await this.lyricsOVHByTrackTag(orm, track, tag)) };
 			}
 			if (!hasLyrics(result)) {
 				return {};

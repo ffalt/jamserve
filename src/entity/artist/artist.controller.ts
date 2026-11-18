@@ -18,10 +18,7 @@ import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 
 @Controller('/artist', { tags: ['Artist'], roles: [UserRole.stream] })
 export class ArtistController {
-	@Get('/id',
-		() => Artist,
-		{ description: 'Get an Artist by Id', summary: 'Get Artist' }
-	)
+	@Get('/id', () => Artist, { description: 'Get an Artist by Id', summary: 'Get Artist' })
 	async id(
 		@QueryParameter('id', { description: 'Artist Id', isID: true }) id: string,
 		@QueryParameters() artistParameters: IncludesArtistParameters,
@@ -32,8 +29,14 @@ export class ArtistController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Artist> {
 		return engine.transform.artist(
-			orm, await orm.Artist.oneOrFailByID(id),
-			artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user
+			orm,
+			await orm.Artist.oneOrFailByID(id),
+			artistParameters,
+			artistChildrenParameters,
+			trackParameters,
+			albumParameters,
+			seriesParameters,
+			user
 		);
 	}
 
@@ -68,12 +71,13 @@ export class ArtistController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtistPage> {
 		if (list.list) {
-			return await orm.Artist.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user)
-			);
+			return await orm.Artist.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user));
 		}
 		return await orm.Artist.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.artist(orm, o, artistParameters, artistChildrenParameters, trackParameters, albumParameters, seriesParameters, user)
 		);
 	}
@@ -137,7 +141,10 @@ export class ArtistController {
 	): Promise<TrackPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
-			{ artistIDs }, [order], page, user,
+			{ artistIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}
@@ -156,7 +163,10 @@ export class ArtistController {
 	): Promise<AlbumPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
-			{ artistIDs }, [order], page, user,
+			{ artistIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Album.albumBase(orm, o, albumParameters, user)
 		);
 	}
@@ -175,7 +185,10 @@ export class ArtistController {
 	): Promise<SeriesPage> {
 		const artistIDs = await orm.Artist.findIDsFilter(filter, user);
 		return await orm.Series.searchTransformFilter(
-			{ artistIDs }, [order], page, user,
+			{ artistIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Series.seriesBase(orm, o, seriesParameters, user)
 		);
 	}

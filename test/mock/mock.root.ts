@@ -127,7 +127,8 @@ export function buildMockRoot(dir: string, nr: number, strategy: RootScanStrateg
 								number: 3,
 								total: 3,
 								genre: 'Genre 2'
-							}],
+							}
+						],
 						expected: {
 							folderType: FolderType.album,
 							albumType: AlbumType.album
@@ -450,7 +451,8 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 								number: 3,
 								total: 3,
 								genre: 'audio series'
-							}],
+							}
+						],
 						expected: {
 							folderType: FolderType.album,
 							albumType: AlbumType.series
@@ -574,7 +576,8 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 						number: 3,
 						total: 3,
 						genre: 'audio series'
-					}],
+					}
+				],
 				expected: {
 					folderType: FolderType.artist
 				}
@@ -691,7 +694,8 @@ export function buildSeriesMockRoot(dir: string, nr: number, strategy: RootScanS
 						number: 3,
 						total: 3,
 						genre: 'audio series'
-					}],
+					}
+				],
 				expected: {
 					folderType: FolderType.artist
 				}

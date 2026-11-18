@@ -16,10 +16,7 @@ import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/bookmark', { tags: ['Bookmark'], roles: [UserRole.stream] })
 export class BookmarkController {
-	@Get('/id',
-		() => Bookmark,
-		{ description: 'Get a Bookmark by Id', summary: 'Get Bookmark' }
-	)
+	@Get('/id', () => Bookmark, { description: 'Get a Bookmark by Id', summary: 'Get Bookmark' })
 	async id(
 		@QueryParameter('id', { description: 'Bookmark Id', isID: true }) id: string,
 		@QueryParameters() childrenParameters: IncludesBookmarkChildrenParameters,
@@ -28,8 +25,12 @@ export class BookmarkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Bookmark> {
 		return engine.transform.bookmark(
-			orm, await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id } : { id, user: user.id } }),
-			childrenParameters, trackParameters, episodeParameters, user
+			orm,
+			await orm.Bookmark.oneOrFail({ where: user.roleAdmin ? { id } : { id, user: user.id } }),
+			childrenParameters,
+			trackParameters,
+			episodeParameters,
+			user
 		);
 	}
 
@@ -48,7 +49,10 @@ export class BookmarkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<BookmarkPage> {
 		return await orm.Bookmark.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.bookmark(orm, o, childrenParameters, trackParameters, episodeParameters, user)
 		);
 	}
@@ -63,8 +67,12 @@ export class BookmarkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Bookmark> {
 		return await engine.transform.bookmark(
-			orm, await engine.bookmark.create(orm, parameters.mediaID, user, parameters.position, parameters.comment),
-			{}, {}, {}, user
+			orm,
+			await engine.bookmark.create(orm, parameters.mediaID, user, parameters.position, parameters.comment),
+			{},
+			{},
+			{},
+			user
 		);
 	}
 

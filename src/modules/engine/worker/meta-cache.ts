@@ -136,8 +136,7 @@ export class MetaMergerCache {
 			if ((a.album.name === name) &&
 				(a.artist.id === artist.id) &&
 				(!trackInfo.tag.seriesNr || (trackInfo.tag.seriesNr === a.album.seriesNr)) &&
-				(!trackInfo.tag.series || (trackInfo.tag.series === a.series))
-			) {
+				(!trackInfo.tag.series || (trackInfo.tag.series === a.series))) {
 				return a.album;
 			}
 		}

@@ -14,17 +14,16 @@ export interface SubsonicBaseParameters {
 	callback?: string;
 }
 
-function processParameters(req: express.Request<any, any, any,
-	{
-		u?: string;
-		p?: string;
-		f?: string;
-		v?: string;
-		t?: string;
-		s?: string;
-		c?: string;
-		callback?: string;
-	}>): SubsonicBaseParameters {
+function processParameters(req: express.Request<any, any, any, {
+	u?: string;
+	p?: string;
+	f?: string;
+	v?: string;
+	t?: string;
+	s?: string;
+	c?: string;
+	callback?: string;
+}>): SubsonicBaseParameters {
 	/*
 	Parameter 	Required 	Default 	Comment
 	u 	Yes 		The username.

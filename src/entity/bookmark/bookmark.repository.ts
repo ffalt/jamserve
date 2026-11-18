@@ -45,7 +45,6 @@ export class BookmarkRepository extends BaseRepository<Bookmark, BookmarkFilterP
 				{ user: QHelper.inOrEqual(filter.userIDs) },
 				{ user: user?.roleAdmin ? undefined : user?.id }
 			] :
-			[{ user: user?.roleAdmin ? undefined : user?.id }]
-		);
+			[{ user: user?.roleAdmin ? undefined : user?.id }]);
 	}
 }

@@ -17,7 +17,7 @@ export function chunks<T>(items: Array<T>, size: number = ID_CHUNK_SIZE): Array<
 export async function collectChunked<T, R>(items: Array<T>, load: (chunk: Array<T>) => Promise<Array<R>>, size: number = ID_CHUNK_SIZE): Promise<Array<R>> {
 	const result: Array<R> = [];
 	for (const chunk of chunks(items, size)) {
-		result.push(...await load(chunk));
+		result.push(...(await load(chunk)));
 	}
 	return result;
 }

@@ -29,12 +29,11 @@ export default {
 		"/dist/"
 	],
 	transform: {
-		"^.+\\.tsx?$": ["ts-jest",
-			{
-				useESM: true,
-				tsconfig: "tsconfig.jest.json",
-				diagnostics: true,
-				testEnvironment: "node"
-			}]
+		"^.+\\.tsx?$": ["ts-jest", {
+			useESM: true,
+			tsconfig: "tsconfig.jest.json",
+			diagnostics: true,
+			testEnvironment: "node"
+		}]
 	}
 };

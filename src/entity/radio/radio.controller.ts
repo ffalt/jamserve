@@ -14,18 +14,17 @@ import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js
 
 @Controller('/radio', { tags: ['Radio'], roles: [UserRole.stream] })
 export class RadioController {
-	@Get('/id',
-		() => Radio,
-		{ description: 'Get a Radio by Id', summary: 'Get Radio' }
-	)
+	@Get('/id', () => Radio, { description: 'Get a Radio by Id', summary: 'Get Radio' })
 	async id(
 		@QueryParameter('id', { description: 'Radio Id', isID: true }) id: string,
 		@QueryParameters() parameters: IncludesRadioParameters,
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Radio> {
 		return engine.transform.Radio.radio(
-			orm, await orm.Radio.oneOrFailByID(id),
-			parameters, user
+			orm,
+			await orm.Radio.oneOrFailByID(id),
+			parameters,
+			user
 		);
 	}
 
@@ -55,7 +54,10 @@ export class RadioController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<RadioPage> {
 		return await orm.Radio.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.Radio.radio(orm, o, parameters, user)
 		);
 	}

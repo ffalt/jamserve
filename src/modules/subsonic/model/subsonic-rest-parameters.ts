@@ -216,7 +216,8 @@ export class SubsonicParameterChatMessage {
 @SubsonicObjectParametersType()
 export class SubsonicParameterState {
 	@SubsonicObjectField(() => [String], {
-		nullable: true, description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.',
+		nullable: true,
+		description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.',
 		isID: true
 	})
 	id?: SubsonicID | Array<SubsonicID>;
@@ -419,7 +420,8 @@ export class SubsonicParameterUpdateUser {
 	videoConversionRole?: boolean;
 
 	@SubsonicObjectField(() => [String], {
-		nullable: true, isID: true,
+		nullable: true,
+		isID: true,
 		description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.'
 	})
 	musicFolderId?: SubsonicID | Array<SubsonicID>;

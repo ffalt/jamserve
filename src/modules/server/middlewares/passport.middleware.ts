@@ -105,5 +105,5 @@ export function usePassPortMiddleWare(router: express.Router, engine: EngineServ
 		passPortAuth(name, next, req, jwth, res);
 	}
 
-	return (jwtAuthMiddleware as express.RequestHandler);
+	return jwtAuthMiddleware as express.RequestHandler;
 }

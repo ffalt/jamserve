@@ -347,8 +347,7 @@ export class WorkerScan {
 		if (this.changes.tracks.updated.has(track) ||
 			scanTrack.size !== track.fileSize ||
 			!isSameDate(scanTrack.ctime, track.statCreated) ||
-			!isSameDate(scanTrack.mtime, track.statModified)
-		) {
+			!isSameDate(scanTrack.mtime, track.statModified)) {
 			const t = await this.updateTrack(scanTrack, track);
 			if (t) {
 				result.tracks.push(new ObjTrackMatch(t));
@@ -380,7 +379,7 @@ export class WorkerScan {
 		const result: Array<Artwork> = [];
 		for (let start = 0; start < folderIDs.length; start += WorkerScan.LOAD_BATCH_SIZE) {
 			const ids = folderIDs.slice(start, start + WorkerScan.LOAD_BATCH_SIZE);
-			result.push(...await this.orm.Artwork.find({ where: { folder: ids } }));
+			result.push(...(await this.orm.Artwork.find({ where: { folder: ids } })));
 		}
 		return result;
 	}

@@ -22,9 +22,12 @@ describe('lyrics sidecar files', () => {
 		test('lists the base name and the full file name for every extension', () => {
 			const candidates = lyricsSidecarCandidates(audioFile).map(candidate => path.basename(candidate));
 			expect(candidates).toEqual([
-				'Artist - Song.lrc', 'Artist - Song.mp3.lrc',
-				'Artist - Song.elrc', 'Artist - Song.mp3.elrc',
-				'Artist - Song.txt', 'Artist - Song.mp3.txt'
+				'Artist - Song.lrc',
+				'Artist - Song.mp3.lrc',
+				'Artist - Song.elrc',
+				'Artist - Song.mp3.elrc',
+				'Artist - Song.txt',
+				'Artist - Song.mp3.txt'
 			]);
 		});
 	});
@@ -81,8 +84,7 @@ describe('lyrics sidecar files', () => {
 
 	describe('writeLyricsSidecar', () => {
 		test('writes synced lyrics as .lrc with a header', async () => {
-			const written = await writeLyricsSidecar(audioFile, { syncedLyrics: lrc, source: 'lrclib' },
-				{ title: 'Song', artist: 'Artist', album: 'Album', duration: 125 });
+			const written = await writeLyricsSidecar(audioFile, { syncedLyrics: lrc, source: 'lrclib' }, { title: 'Song', artist: 'Artist', album: 'Album', duration: 125 });
 			expect(written).toBe(path.join(testPath, 'Artist - Song.lrc'));
 			const content = await fse.readFile(written!, 'utf8');
 			expect(content).toBe('[ti:Song]\n[ar:Artist]\n[al:Album]\n[length:02:05]\n[by:lrclib]\n[re:jamserve]\n[00:12.34]first line\n[00:15.00]second line\n');

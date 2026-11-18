@@ -44,7 +44,8 @@ export enum WorkerRequestMode {
 
 export class IoRequest<T extends WorkerRequestParameters> {
 	constructor(
-		public id: string, public mode: WorkerRequestMode,
+		public id: string,
+		public mode: WorkerRequestMode,
 		public execute: (parameters: T) => Promise<Changes>,
 		public parameters: T
 	) {

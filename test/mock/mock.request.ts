@@ -76,7 +76,9 @@ export const InvalidData = {
 
 	generateInvalidIntegerData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [
-			{ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' }
+			{ data: chance.string(), invalid: 'string' },
+			{ data: '', invalid: 'empty string' },
+			{ data: true, invalid: 'boolean' }
 		];
 		let number_ = 0;
 		while (Number.isSafeInteger(number_)) {
@@ -94,7 +96,9 @@ export const InvalidData = {
 
 	generateInvalidNumberData(schema: SchemaObject): Array<{ data: any; invalid: string }> {
 		const result: Array<{ data: any; invalid: string }> = [
-			{ data: chance.string(), invalid: 'string' }, { data: '', invalid: 'empty string' }, { data: true, invalid: 'boolean' }
+			{ data: chance.string(), invalid: 'string' },
+			{ data: '', invalid: 'empty string' },
+			{ data: true, invalid: 'boolean' }
 		];
 		if (schema.minimum !== undefined) {
 			result.push({ data: schema.minimum - 1, invalid: `less than minimum ${schema.minimum}` });
@@ -294,7 +298,7 @@ export class MockRequests {
 			const operations = Object.keys(derefSpec.paths[apiPath]);
 			for (const operation of operations) {
 				const path = derefSpec.paths[apiPath];
-				requestMocks = [...requestMocks, ...await this.generateRequestMock(api, operation, (path as any)[operation] as OperationObject)];
+				requestMocks = [...requestMocks, ...(await this.generateRequestMock(api, operation, (path as any)[operation] as OperationObject))];
 			}
 		}
 		return requestMocks;

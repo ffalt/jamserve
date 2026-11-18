@@ -30,8 +30,12 @@ export class EpisodeController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Episode> {
 		return engine.transform.episode(
-			orm, await orm.Episode.oneOrFailByID(id),
-			episodeParameters, episodeParentParameters, podcastParameters, user
+			orm,
+			await orm.Episode.oneOrFailByID(id),
+			episodeParameters,
+			episodeParentParameters,
+			podcastParameters,
+			user
 		);
 	}
 
@@ -51,12 +55,13 @@ export class EpisodeController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<EpisodePage> {
 		if (list.list) {
-			return await orm.Episode.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.episode(orm, o, episodeParameters, episodeParentParameters, podcastParameters, user)
-			);
+			return await orm.Episode.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.episode(orm, o, episodeParameters, episodeParentParameters, podcastParameters, user));
 		}
 		return await orm.Episode.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.episode(orm, o, episodeParameters, episodeParentParameters, podcastParameters, user)
 		);
 	}

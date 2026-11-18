@@ -57,7 +57,9 @@ function buildOpenApiBase(version: string): OpenAPIObject {
 	return {
 		openapi: '3.0.0',
 		info: {
-			title: 'SubsonicApi', description: 'Subsonic Api for JamServe', version
+			title: 'SubsonicApi',
+			description: 'Subsonic Api for JamServe',
+			version
 		},
 		servers: [{
 			url: 'http://localhost:4040/rest/',

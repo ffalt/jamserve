@@ -7,7 +7,15 @@ export type Properties = Record<string, SchemaObject | ReferenceObject>;
 export const SCHEMA_JSON = '#/components/schemas/JSON';
 export const SCHEMA_ID = '#/components/schemas/ID';
 export {
-	RequestBodyObject, ResponsesObject, PathItemObject, ParameterLocation, PathsObject,
-	OperationObject, ParameterObject, SchemaObject,
-	ContentObject, ReferenceObject, OpenAPIObject
+	RequestBodyObject,
+	ResponsesObject,
+	PathItemObject,
+	ParameterLocation,
+	PathsObject,
+	OperationObject,
+	ParameterObject,
+	SchemaObject,
+	ContentObject,
+	ReferenceObject,
+	OpenAPIObject
 } from 'openapi3-ts/oas30';

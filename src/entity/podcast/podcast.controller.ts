@@ -41,8 +41,12 @@ export class PodcastController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Podcast> {
 		return engine.transform.podcast(
-			orm, await orm.Podcast.oneOrFailByID(id),
-			podcastParameters, podcastChildrenParameters, episodeParameters, user
+			orm,
+			await orm.Podcast.oneOrFailByID(id),
+			podcastParameters,
+			podcastChildrenParameters,
+			episodeParameters,
+			user
 		);
 	}
 
@@ -72,12 +76,13 @@ export class PodcastController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<PodcastPage> {
 		if (list.list) {
-			return await orm.Podcast.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user)
-			);
+			return await orm.Podcast.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user));
 		}
 		return await orm.Podcast.searchTransformFilter<Podcast>(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.podcast(orm, o, podcastParameters, podcastChildrenParameters, episodeParameters, user)
 		);
 	}
@@ -96,7 +101,10 @@ export class PodcastController {
 	): Promise<EpisodePage> {
 		const podcastIDs = await orm.Podcast.findIDsFilter(filter, user);
 		return await orm.Episode.searchTransformFilter<Episode>(
-			{ podcastIDs }, [order], page, user,
+			{ podcastIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Episode.episodeBase(orm, o, episodeParameters, user)
 		);
 	}

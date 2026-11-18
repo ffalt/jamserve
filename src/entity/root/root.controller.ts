@@ -15,18 +15,17 @@ import { Post } from '../../modules/rest/decorators/post.js';
 
 @Controller('/root', { tags: ['Root'], roles: [UserRole.stream] })
 export class RootController {
-	@Get('/id',
-		() => Root,
-		{ description: 'Get a Root by Id', summary: 'Get Root' }
-	)
+	@Get('/id', () => Root, { description: 'Get a Root by Id', summary: 'Get Root' })
 	async id(
 		@QueryParameter('id', { description: 'Root Id', isID: true }) id: string,
 		@QueryParameters() parameters: IncludesRootParameters,
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Root> {
 		return engine.transform.Root.root(
-			orm, await orm.Root.oneOrFailByID(id),
-			parameters, user
+			orm,
+			await orm.Root.oneOrFailByID(id),
+			parameters,
+			user
 		);
 	}
 
@@ -43,7 +42,10 @@ export class RootController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<RootPage> {
 		return await orm.Root.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.Root.root(orm, o, parameters, user)
 		);
 	}

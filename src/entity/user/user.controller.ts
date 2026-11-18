@@ -21,10 +21,7 @@ import { Upload } from '../../modules/rest/decorators/upload.js';
 
 @Controller('/user', { tags: ['User'] })
 export class UserController {
-	@Get('/id',
-		() => User,
-		{ description: 'Get an User by Id', roles: [UserRole.admin], summary: 'Get User' }
-	)
+	@Get('/id', () => User, { description: 'Get an User by Id', roles: [UserRole.admin], summary: 'Get User' })
 	async id(
 		@QueryParameter('id', { description: 'User Id', isID: true }) id: string,
 		@QueryParameters() parameters: IncludesUserParameters,
@@ -46,7 +43,10 @@ export class UserController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<UserPage> {
 		return await orm.User.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.User.user(orm, o, parameters, user)
 		);
 	}

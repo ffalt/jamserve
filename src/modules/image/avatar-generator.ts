@@ -48,8 +48,7 @@ export class AvatarGenerator {
 		const discriminators = fs
 			.readdirSync(partsLocation)
 			.filter(partsDir =>
-				fs.statSync(path.join(partsLocation, partsDir)).isDirectory()
-			);
+				fs.statSync(path.join(partsLocation, partsDir)).isDirectory());
 
 		const variants: VariantsMap = {};
 		for (const discriminator of discriminators) {

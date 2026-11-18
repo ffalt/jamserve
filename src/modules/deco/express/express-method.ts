@@ -100,8 +100,12 @@ export class ExpressMethod {
 	}
 
 	public POST(
-		post: MethodMetadata, ctrl: ControllerClassMetadata | undefined, router: Router, options: RestOptions,
-		uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler, metadata: MetadataStorage
+		post: MethodMetadata,
+		ctrl: ControllerClassMetadata | undefined,
+		router: Router,
+		options: RestOptions,
+		uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler,
+		metadata: MetadataStorage
 	): RouteInfo {
 		let route = (post.route ?? '/');
 		if (post.customPathParameters) {
@@ -174,7 +178,8 @@ export class ExpressMethod {
 							req.params.pathParameters,
 							get,
 							options
-						), pathParameters: undefined
+						),
+						pathParameters: undefined
 					};
 				}
 				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'Get', options, metadata);
@@ -209,7 +214,8 @@ export class ExpressMethod {
 							req.params.pathParameters as string,
 							get,
 							options
-						), pathParameters: undefined
+						),
+						pathParameters: undefined
 					};
 				}
 				await this.callMethod(get, { req, res, orm: (req as any).orm, engine: (req as any).engine, next, user: req.user }, 'All', options, metadata);

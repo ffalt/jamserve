@@ -35,8 +35,7 @@ export class SessionController {
 		};
 	}
 
-	@Get('/list', () => [UserSession],
-		{ roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions' })
+	@Get('/list', () => [UserSession], { roles: [UserRole.stream], description: 'Get a list of all sessions of the current user', summary: 'Get Sessions' })
 	async list(
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Array<UserSession>> {

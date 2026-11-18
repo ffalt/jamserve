@@ -165,8 +165,15 @@ export class UserService {
 	}
 
 	public async createUser(
-		orm: Orm, name: string, email: string, pass: string,
-		roleAdmin: boolean, roleStream: boolean, roleUpload: boolean, rolePodcast: boolean): Promise<User> {
+		orm: Orm,
+		name: string,
+		email: string,
+		pass: string,
+		roleAdmin: boolean,
+		roleStream: boolean,
+		roleUpload: boolean,
+		rolePodcast: boolean
+	): Promise<User> {
 		const hashAndSalt = await bcryptPassword(pass.trim());
 		const user: User = orm.User.create({ name, hash: hashAndSalt, email, roleAdmin, roleStream, roleUpload, rolePodcast });
 		await orm.User.persistAndFlush(user);
@@ -182,8 +189,7 @@ export class UserService {
 			return Promise.reject(invalidParameterError('name', 'Username already exists'));
 		}
 		const pass = randomString(32);
-		return await this.createUser(orm, parameters.name,
-			parameters.email ?? '', pass, !!parameters.roleAdmin, !!parameters.roleStream, !!parameters.roleUpload, !!parameters.rolePodcast);
+		return await this.createUser(orm, parameters.name, parameters.email ?? '', pass, !!parameters.roleAdmin, !!parameters.roleStream, !!parameters.roleUpload, !!parameters.rolePodcast);
 	}
 
 	public async update(orm: Orm, user: User, parameters?: UserMutateParameters): Promise<User> {

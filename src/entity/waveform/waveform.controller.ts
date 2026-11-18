@@ -16,10 +16,7 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 
 @Controller('/waveform', { tags: ['Waveform'], roles: [UserRole.stream] })
 export class WaveformController {
-	@Get('/json',
-		() => WaveFormData,
-		{ description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' }
-	)
+	@Get('/json', () => WaveFormData, { description: 'Get Peaks Waveform Data as JSON [Episode, Track]', summary: 'Get JSON' })
 	async json(
 		@QueryParameter('id', { description: 'Object Id', isID: true }) id: string,
 		@RestContext() { orm, engine }: Context
@@ -42,13 +39,11 @@ export class WaveformController {
 		return Promise.reject(genericError('Error on Waveform generation'));
 	}
 
-	@Get('/svg',
-		() => String,
-		{
-			description: 'Get Peaks Waveform Data as SVG [Episode, Track]', summary: 'Get SVG',
-			responseStringMimeTypes: ['image/svg+xml']
-		}
-	)
+	@Get('/svg', () => String, {
+		description: 'Get Peaks Waveform Data as SVG [Episode, Track]',
+		summary: 'Get SVG',
+		responseStringMimeTypes: ['image/svg+xml']
+	})
 	async svg(
 		@QueryParameters() parameters: WaveformSVGParameters,
 		@RestContext() { orm, engine }: Context
@@ -71,7 +66,8 @@ export class WaveformController {
 	@Get(
 		'/{id}_{width}.{format}',
 		{
-			description: 'Get Peaks Waveform Data [Episode, Track]', summary: 'Get Waveform',
+			description: 'Get Peaks Waveform Data [Episode, Track]',
+			summary: 'Get Waveform',
 			binary: ApiWaveformTypes,
 			customPathParameters: {
 				regex: /(.*?)(_.*?)?(\..*)?$/,

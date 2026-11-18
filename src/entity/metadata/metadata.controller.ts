@@ -30,8 +30,7 @@ import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js
 
 @Controller('/metadata', { tags: ['Meta Data'], roles: [UserRole.stream] })
 export class MetadataController {
-	@Get('/lastfm/lookup', () => MetadataResult,
-		{ description: 'Lookup LastFM data', summary: 'Lookup LastFM' })
+	@Get('/lastfm/lookup', () => MetadataResult, { description: 'Lookup LastFM data', summary: 'Lookup LastFM' })
 	async lastfmLookup(
 		@QueryParameters() parameters: LastFMLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -39,8 +38,7 @@ export class MetadataController {
 		return { data: await engine.metadata.lastFMLookup(orm, parameters.type, parameters.mbID) };
 	}
 
-	@Get('/lyricsovh/search', () => MetadataTrackLyricsResult,
-		{ description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' })
+	@Get('/lyricsovh/search', () => MetadataTrackLyricsResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' })
 	async lyricsovhSearch(
 		@QueryParameters() parameters: LyricsOVHSearchParameters,
 		@RestContext() { orm, engine }: Context
@@ -48,8 +46,7 @@ export class MetadataController {
 		return { data: await engine.metadata.lyricsOVH(orm, parameters.artist, parameters.title) };
 	}
 
-	@Get('/lrclib/get', () => MetadataResult,
-		{ description: 'Get Lrclib.net data', summary: 'Get Lyrics on lrclib.net' })
+	@Get('/lrclib/get', () => MetadataResult, { description: 'Get Lrclib.net data', summary: 'Get Lyrics on lrclib.net' })
 	async lcrlibSearch(
 		@QueryParameters() parameters: LrclibSearchParameters,
 		@RestContext() { orm, engine }: Context
@@ -57,8 +54,7 @@ export class MetadataController {
 		return { data: await engine.metadata.lrclibGet(orm, parameters.artist, parameters.title, parameters.album, parameters.duration) };
 	}
 
-	@Get('/acoustid/lookup', () => MetadataResult,
-		{ description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' })
+	@Get('/acoustid/lookup', () => MetadataResult, { description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' })
 	async acoustidLookup(
 		@QueryParameters() { trackID, inc }: AcoustidLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -67,8 +63,7 @@ export class MetadataController {
 		return { data: await engine.metadata.acoustidLookupTrack(track, inc) };
 	}
 
-	@Get('/musicbrainz/lookup', () => MetadataResult,
-		{ description: 'Lookup MusicBrainz data', summary: 'Lookup MusicBrainz' })
+	@Get('/musicbrainz/lookup', () => MetadataResult, { description: 'Lookup MusicBrainz data', summary: 'Lookup MusicBrainz' })
 	async musicbrainzLookup(
 		@QueryParameters() parameters: MusicBrainzLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -76,8 +71,7 @@ export class MetadataController {
 		return { data: await engine.metadata.musicbrainzLookup(orm, parameters.type, parameters.mbID, parameters.inc) };
 	}
 
-	@Get('/musicbrainz/search', () => MetadataResult,
-		{ description: 'Search MusicBrainz data', summary: 'Search MusicBrainz' })
+	@Get('/musicbrainz/search', () => MetadataResult, { description: 'Search MusicBrainz data', summary: 'Search MusicBrainz' })
 	async musicbrainzSearch(
 		@QueryParameters() parameters: MusicBrainzSearchParameters,
 		@RestContext() { orm, engine }: Context
@@ -85,8 +79,7 @@ export class MetadataController {
 		return { data: await engine.metadata.musicbrainzSearch(orm, parameters.type, { ...parameters, type: undefined }) };
 	}
 
-	@Get('/acousticbrainz/lookup', () => MetadataResult,
-		{ description: 'Lookup AcousticBrainz data', summary: 'Lookup AcousticBrainz' })
+	@Get('/acousticbrainz/lookup', () => MetadataResult, { description: 'Lookup AcousticBrainz data', summary: 'Lookup AcousticBrainz' })
 	async acousticbrainzLookup(
 		@QueryParameters() { mbID, nr }: AcousticBrainzLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -94,8 +87,7 @@ export class MetadataController {
 		return { data: await engine.metadata.acousticbrainzLookup(orm, mbID, nr) };
 	}
 
-	@Get('/coverartarchive/lookup', () => MetadataResult,
-		{ description: 'Lookup CoverArtArchive data', summary: 'Lookup CoverArtArchive' })
+	@Get('/coverartarchive/lookup', () => MetadataResult, { description: 'Lookup CoverArtArchive data', summary: 'Lookup CoverArtArchive' })
 	async coverartarchiveLookup(
 		@QueryParameters() { type, mbID }: CoverArtArchiveLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -105,7 +97,8 @@ export class MetadataController {
 
 	@Get('/coverartarchive/image', {
 		binary: ApiImageTypes,
-		description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
+		description: 'Get CoverArtArchive image',
+		summary: 'Request CoverArtArchive Image'
 	})
 	async coverartarchiveImage(
 		@QueryParameters() { url }: CoverArtArchiveImageParameters,
@@ -114,8 +107,7 @@ export class MetadataController {
 		return engine.metadata.coverartarchiveImage(url);
 	}
 
-	@Get('/wikipedia/summary', () => MetadataResult,
-		{ description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' })
+	@Get('/wikipedia/summary', () => MetadataResult, { description: 'Search Wikipedia Summary data', summary: 'Search Wikipedia' })
 	async wikipediaSummarySearch(
 		@QueryParameters() { title, lang }: WikipediaSummaryParameters,
 		@RestContext() { orm, engine }: Context
@@ -123,8 +115,7 @@ export class MetadataController {
 		return { data: await engine.metadata.wikipediaSummary(orm, title, lang) };
 	}
 
-	@Get('/wikidata/summary', () => MetadataResult,
-		{ description: 'Search WikiData summary data', summary: 'Search Wikidata' })
+	@Get('/wikidata/summary', () => MetadataResult, { description: 'Search WikiData summary data', summary: 'Search Wikidata' })
 	async wikidataSummarySearch(
 		@QueryParameters() { wikiDataID, lang }: WikidataSummaryParameters,
 		@RestContext() { orm, engine }: Context
@@ -132,8 +123,7 @@ export class MetadataController {
 		return { data: await engine.metadata.wikidataSummary(orm, wikiDataID, lang) };
 	}
 
-	@Get('/wikidata/lookup', () => MetadataResult,
-		{ description: 'Lookup WikiData summary data', summary: 'Lookup WikiData' })
+	@Get('/wikidata/lookup', () => MetadataResult, { description: 'Lookup WikiData summary data', summary: 'Lookup WikiData' })
 	async wikidataLookup(
 		@QueryParameters() { wikiDataID }: WikidataLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -141,8 +131,7 @@ export class MetadataController {
 		return { data: await engine.metadata.wikidataLookup(orm, wikiDataID) };
 	}
 
-	@Get('/discogs/search/release', () => MetadataResult,
-		{ description: 'Search Discogs release data', summary: 'Search Discogs' })
+	@Get('/discogs/search/release', () => MetadataResult, { description: 'Search Discogs release data', summary: 'Search Discogs' })
 	async discogsReleaseSearch(
 		@QueryParameters() parameters: DiscogsSearchParameters,
 		@RestContext() { orm, engine }: Context
@@ -150,8 +139,7 @@ export class MetadataController {
 		return { data: await engine.metadata.discogsReleaseSearch(orm, parameters) };
 	}
 
-	@Get('/discogs/search/artist', () => MetadataResult,
-		{ description: 'Search Discogs artist data', summary: 'Search Discogs Artist' })
+	@Get('/discogs/search/artist', () => MetadataResult, { description: 'Search Discogs artist data', summary: 'Search Discogs Artist' })
 	async discogsArtistSearch(
 		@QueryParameters() { query }: DiscogsArtistSearchParameters,
 		@RestContext() { orm, engine }: Context
@@ -159,8 +147,7 @@ export class MetadataController {
 		return { data: await engine.metadata.discogsArtistSearch(orm, query) };
 	}
 
-	@Get('/discogs/release', () => MetadataResult,
-		{ description: 'Lookup Discogs release by ID', summary: 'Lookup Discogs Release' })
+	@Get('/discogs/release', () => MetadataResult, { description: 'Lookup Discogs release by ID', summary: 'Lookup Discogs Release' })
 	async discogsReleaseLookup(
 		@QueryParameters() { id }: DiscogsReleaseLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -168,8 +155,7 @@ export class MetadataController {
 		return { data: await engine.metadata.discogsRelease(orm, id) };
 	}
 
-	@Get('/discogs/artist', () => MetadataResult,
-		{ description: 'Lookup Discogs artist by ID', summary: 'Lookup Discogs Artist' })
+	@Get('/discogs/artist', () => MetadataResult, { description: 'Lookup Discogs artist by ID', summary: 'Lookup Discogs Artist' })
 	async discogsArtistLookup(
 		@QueryParameters() { id }: DiscogsArtistLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -177,8 +163,7 @@ export class MetadataController {
 		return { data: await engine.metadata.discogsArtist(orm, id) };
 	}
 
-	@Get('/discogs/master', () => MetadataResult,
-		{ description: 'Lookup Discogs master release by ID', summary: 'Lookup Discogs Master' })
+	@Get('/discogs/master', () => MetadataResult, { description: 'Lookup Discogs master release by ID', summary: 'Lookup Discogs Master' })
 	async discogsMasterLookup(
 		@QueryParameters() { id }: DiscogsMasterLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -186,8 +171,7 @@ export class MetadataController {
 		return { data: await engine.metadata.discogsMaster(orm, id) };
 	}
 
-	@Get('/discogs/master/versions', () => MetadataResult,
-		{ description: 'Lookup Discogs master release versions by ID', summary: 'Lookup Discogs Master Versions' })
+	@Get('/discogs/master/versions', () => MetadataResult, { description: 'Lookup Discogs master release versions by ID', summary: 'Lookup Discogs Master Versions' })
 	async discogsMasterVersionsLookup(
 		@QueryParameters() { id }: DiscogsMasterLookupParameters,
 		@RestContext() { orm, engine }: Context
@@ -197,7 +181,8 @@ export class MetadataController {
 
 	@Get('/discogs/image', {
 		binary: ApiImageTypes,
-		description: 'Get Discogs image', summary: 'Request Discogs Image'
+		description: 'Get Discogs image',
+		summary: 'Request Discogs Image'
 	})
 	async discogsImage(
 		@QueryParameters() { url }: DiscogsImageParameters,

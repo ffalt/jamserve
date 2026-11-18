@@ -26,8 +26,7 @@ export class NowPlayingController {
 	): Promise<Array<NowPlaying>> {
 		const result = await engine.nowPlaying.getNowPlaying();
 		return await Promise.all(result.map(o =>
-			engine.transform.nowPlaying(orm, o, nowPlayingParameters, trackParameters, episodeParameters, user))
-		);
+			engine.transform.nowPlaying(orm, o, nowPlayingParameters, trackParameters, episodeParameters, user)));
 	}
 
 	@Post('/scrobble', { description: 'Report playing (scrobble) a media file [Track, Episode]', summary: 'Scrobble' })

@@ -10,10 +10,13 @@ import { Context } from '../../engine/rest/context.js';
 import { SubsonicParameters } from '../decorators/subsonic-parameters.js';
 import { SubsonicParameterArtistInfo, SubsonicParameterID, SubsonicParameterIndexes, SubsonicParameterMusicFolderID, SubsonicParameterSimilarSongs, SubsonicParameterTopSongs } from '../model/subsonic-rest-parameters.js';
 import {
-	SubsonicAlbumWithSongsID3, SubsonicArtist, SubsonicArtistID3,
+	SubsonicAlbumWithSongsID3,
+	SubsonicArtist,
+	SubsonicArtistID3,
 	SubsonicArtistWithAlbumsID3,
 	SubsonicChild,
-	SubsonicGenre, SubsonicMusicFolder,
+	SubsonicGenre,
+	SubsonicMusicFolder,
 	SubsonicResponseAlbumInfo,
 	SubsonicResponseAlbumWithSongsID3,
 	SubsonicResponseArtistInfo,
@@ -27,7 +30,9 @@ import {
 	SubsonicResponseSimilarSongs,
 	SubsonicResponseSimilarSongs2,
 	SubsonicResponseSong,
-	SubsonicResponseTopSongs, SubsonicResponseVideoInfo, SubsonicResponseVideos
+	SubsonicResponseTopSongs,
+	SubsonicResponseVideoInfo,
+	SubsonicResponseVideos
 } from '../model/subsonic-rest-data.js';
 import { SubsonicController } from '../decorators/subsonic-controller.js';
 import { SubsonicContext } from '../decorators/subsonic-context.js';
@@ -336,7 +341,8 @@ export class SubsonicBrowsingApi {
 		 */
 		const artistIndex = await orm.Artist.indexFilter(
 			{ rootIDs: query.musicFolderId ? [query.musicFolderId] : undefined },
-			user, engine.settings.settings.index.ignoreArticles
+			user,
+			engine.settings.settings.index.ignoreArticles
 		);
 		let ids: Array<string> = [];
 		for (const group of artistIndex.groups) {

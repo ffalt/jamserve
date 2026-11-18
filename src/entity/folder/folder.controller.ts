@@ -21,10 +21,7 @@ import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/folder', { tags: ['Folder'], roles: [UserRole.stream] })
 export class FolderController {
-	@Get('/id',
-		() => Folder,
-		{ description: 'Get a Folder by Id', summary: 'Get Folder' }
-	)
+	@Get('/id', () => Folder, { description: 'Get a Folder by Id', summary: 'Get Folder' })
 	async id(
 		@QueryParameter('id', { description: 'Folder Id', isID: true }) id: string,
 		@QueryParameters() folderParameters: IncludesFolderParameters,
@@ -34,8 +31,13 @@ export class FolderController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Folder> {
 		return engine.transform.folder(
-			orm, await orm.Folder.oneOrFailByID(id),
-			folderParameters, folderChildrenParameters, trackParameters, artworkParameters, user
+			orm,
+			await orm.Folder.oneOrFailByID(id),
+			folderParameters,
+			folderChildrenParameters,
+			trackParameters,
+			artworkParameters,
+			user
 		);
 	}
 
@@ -69,12 +71,13 @@ export class FolderController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<FolderPage> {
 		if (list.list) {
-			return await orm.Folder.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.folder(orm, o, folderParameters, folderChildrenParameters, trackParameters, artworkParameters, user)
-			);
+			return await orm.Folder.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.folder(orm, o, folderParameters, folderChildrenParameters, trackParameters, artworkParameters, user));
 		}
 		return await orm.Folder.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.folder(orm, o, folderParameters, folderChildrenParameters, trackParameters, artworkParameters, user)
 		);
 	}
@@ -93,7 +96,10 @@ export class FolderController {
 	): Promise<TrackPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
-			{ folderIDs }, [order], page, user,
+			{ folderIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}
@@ -112,7 +118,10 @@ export class FolderController {
 	): Promise<FolderPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Folder.searchTransformFilter(
-			{ parentIDs: folderIDs }, [order], page, user,
+			{ parentIDs: folderIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Folder.folderBase(orm, o, folderParameters, user)
 		);
 	}
@@ -131,7 +140,10 @@ export class FolderController {
 	): Promise<ArtworkPage> {
 		const folderIDs = await orm.Folder.findIDsFilter(filter, user);
 		return await orm.Artwork.searchTransformFilter(
-			{ folderIDs }, [order], page, user,
+			{ folderIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Artwork.artworkBase(orm, o, artworkParameters, user)
 		);
 	}

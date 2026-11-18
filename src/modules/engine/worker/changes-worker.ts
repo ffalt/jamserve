@@ -38,8 +38,14 @@ export class ChangesWorker extends BaseWorker {
 	private async cleanCacheFiles(changes: Changes): Promise<void> {
 		const imageCleanIds = new IdSet<Base>();
 		for (const changeSet of [
-			changes.albums, changes.artists, changes.artworks, changes.folders,
-			changes.roots, changes.tracks, changes.series, changes.genres
+			changes.albums,
+			changes.artists,
+			changes.artworks,
+			changes.folders,
+			changes.roots,
+			changes.tracks,
+			changes.series,
+			changes.genres
 		]) {
 			imageCleanIds.appendIDs(changeSet.removed.ids());
 			imageCleanIds.appendIDs(changeSet.updated.ids());

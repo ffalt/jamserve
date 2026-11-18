@@ -307,7 +307,13 @@ describe('ChangesWorker.mergeDependendRemovals', () => {
 
 		const stateCall = orm.State.findIDs.mock.calls[0][0] as { where: { destID: Array<string> } };
 		expect(stateCall.where.destID).toEqual(expect.arrayContaining([
-			'track-1', 'album-1', 'artist-1', 'folder-1', 'genre-1', 'root-1', 'series-1'
+			'track-1',
+			'album-1',
+			'artist-1',
+			'folder-1',
+			'genre-1',
+			'root-1',
+			'series-1'
 		]));
 	});
 
@@ -344,11 +350,13 @@ describe('ChangesWorker.mergeDependendRemovals', () => {
 		const removedEntry1 = makeEmptyEntry('pl-1');
 		const removedEntry2 = makeEmptyEntry('pl-2');
 		const playlist1 = {
-			name: 'Playlist 1', duration: 0,
+			name: 'Playlist 1',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([]) }
 		};
 		const playlist2 = {
-			name: 'Playlist 2', duration: 0,
+			name: 'Playlist 2',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([]) }
 		};
 
@@ -379,7 +387,8 @@ describe('ChangesWorker.mergeDependendRemovals', () => {
 	it('deduplicates playlist IDs when multiple entries reference the same playlist', async () => {
 		const removedEntries = [makeEmptyEntry('pl-x'), makeEmptyEntry('pl-x'), makeEmptyEntry('pl-x')];
 		const findByIDsPlaylist = jest.fn<(ids: Array<string>) => Promise<Array<any>>>().mockResolvedValue([{
-			name: 'X', duration: 0,
+			name: 'X',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([]) }
 		}]);
 		const orm = makeOrm({
@@ -591,11 +600,13 @@ describe('ChangesWorker.updateAffectedPlaylists', () => {
 
 	it('updates multiple playlists independently', async () => {
 		const playlist1 = {
-			name: 'Playlist 1', duration: 0,
+			name: 'Playlist 1',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([makeTrackEntry(100)]) }
 		};
 		const playlist2 = {
-			name: 'Playlist 2', duration: 0,
+			name: 'Playlist 2',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([makeTrackEntry(200), makeTrackEntry(300)]) }
 		};
 		const orm = makeOrm({
@@ -617,7 +628,8 @@ describe('ChangesWorker.updateAffectedPlaylists', () => {
 
 	it('does not flush when hasChanges returns false', async () => {
 		const playlist = {
-			name: 'Unchanged Playlist', duration: 0,
+			name: 'Unchanged Playlist',
+			duration: 0,
 			entries: { getItems: jest.fn<() => Promise<Array<any>>>().mockResolvedValue([]) }
 		};
 		const orm = makeOrm({

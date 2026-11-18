@@ -81,12 +81,12 @@ describe('AlbumService.getImage', () => {
 		const { service, folderService } = makeService();
 		const shallow = makeFolder(1);
 		const deep = makeFolder(2);
-		folderService.getImage.mockImplementation(((async (_orm: unknown, folder: unknown) => {
+		folderService.getImage.mockImplementation((async (_orm: unknown, folder: unknown) => {
 			if (folder === shallow) {
 				return folderImage;
 			}
 			return;
-		}) as never));
+		}) as never);
 		const album = makeAlbum({ folders: [shallow, deep] }) as never;
 
 		const result = await service.getImage(mockOrm, album);

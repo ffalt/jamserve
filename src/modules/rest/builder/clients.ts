@@ -45,7 +45,8 @@ export type GenerateBinaryClientCallsFunction = (call: MethodMetadata, name: str
 export type GenerateUploadClientCallsFunction = (call: MethodMetadata, name: string, parameterType: string, upload: RestParameterMetadata) => Array<MustacheDataClientCallFunction>;
 
 function generateClientCalls(
-	call: MethodMetadata, method: 'post' | 'get',
+	call: MethodMetadata,
+	method: 'post' | 'get',
 	generateRequestClientCalls: GenerateRequestClientCallsFunction,
 	generateBinaryClientCalls: GenerateBinaryClientCallsFunction,
 	generateUploadClientCalls: GenerateUploadClientCallsFunction

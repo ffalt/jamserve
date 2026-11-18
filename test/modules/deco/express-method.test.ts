@@ -169,7 +169,9 @@ function registerGet(get: MethodMetadata, options: RestOptions, ctrl?: Controlle
 }
 
 function registerPost(
-	post: MethodMetadata, options: RestOptions, ctrl?: ControllerClassMetadata,
+	post: MethodMetadata,
+	options: RestOptions,
+	ctrl?: ControllerClassMetadata,
 	uploadHandler: (field: string, autoClean?: boolean) => express.RequestHandler = noopUploadHandler
 ): { info: RouteInfo; router: RecordingRouter } {
 	const router = new RecordingRouter();

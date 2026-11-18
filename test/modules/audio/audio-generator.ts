@@ -27,10 +27,14 @@ export async function generateSineWav(filePath: string, durationSeconds = 1, fre
 		// Use lavfi sine source to generate a tone
 		const arguments_ = [
 			'-y',
-			'-f', 'lavfi',
-			'-i', `sine=frequency=${freq}:sample_rate=44100`,
-			'-t', String(durationSeconds),
-			'-c:a', 'pcm_s16le',
+			'-f',
+			'lavfi',
+			'-i',
+			`sine=frequency=${freq}:sample_rate=44100`,
+			'-t',
+			String(durationSeconds),
+			'-c:a',
+			'pcm_s16le',
 			filePath
 		];
 		const p = spawn(bin, arguments_);

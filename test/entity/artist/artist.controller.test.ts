@@ -84,7 +84,14 @@ describe('ArtistController.id', () => {
 
 		expect(orm.Artist.oneOrFailByID).toHaveBeenCalledWith('artist-1');
 		expect(engine.transform.artist).toHaveBeenCalledWith(
-			orm, mockArtist, emptyArtistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters, mockUser
+			orm,
+			mockArtist,
+			emptyArtistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			mockUser
 		);
 		expect(result).toBe(mockArtistDTO);
 	});
@@ -96,7 +103,14 @@ describe('ArtistController.id', () => {
 		await controller.id('artist-1', artistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters, ctx);
 
 		expect(engine.transform.artist).toHaveBeenCalledWith(
-			orm, mockArtist, artistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters, mockUser
+			orm,
+			mockArtist,
+			artistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			mockUser
 		);
 	});
 });
@@ -128,12 +142,24 @@ describe('ArtistController.search', () => {
 		const list: ListParameters = {};
 
 		const result = await controller.search(
-			emptyPage, emptyArtistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyArtistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		expect(orm.Artist.searchTransformFilter).toHaveBeenCalledWith(
-			emptyFilter, [emptyOrder], emptyPage, mockUser, expect.any(Function)
+			emptyFilter,
+			[emptyOrder],
+			emptyPage,
+			mockUser,
+			expect.any(Function)
 		);
 		expect(orm.Artist.findListTransformFilter).not.toHaveBeenCalled();
 		expect(result).toBe(mockArtistPage);
@@ -144,12 +170,26 @@ describe('ArtistController.search', () => {
 		const list: ListParameters = { list: 'random' as never, seed: 'abc' };
 
 		const result = await controller.search(
-			emptyPage, emptyArtistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyArtistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		expect(orm.Artist.findListTransformFilter).toHaveBeenCalledWith(
-			'random', 'abc', emptyFilter, [emptyOrder], emptyPage, mockUser, expect.any(Function)
+			'random',
+			'abc',
+			emptyFilter,
+			[emptyOrder],
+			emptyPage,
+			mockUser,
+			expect.any(Function)
 		);
 		expect(orm.Artist.searchTransformFilter).not.toHaveBeenCalled();
 		expect(result).toBe(mockArtistPage);
@@ -160,14 +200,29 @@ describe('ArtistController.search', () => {
 		const artistParameters: IncludesArtistParameters = { artistIncState: true };
 
 		await controller.search(
-			emptyPage, artistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters,
-			emptyFilter, emptyOrder, {}, ctx
+			emptyPage,
+			artistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			emptyFilter,
+			emptyOrder,
+			{},
+			ctx
 		);
 
 		const callback = orm.Artist.searchTransformFilter.mock.calls[0][4] as (o: unknown) => Promise<unknown>;
 		await callback(mockArtist);
 		expect(engine.transform.artist).toHaveBeenCalledWith(
-			orm, mockArtist, artistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters, mockUser
+			orm,
+			mockArtist,
+			artistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			mockUser
 		);
 	});
 
@@ -176,14 +231,29 @@ describe('ArtistController.search', () => {
 		const list: ListParameters = { list: 'random' as never };
 
 		await controller.search(
-			emptyPage, emptyArtistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters,
-			emptyFilter, emptyOrder, list, ctx
+			emptyPage,
+			emptyArtistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			emptyFilter,
+			emptyOrder,
+			list,
+			ctx
 		);
 
 		const callback = orm.Artist.findListTransformFilter.mock.calls[0][6] as (o: unknown) => Promise<unknown>;
 		await callback(mockArtist);
 		expect(engine.transform.artist).toHaveBeenCalledWith(
-			orm, mockArtist, emptyArtistParameters, emptyChildParameters, emptyTrackParameters, emptyAlbumParameters, emptySeriesParameters, mockUser
+			orm,
+			mockArtist,
+			emptyArtistParameters,
+			emptyChildParameters,
+			emptyTrackParameters,
+			emptyAlbumParameters,
+			emptySeriesParameters,
+			mockUser
 		);
 	});
 });
@@ -218,7 +288,10 @@ describe('ArtistController.similar', () => {
 		expect(orm.Artist.oneOrFailByID).toHaveBeenCalledWith('artist-1');
 		expect(engine.metadata.similarArtists.byArtist).toHaveBeenCalledWith(orm, mockArtist, emptyPage);
 		expect(engine.transform.Artist.artistBases).toHaveBeenCalledWith(
-			orm, [mockArtistDTO], emptyArtistParameters, mockUser
+			orm,
+			[mockArtistDTO],
+			emptyArtistParameters,
+			mockUser
 		);
 		expect(result.items).toEqual([mockArtistDTO]);
 	});
@@ -253,7 +326,10 @@ describe('ArtistController.similarTracks', () => {
 		expect(orm.Artist.oneOrFailByID).toHaveBeenCalledWith('artist-1');
 		expect(engine.metadata.similarTracks.byArtist).toHaveBeenCalledWith(orm, mockArtist, emptyPage);
 		expect(engine.transform.Track.trackBases).toHaveBeenCalledWith(
-			orm, [mockTrackDTO], emptyTrackParameters, mockUser
+			orm,
+			[mockTrackDTO],
+			emptyTrackParameters,
+			mockUser
 		);
 		expect(result.items).toEqual([mockTrackDTO]);
 	});

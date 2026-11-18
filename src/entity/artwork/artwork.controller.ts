@@ -18,10 +18,7 @@ import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
 
 @Controller('/artwork', { tags: ['Artwork'], roles: [UserRole.stream] })
 export class ArtworkController {
-	@Get('/id',
-		() => Artwork,
-		{ description: 'Get an Artwork by Id', summary: 'Get Artwork' }
-	)
+	@Get('/id', () => Artwork, { description: 'Get an Artwork by Id', summary: 'Get Artwork' })
 	async id(
 		@QueryParameter('id', { description: 'Artwork Id', isID: true }) id: string,
 		@QueryParameters() artworkParameters: IncludesArtworkParameters,
@@ -30,8 +27,12 @@ export class ArtworkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Artwork> {
 		return engine.transform.artwork(
-			orm, await orm.Artwork.oneOrFailByID(id),
-			artworkParameters, artworkChildrenParameters, folderParameters, user
+			orm,
+			await orm.Artwork.oneOrFailByID(id),
+			artworkParameters,
+			artworkChildrenParameters,
+			folderParameters,
+			user
 		);
 	}
 
@@ -51,12 +52,13 @@ export class ArtworkController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<ArtworkPage> {
 		if (list.list) {
-			return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user)
-			);
+			return await orm.Artwork.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user));
 		}
 		return await orm.Artwork.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.artwork(orm, o, artworkParameters, artworkChildrenParameters, folderParameters, user)
 		);
 	}

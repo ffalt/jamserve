@@ -207,8 +207,7 @@ export async function id3v2ToFlacMetadata(tag: IID3V2.Tag, imageModule: ImageMod
 		}
 
 		const imageInfo = await imageModule.getImageInfoBuffer(pic.value.bin);
-		const picBlock = MetadataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description,
-			imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
+		const picBlock = MetadataBlockPicture.createPictureBlock(pic.value.pictureType, pic.value.mimeType, pic.value.description, imageInfo.width, imageInfo.height, imageInfo.colorDepth, imageInfo.colors, pic.value.bin);
 		result.push(picBlock);
 	}
 	return result;

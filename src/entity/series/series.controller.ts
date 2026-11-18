@@ -30,8 +30,13 @@ export class SeriesController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Series> {
 		return engine.transform.series(
-			orm, await orm.Series.oneOrFailByID(id),
-			seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user
+			orm,
+			await orm.Series.oneOrFailByID(id),
+			seriesParameters,
+			seriesChildrenParameters,
+			albumParameters,
+			trackParameters,
+			user
 		);
 	}
 
@@ -62,12 +67,13 @@ export class SeriesController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<SeriesPage> {
 		if (list.list) {
-			return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user,
-				o => engine.transform.series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user)
-			);
+			return await orm.Series.findListTransformFilter(list.list, list.seed, filter, [order], page, user, o => engine.transform.series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user));
 		}
 		return await orm.Series.searchTransformFilter(
-			filter, [order], page, user,
+			filter,
+			[order],
+			page,
+			user,
 			o => engine.transform.series(orm, o, seriesParameters, seriesChildrenParameters, albumParameters, trackParameters, user)
 		);
 	}
@@ -99,7 +105,10 @@ export class SeriesController {
 	): Promise<AlbumPage> {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Album.searchTransformFilter(
-			{ seriesIDs }, [order], page, user,
+			{ seriesIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Album.albumBase(orm, o, albumParameters, user)
 		);
 	}
@@ -118,7 +127,10 @@ export class SeriesController {
 	): Promise<TrackPage> {
 		const seriesIDs = await orm.Series.findIDsFilter(filter, user);
 		return await orm.Track.searchTransformFilter(
-			{ seriesIDs }, [order], page, user,
+			{ seriesIDs },
+			[order],
+			page,
+			user,
 			o => engine.transform.Track.trackBase(orm, o, trackParameters, user)
 		);
 	}

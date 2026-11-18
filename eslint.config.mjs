@@ -23,13 +23,23 @@ const unicornRules = {
 	"unicorn/prefer-ternary": "off",
 	"unicorn/no-unnecessary-parameters": "off",
 	"unicorn/prefer-logical-operator-over-ternary": "off",
+	"unicorn/prefer-options-parameter": "off",
 	"unicorn/name-replacements": ["error", {
 		allowList: {
 			mp3val: true
 		},
 		replacements: {
-			docs: false, req: false, res: false, env: false, dir: false, repo: false,
-			db: false, obj: false, utils: false, repository: false, cmd: false
+			docs: false,
+			req: false,
+			res: false,
+			env: false,
+			dir: false,
+			repo: false,
+			db: false,
+			obj: false,
+			utils: false,
+			repository: false,
+			cmd: false
 		}
 	}],
 	"unicorn/prefer-at": ["error", { checkAllIndexAccess: true }]
@@ -57,6 +67,7 @@ const tsRules = {
 	"@typescript-eslint/no-unnecessary-type-assertion": "off",
 	"@typescript-eslint/no-unnecessary-type-parameters": "off",
 	"@typescript-eslint/no-unsafe-assignment": "off",
+	"@typescript-eslint/no-unsafe-class-instance-assignment": "off",
 	"@typescript-eslint/no-unsafe-enum-comparison": "off",
 	"@typescript-eslint/no-unsafe-function-type": "off",
 	"@typescript-eslint/no-unsafe-member-access": "off",

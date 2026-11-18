@@ -44,9 +44,7 @@ export class SubsonicPodcastApi {
 		for (const podcast of podcastList) {
 			const pod = await SubsonicFormatter.packPodcast(podcast, (engine.podcast.isDownloading(podcast.id) ? PodcastStatus.downloading : undefined));
 			if (includeEpisodes) {
-				pod.episode = await SubsonicHelper.prepareEpisodes(engine, orm,
-					await orm.Episode.findFilter({ podcastIDs: [podcast.id] }, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }]),
-					user);
+				pod.episode = await SubsonicHelper.prepareEpisodes(engine, orm, await orm.Episode.findFilter({ podcastIDs: [podcast.id] }, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }]), user);
 			}
 			channel.push(pod);
 		}
@@ -68,9 +66,7 @@ export class SubsonicPodcastApi {
 		Parameter 	Required 	Default 	Comment
 		count 	No 	20 	The maximum number of episodes to return.
 		 */
-		const episodes = await orm.Episode.findFilter({},
-			[{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count ?? 20, skip: query.offset ?? 0 },
-			user);
+		const episodes = await orm.Episode.findFilter({}, [{ orderBy: EpisodeOrderFields.date, orderDesc: true }], { take: query.count ?? 20, skip: query.offset ?? 0 }, user);
 		const newestPodcasts: SubsonicNewestPodcasts = {
 			episode: await SubsonicHelper.prepareEpisodes(engine, orm, episodes, user)
 		};
