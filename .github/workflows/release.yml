@@ -91,6 +91,10 @@ jobs:
         run: |
           cd deploy && zip -r ./jamserve-release.zip .
 
+      - name: Create Release Checksum
+        run: |
+          cd deploy && sha256sum jamserve-release.zip > jamserve-release.zip.sha256
+
       - name: Attest Release Package
         uses: actions/attest-build-provenance@v4.2.2
         with:
@@ -103,4 +107,5 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --notes-file ./RELEASELOG.md \
-            ./deploy/jamserve-release.zip
+            ./deploy/jamserve-release.zip \
+            ./deploy/jamserve-release.zip.sha256
