@@ -49,7 +49,7 @@ export class SubsonicMediaRetrievalApi {
 		 timeOffset 	No 		Only applicable to video streaming. If specified, start streaming at the given offset (in seconds) into the video. Typically used to implement video skipping.
 		 size 	No 		(Since 1.6.0) Only applicable to video streaming. Requested video size specified as WxH, for instance "640x480".
 		 estimateContentLength 	No 	false 	(Since 1.8.0). If set to "true", the Content-Length HTTP header will be set to an estimated value for transcoded or downsampled media.
-		 converted 	No 	false 	(Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4. If a conversion exists for the video in question, then setting this parameter to "true" will cause the converted video to be returned instead of the original.
+		 converted 	No 	false 	(Since 1.14.0) Only applicable to video streaming. Subsonic can optimize videos for streaming by converting them to MP4.
 		 */
 		const o = await orm.findInStreamTypes(query.id);
 		if (!o?.obj) {

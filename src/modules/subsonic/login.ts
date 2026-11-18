@@ -11,9 +11,12 @@ Starting with API version 1.13.0, the recommended authentication scheme is to se
 
 This involves two steps:
 
-    For each REST call, generate a random string called the salt. Send this as parameter s.
-    Use a salt length of at least six characters.
-    Calculate the authentication token as follows: token = md5(password + salt). The md5() function takes a string and returns the 32-byte ASCII hexadecimal representation of the MD5 hash, using lower case characters for the hex values. The '+' operator represents concatenation of the two strings. Treat the strings as UTF-8 encoded when calculating the hash. Send the result as parameter t.
+For each REST call, generate a random string called the salt. Send this as parameter s.
+Use a salt length of at least six characters.
+Calculate the authentication token as follows: token = md5(password + salt).
+The md5() function takes a string and returns the 32-byte ASCII hexadecimal representation of the MD5 hash,
+using lower case characters for the hex values. The '+' operator represents concatenation of the two strings.
+Treat the strings as UTF-8 encoded when calculating the hash. Send the result as parameter t.
 
 For example: if the password is sesame and the random salt is c19b2d, then token = md5("sesamec19b2d") = 26719a1196d2a940705a59634eb18eab. The corresponding request URL then becomes:
 

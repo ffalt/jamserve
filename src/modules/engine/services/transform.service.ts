@@ -124,7 +124,16 @@ export class TransformService {
 		};
 	}
 
-	async artist(orm: Orm, o: ORMArtist, artistParameters: IncludesArtistParameters, artistChildrenParameters: IncludesArtistChildrenParameters, trackParameters: IncludesTrackParameters, albumParameters: IncludesAlbumParameters, seriesParameters: IncludesSeriesParameters, user: User): Promise<Artist> {
+	async artist(
+		orm: Orm,
+		o: ORMArtist,
+		artistParameters: IncludesArtistParameters,
+		artistChildrenParameters: IncludesArtistChildrenParameters,
+		trackParameters: IncludesTrackParameters,
+		albumParameters: IncludesAlbumParameters,
+		seriesParameters: IncludesSeriesParameters,
+		user: User
+	): Promise<Artist> {
 		return {
 			...(await this.Artist.artistBase(orm, o, artistParameters, user)),
 			tracks: artistChildrenParameters.artistIncTracks ? await this.Track.trackBases(orm, await o.tracks.getItems(), trackParameters, user) : undefined,

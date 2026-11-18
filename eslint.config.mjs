@@ -118,7 +118,8 @@ export default ts.config(
 		rules: {
 			...unicornRules,
 			...stylisticRules,
-			...tsRules
+			...tsRules,
+			"max-len": ["error", { code: 300 }]
 		},
 		ignores: ["**/test/**"]
 	},
