@@ -92,6 +92,12 @@ export class TrackLyricsQL {
 	lyrics?: string;
 
 	@Field(() => String, { nullable: true })
+	syncedLyrics?: string;
+
+	@Field(() => String, { nullable: true })
+	language?: string;
+
+	@Field(() => String, { nullable: true })
 	source?: string;
 }
 

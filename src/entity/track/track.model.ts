@@ -40,7 +40,8 @@ export class TrackLyrics {
 
 	@ObjectField({
 		nullable: true,
-		description: 'Synced Lyrics'
+		description: 'Synced Lyrics',
+		example: '[00:00.10]I got a letter from the government\n[00:02.30]The other day\n[00:04.50]I opened and read it\n[00:06.20]It said they were suckers\n[00:08.10] They wanted me for their army or whatever\n[00:10.40] Picture me given’ a damn, I said never.'
 	})
 	syncedLyrics?: string;
 

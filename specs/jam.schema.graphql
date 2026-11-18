@@ -808,6 +808,8 @@ scalar JSON
 
 type TrackLyricsQL {
   lyrics: String
+  syncedLyrics: String
+  language: String
   source: String
 }
 
