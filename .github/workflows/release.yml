@@ -52,6 +52,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.1
@@ -88,6 +90,11 @@ jobs:
       - name: Create Release Package
         run: |
           cd deploy && zip -r ./jamserve-release.zip .
+
+      - name: Attest Release Package
+        uses: actions/attest-build-provenance@v4.2.2
+        with:
+          subject-path: ./deploy/jamserve-release.zip
 
       - name: Create Release
         env:
