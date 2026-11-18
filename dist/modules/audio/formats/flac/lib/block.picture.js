@@ -41,7 +41,7 @@ export class MetadataBlockPicture extends MetaWriteableDataBlock {
             pos += 16;
             const pictureDataLength = buffer.readUInt32BE(pos);
             this.pictureData = Buffer.alloc(pictureDataLength);
-            buffer.copy(this.pictureData, 0, pos + 4, pictureDataLength);
+            buffer.copy(this.pictureData, 0, pos + 4, pos + 4 + pictureDataLength);
             this.hasData = true;
         }
         catch (error) {
@@ -81,7 +81,8 @@ export class MetadataBlockPicture extends MetaWriteableDataBlock {
         return buffer;
     }
     getSize() {
-        return Buffer.byteLength(this.mimeType) + 4 +
+        return 4 +
+            Buffer.byteLength(this.mimeType) + 4 +
             Buffer.byteLength(this.description) + 4 +
             16 +
             (this.pictureData?.length ?? 0) + 4;

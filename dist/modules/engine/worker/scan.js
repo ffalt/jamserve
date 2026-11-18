@@ -321,10 +321,10 @@ export class WorkerScan {
         const artworks = await this.loadArtworks(folders.map(folder => folder.id));
         this.folderArtworks = WorkerScan.groupByID(artworks, artwork => artwork.folder.id());
     }
-    async match(dir) {
+    async match(dir, startFolder) {
         this.root = await this.orm.Root.oneOrFailByID(this.rootID);
         await this.preload();
-        const parent = await this.orm.Folder.findOne({ where: { path: dir.path } });
+        const parent = startFolder ?? await this.orm.Folder.findOne({ where: { path: dir.path } });
         if (!parent) {
             const oldParent = await this.orm.Folder.findOneFilter({ rootIDs: [this.root.id], level: 0 });
             if (oldParent) {

@@ -110,13 +110,25 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         }
         changes.roots.removed.add(root);
     }
-    async scan(orm, root, changes) {
+    async scan(orm, root, changes, startFolder) {
         const dirScanner = new DirScanner();
-        const scanDir = await dirScanner.scan(root.path);
+        const scanDir = await dirScanner.scan(startFolder?.path ?? root.path, startFolder?.level ?? 0);
         const scanMatcher = new WorkerScan(orm, root.id, this.audioModule, this.imageModule, changes);
-        const rootMatch = await scanMatcher.match(scanDir);
+        const match = await scanMatcher.match(scanDir, startFolder);
+        const scanned = WorkerMergeScan.buildNodes(match);
+        const mergeRoot = startFolder ? await this.extendToRoot(scanned) : scanned;
         const scanMerger = new WorkerMergeScan(orm, root.strategy, changes);
-        await scanMerger.mergeMatch(rootMatch);
+        await scanMerger.merge(mergeRoot);
+    }
+    async extendToRoot(node) {
+        const parents = await this.getParents(node.folder);
+        let current = node;
+        for (const parent of parents.toReversed()) {
+            const tracks = await RootWorker_1.buildMergeTracks(parent);
+            current = { changed: true, folder: parent, path: parent.path, children: [current], tracks, nrOfTracks: tracks.length };
+            await this.loadUnchangedSiblings(current);
+        }
+        return current;
     }
     async refreshMeta(orm, root, changes) {
         const trackIDs = await orm.Track.findIDsFilter({ rootIDs: [root.id] });
@@ -231,23 +243,35 @@ let RootWorker = RootWorker_1 = class RootWorker extends BaseWorker {
         return [...(await this.getParents(parent)), parent];
     }
     async loadEmptyUnchanged(node) {
+        const known = [...node.children];
+        await this.loadUnchangedSiblings(node);
+        for (const child of known) {
+            await this.loadEmptyUnchanged(child);
+        }
+    }
+    async loadUnchangedSiblings(node) {
         const folders = await node.folder.children.getItems();
         for (const folder of folders) {
-            const child = node.children.find(f => f.folder.id === folder.id);
-            if (child) {
-                await this.loadEmptyUnchanged(child);
+            if (node.children.some(f => f.folder.id === folder.id)) {
+                continue;
             }
-            else {
-                node.children.push({
-                    changed: false,
-                    folder,
-                    path: folder.path,
-                    children: [],
-                    nrOfTracks: await folder.tracks.count(),
-                    tracks: []
-                });
-            }
+            node.children.push(await this.loadUnchangedNode(folder));
         }
+    }
+    async loadUnchangedNode(folder) {
+        const node = {
+            changed: false,
+            folder,
+            path: folder.path,
+            children: [],
+            nrOfTracks: await folder.tracks.count(),
+            tracks: []
+        };
+        const children = await folder.children.getItems();
+        for (const child of children) {
+            node.children.push(await this.loadUnchangedNode(child));
+        }
+        return node;
     }
     logNode(node) {
         let stat = [`${' '.repeat(node?.folder.level ?? 0)}${node?.changed ? '** ' : '|- '}${node?.folder.path}`];

@@ -104,10 +104,7 @@ export class JamAuthService {
 			if (error instanceof HttpErrorResponse) {
 				return Promise.reject(new Error(error.message || `HTTP error ${error.status}`));
 			}
-			if (error instanceof Error && error.message) {
-				return Promise.reject(new Error(error.message));
-			}
-			return Promise.reject(new Error('Server Error'));
+			return Promise.reject(new Error(error instanceof Error && error.message ? error.message : 'Server Error'));
 		}
 	}
 
@@ -119,10 +116,7 @@ export class JamAuthService {
 	}
 
 	getHTTPOptions(): HTTPOptions {
-		if (this.auth?.token) {
-			return { withCredentials: false, headers: this.getHTTPHeaders() };
-		}
-		return { withCredentials: true };
+		return this.auth?.token ? { withCredentials: false, headers: this.getHTTPHeaders() } : { withCredentials: true };
 	}
 
 	async logout(): Promise<void> {

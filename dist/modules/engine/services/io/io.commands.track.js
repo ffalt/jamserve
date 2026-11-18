@@ -48,6 +48,14 @@ export class IoCommandsTrack {
         this.delayedTrackTagWrite.startTimeOut(delayedCmd, request => this.owner.addRequest(request));
         return this.owner.getRequestInfo(delayedCmd.request);
     }
+    async embedLyrics(trackID, lyrics, rootID) {
+        const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.embedTrackLyrics);
+        if (oldRequest) {
+            oldRequest.parameters.lyrics.push({ trackID, lyrics });
+            return this.owner.getRequestInfo(oldRequest);
+        }
+        return this.owner.newRequest(WorkerRequestMode.embedTrackLyrics, p => this.owner.workerService.track.embedLyrics(p), { rootID, lyrics: [{ trackID, lyrics }] });
+    }
     async fix(trackID, fixID, rootID) {
         const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.fixTrack);
         if (oldRequest) {

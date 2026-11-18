@@ -25,8 +25,8 @@ export class Jam{{part}}Service {
 
 	{{#description}}
 	/**
-	 * {{{description}}}
-	 */
+	{{{description}}}
+	*/
 	{{/description}}
 	{{^sync}}async {{/sync}}{{{name}}}({{{paramName}}}{{#paramsType}}: {{{paramsType}}}{{/paramsType}}): {{^sync}}Promise<{{/sync}}{{{resultType}}}{{^sync}}>{{/sync}} {
     	{{#validate}}

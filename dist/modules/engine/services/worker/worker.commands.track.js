@@ -27,6 +27,12 @@ export class WorkerCommandsTrack {
         await this.owner.trackWorker.fix(orm, parameters.fixes, changes);
         return this.owner.changes.finish(orm, changes, root);
     }
+    async embedLyrics(parameters) {
+        const { root, orm, changes } = await this.owner.changes.start(parameters.rootID);
+        await this.owner.trackWorker.embedLyrics(orm, parameters.lyrics, changes);
+        await this.owner.rootWorker.mergeChanges(orm, root, changes);
+        return this.owner.changes.finish(orm, changes, root);
+    }
     async writeTags(parameters) {
         const { root, orm, changes } = await this.owner.changes.start(parameters.rootID);
         await this.owner.trackWorker.writeTags(orm, parameters.tags, changes);

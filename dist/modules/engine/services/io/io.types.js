@@ -11,15 +11,17 @@ export var WorkerRequestMode;
     WorkerRequestMode[WorkerRequestMode["removeTracks"] = 7] = "removeTracks";
     WorkerRequestMode[WorkerRequestMode["renameTrack"] = 8] = "renameTrack";
     WorkerRequestMode[WorkerRequestMode["writeTrackTags"] = 9] = "writeTrackTags";
-    WorkerRequestMode[WorkerRequestMode["createFolder"] = 10] = "createFolder";
-    WorkerRequestMode[WorkerRequestMode["deleteFolders"] = 11] = "deleteFolders";
-    WorkerRequestMode[WorkerRequestMode["moveFolders"] = 12] = "moveFolders";
-    WorkerRequestMode[WorkerRequestMode["renameFolder"] = 13] = "renameFolder";
-    WorkerRequestMode[WorkerRequestMode["deleteArtwork"] = 14] = "deleteArtwork";
-    WorkerRequestMode[WorkerRequestMode["downloadArtwork"] = 15] = "downloadArtwork";
-    WorkerRequestMode[WorkerRequestMode["replaceArtwork"] = 16] = "replaceArtwork";
-    WorkerRequestMode[WorkerRequestMode["createArtwork"] = 17] = "createArtwork";
-    WorkerRequestMode[WorkerRequestMode["renameArtwork"] = 18] = "renameArtwork";
+    WorkerRequestMode[WorkerRequestMode["embedTrackLyrics"] = 10] = "embedTrackLyrics";
+    WorkerRequestMode[WorkerRequestMode["createFolder"] = 11] = "createFolder";
+    WorkerRequestMode[WorkerRequestMode["deleteFolders"] = 12] = "deleteFolders";
+    WorkerRequestMode[WorkerRequestMode["moveFolders"] = 13] = "moveFolders";
+    WorkerRequestMode[WorkerRequestMode["renameFolder"] = 14] = "renameFolder";
+    WorkerRequestMode[WorkerRequestMode["refreshFolders"] = 15] = "refreshFolders";
+    WorkerRequestMode[WorkerRequestMode["deleteArtwork"] = 16] = "deleteArtwork";
+    WorkerRequestMode[WorkerRequestMode["downloadArtwork"] = 17] = "downloadArtwork";
+    WorkerRequestMode[WorkerRequestMode["replaceArtwork"] = 18] = "replaceArtwork";
+    WorkerRequestMode[WorkerRequestMode["createArtwork"] = 19] = "createArtwork";
+    WorkerRequestMode[WorkerRequestMode["renameArtwork"] = 20] = "renameArtwork";
 })(WorkerRequestMode || (WorkerRequestMode = {}));
 export class IoRequest {
     constructor(id, mode, execute, parameters) {

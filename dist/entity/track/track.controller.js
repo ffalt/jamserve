@@ -24,6 +24,8 @@ import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 import { Post } from '../../modules/rest/decorators/post.js';
 import { BodyParameters } from '../../modules/rest/decorators/body-parameters.js';
 import { BodyParameter } from '../../modules/rest/decorators/body-parameter.js';
+import { invalidParameterError, notFoundError } from '../../modules/deco/express/express-error.js';
+import { fileSuffix } from '../../utils/fs-utils.js';
 let TrackController = class TrackController {
     async id(id, trackParameters, { orm, engine, user }) {
         return engine.transform.track(orm, await orm.Track.oneOrFailByID(id), trackParameters, user);
@@ -85,8 +87,22 @@ let TrackController = class TrackController {
         const track = await orm.Track.oneOrFailByID(parameters.id);
         return await engine.io.track.fix(parameters.id, parameters.fixID, track.root.idOrFail());
     }
+    async lyricsEmbed(id, { orm, engine }) {
+        const track = await orm.Track.oneOrFailByID(id);
+        if (!engine.audio.isWriteLyricsSupported(track.fileName)) {
+            return Promise.reject(invalidParameterError('id', `Embedding lyrics is not supported for ${fileSuffix(track.fileName)} format`));
+        }
+        const lyrics = await engine.metadata.lyricsByTrack(orm, track);
+        if (!(lyrics.lyrics || lyrics.syncedLyrics)) {
+            return Promise.reject(notFoundError('No lyrics found for this track'));
+        }
+        return await engine.io.track.embedLyrics(id, lyrics, track.root.idOrFail());
+    }
     async rawTagSet(parameters, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(parameters.id);
+        if (!engine.audio.isWriteRawTagSupported(track.fileName)) {
+            return Promise.reject(invalidParameterError('id', `Writing tags is not supported for ${fileSuffix(track.fileName)} format`));
+        }
         return await engine.io.track.writeTags(parameters.id, parameters.tag, track.root.idOrFail());
     }
 };
@@ -186,6 +202,14 @@ __decorate([
     __metadata("design:paramtypes", [TrackFixParameters, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "fix", null);
+__decorate([
+    Post('/lyrics/embed', () => AdminChangeQueueInfo, { description: 'Embed the Lyrics of a Track into the Media File by Track Id', roles: [UserRole.admin], summary: 'Embed Lyrics' }),
+    __param(0, BodyParameter('id', { description: 'Track Id', isID: true })),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], TrackController.prototype, "lyricsEmbed", null);
 __decorate([
     Post('/rawTag/set', () => AdminChangeQueueInfo, { description: 'Write a Raw Rag to a Track by Track Id', roles: [UserRole.admin], summary: 'Set Raw Tag' }),
     __param(0, BodyParameters()),

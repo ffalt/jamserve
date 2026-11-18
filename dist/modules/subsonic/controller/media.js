@@ -21,6 +21,7 @@ import { SubsonicController } from '../decorators/subsonic-controller.js';
 import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import path from 'node:path';
+import { parseLyrics, removeWordTimestamps } from '../../../utils/lyrics-lrc.js';
 const log = logger('SubsonicApi');
 let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
     async stream(query, { orm, engine, user }) {
@@ -66,50 +67,31 @@ let SubsonicMediaRetrievalApi = class SubsonicMediaRetrievalApi {
     }
     async getLyricsBySongId(query, { engine, orm }) {
         const track = await orm.Track.findOneOrFailByID(query.id);
-        const tag = await track.tag.get();
         const structuredLyrics = [];
-        let hasSynced = false;
-        let hasUnssynced = false;
-        const splitLyrics = (lyrics) => {
-            return {
-                lang: 'und',
+        const trackLyrics = await engine.metadata.lyricsByTrack(orm, track);
+        const lang = trackLyrics.language ?? 'und';
+        if (trackLyrics.syncedLyrics) {
+            structuredLyrics.push({
+                lang,
+                synced: true,
+                line: parseLyrics(trackLyrics.syncedLyrics).lines.map(line => ({ value: removeWordTimestamps(line.text), start: line.timestamp }))
+            });
+        }
+        if (trackLyrics.lyrics) {
+            structuredLyrics.push({
+                lang,
                 synced: false,
-                line: lyrics.split('\n').map(value => ({ value }))
-            };
-        };
-        if (tag?.syncedlyrics) {
-            structuredLyrics.push(splitLyrics(tag.syncedlyrics));
-            hasSynced = true;
+                line: trackLyrics.lyrics.split(/\r?\n/).map(value => ({ value }))
+            });
         }
-        if (tag?.lyrics) {
-            structuredLyrics.push(splitLyrics(tag.lyrics));
-            hasUnssynced = true;
-        }
-        if (!hasSynced) {
+        if (!trackLyrics.syncedLyrics) {
             const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
             if (slyrics) {
-                const l = {
+                structuredLyrics.push({
                     lang: slyrics.language || 'und',
                     synced: true,
                     line: slyrics.events.map(value => ({ value: value.text, start: value.timestamp }))
-                };
-                structuredLyrics.push(l);
-            }
-        }
-        if (tag?.artist && tag.title) {
-            const trackLyrics = await engine.metadata.lyricsLrcLibByTrackTag(orm, track, tag);
-            if (!hasSynced && trackLyrics.syncedLyrics) {
-                structuredLyrics.push(splitLyrics(trackLyrics.syncedLyrics));
-                hasUnssynced = true;
-            }
-            if (!hasUnssynced && trackLyrics.lyrics) {
-                structuredLyrics.push(splitLyrics(trackLyrics.lyrics));
-            }
-            if (!hasSynced && !hasUnssynced) {
-                const lyrics = await engine.metadata.lyricsOVH(orm, tag.artist, tag.title);
-                if (lyrics?.lyrics) {
-                    structuredLyrics.push(splitLyrics(lyrics.lyrics));
-                }
+                });
             }
         }
         return { lyricsList: { structuredLyrics } };

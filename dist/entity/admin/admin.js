@@ -194,17 +194,17 @@ __decorate([
 ], AdminChangeQueueInfo.prototype, "id", void 0);
 __decorate([
     ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.position, example: 1 }),
-    Field(() => Int, { description: AdminChangeQueueInfoDesc.position }),
+    Field(() => Int, { nullable: true, description: AdminChangeQueueInfoDesc.position }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "position", void 0);
 __decorate([
     ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.error, example: 'Root Folder does not exists' }),
-    Field(() => String, { description: AdminChangeQueueInfoDesc.error }),
+    Field(() => String, { nullable: true, description: AdminChangeQueueInfoDesc.error }),
     __metadata("design:type", String)
 ], AdminChangeQueueInfo.prototype, "error", void 0);
 __decorate([
     ObjectField({ nullable: true, description: AdminChangeQueueInfoDesc.done, example: true }),
-    Field(() => Int, { description: AdminChangeQueueInfoDesc.done }),
+    Field(() => Int, { nullable: true, description: AdminChangeQueueInfoDesc.done }),
     __metadata("design:type", Number)
 ], AdminChangeQueueInfo.prototype, "done", void 0);
 AdminChangeQueueInfo = __decorate([

@@ -91,6 +91,11 @@ JAM_DATA_PATH=./data/
 # JamServe Frontend Path
 JAM_FRONTEND_PATH=./static/jamberry/
 
+# Store lyrics fetched from external services as a file next to the media file
+# (<track>.lrc for synced lyrics, <track>.txt for plain lyrics)
+# Existing lyrics files are never overwritten. Set to "false" to disable.
+JAM_LYRICS_WRITE_SIDECAR=true
+
 ## JSON Web Token (JWT) https://jwt.io/
 
 # A unique string for your instance to sign the JWT tokens

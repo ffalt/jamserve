@@ -2,7 +2,7 @@ import FeedParser from 'feedparser';
 import iconvDefault from 'iconv-lite';
 import { parseDurationToMilliseconds, parseDurationToSeconds } from '../../utils/date-time.js';
 import fetch from 'node-fetch';
-import { useAgent } from 'request-filtering-agent';
+import { filteringAgent } from '../../utils/filtering-agent.js';
 import zlib from 'node:zlib';
 const iconv = iconvDefault;
 export class Feed {
@@ -59,7 +59,7 @@ export class Feed {
     async fetch(url) {
         const posts = [];
         const result = await fetch(url, {
-            agent: parsedUrl => useAgent(parsedUrl.href),
+            agent: filteringAgent,
             signal: AbortSignal.timeout(30000),
             headers: {
                 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',

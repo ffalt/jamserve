@@ -109,6 +109,27 @@ let AudioModule = class AudioModule {
             return Promise.reject(error);
         }
     }
+    async writeLyricsTag(filename, lyrics) {
+        const suffix = fileSuffix(filename);
+        if (suffix === AudioFormatType.mp3) {
+            return this.mp3.writeLyrics(filename, lyrics);
+        }
+        if (suffix === AudioFormatType.flac) {
+            return this.flac.writeLyrics(filename, lyrics);
+        }
+        throw new Error(`Writing lyrics to format ${suffix} is currently not supported`);
+    }
+    isWriteSupported(filename) {
+        const suffix = fileSuffix(filename) || filename;
+        return suffix === AudioFormatType.mp3 || suffix === AudioFormatType.flac;
+    }
+    isWriteRawTagSupported(filename) {
+        return this.isWriteSupported(filename);
+    }
+    isWriteLyricsSupported(filename) {
+        const suffix = fileSuffix(filename) || filename;
+        return suffix === AudioFormatType.mp3 || suffix === AudioFormatType.flac;
+    }
     async extractTagImage(filename) {
         const suffix = fileSuffix(filename);
         if (suffix === AudioFormatType.mp3) {
@@ -123,6 +144,9 @@ let AudioModule = class AudioModule {
         const suffix = fileSuffix(filename);
         if (suffix === AudioFormatType.mp3) {
             return this.mp3.extractTagSyncedLyrics(filename);
+        }
+        if (suffix === AudioFormatType.flac) {
+            return this.flac.extractTagSyncedLyrics(filename);
         }
         return;
     }

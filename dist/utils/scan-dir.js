@@ -50,10 +50,10 @@ export class DirScanner {
         }
         return subDirectories;
     }
-    async scan(dir) {
+    async scan(dir, startLevel = 0) {
         log.info('Scanning Directory', dir);
         const stat = await fse.stat(dir);
-        const root = DirScanner.createDir(dir, stat, 0);
+        const root = DirScanner.createDir(dir, stat, startLevel);
         let level = [root];
         while (level.length > 0) {
             const next = [];

@@ -28,6 +28,9 @@ import { useCSPMiddleware } from './middlewares/csp.middleware.js';
 import { staticMiddleware } from './middlewares/static.middleware.js';
 import { GraphqlMiddleware } from './middlewares/graphql.middleware.js';
 const log = logger('Server');
+const SOCKET_TIMEOUT_MS = 4 * 60000;
+const KEEP_ALIVE_TIMEOUT_MS = 65000;
+const HEADERS_TIMEOUT_MS = KEEP_ALIVE_TIMEOUT_MS + 5000;
 let Server = class Server {
     async init() {
         const app = express();
@@ -79,7 +82,9 @@ let Server = class Server {
     async start() {
         log.debug(`starting express on ${this.getURL()}`);
         this.server = this.app.listen(this.configService.env.port, this.configService.env.host);
-        this.server.setTimeout(4 * 60000);
+        this.server.setTimeout(SOCKET_TIMEOUT_MS);
+        this.server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT_MS;
+        this.server.headersTimeout = HEADERS_TIMEOUT_MS;
         const domain = this.getDomain();
         log.table([
             { Content: 'Frontend', URL: domain },

@@ -123,7 +123,7 @@ let IoService = IoService_1 = class IoService {
     }
     getRequestInfo(req) {
         const pos = this.queue.indexOf(req);
-        return { id: req.id, pos: pos === -1 ? undefined : pos };
+        return { id: req.id, position: pos === -1 ? undefined : pos };
     }
     newRequest(mode, execute, parameters) {
         const request = (new IoRequest(this.generateRequestID(), mode, execute, parameters));
@@ -136,7 +136,7 @@ let IoService = IoService_1 = class IoService {
         const cmd = this.queue.find(c => c.id === id);
         if (cmd) {
             const pos = this.queue.indexOf(cmd);
-            return { id, pos: pos === -1 ? undefined : pos };
+            return { id, position: pos === -1 ? undefined : pos };
         }
         const done = this.history.find(c => c.id === id);
         if (done) {

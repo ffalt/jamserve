@@ -16,6 +16,18 @@ export class IoCommandsFolder {
         }
         return this.owner.newRequest(WorkerRequestMode.moveFolders, p => this.owner.workerService.folder.move(p), { rootID, newParentID, folderIDs });
     }
+    async refresh(folderID, rootID, withMetadata) {
+        const oldRequest = this.owner.find(c => (!!c.parameters.rootID) && (c.parameters.rootID === rootID) &&
+            (c.mode === WorkerRequestMode.refreshFolders) && (c.parameters.withMetadata === withMetadata));
+        if (oldRequest) {
+            const parameters = oldRequest.parameters;
+            if (!parameters.folderIDs.includes(folderID)) {
+                parameters.folderIDs.push(folderID);
+            }
+            return this.owner.getRequestInfo(oldRequest);
+        }
+        return this.owner.newRequest(WorkerRequestMode.refreshFolders, p => this.owner.workerService.folder.refresh(p), { rootID, folderIDs: [folderID], withMetadata });
+    }
     async delete(id, rootID) {
         const oldRequest = this.owner.findRequest(rootID, WorkerRequestMode.deleteFolders);
         if (oldRequest) {

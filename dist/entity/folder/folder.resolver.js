@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { DBObjectType } from '../../types/enums.js';
-import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoot } from 'type-graphql';
+import { DBObjectType, UserRole } from '../../types/enums.js';
+import { Arg, Args, Authorized, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root as GQLRoot } from 'type-graphql';
 import { StateQL } from '../state/state.js';
 import { Folder, FolderIndexQL, FolderPageQL, FolderQL } from './folder.js';
 import { SeriesQL } from '../series/series.js';
@@ -21,6 +21,7 @@ import { TrackQL } from '../track/track.js';
 import { ArtworkQL } from '../artwork/artwork.js';
 import { FolderIndexParameters, FoldersParametersQL } from './folder.parameters.js';
 import { GenreQL } from '../genre/genre.js';
+import { AdminChangeQueueInfoQL } from '../admin/admin.js';
 let FolderResolver = class FolderResolver {
     async folder(id, { orm }) {
         return await orm.Folder.oneOrFailByID(id);
@@ -33,6 +34,10 @@ let FolderResolver = class FolderResolver {
     }
     async folderIndex({ filter }, { orm, user }) {
         return await orm.Folder.indexFilter(filter, user);
+    }
+    async folderRefresh(id, withMetadata, { orm, engine }) {
+        const folder = await orm.Folder.oneOrFailByID(id);
+        return await engine.io.folder.refresh(folder.id, folder.root.idOrFail(), withMetadata ?? false);
     }
     async children(folder) {
         return folder.children.getItems();
@@ -116,6 +121,16 @@ __decorate([
     __metadata("design:paramtypes", [FolderIndexParameters, Object]),
     __metadata("design:returntype", Promise)
 ], FolderResolver.prototype, "folderIndex", null);
+__decorate([
+    Authorized(UserRole.admin),
+    Mutation(() => AdminChangeQueueInfoQL, { description: 'Check & update a folder for file system changes, with "withMetadata" also rebuild all its metadata' }),
+    __param(0, Arg('id', () => ID, { description: 'Folder Id' })),
+    __param(1, Arg('withMetadata', () => Boolean, { nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks' })),
+    __param(2, Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], FolderResolver.prototype, "folderRefresh", null);
 __decorate([
     FieldResolver(() => [FolderQL]),
     __param(0, GQLRoot()),

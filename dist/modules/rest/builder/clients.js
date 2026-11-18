@@ -169,8 +169,8 @@ export function getCallParameterType(call) {
     return types.join(' & ');
 }
 export function callDescription(call) {
-    const roles = call.controllerClassMetadata?.roles ?? call.roles ?? [];
-    const result = (call.description ?? '') + (roles.length > 0 ? ` // Rights needed: ${roles.join(',')}` : '');
+    const roles = call.roles ?? call.controllerClassMetadata?.roles ?? [];
+    const result = (call.description ?? '') + (roles.length > 0 ? `; Rights needed: ${roles.join(',')}` : '');
     return result.trim();
 }
 export function getCustomParameterTemplate(customPathParameters, call, result) {

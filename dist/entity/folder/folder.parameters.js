@@ -151,6 +151,20 @@ FolderCreateParameters = __decorate([
     ObjectParametersType()
 ], FolderCreateParameters);
 export { FolderCreateParameters };
+let FolderRefreshParameters = class FolderRefreshParameters {
+};
+__decorate([
+    ObjectField({ description: 'Folder Id', isID: true }),
+    __metadata("design:type", String)
+], FolderRefreshParameters.prototype, "id", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], FolderRefreshParameters.prototype, "withMetadata", void 0);
+FolderRefreshParameters = __decorate([
+    ObjectParametersType()
+], FolderRefreshParameters);
+export { FolderRefreshParameters };
 let FolderRenameParameters = class FolderRenameParameters {
 };
 __decorate([

@@ -12,10 +12,6 @@ export class WorkerMergeScan {
         this.strategy = strategy;
         this.changes = changes;
     }
-    async mergeMatch(matchRoot) {
-        const mergeRoot = WorkerMergeScan.buildNodes(matchRoot);
-        return this.merge(mergeRoot);
-    }
     async merge(mergeRoot) {
         this.markChangedParents(mergeRoot);
         await this.mergeNode(mergeRoot);

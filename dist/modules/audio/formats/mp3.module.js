@@ -10,6 +10,7 @@ import { rewriteAudio } from '../tasks/task-rewrite-mp3.js';
 import { fixMP3 } from '../tasks/task-fix-mp3.js';
 import { removeID3v1 } from '../tasks/task-remove-id3v1.js';
 import { fileURLToPath } from 'node:url';
+import { lyricsLanguageCode, lyricsToEvents, plainLyrics } from '../../../utils/lyrics-lrc.js';
 const USE_TASKS = process.env.JAM_USE_TASKS;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,7 @@ export const taskFixMp3 = path.join(taskPath, 'task-fix-mp3.js');
 export const taskRemoveID3v1 = path.join(taskPath, 'task-remove-id3v1.js');
 export const taskAnalyzeMp3 = path.join(taskPath, 'task-analyze-mp3.js');
 const log = logger('Audio:MP3');
+const LyricsFrameIDs = new Set(['ULT', 'USLT', 'SLT', 'SYLT']);
 export class AudioModuleMP3 {
     async read(filename) {
         const mp3 = new MP3();
@@ -58,6 +60,29 @@ export class AudioModuleMP3 {
         const id3 = rawTagToID3v2(tag);
         const id3v2 = new ID3v2();
         await id3v2.write(filename, id3, id3.head ? id3.head.ver : 4, id3.head ? id3.head.rev : 0, { keepBackup: false, paddingSize: 10 });
+    }
+    async writeLyrics(filename, lyrics) {
+        const text = lyrics.lyrics ?? (lyrics.syncedLyrics ? plainLyrics(lyrics.syncedLyrics) : undefined);
+        if (!text) {
+            return;
+        }
+        const id3v2 = new ID3v2();
+        const tag = await id3v2.read(filename);
+        const language = lyricsLanguageCode(lyrics.language);
+        const frames = (tag?.frames ?? []).filter(frame => !LyricsFrameIDs.has(frame.id));
+        frames.push({ id: 'USLT', value: { id: 'lyrics', language, text } });
+        if (lyrics.syncedLyrics) {
+            const events = lyricsToEvents(lyrics.syncedLyrics);
+            if (events.length > 0) {
+                frames.push({
+                    id: 'SYLT',
+                    value: { id: 'lyrics', language, timestampFormat: 2, contentType: 1, events }
+                });
+            }
+        }
+        const version = tag?.head?.ver ?? 4;
+        const revision = tag?.head?.rev ?? 0;
+        await id3v2.write(filename, { head: tag?.head, frames }, version, revision, { keepBackup: false, paddingSize: 10 });
     }
     async removeID3v1(filename) {
         if (!USE_TASKS) {
@@ -145,7 +170,7 @@ export class AudioModuleMP3 {
         const id3v2 = new ID3v2();
         const tag = await id3v2.read(filename);
         if (tag) {
-            const frames = tag.frames.filter(f => ['SLT'].includes(f.id));
+            const frames = tag.frames.filter(f => ['SLT', 'SYLT'].includes(f.id));
             if (frames.length > 0) {
                 const frame = frames.find(f => f.value.contentType === 1);
                 if (frame) {

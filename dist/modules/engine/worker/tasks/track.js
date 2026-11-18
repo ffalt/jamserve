@@ -12,6 +12,8 @@ import { TrackHealthID } from '../../../../types/enums.js';
 import { processQueue } from '../../../../utils/queue.js';
 import { BaseWorker } from './base.js';
 import { injectable, injectFromBase } from 'inversify';
+import { logger } from '../../../../utils/logger.js';
+const log = logger('TrackWorker');
 export class TrackUpdater {
     constructor(orm, audioModule, changes) {
         this.orm = orm;
@@ -69,7 +71,34 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
                 continue;
             }
             const filename = path.join(track.path, track.fileName);
+            if (!this.audioModule.isWriteSupported(filename)) {
+                log.warn(`Writing tags not supported for file: ${filename}`);
+                continue;
+            }
             await this.audioModule.writeRawTag(filename, writeTag.tag);
+            await trackUpdater.updateTrackValues(track, filename);
+            await TrackWorker_1.updateTrackStats(track);
+            orm.Track.persistLater(track);
+            changes.tracks.updated.add(track);
+            changes.folders.updated.addID(track.folder.id());
+            folders.push(await track.folder.get());
+        }
+        await this.refreshFolderStats(orm, folders);
+    }
+    async embedLyrics(orm, items, changes) {
+        const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
+        const folders = [];
+        for (const item of items) {
+            const track = await orm.Track.findOneByID(item.trackID);
+            if (!track) {
+                continue;
+            }
+            const filename = path.join(track.path, track.fileName);
+            if (!this.audioModule.isWriteLyricsSupported(filename)) {
+                log.warn(`Embedding lyrics not supported for file: ${filename}`);
+                continue;
+            }
+            await this.audioModule.writeLyricsTag(filename, item.lyrics);
             await trackUpdater.updateTrackValues(track, filename);
             await TrackWorker_1.updateTrackStats(track);
             orm.Track.persistLater(track);

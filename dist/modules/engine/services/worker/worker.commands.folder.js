@@ -9,7 +9,10 @@ export class WorkerCommandsFolder {
     }
     async refresh(parameters) {
         const { root, orm, changes } = await this.owner.changes.start(parameters.rootID);
-        await this.owner.folderWorker.refresh(orm, parameters.folderIDs, changes);
+        const folders = await this.owner.folderWorker.refresh(orm, parameters.folderIDs, parameters.withMetadata, changes);
+        for (const folder of folders) {
+            await this.owner.rootWorker.scan(orm, root, changes, folder);
+        }
         return this.owner.changes.finish(orm, changes, root);
     }
     async create(parameters) {

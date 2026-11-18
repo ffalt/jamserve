@@ -52,24 +52,15 @@ export class JamBaseService {
 	}
 
 	async requestString(path: string, params: unknown): Promise<string> {
-		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(new Error('Not logged in'));
-		}
-		return this.get<string>(path, params, 'text');
+		return this.authService.isLoggedIn() ? this.get<string>(path, params, 'text') : Promise.reject(new Error('Not logged in'));
 	}
 
 	async requestData<T>(path: string, params: unknown): Promise<T> {
-		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(new Error('Not logged in'));
-		}
-		return this.get<T>(path, params);
+		return this.authService.isLoggedIn() ? this.get<T>(path, params) : Promise.reject(new Error('Not logged in'));
 	}
 
 	async requestPostData<T>(path: string, params: unknown): Promise<T> {
-		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(new Error('Not logged in'));
-		}
-		return this.post<T>(path, {}, params);
+		return this.authService.isLoggedIn() ? this.post<T>(path, {}, params) : Promise.reject(new Error('Not logged in'));
 	}
 
 	async requestPostDataOK(path: string, params: unknown): Promise<void> {
@@ -85,10 +76,7 @@ export class JamBaseService {
 	}
 
 	async binary(path: string, params?: unknown): Promise<{ buffer: ArrayBuffer; contentType: string }> {
-		if (!this.authService.isLoggedIn()) {
-			return Promise.reject(new Error('Not logged in'));
-		}
-		return this.raw(path, params);
+		return this.authService.isLoggedIn() ? this.raw(path, params) : Promise.reject(new Error('Not logged in'));
 	}
 
 	upload<T>(path: string, params: unknown, name: string, file: File): Observable<HttpEvent<T>> {

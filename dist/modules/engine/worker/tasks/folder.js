@@ -181,11 +181,19 @@ let FolderWorker = FolderWorker_1 = class FolderWorker extends BaseWorker {
             await this.moveFolder(orm, folder, newParent, changes);
         }
     }
-    async refresh(orm, folderIDs, changes) {
+    async refresh(orm, folderIDs, withMetadata, changes) {
+        const folders = [];
         for (const id of folderIDs) {
             const folder = await orm.Folder.findOneOrFailByID(id);
+            folders.push(folder);
             changes.folders.updated.add(folder);
+            if (!withMetadata) {
+                continue;
+            }
+            const trackIDs = await orm.Track.findIDsFilter({ childOfID: folder.id });
+            changes.tracks.updated.appendIDs(trackIDs);
         }
+        return folders;
     }
 };
 FolderWorker = FolderWorker_1 = __decorate([

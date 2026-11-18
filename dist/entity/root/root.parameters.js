@@ -26,7 +26,7 @@ __decorate([
     __metadata("design:type", String)
 ], RootMutateParameters.prototype, "name", void 0);
 __decorate([
-    ObjectField({ description: 'Absolute Path for Root ', example: '/var/media/compilations' }),
+    ObjectField({ description: 'Absolute Path for Root', example: '/var/media/compilations' }),
     __metadata("design:type", String)
 ], RootMutateParameters.prototype, "path", void 0);
 __decorate([
@@ -43,6 +43,10 @@ __decorate([
     ObjectField({ nullable: true, description: 'Root ID to refresh (empty for refreshing all)', isID: true }),
     __metadata("design:type", String)
 ], RootRefreshParameters.prototype, "id", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Also rebuild all metadata (Artists/Albums/...), re-reading the tags of all tracks', defaultValue: false, example: false }),
+    __metadata("design:type", Boolean)
+], RootRefreshParameters.prototype, "withMetadata", void 0);
 RootRefreshParameters = __decorate([
     ObjectParametersType()
 ], RootRefreshParameters);
