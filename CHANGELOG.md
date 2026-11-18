@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.22](https://github.com/ffalt/jamserve/compare/v0.6.21...v0.6.22) (2026-11-18)
+
+### Features
+
+* **API:** add a refresh folder endpoint; adjust the root refresh API endpoint ([6f58c85](https://github.com/ffalt/jamserve/commit/6f58c85270fa3ad5c487077710d1ccfe5a87a7ae))
+* **lyrics:** normalize lookup keys and try shortened titles ([e69d0d4](https://github.com/ffalt/jamserve/commit/e69d0d44df8f6ca970b2cfa1605861afef9808ad))
+* **lyrics:** read, save and embed sidecar lyrics files ([d15ab1d](https://github.com/ffalt/jamserve/commit/d15ab1df60aaa9eeeb5e75fcc7c220458110edc4))
+
+### Bug Fixes
+
+* **fetch:** reuse filtering agents ([2db54ab](https://github.com/ffalt/jamserve/commit/2db54ab75a630d13004dccec9a83ad4972af4674))
+* **flac:** images metadata write/read ([7cd4193](https://github.com/ffalt/jamserve/commit/7cd4193dc87765a93b9c757c321ed6092f0d2cf1))
+* **session:** clean up expired sessions and preserve jwt expiry ([61f58c5](https://github.com/ffalt/jamserve/commit/61f58c5fba0c875546198cdffe49ea56396b9cfb))
+
 ## [0.6.21](https://github.com/ffalt/jamserve/compare/v0.6.20...v0.6.21) (2026-11-13)
 
 ### Bug Fixes
