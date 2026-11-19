@@ -14,7 +14,8 @@ jobs:
     name: Test Release
     runs-on: ubuntu-latest
     container:
-      image: ffalt/jam-test
+      image: ffalt/jam-test:26.04
+      options: --user 1001
     permissions:
       contents: read
     env:

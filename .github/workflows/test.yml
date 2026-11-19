@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
     container:
-      image: ffalt/jam-test
+      image: ffalt/jam-test:26.04
       options: --user 1001
     env:
       JAM_DB_HOST: postgres
