@@ -113,11 +113,32 @@ export async function buildGraphQlSchema() {
     registerEnums();
     return await buildSchema({
         resolvers: [
-            UserResolver, AlbumResolver, ArtistResolver, ArtworkResolver, BookmarkResolver, ChatResolver,
-            EpisodeResolver, FolderResolver, NowPlayingResolver, WaveformResolver, GenreResolver,
-            PlaylistResolver, PlaylistEntryResolver, PlayQueueResolver, PodcastResolver, RadioResolver,
-            RootResolver, RootStatusResolver, SeriesResolver, UserFavoritesResolver, MetadataResolver,
-            SessionResolver, StateResolver, StatsResolver, TrackResolver, AdminResolver,
+            UserResolver,
+            AlbumResolver,
+            ArtistResolver,
+            ArtworkResolver,
+            BookmarkResolver,
+            ChatResolver,
+            EpisodeResolver,
+            FolderResolver,
+            NowPlayingResolver,
+            WaveformResolver,
+            GenreResolver,
+            PlaylistResolver,
+            PlaylistEntryResolver,
+            PlayQueueResolver,
+            PodcastResolver,
+            RadioResolver,
+            RootResolver,
+            RootStatusResolver,
+            SeriesResolver,
+            UserFavoritesResolver,
+            MetadataResolver,
+            SessionResolver,
+            StateResolver,
+            StatsResolver,
+            TrackResolver,
+            AdminResolver,
             LandscapeResolver
         ],
         validate: { forbidUnknownValues: false },
@@ -202,7 +223,8 @@ let ApolloMiddleware = class ApolloMiddleware {
                     });
                 }
                 return {
-                    req, res,
+                    req,
+                    res,
                     orm: this.orm.fork(),
                     engine: this.engine,
                     sessionID: req.session?.id,

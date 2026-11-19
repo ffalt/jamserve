@@ -44,7 +44,7 @@ export class FolderRepository extends BaseRepository {
         let parentIDs = [];
         if (filter.childOfID) {
             const folder = await this.oneOrFailByID(filter.childOfID);
-            parentIDs = [...parentIDs, ...await this.findAllDescendantsIds(folder)];
+            parentIDs = [...parentIDs, ...(await this.findAllDescendantsIds(folder))];
             if (parentIDs.length === 0) {
                 parentIDs.push('__non_existing_');
             }

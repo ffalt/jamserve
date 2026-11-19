@@ -25,7 +25,9 @@ export class SubsonicFormatter {
         };
         return {
             'subsonic-response': {
-                ...this.defaultProperties, status: 'failed', error: {
+                ...this.defaultProperties,
+                status: 'failed',
+                error: {
                     code,
                     message: txt ?? codeStrings[code]
                 }

@@ -128,7 +128,8 @@ export class ExpressMethod {
                 if (get.customPathParameters) {
                     req.params = {
                         ...req.params,
-                        ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, options), pathParameters: undefined
+                        ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, options),
+                        pathParameters: undefined
                     };
                 }
                 await this.callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'Get', options, metadata);
@@ -158,7 +159,8 @@ export class ExpressMethod {
                 if (get.customPathParameters) {
                     req.params = {
                         ...req.params,
-                        ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, options), pathParameters: undefined
+                        ...processCustomPathParameters(get.customPathParameters, req.params.pathParameters, get, options),
+                        pathParameters: undefined
                     };
                 }
                 await this.callMethod(get, { req, res, orm: req.orm, engine: req.engine, next, user: req.user }, 'All', options, metadata);

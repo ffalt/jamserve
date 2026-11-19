@@ -75,7 +75,8 @@ __decorate([
 ], WaveformController.prototype, "json", null);
 __decorate([
     Get('/svg', () => String, {
-        description: 'Get Peaks Waveform Data as SVG [Episode, Track]', summary: 'Get SVG',
+        description: 'Get Peaks Waveform Data as SVG [Episode, Track]',
+        summary: 'Get SVG',
         responseStringMimeTypes: ['image/svg+xml']
     }),
     __param(0, QueryParameters()),
@@ -86,7 +87,8 @@ __decorate([
 ], WaveformController.prototype, "svg", null);
 __decorate([
     Get('/{id}_{width}.{format}', {
-        description: 'Get Peaks Waveform Data [Episode, Track]', summary: 'Get Waveform',
+        description: 'Get Peaks Waveform Data [Episode, Track]',
+        summary: 'Get Waveform',
         binary: ApiWaveformTypes,
         customPathParameters: {
             regex: /(.*?)(_.*?)?(\..*)?$/,

@@ -68,7 +68,7 @@ export const SubsonicHelper = {
         const states = await SubsonicHelper.loadStates(orm, episodes.map(o => o.id), DBObjectType.episode, user.id);
         const result = [];
         for (const episode of episodes) {
-            result.push(await SubsonicFormatter.packPodcastEpisode(episode, states[episode.id], (engine.episode.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status)));
+            result.push(await SubsonicFormatter.packPodcastEpisode(episode, states[episode.id], engine.episode.isDownloading(episode.id) ? PodcastStatus.downloading : episode.status));
         }
         return result;
     },

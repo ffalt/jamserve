@@ -12,7 +12,7 @@ export function chunks(items, size = ID_CHUNK_SIZE) {
 export async function collectChunked(items, load, size = ID_CHUNK_SIZE) {
     const result = [];
     for (const chunk of chunks(items, size)) {
-        result.push(...await load(chunk));
+        result.push(...(await load(chunk)));
     }
     return result;
 }

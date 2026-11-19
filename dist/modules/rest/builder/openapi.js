@@ -61,7 +61,9 @@ function buildOpenApiBase(version) {
     return {
         openapi: '3.0.0',
         info: {
-            title: 'JamApi', description: 'Api for JamServe', version,
+            title: 'JamApi',
+            description: 'Api for JamServe',
+            version,
             license: { name: 'MIT', url: 'https://raw.githubusercontent.com/ffalt/jamserve/main/LICENSE' }
         },
         servers: [{
@@ -69,7 +71,8 @@ function buildOpenApiBase(version) {
                 description: 'A local JamServe API',
                 variables: { version: { enum: [JAMAPI_URL_VERSION], default: JAMAPI_URL_VERSION } }
             }],
-        tags: [], paths: {},
+        tags: [],
+        paths: {},
         components: {
             securitySchemes: {
                 cookieAuth: { type: 'apiKey', in: 'cookie', name: 'jam.sid' },

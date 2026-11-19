@@ -309,7 +309,7 @@ export class WorkerScan {
         const result = [];
         for (let start = 0; start < folderIDs.length; start += WorkerScan.LOAD_BATCH_SIZE) {
             const ids = folderIDs.slice(start, start + WorkerScan.LOAD_BATCH_SIZE);
-            result.push(...await this.orm.Artwork.find({ where: { folder: ids } }));
+            result.push(...(await this.orm.Artwork.find({ where: { folder: ids } })));
         }
         return result;
     }

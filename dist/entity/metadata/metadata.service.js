@@ -214,9 +214,9 @@ let MetadataService = MetadataService_1 = class MetadataService {
             if (!tag) {
                 return {};
             }
-            let result = { source: 'lrclib', ...await this.lyricsLrcLibByTrackTag(orm, track, tag) };
+            let result = { source: 'lrclib', ...(await this.lyricsLrcLibByTrackTag(orm, track, tag)) };
             if (!hasLyrics(result)) {
-                result = { source: 'lyrics.ovh', ...await this.lyricsOVHByTrackTag(orm, track, tag) };
+                result = { source: 'lyrics.ovh', ...(await this.lyricsOVHByTrackTag(orm, track, tag)) };
             }
             if (!hasLyrics(result)) {
                 return {};

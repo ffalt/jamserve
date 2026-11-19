@@ -145,7 +145,8 @@ __decorate([
 __decorate([
     Get('/coverartarchive/image', {
         binary: ApiImageTypes,
-        description: 'Get CoverArtArchive image', summary: 'Request CoverArtArchive Image'
+        description: 'Get CoverArtArchive image',
+        summary: 'Request CoverArtArchive Image'
     }),
     __param(0, QueryParameters()),
     __param(1, RestContext()),
@@ -228,7 +229,8 @@ __decorate([
 __decorate([
     Get('/discogs/image', {
         binary: ApiImageTypes,
-        description: 'Get Discogs image', summary: 'Request Discogs Image'
+        description: 'Get Discogs image',
+        summary: 'Request Discogs Image'
     }),
     __param(0, QueryParameters()),
     __param(1, RestContext()),

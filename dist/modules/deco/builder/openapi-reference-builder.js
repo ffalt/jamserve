@@ -20,8 +20,12 @@ export class OpenApiReferenceBuilder {
             }
             case Number: {
                 return {
-                    type: 'integer', default: typeOptions.defaultValue,
-                    minimum: typeOptions.min, maximum: typeOptions.max, description: typeOptions.description, deprecated: typeOptions.deprecationReason ? true : undefined
+                    type: 'integer',
+                    default: typeOptions.defaultValue,
+                    minimum: typeOptions.min,
+                    maximum: typeOptions.max,
+                    description: typeOptions.description,
+                    deprecated: typeOptions.deprecationReason ? true : undefined
                 };
             }
             case Boolean: {
@@ -188,7 +192,9 @@ export class OpenApiReferenceBuilder {
                     },
                     required: ['type', 'file']
                 }
-            }, required: [parameter.name], description: 'Binary Part'
+            },
+            required: [parameter.name],
+            description: 'Binary Part'
         };
     }
     buildParameterSchema(parameter, schemas) {

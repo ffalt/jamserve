@@ -37,8 +37,14 @@ let ChangesWorker = ChangesWorker_1 = class ChangesWorker extends BaseWorker {
     async cleanCacheFiles(changes) {
         const imageCleanIds = new IdSet();
         for (const changeSet of [
-            changes.albums, changes.artists, changes.artworks, changes.folders,
-            changes.roots, changes.tracks, changes.series, changes.genres
+            changes.albums,
+            changes.artists,
+            changes.artworks,
+            changes.folders,
+            changes.roots,
+            changes.tracks,
+            changes.series,
+            changes.genres
         ]) {
             imageCleanIds.appendIDs(changeSet.removed.ids());
             imageCleanIds.appendIDs(changeSet.updated.ids());

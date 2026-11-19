@@ -92,7 +92,8 @@ function generateRequestClientCalls(call, name, parameterType, method) {
 export async function buildAxiosClientList() {
     const parts = await buildServiceParts(generateRequestClientCalls, generateBinaryClientCalls, generateUploadClientCalls, (key, part, calls) => buildPartService('./static/templates/client-axios/jam.part.service.ts.template', key, part, calls));
     const list = parts.map(part => ({ name: `services/jam.${part.name}.service.ts`, content: part.content }));
-    return [...list,
+    return [
+        ...list,
         { name: 'jam.service.ts', content: await buildParts('./static/templates/client-axios/jam.service.ts.template', parts) },
         { name: 'jam.base.service.ts', content: await buildTemplate('./static/templates/client-axios/jam.base.service.ts.template') },
         { name: 'jam.http.service.ts', content: await buildTemplate('./static/templates/client-axios/jam.http.service.ts.template') },

@@ -320,7 +320,8 @@ let SubsonicParameterState = class SubsonicParameterState {
 };
 __decorate([
     SubsonicObjectField(() => [String], {
-        nullable: true, description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.',
+        nullable: true,
+        description: 'The ID of the file (song) or folder (album/artist) to star. Multiple parameters allowed.',
         isID: true
     }),
     __metadata("design:type", Object)
@@ -598,7 +599,8 @@ __decorate([
 ], SubsonicParameterUpdateUser.prototype, "videoConversionRole", void 0);
 __decorate([
     SubsonicObjectField(() => [String], {
-        nullable: true, isID: true,
+        nullable: true,
+        isID: true,
         description: 'IDs of the music folders the user is allowed access to. Include the parameter once for each folder.'
     }),
     __metadata("design:type", Object)

@@ -137,6 +137,14 @@ __decorate([
 __decorate([
     Field(() => String, { nullable: true }),
     __metadata("design:type", String)
+], TrackLyricsQL.prototype, "syncedLyrics", void 0);
+__decorate([
+    Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
+], TrackLyricsQL.prototype, "language", void 0);
+__decorate([
+    Field(() => String, { nullable: true }),
+    __metadata("design:type", String)
 ], TrackLyricsQL.prototype, "source", void 0);
 TrackLyricsQL = __decorate([
     ObjectType()
