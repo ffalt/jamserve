@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.23](https://github.com/ffalt/jamserve/compare/v0.6.22...v0.6.23) (2026-11-19)
+
+### Features
+
+* **graphql:** expose synced lyrics and language ([f4dba19](https://github.com/ffalt/jamserve/commit/f4dba19e8ad817cd385b4dfe2421fc9e929acc22))
+
 ## [0.6.22](https://github.com/ffalt/jamserve/compare/v0.6.21...v0.6.22) (2026-11-18)
 
 ### Features
