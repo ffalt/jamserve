@@ -70,6 +70,24 @@ describe('AudioModuleMP3.writeLyrics', () => {
 		expect(scanned.lyrics).toBe('first line\nsecond line');
 	});
 
+	test('scans the lyrics language of the SYLT frame into the tag', async () => {
+		await mp3.writeLyrics(audioFile, { syncedLyrics: lrc, language: 'eng' });
+		const scanned = await mp3.read(audioFile);
+		expect(scanned.lyricslanguage).toBe('eng');
+	});
+
+	test('scans the lyrics language of the USLT frame into the tag', async () => {
+		await mp3.writeLyrics(audioFile, { lyrics: 'first line\nsecond line', language: 'deu' });
+		const scanned = await mp3.read(audioFile);
+		expect(scanned.lyricslanguage).toBe('deu');
+	});
+
+	test('leaves the lyrics language unset when no frame declares one', async () => {
+		await mp3.writeLyrics(audioFile, { syncedLyrics: lrc });
+		const scanned = await mp3.read(audioFile);
+		expect(scanned.lyricslanguage).toBeUndefined();
+	});
+
 	test('prefers explicit plain lyrics for USLT frame when both are provided', async () => {
 		await mp3.writeLyrics(audioFile, { lyrics: 'explicit plain', syncedLyrics: lrc });
 		const usltFrames = await readFrames('USLT');

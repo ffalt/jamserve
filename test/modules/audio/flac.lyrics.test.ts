@@ -140,6 +140,19 @@ describe('AudioModuleFLAC tag and comment roundtrip', () => {
 		expect(tag).toBeDefined();
 		expect(tag?.lyrics).toBe('first line\nsecond line');
 		expect(tag?.syncedlyrics).toBe('[00:12.34]first line\n[00:15.00]second line');
+		expect(tag?.lyricslanguage).toBe('eng');
+	});
+
+	test('FORMAT.packFlacVorbisCommentJamServeTag leaves the lyrics language unset without a synced comment', () => {
+		const tag = FORMAT.packFlacVorbisCommentJamServeTag({
+			vendor: 'jamserve',
+			tag: {
+				TITLE: 'Song',
+				LYRICS: 'first line\nsecond line'
+			}
+		});
+
+		expect(tag?.lyricslanguage).toBeUndefined();
 	});
 
 	test('extractTagSyncedLyrics returns structured synced lyrics', async () => {

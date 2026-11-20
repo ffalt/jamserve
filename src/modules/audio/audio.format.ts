@@ -1,6 +1,6 @@
 import { ID3v1_GENRES, ID3v2, IID3V1, IID3V2, IMP3 } from 'jamp3';
 import { cleanGenre } from '../../utils/genres.js';
-import { eventsToLyrics, hasLyricsTimestamps, parseSimplifiedSynchronisedLyrics, plainLyrics } from '../../utils/lyrics-lrc.js';
+import { eventsToLyrics, hasLyricsTimestamps, lyricsLanguage, parseSimplifiedSynchronisedLyrics, plainLyrics } from '../../utils/lyrics-lrc.js';
 import { ID3TrackTagRawFormatTypes } from './audio.module.js';
 import { FlacComment, FlacMedia, FlacPicture } from './formats/flac/index.js';
 import { ProbeResult } from './tools/ffprobe.js';
@@ -37,6 +37,7 @@ export interface TrackTag {
 	seriesNr?: string;
 	lyrics?: string;
 	syncedlyrics?: string;
+	lyricslanguage?: string;
 	chapters?: string;
 }
 
@@ -204,12 +205,15 @@ export class FORMAT {
 		const format = ID3TrackTagRawFormatTypes[data.head ? data.head.rev : -1] || TagFormatType.none;
 		const syncedRaw = simple.SYNCHRONISEDLYRICS ?? (simple.LYRICS && hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : undefined);
 		let syncedlyrics: string | undefined;
+		let lyricslanguage: string | undefined;
 		if (syncedRaw) {
 			const parsed = parseSimplifiedSynchronisedLyrics(syncedRaw);
 			if (parsed) {
 				syncedlyrics = eventsToLyrics(parsed.events);
+				lyricslanguage = lyricsLanguage(parsed.language);
 			}
 		}
+		lyricslanguage ??= this.unsynchronisedLyricsLanguage(data);
 		return {
 			format,
 			album: this.cleanText(simple.ALBUM),
@@ -227,6 +231,7 @@ export class FORMAT {
 			trackTotal: this.parseNum(simple.TRACKTOTAL),
 			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
 			syncedlyrics,
+			lyricslanguage,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
 			year: this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE) ?? this.parseYear(simple.RELEASETIME),
@@ -245,6 +250,11 @@ export class FORMAT {
 		};
 	}
 
+	private static unsynchronisedLyricsLanguage(data: IID3V2.Tag): string | undefined {
+		const frame = data.frames.find(f => ['ULT', 'USLT'].includes(f.id)) as IID3V2.Frames.LangDescTextFrame | undefined;
+		return lyricsLanguage(frame?.value.language);
+	}
+
 	private static cleanText(s: string | undefined): string | undefined {
 		return s === undefined ? undefined : s.replaceAll(/ {2}/g, ' ').trim();
 	}
@@ -256,10 +266,12 @@ export class FORMAT {
 		const simple: Record<string, string | undefined> = comment.tag;
 		const syncedRaw = simple.SYNCHRONISEDLYRICS ?? simple.SYNCEDLYRICS ?? (simple.LYRICS && hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : undefined);
 		let syncedlyrics: string | undefined;
+		let lyricslanguage: string | undefined;
 		if (syncedRaw) {
 			const parsed = parseSimplifiedSynchronisedLyrics(syncedRaw);
 			if (parsed) {
 				syncedlyrics = eventsToLyrics(parsed.events);
+				lyricslanguage = lyricsLanguage(parsed.language);
 			}
 		}
 		return {
@@ -280,6 +292,7 @@ export class FORMAT {
 			year: this.parseYear(simple.ORIGINALYEAR) ?? this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE),
 			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
 			syncedlyrics,
+			lyricslanguage,
 			seriesNr: simple.WORK,
 			series: simple.GROUPING,
 			mbTrackID: simple.MUSICBRAINZ_TRACKID,

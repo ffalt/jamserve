@@ -1,6 +1,6 @@
-import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model.js';
+import { Track, TrackHealth, TrackLyricsList, TrackPage } from './track.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
+import { IncludesTrackLyricsParameters, IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
 import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
@@ -79,15 +79,16 @@ export class TrackController {
 
 	@Get(
 		'/lyrics',
-		() => TrackLyrics,
-		{ description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }
+		() => TrackLyricsList,
+		{ description: 'Get Lyrics for a Track by Id (External Service, Lyrics File or Media File)', summary: 'Get Lyrics' }
 	)
 	async lyrics(
 		@QueryParameter('id', { description: 'Track Id', isID: true }) id: string,
+		@QueryParameters() lyricsParameters: IncludesTrackLyricsParameters,
 		@RestContext() { orm, engine }: Context
-	): Promise<TrackLyrics> {
+	): Promise<TrackLyricsList> {
 		const track = await orm.Track.oneOrFailByID(id);
-		return await engine.metadata.lyricsByTrack(orm, track);
+		return await engine.metadata.lyricsByTrack(orm, track, lyricsParameters);
 	}
 
 	@Get(
@@ -200,8 +201,9 @@ export class TrackController {
 		if (!engine.audio.isWriteLyricsSupported(track.fileName)) {
 			return Promise.reject(invalidParameterError('id', `Embedding lyrics is not supported for ${fileSuffix(track.fileName)} format`));
 		}
-		const lyrics = await engine.metadata.lyricsByTrack(orm, track);
-		if (!(lyrics.lyrics || lyrics.syncedLyrics)) {
+		const { entries } = await engine.metadata.lyricsByTrack(orm, track);
+		const lyrics = entries.find(entry => Boolean(entry.lyrics ?? entry.syncedLyrics));
+		if (!lyrics) {
 			return Promise.reject(notFoundError('No lyrics found for this track'));
 		}
 		return await engine.io.track.embedLyrics(id, lyrics, track.root.idOrFail());

@@ -29,7 +29,16 @@ export class TrackHealth {
 	health!: Array<TrackHealthHint>;
 }
 
-@ResultType({ description: 'Track Lyrics (via External Service or Audio Tag)' })
+@ResultType({ description: 'Track Lyrics Line (parsed from Synced Lyrics)' })
+export class TrackLyricsLine {
+	@ObjectField({ description: 'Start of the Line in Milliseconds', example: 100 })
+	timestamp!: number;
+
+	@ObjectField({ description: 'Text of the Line', example: 'I got a letter from the government' })
+	text!: string;
+}
+
+@ResultType({ description: 'Track Lyrics (via External Service, Lyrics File or Audio Tag)' })
 export class TrackLyrics {
 	@ObjectField({
 		nullable: true,
@@ -45,9 +54,18 @@ export class TrackLyrics {
 	})
 	syncedLyrics?: string;
 
+	@ObjectField(() => [TrackLyricsLine], { nullable: true, description: 'Parsed Synced Lyrics' })
+	syncedLines?: Array<TrackLyricsLine>;
+
 	@ObjectField({ nullable: true, description: 'Language of the the lyrics' })
 	language?: string;
 
-	@ObjectField({ nullable: true, description: 'Audio Tag or External Service' })
+	@ObjectField({ nullable: true, description: 'Audio Tag, Lyrics File or External Service' })
 	source?: string;
+}
+
+@ResultType({ description: 'Track Lyrics List' })
+export class TrackLyricsList {
+	@ObjectField(() => [TrackLyrics], { description: 'List of Lyrics found for the Track' })
+	entries!: Array<TrackLyrics>;
 }

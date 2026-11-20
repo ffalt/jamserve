@@ -24,6 +24,18 @@ export class IncludesTrackParameters {
 }
 
 @ObjectParametersType()
+export class IncludesTrackLyricsParameters {
+	@ObjectField({ nullable: true, description: 'include the plain lyrics', defaultValue: true, example: true })
+	lyricsIncPlain?: boolean;
+
+	@ObjectField({ nullable: true, description: 'include the synced lyrics in LRC format', defaultValue: true, example: true })
+	lyricsIncSynced?: boolean;
+
+	@ObjectField({ nullable: true, description: 'include the parsed lines of the synced lyrics', defaultValue: true, example: true })
+	lyricsIncParsedSynced?: boolean;
+}
+
+@ObjectParametersType()
 export class MediaHealthParameters {
 	@ObjectField({ nullable: true, description: 'check media file integrity', defaultValue: false, example: false })
 	healthMedia?: boolean;

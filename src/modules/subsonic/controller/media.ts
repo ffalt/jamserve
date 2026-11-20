@@ -23,8 +23,6 @@ import { SubsonicController } from '../decorators/subsonic-controller.js';
 import { SubsonicContext } from '../decorators/subsonic-context.js';
 import { SubsonicApiError, SubsonicFormatter } from '../formatter.js';
 import { StreamOptions } from '../../../entity/stream/stream.service.js';
-import path from 'node:path';
-import { parseLyrics, removeWordTimestamps } from '../../../utils/lyrics-lrc.js';
 
 const log = logger('SubsonicApi');
 
@@ -119,29 +117,21 @@ export class SubsonicMediaRetrievalApi {
 	async getLyricsBySongId(@SubsonicParameters() query: SubsonicParameterLyricsByID, @SubsonicContext() { engine, orm }: Context): Promise<SubsonicResponseLyricsList> {
 		const track = await orm.Track.findOneOrFailByID(query.id);
 		const structuredLyrics: Array<SubsonicStructuredLyrics> = [];
-		const trackLyrics = await engine.metadata.lyricsByTrack(orm, track);
-		const lang = trackLyrics.language ?? 'und';
-		if (trackLyrics.syncedLyrics) {
-			structuredLyrics.push({
-				lang,
-				synced: true,
-				line: parseLyrics(trackLyrics.syncedLyrics).lines.map(line => ({ value: removeWordTimestamps(line.text), start: line.timestamp }))
-			});
-		}
-		if (trackLyrics.lyrics) {
-			structuredLyrics.push({
-				lang,
-				synced: false,
-				line: trackLyrics.lyrics.split(/\r?\n/).map(value => ({ value }))
-			});
-		}
-		if (!trackLyrics.syncedLyrics) {
-			const slyrics = await engine.audio.extractTagLyrics(path.join(track.path, track.fileName));
-			if (slyrics) {
+		const { entries } = await engine.metadata.lyricsByTrack(orm, track);
+		for (const entry of entries) {
+			const lang = entry.language ?? 'und';
+			if (entry.syncedLines) {
 				structuredLyrics.push({
-					lang: slyrics.language || 'und',
+					lang,
 					synced: true,
-					line: slyrics.events.map(value => ({ value: value.text, start: value.timestamp }))
+					line: entry.syncedLines.map(line => ({ value: line.text, start: line.timestamp }))
+				});
+			}
+			if (entry.lyrics) {
+				structuredLyrics.push({
+					lang,
+					synced: false,
+					line: entry.lyrics.split(/\r?\n/).map(value => ({ value }))
 				});
 			}
 		}

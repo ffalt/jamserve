@@ -12,7 +12,7 @@ import { State, StateQL } from '../state/state.js';
 import { Waveform, WaveformQL } from '../waveform/waveform.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { MediaTagRaw } from '../tag/tag.model.js';
-import { TrackLyrics } from './track.model.js';
+import { TrackLyrics, TrackLyricsLine, TrackLyricsList } from './track.model.js';
 import { PlayQueueEntry } from '../playqueueentry/playqueue-entry.js';
 import { PlaylistEntry } from '../playlistentry/playlist-entry.js';
 import { BookmarkOrderFields } from '../../types/enums.js';
@@ -87,6 +87,15 @@ export class Track extends Base {
 }
 
 @ObjectType()
+export class TrackLyricsLineQL {
+	@Field(() => Int)
+	timestamp!: number;
+
+	@Field(() => String)
+	text!: string;
+}
+
+@ObjectType()
 export class TrackLyricsQL {
 	@Field(() => String, { nullable: true })
 	lyrics?: string;
@@ -94,11 +103,20 @@ export class TrackLyricsQL {
 	@Field(() => String, { nullable: true })
 	syncedLyrics?: string;
 
+	@Field(() => [TrackLyricsLineQL], { nullable: true })
+	syncedLines?: Array<TrackLyricsLine>;
+
 	@Field(() => String, { nullable: true })
 	language?: string;
 
 	@Field(() => String, { nullable: true })
 	source?: string;
+}
+
+@ObjectType()
+export class TrackLyricsListQL {
+	@Field(() => [TrackLyricsQL])
+	entries!: Array<TrackLyrics>;
 }
 
 @ObjectType()
@@ -112,8 +130,8 @@ export class TrackQL extends Track {
 	@Field(() => MediaTagRawQL)
 	rawTag!: MediaTagRaw;
 
-	@Field(() => TrackLyricsQL)
-	lyrics!: TrackLyrics;
+	@Field(() => TrackLyricsListQL)
+	lyrics!: TrackLyricsList;
 
 	@Field(() => Int)
 	bookmarksCount!: number;

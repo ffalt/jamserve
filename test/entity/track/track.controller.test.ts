@@ -4,12 +4,12 @@ import type { Context } from '../../../src/modules/engine/rest/context.js';
 import { mockUser } from '../shared/mock-data.js';
 import { ApiError } from '../../../src/modules/deco/express/express-error.js';
 
-const defaultLyrics = { lyrics: 'some lyrics' };
+const defaultLyrics = { entries: [{ lyrics: 'some lyrics' }] };
 
 describe('TrackController lyricsEmbed & rawTagSet format validation', () => {
 	const controller = new TrackController();
 
-	function makeContext(fileName: string, lyricsData: { lyrics?: string; syncedLyrics?: string } = defaultLyrics) {
+	function makeContext(fileName: string, lyricsData: { entries: Array<{ lyrics?: string; syncedLyrics?: string }> } = defaultLyrics) {
 		const mockTrack = {
 			id: 'track-1',
 			fileName,
@@ -57,7 +57,7 @@ describe('TrackController lyricsEmbed & rawTagSet format validation', () => {
 	});
 
 	test('lyricsEmbed rejects when track has no lyrics', async () => {
-		const { ctx } = makeContext('song.mp3', { lyrics: undefined, syncedLyrics: undefined });
+		const { ctx } = makeContext('song.mp3', { entries: [] });
 
 		await expect(controller.lyricsEmbed('track-1', ctx)).rejects.toThrow(ApiError);
 		await expect(controller.lyricsEmbed('track-1', ctx)).rejects.toMatchObject({

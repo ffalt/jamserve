@@ -63,6 +63,9 @@ export class ORM {
 		if (!table?.syncedlyrics) {
 			await queryInterface.addColumn('Tag', 'syncedlyrics', { type: DataTypes.TEXT, allowNull: true });
 		}
+		if (!table?.lyricslanguage) {
+			await queryInterface.addColumn('Tag', 'lyricslanguage', { type: DataTypes.TEXT, allowNull: true });
+		}
 	}
 
 	async ensureSchema(): Promise<void> {

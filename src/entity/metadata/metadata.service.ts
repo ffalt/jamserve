@@ -13,7 +13,7 @@ import { Orm } from '../../modules/engine/services/orm.service.js';
 import { Track } from '../track/track.js';
 import { LastFM } from '../../modules/audio/clients/lastfm-rest-data.js';
 import { WikidataLookupResponse, WikipediaSummaryResponse } from './metadata.types.js';
-import { TrackLyrics } from '../track/track.model.js';
+import { TrackLyrics, TrackLyricsList } from '../track/track.model.js';
 import { AcousticBrainz } from '../../modules/audio/clients/acousticbrainz-rest-data.js';
 import { Acoustid } from '../../modules/audio/clients/acoustid-rest-data.js';
 import { CoverArtArchive } from '../../modules/audio/clients/coverartarchive-rest-data.js';
@@ -27,8 +27,9 @@ import { Discogs } from '../../modules/audio/clients/discogs-rest-data.js';
 import { Tag } from '../tag/tag.js';
 import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
 import { DiscogsSearchParameters } from './metadata.parameters.js';
+import { IncludesTrackLyricsParameters } from '../track/track.parameters.js';
 import { lyricsSlug, shortenLyricsTitle } from '../../utils/lyrics-slug.js';
-import { plainLyrics } from '../../utils/lyrics-lrc.js';
+import { lyricsToEvents, plainLyrics } from '../../utils/lyrics-lrc.js';
 import { lyricsFromText, readLyricsSidecar, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 
@@ -244,42 +245,67 @@ export class MetadataService {
 
 	static lyricsByTag(tag?: Tag): TrackLyrics | undefined {
 		if (tag?.syncedlyrics) {
-			return { syncedLyrics: tag.syncedlyrics, lyrics: tag.lyrics ?? plainLyrics(tag.syncedlyrics), source: 'tag' };
+			return { syncedLyrics: tag.syncedlyrics, lyrics: tag.lyrics ?? plainLyrics(tag.syncedlyrics), language: tag.lyricslanguage, source: 'tag' };
 		}
 		if (tag?.lyrics) {
-			return lyricsFromText(tag.lyrics, 'tag');
+			const result = lyricsFromText(tag.lyrics, 'tag');
+			return result ? { ...result, language: tag.lyricslanguage } : undefined;
 		}
 		return;
 	}
 
-	async lyricsByTrack(orm: Orm, track: Track): Promise<TrackLyrics> {
+	static selectLyrics(entries: Array<TrackLyrics>, parameters?: IncludesTrackLyricsParameters): Array<TrackLyrics> {
+		const includePlain = parameters?.lyricsIncPlain ?? true;
+		const includeSynced = parameters?.lyricsIncSynced ?? true;
+		const includeParsedSynced = parameters?.lyricsIncParsedSynced ?? true;
+		const result: Array<TrackLyrics> = [];
+		for (const entry of entries) {
+			const selected: TrackLyrics = {
+				lyrics: includePlain ? entry.lyrics : undefined,
+				syncedLyrics: includeSynced ? entry.syncedLyrics : undefined,
+				syncedLines: includeParsedSynced && entry.syncedLyrics ? lyricsToEvents(entry.syncedLyrics) : undefined,
+				language: entry.language,
+				source: entry.source
+			};
+			if (selected.lyrics ?? selected.syncedLyrics ?? selected.syncedLines) {
+				result.push(selected);
+			}
+		}
+		return result;
+	}
+
+	async lyricsByTrack(orm: Orm, track: Track, parameters?: IncludesTrackLyricsParameters): Promise<TrackLyricsList> {
 		const tag = await track.tag.get();
+		const entries: Array<TrackLyrics> = [];
 		const embedded = MetadataService.lyricsByTag(tag);
 		if (embedded) {
-			return embedded;
+			entries.push(embedded);
 		}
 		const filename = path.join(track.path, track.fileName);
 		try {
 			const sidecar = await readLyricsSidecar(filename);
 			if (sidecar) {
-				return sidecar;
+				entries.push(sidecar);
 			}
-			if (!tag) {
-				return {};
+			if (tag && entries.length === 0) {
+				const external = await this.lyricsByExternalService(orm, track, tag);
+				if (external) {
+					await this.storeLyricsSidecar(filename, external, tag);
+					entries.push(external);
+				}
 			}
-			let result: TrackLyrics = { source: 'lrclib', ...(await this.lyricsLrcLibByTrackTag(orm, track, tag)) };
-			if (!hasLyrics(result)) {
-				result = { source: 'lyrics.ovh', ...(await this.lyricsOVHByTrackTag(orm, track, tag)) };
-			}
-			if (!hasLyrics(result)) {
-				return {};
-			}
-			await this.storeLyricsSidecar(filename, result, tag);
-			return result;
 		} catch (error: unknown) {
 			log.error(error);
-			return {};
 		}
+		return { entries: MetadataService.selectLyrics(entries, parameters) };
+	}
+
+	private async lyricsByExternalService(orm: Orm, track: Track, tag: Tag): Promise<TrackLyrics | undefined> {
+		let result: TrackLyrics = { source: 'lrclib', ...(await this.lyricsLrcLibByTrackTag(orm, track, tag)) };
+		if (!hasLyrics(result)) {
+			result = { source: 'lyrics.ovh', ...(await this.lyricsOVHByTrackTag(orm, track, tag)) };
+		}
+		return hasLyrics(result) ? result : undefined;
 	}
 
 	private async storeLyricsSidecar(filename: string, lyrics: TrackLyrics, tag: Tag): Promise<void> {

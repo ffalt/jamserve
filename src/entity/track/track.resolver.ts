@@ -2,13 +2,13 @@ import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoo
 import { State, StateQL } from '../state/state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { Waveform, WaveformQL } from '../waveform/waveform.js';
-import { Track, TrackLyricsQL, TrackPageQL, TrackQL } from './track.js';
+import { Track, TrackLyricsListQL, TrackPageQL, TrackQL } from './track.js';
 import { Folder, FolderQL } from '../folder/folder.js';
 import { Album, AlbumQL } from '../album/album.js';
 import { Artist, ArtistQL } from '../artist/artist.js';
 import { Root, RootQL } from '../root/root.js';
 import { Context } from '../../modules/server/middlewares/apollo.context.js';
-import { TrackLyrics } from './track.model.js';
+import { TrackLyricsList } from './track.model.js';
 import { MediaTagRawQL, Tag, TagQL } from '../tag/tag.js';
 import { MediaTagRaw } from '../tag/tag.model.js';
 import { Series, SeriesQL } from '../series/series.js';
@@ -96,8 +96,8 @@ export class TrackResolver {
 		return { obj: track, objType: DBObjectType.track };
 	}
 
-	@FieldResolver(() => TrackLyricsQL)
-	async lyrics(@GQLRoot() track: Track, @Ctx() { engine, orm }: Context): Promise<TrackLyrics> {
+	@FieldResolver(() => TrackLyricsListQL)
+	async lyrics(@GQLRoot() track: Track, @Ctx() { engine, orm }: Context): Promise<TrackLyricsList> {
 		return await engine.metadata.lyricsByTrack(orm, track);
 	}
 

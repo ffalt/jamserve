@@ -138,6 +138,11 @@ export function lyricsLanguageCode(language = ''): string {
 	return /^[a-z]{3}$/.test(code) ? code : 'und';
 }
 
+export function lyricsLanguage(language?: string): string | undefined {
+	const code = lyricsLanguageCode(language);
+	return code === 'und' ? undefined : code;
+}
+
 export interface SynchronisedLyricsData {
 	id: string;
 	language: string;

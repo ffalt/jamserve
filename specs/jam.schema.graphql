@@ -265,7 +265,7 @@ type TrackQL {
   state: StateQL!
   waveform: WaveformQL!
   rawTag: MediaTagRawQL!
-  lyrics: TrackLyricsQL!
+  lyrics: TrackLyricsListQL!
   bookmarksCount: Int!
   fileCreated: DateTimeISO!
   fileModified: DateTimeISO!
@@ -715,6 +715,7 @@ type TagQL {
   seriesNr: String
   lyrics: String
   syncedlyrics: String
+  lyricslanguage: String
   chapters: [TagChapterQL!]
   mediaDuration: Int
   mediaBitRate: Int
@@ -806,11 +807,21 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type TrackLyricsListQL {
+  entries: [TrackLyricsQL!]!
+}
+
 type TrackLyricsQL {
   lyrics: String
   syncedLyrics: String
+  syncedLines: [TrackLyricsLineQL!]
   language: String
   source: String
+}
+
+type TrackLyricsLineQL {
+  timestamp: Int!
+  text: String!
 }
 
 """User Roles"""

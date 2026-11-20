@@ -22434,7 +22434,7 @@
 			"get": {
 				"operationId": "TrackController.lyrics",
 				"summary": "Get Lyrics",
-				"description": "Get Lyrics for a Track by Id (External Service or Media File)",
+				"description": "Get Lyrics for a Track by Id (External Service, Lyrics File or Media File)",
 				"tags": [
 					"Track"
 				],
@@ -22448,6 +22448,42 @@
 						"schema": {
 							"$ref": "#/components/schemas/ID"
 						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncParsedSynced",
+						"description": "include the parsed lines of the synced lyrics",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the parsed lines of the synced lyrics"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncPlain",
+						"description": "include the plain lyrics",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the plain lyrics"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncSynced",
+						"description": "include the synced lyrics in LRC format",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the synced lyrics in LRC format"
+						}
 					}
 				],
 				"responses": {
@@ -22456,7 +22492,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TrackLyrics"
+									"$ref": "#/components/schemas/TrackLyricsList"
 								}
 							}
 						}
@@ -28982,6 +29018,23 @@
 					}
 				}
 			},
+			"TrackLyricsLine": {
+				"type": "object",
+				"properties": {
+					"timestamp": {
+						"type": "integer",
+						"description": "Start of the Line in Milliseconds"
+					},
+					"text": {
+						"type": "string",
+						"description": "Text of the Line"
+					}
+				},
+				"required": [
+					"timestamp",
+					"text"
+				]
+			},
 			"TrackLyrics": {
 				"type": "object",
 				"properties": {
@@ -28993,13 +29046,19 @@
 						"type": "string",
 						"description": "Synced Lyrics"
 					},
+					"syncedLines": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/TrackLyricsLine"
+						}
+					},
 					"language": {
 						"type": "string",
 						"description": "Language of the the lyrics"
 					},
 					"source": {
 						"type": "string",
-						"description": "Audio Tag or External Service"
+						"description": "Audio Tag, Lyrics File or External Service"
 					}
 				}
 			},
@@ -30256,6 +30315,20 @@
 					"flac",
 					"webma",
 					"wav"
+				]
+			},
+			"TrackLyricsList": {
+				"type": "object",
+				"properties": {
+					"entries": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/TrackLyrics"
+						}
+					}
+				},
+				"required": [
+					"entries"
 				]
 			},
 			"MediaIDTagRaw": {
