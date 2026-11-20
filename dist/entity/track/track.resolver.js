@@ -14,7 +14,7 @@ import { Arg, Args, Ctx, FieldResolver, ID, Int, Query, Resolver, Root as GQLRoo
 import { StateQL } from '../state/state.js';
 import { DBObjectType } from '../../types/enums.js';
 import { WaveformQL } from '../waveform/waveform.js';
-import { Track, TrackLyricsQL, TrackPageQL, TrackQL } from './track.js';
+import { Track, TrackLyricsListQL, TrackPageQL, TrackQL } from './track.js';
 import { FolderQL } from '../folder/folder.js';
 import { AlbumQL } from '../album/album.js';
 import { ArtistQL } from '../artist/artist.js';
@@ -191,7 +191,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TrackResolver.prototype, "waveform", null);
 __decorate([
-    FieldResolver(() => TrackLyricsQL),
+    FieldResolver(() => TrackLyricsListQL),
     __param(0, GQLRoot()),
     __param(1, Ctx()),
     __metadata("design:type", Function),

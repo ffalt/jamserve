@@ -21,7 +21,7 @@ import { State, StateQL } from '../state/state.js';
 import { Waveform, WaveformQL } from '../waveform/waveform.js';
 import { TrackHealthHint } from '../health/health.model.js';
 import { MediaTagRaw } from '../tag/tag.model.js';
-import { TrackLyrics } from './track.model.js';
+import { TrackLyricsList } from './track.model.js';
 import { PlayQueueEntry } from '../playqueueentry/playqueue-entry.js';
 import { PlaylistEntry } from '../playlistentry/playlist-entry.js';
 import { BookmarkOrderFields } from '../../types/enums.js';
@@ -128,6 +128,20 @@ Track = __decorate([
     Entity()
 ], Track);
 export { Track };
+let TrackLyricsLineQL = class TrackLyricsLineQL {
+};
+__decorate([
+    Field(() => Int),
+    __metadata("design:type", Number)
+], TrackLyricsLineQL.prototype, "timestamp", void 0);
+__decorate([
+    Field(() => String),
+    __metadata("design:type", String)
+], TrackLyricsLineQL.prototype, "text", void 0);
+TrackLyricsLineQL = __decorate([
+    ObjectType()
+], TrackLyricsLineQL);
+export { TrackLyricsLineQL };
 let TrackLyricsQL = class TrackLyricsQL {
 };
 __decorate([
@@ -138,6 +152,10 @@ __decorate([
     Field(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], TrackLyricsQL.prototype, "syncedLyrics", void 0);
+__decorate([
+    Field(() => [TrackLyricsLineQL], { nullable: true }),
+    __metadata("design:type", Array)
+], TrackLyricsQL.prototype, "syncedLines", void 0);
 __decorate([
     Field(() => String, { nullable: true }),
     __metadata("design:type", String)
@@ -150,6 +168,16 @@ TrackLyricsQL = __decorate([
     ObjectType()
 ], TrackLyricsQL);
 export { TrackLyricsQL };
+let TrackLyricsListQL = class TrackLyricsListQL {
+};
+__decorate([
+    Field(() => [TrackLyricsQL]),
+    __metadata("design:type", Array)
+], TrackLyricsListQL.prototype, "entries", void 0);
+TrackLyricsListQL = __decorate([
+    ObjectType()
+], TrackLyricsListQL);
+export { TrackLyricsListQL };
 let TrackQL = class TrackQL extends Track {
 };
 __decorate([
@@ -165,8 +193,8 @@ __decorate([
     __metadata("design:type", MediaTagRaw)
 ], TrackQL.prototype, "rawTag", void 0);
 __decorate([
-    Field(() => TrackLyricsQL),
-    __metadata("design:type", TrackLyrics)
+    Field(() => TrackLyricsListQL),
+    __metadata("design:type", TrackLyricsList)
 ], TrackQL.prototype, "lyrics", void 0);
 __decorate([
     Field(() => Int),

@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Track, TrackHealth, TrackLyrics, TrackPage } from './track.model.js';
+import { Track, TrackHealth, TrackLyricsList, TrackPage } from './track.model.js';
 import { UserRole } from '../../types/enums.js';
-import { IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
+import { IncludesTrackLyricsParameters, IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
 import { ListParameters, PageParameters } from '../base/base.parameters.js';
 import { AdminChangeQueueInfo } from '../admin/admin.js';
@@ -41,9 +41,9 @@ let TrackController = class TrackController {
         const result = await engine.metadata.similarTracks.byTrack(orm, track, page);
         return { ...result, items: await engine.transform.Track.trackBases(orm, result.items, trackParameters, user) };
     }
-    async lyrics(id, { orm, engine }) {
+    async lyrics(id, lyricsParameters, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(id);
-        return await engine.metadata.lyricsByTrack(orm, track);
+        return await engine.metadata.lyricsByTrack(orm, track, lyricsParameters);
     }
     async rawTagGet(filter, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
@@ -92,8 +92,9 @@ let TrackController = class TrackController {
         if (!engine.audio.isWriteLyricsSupported(track.fileName)) {
             return Promise.reject(invalidParameterError('id', `Embedding lyrics is not supported for ${fileSuffix(track.fileName)} format`));
         }
-        const lyrics = await engine.metadata.lyricsByTrack(orm, track);
-        if (!(lyrics.lyrics || lyrics.syncedLyrics)) {
+        const { entries } = await engine.metadata.lyricsByTrack(orm, track);
+        const lyrics = entries.find(entry => Boolean(entry.lyrics ?? entry.syncedLyrics));
+        if (!lyrics) {
             return Promise.reject(notFoundError('No lyrics found for this track'));
         }
         return await engine.io.track.embedLyrics(id, lyrics, track.root.idOrFail());
@@ -143,11 +144,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "similar", null);
 __decorate([
-    Get('/lyrics', () => TrackLyrics, { description: 'Get Lyrics for a Track by Id (External Service or Media File)', summary: 'Get Lyrics' }),
+    Get('/lyrics', () => TrackLyricsList, { description: 'Get Lyrics for a Track by Id (External Service, Lyrics File or Media File)', summary: 'Get Lyrics' }),
     __param(0, QueryParameter('id', { description: 'Track Id', isID: true })),
-    __param(1, RestContext()),
+    __param(1, QueryParameters()),
+    __param(2, RestContext()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, IncludesTrackLyricsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "lyrics", null);
 __decorate([

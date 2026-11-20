@@ -106,6 +106,10 @@ export function lyricsLanguageCode(language = '') {
     const code = language.trim().toLowerCase();
     return /^[a-z]{3}$/.test(code) ? code : 'und';
 }
+export function lyricsLanguage(language) {
+    const code = lyricsLanguageCode(language);
+    return code === 'und' ? undefined : code;
+}
 export function parseSimplifiedSynchronisedLyrics(value) {
     if (!value) {
         return;

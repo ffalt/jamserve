@@ -58,7 +58,8 @@ export class JamHttpService {
 
 	async get<T>(url: string, options: HTTPOptions): Promise<T> {
 		try {
-			return await firstValueFrom(this.client.get<T>(url,
+			return await firstValueFrom(this.client.get<T>(
+				url,
 				{
 					params: options.params,
 					headers: options.headers,
@@ -74,7 +75,9 @@ export class JamHttpService {
 
 	async post<T>(url: string, body: unknown, options: HTTPOptions): Promise<T> {
 		try {
-			return await firstValueFrom(this.client.post<T>(url, body,
+			return await firstValueFrom(this.client.post<T>(
+				url,
+				body,
 				{
 					params: options.params,
 					headers: options.headers,

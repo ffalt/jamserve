@@ -52,6 +52,20 @@ TrackHealth = __decorate([
     ResultType({ description: 'Track Health' })
 ], TrackHealth);
 export { TrackHealth };
+let TrackLyricsLine = class TrackLyricsLine {
+};
+__decorate([
+    ObjectField({ description: 'Start of the Line in Milliseconds', example: 100 }),
+    __metadata("design:type", Number)
+], TrackLyricsLine.prototype, "timestamp", void 0);
+__decorate([
+    ObjectField({ description: 'Text of the Line', example: 'I got a letter from the government' }),
+    __metadata("design:type", String)
+], TrackLyricsLine.prototype, "text", void 0);
+TrackLyricsLine = __decorate([
+    ResultType({ description: 'Track Lyrics Line (parsed from Synced Lyrics)' })
+], TrackLyricsLine);
+export { TrackLyricsLine };
 let TrackLyrics = class TrackLyrics {
 };
 __decorate([
@@ -71,15 +85,29 @@ __decorate([
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "syncedLyrics", void 0);
 __decorate([
+    ObjectField(() => [TrackLyricsLine], { nullable: true, description: 'Parsed Synced Lyrics' }),
+    __metadata("design:type", Array)
+], TrackLyrics.prototype, "syncedLines", void 0);
+__decorate([
     ObjectField({ nullable: true, description: 'Language of the the lyrics' }),
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "language", void 0);
 __decorate([
-    ObjectField({ nullable: true, description: 'Audio Tag or External Service' }),
+    ObjectField({ nullable: true, description: 'Audio Tag, Lyrics File or External Service' }),
     __metadata("design:type", String)
 ], TrackLyrics.prototype, "source", void 0);
 TrackLyrics = __decorate([
-    ResultType({ description: 'Track Lyrics (via External Service or Audio Tag)' })
+    ResultType({ description: 'Track Lyrics (via External Service, Lyrics File or Audio Tag)' })
 ], TrackLyrics);
 export { TrackLyrics };
+let TrackLyricsList = class TrackLyricsList {
+};
+__decorate([
+    ObjectField(() => [TrackLyrics], { description: 'List of Lyrics found for the Track' }),
+    __metadata("design:type", Array)
+], TrackLyricsList.prototype, "entries", void 0);
+TrackLyricsList = __decorate([
+    ResultType({ description: 'Track Lyrics List' })
+], TrackLyricsList);
+export { TrackLyricsList };
 //# sourceMappingURL=track.model.js.map

@@ -39,6 +39,24 @@ IncludesTrackParameters = __decorate([
     ObjectParametersType()
 ], IncludesTrackParameters);
 export { IncludesTrackParameters };
+let IncludesTrackLyricsParameters = class IncludesTrackLyricsParameters {
+};
+__decorate([
+    ObjectField({ nullable: true, description: 'include the plain lyrics', defaultValue: true, example: true }),
+    __metadata("design:type", Boolean)
+], IncludesTrackLyricsParameters.prototype, "lyricsIncPlain", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'include the synced lyrics in LRC format', defaultValue: true, example: true }),
+    __metadata("design:type", Boolean)
+], IncludesTrackLyricsParameters.prototype, "lyricsIncSynced", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'include the parsed lines of the synced lyrics', defaultValue: true, example: true }),
+    __metadata("design:type", Boolean)
+], IncludesTrackLyricsParameters.prototype, "lyricsIncParsedSynced", void 0);
+IncludesTrackLyricsParameters = __decorate([
+    ObjectParametersType()
+], IncludesTrackLyricsParameters);
+export { IncludesTrackLyricsParameters };
 let MediaHealthParameters = class MediaHealthParameters {
 };
 __decorate([
