@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.24](https://github.com/ffalt/jamserve/compare/v0.6.23...v0.6.24) (2026-11-20)
+
+### Features
+
+* **lyrics:** return lyrics entries with parsed synced lines ([360bec3](https://github.com/ffalt/jamserve/commit/360bec35dd5e4ac460fee416a067438cc9786578))
+
 ## [0.6.23](https://github.com/ffalt/jamserve/compare/v0.6.22...v0.6.23) (2026-11-19)
 
 ### Features
