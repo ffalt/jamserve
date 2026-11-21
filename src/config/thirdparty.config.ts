@@ -13,7 +13,7 @@ export interface ThirdpartyToolsConfig {
 	wikipedia: { userAgent: string };
 	gpodder: { userAgent: string };
 	lyricsovh: { userAgent: string };
-	lrclib: { userAgent: string };
+	lrclib: { apiKey: string; appId: string; userAgent: string };
 	discogs: { apiToken: string; userAgent: string };
 }
 
@@ -70,7 +70,7 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		Lrclib
 		https://lrclib.net/
     */
-	lrclib: { userAgent: `${userAgent} ( ${contact} )` },
+	lrclib: { apiKey: '', appId: '', userAgent: `${userAgent} ( ${contact} )` },
 	/*
 		Discogs
 		https://www.discogs.com/developers/

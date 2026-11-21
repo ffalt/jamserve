@@ -66,7 +66,7 @@ export class AudioModule {
 		this.lastFM = new LastFMClient({ key: this.configService.tools.lastfm.apiKey, userAgent: this.configService.tools.lastfm.userAgent });
 		this.acoustid = new AcoustidClient({ key: this.configService.tools.acoustid.apiKey, userAgent: this.configService.tools.acoustid.userAgent });
 		this.lyricsOVH = new LyricsOVHClient(this.configService.tools.lyricsovh.userAgent);
-		this.lrclib = new LrclibClient(this.configService.tools.lrclib.userAgent);
+		this.lrclib = new LrclibClient({ userAgent: this.configService.tools.lrclib.userAgent, apiKey: this.configService.tools.lrclib.apiKey, appId: this.configService.tools.lrclib.appId });
 		this.wikipedia = new WikipediaClient(this.configService.tools.wikipedia.userAgent);
 		this.gpodder = new GpodderClient(this.configService.tools.gpodder.userAgent);
 

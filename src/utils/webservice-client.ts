@@ -55,12 +55,12 @@ export class WebserviceClient {
 		return this.getJsonWithParameters<T, undefined>(url, undefined, ignoreStatus);
 	}
 
-	protected async getJsonWithParameters<T, P extends WebserviceClientParameters>(url: string, parameters?: P, ignoreStatus?: boolean): Promise<T> {
+	protected async getJsonWithParameters<T, P extends WebserviceClientParameters>(url: string, parameters?: P, ignoreStatus?: boolean, headers?: Record<string, string>): Promise<T> {
 		this.checkDisabled();
 		await this.limit();
 		const urlParameters = parameters ? this.formatParams<P>(parameters) : '';
 		const response = await fetch(url + urlParameters, {
-			headers: { 'User-Agent': this.userAgent },
+			headers: { 'User-Agent': this.userAgent, ...headers },
 			signal: AbortSignal.timeout(this.timeout)
 		});
 		if (!ignoreStatus && response.status !== 200) {
