@@ -26,7 +26,7 @@ let MetadataController = class MetadataController {
         return { data: await engine.metadata.lyricsOVH(orm, parameters.artist, parameters.title) };
     }
     async lcrlibSearch(parameters, { orm, engine }) {
-        return { data: await engine.metadata.lrclibGet(orm, parameters.artist, parameters.title, parameters.album, parameters.duration) };
+        return { data: await engine.metadata.lrclibGet(orm, parameters.title, parameters.artist, parameters.album, parameters.duration) };
     }
     async acoustidLookup({ trackID, inc }, { orm, engine }) {
         const track = await orm.Track.oneOrFailByID(trackID);

@@ -6,6 +6,12 @@ import { logger } from '../../utils/logger.js';
 const log = logger('Lyrics:File');
 export const LyricsSyncedExtensions = ['.lrc', '.elrc'];
 export const LyricsPlainExtensions = ['.txt'];
+export function durationToSeconds(milliseconds) {
+    if (!milliseconds || milliseconds <= 0) {
+        return;
+    }
+    return Math.round(milliseconds / 1000);
+}
 export function lyricsSidecarCandidates(filename, extensions = [...LyricsSyncedExtensions, ...LyricsPlainExtensions]) {
     const directory = path.dirname(filename);
     const base = basenameStripExtension(filename);
@@ -42,6 +48,22 @@ export async function readLyricsSidecar(filename) {
         }
     }
     return;
+}
+export async function hasSyncedLyricsSidecar(filename) {
+    for (const candidate of lyricsSidecarCandidates(filename, LyricsSyncedExtensions)) {
+        if (!await fse.pathExists(candidate)) {
+            continue;
+        }
+        try {
+            if (hasLyricsTimestamps(await fse.readFile(candidate, 'utf8'))) {
+                return true;
+            }
+        }
+        catch (error) {
+            log.errorMsg(`Could not read lyrics file ${candidate}`, error);
+        }
+    }
+    return false;
 }
 function formatLength(duration) {
     if (!duration || duration <= 0) {

@@ -157,6 +157,11 @@ JAM_DB_PORT=5432
 
 # Last.fm API key for music metadata (https://www.last.fm/api)
 # JAM_LASTFM_API_KEY=your-lastfm-api-key
+
+# LRCLib key for synced lyrics, raises the rate limit (https://lrclib.net/developers)
+# Use the server-side key, or the public app id if you only have that one
+# JAM_LRCLIB_API_KEY=your-lrclib-api-key
+# JAM_LRCLIB_APP_ID=your-lrclib-app-id
 ```
 
 Example **config/firststart.config.json**:

@@ -5,8 +5,8 @@ export function getMethodMetadata(prototype, propertyKey, defaultReturnTypeForma
         throw new SymbolKeysNotSupportedError();
     }
     const methodName = propertyKey;
-    let getReturnType = undefined;
-    let returnTypeOptions = undefined;
+    let getReturnType;
+    let returnTypeOptions;
     if (returnTypeFunction) {
         const { getType, typeOptions } = findType({
             metadataKey: 'design:returntype',

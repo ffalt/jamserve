@@ -17,7 +17,7 @@ function generateUploadClientCalls(call, name, parameterType, upload) {
 }
 function generateUrlClientCall(call, name, parametersType = '{}') {
     let route = (call.route ?? '');
-    let validate = undefined;
+    let validate;
     let baseParameter = 'params';
     if (call.customPathParameters) {
         const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `return ''`);
@@ -42,7 +42,7 @@ function generateUrlClientCall(call, name, parametersType = '{}') {
 }
 function generateBinClientCall(call, name, parametersType = '{}') {
     let route = call.route ?? '';
-    let validate = undefined;
+    let validate;
     let baseParameter = 'params';
     if (call.customPathParameters) {
         const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `throw new Error('Invalid Parameter')`);

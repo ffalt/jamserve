@@ -61,7 +61,7 @@ let TrackController = class TrackController {
     }
     async health(healthParameters, filter, trackParameters, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
-        const list = await engine.track.health(tracks, healthParameters.healthMedia);
+        const list = await engine.track.health(orm, tracks, healthParameters.healthMedia);
         const result = [];
         for (const item of list) {
             result.push({

@@ -21,9 +21,10 @@ import { CoverArtArchiveLookupType, DBObjectType, MetadataType } from '../../typ
 import { Op } from 'sequelize';
 import fetch from 'node-fetch';
 import { invalidParameterError } from '../../modules/deco/express/express-error.js';
+import { lrclibDuration } from '../../modules/audio/clients/lrclib-client.js';
 import { lyricsSlug, shortenLyricsTitle } from '../../utils/lyrics-slug.js';
 import { lyricsToEvents, plainLyrics } from '../../utils/lyrics-lrc.js';
-import { lyricsFromText, readLyricsSidecar, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
+import { durationToSeconds, lyricsFromText, readLyricsSidecar, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 const log = logger('Metadata');
 function hasLyrics(result) {
@@ -152,6 +153,11 @@ let MetadataService = MetadataService_1 = class MetadataService {
             return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
         });
     }
+    async lrclibSearch(orm, track_name, artist_name, album_name, duration) {
+        return this.searchInStore(orm, lrclibStoreKey('lrclib-search', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
+            return await this.audioModule.lrclib.findBySearch({ track_name, artist_name, album_name, duration });
+        });
+    }
     async lrclibGet(orm, track_name, artist_name, album_name, duration) {
         return this.searchInStore(orm, lrclibStoreKey('lrclib-get', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
             return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
@@ -260,21 +266,18 @@ let MetadataService = MetadataService_1 = class MetadataService {
             title: tag.title,
             artist: tag.artist ?? tag.albumArtist,
             album: tag.album,
-            duration: tag.mediaDuration
+            duration: durationToSeconds(tag.mediaDuration)
         });
     }
     async lyricsLrcLibByTrackTag(orm, _track, tag) {
-        if (!tag.title) {
+        const artistName = tag.artist ?? tag.albumArtist;
+        if (!artistName || !tag.title) {
             return {};
         }
-        const artistName = tag.artist ?? tag.albumArtist ?? '';
-        let result = await this.lrclibFind(orm, tag.title, artistName, tag.album);
+        const duration = lrclibDuration(durationToSeconds(tag.mediaDuration));
+        let result = await this.lrclibFind(orm, tag.title, artistName, tag.album, duration);
         if (!hasLyrics(result)) {
-            result = await this.lrclibFind(orm, tag.title, artistName);
-        }
-        const shortTitle = shortenLyricsTitle(tag.title);
-        if (shortTitle && !hasLyrics(result)) {
-            result = await this.lrclibFind(orm, shortTitle, artistName);
+            result = await this.lrclibSearch(orm, tag.title, artistName, undefined, duration);
         }
         return result ?? {};
     }

@@ -101,7 +101,7 @@ export class Feed {
                 const body = result.body;
                 body.on('data', (chunk) => {
                     received += chunk.length;
-                    if (!(received > Feed.MAX_FEED_SIZE)) {
+                    if (received <= Feed.MAX_FEED_SIZE) {
                         return;
                     }
                     body.destroy();

@@ -151,6 +151,7 @@ export var TrackHealthID;
     TrackHealthID["flacMediaValid"] = "track.flac.media.valid";
     TrackHealthID["id3v2NoId3v1"] = "track.mp3.id3v2.no.id3v1";
     TrackHealthID["mp3Garbage"] = "track.mp3.garbage.data";
+    TrackHealthID["lyricsSyncedExists"] = "track.lyrics.synced.exists";
 })(TrackHealthID || (TrackHealthID = {}));
 export var FileTyp;
 (function (FileTyp) {

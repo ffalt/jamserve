@@ -67,10 +67,10 @@ let TrackService = class TrackService {
         }
         return;
     }
-    async health(tracks, media) {
+    async health(orm, tracks, media) {
         const result = [];
         await processQueue(3, tracks, async (track) => {
-            const health = await this.checker.run(track, !!media);
+            const health = await this.checker.run(orm, track, !!media);
             if (health.length > 0) {
                 result.push({ track, health });
             }

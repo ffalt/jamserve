@@ -4,7 +4,7 @@ export class WebserviceClient {
     constructor(requestPerInterval, requestIntervalMS, userAgent) {
         this.enabled = false;
         this.timeout = 30000;
-        this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS, fireImmediately: true });
+        this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS });
         this.userAgent = userAgent;
     }
     async parseResult(response) {
@@ -42,12 +42,12 @@ export class WebserviceClient {
     async getJson(url, ignoreStatus) {
         return this.getJsonWithParameters(url, undefined, ignoreStatus);
     }
-    async getJsonWithParameters(url, parameters, ignoreStatus) {
+    async getJsonWithParameters(url, parameters, ignoreStatus, headers) {
         this.checkDisabled();
         await this.limit();
         const urlParameters = parameters ? this.formatParams(parameters) : '';
         const response = await fetch(url + urlParameters, {
-            headers: { 'User-Agent': this.userAgent },
+            headers: { 'User-Agent': this.userAgent, ...headers },
             signal: AbortSignal.timeout(this.timeout)
         });
         if (!ignoreStatus && response.status !== 200) {

@@ -1,7 +1,7 @@
 import { getMethodMetadata } from '../helpers/method-metadata.js';
 import { getTypeDecoratorParameters } from '../helpers/decorators.js';
 export function BaseGet(metadata, routeOrReturnTypeFunctionOrOptions, returnTypeFunctionOrOptions, maybeOptions) {
-    let route = undefined;
+    let route;
     if (typeof routeOrReturnTypeFunctionOrOptions === 'string') {
         route = routeOrReturnTypeFunctionOrOptions;
     }
