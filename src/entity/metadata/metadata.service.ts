@@ -22,7 +22,7 @@ import { Op } from 'sequelize';
 import fetch from 'node-fetch';
 import { invalidParameterError } from '../../modules/deco/express/express-error.js';
 import { ApiBinaryResult } from '../../modules/deco/express/express-responder.js';
-import { LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
+import { lrclibDuration, LrclibResult } from '../../modules/audio/clients/lrclib-client.js';
 import { Discogs } from '../../modules/audio/clients/discogs-rest-data.js';
 import { Tag } from '../tag/tag.js';
 import type { MusicBrainzLookupIncludes } from '../../modules/audio/clients/musicbrainz-client.interface.js';
@@ -31,7 +31,6 @@ import { IncludesTrackLyricsParameters } from '../track/track.parameters.js';
 import { lyricsSlug, shortenLyricsTitle } from '../../utils/lyrics-slug.js';
 import { lyricsToEvents, plainLyrics } from '../../utils/lyrics-lrc.js';
 import { durationToSeconds, lyricsFromText, readLyricsSidecar, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
-import { lrclibDuration } from '../../modules/audio/clients/lrclib-client.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 
 const log = logger('Metadata');

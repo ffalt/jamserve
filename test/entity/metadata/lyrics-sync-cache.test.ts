@@ -67,7 +67,7 @@ describe('isSyncedLyricsMarkedUnavailable', () => {
 	test('looks the entry up by name and lyrics type', async () => {
 		const orm = makeOrm();
 		await isSyncedLyricsMarkedUnavailable(orm as unknown as Orm, makeTag());
-		const where = (orm.MetaData.findOne.mock.calls.at(0)?.at(0) as { where: { name: string; dataType: MetadataType } }).where;
+		const where = (orm.MetaData.findOne.mock.calls[0][0] as { where: { name: string; dataType: MetadataType } }).where;
 		expect(where.name).toBe('lyrics-synced-unavailable/theartist/thesong');
 		expect(where.dataType).toBe(MetadataType.lyrics);
 	});
@@ -76,7 +76,7 @@ describe('isSyncedLyricsMarkedUnavailable', () => {
 		const orm = makeOrm();
 		const before = Date.now();
 		await isSyncedLyricsMarkedUnavailable(orm as unknown as Orm, makeTag());
-		const where = (orm.MetaData.findOne.mock.calls.at(0)?.at(0) as { where: { createdAt: Record<symbol, Date> } }).where;
+		const where = (orm.MetaData.findOne.mock.calls[0][0] as { where: { createdAt: Record<symbol, Date> } }).where;
 		const freshSince = where.createdAt[Op.gte];
 		expect(freshSince.getTime()).toBeGreaterThanOrEqual(before - SYNCED_LYRICS_MARKER_TTL_MS);
 		expect(freshSince.getTime()).toBeLessThanOrEqual(Date.now() - SYNCED_LYRICS_MARKER_TTL_MS + 1000);

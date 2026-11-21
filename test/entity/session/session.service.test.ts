@@ -1,5 +1,4 @@
-import { jest } from '@jest/globals';
-import { describe, expect, test } from '@jest/globals';
+import { jest, describe, expect, test } from '@jest/globals';
 import { Op } from 'sequelize';
 import { SessionService } from '../../../src/entity/session/session.service.js';
 

@@ -35,7 +35,7 @@ function normalizeGenreName(name: string): string {
 
 @injectable()
 export class LandscapeService {
-	private cacheMap = new Map<string, LandscapeCache>();
+	private readonly cacheMap = new Map<string, LandscapeCache>();
 	private noiseData: Record<string, NoiseCoord> | undefined;
 
 	private loadNoiseData(): Record<string, NoiseCoord> {

@@ -229,7 +229,7 @@ export class FORMAT {
 			discTotal: this.parseNum(simple.DISCTOTAL),
 			trackNr: this.parseNum(simple.TRACKNUMBER),
 			trackTotal: this.parseNum(simple.TRACKTOTAL),
-			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
+			lyrics: this.unsynchronisedLyrics(simple.LYRICS),
 			syncedlyrics,
 			lyricslanguage,
 			seriesNr: simple.WORK,
@@ -253,6 +253,13 @@ export class FORMAT {
 	private static unsynchronisedLyricsLanguage(data: IID3V2.Tag): string | undefined {
 		const frame = data.frames.find(f => ['ULT', 'USLT'].includes(f.id)) as IID3V2.Frames.LangDescTextFrame | undefined;
 		return lyricsLanguage(frame?.value.language);
+	}
+
+	private static unsynchronisedLyrics(value: string | undefined): string | undefined {
+		if (!value) {
+			return undefined;
+		}
+		return hasLyricsTimestamps(value) ? plainLyrics(value) : value;
 	}
 
 	private static cleanText(s: string | undefined): string | undefined {
@@ -290,7 +297,7 @@ export class FORMAT {
 			trackNr: this.parseNum(simple.TRACKNUMBER) ?? this.parseNum(simple.TRACK),
 			trackTotal: this.parseNum(simple.TRACKTOTAL) ?? this.parseNum(simple.TOTALTRACKS),
 			year: this.parseYear(simple.ORIGINALYEAR) ?? this.parseYear(simple.ORIGINALDATE) ?? this.parseYear(simple.DATE),
-			lyrics: simple.LYRICS && !hasLyricsTimestamps(simple.LYRICS) ? simple.LYRICS : (simple.LYRICS ? plainLyrics(simple.LYRICS) : undefined),
+			lyrics: this.unsynchronisedLyrics(simple.LYRICS),
 			syncedlyrics,
 			lyricslanguage,
 			seriesNr: simple.WORK,

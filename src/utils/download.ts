@@ -29,7 +29,7 @@ export async function downloadFile(url: string, filename: string, maxSize: numbe
 		let aborted = false;
 		body.on('data', (chunk: Buffer) => {
 			received += chunk.length;
-			if (aborted || !(received > maxSize)) {
+			if (aborted || (received <= maxSize)) {
 				return;
 			}
 			aborted = true;

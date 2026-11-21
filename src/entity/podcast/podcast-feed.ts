@@ -143,7 +143,7 @@ export class Feed {
 				const body = result.body as unknown as Readable;
 				body.on('data', (chunk: Buffer) => {
 					received += chunk.length;
-					if (!(received > Feed.MAX_FEED_SIZE)) {
+					if (received <= Feed.MAX_FEED_SIZE) {
 						return;
 					}
 

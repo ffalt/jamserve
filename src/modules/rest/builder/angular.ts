@@ -24,7 +24,7 @@ function generateUploadClientCalls(call: MethodMetadata, name: string, parameter
 
 function generateUrlClientCall(call: MethodMetadata, name: string, parametersType: string = '{}'): MustacheDataClientCallFunction {
 	let route = call.route ?? '';
-	let validate = undefined;
+	let validate: string | undefined;
 	if (call.customPathParameters) {
 		const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `return ''`);
 		validate = validateCode;
@@ -48,7 +48,7 @@ function generateUrlClientCall(call: MethodMetadata, name: string, parametersTyp
 
 function generateBinClientCall(call: MethodMetadata, name: string, parametersType: string = '{}'): MustacheDataClientCallFunction {
 	let route = call.route ?? '';
-	let validate = undefined;
+	let validate: string | undefined;
 	if (call.customPathParameters) {
 		const { validateCode, paramRoute } = getCustomParameterTemplate(call.customPathParameters, call, `throw new Error('Invalid Parameter')`);
 		validate = validateCode;

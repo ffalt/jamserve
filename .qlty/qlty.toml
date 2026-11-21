@@ -95,6 +95,13 @@ name = "biome"
 
 
 [[triage]]
+match.rules = [
+    "zizmor:zizmor/unpinned-uses" # false positive in GitHub Actions, we are using actions.lock now to pin actions versions
+]
+set.ignored = true
+
+
+[[triage]]
 # disable openapi hints for now
 match.rules = [
     "checkov:CKV_OPENAPI_5", # Ensure that security operations is not empty.
@@ -129,7 +136,9 @@ match.rules = [
     "biome:lint/style/noParameterAssign", # Reassigning a function parameter is confusing.
     "biome:lint/style/noNonNullAssertion", # Forbidden non-null assertion.
     "biome:lint/complexity/noStaticOnlyClass", # Avoid classes that contain only static members.
-    "biome:lint/complexity/noBannedTypes" # Don't use 'Function' as a type.
+    "biome:lint/complexity/noBannedTypes", # Don't use 'Function' as a type.
+    "biome:lint/complexity/noThisInStatic", # Using this in a static context can be confusing.
+    "biome:lint/correctness/noUnusedFunctionParameters" # This parameter x is unused.
 ]
 set.ignored = true
 

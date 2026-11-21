@@ -79,13 +79,12 @@ All notable changes to this project will be documented in this file. See [commit
 
 * **express:** authorize before upload to tmp ([bbe80db](https://github.com/ffalt/jamserve/commit/bbe80db329d43ea113c8e50ad92f38a3540cbd99))
 * **lint:** follow unicorn rules ([85f7d38](https://github.com/ffalt/jamserve/commit/85f7d38ed4768d5d8598869ea8d3bce9838c039c))
-## [0.6.16](https://github.com/ffalt/jamserve/compare/v0.6.15...v0.6.16) (2026-07-05)
 
+## [0.6.16](https://github.com/ffalt/jamserve/compare/v0.6.15...v0.6.16) (2026-07-05)
 
 ### Features
 
 * **SSRF:** integrate request-filtering-agent for SSRF URL handling instead of the hand-rolled code ([c0b6b5e](https://github.com/ffalt/jamserve/commit/c0b6b5e0c1bd511b94c07e891dacbd71257ad6b7))
-
 
 ### Bug Fixes
 
@@ -93,11 +92,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.15](https://github.com/ffalt/jamserve/compare/v0.6.14...v0.6.15) (2026-07-04)
 
-
 ### Features
 
 * **api:** add mbTrackIDs query parameter for filtering by MusicBrainz Track Ids ([cf47b7e](https://github.com/ffalt/jamserve/commit/cf47b7ef8b076e7182d0ec5ec37711596b3647dc))
-
 
 ### Bug Fixes
 
@@ -105,7 +102,6 @@ All notable changes to this project will be documented in this file. See [commit
 * **track:** adjust broken similar tracks function ([8ebf167](https://github.com/ffalt/jamserve/commit/8ebf167076378899987d38cb3c6282526916a201))
 
 ## [0.6.14](https://github.com/ffalt/jamserve/compare/v0.6.13...v0.6.14) (2026-05-31)
-
 
 ### Features
 
@@ -115,13 +111,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.13](https://github.com/ffalt/jamserve/compare/v0.6.12...v0.6.13) (2026-05-30)
 
-
 ### Bug Fixes
 
 * **discogs:** remove custom headers from image fetch request ([a585131](https://github.com/ffalt/jamserve/commit/a5851311e732823196e63fccaa81b61ba03b39a3))
 
 ## [0.6.12](https://github.com/ffalt/jamserve/compare/v0.6.11...v0.6.12) (2026-05-30)
-
 
 ### Bug Fixes
 
@@ -129,11 +123,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.11](https://github.com/ffalt/jamserve/compare/v0.6.10...v0.6.11) (2026-05-30)
 
-
 ### Features
 
 * **discogs:** add Discogs client and search functionality ([56b6ce5](https://github.com/ffalt/jamserve/commit/56b6ce5903c90765e7a3de5353fecc20ff6cbdd2))
-
 
 ### Bug Fixes
 
@@ -144,13 +136,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.10](https://github.com/ffalt/jamserve/compare/v0.6.9...v0.6.10) (2026-05-29)
 
-
 ### Features
 
 * **folder:** add folderIncTrackInSubtreeCount parameter and tracksInSubtreeCount field ([b2b8bd3](https://github.com/ffalt/jamserve/commit/b2b8bd3871d47de8daeda1e68302d0b53a6e622c))
 * **landscape:** add landscape data model and resolver with query parameters ([66f16f6](https://github.com/ffalt/jamserve/commit/66f16f66ee8a94196b9e8ddea434cb0ff7eb78ac))
 * upgrade Node.js version to 26.x in CI and package configuration ([11eefae](https://github.com/ffalt/jamserve/commit/11eefae7dc166418f774d4781a0dfc25ca137867))
-
 
 ### Bug Fixes
 
@@ -160,11 +150,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.9](https://github.com/ffalt/jamserve/compare/v0.6.8...v0.6.9) (2026-05-29)
 
-
 ### Features
 
 * **folder:** add inSubtreeOfID filter for folder queries to include the folder and all its subfolders ([e8f59a3](https://github.com/ffalt/jamserve/commit/e8f59a3b730ee6191356c413295e8e734e750530))
-
 
 ### Bug Fixes
 
@@ -172,11 +160,9 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.6.8](https://github.com/ffalt/jamserve/compare/v0.6.7...v0.6.8) (2026-05-27)
 
-
 ### Features
 
 * **landscape:** add landscape data retrieval and visualization endpoints ([6b66d71](https://github.com/ffalt/jamserve/commit/6b66d71ce87bc6e09fb823c676cfbf8fbe78ad00))
-
 
 ### Bug Fixes
 

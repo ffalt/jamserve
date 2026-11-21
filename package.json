@@ -21,7 +21,7 @@
     "build": "tsc",
     "build:prod": "npm run clean && npm run build",
     "build:deploy": "npm run build:prod && node --loader ts-node/esm deploy.ts",
-    "check": "qlty check --all",
+    "check": "qlty check --all --no-formatters",
     "clean": "rimraf dist",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
     "test:watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch",

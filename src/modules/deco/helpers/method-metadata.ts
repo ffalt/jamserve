@@ -1,5 +1,5 @@
 import { findType } from './find-type.js';
-import { MethodOptions, ReturnTypeFunction } from '../definitions/types.js';
+import { MethodOptions, ReturnTypeFunction, TypeOptions, TypeValueThunk } from '../definitions/types.js';
 import { MethodMetadata } from '../definitions/method-metadata.js';
 import { SymbolKeysNotSupportedError } from 'type-graphql';
 
@@ -8,8 +8,8 @@ export function getMethodMetadata(prototype: object, propertyKey: string | symbo
 		throw new SymbolKeysNotSupportedError();
 	}
 	const methodName = propertyKey as keyof typeof prototype;
-	let getReturnType = undefined;
-	let returnTypeOptions = undefined;
+	let getReturnType: TypeValueThunk | undefined;
+	let returnTypeOptions: TypeOptions | undefined;
 	if (returnTypeFunction) {
 		const { getType, typeOptions } = findType({
 			metadataKey: 'design:returntype',

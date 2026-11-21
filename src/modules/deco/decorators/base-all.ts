@@ -10,7 +10,7 @@ export function BaseAll(
 	returnTypeFunctionOrOptions?: ReturnTypeFunction | MethodOptions,
 	maybeOptions?: MethodOptions
 ): MethodDecorator {
-	let route: string | undefined = undefined;
+	let route: string | undefined;
 	if (typeof routeOrReturnTypeFunctionOrOptions === 'string') {
 		route = routeOrReturnTypeFunctionOrOptions;
 	} else {
