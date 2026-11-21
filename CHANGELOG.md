@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.25](https://github.com/ffalt/jamserve/compare/v0.6.24...v0.6.25) (2026-11-21)
+
+### Features
+
+* **lyrics:** add LRCLib credentials and retry handling ([5792a3b](https://github.com/ffalt/jamserve/commit/5792a3b12e44eca277118f4dc73a27f715d0525e))
+* **lyrics:** add support for checking and marking synced lyrics availability ([64a190c](https://github.com/ffalt/jamserve/commit/64a190c7d8f27d98115307e0fec5902e8f845e35))
+* **lyrics:** improve LRCLib matching according to https://lrclib.net/docs ([9ac06a1](https://github.com/ffalt/jamserve/commit/9ac06a1bc57216602d4e51912053c5bb82dbaaf1))
+
+### Bug Fixes
+
+* **metadata:** correct parameter order in lrclibGet call ([332141b](https://github.com/ffalt/jamserve/commit/332141b8f02a75365e093ede7bc9247620a86ba7))
+* **webservice:** enforce request rate limiting ([7a47c21](https://github.com/ffalt/jamserve/commit/7a47c21c081b58a3c5138d3897db5d09d30473db))
+
 ## [0.6.24](https://github.com/ffalt/jamserve/compare/v0.6.23...v0.6.24) (2026-11-20)
 
 ### Features
