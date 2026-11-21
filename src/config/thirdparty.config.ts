@@ -18,6 +18,7 @@ export interface ThirdpartyToolsConfig {
 }
 
 export const userAgent = `JamServe/${JAMSERVE_VERSION}`;
+export const LRCLIB_APP_NAME = 'Jam';
 export const contact = 'https://github.com/ffalt/jamserve';
 
 export const ThirdPartyConfig: ThirdpartyToolsConfig = {
@@ -70,7 +71,7 @@ export const ThirdPartyConfig: ThirdpartyToolsConfig = {
 		Lrclib
 		https://lrclib.net/
     */
-	lrclib: { apiKey: '', appId: '', userAgent: `${userAgent} ( ${contact} )` },
+	lrclib: { apiKey: '', appId: '', userAgent: `${LRCLIB_APP_NAME} v${JAMSERVE_VERSION} (${contact})` },
 	/*
 		Discogs
 		https://www.discogs.com/developers/

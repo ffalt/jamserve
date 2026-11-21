@@ -17,6 +17,13 @@ export interface LyricsFileInfo {
 	duration?: number;
 }
 
+export function durationToSeconds(milliseconds?: number): number | undefined {
+	if (!milliseconds || milliseconds <= 0) {
+		return;
+	}
+	return Math.round(milliseconds / 1000);
+}
+
 export function lyricsSidecarCandidates(filename: string, extensions: Array<string> = [...LyricsSyncedExtensions, ...LyricsPlainExtensions]): Array<string> {
 	const directory = path.dirname(filename);
 	const base = basenameStripExtension(filename);

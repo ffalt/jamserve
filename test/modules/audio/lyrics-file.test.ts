@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from '@jest/globals';
 import fse from 'fs-extra';
 import path from 'node:path';
-import { addLyricsHeader, hasSyncedLyricsSidecar, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
+import { addLyricsHeader, durationToSeconds, hasSyncedLyricsSidecar, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
 
 const testPath = path.resolve('./local/__tests__/lyrics-file/');
 const audioFile = path.join(testPath, 'Artist - Song.mp3');
@@ -150,6 +150,20 @@ describe('lyrics sidecar files', () => {
 		test('ignores a plain text file', async () => {
 			await fse.writeFile(path.join(testPath, 'Artist - Song.txt'), lrc);
 			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+		});
+	});
+
+	describe('durationToSeconds', () => {
+		test('turns the tag milliseconds into seconds', () => {
+			expect(durationToSeconds(180_000)).toBe(180);
+		});
+
+		test('drops a missing duration', () => {
+			expect(durationToSeconds(undefined)).toBeUndefined();
+		});
+
+		test('writes a length header in minutes and seconds', () => {
+			expect(addLyricsHeader(lrc, { duration: durationToSeconds(180_000) })).toContain('[length:03:00]');
 		});
 	});
 

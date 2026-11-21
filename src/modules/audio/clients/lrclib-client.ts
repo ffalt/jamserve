@@ -57,9 +57,53 @@ export function retryAfterMS(header: string | null): number {
 	return Math.min(Math.round(jittered), RETRY_AFTER_MAX_MS);
 }
 
+// the docs state lrclib itself matches a duration within +/- 2 seconds
+export const DURATION_TOLERANCE_SECONDS = 2;
+export const MIN_DURATION_SECONDS = 1;
+export const MAX_DURATION_SECONDS = 3600;
+
+// the docs warn that an overloaded edge may answer with something other than JSON
+async function errorMessage(response: Response): Promise<string> {
+	try {
+		const body = await response.text();
+		if (response.headers.get('content-type')?.includes('json')) {
+			return ((JSON.parse(body) as { message?: string }).message ?? body).slice(0, 200);
+		}
+		return body.slice(0, 200);
+	} catch {
+		return response.statusText;
+	}
+}
+
+export function lrclibDuration(seconds?: number): number | undefined {
+	if (seconds === undefined || seconds < MIN_DURATION_SECONDS || seconds > MAX_DURATION_SECONDS) {
+		return;
+	}
+	return Math.round(seconds);
+}
+
+export function toLyrics(data?: LrclibResult): TrackLyrics {
+	if (!data || !(data.plainLyrics || data.syncedLyrics)) {
+		return {};
+	}
+	return { lyrics: data.plainLyrics, syncedLyrics: data.syncedLyrics, source: `https://lrclib.net/api/get/${data.id}` };
+}
+
+export function bestMatch(results: Array<LrclibResult>, duration?: number): LrclibResult | undefined {
+	const usable = results.filter(result => !result.instrumental && (result.plainLyrics || result.syncedLyrics));
+	const candidates = duration === undefined ? usable : usable.filter(result => Math.abs(result.duration - duration) <= DURATION_TOLERANCE_SECONDS);
+	const synced = candidates.filter(result => result.syncedLyrics);
+	const preferred = synced.length > 0 ? synced : candidates;
+	if (duration === undefined) {
+		return preferred.at(0);
+	}
+	return preferred.toSorted((a, b) => Math.abs(a.duration - duration) - Math.abs(b.duration - duration)).at(0);
+}
+
 export class LrclibClient extends WebserviceClient {
 	private readonly apiKey: string;
 	private readonly appId: string;
+	private inFlight: Promise<undefined> = Promise.resolve(undefined);
 
 	constructor(options: LrclibOptions) {
 		super(1, options.apiKey ? REQUEST_INTERVAL_MS_WITH_KEY : REQUEST_INTERVAL_MS, options.userAgent);
@@ -84,29 +128,58 @@ export class LrclibClient extends WebserviceClient {
 		if (response.status === 404) {
 			return Promise.resolve({} as T);
 		}
+		if (!response.ok) {
+			throw new Error(`LRCLib request failed: ${response.status} ${await errorMessage(response)}`);
+		}
 		return super.parseResult<T>(response);
 	}
 
-	async get(parameters: LrclibParameters): Promise<LrclibResult | undefined> {
-		log.info('requesting', JSON.stringify(parameters));
-		for (let attempt = 0; ; attempt++) {
-			try {
-				return await this.getJsonWithParameters<LrclibResult | undefined, LrclibParameters>('https://lrclib.net/api/get', parameters, true, this.headers());
-			} catch (error: unknown) {
-				if (!(error instanceof LrclibRateLimitError) || attempt >= RETRY_ATTEMPTS) {
-					throw error;
-				}
-				log.info(`waiting ${error.retryAfterMS}ms before retrying`);
-				await wait(error.retryAfterMS);
-			}
+	private async sequential<T>(task: () => Promise<T>): Promise<T> {
+		const previous = this.inFlight;
+		const { promise, resolve } = Promise.withResolvers<undefined>();
+		this.inFlight = promise;
+		await previous;
+		try {
+			return await task();
+		} finally {
+			resolve(undefined);
 		}
 	}
 
+	private async request<T>(url: string, parameters: LrclibParameters): Promise<T | undefined> {
+		return this.sequential(async () => {
+			log.info('requesting', url, JSON.stringify(parameters));
+			for (let attempt = 0; ; attempt++) {
+				try {
+					return await this.getJsonWithParameters<T | undefined, LrclibParameters>(url, parameters, true, this.headers());
+				} catch (error: unknown) {
+					if (!(error instanceof LrclibRateLimitError) || attempt >= RETRY_ATTEMPTS) {
+						throw error;
+					}
+					log.info(`waiting ${error.retryAfterMS}ms before retrying`);
+					await wait(error.retryAfterMS);
+				}
+			}
+		});
+	}
+
+	async get(parameters: LrclibParameters): Promise<LrclibResult | undefined> {
+		return this.request<LrclibResult>('https://lrclib.net/api/get', parameters);
+	}
+
+	async search(parameters: LrclibParameters): Promise<Array<LrclibResult>> {
+		// the search endpoint takes no duration, it only serves to pick the match afterwards
+		const { duration: _duration, ...query } = parameters;
+		const data = await this.request<Array<LrclibResult>>('https://lrclib.net/api/search', query);
+		return Array.isArray(data) ? data : [];
+	}
+
 	async find(parameters: LrclibParameters): Promise<TrackLyrics> {
-		const data = await this.get(parameters);
-		if (!data || !(data.plainLyrics || data.syncedLyrics)) {
-			return {};
-		}
-		return { lyrics: data.plainLyrics, syncedLyrics: data.syncedLyrics, source: `https://lrclib.net/api/get/${data.id}` };
+		return toLyrics(await this.get(parameters));
+	}
+
+	// the docs do not define the order of search results, so pick the match instead of trusting the first
+	async findBySearch(parameters: LrclibParameters): Promise<TrackLyrics> {
+		return toLyrics(bestMatch(await this.search(parameters), parameters.duration));
 	}
 }

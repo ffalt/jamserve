@@ -17,7 +17,7 @@ import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
 import { TrackLyrics } from '../../../../entity/track/track.model.js';
 import { logger } from '../../../../utils/logger.js';
 import { MetadataService } from '../../../../entity/metadata/metadata.service.js';
-import { writeLyricsSidecar } from '../../../audio/lyrics-file.js';
+import { durationToSeconds, writeLyricsSidecar } from '../../../audio/lyrics-file.js';
 import { markSyncedLyricsUnavailable } from '../../../../entity/metadata/lyrics-sync-cache.js';
 
 const log = logger('TrackWorker');
@@ -187,7 +187,7 @@ export class TrackWorker extends BaseWorker {
 			title: tag.title,
 			artist: tag.artist ?? tag.albumArtist,
 			album: tag.album,
-			duration: tag.mediaDuration
+			duration: durationToSeconds(tag.mediaDuration)
 		});
 	}
 
