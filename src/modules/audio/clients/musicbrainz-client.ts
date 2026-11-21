@@ -4,6 +4,11 @@ import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types.js
 import { MusicBrainz } from './musicbrainz-rest-data.js';
 import { capitalize } from '../../../utils/capitalize.js';
 
+// https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
+// per ip: "Currently that rate is (on average) 1 request per second.", anything above it is declined with a 503.
+// pace one request per interval with a margin instead of sitting exactly on the limit
+export const REQUEST_INTERVAL_MS = 1100;
+
 export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi.Request, MusicBrainz.Response> {
 	constructor(options: MusicbrainzClientApi.Options) {
 		const defaultOptions = {
@@ -13,8 +18,7 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 			retryCount: 3,
 			timeout: 60_000
 		};
-		// https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
-		super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
+		super(1, REQUEST_INTERVAL_MS, options.userAgent, { ...defaultOptions, ...options });
 	}
 
 	formatKey(key: string): string {
@@ -66,11 +70,6 @@ export class MusicbrainzClient extends WebserviceJSONClient<MusicbrainzClientApi
 			'fmt=json'
 		);
 		return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
-	}
-
-	protected isRateLimitError(body?: { error?: string }): boolean {
-		// "error":"Your requests are exceeding the allowable rate limit. Please see https://wiki.musicbrainz.org/XMLWebService for more information."
-		return !!(body?.error?.includes('allowable rate limit'));
 	}
 
 	async search(parameters: MusicbrainzClientApi.ParameterSearch): Promise<MusicBrainz.Response> {

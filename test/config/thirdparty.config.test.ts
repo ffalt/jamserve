@@ -17,3 +17,16 @@ describe('LRCLib user agent', () => {
 		expect(userAgent).toContain(`v${JAMSERVE_VERSION}`);
 	});
 });
+
+describe('MusicBrainz user agent', () => {
+	const { userAgent } = ThirdPartyConfig.musicbrainz;
+
+	// https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting asks for "Application name/<version> ( contact-url )"
+	test('follows the format the musicbrainz docs ask for', () => {
+		expect(userAgent).toMatch(/^\S+\/\d+\.\d+\.\d+ \( https?:\/\/\S+ \)$/);
+	});
+
+	test('carries the current version', () => {
+		expect(userAgent).toContain(`/${JAMSERVE_VERSION}`);
+	});
+});

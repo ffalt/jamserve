@@ -1,5 +1,6 @@
 import { JSONOptions, JSONRequest, WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
 import { AcousticBrainz } from './acousticbrainz-rest-data.js';
+import { REQUEST_INTERVAL_MS } from './musicbrainz-client.js';
 
 export class AcousticbrainzClient extends WebserviceJSONClient<JSONRequest, AcousticBrainz.Response> {
 	constructor(options: JSONOptions) {
@@ -7,8 +8,8 @@ export class AcousticbrainzClient extends WebserviceJSONClient<JSONRequest, Acou
 			host: 'https://acousticbrainz.org',
 			basePath: '/api/v1/'
 		};
-		// unknown rate limit, using same from musicbrainz https://musicbrainz.org/doc/XML_Web_Service/Rate_Limiting "Currently that rate is (on average) 1 request per second. (per ip)"
-		super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
+		// unknown rate limit, using the same pacing as musicbrainz
+		super(1, REQUEST_INTERVAL_MS, options.userAgent, { ...defaultOptions, ...options });
 	}
 
 	async highLevel(mbid: string, nr?: number): Promise<AcousticBrainz.Response> {

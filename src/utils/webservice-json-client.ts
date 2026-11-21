@@ -4,6 +4,12 @@ import { errorStatusCode } from './error.js';
 
 const log = logger('WebserviceJSONClient');
 
+export const DEFAULT_RETRY_DELAY_MS = 3000;
+
+export function backoffDelayMS(baseMS: number, retry: number): number {
+	return baseMS * (2 ** (retry - 1));
+}
+
 export interface JSONRequest {
 	path: string;
 	query: Record<string, string | undefined | null>;
@@ -32,7 +38,7 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 			userAgent: '',
 			limit: 25,
 			retryOn: false,
-			retryDelay: 3000,
+			retryDelay: DEFAULT_RETRY_DELAY_MS,
 			retryCount: 3
 		};
 		this.options = { ...defaultOptions, ...options };
@@ -61,11 +67,12 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 	protected async retry(error: unknown, req: T): Promise<R> {
 		if (this.options.retryOn && req.retry < (this.options.retryCount ?? 0)) {
 			req.retry++;
-			log.info(`rate limit hit, retrying in ${this.options.retryDelay}ms`);
+			const delay = backoffDelayMS(this.options.retryDelay ?? DEFAULT_RETRY_DELAY_MS, req.retry);
+			log.info(`request failed, retry ${req.retry} in ${delay}ms`);
 			return new Promise<R>((resolve, reject) => {
 				setTimeout(() => {
 					this.get(req).then(resolve).catch(reject);
-				}, this.options.retryDelay ?? 3000);
+				}, delay);
 			});
 		}
 		return Promise.reject(error);
@@ -82,20 +89,12 @@ export class WebserviceJSONClient<T extends JSONRequest, R> extends WebserviceCl
 		return Promise.reject(error);
 	}
 
-	protected isRateLimitError(body?: { error?: string }): boolean {
-		return !!body?.error?.includes('allowable rate limit');
-	}
-
 	protected async get(req: T): Promise<R> {
 		const url = this.reqToUrl(req);
 
 		log.debug('requesting', url, JSON.stringify(req));
 		try {
-			const data = await this.getJson<R>(url);
-			if (this.isRateLimitError(data as { error?: string })) {
-				return await this.retry(new Error((data as { error: string }).error), req);
-			}
-			return data;
+			return await this.getJson<R>(url);
 		} catch (error: unknown) {
 			return this.processError(error, req);
 		}
