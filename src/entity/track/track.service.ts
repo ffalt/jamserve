@@ -78,10 +78,10 @@ export class TrackService {
 		return;
 	}
 
-	async health(tracks: Array<Track>, media?: boolean): Promise<Array<TrackHealth>> {
+	async health(orm: Orm, tracks: Array<Track>, media?: boolean): Promise<Array<TrackHealth>> {
 		const result: Array<{ track: Track; health: Array<TrackHealthHint> }> = [];
 		await processQueue<Track>(3, tracks, async track => {
-			const health = await this.checker.run(track, !!media);
+			const health = await this.checker.run(orm, track, !!media);
 			if (health.length > 0) {
 				result.push({ track, health });
 			}

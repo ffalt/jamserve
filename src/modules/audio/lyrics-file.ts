@@ -56,6 +56,22 @@ export async function readLyricsSidecar(filename: string): Promise<TrackLyrics |
 	return;
 }
 
+export async function hasSyncedLyricsSidecar(filename: string): Promise<boolean> {
+	for (const candidate of lyricsSidecarCandidates(filename, LyricsSyncedExtensions)) {
+		if (!await fse.pathExists(candidate)) {
+			continue;
+		}
+		try {
+			if (hasLyricsTimestamps(await fse.readFile(candidate, 'utf8'))) {
+				return true;
+			}
+		} catch (error: unknown) {
+			log.errorMsg(`Could not read lyrics file ${candidate}`, error);
+		}
+	}
+	return false;
+}
+
 function formatLength(duration?: number): string | undefined {
 	if (!duration || duration <= 0) {
 		return;

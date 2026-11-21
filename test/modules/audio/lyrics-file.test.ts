@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from '@jest/globals';
 import fse from 'fs-extra';
 import path from 'node:path';
-import { addLyricsHeader, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
+import { addLyricsHeader, hasSyncedLyricsSidecar, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
 
 const testPath = path.resolve('./local/__tests__/lyrics-file/');
 const audioFile = path.join(testPath, 'Artist - Song.mp3');
@@ -129,6 +129,27 @@ describe('lyrics sidecar files', () => {
 		test('writes a file that reads back as the same lyrics', async () => {
 			await writeLyricsSidecar(audioFile, { syncedLyrics: lrc, source: 'lrclib' }, { title: 'Song', artist: 'Artist' });
 			expect((await readLyricsSidecar(audioFile))?.lyrics).toBe('first line\nsecond line');
+		});
+	});
+
+	describe('hasSyncedLyricsSidecar', () => {
+		test('finds no file next to an untouched audio file', async () => {
+			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+		});
+
+		test('finds a timed lrc file', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), lrc);
+			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(true);
+		});
+
+		test('ignores an lrc file without timestamps', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), 'first line\nsecond line');
+			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+		});
+
+		test('ignores a plain text file', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.txt'), lrc);
+			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
 		});
 	});
 

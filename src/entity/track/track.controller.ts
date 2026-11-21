@@ -125,7 +125,7 @@ export class TrackController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Array<TrackHealth>> {
 		const tracks = await orm.Track.findFilter(filter, [], {}, user);
-		const list = await engine.track.health(tracks, healthParameters.healthMedia);
+		const list = await engine.track.health(orm, tracks, healthParameters.healthMedia);
 		const result: Array<TrackHealth> = [];
 		for (const item of list) {
 			result.push({

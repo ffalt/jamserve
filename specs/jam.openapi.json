@@ -30360,7 +30360,8 @@
 					"track.mp3.media.valid",
 					"track.flac.media.valid",
 					"track.mp3.id3v2.no.id3v1",
-					"track.mp3.garbage.data"
+					"track.mp3.garbage.data",
+					"track.lyrics.synced.exists"
 				]
 			},
 			"TrackHealthHint": {
