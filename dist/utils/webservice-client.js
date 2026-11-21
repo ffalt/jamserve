@@ -51,7 +51,9 @@ export class WebserviceClient {
             signal: AbortSignal.timeout(this.timeout)
         });
         if (!ignoreStatus && response.status !== 200) {
-            return Promise.reject(new Error(`Invalid Result: ${response.statusText}`));
+            const error = new Error(`Invalid Result: ${response.statusText}`);
+            error.statusCode = response.status;
+            return Promise.reject(error);
         }
         const result = await this.parseResult(response);
         if (result === undefined) {

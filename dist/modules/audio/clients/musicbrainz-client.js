@@ -1,6 +1,7 @@
 import { WebserviceJSONClient } from '../../../utils/webservice-json-client.js';
 import { LookupBrowseTypes, LookupIncludes } from './musicbrainz-client.types.js';
 import { capitalize } from '../../../utils/capitalize.js';
+export const REQUEST_INTERVAL_MS = 1100;
 export class MusicbrainzClient extends WebserviceJSONClient {
     constructor(options) {
         const defaultOptions = {
@@ -10,7 +11,7 @@ export class MusicbrainzClient extends WebserviceJSONClient {
             retryCount: 3,
             timeout: 60000
         };
-        super(1, 1000, options.userAgent, { ...defaultOptions, ...options });
+        super(1, REQUEST_INTERVAL_MS, options.userAgent, { ...defaultOptions, ...options });
     }
     formatKey(key) {
         return key.split('-').map((value, index) => {
@@ -55,9 +56,6 @@ export class MusicbrainzClient extends WebserviceJSONClient {
             .map(([key, value]) => `${key}=${value}`);
         q.push(`limit=${req.limit ?? this.options.limit ?? 25}`, `offset=${req.offset ?? 0}`, 'fmt=json');
         return `${this.reqToHost(req)}${req.path}?${q.join('&')}`;
-    }
-    isRateLimitError(body) {
-        return !!(body?.error?.includes('allowable rate limit'));
     }
     async search(parameters) {
         const data = await this.get({
