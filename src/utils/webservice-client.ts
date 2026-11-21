@@ -10,7 +10,7 @@ export class WebserviceClient {
 	private readonly userAgent: string;
 
 	constructor(requestPerInterval: number, requestIntervalMS: number, userAgent: string) {
-		this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS, fireImmediately: true });
+		this.limiter = new RateLimiter({ tokensPerInterval: requestPerInterval, interval: requestIntervalMS });
 		this.userAgent = userAgent;
 	}
 

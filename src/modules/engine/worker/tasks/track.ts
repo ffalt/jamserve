@@ -172,7 +172,13 @@ export class TrackWorker extends BaseWorker {
 			log.warn(`Looking up synced lyrics needs a title tag: ${item.filename}`);
 			return;
 		}
-		const lyrics = await this.metadataService.lyricsLrcLibByTrackTag(orm, item.track, tag);
+		let lyrics: TrackLyrics;
+		try {
+			lyrics = await this.metadataService.lyricsLrcLibByTrackTag(orm, item.track, tag);
+		} catch (error: unknown) {
+			log.errorMsg(`Looking up synced lyrics failed for ${item.filename}`, error);
+			return;
+		}
 		if (!lyrics.syncedLyrics) {
 			await markSyncedLyricsUnavailable(orm, tag);
 			return;
