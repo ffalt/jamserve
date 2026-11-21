@@ -51,7 +51,7 @@ export class MetadataController {
 		@QueryParameters() parameters: LrclibSearchParameters,
 		@RestContext() { orm, engine }: Context
 	): Promise<MetadataResult> {
-		return { data: await engine.metadata.lrclibGet(orm, parameters.artist, parameters.title, parameters.album, parameters.duration) };
+		return { data: await engine.metadata.lrclibGet(orm, parameters.title, parameters.artist, parameters.album, parameters.duration) };
 	}
 
 	@Get('/acoustid/lookup', () => MetadataResult, { description: 'Lookup AcoustId data', summary: 'Lookup AcoustId' })
