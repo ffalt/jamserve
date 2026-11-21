@@ -5,6 +5,8 @@ import jest from "eslint-plugin-jest";
 import unicorn from "eslint-plugin-unicorn";
 import globals from "globals";
 
+const tsconfigRootDir = process.env.INIT_CWD || process.env.PWD || import.meta.dirname;
+
 const unicornRules = {
 	"unicorn/empty-brace-spaces": "off",
 	"unicorn/no-await-expression-member": "off",
@@ -112,7 +114,8 @@ export default ts.config(
 		],
 		languageOptions: {
 			parserOptions: {
-				project: "tsconfig.json"
+				project: "tsconfig.json",
+				tsconfigRootDir
 			}
 		},
 		rules: {
@@ -151,7 +154,8 @@ export default ts.config(
 		languageOptions: {
 			globals: jest.environments.globals.globals,
 			parserOptions: {
-				project: "tsconfig.jest.json"
+				project: "tsconfig.jest.json",
+				tsconfigRootDir
 			}
 		},
 		rules: {

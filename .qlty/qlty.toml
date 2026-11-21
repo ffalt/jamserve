@@ -64,11 +64,11 @@ name = "osv-scanner"
 [[plugin]]
 name = "radarlint-js"
 
-#[[plugin]]
-#name = "eslint"
-#version = "10.3.0"
-#package_file = "package.json"
-#package_filters = ["eslint", "jest"]
+[[plugin]]
+name = "eslint"
+version = "10.15.0"
+package_file = "package.json"
+package_filters = ["eslint", "jest"]
 
 [[plugin]]
 name = "osv-scanner"
