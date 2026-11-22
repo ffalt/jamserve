@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.27](https://github.com/ffalt/jamserve/compare/v0.6.26...v0.6.27) (2026-11-22)
+
+### Features
+
+* **lyrics:** add lyrics search and sidecar source listing to REST api ([c40cd21](https://github.com/ffalt/jamserve/commit/c40cd21fdcb772d70add54aef4a9432a2ac74c18))
+
+### Bug Fixes
+
+* **test:** set local TMPDIR for file-serving tests ([d2906ca](https://github.com/ffalt/jamserve/commit/d2906cad3055dca2ecdd38f91c1cee83a7c0d77f))
+
 ## [0.6.26](https://github.com/ffalt/jamserve/compare/v0.6.25...v0.6.26) (2026-11-21)
 
 ### Bug Fixes
