@@ -24,11 +24,23 @@ import { invalidParameterError } from '../../modules/deco/express/express-error.
 import { lrclibDuration } from '../../modules/audio/clients/lrclib-client.js';
 import { lyricsSlug, shortenLyricsTitle } from '../../utils/lyrics-slug.js';
 import { lyricsToEvents, plainLyrics } from '../../utils/lyrics-lrc.js';
-import { durationToSeconds, lyricsFromText, readLyricsSidecar, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
+import { durationToSeconds, lyricsFromText, readLyricsSidecar, readLyricsSidecarSources, writeLyricsSidecar } from '../../modules/audio/lyrics-file.js';
 import { ConfigService } from '../../modules/engine/services/config.service.js';
 const log = logger('Metadata');
 function hasLyrics(result) {
     return Boolean(result?.lyrics) || Boolean(result?.syncedLyrics);
+}
+export const LYRICS_MISS_TTL_MS = durationToMilliseconds(30, 'd');
+function uniqueLyrics(entries) {
+    const seen = new Set();
+    return entries.filter(entry => {
+        const key = `${entry.syncedLyrics ?? ''}\0${entry.lyrics ?? ''}`;
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
 }
 function lrclibStoreKey(prefix, track_name, artist_name, album_name, duration) {
     return [prefix, lyricsSlug(track_name), lyricsSlug(artist_name), album_name ? lyricsSlug(album_name) : '', duration ?? ''].join('/');
@@ -51,12 +63,33 @@ let MetadataService = MetadataService_1 = class MetadataService {
         const buffer = Buffer.from(await response.arrayBuffer());
         return { buffer: { buffer, contentType: response.headers.get('content-type') ?? 'image' } };
     }
-    async searchInStore(orm, name, dataType, generate) {
+    static parseStore(data) {
+        try {
+            return JSON.parse(data);
+        }
+        catch {
+            return;
+        }
+    }
+    static isStaleMiss(entry, missTTL) {
+        if (missTTL === undefined) {
+            return false;
+        }
+        const data = this.parseStore(entry.data);
+        if (data && Object.keys(data).length > 0) {
+            return false;
+        }
+        return entry.createdAt.getTime() < Date.now() - missTTL;
+    }
+    async searchInStore(orm, name, dataType, generate, missTTL) {
         const result = await orm.MetaData.findOne({ where: { name, dataType } });
-        if (result) {
+        if (result && !MetadataService_1.isStaleMiss(result, missTTL)) {
             return JSON.parse(result.data);
         }
         const data = (await generate()) ?? {};
+        if (result) {
+            await orm.MetaData.removeByQueryAndFlush({ where: { name, dataType } });
+        }
         await MetadataService_1.addToStore(orm, name, dataType, JSON.stringify(data));
         return data;
     }
@@ -146,22 +179,22 @@ let MetadataService = MetadataService_1 = class MetadataService {
                 result = await this.audioModule.lyricsOVH.search(artist, shortTitle);
             }
             return result;
-        });
+        }, LYRICS_MISS_TTL_MS);
     }
     async lrclibFind(orm, track_name, artist_name, album_name, duration) {
         return this.searchInStore(orm, lrclibStoreKey('lrclib-find', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
             return await this.audioModule.lrclib.find({ track_name, artist_name, album_name, duration });
-        });
+        }, LYRICS_MISS_TTL_MS);
     }
     async lrclibSearch(orm, track_name, artist_name, album_name, duration) {
         return this.searchInStore(orm, lrclibStoreKey('lrclib-search', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
             return await this.audioModule.lrclib.findBySearch({ track_name, artist_name, album_name, duration });
-        });
+        }, LYRICS_MISS_TTL_MS);
     }
     async lrclibGet(orm, track_name, artist_name, album_name, duration) {
         return this.searchInStore(orm, lrclibStoreKey('lrclib-get', track_name, artist_name, album_name, duration), MetadataType.lyrics, async () => {
             return await this.audioModule.lrclib.get({ track_name, artist_name, album_name, duration });
-        });
+        }, LYRICS_MISS_TTL_MS);
     }
     async wikipediaSummary(orm, title, lang = 'en') {
         return this.searchInStore(orm, `summary-${title}/${lang}`, MetadataType.wikipedia, async () => {
@@ -251,6 +284,15 @@ let MetadataService = MetadataService_1 = class MetadataService {
         }
         return { entries: MetadataService_1.selectLyrics(entries, parameters) };
     }
+    async lyricsSidecarsByTrack(track) {
+        try {
+            return { entries: await readLyricsSidecarSources(path.join(track.path, track.fileName)) };
+        }
+        catch (error) {
+            log.error(error);
+            return { entries: [] };
+        }
+    }
     async lyricsByExternalService(orm, track, tag) {
         let result = { source: 'lrclib', ...(await this.lyricsLrcLibByTrackTag(orm, track, tag)) };
         if (!hasLyrics(result)) {
@@ -280,6 +322,33 @@ let MetadataService = MetadataService_1 = class MetadataService {
             result = await this.lrclibSearch(orm, tag.title, artistName, undefined, duration);
         }
         return result ?? {};
+    }
+    async lyricsAttempt(source, lookup) {
+        try {
+            const result = await lookup();
+            return hasLyrics(result) ? { ...result, source: result?.source ?? source } : undefined;
+        }
+        catch (error) {
+            log.errorMsg(`Lyrics lookup on ${source} failed`, error);
+            return;
+        }
+    }
+    async lyricsBySearch(orm, search, parameters) {
+        const { title, artist, album } = search;
+        const duration = lrclibDuration(search.duration);
+        const attempts = [
+            ['lrclib', async () => this.lrclibFind(orm, title, artist, album, duration)],
+            ['lrclib', async () => this.lrclibSearch(orm, title, artist, undefined, duration)],
+            ['lyrics.ovh', async () => this.lyricsOVH(orm, artist, title)]
+        ];
+        const entries = [];
+        for (const [source, lookup] of attempts) {
+            const result = await this.lyricsAttempt(source, lookup);
+            if (result) {
+                entries.push(result);
+            }
+        }
+        return { entries: MetadataService_1.selectLyrics(uniqueLyrics(entries), parameters) };
     }
     async lyricsOVHByTrackTag(orm, _track, tag) {
         if (!tag.title) {

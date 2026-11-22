@@ -100,6 +100,38 @@ TrackLyrics = __decorate([
     ResultType({ description: 'Track Lyrics (via External Service, Lyrics File or Audio Tag)' })
 ], TrackLyrics);
 export { TrackLyrics };
+let TrackLyricsSidecar = class TrackLyricsSidecar {
+};
+__decorate([
+    ObjectField({ description: 'File Name of the Lyrics Sidecar', example: 'Artist - Song.lrc' }),
+    __metadata("design:type", String)
+], TrackLyricsSidecar.prototype, "name", void 0);
+__decorate([
+    ObjectField({ description: 'The Sidecar holds synced lyrics', example: true }),
+    __metadata("design:type", Boolean)
+], TrackLyricsSidecar.prototype, "synced", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Origin of the Lyrics, taken from the by tag of the file', example: 'https://lrclib.net/api/get/12345' }),
+    __metadata("design:type", String)
+], TrackLyricsSidecar.prototype, "source", void 0);
+__decorate([
+    ObjectField({ description: 'The Sidecar was written by Jam', example: true }),
+    __metadata("design:type", Boolean)
+], TrackLyricsSidecar.prototype, "writtenByJam", void 0);
+TrackLyricsSidecar = __decorate([
+    ResultType({ description: 'Lyrics Sidecar File of a Track' })
+], TrackLyricsSidecar);
+export { TrackLyricsSidecar };
+let TrackLyricsSidecarList = class TrackLyricsSidecarList {
+};
+__decorate([
+    ObjectField(() => [TrackLyricsSidecar], { description: 'List of Lyrics Sidecar Files found for the Track' }),
+    __metadata("design:type", Array)
+], TrackLyricsSidecarList.prototype, "entries", void 0);
+TrackLyricsSidecarList = __decorate([
+    ResultType({ description: 'Track Lyrics Sidecar List' })
+], TrackLyricsSidecarList);
+export { TrackLyricsSidecarList };
 let TrackLyricsList = class TrackLyricsList {
 };
 __decorate([

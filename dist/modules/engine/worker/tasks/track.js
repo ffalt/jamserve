@@ -4,9 +4,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var TrackWorker_1;
 import fse from 'fs-extra';
 import path from 'node:path';
@@ -14,11 +11,8 @@ import { ensureTrailingPathSeparator } from '../../../../utils/fs-utils.js';
 import { TrackHealthID } from '../../../../types/enums.js';
 import { processQueue } from '../../../../utils/queue.js';
 import { BaseWorker } from './base.js';
-import { inject, injectable, injectFromBase } from 'inversify';
+import { injectable, injectFromBase } from 'inversify';
 import { logger } from '../../../../utils/logger.js';
-import { MetadataService } from '../../../../entity/metadata/metadata.service.js';
-import { durationToSeconds, writeLyricsSidecar } from '../../../audio/lyrics-file.js';
-import { markSyncedLyricsUnavailable } from '../../../../entity/metadata/lyrics-sync-cache.js';
 const log = logger('TrackWorker');
 export class TrackUpdater {
     constructor(orm, audioModule, changes) {
@@ -124,7 +118,6 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
             changes.folders.updated.add(folder);
             folders.push(folder);
             fixTasks.push({
-                track,
                 filename: path.join(track.path, track.fileName),
                 fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
             });
@@ -140,37 +133,9 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
                 else if ([TrackHealthID.id3v2NoId3v1].includes(fixID)) {
                     await this.audioModule.mp3.removeID3v1(item.filename);
                 }
-                else if (fixID === TrackHealthID.lyricsSyncedExists) {
-                    await this.downloadSyncedLyrics(orm, item);
-                }
             }
         });
         await this.refreshFolderStats(orm, folders);
-    }
-    async downloadSyncedLyrics(orm, item) {
-        const tag = await item.track.tag.get();
-        if (!tag?.title) {
-            log.warn(`Looking up synced lyrics needs a title tag: ${item.filename}`);
-            return;
-        }
-        let lyrics;
-        try {
-            lyrics = await this.metadataService.lyricsLrcLibByTrackTag(orm, item.track, tag);
-        }
-        catch (error) {
-            log.errorMsg(`Looking up synced lyrics failed for ${item.filename}`, error);
-            return;
-        }
-        if (!lyrics.syncedLyrics) {
-            await markSyncedLyricsUnavailable(orm, tag);
-            return;
-        }
-        await writeLyricsSidecar(item.filename, { ...lyrics, source: lyrics.source ?? 'lrclib' }, {
-            title: tag.title,
-            artist: tag.artist ?? tag.albumArtist,
-            album: tag.album,
-            duration: durationToSeconds(tag.mediaDuration)
-        });
     }
     static async updateTrackStats(track) {
         const stat = await fse.stat(path.join(track.path, track.fileName));
@@ -250,10 +215,6 @@ let TrackWorker = TrackWorker_1 = class TrackWorker extends BaseWorker {
         }
     }
 };
-__decorate([
-    inject(MetadataService),
-    __metadata("design:type", MetadataService)
-], TrackWorker.prototype, "metadataService", void 0);
 TrackWorker = TrackWorker_1 = __decorate([
     injectable(),
     injectFromBase()

@@ -12,7 +12,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { UserRole } from '../../types/enums.js';
 import { MetadataResult, MetadataTrackLyricsResult } from './metadata.model.js';
-import { AcousticBrainzLookupParameters, AcoustidLookupParameters, CoverArtArchiveImageParameters, CoverArtArchiveLookupParameters, DiscogsArtistLookupParameters, DiscogsArtistSearchParameters, DiscogsImageParameters, DiscogsMasterLookupParameters, DiscogsReleaseLookupParameters, DiscogsSearchParameters, LastFMLookupParameters, LyricsOVHSearchParameters, LrclibSearchParameters, MusicBrainzLookupParameters, MusicBrainzSearchParameters, WikidataLookupParameters, WikidataSummaryParameters, WikipediaSummaryParameters } from './metadata.parameters.js';
+import { TrackLyricsList } from '../track/track.model.js';
+import { IncludesTrackLyricsParameters } from '../track/track.parameters.js';
+import { AcousticBrainzLookupParameters, AcoustidLookupParameters, CoverArtArchiveImageParameters, CoverArtArchiveLookupParameters, DiscogsArtistLookupParameters, DiscogsArtistSearchParameters, DiscogsImageParameters, DiscogsMasterLookupParameters, DiscogsReleaseLookupParameters, DiscogsSearchParameters, LastFMLookupParameters, LyricsOVHSearchParameters, LyricsSearchParameters, LrclibSearchParameters, MusicBrainzLookupParameters, MusicBrainzSearchParameters, WikidataLookupParameters, WikidataSummaryParameters, WikipediaSummaryParameters } from './metadata.parameters.js';
 import { ApiImageTypes } from '../../types/consts.js';
 import { Controller } from '../../modules/rest/decorators/controller.js';
 import { Get } from '../../modules/rest/decorators/get.js';
@@ -21,6 +23,9 @@ import { RestContext } from '../../modules/rest/decorators/rest-context.js';
 let MetadataController = class MetadataController {
     async lastfmLookup(parameters, { orm, engine }) {
         return { data: await engine.metadata.lastFMLookup(orm, parameters.type, parameters.mbID) };
+    }
+    async lyricsSearch(parameters, lyricsParameters, { orm, engine }) {
+        return await engine.metadata.lyricsBySearch(orm, parameters, lyricsParameters);
     }
     async lyricsovhSearch(parameters, { orm, engine }) {
         return { data: await engine.metadata.lyricsOVH(orm, parameters.artist, parameters.title) };
@@ -86,6 +91,16 @@ __decorate([
     __metadata("design:paramtypes", [LastFMLookupParameters, Object]),
     __metadata("design:returntype", Promise)
 ], MetadataController.prototype, "lastfmLookup", null);
+__decorate([
+    Get('/lyrics/search', () => TrackLyricsList, { description: 'Search Lyrics on all supported External Services by Song Values', summary: 'Search Lyrics' }),
+    __param(0, QueryParameters()),
+    __param(1, QueryParameters()),
+    __param(2, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [LyricsSearchParameters,
+        IncludesTrackLyricsParameters, Object]),
+    __metadata("design:returntype", Promise)
+], MetadataController.prototype, "lyricsSearch", null);
 __decorate([
     Get('/lyricsovh/search', () => MetadataTrackLyricsResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' }),
     __param(0, QueryParameters()),

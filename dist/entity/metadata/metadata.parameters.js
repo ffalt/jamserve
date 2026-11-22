@@ -61,6 +61,28 @@ LrclibSearchParameters = __decorate([
     ObjectParametersType()
 ], LrclibSearchParameters);
 export { LrclibSearchParameters };
+let LyricsSearchParameters = class LyricsSearchParameters {
+};
+__decorate([
+    ObjectField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' }),
+    __metadata("design:type", String)
+], LyricsSearchParameters.prototype, "title", void 0);
+__decorate([
+    ObjectField({ description: 'Song Artist', example: 'Primus' }),
+    __metadata("design:type", String)
+], LyricsSearchParameters.prototype, "artist", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Song Album', example: 'Sailing the Seas of Cheese' }),
+    __metadata("design:type", String)
+], LyricsSearchParameters.prototype, "album", void 0);
+__decorate([
+    ObjectField({ nullable: true, description: 'Song Duration in seconds', example: 191 }),
+    __metadata("design:type", Number)
+], LyricsSearchParameters.prototype, "duration", void 0);
+LyricsSearchParameters = __decorate([
+    ObjectParametersType()
+], LyricsSearchParameters);
+export { LyricsSearchParameters };
 let AcoustidLookupParameters = class AcoustidLookupParameters {
 };
 __decorate([

@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Track, TrackHealth, TrackLyricsList, TrackPage } from './track.model.js';
+import { Track, TrackHealth, TrackLyricsList, TrackLyricsSidecarList, TrackPage } from './track.model.js';
 import { UserRole } from '../../types/enums.js';
 import { IncludesTrackLyricsParameters, IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
@@ -45,6 +45,10 @@ let TrackController = class TrackController {
         const track = await orm.Track.oneOrFailByID(id);
         return await engine.metadata.lyricsByTrack(orm, track, lyricsParameters);
     }
+    async lyricsSidecars(id, { orm, engine }) {
+        const track = await orm.Track.oneOrFailByID(id);
+        return await engine.metadata.lyricsSidecarsByTrack(track);
+    }
     async rawTagGet(filter, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
         const result = [];
@@ -61,7 +65,7 @@ let TrackController = class TrackController {
     }
     async health(healthParameters, filter, trackParameters, { orm, engine, user }) {
         const tracks = await orm.Track.findFilter(filter, [], {}, user);
-        const list = await engine.track.health(orm, tracks, healthParameters.healthMedia);
+        const list = await engine.track.health(tracks, healthParameters.healthMedia);
         const result = [];
         for (const item of list) {
             result.push({
@@ -152,6 +156,14 @@ __decorate([
     __metadata("design:paramtypes", [String, IncludesTrackLyricsParameters, Object]),
     __metadata("design:returntype", Promise)
 ], TrackController.prototype, "lyrics", null);
+__decorate([
+    Get('/lyrics/sidecars', () => TrackLyricsSidecarList, { description: 'Get the Lyrics Sidecar Files of a Track by Id', summary: 'Get Lyrics Sidecars' }),
+    __param(0, QueryParameter('id', { description: 'Track Id', isID: true })),
+    __param(1, RestContext()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], TrackController.prototype, "lyricsSidecars", null);
 __decorate([
     Get('/rawTag/get', () => [MediaIDTagRaw], { description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }),
     __param(0, QueryParameters()),
