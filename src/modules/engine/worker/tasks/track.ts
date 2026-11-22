@@ -8,7 +8,7 @@ import { Changes } from '../changes.js';
 import { BaseWorker } from './base.js';
 import { Track } from '../../../../entity/track/track.js';
 import { Folder } from '../../../../entity/folder/folder.js';
-import { inject, injectable, injectFromBase } from 'inversify';
+import { injectable, injectFromBase } from 'inversify';
 import { Orm } from '../../services/orm.service.js';
 import { AudioModule } from '../../../audio/audio.module.js';
 import { TrackTag } from '../../../audio/audio.format.js';
@@ -16,17 +16,8 @@ import { Genre } from '../../../../entity/genre/genre.js';
 import { MediaTagRaw } from '../../../../entity/tag/tag.model.js';
 import { TrackLyrics } from '../../../../entity/track/track.model.js';
 import { logger } from '../../../../utils/logger.js';
-import { MetadataService } from '../../../../entity/metadata/metadata.service.js';
-import { durationToSeconds, writeLyricsSidecar } from '../../../audio/lyrics-file.js';
-import { markSyncedLyricsUnavailable } from '../../../../entity/metadata/lyrics-sync-cache.js';
 
 const log = logger('TrackWorker');
-
-interface FixTask {
-	track: Track;
-	filename: string;
-	fixIDs: Array<TrackHealthID>;
-}
 
 export class TrackUpdater {
 	private readonly genresCache: Array<Genre> = [];
@@ -84,9 +75,6 @@ export class TrackUpdater {
 @injectable()
 @injectFromBase()
 export class TrackWorker extends BaseWorker {
-	@inject(MetadataService)
-	private readonly metadataService!: MetadataService;
-
 	public async writeTags(orm: Orm, tags: Array<{ trackID: string; tag: MediaTagRaw }>, changes: Changes): Promise<void> {
 		const trackUpdater = new TrackUpdater(orm, this.audioModule, changes);
 		const folders: Array<Folder | undefined> = [];
@@ -137,7 +125,7 @@ export class TrackWorker extends BaseWorker {
 
 	public async fix(orm: Orm, fixes: Array<{ trackID: string; fixID: TrackHealthID }>, changes: Changes): Promise<void> {
 		const tracks = await orm.Track.findByIDs(fixes.map(t => t.trackID));
-		const fixTasks: Array<FixTask> = [];
+		const fixTasks: Array<{ filename: string; fixIDs: Array<TrackHealthID> }> = [];
 		const folders: Array<Folder | undefined> = [];
 		for (const track of tracks) {
 			changes.tracks.updated.add(track);
@@ -145,12 +133,11 @@ export class TrackWorker extends BaseWorker {
 			changes.folders.updated.add(folder);
 			folders.push(folder);
 			fixTasks.push({
-				track,
 				filename: path.join(track.path, track.fileName),
 				fixIDs: fixes.filter(f => f.trackID === track.id).map(f => f.fixID)
 			});
 		}
-		await processQueue<FixTask>(3, fixTasks, async item => {
+		await processQueue<{ filename: string; fixIDs: Array<TrackHealthID> }>(3, fixTasks, async item => {
 			for (const fixID of item.fixIDs) {
 				if ([TrackHealthID.mp3HeaderExists, TrackHealthID.mp3HeaderValid].includes(fixID)) {
 					await this.audioModule.mp3.rewrite(item.filename);
@@ -158,37 +145,10 @@ export class TrackWorker extends BaseWorker {
 					await this.audioModule.mp3.fixAudio(item.filename);
 				} else if ([TrackHealthID.id3v2NoId3v1].includes(fixID)) {
 					await this.audioModule.mp3.removeID3v1(item.filename);
-				} else if (fixID === TrackHealthID.lyricsSyncedExists) {
-					await this.downloadSyncedLyrics(orm, item);
 				}
 			}
 		});
 		await this.refreshFolderStats(orm, folders);
-	}
-
-	private async downloadSyncedLyrics(orm: Orm, item: FixTask): Promise<void> {
-		const tag = await item.track.tag.get();
-		if (!tag?.title) {
-			log.warn(`Looking up synced lyrics needs a title tag: ${item.filename}`);
-			return;
-		}
-		let lyrics: TrackLyrics;
-		try {
-			lyrics = await this.metadataService.lyricsLrcLibByTrackTag(orm, item.track, tag);
-		} catch (error: unknown) {
-			log.errorMsg(`Looking up synced lyrics failed for ${item.filename}`, error);
-			return;
-		}
-		if (!lyrics.syncedLyrics) {
-			await markSyncedLyricsUnavailable(orm, tag);
-			return;
-		}
-		await writeLyricsSidecar(item.filename, { ...lyrics, source: lyrics.source ?? 'lrclib' }, {
-			title: tag.title,
-			artist: tag.artist ?? tag.albumArtist,
-			album: tag.album,
-			duration: durationToSeconds(tag.mediaDuration)
-		});
 	}
 
 	private static async updateTrackStats(track: Track): Promise<void> {

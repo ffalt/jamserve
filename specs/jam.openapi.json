@@ -13726,6 +13726,131 @@
 				]
 			}
 		},
+		"/metadata/lyrics/search": {
+			"get": {
+				"operationId": "MetadataController.lyricsSearch",
+				"summary": "Search Lyrics",
+				"description": "Search Lyrics on all supported External Services by Song Values",
+				"tags": [
+					"Meta Data"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "artist",
+						"description": "Song Artist",
+						"required": true,
+						"example": "Primus",
+						"schema": {
+							"type": "string",
+							"description": "Song Artist"
+						}
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"description": "Song Title",
+						"required": true,
+						"example": "Jerry Was a Race Car Driver",
+						"schema": {
+							"type": "string",
+							"description": "Song Title"
+						}
+					},
+					{
+						"in": "query",
+						"name": "album",
+						"description": "Song Album",
+						"required": false,
+						"example": "Sailing the Seas of Cheese",
+						"schema": {
+							"type": "string",
+							"description": "Song Album"
+						}
+					},
+					{
+						"in": "query",
+						"name": "duration",
+						"description": "Song Duration in seconds",
+						"required": false,
+						"example": 191,
+						"schema": {
+							"type": "integer",
+							"description": "Song Duration in seconds"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncParsedSynced",
+						"description": "include the parsed lines of the synced lyrics",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the parsed lines of the synced lyrics"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncPlain",
+						"description": "include the plain lyrics",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the plain lyrics"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lyricsIncSynced",
+						"description": "include the synced lyrics in LRC format",
+						"required": false,
+						"example": true,
+						"schema": {
+							"type": "boolean",
+							"default": true,
+							"description": "include the synced lyrics in LRC format"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TrackLyricsList"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/metadata/lyricsovh/search": {
 			"get": {
 				"operationId": "MetadataController.lyricsovhSearch",
@@ -22524,6 +22649,64 @@
 				]
 			}
 		},
+		"/track/lyrics/sidecars": {
+			"get": {
+				"operationId": "TrackController.lyricsSidecars",
+				"summary": "Get Lyrics Sidecars",
+				"description": "Get the Lyrics Sidecar Files of a Track by Id",
+				"tags": [
+					"Track"
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"description": "Track Id",
+						"required": true,
+						"example": "c0ffeec0-ffee-c0ff-eec0-ffeec0ffeec0",
+						"schema": {
+							"$ref": "#/components/schemas/ID"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "json data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TrackLyricsSidecarList"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing parameter"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Item not found"
+					},
+					"422": {
+						"description": "Invalid parameter"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": [
+							"stream"
+						]
+					},
+					{
+						"bearerAuth": [
+							"stream"
+						]
+					}
+				]
+			}
+		},
 		"/track/rawTag/get": {
 			"get": {
 				"operationId": "TrackController.rawTagGet",
@@ -29062,6 +29245,20 @@
 					}
 				}
 			},
+			"TrackLyricsList": {
+				"type": "object",
+				"properties": {
+					"entries": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/TrackLyrics"
+						}
+					}
+				},
+				"required": [
+					"entries"
+				]
+			},
 			"MetadataTrackLyricsResult": {
 				"type": "object",
 				"properties": {
@@ -30317,13 +30514,39 @@
 					"wav"
 				]
 			},
-			"TrackLyricsList": {
+			"TrackLyricsSidecar": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "File Name of the Lyrics Sidecar"
+					},
+					"synced": {
+						"type": "boolean",
+						"description": "The Sidecar holds synced lyrics"
+					},
+					"source": {
+						"type": "string",
+						"description": "Origin of the Lyrics, taken from the by tag of the file"
+					},
+					"writtenByJam": {
+						"type": "boolean",
+						"description": "The Sidecar was written by Jam"
+					}
+				},
+				"required": [
+					"name",
+					"synced",
+					"writtenByJam"
+				]
+			},
+			"TrackLyricsSidecarList": {
 				"type": "object",
 				"properties": {
 					"entries": {
 						"type": "array",
 						"items": {
-							"$ref": "#/components/schemas/TrackLyrics"
+							"$ref": "#/components/schemas/TrackLyricsSidecar"
 						}
 					}
 				},
@@ -30360,8 +30583,7 @@
 					"track.mp3.media.valid",
 					"track.flac.media.valid",
 					"track.mp3.id3v2.no.id3v1",
-					"track.mp3.garbage.data",
-					"track.lyrics.synced.exists"
+					"track.mp3.garbage.data"
 				]
 			},
 			"TrackHealthHint": {

@@ -151,8 +151,7 @@ export enum TrackHealthID {
 	mp3MediaValid = 'track.mp3.media.valid',
 	flacMediaValid = 'track.flac.media.valid',
 	id3v2NoId3v1 = 'track.mp3.id3v2.no.id3v1',
-	mp3Garbage = 'track.mp3.garbage.data',
-	lyricsSyncedExists = 'track.lyrics.synced.exists'
+	mp3Garbage = 'track.mp3.garbage.data'
 }
 
 export enum FileTyp {

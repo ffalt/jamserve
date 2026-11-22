@@ -239,6 +239,13 @@ const MOCK_CASES: Array<MockCase> = [
 		}
 	},
 	{
+		apiName: 'track/lyrics/sidecars',
+		expected: 200,
+		setup: (call, entities) => {
+			call.data.id = entities.track.id;
+		}
+	},
+	{
 		apiName: 'track/id',
 		expected: 200,
 		setup: (call, entities) => {
@@ -416,6 +423,7 @@ const MOCK_CASES: Array<MockCase> = [
 	{ apiName: 'podcast/discover/byTag', expected: 500 },
 	{ apiName: 'podcast/discover/tags', expected: 500 },
 	{ apiName: 'podcast/discover', expected: 500 },
+	{ apiName: 'metadata/lyrics/search', expected: 200 },
 	{ apiName: 'metadata/lrclib/get', expected: 500 },
 	{ apiName: 'metadata/lyricsovh/search', expected: 500 },
 	{ apiName: 'metadata/musicbrainz/search', expected: 500 },

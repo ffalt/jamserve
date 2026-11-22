@@ -1,5 +1,7 @@
 import { UserRole } from '../../types/enums.js';
 import { MetadataResult, MetadataTrackLyricsResult } from './metadata.model.js';
+import { TrackLyricsList } from '../track/track.model.js';
+import { IncludesTrackLyricsParameters } from '../track/track.parameters.js';
 import {
 	AcousticBrainzLookupParameters,
 	AcoustidLookupParameters,
@@ -13,6 +15,7 @@ import {
 	DiscogsSearchParameters,
 	LastFMLookupParameters,
 	LyricsOVHSearchParameters,
+	LyricsSearchParameters,
 	LrclibSearchParameters,
 	MusicBrainzLookupParameters,
 	MusicBrainzSearchParameters,
@@ -36,6 +39,19 @@ export class MetadataController {
 		@RestContext() { orm, engine }: Context
 	): Promise<MetadataResult> {
 		return { data: await engine.metadata.lastFMLookup(orm, parameters.type, parameters.mbID) };
+	}
+
+	@Get(
+		'/lyrics/search',
+		() => TrackLyricsList,
+		{ description: 'Search Lyrics on all supported External Services by Song Values', summary: 'Search Lyrics' }
+	)
+	async lyricsSearch(
+		@QueryParameters() parameters: LyricsSearchParameters,
+		@QueryParameters() lyricsParameters: IncludesTrackLyricsParameters,
+		@RestContext() { orm, engine }: Context
+	): Promise<TrackLyricsList> {
+		return await engine.metadata.lyricsBySearch(orm, parameters, lyricsParameters);
 	}
 
 	@Get('/lyricsovh/search', () => MetadataTrackLyricsResult, { description: 'Search Lyrics.ovh data', summary: 'Search Lyrics on lyrics.ovh' })

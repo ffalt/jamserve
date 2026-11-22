@@ -64,6 +64,27 @@ export class TrackLyrics {
 	source?: string;
 }
 
+@ResultType({ description: 'Lyrics Sidecar File of a Track' })
+export class TrackLyricsSidecar {
+	@ObjectField({ description: 'File Name of the Lyrics Sidecar', example: 'Artist - Song.lrc' })
+	name!: string;
+
+	@ObjectField({ description: 'The Sidecar holds synced lyrics', example: true })
+	synced!: boolean;
+
+	@ObjectField({ nullable: true, description: 'Origin of the Lyrics, taken from the by tag of the file', example: 'https://lrclib.net/api/get/12345' })
+	source?: string;
+
+	@ObjectField({ description: 'The Sidecar was written by Jam', example: true })
+	writtenByJam!: boolean;
+}
+
+@ResultType({ description: 'Track Lyrics Sidecar List' })
+export class TrackLyricsSidecarList {
+	@ObjectField(() => [TrackLyricsSidecar], { description: 'List of Lyrics Sidecar Files found for the Track' })
+	entries!: Array<TrackLyricsSidecar>;
+}
+
 @ResultType({ description: 'Track Lyrics List' })
 export class TrackLyricsList {
 	@ObjectField(() => [TrackLyrics], { description: 'List of Lyrics found for the Track' })

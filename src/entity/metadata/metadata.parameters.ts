@@ -55,6 +55,21 @@ export class LrclibSearchParameters {
 }
 
 @ObjectParametersType()
+export class LyricsSearchParameters {
+	@ObjectField({ description: 'Song Title', example: 'Jerry Was a Race Car Driver' })
+	title!: string;
+
+	@ObjectField({ description: 'Song Artist', example: 'Primus' })
+	artist!: string;
+
+	@ObjectField({ nullable: true, description: 'Song Album', example: 'Sailing the Seas of Cheese' })
+	album?: string;
+
+	@ObjectField({ nullable: true, description: 'Song Duration in seconds', example: 191 })
+	duration?: number;
+}
+
+@ObjectParametersType()
 export class AcoustidLookupParameters {
 	@ObjectField({ description: 'Track ID', example: examples.mbTrackID })
 	trackID!: string;

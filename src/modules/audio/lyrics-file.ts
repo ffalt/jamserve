@@ -35,6 +35,37 @@ export function lyricsSidecarCandidates(filename: string, extensions: Array<stri
 	return result;
 }
 
+export interface LyricsSidecarSource {
+	name: string;
+	synced: boolean;
+	source?: string;
+	writtenByJam: boolean;
+}
+
+export async function readLyricsSidecarSources(filename: string): Promise<Array<LyricsSidecarSource>> {
+	const result: Array<LyricsSidecarSource> = [];
+	const candidates = new Set(lyricsSidecarCandidates(filename));
+	for (const candidate of candidates) {
+		if (!await fse.pathExists(candidate)) {
+			continue;
+		}
+		try {
+			const raw = await fse.readFile(candidate, 'utf8');
+			const content = raw.startsWith('\u{FEFF}') ? raw.slice(1) : raw;
+			const { tags } = parseLyrics(content);
+			result.push({
+				name: path.basename(candidate),
+				synced: hasLyricsTimestamps(content),
+				source: tags.by,
+				writtenByJam: tags.re === 'jamserve'
+			});
+		} catch (error: unknown) {
+			log.errorMsg(`Could not read lyrics file ${candidate}`, error);
+		}
+	}
+	return result;
+}
+
 export function lyricsFromText(text: string, source: string): TrackLyrics | undefined {
 	const content = (text.startsWith('\u{FEFF}') ? text.slice(1) : text).trim();
 	if (!content) {
@@ -61,22 +92,6 @@ export async function readLyricsSidecar(filename: string): Promise<TrackLyrics |
 		}
 	}
 	return;
-}
-
-export async function hasSyncedLyricsSidecar(filename: string): Promise<boolean> {
-	for (const candidate of lyricsSidecarCandidates(filename, LyricsSyncedExtensions)) {
-		if (!await fse.pathExists(candidate)) {
-			continue;
-		}
-		try {
-			if (hasLyricsTimestamps(await fse.readFile(candidate, 'utf8'))) {
-				return true;
-			}
-		} catch (error: unknown) {
-			log.errorMsg(`Could not read lyrics file ${candidate}`, error);
-		}
-	}
-	return false;
 }
 
 function formatLength(duration?: number): string | undefined {

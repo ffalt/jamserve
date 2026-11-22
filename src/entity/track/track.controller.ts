@@ -1,4 +1,4 @@
-import { Track, TrackHealth, TrackLyricsList, TrackPage } from './track.model.js';
+import { Track, TrackHealth, TrackLyricsList, TrackLyricsSidecarList, TrackPage } from './track.model.js';
 import { UserRole } from '../../types/enums.js';
 import { IncludesTrackLyricsParameters, IncludesTrackParameters, MediaHealthParameters, RawTagUpdateParameters, TrackFilterParameters, TrackFixParameters, TrackMoveParameters, TrackOrderParameters, TrackRenameParameters } from './track.parameters.js';
 import { MediaIDTagRaw } from '../tag/tag.model.js';
@@ -92,6 +92,19 @@ export class TrackController {
 	}
 
 	@Get(
+		'/lyrics/sidecars',
+		() => TrackLyricsSidecarList,
+		{ description: 'Get the Lyrics Sidecar Files of a Track by Id', summary: 'Get Lyrics Sidecars' }
+	)
+	async lyricsSidecars(
+		@QueryParameter('id', { description: 'Track Id', isID: true }) id: string,
+		@RestContext() { orm, engine }: Context
+	): Promise<TrackLyricsSidecarList> {
+		const track = await orm.Track.oneOrFailByID(id);
+		return await engine.metadata.lyricsSidecarsByTrack(track);
+	}
+
+	@Get(
 		'/rawTag/get',
 		() => [MediaIDTagRaw],
 		{ description: 'Get Raw Tag (eg. id3/vorbis)', summary: 'Get Raw Tag' }
@@ -125,7 +138,7 @@ export class TrackController {
 		@RestContext() { orm, engine, user }: Context
 	): Promise<Array<TrackHealth>> {
 		const tracks = await orm.Track.findFilter(filter, [], {}, user);
-		const list = await engine.track.health(orm, tracks, healthParameters.healthMedia);
+		const list = await engine.track.health(tracks, healthParameters.healthMedia);
 		const result: Array<TrackHealth> = [];
 		for (const item of list) {
 			result.push({

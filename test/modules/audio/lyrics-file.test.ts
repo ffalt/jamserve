@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from '@jest/globals';
 import fse from 'fs-extra';
 import path from 'node:path';
-import { addLyricsHeader, durationToSeconds, hasSyncedLyricsSidecar, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
+import { addLyricsHeader, durationToSeconds, lyricsFromText, lyricsSidecarCandidates, readLyricsSidecar, readLyricsSidecarSources, writeLyricsSidecar } from '../../../src/modules/audio/lyrics-file.js';
 
 const testPath = path.resolve('./local/__tests__/lyrics-file/');
 const audioFile = path.join(testPath, 'Artist - Song.mp3');
@@ -132,24 +132,58 @@ describe('lyrics sidecar files', () => {
 		});
 	});
 
-	describe('hasSyncedLyricsSidecar', () => {
-		test('finds no file next to an untouched audio file', async () => {
-			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+	describe('readLyricsSidecarSources', () => {
+		test('finds nothing next to an untouched audio file', async () => {
+			expect(await readLyricsSidecarSources(audioFile)).toEqual([]);
 		});
 
-		test('finds a timed lrc file', async () => {
+		test('reports every sidecar that exists', async () => {
 			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), lrc);
-			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(true);
+			await fse.writeFile(path.join(testPath, 'Artist - Song.txt'), 'first line');
+			const sources = await readLyricsSidecarSources(audioFile);
+			expect(sources.map(entry => entry.name)).toEqual(['Artist - Song.lrc', 'Artist - Song.txt']);
 		});
 
-		test('ignores an lrc file without timestamps', async () => {
-			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), 'first line\nsecond line');
-			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+		test('reports a sidecar named after the full file name', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.mp3.lrc'), lrc);
+			const sources = await readLyricsSidecarSources(audioFile);
+			expect(sources.map(entry => entry.name)).toEqual(['Artist - Song.mp3.lrc']);
 		});
 
-		test('ignores a plain text file', async () => {
-			await fse.writeFile(path.join(testPath, 'Artist - Song.txt'), lrc);
-			expect(await hasSyncedLyricsSidecar(audioFile)).toBe(false);
+		test('marks a timed file as synced', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), lrc);
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.synced).toBe(true);
+		});
+
+		test('marks a file without timestamps as not synced', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.txt'), 'first line');
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.synced).toBe(false);
+		});
+
+		test('reports the origin from the by tag', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), `[by:https://lrclib.net/api/get/42]\n${lrc}`);
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.source).toBe('https://lrclib.net/api/get/42');
+		});
+
+		test('leaves the origin out when the file carries no by tag', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), lrc);
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.source).toBeUndefined();
+		});
+
+		test('recognises a sidecar jam wrote itself', async () => {
+			await writeLyricsSidecar(audioFile, { syncedLyrics: lrc, source: 'lrclib' }, { title: 'Song' });
+			const sources = await readLyricsSidecarSources(audioFile);
+			expect(sources.at(0)).toMatchObject({ source: 'lrclib', writtenByJam: true, synced: true });
+		});
+
+		test('does not claim a foreign file was written by jam', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), `[by:someone else]\n${lrc}`);
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.writtenByJam).toBe(false);
+		});
+
+		test('reads a file that starts with a byte order mark', async () => {
+			await fse.writeFile(path.join(testPath, 'Artist - Song.lrc'), `\u{FEFF}[by:lrclib]\n${lrc}`);
+			expect((await readLyricsSidecarSources(audioFile)).at(0)?.source).toBe('lrclib');
 		});
 	});
 
